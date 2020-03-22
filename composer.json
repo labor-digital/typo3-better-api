@@ -1,0 +1,48 @@
+{
+	"name": "labor-digital/typo3-better-api",
+	"description": "A package that overhauls the way you work with TYPO3 providing you with a new, better core API",
+	"type": "typo3-cms-extension",
+	"license": "Apache-2.0",
+	"authors": [
+		{
+			"name": "LABOR.digital",
+			"email": "info@labor.tools",
+			"homepage": "https://www.labor.digital",
+			"role": "Company"
+		},
+		{
+			"name": "Martin Neundorfer",
+			"email": "code@neunerlei.eu",
+			"homepage": "https://www.neunerlei.eu",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"psr/simple-cache": "*",
+		"psr/container": "*",
+		"neunerlei/event-bus": "*",
+		"neunerlei/arrays": "*",
+		"neunerlei/tiny-timy": "*",
+		"neunerlei/path-util": "*",
+		"neunerlei/options": "*",
+		"neunerlei/inflection": "*",
+		"neunerlei/filesystem": "*",
+		"whitecube/lingua": "^1.0",
+		"zordius/lightncandy": "^1.2",
+		"labor-digital/typo3-better-api-composer-plugin": "*"
+	},
+	"support": {
+		"issues": "https://github.com/labor-digital/typo3-better-api/issues",
+		"source": "https://github.com/labor-digital/typo3-better-api",
+		"docs": "https://typo3-better-api.labor.tools"
+	},
+	"suggest": {
+		"neunerlei/dbg": "Allows more debugging capabilities than TYPO3's default debugger."
+	},
+	"autoload": {
+		"psr-4": {
+			"LaborDigital\\Typo3BetterApi\\": "Classes"
+		}
+	},
+	"version": "9.0.0"
+}
