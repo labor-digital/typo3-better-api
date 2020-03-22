@@ -34,4 +34,3 @@ jobs:
         uses: labor-digital/conventional-release-action@master
         with:
           github-token: ${{ secrets.github_token }}
-
