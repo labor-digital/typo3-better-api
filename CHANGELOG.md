@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.1.1](https://github.com/labor-digital/typo3-better-api/compare/v9.1.0...v9.1.1) (2020-03-23)
+
+
+### Bug Fixes
+
+* make dependency versions specific ([1f3b9b3](https://github.com/labor-digital/typo3-better-api/commit/1f3b9b3ba5011e68771a442f0195e751488107dd))
+* make sure the package is correctly registered before other packages can depend on it ([5f04c35](https://github.com/labor-digital/typo3-better-api/commit/5f04c35ee56858bbc94b1d0749cc0a78224f5a63))
+
 ## 9.1.0 (2020-03-22)
 
 
