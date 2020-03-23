@@ -37,10 +37,10 @@ class ConfigSorter {
 	 * "after" does the opposite and defines elements that should come before this element.
 	 * Both keys can either be an array or a single key value.
 	 *
-	 * There are two "special" keys. "start" and "end". You can do ["a" => ["before" => "end"] ["b" = ...]] to
-	 * always put this element to the end of the list. Using the "start" key does the opposite. You can always
-	 * use "after" => "end" and "before" => "start" which will be sorted with higher priority than "before" => "end"
-	 * and "after" => "start".
+	 * There are two "special" keys. "first" and "last". You can do ["a" => ["before" => "end"] ["b" = ...]] to
+	 * always put this element to the end of the list. Using the "first" key does the opposite. You can always
+	 * use "after" => "last" and "before" => "first" which will be sorted with higher priority than "before" => "last"
+	 * and "after" => "first".
 	 *
 	 * @param array $list
 	 *
@@ -77,12 +77,6 @@ class ConfigSorter {
 				],
 			], ["allowUnknown" => TRUE]);
 			
-			// Remap before and after as they seem to work counter intuitive.
-			$_v["@sortVarsVanilla"] = [$_v["before"], $_v["after"]];
-			$tmp = $_v["before"];
-			$_v["before"] = $_v["after"];
-			$_v["after"] = $tmp;
-			
 			// Add it to the list
 			$listClean[$k] = $_v;
 		}
@@ -90,16 +84,7 @@ class ConfigSorter {
 		// Sort the list
 		$listSorted = TypoContainer::getInstance()->get(DependencyOrderingService::class)->orderByDependencies($listClean);
 		
-		// Second pass, revert the remapped before/after keys
-		foreach ($listSorted as &$v) {
-			if (!isset($v["@sortVarsVanilla"])) continue;
-			$v["before"] = $v["@sortVarsVanilla"][0];
-			$v["after"] = $v["@sortVarsVanilla"][1];
-			unset($v["@sortVarsVanilla"]);
-		}
-		
 		// Clean the list
-		$listSorted = array_reverse($listSorted);
 		unset($listSorted["first"]);
 		unset($listSorted["last"]);
 		

@@ -91,6 +91,8 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Package\Package;
+use TYPO3\CMS\Core\Package\PackageInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -214,6 +216,9 @@ class BetterApiInit {
 		$eventBus->addListener(RegisterRuntimePackagesEvent::class, function (RegisterRuntimePackagesEvent $event) use ($self) {
 			$self->forceSelfActivation($event->getPackageManager());
 		});
+		$eventBus->addListener(RegisterRuntimePackagesEvent::class, function (RegisterRuntimePackagesEvent $event) use ($self) {
+			$self->activateHookExtension($event->getPackageManager());
+		}, ["priority" => -500]);
 		
 		// Do remaining bootstrapping
 		$eventBus->addListener(AfterExtLocalConfLoadedEvent::class, function () use ($self) {
@@ -266,6 +271,32 @@ class BetterApiInit {
 			$packageManager->scanAvailablePackages();
 		if (!$packageManager->isPackageActive($packageKey))
 			$packageManager->activatePackage($packageKey);
+	}
+	
+	/**
+	 * Activates the hook extension that should be always the last in the list of extension.
+	 * This is important because we want all other extensions to be able to do their stuff, before we do our stuff :)
+	 *
+	 * @param \TYPO3\CMS\Core\Package\PackageManager $packageManager
+	 */
+	protected function activateHookExtension(PackageManager $packageManager): void {
+		// Make sure the package was never enabled
+		$packageKey = "typo3_better_api_hook";
+		if ($packageManager->isPackageActive($packageKey))
+			$packageManager->deactivatePackage($packageKey);
+		
+		// Create the package and register the base path
+		$package = new Package($packageManager, $packageKey, __DIR__ . "/../HookExtension/" . $packageKey . "/");
+		$adapter = new class extends PackageManager {
+			public function registerHookPackage(PackageManager $packageManager, PackageInterface $package) {
+				// Register a new base path
+				$packageManager->packagesBasePaths[$package->getPackageKey()] = $package->getPackagePath();
+				
+				// Activate the package
+				$packageManager->activatePackageDuringRuntime($package->getPackageKey());
+			}
+		};
+		$adapter->registerHookPackage($packageManager, $package);
 	}
 	
 	/**
@@ -459,7 +490,7 @@ HTML;
 		}, ["priority" => -500]);
 		
 		// Register our own ext config class
-		betterExtConfig("laborDigital.typo3_better_api", BetterApiExtConfig::class, ["before" => "start"]);
+		betterExtConfig("laborDigital.typo3_better_api", BetterApiExtConfig::class, ["before" => ["first", "last"]]);
 	}
 	
 	/**
