@@ -42,7 +42,6 @@ use LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection\LazyConstruct
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\ObjectContainerAdapter;
-use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\PackageManagerAdapter;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedBootstrap;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedCacheManager;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedDataHandler;
@@ -69,6 +68,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\InitEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\InitInstanceFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\LoadExtLocalConfIfTcaIsRequiredWithoutItEvent;
+use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\BootstrapContainerFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\ListenerProvider\TypoListenerProvider;
@@ -91,6 +91,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
@@ -209,6 +210,11 @@ class BetterApiInit {
 			FailsafeWrapper::$isFailsafe = $e->isFailsafe();
 		});
 		
+		// Activate myself
+		$eventBus->addListener(RegisterRuntimePackagesEvent::class, function (RegisterRuntimePackagesEvent $event) use ($self) {
+			$self->forceSelfActivation($event->getPackageManager());
+		});
+		
 		// Do remaining bootstrapping
 		$eventBus->addListener(AfterExtLocalConfLoadedEvent::class, function () use ($self) {
 			$self->setupContainer();
@@ -246,6 +252,20 @@ class BetterApiInit {
 	 */
 	public static function isComplete(): bool {
 		return static::$initComplete;
+	}
+	
+	/**
+	 * Makes sure that this package is always active in the package states
+	 *
+	 * @param \TYPO3\CMS\Core\Package\PackageManager $packageManager
+	 */
+	protected function forceSelfActivation(PackageManager $packageManager): void {
+		$packageKey = "typo3_better_api";
+		if ($packageManager->isPackageActive($packageKey)) return;
+		if (!$packageManager->isPackageAvailable($packageKey))
+			$packageManager->scanAvailablePackages();
+		if (!$packageManager->isPackageActive($packageKey))
+			$packageManager->activatePackage($packageKey);
 	}
 	
 	/**
