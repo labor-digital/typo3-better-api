@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.1.2](https://github.com/labor-digital/typo3-better-api/compare/v9.1.1...v9.1.2) (2020-03-23)
+
+
+### Bug Fixes
+
+* add more elegant self activation ([e03945e](https://github.com/labor-digital/typo3-better-api/commit/e03945e0f0ff680baa3bd0cdca90183cce84921c))
+
 ### [9.1.1](https://github.com/labor-digital/typo3-better-api/compare/v9.1.0...v9.1.1) (2020-03-23)
 
 
