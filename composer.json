@@ -18,6 +18,7 @@
 		}
 	],
 	"require": {
+		"typo3/cms-core": "^9.5",
 		"psr/simple-cache": "^1.0",
 		"psr/container": "^1.0",
 		"neunerlei/event-bus": "^1.1",
@@ -44,5 +45,15 @@
 			"LaborDigital\\Typo3BetterApi\\": "Classes"
 		}
 	},
-	"version": "9.1.0"
+	"version": "9.1.0",
+	"extra": {
+		"typo3/cms": {
+			"Package": {
+				"protected": true,
+				"partOfFactoryDefault": true,
+				"partOfMinimalUsableSystem": true
+			},
+			"extension-key": "typo3_better_api"
+		}
+	}
 }

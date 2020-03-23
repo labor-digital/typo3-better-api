@@ -50,6 +50,7 @@ use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedDataMapper;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedLanguageService;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedLocalizationUtility;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedNodeFactory;
+use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedPackageManager;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedReflectionService;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedSiteConfiguration;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console\ExtendedScripts;
@@ -68,7 +69,6 @@ use LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\InitEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\InitInstanceFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\LoadExtLocalConfIfTcaIsRequiredWithoutItEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\BootstrapContainerFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\ListenerProvider\TypoListenerProvider;
@@ -207,11 +207,6 @@ class BetterApiInit {
 		// Handle the failsafe state
 		$eventBus->addListener(BootstrapFailsafeDefinitionEvent::class, function (BootstrapFailsafeDefinitionEvent $e) {
 			FailsafeWrapper::$isFailsafe = $e->isFailsafe();
-		});
-		
-		// Activate myself
-		$eventBus->addListener(RegisterRuntimePackagesEvent::class, function (RegisterRuntimePackagesEvent $event) {
-			PackageManagerAdapter::forcedSelfActivation($event->getPackageManager());
 		});
 		
 		// Do remaining bootstrapping
