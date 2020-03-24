@@ -326,7 +326,7 @@ class BetterApiInit {
 	 * Apply the configuration for the labor/dbg package
 	 */
 	protected function applyDebuggerConfig() {
-		if (function_exists("dbgConfig") && defined("LABOR_DBG_CONFIG_LOADED")) {
+		if (function_exists("dbgConfig") && defined("_DBG_CONFIG_LOADED")) {
 			// Register our Plugins
 			Kint::$plugins[] = LazyLoadingPlugin::class;
 			Kint::$plugins[] = TypoInstanceTypePlugin::class;
