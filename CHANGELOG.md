@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.1.4](https://github.com/labor-digital/typo3-better-api/compare/v9.1.3...v9.1.4) (2020-03-24)
+
+
+### Bug Fixes
+
+* fix broken tca type generation after new event bus implementation ([844952e](https://github.com/labor-digital/typo3-better-api/commit/844952ef754b53dd9c86130a84d739c33360ef79))
+* fix incompatibility with public debugger implementation ([d995dca](https://github.com/labor-digital/typo3-better-api/commit/d995dca2fa5d165610422c94bda1556bdd0a7277))
+* fix incorrect ordering of form elements when "before" or "after" are used as modifiers and the target is a "tab" ([e317a77](https://github.com/labor-digital/typo3-better-api/commit/e317a770d4abe3b88237ffdb224dacaed6fbff57))
+* remove "NOT NULL" sql statement to keep the sql compatible with sql server ([44a1280](https://github.com/labor-digital/typo3-better-api/commit/44a1280ef69a3204790641413e717128a4844e83))
+
 ### [9.1.3](https://github.com/labor-digital/typo3-better-api/compare/v9.1.2...v9.1.3) (2020-03-23)
 
 
