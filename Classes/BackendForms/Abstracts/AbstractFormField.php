@@ -49,7 +49,7 @@ abstract class AbstractFormField extends AbstractFormElement {
 	 * @return $this
 	 * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Columns/Index.html#onchange
 	 */
-	public function setReloadOnChange(bool $state) {
+	public function setReloadOnChange(bool $state = TRUE) {
 		$this->config["onChange"] = $state ? "reload" : "";
 		return $this;
 	}
