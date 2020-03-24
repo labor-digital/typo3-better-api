@@ -376,7 +376,7 @@ abstract class AbstractFormPreset implements FormPresetInterface {
 		
 		if ($addSqlStatement) {
 			// Make sure we don't create varChars that are too long...
-			$sqlType = (int)$options["maxLength"] <= 4096 ? "varchar(" . $options["maxLength"] . ") DEFAULT '' NOT NULL" : "text";
+			$sqlType = (int)$options["maxLength"] <= 4096 ? "varchar(" . $options["maxLength"] . ") DEFAULT ''" : "text";
 			$this->setSqlDefinitionForTcaField($sqlType);
 		}
 		
