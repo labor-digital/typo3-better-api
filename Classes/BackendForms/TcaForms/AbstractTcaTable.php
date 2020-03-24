@@ -196,7 +196,7 @@ abstract class AbstractTcaTable extends AbstractForm {
 		// Add the data handler actions
 		$handlers = $this->__getDataHandlerActionHandlers();
 		if (!empty($handlers))
-			$raw["dataHandlerActions"] = $handlers["@table"];
+			$tca["dataHandlerActions"] = $handlers["@table"];
 		
 		// Done
 		return $tca;
