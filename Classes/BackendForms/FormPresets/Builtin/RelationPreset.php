@@ -105,7 +105,7 @@ class RelationPreset extends AbstractFormPreset {
 		$GLOBALS["TCA"] = Arrays::setPath($GLOBALS, $path, $fieldList)["TCA"];
 		
 		// Set the sql
-		$this->setSqlDefinitionForTcaField("int(11) NOT NULL DEFAULT '0'");
+		$this->setSqlDefinitionForTcaField("int(11) DEFAULT '0'");
 		
 		// Set the field
 		$this->field->addConfig($config);
@@ -306,7 +306,7 @@ class RelationPreset extends AbstractFormPreset {
 			]);
 			
 			// Set sql for field
-			$this->setSqlDefinitionForTcaField("int(11) DEFAULT '0' NOT NULL");
+			$this->setSqlDefinitionForTcaField("int(11) DEFAULT '0'");
 			
 		}
 		

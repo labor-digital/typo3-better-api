@@ -108,7 +108,7 @@ class InputFieldPreset extends AbstractFormPreset {
 		// Set sql statement
 		$this->setSqlDefinitionForTcaField(
 			$options["asInt"] ?
-				"int(11) DEFAULT '0' NOT NULL" :
+				"int(11) DEFAULT '0'" :
 				"datetime DEFAULT 'CURRENT_TIMESTAMP'"
 		);
 		

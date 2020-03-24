@@ -62,7 +62,7 @@ class BasicFieldPreset extends AbstractFormPreset {
 		if ($options["toggle"]) $config["renderType"] = "checkboxToggle";
 		
 		// Set sql config
-		$this->setSqlDefinitionForTcaField("tinyint(4) DEFAULT '0' NOT NULL");
+		$this->setSqlDefinitionForTcaField("tinyint(4) DEFAULT '0'");
 		
 		// Done
 		$this->field->addConfig($config);
@@ -184,7 +184,7 @@ class BasicFieldPreset extends AbstractFormPreset {
 		if (!is_null($options["default"])) $config["default"] = $options["default"];
 		$config = $this->addMinMaxItemConfig($config, $options);
 		$config = $this->addEvalConfig($config, $options);
-		$this->setSqlDefinitionForTcaField("varchar(1024) DEFAULT '' NOT NULL");
+		$this->setSqlDefinitionForTcaField("varchar(1024) DEFAULT ''");
 		
 		// Set the field
 		$this->field->addConfig($config);
