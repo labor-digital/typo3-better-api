@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.1.3](https://github.com/labor-digital/typo3-better-api/compare/v9.1.2...v9.1.3) (2020-03-23)
+
+
+### Bug Fixes
+
+* reimplement hook extension to make sure the events are triggered correctly when using the "nicer" way to register ourselves ([264cf68](https://github.com/labor-digital/typo3-better-api/commit/264cf685b018fad5c59f03d7c38a877a8cb18d41))
+
 ### [9.1.2](https://github.com/labor-digital/typo3-better-api/compare/v9.1.1...v9.1.2) (2020-03-23)
 
 
