@@ -25,7 +25,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableAfterBuildEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableBeforeBuildEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableDefaultTcaFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableRawTcaTypeFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableTcaTypeFilterEvent;
+use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableTypeDefinitionFilterEvent;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
@@ -376,12 +376,12 @@ class TcaTable extends AbstractTcaTable {
 	 *
 	 * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
 	 *
-	 * @param string $id
+	 * @param string|int $id
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableType
 	 * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
 	 */
-	public function getType(string $id): TcaTableType {
+	public function getType($id): TcaTableType {
 		return $this->getTypeInternal($id);
 	}
 	
@@ -530,8 +530,8 @@ class TcaTable extends AbstractTcaTable {
 			$tca["types"][$key]["showitem"] = $typeShowItem;
 			
 			// Allow filtering
-			$this->context->EventBus->dispatch(($e = new ExtConfigTableTcaTypeFilterEvent(
-				$typeTca, $key, $this->tableName, $this
+			$this->context->EventBus->dispatch(($e = new ExtConfigTableTypeDefinitionFilterEvent(
+				$tca["types"][$key], $key, $this->tableName, $this
 			)));
 			$tca["types"][$key] = $e->getTypeTca();
 		}
@@ -658,11 +658,11 @@ class TcaTable extends AbstractTcaTable {
 	/**
 	 * Internal helper to create retrieve or create a instance of a tca type representation
 	 *
-	 * @param string $id
+	 * @param string|int $id
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableType
 	 */
-	protected function getTypeInternal(string $id): TcaTableType {
+	protected function getTypeInternal($id): TcaTableType {
 		// Return already existing type object
 		if (isset($this->types[$id])) return $this->types[$id];
 		

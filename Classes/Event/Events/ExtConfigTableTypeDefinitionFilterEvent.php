@@ -24,13 +24,13 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
 use LaborDigital\Typo3BetterApi\Event\Events\Traits\ExtConfigTableTcaTypeFilterTrait;
 
 /**
- * Class ExtConfigTableTcaTypeFilterEvent
+ * Class ExtConfigTableTypeDefinitionFilterEvent
  *
- * Dispatched when a tca table instance is converted into it's array form
- * Can be used to filter the raw type tca AFTER it is merged with the table defaults
+ * Dispatched when a tca table instance is converted into it's array form.
+ * Can be used to filter the "type" sub-array containing the showitem definition after it was build
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ExtConfigTableTcaTypeFilterEvent {
+class ExtConfigTableTypeDefinitionFilterEvent {
 	use ExtConfigTableTcaTypeFilterTrait;
 }
