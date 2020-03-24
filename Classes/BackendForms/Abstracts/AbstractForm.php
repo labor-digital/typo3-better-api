@@ -156,10 +156,10 @@ abstract class AbstractForm extends AbstractFormContainer {
 				// Move the field/container to another tab
 				/** @var AbstractFormContainer $targetEl */
 				if ($modifier === "before") {
-					$targetEl = $targetEl->getParent()->getSiblingElement($targetElId);
+					$targetEl = $targetEl->getParent()->getSiblingElement($targetElId, FALSE);
 					$modifier = "bottom";
 				} else if ($modifier === "after") {
-					$targetEl = $targetEl->getParent()->getSiblingElement($targetElId, FALSE);
+					$targetEl = $targetEl->getParent()->getSiblingElement($targetElId, TRUE);
 					$modifier = "top";
 				}
 				$targetEl->addElementAt($elId, $el, $modifier);
