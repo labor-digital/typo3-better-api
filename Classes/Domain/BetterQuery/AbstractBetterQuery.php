@@ -299,7 +299,7 @@ abstract class AbstractBetterQuery {
 			$orderings[$k] = $direction;
 		}
 		$clone->adapter->setOrderings($orderings);
-		return $this;
+		return $clone;
 	}
 	
 	/**
