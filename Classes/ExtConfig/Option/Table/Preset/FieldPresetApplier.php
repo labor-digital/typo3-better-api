@@ -52,6 +52,12 @@ class FieldPresetApplier implements SingletonInterface {
 	protected $field;
 	
 	/**
+	 * The instance of the trait generator -> always use getExtensionHandler()!
+	 * @var \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\Preset\FieldPresetApplierTraitGenerator|null
+	 */
+	protected $extensionHandler;
+	
+	/**
 	 * FieldPresetApplier constructor.
 	 *
 	 * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
@@ -68,7 +74,8 @@ class FieldPresetApplier implements SingletonInterface {
 	 * @return bool
 	 */
 	public function hasPreset(string $key): bool {
-		return method_exists($this, $key) || isset($this->getAllPresets()[$key]);
+		return method_exists($this, $key) ||
+			!empty($this->getExtensionHandler()->getClassNameForMethodName($key));
 	}
 	
 	/**
@@ -92,26 +99,24 @@ class FieldPresetApplier implements SingletonInterface {
 	 * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
 	 */
 	public function __call($name, $arguments) {
-		
 		// Try to find a not-yet compiled preset -> When an extension is activated
-		$options = $this->getAllPresets();
-		if (isset($options[$name])) return $this->callHandlerInstance($options[$name], $name, $arguments);
+		$class = $this->getExtensionHandler()->getClassNameForMethodName($name);
+		if (!empty($class)) return $this->callHandlerInstance($class, $name, $arguments);
 		
 		// Not found
 		throw new ExtConfigException("Could not apply preset $name, because it was not registered!");
 	}
 	
 	/**
-	 * Internal helper to get a list of all presets that could be used in the applier (the list is automatically
-	 * collected, even if the trait itself does not have the presets compiled, yet)
-	 *
-	 * @return array returns a list of $presetName => $handlerClass
+	 * Returns the instance of the extension handler
+	 * This is used to check if a new option has been added (e.g. when the extension is activated)
+	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\Preset\FieldPresetApplierTraitGenerator
 	 */
-	protected function getAllPresets(): array {
-		/** @var \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\Preset\FieldPresetApplierTraitGenerator $handler */
-		$handler = $this->context->ExtensionRegistry->getExtensionHandler(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET);
-		$extensions = $this->context->ExtensionRegistry->getExtensions(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET);
-		return $handler->getAllPresets($extensions);
+	protected function getExtensionHandler(): FieldPresetApplierTraitGenerator {
+		if (!empty($this->extensionHandler)) return $this->extensionHandler;
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->extensionHandler =
+			$this->context->ExtensionRegistry->getExtensionHandler(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET);
 	}
 	
 	/**

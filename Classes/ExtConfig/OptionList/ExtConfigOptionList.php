@@ -46,6 +46,12 @@ class ExtConfigOptionList {
 	protected $options = [];
 	
 	/**
+	 * The instance of the trait generator -> always use getExtensionHandler()!
+	 * @var \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator|null
+	 */
+	protected $extensionHandler;
+	
+	/**
 	 * ExtConfigOptionList constructor.
 	 *
 	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext       $context
@@ -68,12 +74,13 @@ class ExtConfigOptionList {
 	 * Returns true if a certain option exists, false if not.
 	 * This is useful for checking if a certain extension is installed.
 	 *
-	 * @param string $key
+	 * @param string $optionName
 	 *
 	 * @return bool
 	 */
-	public function hasOption(string $key): bool {
-		return method_exists($this, $key) || isset($this->getAllOptions()[$key]);
+	public function hasOption(string $optionName): bool {
+		return method_exists($this, $optionName) ||
+			!empty($this->getExtensionHandler()->getClassNameForOption($optionName));
 	}
 	
 	/**
@@ -87,24 +94,23 @@ class ExtConfigOptionList {
 	 */
 	public function __call($name, $arguments) {
 		// Try to find a not-yet compiled option -> When an extension is activated
-		$options = $this->getAllOptions();
-		if (isset($options[$name])) return $this->getOrCreateOptionInstance($options[$name]);
+		$class = $this->getExtensionHandler()->getClassNameForOption($name);
+		if (!empty($class)) return $this->getOrCreateOptionInstance($class);
 		
 		// No fallback found
-		throw new ExtConfigException("Could not find option $name, because it was not registered!");
+		throw new ExtConfigException("Could not find option \"$name\", because it was not registered!");
 	}
 	
 	/**
-	 * Internal helper to get a list of all options that could be used in the applier (the list is automatically
-	 * collected, even if the trait itself does not have the options compiled, yet)
-	 *
-	 * @return array returns a list of $optionName => $handlerClass
+	 * Returns the instance of the extension handler
+	 * This is used to check if a new option has been added (e.g. when the extension is activated)
+	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator
 	 */
-	protected function getAllOptions(): array {
-		/** @var \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator $handler */
-		$handler = $this->context->ExtensionRegistry->getExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY);
-		$extensions = $this->context->ExtensionRegistry->getExtensions(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY);
-		return $handler->getAllOptions($extensions);
+	protected function getExtensionHandler(): ExtConfigOptionTraitGenerator {
+		if (!empty($this->extensionHandler)) return $this->extensionHandler;
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->extensionHandler =
+			$this->context->ExtensionRegistry->getExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY);
 	}
 	
 	/**

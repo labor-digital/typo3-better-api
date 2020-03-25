@@ -40,10 +40,56 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
 	protected $context;
 	
 	/**
+	 * The list of all option classes by their option name
+	 * The value is populated by the generate() method
+	 * @var array
+	 */
+	protected $options;
+	
+	/**
 	 * @inheritDoc
 	 */
 	public function __construct(ExtConfigContext $context) {
 		$this->context = $context;
+	}
+	
+	/**
+	 * Returns either the class name for an option name or null
+	 * if none was registered
+	 *
+	 * @param string $optionName The name of the option to check for
+	 *
+	 * @return string|null
+	 */
+	public function getClassNameForOption(string $optionName): ?string {
+		return $this->options[$optionName];
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function generate(array $extensions): void {
+		// Generate a hash for the loaded extensions
+		$hash = md5(\GuzzleHttp\json_encode($extensions));
+		
+		// Get or generate the options
+		$fileName = "OptionListOptions-$hash.php";
+		if (!$this->context->Fs->hasFile($fileName)) {
+			$this->options = $this->generateOptionClassList($extensions);
+			$this->context->Fs->setFileContent($fileName, $this->options);
+		} else $this->options = $this->context->Fs->getFileContent($fileName);
+		
+		// Compile if the trait does not exist
+		$fileName = "OptionListTrait-$hash.php";
+		if (!$this->context->Fs->hasFile($fileName)) {
+			$methods = [];
+			foreach ($this->options as $name => $class) $methods[] = $this->makeOptionSrc($name, $class);
+			$this->context->Fs->setFileContent($fileName, $this->makeTraitSrc($methods));
+		}
+		
+		// Include the trait if it does not exist yet
+		if (!trait_exists(static::TRAIT_NAME))
+			$this->context->Fs->includeFile($fileName);
 	}
 	
 	/**
@@ -53,12 +99,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
 	 *
 	 * @return array
 	 */
-	public function getAllOptions(array $extensions): array {
-		// Check if we have the entries already cached
-		$cacheKey = "ext-config-option-list-options";
-		if ($this->context->GeneralCache->has($cacheKey))
-			return $this->context->GeneralCache->get($cacheKey);
-		
+	protected function generateOptionClassList(array $extensions): array {
 		// Generate the list of options
 		$options = [];
 		foreach ($extensions as $extension) {
@@ -71,30 +112,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
 			}
 			$options[$optionName] = $extension["class"];
 		}
-		
-		// Store and return the options
-		$this->context->GeneralCache->set($cacheKey, $options);
 		return $options;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function generate(array $extensions): void {
-		$options = $this->getAllOptions($extensions);
-		
-		// Compile if the trait does not exist
-		$fileName = "OptionListTrait-" . md5(\GuzzleHttp\json_encode($options)) . ".php";
-		if (!$this->context->Fs->hasFile($fileName)) {
-			$methods = [];
-			foreach ($options as $name => $class) $methods[] = $this->makeOptionSrc($name, $class);
-			$this->context->Fs->setFileContent($fileName, $this->makeTraitSrc($methods));
-		}
-		
-		// Include the trait if it does not exist yet
-		if (!trait_exists(static::TRAIT_NAME))
-			$this->context->Fs->includeFile($fileName);
-		
 	}
 	
 	/**

@@ -42,10 +42,56 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
 	protected $context;
 	
 	/**
+	 * The list of preset configurations that have been gathered
+	 * @var array
+	 */
+	protected $presets;
+	
+	/**
 	 * @inheritDoc
 	 */
 	public function __construct(ExtConfigContext $context) {
 		$this->context = $context;
+	}
+	
+	/**
+	 * Returns either the class name for a preset method name or null
+	 * if none was registered
+	 *
+	 * @param string $presetName The name of the preset method to check for
+	 *
+	 * @return string|null
+	 */
+	public function getClassNameForMethodName(string $presetName): ?string {
+		return $this->presets[$presetName];
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function generate(array $extensions): void {
+		// Generate a hash for the loaded extensions
+		$hash = md5(\GuzzleHttp\json_encode($extensions));
+		
+		// Get or generate the preset list
+		$fileName = "FieldPresetList-$hash.php";
+		if (!$this->context->Fs->hasFile($fileName)) {
+			$this->presets = $this->generatePresetList($extensions);
+			$this->context->Fs->setFileContent($fileName, $this->presets);
+		} else $this->presets = $this->context->Fs->getFileContent($fileName);
+		
+		// Compile if the trait does not exist
+		$fileName = "FieldPresetApplierTrait-$hash.php";
+		if (!$this->context->Fs->hasFile($fileName)) {
+			$methods = [];
+			foreach ($this->presets as $name => $class) $methods[] = $this->makePresetSrc(new ReflectionMethod($class, $name));
+			$this->context->Fs->setFileContent($fileName, $this->makeTraitSrc($methods));
+		}
+		
+		// Include the trait if it does not exist yet
+		if (!trait_exists(static::TRAIT_NAME))
+			$this->context->Fs->includeFile($fileName);
+		
 	}
 	
 	/**
@@ -56,12 +102,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
 	 * @return array
 	 * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
 	 */
-	public function getAllPresets(array $extensions): array {
-		// Check if we have the entry already cached
-		$cacheKey = "ext-config-preset-list-entries";
-		if ($this->context->GeneralCache->has($cacheKey))
-			return $this->context->GeneralCache->get($cacheKey);
-		
+	protected function generatePresetList(array $extensions): array {
 		// Collect the presets via reflection
 		$presets = [];
 		foreach ($extensions as $class => $args) {
@@ -86,29 +127,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
 				$presets[$method->getName()] = $class;
 			}
 		}
-		
-		// Store and return the presets
-		$this->context->GeneralCache->set($cacheKey, $presets);
 		return $presets;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function generate(array $extensions): void {
-		// Compile if the trait does not exist
-		$fileName = "FieldPresetApplierTrait-" . md5(\GuzzleHttp\json_encode($extensions)) . ".php";
-		if (!$this->context->Fs->hasFile($fileName)) {
-			$methods = [];
-			$presets = $this->getAllPresets($extensions);
-			foreach ($presets as $name => $class) $methods[] = $this->makeOptionSrc(new ReflectionMethod($class, $name));
-			$this->context->Fs->setFileContent($fileName, $this->makeTraitSrc($methods));
-		}
-		
-		// Include the trait if it does not exist yet
-		if (!trait_exists(static::TRAIT_NAME))
-			$this->context->Fs->includeFile($fileName);
-		
 	}
 	
 	/**
@@ -118,7 +137,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
 	 *
 	 * @return string
 	 */
-	protected function makeOptionSrc(ReflectionMethod $method): string {
+	protected function makePresetSrc(ReflectionMethod $method): string {
 		$args = $this->generateMethodArgs($method);
 		$desc = $method->getDocComment();
 		$desc = $this->sanitizeDesc($desc);
