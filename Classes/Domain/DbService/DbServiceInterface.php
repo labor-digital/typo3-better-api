@@ -77,6 +77,8 @@ interface DbServiceInterface {
 	 * @return array
 	 * @throws \Doctrine\DBAL\DBALException
 	 * @throws \Exception
+	 * @deprecated use getQuery instead!
+	 * @see        \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface::getQuery()
 	 */
 	public function getRecords(string $table, $uid, $fields = '*', $where = '', $orderBy = '', $limit = ''): array;
 	
