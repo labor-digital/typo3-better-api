@@ -312,6 +312,7 @@ abstract class AbstractFormPreset implements FormPresetInterface {
 		
 		// Create the mm table configuration
 		$config["MM"] = $mmTableName;
+		$config["prepend_tname"] = TRUE;
 		
 		// Done
 		return $config;
