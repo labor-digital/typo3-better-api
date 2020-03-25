@@ -31,6 +31,9 @@ trait DisplayConditionTrait {
 	 * Special feature: If you give an array like ["fieldName", "=" , "0"], the logic will automatically
 	 * convert it into the internal format like: "FIELD:fieldName:=:0"
 	 *
+	 * Auto-And: If you apply multiple arrays like [["fieldName", "=" , "0"],["fieldName", "=" , "2"]]
+	 * the values will be combined using the "AND" conditional
+	 *
 	 * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Columns/Index.html#displaycond
 	 *
 	 * @param string|array $condition
@@ -41,8 +44,16 @@ trait DisplayConditionTrait {
 	public function setDisplayCondition($condition) {
 		if (empty($condition)) return $this;
 		if (is_array($condition)) {
-			if (count($condition) === 3 && Arrays::isSequential($condition))
-				$condition = "FIELD:" . $condition[0] . ":" . $condition[1] . ":" . $condition[2];
+			$fieldProcessor = function ($condition) {
+				if (count($condition) === 3 && Arrays::isSequential($condition))
+					$condition = "FIELD:" . $condition[0] . ":" . $condition[1] . ":" . $condition[2];
+				return $condition;
+			};
+			if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
+				$condition = [
+					"AND" => array_map($fieldProcessor, $condition),
+				];
+			} else $condition = $fieldProcessor($condition);
 		} else if (!is_string($condition))
 			throw new BackendFormException("Only strings and arrays are allowed as display conditions!");
 		$this->config["displayCond"] = $condition;
