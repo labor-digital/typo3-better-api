@@ -187,7 +187,7 @@ abstract class AbstractTcaTable extends AbstractForm {
 		
 		// Build the show item string for this type
 		$showItem = $this->dumpShowItem();
-		$tca["types"][$this->typeKey]["showitem"] = $showItem["showitem"];
+		$tca["types"][empty($this->typeKey) ? 0 : $this->typeKey]["showitem"] = $showItem["showitem"];
 		
 		// Build the show item string for the palettes
 		foreach ($showItem["palettes"] as $k => $showItem)
