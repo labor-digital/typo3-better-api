@@ -189,8 +189,8 @@ class TempFs implements LazyEventSubscriberInterface {
 	public function getBaseDirectoryPath(bool $relative = FALSE): string {
 		if (!$relative) return $this->baseDirectory;
 		if (!empty($this->relativeBaseDirectory)) return $this->relativeBaseDirectory;
-		return $this->relativeBaseDirectory = Path::makeRelative(
-			Path::unifyPath(realpath(ExtensionManagementUtility::extPath("typo3_better_api"))), $this->baseDirectory);
+		return $this->relativeBaseDirectory = Path::makeRelative($this->baseDirectory,
+				Path::unifyPath(realpath(ExtensionManagementUtility::extPath("typo3_better_api")))) . DIRECTORY_SEPARATOR;
 	}
 	
 	/**
