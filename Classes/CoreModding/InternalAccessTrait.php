@@ -83,7 +83,7 @@ trait InternalAccessTrait {
 	 *
 	 * @return bool
 	 */
-	protected function hasMethod(string $method): bool {
+	public function hasMethod(string $method): bool {
 		return method_exists($this->getExecutionTarget(), $method);
 	}
 	
