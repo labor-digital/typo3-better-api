@@ -478,8 +478,8 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
 				
 				// Dump the files
 				$dir = Inflector::toFile($id);
-				if (!empty($ts["constants"])) $this->Fs->setFileContent($dir . "/constants.txt", $ts["constants"]);
-				if (!empty($ts["setup"])) $this->Fs->setFileContent($dir . "/setup.txt", $ts["setup"]);
+				$this->Fs->setFileContent($dir . "/constants.txt", $ts["constants"]);
+				$this->Fs->setFileContent($dir . "/setup.txt", $ts["setup"]);
 				$relPath = $this->Fs->getBaseDirectoryPath(TRUE) . $dir;
 				
 				// Add the file to the tsFiles list
