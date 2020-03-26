@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.2.0](https://github.com/labor-digital/typo3-better-api/compare/v9.1.4...v9.2.0) (2020-03-25)
+
+
+### Features
+
+* **DisplayConditionTrait:** add "auto-add" when multiple display conditions are passed as array ([47138ae](https://github.com/labor-digital/typo3-better-api/commit/47138ae4c8a585c7352cdb92e8b2d04bf697c0d9))
+* **FormPreset:** add "prepend_tname" to the field config when an mm table is generated ([1159eb1](https://github.com/labor-digital/typo3-better-api/commit/1159eb1a68b47f9fe675944810e58611e1985b06))
+* **StandaloneBetterQuery:** add findRelated() method to find related records for a query + make sure the translation and versioning is applied to query results ([8640376](https://github.com/labor-digital/typo3-better-api/commit/8640376d3f2853c9e85d7a797176679bc85f50a0))
+
+
+### Bug Fixes
+
+* make sure the dynamic traits are compiled correctly even if there is a change in the extension list ([0432394](https://github.com/labor-digital/typo3-better-api/commit/0432394e36ef70469e2af41d427c2139164dff79))
+* **TcaTable:** make sure "null" type keys are converted to 0 ([a7ded5d](https://github.com/labor-digital/typo3-better-api/commit/a7ded5dc74f4605956272a0467c58190fc96e35a))
+* add data handler action handlers to the correct tca array when building a tca table ([e23911d](https://github.com/labor-digital/typo3-better-api/commit/e23911d6a234be9480348f45ec31f7a8fde613c6))
+* remove "NOT NULL" sql statement to keep the sql compatible with sql server ([e10e943](https://github.com/labor-digital/typo3-better-api/commit/e10e9438ed68a0cd862c58163d7c7484957e0f0a))
+* return $clone in AbstractBetterQuery::withOrder instead of $this ([10496bd](https://github.com/labor-digital/typo3-better-api/commit/10496bd3b3e266c3785181704b33fd966ba3e62d))
+* set setReloadOnChange() value on a form field to TRUE by default ([f1c9996](https://github.com/labor-digital/typo3-better-api/commit/f1c9996c08805f725671a15620b6a337e18c7d7e))
+
 ### [9.1.4](https://github.com/labor-digital/typo3-better-api/compare/v9.1.3...v9.1.4) (2020-03-24)
 
 
