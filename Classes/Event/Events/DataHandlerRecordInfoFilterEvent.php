@@ -41,8 +41,8 @@ class DataHandlerRecordInfoFilterEvent {
 	protected $tableName;
 	
 	/**
-	 * UID of the record from $tableName
-	 * @var int
+	 * UID of the record from $tableName or NEW... for a new record
+	 * @var int|string
 	 */
 	protected $id;
 	
@@ -69,12 +69,12 @@ class DataHandlerRecordInfoFilterEvent {
 	 * DataHandlerRecordInfoFilterEvent constructor.
 	 *
 	 * @param string                                   $tableName
-	 * @param int                                      $id
+	 * @param int|string                               $id
 	 * @param string                                   $fieldList
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
 	 * @param \Closure                                 $concreteInfoProvider
 	 */
-	public function __construct(string $tableName, int $id, string $fieldList, DataHandler $dataHandler, Closure $concreteInfoProvider) {
+	public function __construct(string $tableName, $id, string $fieldList, DataHandler $dataHandler, Closure $concreteInfoProvider) {
 		$this->tableName = $tableName;
 		$this->id = $id;
 		$this->fieldList = $fieldList;
