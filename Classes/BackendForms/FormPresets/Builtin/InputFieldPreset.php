@@ -267,7 +267,7 @@ class InputFieldPreset extends AbstractFormPreset {
 			"default"           => $options["default"],
 			"size"              => 50,
 		];
-		if ($options["useNativeElement"]) $config["renderType"] = "betterApiPathSegmentSlug";
+		if (!$options["useNativeElement"]) $config["renderType"] = "betterApiPathSegmentSlug";
 		$config = $this->addEvalConfig($config, $options);
 		$config = $this->addMaxLengthConfig($config, ["maxLength" => 2048]);
 		
