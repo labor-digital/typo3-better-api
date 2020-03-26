@@ -17,10 +17,12 @@
  */
 
 module.exports = {
-	title: "TYPO3 - Better API by LABOR.digital"
-	// themeConfig: {
-	// 	sidebar: [
-	// 		"/",
-	// 	]
-	// }
+	title: "TYPO3 - Better API by LABOR.digital",
+	themeConfig: {
+		sidebarDepth: 2,
+		sidebar: [
+			"/",
+			"/guide/CoreModification.md"
+		]
+	}
 };
