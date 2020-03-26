@@ -130,8 +130,8 @@ class ClassOverrideGenerator {
 	/**
 	 * Returns true if the given class can be overwritten with something else
 	 *
-	 * @param string $classToOverride
-	 * @param bool   $withOverrule
+	 * @param string $classToOverride The name of the class to check for
+	 * @param bool   $withOverrule    Set this to true if you want allow overruling of the existing definition
 	 *
 	 * @return bool
 	 */
@@ -145,7 +145,7 @@ class ClassOverrideGenerator {
 	/**
 	 * Returns true if the class with the given name is registered as override
 	 *
-	 * @param string $classToOverride
+	 * @param string $classToOverride The name of the class to check for
 	 *
 	 * @return bool
 	 */
