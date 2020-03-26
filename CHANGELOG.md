@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.2.1](https://github.com/labor-digital/typo3-better-api/compare/v9.2.0...v9.2.1) (2020-03-26)
+
+
+### Bug Fixes
+
+* **DataHandlerRecordInfoFilterEvent:** make sure that id can also be a string ([bbbd25b](https://github.com/labor-digital/typo3-better-api/commit/bbbd25b58f937f112e808ceb03a4c642a83853da))
+* **FieldPreset:** make sure useNativeElement on slug fields works correctly ([aa5254c](https://github.com/labor-digital/typo3-better-api/commit/aa5254ca267b0f479b310b335e53cbce62ad6b74))
+* **InternalAccessTrait:** make hasMethod() public as it should be ([210e274](https://github.com/labor-digital/typo3-better-api/commit/210e274a0d326c8d091ddd00e8b9b7f3c38a36e3))
+* **LinkSetDefinition:** make sure cHash and keepQuery parameters are given to $link even if they are set to FALSE ([727a4d8](https://github.com/labor-digital/typo3-better-api/commit/727a4d8d7acb60027634f5a0465f6f982ebc22a7))
+* **StandaloneBetterQuery:** rename findRelated to getRelated to keep the code consistent ([7205038](https://github.com/labor-digital/typo3-better-api/commit/720503810e53a79848970f0c13bda6be062bf3b5))
+* **TempFs:** fix relative path issue with getBaseDirectoryPath() ([0d624c0](https://github.com/labor-digital/typo3-better-api/commit/0d624c0fdcfb4a89c3dac90a09536666d0f691f9))
+* **TypoScriptService:** make sure dynamic typo script files are always written even if they have no content ([30b0179](https://github.com/labor-digital/typo3-better-api/commit/30b0179892d3cebb52de8d5260b72eeeaf01305d))
+
 ## [9.2.0](https://github.com/labor-digital/typo3-better-api/compare/v9.1.4...v9.2.0) (2020-03-25)
 
 
