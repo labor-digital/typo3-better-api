@@ -498,8 +498,8 @@ class LinkSetDefinition {
 		if (!empty($this->controllerExtKey)) $link = $link->withControllerExtKey($this->controllerExtKey);
 		if (!empty($this->controllerAction)) $link = $link->withControllerAction($this->controllerAction);
 		if (!empty($this->pluginName)) $link = $link->withPluginName($this->pluginName);
-		if (isset($this->cHash)) $link = $link->withCHash($this->cHash);
-		if (isset($this->keepQuery)) $link = $link->withKeepQuery($this->keepQuery);
+		if (is_bool($this->cHash)) $link = $link->withCHash($this->cHash);
+		if (is_bool($this->keepQuery)) $link = $link->withKeepQuery($this->keepQuery);
 		if (!empty($this->allowedQueryArgs)) $link = $link->withAllowedQueryArgs($this->allowedQueryArgs);
 		if (!empty($this->deniedQueryArgs)) $link = $link->withDeniedQueryArgs($this->deniedQueryArgs);
 		if (!empty($this->language)) $link = $link->withLanguage($this->language);
