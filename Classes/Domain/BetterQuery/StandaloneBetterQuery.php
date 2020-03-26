@@ -169,7 +169,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery {
 	 * @throws \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQueryException
 	 * @see \LaborDigital\Typo3BetterApi\Domain\BetterQuery\RelatedRecordRow
 	 */
-	public function findRelated($field, bool $includeHiddenChildren = FALSE): array {
+	public function getRelated($field, bool $includeHiddenChildren = FALSE): array {
 		if ($isSingleField = is_string($field)) $field = [$field];
 		if (!is_array($field))
 			throw new BetterQueryException("Only strings and arrays are allowed as \$field!");
