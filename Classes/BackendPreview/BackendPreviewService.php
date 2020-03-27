@@ -98,10 +98,11 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
 	/**
 	 * @inheritDoc
 	 */
-	public function registerBackendPreviewRenderer(string $rendererClass, array $fieldConstraints): BackendPreviewService {
+	public function registerBackendPreviewRenderer(string $rendererClass, array $fieldConstraints, bool $override = FALSE): BackendPreviewService {
 		$this->backendPreviewRenderers[md5(json_encode($fieldConstraints))] = [
 			"constraints" => $fieldConstraints,
 			"class"       => $rendererClass,
+			"override"    => $override,
 		];
 		return $this;
 	}
@@ -141,10 +142,11 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
 	 * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent $event
 	 */
 	public function __onBackendPreviewRendering(BackendPreviewRenderingEvent $event) {
-		if ($event->isRendered()) return;
-		
 		// Try to find a matching renderer
+		$isRendered = $event->isRendered();
 		foreach ($this->backendPreviewRenderers as $renderer) {
+			// Check if this is an override
+			if ($isRendered && !$renderer["override"]) continue;
 			// Check if we match the constraints
 			if (empty($renderer["constraints"])) continue;
 			if (count(array_intersect_assoc($renderer["constraints"], $event->getRow())) !== count($renderer["constraints"])) continue;

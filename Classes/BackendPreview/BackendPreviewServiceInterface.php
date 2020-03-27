@@ -37,11 +37,13 @@ interface BackendPreviewServiceInterface {
 	 *                                 CType ["CType" => "mxext_myplugin"]. If you want to watch for any other value or
 	 *                                 combination of values... feel free to be creative... All given fields and values
 	 *                                 are seen as "AND" constraints
+	 * @param bool   $override         If you set this to true the preview will renderer will be executed even if the
+	 *                                 preview was already rendered by other means.
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewService
 	 * @see \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererInterface
 	 */
-	public function registerBackendPreviewRenderer(string $rendererClass, array $fieldConstraints): BackendPreviewService;
+	public function registerBackendPreviewRenderer(string $rendererClass, array $fieldConstraints, bool $override = FALSE): BackendPreviewService;
 	
 	/**
 	 * Can be used to register a backend list label renderer for any kind of tt_content element in the list module.
