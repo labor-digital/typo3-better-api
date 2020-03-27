@@ -232,10 +232,12 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
 				$context = $this->container->get(BackendPreviewRendererContext::class,
 					["args" => [$event->getView(), $event, $row]]);
 				if (method_exists($renderer, "setContext")) $renderer->setContext($context);
+				$context->setBody($event->getContent());
 				$context->setHeader("<b>" . $this->findDefaultHeader($row) . "</b>");
 				$result = $renderer->renderBackendPreview($context);
 				if ($result instanceof ViewInterface) $result = $result->render();
 				else if ($result instanceof Response) $result = $result->getContent();
+				if (empty($result)) return;
 				if (is_string($result)) $context->setBody($result);
 				
 				// Check if we have to link the content

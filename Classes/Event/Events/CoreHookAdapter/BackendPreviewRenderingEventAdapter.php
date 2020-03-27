@@ -40,7 +40,6 @@ class BackendPreviewRenderingEventAdapter extends AbstractCoreHookEventAdapter i
 	 * @inheritDoc
 	 */
 	public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row) {
-		;
 		static::$bus->dispatch(($e =
 			new BackendPreviewRenderingEvent($row, $headerContent, $itemContent, $drawItem, $parentObject)));
 		$drawItem = !$e->isRendered();
