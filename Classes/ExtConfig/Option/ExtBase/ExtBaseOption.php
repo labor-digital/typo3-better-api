@@ -195,11 +195,10 @@ class ExtBaseOption extends AbstractExtConfigOption {
 			$pluginConfig = $this->getPluginConfig();
 			
 			// Register data handler action handlers
-			foreach ($pluginConfig->dataHandlerActionHandlers as $tables)
-				foreach ($tables as $table => $actions)
-					foreach ($actions as $action => $handlers)
-						foreach ($handlers as $handler)
-							$this->context->DataHandlerActions->registerActionHandler($table, $action, ...$handler);
+			foreach ($pluginConfig->dataHandlerActionHandlers as $table => $actions)
+				foreach ($actions as $action => $handlers)
+					foreach ($handlers as $handler)
+						$this->context->DataHandlerActions->registerActionHandler($table, $action, ...$handler);
 			
 			// Register backend preview and label renderers
 			foreach ($pluginConfig->backendPreviewRenderers as $args)
