@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.4.0](https://github.com/labor-digital/typo3-better-api/compare/v9.3.0...v9.4.0) (2020-03-29)
+
+
+### Features
+
+* **LinkService:** add getTypoLinkTarget() helper to extract the link target from a typo link definition ([b23aa0d](https://github.com/labor-digital/typo3-better-api/commit/b23aa0da6f39612137a47b92ef82338ee31cdbe8))
+* **PageService:** extend getPageContents() to return the raw page contents if requested ([dd7b118](https://github.com/labor-digital/typo3-better-api/commit/dd7b1180db2e02f5a9954b12e4dd629e28ee878e))
+
+
+### Bug Fixes
+
+* **BackendListLabelFilterEventAdapter:** make sure BackendListLabelFilterEvent only receives arrays even on new records ([4212d52](https://github.com/labor-digital/typo3-better-api/commit/4212d52100699a9d78b0f36b34e31ad5aea33b3d))
+* **DataHandlerActionService:** use the correct event data before reinjecting "databaseRow" on the form filter event ([f624928](https://github.com/labor-digital/typo3-better-api/commit/f62492890a4150f584888d1e7ed1790e8a8cfd89))
+
 ## [9.3.0](https://github.com/labor-digital/typo3-better-api/compare/v9.2.1...v9.3.0) (2020-03-27)
 
 
