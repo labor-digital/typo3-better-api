@@ -96,6 +96,20 @@ class LinkService {
 	}
 	
 	/**
+	 * Returns the target frame for a typo link definition object.
+	 *
+	 * @param string|array $typoLink Can by either a textual representation, like t3://page?uid=26
+	 *                               or a full blown typoscript config array which will be rendered.
+	 *
+	 * @return string
+	 */
+	public function getTypoLinkTarget($typoLink): string {
+		$cObj = $this->context->getContentObject();
+		$this->getTypoLink($typoLink);
+		return empty($cObj->lastTypoLinkTarget) ? "_self" : $cObj->lastTypoLinkTarget;
+	}
+	
+	/**
 	 * This helper can be used to render a typo3 backend url.
 	 * There are currently TWO possible options of creating links.
 	 * 1. Creating a link by a module. Modules look like "web_list", "web_ts"...
