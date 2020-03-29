@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.3.0](https://github.com/labor-digital/typo3-better-api/compare/v9.2.1...v9.3.0) (2020-03-27)
+
+
+### Features
+
+* **BackendPreviewService:** allow overrides for already rendered previews with registered renderers ([cbd6dfb](https://github.com/labor-digital/typo3-better-api/commit/cbd6dfb8f662a42d9cd7eed00bcc1dc8b9a48d5b))
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderingEvent:** make sure the event is dispatched ([b86e3f3](https://github.com/labor-digital/typo3-better-api/commit/b86e3f3eed92bf83e167d9aaf643f42fcc3012b7))
+* **BackendPreviewService:** don't set a backend preview as rendered if the result of the handler is empty ([0f5853b](https://github.com/labor-digital/typo3-better-api/commit/0f5853b95052f223d523aeea17b2638526bec48f))
+* **BackendPreviewService:** make sure the default header is set before the handler is executed ([9a3979b](https://github.com/labor-digital/typo3-better-api/commit/9a3979bc90137463798126674cc7a65727cf0ed3))
+* fix action handler registration for ext base plugins ([71ab893](https://github.com/labor-digital/typo3-better-api/commit/71ab8936c2deb04ffacd94f63c5744fb81bc8c44))
+
 ### [9.2.1](https://github.com/labor-digital/typo3-better-api/compare/v9.2.0...v9.2.1) (2020-03-26)
 
 
