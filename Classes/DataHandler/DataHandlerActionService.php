@@ -181,6 +181,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
 		$this->lazyActionHandler->runActionStack("form", $data["tableName"],
 			$data["vanillaUid"], $event, $row, $isDirty);
 		if (!$isDirty) return;
+		$data = $event->getData();
 		$data["databaseRow"] = $row;
 		$event->setData($data);
 	}
