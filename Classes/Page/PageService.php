@@ -330,6 +330,8 @@ class PageService implements SingletonInterface {
 	 *                          have access to all hidden content elements on when retrieving tt_content data
 	 *                          - includeDeletedRecords bool (FALSE): If this is set to true the requests
 	 *                          made in the closure will include deleted records
+	 *                          - returnRaw bool (FALSE): If set to true the method will return the
+	 *                          raw list of records instead of the sorted list of elements
 	 *
 	 * @return mixed
 	 */
@@ -356,6 +358,10 @@ class PageService implements SingletonInterface {
 				"type"    => "bool",
 				"default" => FALSE,
 			],
+			"returnRaw"             => [
+				"type"    => "bool",
+				"default" => FALSE,
+			],
 		]);
 		
 		// Collect the records
@@ -371,6 +377,7 @@ class PageService implements SingletonInterface {
 			]);
 		});
 		if (!is_array($records)) $records = [];
+		if ($options["returnRaw"]) return $records;
 		
 		// Default configuration for extensions that provide custom grids
 		$customGrids = [
