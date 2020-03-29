@@ -40,7 +40,8 @@ class BackendListLabelFilterEventAdapter extends AbstractCoreHookEventAdapter {
 	 * @param array $args
 	 */
 	public function emit(array &$args) {
-		$e = new BackendListLabelFilterEvent($args["table"], $args["row"], $args["title"], $args["options"]);
+		$e = new BackendListLabelFilterEvent($args["table"], empty($args["row"]) ? [] : $args["row"],
+			$args["title"], $args["options"]);
 		static::$bus->dispatch($e);
 		$args["title"] = $e->getTitle();
 	}
