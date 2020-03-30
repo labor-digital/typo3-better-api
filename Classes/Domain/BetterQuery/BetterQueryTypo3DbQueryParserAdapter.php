@@ -50,6 +50,7 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser {
 		$self->queryBuilder = $queryBuilder;
 		$dummyQuery = new Query("");
 		$dummyQuery->setQuerySettings($settings);
+		$self->tableAliasMap = [];
 		$self->tableAliasMap[$tableName] = $tableName;
 		$self->addTypo3Constraints($dummyQuery);
 	}
