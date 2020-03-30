@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.4.1](https://github.com/labor-digital/typo3-better-api/compare/v9.4.0...v9.4.1) (2020-03-30)
+
+
+### Bug Fixes
+
+* **BetterQuery:** avoid an issue where old table alias fragments were added when multiple queries were executed in sequence ([81b2596](https://github.com/labor-digital/typo3-better-api/commit/81b2596fccc9a5d9087c0ba001c16a55214303cf))
+
 ## [9.4.0](https://github.com/labor-digital/typo3-better-api/compare/v9.3.0...v9.4.0) (2020-03-29)
 
 
