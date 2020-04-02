@@ -190,14 +190,18 @@ class LinkService {
 		$pid = $this->context->TypoContext->getPidAspect()->getCurrentPid();
 		$rootLine = $this->context->Page->getRootLine($pid, TRUE);
 		$rootUid = reset($rootLine);
-		$domain = $this->getUriBuilder()->reset()->setTargetPageUid(!empty($rootUid) ? $rootUid["uid"] : 0)
-			->setAddQueryString(FALSE)
-			->setCreateAbsoluteUri(TRUE)
-			->buildFrontendUri();
+		
+		// Make sure we have a request object
+		if (!is_null($this->context->TypoContext->getRequestAspect()->getRootRequest()))
+			$domain = $this->getUriBuilder()->reset()->setTargetPageUid(!empty($rootUid) ? $rootUid["uid"] : 0)
+				->setAddQueryString(FALSE)
+				->setCreateAbsoluteUri(TRUE)
+				->buildFrontendUri();
 		if (empty($domain)) {
 			if ($this->context->TypoContext->getSiteAspect()->hasSite())
-				$domain = $this->context->TypoContext->getSiteAspect()->getSite()->getBase()->__toString();
-			else $domain = Path::makeUri(TRUE)->__toString();
+				$uri = $this->context->TypoContext->getSiteAspect()->getSite()->getBase();
+			else $uri = Path::makeUri(TRUE);
+			$domain = $uri->getScheme() . "://" . $uri->getHost();
 		}
 		$domain = parse_url($domain);
 		return $this->host = ($withProtocol ? ($domain["scheme"] . "://") : "") . $domain["host"];
@@ -211,7 +215,7 @@ class LinkService {
 	 * @return string
 	 */
 	public function getFileLink($file): string {
-		return $this->context->FalFiles->getFileInformation($file)["url"];
+		return $this->context->FalFiles->getFileInfo($file)->getUrl();
 	}
 	
 	/**
