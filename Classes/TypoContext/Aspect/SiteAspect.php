@@ -22,6 +22,7 @@ namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
@@ -55,6 +56,12 @@ class SiteAspect implements AspectInterface {
 	protected $context;
 	
 	/**
+	 * True to avoid recursive loop when testing if a site exists
+	 * @var bool
+	 */
+	protected $recursion = FALSE;
+	
+	/**
 	 * SiteAspect constructor.
 	 *
 	 * @param \TYPO3\CMS\Core\Site\SiteFinder                      $siteFinder
@@ -83,7 +90,16 @@ class SiteAspect implements AspectInterface {
 			$pid = $this->context->getPidAspect()->getCurrentPid();
 			if ($pid === 0) {
 				$sites = $this->siteFinder->getAllSites();
-				if (count($sites) === 1) return reset($sites);
+				if (count($sites) === 1) return $this->currentSite = reset($sites);
+				$url = preg_replace("~^https?://~", "", Path::makeUri(TRUE));
+				foreach ($sites as $site) {
+					$base = preg_replace("~^https?://~", "", (string)$site->getBase());
+					if (stripos($url, $base) === 0)
+						return $this->currentSite = $site;
+				}
+			} else {
+				$site = $this->siteFinder->getSiteByPageId($pid);
+				if (!empty($site)) return $this->currentSite = $site;
 			}
 			throw new SiteNotFoundException("There is currently no site defined! To use the SiteAspect set a site first!");
 		}
@@ -95,7 +111,17 @@ class SiteAspect implements AspectInterface {
 	 * @return bool
 	 */
 	public function hasSite(): bool {
-		return !empty($this->currentSite);
+		if (isset($this->currentSite)) return TRUE;
+		if ($this->recursion) return FALSE;
+		$this->recursion = TRUE;
+		try {
+			$this->getSite();
+			return TRUE;
+		} catch (\Throwable $e) {
+			return FALSE;
+		} finally {
+			$this->recursion = FALSE;
+		}
 	}
 	
 	/**
