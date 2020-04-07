@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.5.0](https://github.com/labor-digital/typo3-better-api/compare/v9.4.1...v9.5.0) (2020-04-07)
+
+
+### Features
+
+* **FileAndFolder:** add FileInfo class as successor to FalFileService::getFileInformation() ([64c1ec5](https://github.com/labor-digital/typo3-better-api/commit/64c1ec5bfe6ce36b37983fe924468fa0e5f468be))
+* **SiteAspect:** more reliable detection for the site even if it was not explicitly defined ([685fdd8](https://github.com/labor-digital/typo3-better-api/commit/685fdd8933f3b02f4886753378f641b11bc9dbeb))
+
+
+### Bug Fixes
+
+* **LinkService:** use fallback host lookup if no request exists ([91cf470](https://github.com/labor-digital/typo3-better-api/commit/91cf470b1ca96147779d4eda4327487072aa80a2))
+
 ### [9.4.1](https://github.com/labor-digital/typo3-better-api/compare/v9.4.0...v9.4.1) (2020-03-30)
 
 
