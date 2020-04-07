@@ -19,9 +19,10 @@
 module.exports = {
 	title: "TYPO3 - Better API by LABOR.digital",
 	themeConfig: {
-		sidebarDepth: 2,
+		sidebarDepth: 4,
 		sidebar: [
 			"/",
+			"/guide/FilesAndFolders.md",
 			"/guide/CoreModification.md"
 		]
 	}

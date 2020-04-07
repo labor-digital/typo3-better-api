@@ -17,6 +17,7 @@ However, if you create it normally you will notice it still is using the same cl
 but the parents of the class look differently:
 
 ```php
+<?php
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 $dataHandler = new DataHandler();
 print_r(get_class($dataHandler)); 
@@ -40,6 +41,7 @@ Its usage is fairly simple:
 If your class matches the criteria you can call the overwrite generator in your code like so. Imagine you 
 have a class like this, which comes from a third-party package (TYPO3 core or another extension):
 ```php
+<?php
 namespace ForeignVendor\ForeignNamespace;
 class TargetClass {
     public function foo(){
@@ -55,6 +57,7 @@ class TargetClass {
 To extend the class, you first have to make a new class that contains your extension.
 
 ```php
+<?php
 namespace YourVendor\YourNamespace;
 use ForeignVendor\ForeignNamespace\BetterApiClassOverrideCopy__TargetClass;
 class ExtendedTargetClass extends BetterApiClassOverrideCopy__TargetClass {
@@ -69,6 +72,7 @@ class ExtendedTargetClass extends BetterApiClassOverrideCopy__TargetClass {
 
 After that you can call the override generator like so: 
 ```php
+<?php
 use LaborDigital\Typo3BetterApi\CoreModding\CodeGeneration\ClassOverrideGenerator;
 use ForeignVendor\ForeignNamespace\TargetClass;
 use YourVendor\YourNamespace\ExtendedTargetClass;
@@ -129,6 +133,7 @@ This class executes the given callable with the given set of arguments. However,
 is used in the package when we extend kernel processes, so we don't break any core workings of TYPO3 with an exception at the wrong place.
 
 ```php
+<?php
 use LaborDigital\Typo3BetterApi\CoreModding\FailsafeWrapper;
 FailsafeWrapper::handle(function(){
     // If this code throws an exception in the install-tool it will be ignored
@@ -153,6 +158,7 @@ To implement the trait, you have to implement the abstract getExecutionTarget() 
 The code of the method is rather simple, for the most part. Just return "$this," and you should be good to go for 99% of the time. 
 
 ```php
+<?php
 use LaborDigital\Typo3BetterApi\CoreModding\InternalAccessTrait;
 class YourClass {
     use InternalAccessTrait;

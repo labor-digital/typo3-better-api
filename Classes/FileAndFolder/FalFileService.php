@@ -23,11 +23,11 @@ use Exception;
 use InvalidArgumentException;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\ProcessedFileAdapter;
+use LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo;
 use LaborDigital\Typo3BetterApi\LazyLoading\LazyLoadingTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
-use stdClass;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
@@ -42,7 +42,6 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Service\ImageService;
 
 /**
@@ -66,87 +65,6 @@ class FalFileService implements SingletonInterface {
 			"FileRepository"  => FileRepository::class,
 			"ImageService"    => ImageService::class,
 		]);
-	}
-	
-	/**
-	 * Similar to getFile() as it finds a file object in the FAL. However this will
-	 * solely search for file references and requires a numeric id for a reference to find in the database.
-	 *
-	 * @param int $uid
-	 *
-	 * @return \TYPO3\CMS\Core\Resource\FileReference
-	 */
-	public function getFileReference(int $uid): FileReference {
-		return $this->ResourceFactory->getFileReferenceObject($uid);
-	}
-	
-	/**
-	 * This method creates a new file reference. It expects to receive a FAL file instance and
-	 * some metadata to create the mapping on an external field.
-	 *
-	 * IMPORTANT: There will be no permission checks when creating the reference!
-	 *
-	 * @param FileInterface $file  The main file to create the reference for
-	 * @param int           $uid   The uid of the record that should display the linked file
-	 * @param string        $field The field of the record that should be linked with this file
-	 * @param string        $table The table of the record that should be linked with this file
-	 *
-	 * @return \TYPO3\CMS\Core\Resource\FileReference
-	 */
-	public function addFileReference(FileInterface $file, int $uid, string $field = "image", string $table = "tt_content"): FileReference {
-		
-		// Ignore the access checks
-		$referenceUid = $this->Simulator->runAsAdmin(function () use ($file, $uid, $field, $table) {
-			// Get the record from the database
-			$records = $this->Db->getRecords($table, $uid, "uid,pid");
-			$record = reset($records);
-			if (empty($record))
-				throw new FalFileServiceException("Invalid table: " . $table . " or uid: " . $uid . " to create a file reference for");
-			
-			// Create the data to be added for the reference
-			$data = [
-				"sys_file_reference" => [
-					"NEW1" => [
-						"table_local" => "sys_file",
-						"uid_local"   => $file->getProperty("uid"),
-						"tablenames"  => $table,
-						"uid_foreign" => $uid,
-						"fieldname"   => $field,
-						"pid"         => $record["pid"],
-					],
-				],
-				$table               => [
-					$uid => [
-						"pid"  => $record["pid"],
-						$field => "NEW1",
-					],
-				],
-			];
-			
-			// Make sure we can add sys_file_references everywhere
-			$allowedTablesBackup = $GLOBALS['PAGES_TYPES']['default']['allowedTables'];
-			ExtensionManagementUtility::allowTableOnStandardPages("sys_file_reference");
-			
-			// Execute the data handler
-			$dataHandler = $this->DataHandler;
-			$dataHandler->start($data, []);
-			$dataHandler->process_datamap();
-			
-			// Restore the backup
-			$GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
-			
-			// Check for errors
-			if (count($dataHandler->errorLog) !== 0)
-				throw new FalFileServiceException(
-					"Error while creating file reference in table: " . $table . " with uid: " . $uid . " Errors were: " .
-					implode(PHP_EOL, $dataHandler->errorLog));
-			
-			// Get the new id
-			return reset($dataHandler->newRelatedIDs["sys_file_reference"]);
-		});
-		
-		// Done
-		return $this->getFileReference($referenceUid);
 	}
 	
 	/**
@@ -230,6 +148,86 @@ class FalFileService implements SingletonInterface {
 		} catch (Exception $e) {
 			return NULL;
 		}
+	}
+	
+	/**
+	 * Similar to getFile() as it finds a file object in the FAL. However this will
+	 * solely search for file references and requires a numeric id for a reference to find in the database.
+	 *
+	 * @param int $uid The uid of the reference in the sys_file_reference table
+	 *
+	 * @return \TYPO3\CMS\Core\Resource\FileReference
+	 */
+	public function getFileReference(int $uid): FileReference {
+		return $this->ResourceFactory->getFileReferenceObject($uid);
+	}
+	
+	/**
+	 * This method creates a new file reference. It expects to receive a FAL file instance and
+	 * some metadata to create the mapping on an external field.
+	 *
+	 * IMPORTANT: There will be no permission checks when creating the reference!
+	 *
+	 * @param FileInterface $file  The main file to create the reference for
+	 * @param int           $uid   The uid of the record that should display the linked file
+	 * @param string        $field The field of the record that should be linked with this file
+	 * @param string        $table The table of the record that should be linked with this file
+	 *
+	 * @return \TYPO3\CMS\Core\Resource\FileReference
+	 */
+	public function addFileReference(FileInterface $file, int $uid, string $field = "image", string $table = "tt_content"): FileReference {
+		
+		// Ignore the access checks
+		$referenceUid = $this->Simulator->runAsAdmin(function () use ($file, $uid, $field, $table) {
+			// Get the record from the database
+			$record = $this->Db->getQuery($table)->withWhere(["uid" => $uid])->getFirst();
+			if (empty($record))
+				throw new FalFileServiceException("Invalid table: " . $table . " or uid: " . $uid . " to create a file reference for");
+			
+			// Create the data to be added for the reference
+			$data = [
+				"sys_file_reference" => [
+					"NEW1" => [
+						"table_local" => "sys_file",
+						"uid_local"   => $file->getProperty("uid"),
+						"tablenames"  => $table,
+						"uid_foreign" => $uid,
+						"fieldname"   => $field,
+						"pid"         => $record["pid"],
+					],
+				],
+				$table               => [
+					$uid => [
+						"pid"  => $record["pid"],
+						$field => "NEW1",
+					],
+				],
+			];
+			
+			// Make sure we can add sys_file_references everywhere
+			$allowedTablesBackup = $GLOBALS['PAGES_TYPES']['default']['allowedTables'];
+			ExtensionManagementUtility::allowTableOnStandardPages("sys_file_reference");
+			
+			// Execute the data handler
+			$dataHandler = $this->DataHandler;
+			$dataHandler->start($data, []);
+			$dataHandler->process_datamap();
+			
+			// Restore the backup
+			$GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
+			
+			// Check for errors
+			if (count($dataHandler->errorLog) !== 0)
+				throw new FalFileServiceException(
+					"Error while creating file reference in table: " . $table . " with uid: " . $uid . " Errors were: " .
+					implode(PHP_EOL, $dataHandler->errorLog));
+			
+			// Get the new id
+			return reset($dataHandler->newRelatedIDs["sys_file_reference"]);
+		});
+		
+		// Done
+		return $this->getFileReference($referenceUid);
 	}
 	
 	/**
@@ -377,115 +375,83 @@ class FalFileService implements SingletonInterface {
 	 * @return array
 	 *
 	 * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileServiceException
+	 * @deprecated use getFileInfo() instead!
 	 */
 	public function getFileInformation($file) {
-		$file = $this->getFileReferenceOrFile($file);
-		if ($file instanceof ProcessedFile) {
-			$fileRefProc = $file;
-			if ($file->hasProperty("@fileReference"))
-				$file = ProcessedFileAdapter::getRawProperty($file, "@fileReference");
-			else
-				$file = $file->getOriginalFile();
-		}
-		if ($file instanceof FileReference) {
-			$fileRef1 = $file;
-			$file = $file->getOriginalFile();
-		}
-		if ($file instanceof File) {
-			$isProcessed = isset($fileRefProc);
-			if (!isset($fileRefProc)) $fileRefProc = new stdClass();
-			
-			// Prepare general file information
-			$info = [
-				"isReference" => isset($fileRef1),
-				"id"          => isset($fileRef1) ? $fileRef1->getUid() : $file->getUid(),
-				"referenceId" => isset($fileRef1) ? $fileRef1->getUid() : NULL,
-				"isProcessed" => $isProcessed,
-				"fileId"      => $file->getUid(),
-				"hash"        => $this->getFileHash($isProcessed ? $fileRefProc : $file),
-				"url"         => ($url = $this->getFileUrl($isProcessed ? $fileRefProc : $file)),
-				"originalUrl" => $isProcessed ? $this->getFileUrl($file) : $url,
-				"mime"        => $isProcessed ? $fileRefProc->getMimeType() : $file->getProperty("mime_type"),
-				"size"        => $isProcessed ? $fileRefProc->getSize() : (int)$file->getProperty("size"),
-				"ext"         => $isProcessed ? $fileRefProc->getExtension() : $file->getProperty("extension"),
-				"image"       => NULL,
-			];
-			
-			// Check if we got an external media link
-			if ($file->getType() === File::FILETYPE_VIDEO) {
-				if ($info["mime"] === "video/youtube") $info["youtubeId"] = $file->getContents();
-			}
-			
-			// Check if this is an image
-			if ($file->getType() !== File::FILETYPE_IMAGE) return $info;
-			
-			// Replace the file with the processed image if there is one
-			if ($isProcessed) $file = $fileRefProc;
-			
-			// Generate additional image data
-			$image = [
-				"alt"       => "",
-				"title"     => "",
-				"desc"      => "",
-				"width"     => (int)$file->getProperty("width"),
-				"height"    => (int)$file->getProperty("height"),
-				"alignment" => "cc",
-				"variants"  => [],
-			];
-			
-			// Generate optional data if a file reference was used
-			if (isset($fileRef1)) {
-				$image["alt"] = $fileRef1->getAlternative();
-				$image["title"] = $fileRef1->getTitle();
-				$image["desc"] = $fileRef1->getDescription();
-				try {
-					$image["alignment"] = $fileRef1->getReferenceProperty("image_alignment");
-				} catch (InvalidArgumentException $e) {
-				}
-				
-				// Check if we can generate variants for this image
-				try {
-					$crop = $fileRef1->getReferenceProperty("crop");
-					$variantKeys = array_keys(\GuzzleHttp\json_decode($crop, TRUE));
-					foreach ($variantKeys as $key)
-						$image["variants"][$key] = $this->getResizedImageUrl($fileRef1, ["crop" => $key]);
-				} catch (InvalidArgumentException $e) {
-				}
-			}
-			$info["image"] = $image;
-			
-			// Done
-			return $info;
-		}
 		
-		// Could not resolve information
-		throw new FalFileServiceException("Could not resolve information for your requested file!");
+		// Build legacy array
+		$fileInfo = $this->getFileInfo($file);
+		$info = [
+			"isReference" => $fileInfo->isFileReference(),
+			"id"          => $fileInfo->getUid(),
+			"referenceId" => $fileInfo->getFileReferenceUid(),
+			"isProcessed" => $fileInfo->isProcessed(),
+			"fileId"      => $fileInfo->getFileUid(),
+			"hash"        => $fileInfo->getHash(),
+			"url"         => $fileInfo->getUrl(),
+			"originalUrl" => $fileInfo->getOriginalUrl(),
+			"mime"        => $fileInfo->getMimeType(),
+			"size"        => $fileInfo->getSize(),
+			"ext"         => $fileInfo->getExtension(),
+			"image"       => NULL,
+		];
+		
+		// Handle video information
+		if ($fileInfo->isVideo() && $fileInfo->getVideoInfo()->isYouTube())
+			$info["youtubeId"] = $fileInfo->getVideoInfo()->getVideoId();
+		if (!$fileInfo->isImage()) return $info;
+		
+		// Build legacy image info
+		$imageInfo = $fileInfo->getImageInfo();
+		$image = [
+			"alt"       => $imageInfo->getAlt(),
+			"title"     => $imageInfo->getTitle(),
+			"desc"      => $imageInfo->getDescription(),
+			"width"     => $imageInfo->getWidth(),
+			"height"    => $imageInfo->getHeight(),
+			"alignment" => $imageInfo->getImageAlignment(),
+			"variants"  => [],
+		];
+		
+		// Build legacy image variants
+		foreach ($imageInfo->getCropVariants() as $k => $conf)
+			$image["variants"][$k] = $imageInfo->getCroppedUrl($k);
+		
+		// Done
+		$info["image"] = $image;
+		return $info;
+	}
+	
+	/**
+	 * Returns an object containing information for a given file, like it's size, url, mime type and similar options.
+	 * Image and video files also contain additional metadata like dimensions, description and platform video id's
+	 *
+	 * @param string|int|FileReference|File|mixed $file Can either be the instance of a file or anything that is
+	 *                                                  valid as a $uid when using getFile()
+	 *
+	 * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo
+	 */
+	public function getFileInfo($file): FileInfo {
+		return $this->getInstanceOf(FileInfo::class, [$file, $this, $this->lazyLoading]);
 	}
 	
 	/**
 	 * Returns the url of a given file object
 	 *
-	 * @param string|int|FileReference|File|mixed $file Can either be the instance of a file or anything that is
-	 *                                                  valid as a $uid when using getFile()
-	 *
-	 * @param bool                                $withHash
+	 * @param string|int|FileReference|File|mixed $file     Can either be the instance of a file or anything that is
+	 *                                                      valid as a $uid when using getFile()
+	 * @param bool                                $withHash By default all urls have a cache buster hash attached.
+	 *                                                      Set this to false if you don't want a cache buster
 	 *
 	 * @return  string
 	 */
 	public function getFileUrl($file, bool $withHash = TRUE): string {
-		if (!is_object($file) || !method_exists($file, "getPublicUrl")) $file = $this->getFileReferenceOrFile($file, TRUE);
-		
-		// Check if the public url is already a fully qualified url
-		$publicUrl = $file->getPublicUrl();
-		if (filter_var($publicUrl, FILTER_VALIDATE_URL)) return $publicUrl;
-		
-		// Build the full url
-		return $this->Links->getHost() . "/" . $publicUrl . ($withHash ? "?hash=" . $this->getFileHash($file) : "");
+		return $this->getFileInfo($file)->getUrl($withHash);
 	}
 	
 	/**
 	 * This method is used to apply resizing and cropping definitions to a image file.
-	 * The result will be a processed file for you to use
+	 * The result will be a processed file
 	 *
 	 * @param mixed $file     Can either be the instance of a file or anything that is valid as a $uid when using
 	 *                        getFile()
@@ -504,7 +470,9 @@ class FalFileService implements SingletonInterface {
 	 * @return ProcessedFile
 	 */
 	public function getResizedImage($file, array $options = []): ProcessedFile {
-		$file = $this->getFileReferenceOrFile($file);
+		$fileInfo = $this->getFileInfo($file);
+		if ($fileInfo->isFileReference()) $file = $fileInfo->getFileReference();
+		else $file = $fileInfo->getFile();
 		
 		// Prepare image processing options
 		$def = [
@@ -572,7 +540,7 @@ class FalFileService implements SingletonInterface {
 	 */
 	public function getResizedImageUrl($file, array $options = []): string {
 		$processed = $this->getResizedImage($file, $options);
-		return $this->Links->getHost() . "/" . $processed->getPublicUrl(FALSE);
+		return $this->Links->getHost() . "/" . $processed->getPublicUrl(FALSE) . "?hash=" . md5($processed->getSha1());
 	}
 	
 	/**
@@ -659,71 +627,5 @@ class FalFileService implements SingletonInterface {
 			"path"       => $remainingPathParts,
 			"identifier" => $storageId . ":/" . implode("/", $remainingPathParts),
 		];
-	}
-	
-	/**
-	 * Can be used to create a cache buster string for a given file
-	 *
-	 * @param \TYPO3\CMS\Core\Resource\File $file
-	 *
-	 * @return string
-	 */
-	protected function getFileHash($file): string {
-		if ($file instanceof ProcessedFile) return md5($file->getSha1());
-		$file = $this->getFileReferenceOrFile($file, TRUE);
-		$hash = $file->getProperty("identifier_hash") . $file->getProperty("sha1") .
-			$file->getProperty("size") . $file->getProperty("modification_date") . $file->getProperty("folder_hash");
-		return md5($hash);
-	}
-	
-	/**
-	 * Internal helper which is used to retrieve either a file reference or a file object from based on one of TYPO3's
-	 * 300 possible file definition variants.
-	 *
-	 * @param string|int|FileReference|File|mixed $file           Can either be the instance of a file or anything that
-	 *                                                            is valid as a $uid when using getFile()
-	 * @param bool                                $returnFileOnly If set to true the returned object is always of type
-	 *                                                            file an never of type file reference
-	 *
-	 * @return array|mixed|object|\TYPO3\CMS\Core\Resource\File|\TYPO3\CMS\Core\Resource\FileReference|\TYPO3\CMS\Core\Resource\FileReference[]|null
-	 * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileServiceException
-	 */
-	protected function getFileReferenceOrFile($file, bool $returnFileOnly = FALSE) {
-		// Check if the file is already the correct object
-		if ($file instanceof ProcessedFile) {
-			if (!$returnFileOnly) return $file;
-			$file = $file->getOriginalFile();
-		}
-		if ($file instanceof File) return $file;
-		if (!$returnFileOnly && $file instanceof FileReference) return $file;
-		
-		// Try to load from database if a numeric value or string was passed
-		if (is_numeric($file) || is_string($file)) $file = $this->getFile($file);
-		
-		// Fail
-		if (!is_object($file)) throw new FalFileServiceException("Could not retrieve a file for the given selector!");
-		
-		// Handle lazy objects
-		$file = $this->lazyLoading->getRealValue($file);
-		
-		// Handle object storage
-		if ($file instanceof ObjectStorage) {
-			$file->rewind();
-			$file = $file->current();
-		}
-		
-		// Handle file objects
-		if ($file instanceof \TYPO3\CMS\Extbase\Domain\Model\FileReference)
-			$file = $file->getOriginalResource();
-		
-		// Check if we found the file
-		if (!$file instanceof FileReference && !$file instanceof File)
-			throw new FalFileServiceException("Could not retrieve a valid file or file reference for the given selector!");
-		
-		// Check if we have to return a file and not a file reference
-		if ($returnFileOnly && $file instanceof FileReference) return $file->getOriginalFile();
-		
-		// Done
-		return $file;
 	}
 }
