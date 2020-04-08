@@ -86,7 +86,7 @@ class TempFs implements LazyEventSubscriberInterface {
 	 * @inheritDoc
 	 */
 	public static function subscribeToEvents(EventSubscriptionInterface $subscription) {
-		$subscription->subscribe(CacheClearedEvent::class, "flush");
+		$subscription->subscribe(CacheClearedEvent::class, "__onCacheClear");
 	}
 	
 	/**
@@ -198,6 +198,16 @@ class TempFs implements LazyEventSubscriberInterface {
 	 */
 	public function flush() {
 		Fs::flushDirectory($this->baseDirectory);
+	}
+	
+	/**
+	 * Flushes the directory if the "all" Cache is cleared
+	 *
+	 * @param \LaborDigital\Typo3BetterApi\Event\Events\CacheClearedEvent $event
+	 */
+	public function __onCacheClear(CacheClearedEvent $event) {
+		if ($event->getGroup() !== "all") return;
+		$this->flush();
 	}
 	
 	/**
