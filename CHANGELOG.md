@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.5.2](https://github.com/labor-digital/typo3-better-api/compare/v9.5.1...v9.5.2) (2020-04-08)
+
+
+### Bug Fixes
+
+* **RelationPreset:** make sure the image crop variants are validated correctly ([0cb7720](https://github.com/labor-digital/typo3-better-api/commit/0cb7720b890ac9af6b860f3c9f43bfebb72ddded))
+* **RelationPreset:** remove debug output ([80d2c08](https://github.com/labor-digital/typo3-better-api/commit/80d2c086d32bacd392beba523482d4f61ace3c52))
+
 ### [9.5.1](https://github.com/labor-digital/typo3-better-api/compare/v9.5.0...v9.5.1) (2020-04-08)
 
 
