@@ -498,8 +498,6 @@ class RelationPreset extends AbstractFormPreset {
 			// Build real crop variants array
 			$cropVariants = [];
 			foreach ($options["cropVariants"] as $k => $c) {
-				
-				dbge($c);
 				// Build aspect ratio list by converting the simple format to the Typo3 format
 				if (!is_array($c["allowedAspectRatios"])) $c["allowedAspectRatios"] = [];
 				if (is_array($c["aspectRatios"]))
