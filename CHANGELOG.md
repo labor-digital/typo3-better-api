@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.5.1](https://github.com/labor-digital/typo3-better-api/compare/v9.5.0...v9.5.1) (2020-04-08)
+
+
+### Bug Fixes
+
+* **TempFs:** only flush the directory when the "all" cache is cleared. ([3e9c5f3](https://github.com/labor-digital/typo3-better-api/commit/3e9c5f357197467485f072be4dd0740ca129d35b))
+
 ## [9.5.0](https://github.com/labor-digital/typo3-better-api/compare/v9.4.1...v9.5.0) (2020-04-07)
 
 
