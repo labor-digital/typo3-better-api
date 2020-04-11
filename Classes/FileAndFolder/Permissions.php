@@ -39,7 +39,7 @@ class Permissions {
 	 * @return bool
 	 * @throws \LaborDigital\Typo3BetterApi\BetterApiException
 	 */
-	public static function setFilePermissions(string $filename, ?string $mode = NULL, ?string $group = NULL) {
+	public static function setFilePermissions(string $filename, ?string $mode = NULL, ?string $group = NULL): bool {
 		// No permissions in windows
 		if (stripos(PHP_OS, "win") === 0) return TRUE;
 		
@@ -78,7 +78,6 @@ class Permissions {
 			if (strlen($mode) === 3) $mode = (int)$mode;
 			else $mode = octdec($mode);
 		}
-		
 		
 		// Check if this is a directory
 		if (is_dir($filename)) {

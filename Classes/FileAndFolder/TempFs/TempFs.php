@@ -92,7 +92,7 @@ class TempFs implements LazyEventSubscriberInterface {
 	/**
 	 * Returns true if a file exists, false if not
 	 *
-	 * @param string $filePath
+	 * @param string $filePath The name / relative path of the file to check
 	 *
 	 * @return bool
 	 */
@@ -104,7 +104,7 @@ class TempFs implements LazyEventSubscriberInterface {
 	/**
 	 * Returns the file object for the required file path
 	 *
-	 * @param string $filePath
+	 * @param string $filePath The name / relative path of the file to retrieve
 	 *
 	 * @return \SplFileInfo
 	 * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
@@ -120,7 +120,7 @@ class TempFs implements LazyEventSubscriberInterface {
 	 * Returns the content of a required file.
 	 * It will automatically unpack serialized values back into their PHP values
 	 *
-	 * @param string $filePath
+	 * @param string $filePath The name / relative path of the file to read
 	 *
 	 * @return mixed
 	 * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
@@ -131,7 +131,7 @@ class TempFs implements LazyEventSubscriberInterface {
 		$filePathReal = $this->resolvePath($filePath);
 		if (!$this->hasFileInternal($filePathReal))
 			throw new TempFsException("Could not get the contents of file: \"$filePath\" because it does not exist!");
-		$content = file_get_contents($filePathReal);
+		$content = Fs::readFile($filePathReal);
 		
 		// Deserialize serialized content
 		if (substr($content, 0, strlen(static::SERIALIZED_MARKER)) === static::SERIALIZED_MARKER)
@@ -142,9 +142,10 @@ class TempFs implements LazyEventSubscriberInterface {
 	}
 	
 	/**
-	 * Is used to dump some content into a file
+	 * Is used to dump some content into a file.
+	 * Automatically serializes non-string/numeric content before writing it as a file
 	 *
-	 * @param string       $filePath The name of the file to dump the content to
+	 * @param string       $filePath The name / relative path of the file to dump the content to
 	 * @param string|mixed $content  Either a string (will be dumped as string) or anything else (will be dumped as
 	 *                               serialized value)
 	 */
@@ -182,7 +183,8 @@ class TempFs implements LazyEventSubscriberInterface {
 	 * Returns the configured base directory, either as absolute, or as relative path (relative to the typo3_better_api
 	 * root directory)
 	 *
-	 * @param bool $relative
+	 * @param bool $relative Set this to true if you want to retrieve the relative path based on the better api extension.
+	 *                       Useful for compiling typoscript or flexform files
 	 *
 	 * @return string
 	 */
@@ -194,7 +196,7 @@ class TempFs implements LazyEventSubscriberInterface {
 	}
 	
 	/**
-	 * Completely removes the whole directory and all its files in it
+	 * Completely removes the whole directory and all files in it
 	 */
 	public function flush() {
 		Fs::flushDirectory($this->baseDirectory);
