@@ -28,6 +28,7 @@ use LaborDigital\Typo3BetterApi\LazyLoading\LazyLoadingTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
+use TYPO3\CMS\Core\Imaging\ImageManipulation\Area;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
@@ -55,6 +56,7 @@ use TYPO3\CMS\Extbase\Service\ImageService;
 class FalFileService implements SingletonInterface {
 	use CommonServiceLocatorTrait;
 	use LazyLoadingTrait;
+	use ResizedImageOptionsTrait;
 	
 	/**
 	 * FalFileService constructor.
@@ -458,14 +460,18 @@ class FalFileService implements SingletonInterface {
 	 * @param array $options  The resizing options to apply when the image is generated
 	 *                        - width int|string: see *1
 	 *                        - height int|string: see *1
-	 *                        - minWidth int|string: see *1
-	 *                        - minHeight int|string: see *1
-	 *                        - maxWidth int|string: see *1
-	 *                        - maxHeight int|string: see *1
-	 *                        - crop bool|string (FALSE): True if the image should be cropped instead of stretched
+	 *                        - minWidth int The minimal width of the image in pixels
+	 *                        - minHeight int The minimal height of the image in pixels
+	 *                        - maxWidth int The maximal width of the image in pixels
+	 *                        - maxHeight int The maximal height of the image in pixels
+	 *                        - crop bool|string|array: True if the image should be cropped instead of stretched
 	 *                        Can also be the name of a cropVariant that should be rendered
+	 *                        Can be an array with (x,y,width,height) keys to provide a custom crop mask
+	 *                        - params string: Additional command line parameters for imagick
+	 *                        see: https://imagemagick.org/script/command-line-options.php
 	 *
-	 * *1: A numeric value, can end a "c" to crop the image to the target width
+	 * *1: A numeric value, can also be a simple calculation. For further details take a look at imageResource.width:
+	 * https://docs.typo3.org/m/typo3/reference-typoscript/8.7/en-us/Functions/Imgresource/Index.html
 	 *
 	 * @return ProcessedFile
 	 */
@@ -474,38 +480,18 @@ class FalFileService implements SingletonInterface {
 		if ($fileInfo->isFileReference()) $file = $fileInfo->getFileReference();
 		else $file = $fileInfo->getFile();
 		
-		// Prepare image processing options
-		$def = [
-			"type"    => ["number", "null", "string"],
-			"default" => NULL,
-			"filter"  => function ($v) {
-				if (!is_null($v)) return (string)$v;
-				return NULL;
-			},
-		];
-		$options = Options::make($options, [
-			"width"     => $def,
-			"minWidth"  => $def,
-			"maxWidth"  => $def,
-			"height"    => $def,
-			"minHeight" => $def,
-			"maxHeight" => $def,
-			"crop"      => [
-				"type"    => ["bool", "string"],
-				"default" => FALSE,
-			],
-		]);
-		$options = array_filter($options, function ($v) {
-			return !is_null($v);
-		});
+		// Build options
+		$options = $this->applyResizedImageOptions($options);
 		
 		// Build crop definition if a crop
 		if (is_string($options["crop"])) {
 			$cropString = ($file->hasProperty('crop') && $file->getProperty('crop')) ? $file->getProperty('crop') : "";
 			$cropVariantCollection = CropVariantCollection::create((string)$cropString);
 			$cropArea = $cropVariantCollection->getCropArea($options["crop"]);
-			$crop = $cropArea->isEmpty() ? FALSE : $cropArea->makeAbsoluteBasedOnFile($file);
+			$crop = $cropArea->isEmpty() ? NULL : $cropArea->makeAbsoluteBasedOnFile($file);
 			$options["crop"] = $crop;
+		} else if (is_array($options["crop"])) {
+			$options["crop"] = Area::createFromConfiguration($options["crop"]);
 		}
 		
 		// Apply the processing
