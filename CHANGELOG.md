@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.6.0](https://github.com/labor-digital/typo3-better-api/compare/v9.5.2...v9.6.0) (2020-04-11)
+
+
+### Features
+
+* **FalFileService:** improved handling when generating resized images + externalizing resized image options for other extensions ([8faa446](https://github.com/labor-digital/typo3-better-api/commit/8faa44625042a47f9788e49257c7abed30300f29))
+
 ### [9.5.2](https://github.com/labor-digital/typo3-better-api/compare/v9.5.1...v9.5.2) (2020-04-08)
 
 
