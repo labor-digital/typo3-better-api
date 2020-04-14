@@ -50,6 +50,7 @@ use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedLanguageServi
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedLocalizationUtility;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedNodeFactory;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedPackageManager;
+use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedReferenceIndex;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedReflectionService;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedSiteConfiguration;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console\ExtendedScripts;
@@ -89,6 +90,7 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Package\Package;
@@ -315,6 +317,7 @@ class BetterApiInit {
 		ClassOverrideGenerator::registerOverride(NodeFactory::class, ExtendedNodeFactory::class);
 		ClassOverrideGenerator::registerOverride(DataMapper::class, ExtendedDataMapper::class);
 		ClassOverrideGenerator::registerOverride(SiteConfiguration::class, ExtendedSiteConfiguration::class);
+		ClassOverrideGenerator::registerOverride(ReferenceIndex::class, ExtendedReferenceIndex::class);
 		
 		// Make sure we don't crash legacy code when changing the language service
 		ClassOverrideGenerator::registerOverride(LanguageService::class, ExtendedLanguageService::class);
