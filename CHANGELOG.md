@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.7.0](https://github.com/labor-digital/typo3-better-api/compare/v9.6.0...v9.7.0) (2020-04-15)
+
+
+### Features
+
+* implement new RefIndexRecordDataFilterEvent event to filter the ref index record before the index is generated ([2f3b9f2](https://github.com/labor-digital/typo3-better-api/commit/2f3b9f25a86f39fe022630e9e727ff4a25eb364e))
+
 ## [9.6.0](https://github.com/labor-digital/typo3-better-api/compare/v9.5.2...v9.6.0) (2020-04-11)
 
 
