@@ -107,7 +107,7 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	}
 	
 	/**
-	 * Returns the whole list of all registered pid"s by their keys
+	 * Returns the whole list of all registered pid's by their keys
 	 * @return array
 	 */
 	public function getAllPids(): array {
