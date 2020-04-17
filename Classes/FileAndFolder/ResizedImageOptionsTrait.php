@@ -47,9 +47,13 @@ trait ResizedImageOptionsTrait {
 			},
 		];
 		$defNumberOnly = [
-			"type"    => ["number", "null"],
-			"default" => NULL,
-			"filter"  => function ($v) {
+			"type"      => ["number", "null"],
+			"default"   => NULL,
+			"preFilter" => function ($v) {
+				if (is_numeric($v)) return floatval($v);
+				return $v;
+			},
+			"filter"    => function ($v) {
 				if (!is_null($v)) return (string)$v;
 				return NULL;
 			},
