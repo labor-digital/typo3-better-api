@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.7.1](https://github.com/labor-digital/typo3-better-api/compare/v9.7.0...v9.7.1) (2020-04-17)
+
+
+### Bug Fixes
+
+* **ResizedImagesOptionsTrait:** make sure number values are parsed as number if possible ([6b47351](https://github.com/labor-digital/typo3-better-api/commit/6b47351a5095e98cdabcbfa667407ccca8d0edb2))
+
 ## [9.7.0](https://github.com/labor-digital/typo3-better-api/compare/v9.6.0...v9.7.0) (2020-04-15)
 
 
