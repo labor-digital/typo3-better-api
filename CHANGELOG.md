@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.7.2](https://github.com/labor-digital/typo3-better-api/compare/v9.7.1...v9.7.2) (2020-04-17)
+
+
+### Bug Fixes
+
+* fix a typo in pidAspect ([1e3916d](https://github.com/labor-digital/typo3-better-api/commit/1e3916dbd057c48087c33f83b1b6b954acb27d11))
+
 ### [9.7.1](https://github.com/labor-digital/typo3-better-api/compare/v9.7.0...v9.7.1) (2020-04-17)
 
 
