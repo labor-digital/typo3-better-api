@@ -154,6 +154,16 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	}
 	
 	/**
+	 * Internal helper to completely replace the pid array.
+	 * If you use this, use it with care!
+	 *
+	 * @param array $pids
+	 */
+	public function __setPids(array $pids): void {
+		$this->pids = $pids;
+	}
+	
+	/**
 	 * Internal helper to make sure there is no $pid, (at)pid (stupid annotation parsing...) prefix in the given keys
 	 *
 	 * @param string $key

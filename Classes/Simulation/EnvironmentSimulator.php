@@ -198,10 +198,15 @@ class EnvironmentSimulator implements SingletonInterface {
 					public $language;
 					public $typoRequest;
 					public $visibility;
+					public $pids;
 				};
 				
 				// Run the handler
 				try {
+					
+					// Context
+					// =============================
+					$backup->pids = $this->TypoContext->getPidAspect()->getAllPids();
 					
 					// Visibility
 					// =============================
@@ -273,6 +278,10 @@ class EnvironmentSimulator implements SingletonInterface {
 						$visibilityAspect->setIncludeHiddenContent($backup->visibility["includeHiddenContent"]);
 						$visibilityAspect->setIncludeDeletedRecords($backup->visibility["includeDeletedRecords"]);
 					}
+					
+					// Context
+					// =============================
+					$this->TypoContext->getPidAspect()->__setPids($backup->pids);
 					
 					// Clean up
 					$backup = NULL;
