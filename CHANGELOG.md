@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.7.4](https://github.com/labor-digital/typo3-better-api/compare/v9.7.3...v9.7.4) (2020-04-21)
+
+
+### Bug Fixes
+
+* **ExtBaseOption:** don't remove plugin|ext|config|configuration from the end of a plugin controller's class name ([98b0a82](https://github.com/labor-digital/typo3-better-api/commit/98b0a8287509a5f592ff78f64889750807197c45))
+
 ### [9.7.3](https://github.com/labor-digital/typo3-better-api/compare/v9.7.2...v9.7.3) (2020-04-19)
 
 
