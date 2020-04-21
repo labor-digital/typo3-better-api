@@ -271,7 +271,7 @@ class ExtBaseOption extends AbstractExtConfigOption {
 	 */
 	protected function makePluginNameFromConfigClass(string $configClass): string {
 		$baseName = Path::classBasename($configClass);
-		$baseName = preg_replace("~(plugin)?(ext)?(config|configuration|controller)?(overrides?)?$~si", "", $baseName);
+		$baseName = preg_replace("~(controller)?(overrides?)?$~si", "", $baseName);
 		return Inflector::toCamelCase($baseName);
 	}
 }
