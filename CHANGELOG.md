@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.8.0](https://github.com/labor-digital/typo3-better-api/compare/v9.7.4...v9.8.0) (2020-04-30)
+
+
+### Features
+
+* implement ConfigRepository as central knowledge base for different kinds of information ([581180f](https://github.com/labor-digital/typo3-better-api/commit/581180fa26c2406ab67a12112ac41b684abe1439))
+
 ### [9.7.4](https://github.com/labor-digital/typo3-better-api/compare/v9.7.3...v9.7.4) (2020-04-21)
 
 

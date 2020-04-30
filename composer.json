@@ -45,7 +45,7 @@
 			"LaborDigital\\Typo3BetterApi\\": "Classes"
 		}
 	},
-	"version": "9.7.4",
+	"version": "9.8.0",
 	"extra": {
 		"typo3/cms": {
 			"Package": {
