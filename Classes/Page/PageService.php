@@ -24,6 +24,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\PageContentsGridConfigFilterEvent;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
@@ -491,8 +492,12 @@ class PageService implements SingletonInterface {
 		if ($ignorePermissions) $repo->where_groupAccess = "";
 		
 		// Get the root line
-		$rootLineUtility = $this->getInstanceOf(RootlineUtility::class, [$pageId]);
-		$rootLine = $rootLineUtility->get();
+		try {
+			$rootLineUtility = $this->getInstanceOf(RootlineUtility::class, [$pageId]);
+			$rootLine = $rootLineUtility->get();
+		} catch (PageNotFoundException $e) {
+			$rootLine = [];
+		}
 		$this->rootLineCache[$cacheKey] = $rootLine;
 		
 		// Restore the repository
