@@ -20,24 +20,17 @@
 namespace LaborDigital\Typo3BetterApi\Middleware;
 
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class SiteCollectorMiddleware implements MiddlewareInterface {
+class RequestCollectorMiddleware implements MiddlewareInterface {
+	
 	/**
 	 * @inheritDoc
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		$context = TypoContainer::getInstance()->get(TypoContext::class);
-		
-		// Collect the site
-		/** @var \TYPO3\CMS\Core\Site\Entity\Site $site */
-		$site = $request->getAttribute("site");
-		$context->getSiteAspect()->setSite($site);
 		
 		// Store fallback request
 		$GLOBALS["TYPO3_REQUEST_FALLBACK"] = $request;

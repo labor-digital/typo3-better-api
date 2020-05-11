@@ -49,6 +49,19 @@ class RequestAspect implements AspectInterface {
 	}
 	
 	/**
+	 * Allows you to update the root typo3 server request for the current execution context
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $request
+	 *
+	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\RequestAspect
+	 */
+	public function setRootRequest(ServerRequestInterface $request): RequestAspect {
+		$GLOBALS["TYPO3_REQUEST"] = $request;
+		$GLOBALS["TYPO3_REQUEST_FALLBACK"] = $request;
+		return $this;
+	}
+	
+	/**
 	 * @inheritDoc
 	 */
 	public function get(string $name) {

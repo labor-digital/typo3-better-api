@@ -40,7 +40,7 @@ use LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\Preset\FieldPresetApplier
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\TableOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList;
 use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator;
-use LaborDigital\Typo3BetterApi\Middleware\SiteCollectorMiddleware;
+use LaborDigital\Typo3BetterApi\Middleware\RequestCollectorMiddleware;
 use LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationSyncCommand;
 use LaborDigital\Typo3BetterApi\Translation\TranslationConfigOption;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigOption;
@@ -60,11 +60,11 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
 		
 		// Register middlewares
 		$configurator->http()
-			->registerMiddleware(SiteCollectorMiddleware::class, "frontend", [
+			->registerMiddleware(RequestCollectorMiddleware::class, "frontend", [
 				"after"  => "typo3/cms-frontend/site",
 				"before" => "typo3/cms-frontend/base-redirect-resolver",
 			])
-			->registerMiddleware(SiteCollectorMiddleware::class, "backend", [
+			->registerMiddleware(RequestCollectorMiddleware::class, "backend", [
 				"after" => "typo3/cms-backend/site-resolver",
 			]);
 	}

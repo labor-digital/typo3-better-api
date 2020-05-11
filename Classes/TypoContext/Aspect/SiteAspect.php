@@ -23,8 +23,10 @@ namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 use LaborDigital\Typo3BetterApi\BetterApiException;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\PathUtil\Path;
+use Throwable;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Routing\SiteMatcher;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\PseudoSite;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -56,20 +58,21 @@ class SiteAspect implements AspectInterface {
 	protected $context;
 	
 	/**
-	 * True to avoid recursive loop when testing if a site exists
-	 * @var bool
+	 * @var \TYPO3\CMS\Core\Routing\SiteMatcher
 	 */
-	protected $recursion = FALSE;
+	protected $siteMatcher;
 	
 	/**
 	 * SiteAspect constructor.
 	 *
 	 * @param \TYPO3\CMS\Core\Site\SiteFinder                      $siteFinder
+	 * @param \TYPO3\CMS\Core\Routing\SiteMatcher                  $siteMatcher
 	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
 	 */
-	public function __construct(SiteFinder $siteFinder, TypoContext $context) {
+	public function __construct(SiteFinder $siteFinder, SiteMatcher $siteMatcher, TypoContext $context) {
 		$this->siteFinder = $siteFinder;
 		$this->context = $context;
+		$this->siteMatcher = $siteMatcher;
 	}
 	
 	/**
@@ -86,24 +89,39 @@ class SiteAspect implements AspectInterface {
 	 * @throws \TYPO3\CMS\Core\Exception\SiteNotFoundException
 	 */
 	public function getSite() {
-		if (!$this->hasSite()) {
-			$pid = $this->context->getPidAspect()->getCurrentPid();
-			if ($pid === 0) {
-				$sites = $this->siteFinder->getAllSites();
-				if (count($sites) === 1) return $this->currentSite = reset($sites);
-				$url = preg_replace("~^https?://~", "", Path::makeUri(TRUE));
-				foreach ($sites as $site) {
-					$base = preg_replace("~^https?://~", "", (string)$site->getBase());
-					if (stripos($url, $base) === 0)
-						return $this->currentSite = $site;
-				}
-			} else {
-				$site = $this->siteFinder->getSiteByPageId($pid);
-				if (!empty($site)) return $this->currentSite = $site;
+		// Check if we can fetch a better site
+		$site = $this->context->getRequestAspect()->getRootRequest()->getAttribute("site", NULL);
+		if (!empty($site)) return $site;
+		
+		// Try to find the site via pid
+		$pid = $this->context->getPidAspect()->getCurrentPid();
+		if (!empty($pid)) {
+			$site = $this->siteFinder->getSiteByPageId($pid);
+			if (!empty($site)) {
+				$this->setSite($site);
+				return $site;
 			}
-			throw new SiteNotFoundException("There is currently no site defined! To use the SiteAspect set a site first!");
 		}
-		return $this->currentSite;
+		
+		// Use the single site we have
+		$sites = $this->siteFinder->getAllSites();
+		if (count($sites) === 1) {
+			$this->setSite(reset($sites));
+			return reset($sites);
+		}
+		
+		// Try to match the site with the current host
+		$request = $this->context->getRequestAspect()->getRootRequest();
+		try {
+			$result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(TRUE)));
+			$site = $result->getSite();
+			$this->setSite($site);
+			return $site;
+		} catch (Throwable $exception) {
+		}
+		
+		// Nothing found...
+		throw new SiteNotFoundException("There is currently no site defined! To use the SiteAspect set a site first!");
 	}
 	
 	/**
@@ -111,16 +129,11 @@ class SiteAspect implements AspectInterface {
 	 * @return bool
 	 */
 	public function hasSite(): bool {
-		if (isset($this->currentSite)) return TRUE;
-		if ($this->recursion) return FALSE;
-		$this->recursion = TRUE;
 		try {
 			$this->getSite();
 			return TRUE;
-		} catch (\Throwable $e) {
+		} catch (Throwable $e) {
 			return FALSE;
-		} finally {
-			$this->recursion = FALSE;
 		}
 	}
 	
@@ -136,7 +149,9 @@ class SiteAspect implements AspectInterface {
 		if ($site === NULL) $site = new NullSite();
 		if (!$site instanceof Site && !$site instanceof NullSite && !$site instanceof PseudoSite)
 			throw new BetterApiException("The given site object is not a site, a null site or a pseudo site object!");
-		$this->currentSite = $site;
+		$request = $this->context->getRequestAspect()->getRootRequest();
+		$request = $request->withAttribute("site", $site);
+		$this->context->getRequestAspect()->setRootRequest($request);
 		return $this;
 	}
 	
