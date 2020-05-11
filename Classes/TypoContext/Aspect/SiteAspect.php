@@ -42,12 +42,6 @@ class SiteAspect implements AspectInterface {
 	use AutomaticAspectGetTrait;
 	
 	/**
-	 * Stores the current site, or is null if there is none configured
-	 * @var Site
-	 */
-	protected $currentSite;
-	
-	/**
 	 * @var \TYPO3\CMS\Core\Site\SiteFinder
 	 */
 	protected $siteFinder;
@@ -61,6 +55,12 @@ class SiteAspect implements AspectInterface {
 	 * @var \TYPO3\CMS\Core\Routing\SiteMatcher
 	 */
 	protected $siteMatcher;
+	
+	/**
+	 * Holds the site information if we don't have a request to store it on
+	 * @var Site|NullSite|PseudoSite
+	 */
+	protected $fallbackSiteStorage;
 	
 	/**
 	 * SiteAspect constructor.
@@ -90,7 +90,10 @@ class SiteAspect implements AspectInterface {
 	 */
 	public function getSite() {
 		// Check if we can fetch a better site
-		$site = $this->context->getRequestAspect()->getRootRequest()->getAttribute("site", NULL);
+		$request = $this->context->getRequestAspect()->getRootRequest();
+		if (!is_null($request))
+			$site = $request->getAttribute("site", NULL);
+		else $site = $this->fallbackSiteStorage;
 		if (!empty($site)) return $site;
 		
 		// Try to find the site via pid
@@ -111,14 +114,19 @@ class SiteAspect implements AspectInterface {
 		}
 		
 		// Try to match the site with the current host
-		$request = $this->context->getRequestAspect()->getRootRequest();
-		try {
-			$result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(TRUE)));
-			$site = $result->getSite();
-			$this->setSite($site);
-			return $site;
-		} catch (Throwable $exception) {
+		if (!is_null($request)) {
+			try {
+				$result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(TRUE)));
+				$site = $result->getSite();
+				$this->setSite($site);
+				return $site;
+			} catch (Throwable $exception) {
+			}
 		}
+		
+		// Check if we have a fallback site
+		if (!is_null($this->fallbackSiteStorage))
+			return $this->fallbackSiteStorage;
 		
 		// Nothing found...
 		throw new SiteNotFoundException("There is currently no site defined! To use the SiteAspect set a site first!");
@@ -149,9 +157,12 @@ class SiteAspect implements AspectInterface {
 		if ($site === NULL) $site = new NullSite();
 		if (!$site instanceof Site && !$site instanceof NullSite && !$site instanceof PseudoSite)
 			throw new BetterApiException("The given site object is not a site, a null site or a pseudo site object!");
+		$this->fallbackSiteStorage = $site;
 		$request = $this->context->getRequestAspect()->getRootRequest();
-		$request = $request->withAttribute("site", $site);
-		$this->context->getRequestAspect()->setRootRequest($request);
+		if (!is_null($request)) {
+			$request = $request->withAttribute("site", $site);
+			$this->context->getRequestAspect()->setRootRequest($request);
+		}
 		return $this;
 	}
 	
@@ -163,7 +174,7 @@ class SiteAspect implements AspectInterface {
 	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
 	 */
 	public function setSiteTo(string $identifier): SiteAspect {
-		$this->currentSite = $this->siteFinder->getSiteByIdentifier($identifier);
+		$this->setSite($this->siteFinder->getSiteByIdentifier($identifier));
 		return $this;
 	}
 	
@@ -177,7 +188,7 @@ class SiteAspect implements AspectInterface {
 	 */
 	public function setSiteToPid($pid, ?array $rootLine = NULL): SiteAspect {
 		if (!is_numeric($pid)) $pid = $this->context->getPidAspect()->getPid($pid, 0);
-		$this->currentSite = $this->siteFinder->getSiteByPageId($pid, $rootLine);
+		$this->setSite($this->siteFinder->getSiteByPageId($pid, $rootLine));
 		return $this;
 	}
 	
