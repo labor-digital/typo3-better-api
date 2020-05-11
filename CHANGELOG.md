@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.9.0](https://github.com/labor-digital/typo3-better-api/compare/v9.8.0...v9.9.0) (2020-05-11)
+
+
+### Features
+
+* **SiteAspect:** make site detection more reliable ([e759715](https://github.com/labor-digital/typo3-better-api/commit/e759715ec602d418ed73b6b40a487d6653f49a87))
+
+
+### Bug Fixes
+
+* **PageService:** fix crash when the rootline is requested with no pages ([aefc69e](https://github.com/labor-digital/typo3-better-api/commit/aefc69ecd8c9ca0d17018149ea439e6eea59409e))
+
 ## [9.8.0](https://github.com/labor-digital/typo3-better-api/compare/v9.7.4...v9.8.0) (2020-04-30)
 
 
