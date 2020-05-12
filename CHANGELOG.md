@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.11.0](https://github.com/labor-digital/typo3-better-api/compare/v9.10.0...v9.11.0) (2020-05-12)
+
+
+### Features
+
+* **BackendForms:** add "inverted" option to checkbox preset ([bf98203](https://github.com/labor-digital/typo3-better-api/commit/bf982033ade22946b0a933eefcf4e3c6170fea23))
+* **BackendForms:** update default TCA definition and remove no longer required sql definitions ([6218092](https://github.com/labor-digital/typo3-better-api/commit/6218092a0aadce942a1d73cdebf3c1ed89c06660))
+* remove deprecated dependencies ([54e6ace](https://github.com/labor-digital/typo3-better-api/commit/54e6acea61d1f3162fdc8b024e5432a81356deac))
+
 ## [9.10.0](https://github.com/labor-digital/typo3-better-api/compare/v9.9.1...v9.10.0) (2020-05-12)
 
 
