@@ -19,12 +19,10 @@
 
 namespace LaborDigital\Typo3BetterApi\BetterController;
 
+use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
 use LaborDigital\Typo3BetterApi\Event\Events\ActionControllerMethodNameFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ActionControllerRequestFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
-use LaborDigital\Typo3BetterApi\Link\LinkService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
@@ -32,7 +30,10 @@ use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
 
 class BetterActionController extends ActionController {
 	use CommonServiceLocatorTrait;
-	use LazyServiceDependencyTrait;
+	use CommonServiceDependencyTrait {
+		CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+		CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
+	}
 	
 	/**
 	 * The list of the raw content object data
@@ -60,12 +61,10 @@ class BetterActionController extends ActionController {
 			$this->data = $this->configurationManager->getContentObject()->data;
 		
 		// Inject the this controller's request into the links object
-		$this->getService(LinkService::class)
-			->__setControllerRequest($request);
+		$this->Links()->__setControllerRequest($request);
 		
 		// Allow filtering
-		$this->getService(TypoEventBus::class)
-			->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, TRUE));
+		$this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, TRUE));
 		
 		// Do the default stuff
 		try {
@@ -75,8 +74,7 @@ class BetterActionController extends ActionController {
 		}
 		
 		// Allow filtering
-		$this->getService(TypoEventBus::class)
-			->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, FALSE));
+		$this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, FALSE));
 	}
 	
 	/**
@@ -89,7 +87,7 @@ class BetterActionController extends ActionController {
 	 */
 	protected function resolveActionMethodName() {
 		$actionName = parent::resolveActionMethodName();
-		$this->getService(TypoEventBus::class)->dispatch(($e = new ActionControllerMethodNameFilterEvent(
+		$this->EventBus()->dispatch(($e = new ActionControllerMethodNameFilterEvent(
 			$actionName, $this->request, $this->response, $this)));
 		return $e->getActionMethodName();
 	}

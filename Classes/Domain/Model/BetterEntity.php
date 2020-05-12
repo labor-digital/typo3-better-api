@@ -20,19 +20,25 @@
 namespace LaborDigital\Typo3BetterApi\Domain\Model;
 
 
+use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\LazyLoading\LazyLoadingTrait;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 abstract class BetterEntity extends AbstractEntity {
 	use CommonServiceLocatorTrait;
 	use LazyLoadingTrait;
+	use CommonServiceDependencyTrait {
+		CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+		CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
+	}
 	
 	/**
 	 * @param int|string|null $pid
 	 */
 	public function setPid($pid) {
-		if (is_string($pid)) $pid = $this->TypoContext->getPidAspect()->getPid($pid, (int)$pid);
+		if (is_string($pid)) $pid = $this->getService(TypoContext::class)->Pid()->get($pid, (int)$pid);
 		parent::setPid($pid);
 	}
 }

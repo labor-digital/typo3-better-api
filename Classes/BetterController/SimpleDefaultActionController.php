@@ -43,7 +43,7 @@ abstract class SimpleDefaultActionController extends BetterActionController impl
 		// Check if an image has to be loaded
 		foreach (["image", "media", "image_a", "image_b"] as $field) {
 			if (empty($this->data[$field])) continue;
-			$this->view->assign($field, $this->FalFiles->getFile($this->data["uid"], "tt_content", $field, $field !== "media"));
+			$this->view->assign($field, $this->FalFiles()->getFile($this->data["uid"], "tt_content", $field, $field !== "media"));
 		}
 	}
 	

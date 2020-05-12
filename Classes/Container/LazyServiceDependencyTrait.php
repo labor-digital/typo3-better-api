@@ -92,7 +92,7 @@ trait LazyServiceDependencyTrait {
 		// Check if we have a factory -> Create the instance locally
 		if (isset($this->__serviceFactories[$classOrInterfaceName]))
 			return $this->__serviceInstances[$classOrInterfaceName] =
-				call_user_func($this->__serviceFactories[$classOrInterfaceName], $this->getContainer(), $classOrInterfaceName);
+				call_user_func($this->__serviceFactories[$classOrInterfaceName], $this->Container(), $classOrInterfaceName);
 		
 		// Create the service using the container
 		return $this->__serviceInstances[$classOrInterfaceName] = $this->getInstanceOf($classOrInterfaceName);

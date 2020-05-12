@@ -49,7 +49,7 @@ trait ContainerAwareTrait {
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
 	 */
-	protected function getContainer(): TypoContainerInterface {
+	protected function Container(): TypoContainerInterface {
 		return isset($this->__container) ? $this->__container :
 			$this->__container = TypoContainer::getInstance();
 	}
@@ -68,6 +68,6 @@ trait ContainerAwareTrait {
 	 * @return mixed
 	 */
 	protected function getInstanceOf(string $class, array $args = []) {
-		return $this->getContainer()->get($class, ["args" => $args]);
+		return $this->Container()->get($class, ["args" => $args]);
 	}
 }

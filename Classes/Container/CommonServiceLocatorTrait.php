@@ -192,8 +192,9 @@ trait CommonServiceLocatorDeprecationTrait {
  * @mixin CommonServiceLocatorDeprecationTrait
  * @package    LaborDigital\Typo3BetterApi\Container
  *
- * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+ * @deprecated Will be removed in v10 - Use ContainerAwareTrait, CommonServiceDependencyTrait or LazySingletonTrait instead
  * @see        \LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait
+ * @see        \LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait
  * @see        \LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait
  */
 trait CommonServiceLocatorTrait {
