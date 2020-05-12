@@ -42,15 +42,21 @@ class BasicFieldPreset extends AbstractFormPreset {
 	 * @param array $options Additional options for this preset
 	 *                       - default bool (FALSE): A default value for your input field
 	 *                       - toggle bool (FALSE): If set to true, this field is rendered as toggle and not as checkbox
+	 *                       - inverted bool (FALSE): If set to true checked / unchecked state are swapped in view:
+	 *                       A checkbox is marked checked if the database bit is not set and vice versa.
 	 */
 	public function checkbox(array $options = []) {
 		// Prepare the options
 		$options = Options::make($options, [
-			"default" => [
+			"default"  => [
 				"type"    => "bool",
 				"default" => FALSE,
 			],
-			"toggle"  => [
+			"toggle"   => [
+				"type"    => "bool",
+				"default" => FALSE,
+			],
+			"inverted" => [
 				"type"    => "bool",
 				"default" => FALSE,
 			],
@@ -60,6 +66,7 @@ class BasicFieldPreset extends AbstractFormPreset {
 		$config = ["type" => "check"];
 		$config["default"] = (int)$options["default"];
 		if ($options["toggle"]) $config["renderType"] = "checkboxToggle";
+		if ($options["inverted"]) $config["items"] = [0 => "", 1 => "", "invertStateDisplay" => TRUE,];
 		
 		// Set sql config
 		$this->setSqlDefinitionForTcaField("tinyint(4) DEFAULT '0'");
