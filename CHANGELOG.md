@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.10.0](https://github.com/labor-digital/typo3-better-api/compare/v9.9.1...v9.10.0) (2020-05-12)
+
+
+### Features
+
+* implement new typo context architecture ([1eb763a](https://github.com/labor-digital/typo3-better-api/commit/1eb763a53dcf75d358cca0e05c4bf4a1b270a0b9))
+* implement replacement for common service locator trait ([09f77c2](https://github.com/labor-digital/typo3-better-api/commit/09f77c2dc6161497a9614fa8b93e0cf4f3ae4542))
+
+
+### Bug Fixes
+
+* remove debug output ([e837418](https://github.com/labor-digital/typo3-better-api/commit/e837418e7a87638763c1dfd0071602736c3e818d))
+* **SiteAspect:** fix infinite recursion loop issue ([50431b7](https://github.com/labor-digital/typo3-better-api/commit/50431b755df7a930067d5b45beb598bbbea5db1e))
+
 ### [9.9.1](https://github.com/labor-digital/typo3-better-api/compare/v9.9.0...v9.9.1) (2020-05-11)
 
 
