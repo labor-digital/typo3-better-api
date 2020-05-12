@@ -65,29 +65,136 @@ define("COMMON_SERVICE_LOCATOR_STATIC_SERVICE_MAP", [
 	"Simulator"             => EnvironmentSimulator::class,
 ]);
 
+trait CommonServiceLocatorDeprecationTrait {
+	/**
+	 * @var TranslationService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Translation;
+	
+	/**
+	 * @var SessionService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Session;
+	
+	/**
+	 * @var TypoScriptService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $TypoScript;
+	
+	/**
+	 * @var DbServiceInterface
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Db;
+	
+	/**
+	 * @var FalFileService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $FalFiles;
+	
+	/**
+	 * @var EventBusInterface
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $EventBus;
+	
+	/**
+	 * @var LinkService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Links;
+	
+	/**
+	 * @var TsfeService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Tsfe;
+	
+	/**
+	 * @var EnvironmentSimulator
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Simulator;
+	
+	/**
+	 * @var FlexFormService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $FlexForm;
+	
+	/**
+	 * @var BackendRenderingService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $BackendRendering;
+	
+	/**
+	 * @var TemplateRenderingService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $TemplateRendering;
+	
+	/**
+	 * @var FlashMessageRenderingService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $FlashMessageRendering;
+	
+	/**
+	 * @var PageService
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Page;
+	
+	/**
+	 * @var PageBasedCache
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $PageBasedCache;
+	
+	/**
+	 * @var FrontendCache
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $FrontendCache;
+	
+	/**
+	 * @var GeneralCache
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $GeneralCache;
+	
+	/**
+	 * @var TypoContainerInterface
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $Container;
+	
+	/**
+	 * @var DataHandler
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $DataHandler;
+	
+	/**
+	 * @var TypoContext
+	 * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+	 */
+	public $TypoContext;
+}
+
 /**
  * Trait CommonServiceLocatorTrait
- * @property TranslationService           $Translation
- * @property SessionService               $Session
- * @property TypoScriptService            $TypoScript
- * @property DbServiceInterface           $Db
- * @property FalFileService               $FalFiles
- * @property EventBusInterface            $EventBus
- * @property LinkService                  $Links
- * @property TsfeService                  $Tsfe
- * @property EnvironmentSimulator         $Simulator
- * @property FlexFormService              $FlexForm
- * @property BackendRenderingService      $BackendRendering
- * @property TemplateRenderingService     $TemplateRendering
- * @property FlashMessageRenderingService $FlashMessageRendering
- * @property PageService                  $Page
- * @property PageBasedCache               $PageBasedCache
- * @property FrontendCache                $FrontendCache
- * @property GeneralCache                 $GeneralCache
- * @property TypoContainerInterface       $Container
- * @property DataHandler                  $DataHandler
- * @property TypoContext                  $TypoContext
- * @package LaborDigital\Typo3BetterApi\Container
+ * @mixin CommonServiceLocatorDeprecationTrait
+ * @package    LaborDigital\Typo3BetterApi\Container
+ *
+ * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+ * @see        \LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait
+ * @see        \LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait
  */
 trait CommonServiceLocatorTrait {
 	
@@ -136,6 +243,7 @@ trait CommonServiceLocatorTrait {
 	 * @param array  $args  Optional, additional constructor arguments
 	 *
 	 * @return mixed
+	 * @deprecated Will be removed in v10
 	 */
 	public function getInstanceOf(string $class, array $args = []) {
 		if (!$this->__traitInitialized) $this->__initializeTrait();
@@ -150,6 +258,8 @@ trait CommonServiceLocatorTrait {
 	 * @param array $map A list of "PropertyName" => My\Class\Name to define additional services
 	 *                   If the instance of an object is passed as value in the mapping array it will be used as
 	 *                   instance for that property
+	 *
+	 * @deprecated Will be removed in v10
 	 */
 	public function addToServiceMap(array $map) {
 		if (!$this->__traitInitialized) $this->__initializeTrait();

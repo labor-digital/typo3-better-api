@@ -20,41 +20,39 @@
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
 
-use LaborDigital\Typo3BetterApi\Pid\InvalidPidException;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use Neunerlei\Arrays\Arrays;
-use Neunerlei\PathUtil\Path;
+use LaborDigital\Typo3BetterApi\TypoContext\Facet\PidFacet;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\SingletonInterface;
-use function GuzzleHttp\Psr7\parse_query;
 
+/**
+ * Class PidAspect
+ * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
+ *
+ * @deprecated will be removed in v10 -> Use PidFacet instead
+ */
 class PidAspect implements AspectInterface, SingletonInterface {
 	use AutomaticAspectGetTrait;
 	
 	/**
-	 * The pid storage list
-	 * @var array
+	 * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\PidFacet
 	 */
-	protected $pids = [];
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-	 */
-	protected $context;
+	protected $facet;
 	
 	/**
 	 * PidAspect constructor.
 	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext    $context
+	 * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\PidFacet $facet
 	 */
-	public function __construct(TypoContext $context) {
-		$this->context = $context;
+	public function __construct(PidFacet $facet) {
+		$this->facet = $facet;
 	}
 	
 	/**
 	 * @inheritDoc
 	 */
 	public function get(string $name) {
+		if ($name === "FACET") return $this->facet;
 		return $this->handleGet($name);
 	}
 	
@@ -64,9 +62,10 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	 * @param string $key A key like "myKey" or "storage.myKey" for hierarchical data
 	 *
 	 * @return bool
+	 * @deprecated will be removed in v10 -> Use PidFacet instead
 	 */
 	public function hasPid(string $key): bool {
-		return Arrays::hasPath($this->pids, $this->stripPrefix($key));
+		return $this->facet->has($key);
 	}
 	
 	/**
@@ -77,9 +76,10 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	 * @param int    $pid The numeric page id which should be returned when the given pid is required
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\PidAspect
+	 * @deprecated will be removed in v10 -> Use PidFacet instead
 	 */
 	public function setPid(string $key, int $pid): PidAspect {
-		$this->pids = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
+		$this->facet->set($key, $pid);
 		return $this;
 	}
 	
@@ -95,23 +95,19 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	 *
 	 * @return int
 	 * @throws \LaborDigital\Typo3BetterApi\Pid\InvalidPidException
+	 * @deprecated will be removed in v10 -> Use PidFacet instead
 	 */
 	public function getPid(string $key, int $fallback = -1): int {
-		$pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
-		if (!is_numeric($pid) || $pid === -9999) {
-			if ($fallback !== -1) return $fallback;
-			if (is_numeric($key) && (int)$key == $key) return (int)$key;
-			throw new InvalidPidException("There is no registered pid for key: " . $key);
-		}
-		return $pid;
+		return $this->facet->get($key, $fallback);
 	}
 	
 	/**
 	 * Returns the whole list of all registered pid's by their keys
 	 * @return array
+	 * @deprecated will be removed in v10 -> Use PidFacet instead
 	 */
 	public function getAllPids(): array {
-		return $this->pids;
+		return $this->facet->getAll();
 	}
 	
 	/**
@@ -123,34 +119,10 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	 *
 	 * @return int
 	 * @throws \Exception
+	 * @deprecated will be removed in v10 -> Use PidFacet instead
 	 */
 	public function getCurrentPid(): int {
-		$requestAspect = $this->context->getRequestAspect();
-		if ($this->context->getEnvAspect()->isBackend()) {
-			// BACKEND
-			// ============
-			// Read current ID when in backend
-			if (isset($GLOBALS["TSFE"]) && isset($GLOBALS["TSFE"]->id)) return (int)$GLOBALS["TSFE"]->id;
-			if ($requestAspect->hasGet("id")) return (int)$requestAspect->getGet("id");
-			if (isset($_REQUEST["id"])) return (int)$_REQUEST["id"];
-			// Try to parse return url
-			if ($requestAspect->hasGet("returnUrl")) {
-				$query = Path::makeUri("http://www.foo.bar" . $requestAspect->getGet("returnUrl"))->getQuery();
-				$query = parse_query($query);
-				if (isset($query["id"])) return isset($query["id"]);
-			}
-		} else {
-			// FRONTEND
-			// ============
-			// Read current id when in frontend
-			if (isset($GLOBALS["TSFE"]->id)) return $GLOBALS["TSFE"]->id;
-			if ($requestAspect->hasGet("id")) return (int)$requestAspect->getGet("id");
-		}
-		
-		// Fallback to the root pid of the site
-		if ($this->context->getSiteAspect()->hasSite())
-			return $this->context->getSiteAspect()->getSite()->getRootPageId();
-		return 0;
+		return $this->facet->getCurrent();
 	}
 	
 	/**
@@ -158,22 +130,10 @@ class PidAspect implements AspectInterface, SingletonInterface {
 	 * If you use this, use it with care!
 	 *
 	 * @param array $pids
+	 *
+	 * @deprecated will be removed in v10 -> Use PidFacet instead
 	 */
 	public function __setPids(array $pids): void {
-		$this->pids = $pids;
-	}
-	
-	/**
-	 * Internal helper to make sure there is no $pid, (at)pid (stupid annotation parsing...) prefix in the given keys
-	 *
-	 * @param string $key
-	 *
-	 * @return string
-	 */
-	protected function stripPrefix(string $key): string {
-		$key = trim($key);
-		$prefix = substr($key, 0, 5);
-		if ($prefix === "\$pid." || $prefix === "@pid.") return substr($key, 5);
-		return $key;
+		$this->facet->__setAll($pids);
 	}
 }

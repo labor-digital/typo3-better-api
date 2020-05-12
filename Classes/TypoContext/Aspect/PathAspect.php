@@ -20,50 +20,37 @@
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
 
-use Composer\Autoload\ClassLoader;
-use LaborDigital\Typo3BetterApi\BetterApiException;
-use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use Neunerlei\Arrays\Arrays;
-use Neunerlei\FileSystem\Fs;
-use Neunerlei\Inflection\Inflector;
-use Neunerlei\PathUtil\Path;
-use ReflectionClass;
-use RuntimeException;
+use LaborDigital\Typo3BetterApi\TypoContext\Facet\PathFacet;
 use TYPO3\CMS\Core\Context\AspectInterface;
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\DataHandling\SlugHelper;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 
+/**
+ * Class PathAspect
+ * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
+ * @deprecated will be removed in v10 -> Use PathFacet instead
+ */
 class PathAspect implements AspectInterface {
 	use AutomaticAspectGetTrait;
-	use CommonServiceLocatorTrait;
 	
 	/**
-	 * This property stores the vendor path after it was resolved in getVendorPath
-	 * @var string
+	 * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\PathFacet
 	 */
-	protected $vendorPath;
+	protected $facet;
 	
 	/**
-	 * @var TypoContext
-	 */
-	protected $context;
-	
-	/**
-	 * Inject the typo context instance
+	 * PathAspect constructor.
 	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+	 * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\PathFacet $facet
 	 */
-	public function injectContext(TypoContext $context) {
-		$this->context = $context;
+	public function __construct(PathFacet $facet) {
+		$this->facet = $facet;
 	}
 	
 	/**
 	 * @inheritDoc
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function get(string $name) {
+		if ($name === "FACET") return $this->facet;
 		return $this->handleGet($name);
 	}
 	
@@ -72,18 +59,10 @@ class PathAspect implements AspectInterface {
 	 * Will return an empty string if the composer classloader is not yet loaded / not installed
 	 * @return string
 	 * @throws \ReflectionException
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getVendorPath(): string {
-		// Check if we know the path already
-		if (isset($this->vendorPath)) return $this->vendorPath;
-		
-		// Check if we have the autoloader
-		if (!class_exists(ClassLoader::class)) return "";
-		
-		// Read the directory of the classloader
-		$ref = new ReflectionClass(ClassLoader::class);
-		$file = $ref->getFileName();
-		return $this->vendorPath = Path::unifyPath(dirname($file, 2));
+		return $this->facet->getVendorPath();
 	}
 	
 	/**
@@ -93,9 +72,10 @@ class PathAspect implements AspectInterface {
 	 * @param string $script       Will be appended to the created path
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getExtensionPath($extensionKey, $script = ""): string {
-		return Path::unifyPath(ExtensionManagementUtility::extPath($extensionKey, $script));
+		return $this->facet->getExtensionPath($extensionKey, $script);
 	}
 	
 	/**
@@ -103,9 +83,10 @@ class PathAspect implements AspectInterface {
 	 * PATH_site, without the trailing slash. For non-composer installations, the project path = the public path.
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getPublicPath(): string {
-		return Path::unifyPath(Environment::getPublicPath());
+		return $this->facet->getPublicPath();
 	}
 	
 	/**
@@ -120,9 +101,10 @@ class PathAspect implements AspectInterface {
 	 * $project_path/config.
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getConfigPath() {
-		return Path::unifyPath(Environment::getConfigPath());
+		return $this->facet->getConfigPath();
 	}
 	
 	/**
@@ -134,11 +116,10 @@ class PathAspect implements AspectInterface {
 	 * @param string|null $pluginName Optional plugin name to append to the built path
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getTemplatePath(string $extKey, ?string $pluginName = NULL): string {
-		return "EXT:" . strtolower($extKey) . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR .
-			"Private" . DIRECTORY_SEPARATOR . "Templates" . DIRECTORY_SEPARATOR .
-			(empty($pluginName) ? "" : Inflector::toCamelCase($pluginName) . "/");
+		return $this->facet->getTemplatePath($extKey, $pluginName);
 	}
 	
 	/**
@@ -150,11 +131,10 @@ class PathAspect implements AspectInterface {
 	 * @param string|null $pluginName Optional plugin name to append to the built path
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getPartialPath(string $extKey, ?string $pluginName = NULL): string {
-		return "EXT:" . strtolower($extKey) . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR .
-			"Private" . DIRECTORY_SEPARATOR . "Partials" . DIRECTORY_SEPARATOR .
-			(empty($pluginName) ? "" : Inflector::toCamelCase($pluginName) . "/");
+		return $this->facet->getPartialPath($extKey, $pluginName);
 	}
 	
 	/**
@@ -166,19 +146,19 @@ class PathAspect implements AspectInterface {
 	 * @param string|null $pluginName Optional plugin name to append to the built path
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getLayoutPath(string $extKey, ?string $pluginName = NULL): string {
-		return "EXT:" . strtolower($extKey) . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR .
-			"Private" . DIRECTORY_SEPARATOR . "Layouts" . DIRECTORY_SEPARATOR .
-			(empty($pluginName) ? "" : Inflector::toCamelCase($pluginName) . "/");
+		return $this->facet->getLayoutPath($extKey, $pluginName);
 	}
 	
 	/**
 	 * Returns the path to the directory where dynamic data may be stored
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getVarPath(): string {
-		return Environment::getVarPath() . DIRECTORY_SEPARATOR;
+		return $this->facet->getVarPath();
 	}
 	
 	/**
@@ -189,40 +169,10 @@ class PathAspect implements AspectInterface {
 	 * @param string $typoPath The path to parse
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function typoPathToRealPath(string $typoPath): string {
-		$file = Path::unifySlashes($typoPath);
-		
-		// Prepare input string
-		if (strtolower(substr($file, 0, 5)) === "file:") $file = substr($file, 5);
-		$prefix = substr($file, 0, 4);
-		$isLangFile = strtolower($prefix) === "lll:";
-		if ($isLangFile) $prefix = substr($file, 4, 4);
-		$isExtFile = strtolower($prefix) === "ext:";
-		
-		// Nothing to do
-		if (!$isLangFile && !$isExtFile) return $file;
-		
-		// Remove primary prefix -> EXT: or LLL:
-		$file = substr($file, 4);
-		
-		// Return non ext langFile
-		if (!$isExtFile && $isLangFile) return $file;
-		
-		// Remove secondary prefix -> EXT:
-		if ($isExtFile && $isLangFile) $file = substr($file, 4);
-		
-		// Get extKey
-		$pos = strpos($file, DIRECTORY_SEPARATOR);
-		$extKey = substr($file, 0, $pos);
-		$file = substr($file, $pos + 1);
-		
-		// Resolve directory
-		$dir = static::getExtensionPath($extKey);
-		$file = Path::unifyPath($dir) . $file;
-		
-		// Done
-		return $file;
+		return $this->facet->typoPathToRealPath($typoPath);
 	}
 	
 	/**
@@ -235,50 +185,10 @@ class PathAspect implements AspectInterface {
 	 *
 	 * @return string
 	 * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function realPathToTypoExt(string $path): string {
-		$path = Path::unifySlashes(trim($path));
-		
-		// Ignore if we have already an ext: prefix
-		if (stripos($path, "ext:") === 0) return $path;
-		$p = PathUtility::stripPathSitePrefix($path);
-		
-		// Could we resolve the path inside of ext?
-		if (stripos($p, "typo3conf" . DIRECTORY_SEPARATOR . "ext" . DIRECTORY_SEPARATOR) !== 0) {
-			
-			// Try to find find a part inside the ext directory by looking for every chain member
-			$stripPath = [];
-			foreach (explode(DIRECTORY_SEPARATOR, $path) as $extKey) {
-				$stripPath[] = $extKey;
-				if (empty($extKey)) continue;
-				
-				// Check current chain member
-				if (ExtensionManagementUtility::isLoaded($extKey)) {
-					$path = "EXT:" . $extKey . str_replace(implode(DIRECTORY_SEPARATOR, $stripPath), "", $path);
-					$realPath = $this->typoPathToRealPath($path);
-					if (!file_exists($realPath)) continue;
-					return $path;
-				}
-				
-				// Check if the path has a composer file we can use to find the ext key
-				$composerJsonPath = implode(DIRECTORY_SEPARATOR, $stripPath) . DIRECTORY_SEPARATOR . "composer.json";
-				if (file_exists($composerJsonPath)) {
-					$compJson = json_decode(Fs::readFile($composerJsonPath), TRUE);
-					if (!isset($compJson["name"])) continue;
-					$extKey = Inflector::toUnderscore(preg_replace("/^.*?\//", "", $compJson["name"]));
-					if (ExtensionManagementUtility::isLoaded($extKey)) {
-						return "EXT:" . $extKey . str_replace(implode(DIRECTORY_SEPARATOR, $stripPath), "", $path);
-					}
-				}
-			}
-			
-			// Try to find the path by looking
-			throw new BetterApiException("Could not resolve path: " . $path . " to a relative EXT: path!");
-		}
-		
-		// Looking inside the ext directory
-		$path = substr($p, 14);
-		return "EXT:" . $path;
+		return $this->facet->realPathToTypoExt($path);
 	}
 	
 	/**
@@ -303,30 +213,9 @@ class PathAspect implements AspectInterface {
 	 * @param string           $field       The name of the slug field to read the configuration from
 	 *
 	 * @return string
+	 * @deprecated will be removed in v10 -> Use PathFacet instead
 	 */
 	public function getSlugFor($recordOrUid, string $table, string $field): string {
-		// Try to read the field configuration from the TCA
-		$languageField = Arrays::getPath($GLOBALS, ["TCA", $table, "ctrl", "languageField"], NULL);
-		$fieldConfig = Arrays::getPath($GLOBALS, ["TCA", $table, "columns", $field, "config"], []);
-		if (empty($fieldConfig))
-			throw new RuntimeException(
-				'No valid field configuration for table ' . $table . ' field name ' . $field . ' found.',
-				1535379534
-			);
-		
-		// Resolve the record
-		if (is_numeric($recordOrUid)) {
-			$record = $this->Db->getRecords($table, $recordOrUid);
-			$record = reset($record);
-		} else $record = $recordOrUid;
-		if (!is_array($record)) $record = [];
-		
-		// Inject language if required
-		if (!empty($languageField) && !isset($record[$languageField]))
-			$record[$languageField] = $this->TypoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId();
-		
-		// Create the slug using the slug helper
-		$slugHelper = $this->getInstanceOf(SlugHelper::class, [$table, $field, $fieldConfig]);
-		return $slugHelper->generate($record, empty($record["pid"]) ? -1 : $record["pid"]);
+		return $this->facet->getSlugFor($recordOrUid, $table, $field);
 	}
 }

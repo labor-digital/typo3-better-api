@@ -20,6 +20,8 @@
 namespace PHPSTORM_META {
 	
 	use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
+	use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
+	use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
 	use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 	use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 	use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
@@ -28,12 +30,20 @@ namespace PHPSTORM_META {
 	use TYPO3\CMS\Extbase\Object\ObjectManager;
 	use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 	
+	// TYPO3 Core
 	override(GeneralUtility::makeInstance(0), type(0));
 	override(ObjectManager::get(0), type(0));
+	override(ObjectManagerInterface::get(0), type(0));
+	override(ContainerInterface::get(0), type(0));
+	
+	// Better API
 	override(TypoContainer::get(0), type(0));
 	override(TypoContainerInterface::get(0), type(0));
-	override(ObjectManagerInterface::get(0), type(0));
-	override(CommonServiceLocatorTrait::getInstanceOf(0), type(0));
 	override(ExtConfigContext::getInstanceOf(0), type(0));
-	override(ContainerInterface::get(0), type(0));
+	override(ContainerAwareTrait::getInstance(0), type(0));
+	override(LazyServiceDependencyTrait::getInstance(0), type(0));
+	override(LazyServiceDependencyTrait::getService(0), type(0));
+	
+	// Deprecated
+	override(CommonServiceLocatorTrait::getInstanceOf(0), type(0));
 }

@@ -14,74 +14,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.05.12 at 13:50
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
 
 
-use LaborDigital\Typo3BetterApi\TypoContext\Facet\EnvFacet;
-use TYPO3\CMS\Core\Context\AspectInterface;
+use LaborDigital\Typo3BetterApi\BetterApiException;
 use TYPO3\CMS\Core\Core\ApplicationContext;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
-/**
- * Class EnvironmentAspect
- * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
- * @deprecated will be removed in v10 -> Use EnvFacet instead
- */
-class EnvironmentAspect implements AspectInterface {
-	use AutomaticAspectGetTrait;
+class EnvFacet implements FacetInterface {
 	
 	/**
-	 * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\EnvFacet
+	 * Stores the current typo3 version as integer
+	 * @var int
 	 */
-	protected $facet;
+	protected $versionInt;
 	
 	/**
-	 * EnvironmentAspect constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\EnvFacet $facet
+	 * Stores the version comparisons to save repetitive overhead
+	 * @var array
 	 */
-	public function __construct(EnvFacet $facet) {
-		$this->facet = $facet;
-	}
-	
-	/**
-	 * @inheritDoc
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
-	 */
-	public function get(string $name) {
-		if ($name === "FACET") return $this->facet;
-		return $this->handleGet($name);
-	}
+	protected $versionComparisons = [];
 	
 	/**
 	 * Returns typo3's application context object
 	 * @return \TYPO3\CMS\Core\Core\ApplicationContext
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function getApplicationContext(): ApplicationContext {
-		return $this->facet->getApplicationContext();
+		return Environment::getContext();
 	}
 	
 	/**
 	 * Returns true if the current typo3 version is LTS 9.x
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function is9(): bool {
-		return $this->facet->is9();
+		return $this->isVersion(9);
 	}
 	
 	/**
 	 * Returns true if the current typo3 version is LTS 10.x
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function is10(): bool {
-		return $this->facet->is10();
+		return $this->isVersion(10);
 	}
 	
 	/**
@@ -96,10 +77,49 @@ class EnvironmentAspect implements AspectInterface {
 	 *
 	 * @return bool
 	 * @throws \LaborDigital\Typo3BetterApi\BetterApiException
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isVersion($version, string $operator = "="): bool {
-		return $this->facet->isVersion($version, $operator);
+		// Serve already created comparisons from the fast lane cache
+		$key = $version . $operator;
+		if (isset($this->versionComparisons[$key]))
+			return $this->versionComparisons[$key];
+		
+		// Get the integer version of the typo3 version
+		if (empty($this->versionInt))
+			$this->versionInt = VersionNumberUtility::convertVersionNumberToInteger($this->getVersion());
+		$versionInt = $this->versionInt;
+		
+		// Check if we have to use fuzzy compare
+		if (strlen($version . "") < 3) $versionInt = floor($versionInt / 1000000) * 1000000;
+		
+		// Compare the given version with the current version
+		$givenInt = VersionNumberUtility::convertVersionNumberToInteger($version);
+		switch ($operator) {
+			case "=":
+				$this->versionComparisons[$key] = $versionInt == $givenInt;
+				break;
+			case "!=":
+				$this->versionComparisons[$key] = $versionInt != $givenInt;
+				break;
+			case ">":
+				$this->versionComparisons[$key] = $versionInt > $givenInt;
+				break;
+			case ">=":
+				$this->versionComparisons[$key] = $versionInt >= $givenInt;
+				break;
+			case "<":
+				$this->versionComparisons[$key] = $versionInt < $givenInt;
+				break;
+			case "<=":
+				$this->versionComparisons[$key] = $versionInt <= $givenInt;
+				break;
+			default:
+				throw new BetterApiException("Invalid operator \"$operator\" given! Only =, !=, <, >, <= or >= are supported!");
+				break;
+		}
+		
+		// Done
+		return $this->versionComparisons[$key];
 	}
 	
 	/**
@@ -108,59 +128,53 @@ class EnvironmentAspect implements AspectInterface {
 	 * @param bool $exact If this is set to true the version may contain suffixes like "-dev" "-rc..." or similar.
 	 *
 	 * @return string
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function getVersion(bool $exact = FALSE): string {
-		return $this->facet->getVersion($exact);
+		return $exact ? VersionNumberUtility::getCurrentTypo3Version() : VersionNumberUtility::getNumericTypo3Version();
 	}
 	
 	/**
 	 * Returns true if the current call was performed in the typo3 backend
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isBackend(): bool {
-		return $this->facet->isBackend();
+		return (defined('TYPO3_MODE') && TYPO3_MODE === 'BE') ?: FALSE;
 	}
 	
 	/**
 	 * Returns true if the current call was performed in the typo3 frontend
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isFrontend(): bool {
-		return $this->facet->isFrontend();
+		return (defined('TYPO3_MODE') && TYPO3_MODE === 'FE') ?: FALSE;
 	}
 	
 	/**
 	 * Returns true if the current call was performed in the typo3 cli handler
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isCli(): bool {
-		return $this->facet->isCli();
+		return Environment::isCli() || php_sapi_name() === 'cli';
 	}
 	
 	/**
 	 * Returns true if the current call was performed in the typo3 install tool
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isInstall(): bool {
-		return $this->facet->isInstall();
+		return TYPO3_REQUESTTYPE === TYPO3_REQUESTTYPE_INSTALL || TYPO3_REQUESTTYPE === (TYPO3_REQUESTTYPE_INSTALL + TYPO3_REQUESTTYPE_BE);
 	}
 	
 	/**
 	 * Returns true if the current instance is running in development context
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isDev(): bool {
-		return $this->facet->isDev();
+		return Environment::getContext()->isDevelopment();
 	}
 	
 	/**
@@ -170,19 +184,17 @@ class EnvironmentAspect implements AspectInterface {
 	 *                             instead it only returns true IF the context is set to production
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isProduction(bool $includeStaging = TRUE): bool {
-		return $this->facet->isProduction($includeStaging);
+		return $includeStaging ? !$this->isDev() : Environment::getContext()->isProduction();
 	}
 	
 	/**
 	 * Returns true if the current instance is running in staging context
 	 *
 	 * @return bool
-	 * @deprecated will be removed in v10 -> Use EnvFacet instead
 	 */
 	public function isStaging(): bool {
-		return $this->facet->isStaging();
+		return Environment::getContext()->isTesting();
 	}
 }

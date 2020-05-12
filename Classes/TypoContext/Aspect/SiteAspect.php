@@ -20,71 +20,41 @@
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use Neunerlei\PathUtil\Path;
-use Throwable;
+use LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet;
 use TYPO3\CMS\Core\Context\AspectInterface;
-use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Routing\SiteMatcher;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\PseudoSite;
-use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * Class SiteAspect
- * @package LaborDigital\Typo3BetterApi\TypoContext\Aspect*
+ * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect*
  *
  * @property SiteFinder $SiteFinder
+ * @deprecated will be removed in v10 -> Use SiteFacet instead
  */
 class SiteAspect implements AspectInterface {
 	use AutomaticAspectGetTrait;
 	
 	/**
-	 * @var \TYPO3\CMS\Core\Site\SiteFinder
+	 * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
 	 */
-	protected $siteFinder;
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-	 */
-	protected $context;
-	
-	/**
-	 * @var \TYPO3\CMS\Core\Routing\SiteMatcher
-	 */
-	protected $siteMatcher;
-	
-	/**
-	 * Holds the site information if we don't have a request to store it on
-	 * @var Site|NullSite|PseudoSite
-	 */
-	protected $fallbackSiteStorage;
-	
-	/**
-	 * True while the site is being found to avoid infinite loops
-	 * @var bool
-	 */
-	protected $simulateNoSite = FALSE;
+	protected $facet;
 	
 	/**
 	 * SiteAspect constructor.
 	 *
-	 * @param \TYPO3\CMS\Core\Site\SiteFinder                      $siteFinder
-	 * @param \TYPO3\CMS\Core\Routing\SiteMatcher                  $siteMatcher
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+	 * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet $facet
 	 */
-	public function __construct(SiteFinder $siteFinder, SiteMatcher $siteMatcher, TypoContext $context) {
-		$this->siteFinder = $siteFinder;
-		$this->context = $context;
-		$this->siteMatcher = $siteMatcher;
+	public function __construct(SiteFacet $facet) {
+		$this->facet = $facet;
 	}
 	
 	/**
 	 * @inheritDoc
 	 */
 	public function get(string $name) {
+		if ($name === "FACET") return $this->facet;
 		return $this->handleGet($name);
 	}
 	
@@ -93,65 +63,19 @@ class SiteAspect implements AspectInterface {
 	 *
 	 * @return \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite
 	 * @throws \TYPO3\CMS\Core\Exception\SiteNotFoundException
+	 * @deprecated will be removed in v10 -> Use SiteFacet instead
 	 */
 	public function getSite() {
-		// Check if we can fetch a better site
-		$request = $this->context->getRequestAspect()->getRootRequest();
-		if (!is_null($request))
-			$site = $request->getAttribute("site", NULL);
-		else $site = $this->fallbackSiteStorage;
-		if (!empty($site)) return $site;
-		
-		// Try to find the site via pid
-		$this->simulateNoSite = TRUE;
-		$pid = $this->context->getPidAspect()->getCurrentPid();
-		$this->simulateNoSite = FALSE;
-		if (!empty($pid)) {
-			$site = $this->siteFinder->getSiteByPageId($pid);
-			if (!empty($site)) {
-				$this->setSite($site);
-				return $site;
-			}
-		}
-		
-		// Use the single site we have
-		$sites = $this->siteFinder->getAllSites();
-		if (count($sites) === 1) {
-			$this->setSite(reset($sites));
-			return reset($sites);
-		}
-		
-		// Try to match the site with the current host
-		if (!is_null($request)) {
-			try {
-				$result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(TRUE)));
-				$site = $result->getSite();
-				$this->setSite($site);
-				return $site;
-			} catch (Throwable $exception) {
-			}
-		}
-		
-		// Check if we have a fallback site
-		if (!is_null($this->fallbackSiteStorage))
-			return $this->fallbackSiteStorage;
-		
-		// Nothing found...
-		throw new SiteNotFoundException("There is currently no site defined! To use the SiteAspect set a site first!");
+		return $this->facet->get();
 	}
 	
 	/**
 	 * Returns true if the site has been set
 	 * @return bool
+	 * @deprecated will be removed in v10 -> Use SiteFacet instead
 	 */
 	public function hasSite(): bool {
-		if ($this->simulateNoSite) return FALSE;
-		try {
-			$this->getSite();
-			return TRUE;
-		} catch (Throwable $e) {
-			return FALSE;
-		}
+		return $this->facet->exists();
 	}
 	
 	/**
@@ -161,17 +85,10 @@ class SiteAspect implements AspectInterface {
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
 	 * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+	 * @deprecated will be removed in v10 -> Use SiteFacet instead
 	 */
 	public function setSite($site): SiteAspect {
-		if ($site === NULL) $site = new NullSite();
-		if (!$site instanceof Site && !$site instanceof NullSite && !$site instanceof PseudoSite)
-			throw new BetterApiException("The given site object is not a site, a null site or a pseudo site object!");
-		$this->fallbackSiteStorage = $site;
-		$request = $this->context->getRequestAspect()->getRootRequest();
-		if (!is_null($request)) {
-			$request = $request->withAttribute("site", $site);
-			$this->context->getRequestAspect()->setRootRequest($request);
-		}
+		$this->facet->set($site);
 		return $this;
 	}
 	
@@ -181,9 +98,10 @@ class SiteAspect implements AspectInterface {
 	 * @param string $identifier
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
+	 * @deprecated will be removed in v10 -> Use SiteFacet instead
 	 */
 	public function setSiteTo(string $identifier): SiteAspect {
-		$this->setSite($this->siteFinder->getSiteByIdentifier($identifier));
+		$this->facet->setTo($identifier);
 		return $this;
 	}
 	
@@ -194,10 +112,10 @@ class SiteAspect implements AspectInterface {
 	 * @param array|null $rootLine An optional rootLine to traverse
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
+	 * @deprecated will be removed in v10 -> Use SiteFacet instead
 	 */
 	public function setSiteToPid($pid, ?array $rootLine = NULL): SiteAspect {
-		if (!is_numeric($pid)) $pid = $this->context->getPidAspect()->getPid($pid, 0);
-		$this->setSite($this->siteFinder->getSiteByPageId($pid, $rootLine));
+		$this->facet->setToPid($pid, $rootLine);
 		return $this;
 	}
 	
