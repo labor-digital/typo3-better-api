@@ -84,6 +84,7 @@ class RequestFacet implements FacetInterface {
 		$request = $this->getRootRequest();
 		$params = $_POST;
 		if (!empty($request)) $params = $request->getParsedBody();
+		if (!is_array($params)) $params = [];
 		return is_null($path) ? $params : Arrays::getPath($params, $path, $default);
 	}
 	
@@ -97,6 +98,7 @@ class RequestFacet implements FacetInterface {
 	public function hasPost($path): bool {
 		$request = $this->getRootRequest();
 		$params = $_POST;
+		if (!is_array($params)) $params = [];
 		if (!empty($request)) $params = $request->getParsedBody();
 		return Arrays::hasPath($params, $path);
 	}
