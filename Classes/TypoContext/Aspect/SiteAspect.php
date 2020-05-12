@@ -63,6 +63,12 @@ class SiteAspect implements AspectInterface {
 	protected $fallbackSiteStorage;
 	
 	/**
+	 * True while the site is being found to avoid infinite loops
+	 * @var bool
+	 */
+	protected $simulateNoSite = FALSE;
+	
+	/**
 	 * SiteAspect constructor.
 	 *
 	 * @param \TYPO3\CMS\Core\Site\SiteFinder                      $siteFinder
@@ -97,7 +103,9 @@ class SiteAspect implements AspectInterface {
 		if (!empty($site)) return $site;
 		
 		// Try to find the site via pid
+		$this->simulateNoSite = TRUE;
 		$pid = $this->context->getPidAspect()->getCurrentPid();
+		$this->simulateNoSite = FALSE;
 		if (!empty($pid)) {
 			$site = $this->siteFinder->getSiteByPageId($pid);
 			if (!empty($site)) {
@@ -137,6 +145,7 @@ class SiteAspect implements AspectInterface {
 	 * @return bool
 	 */
 	public function hasSite(): bool {
+		if ($this->simulateNoSite) return FALSE;
 		try {
 			$this->getSite();
 			return TRUE;
