@@ -25,6 +25,7 @@ use LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService;
 use LaborDigital\Typo3BetterApi\Link\LinkService;
 use LaborDigital\Typo3BetterApi\Page\PageService;
 use LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator;
+use LaborDigital\Typo3BetterApi\Translation\TranslationService;
 use LaborDigital\Typo3BetterApi\Tsfe\TsfeService;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
@@ -95,6 +96,14 @@ trait CommonServiceDependencyTrait {
 	 */
 	protected function EventBus(): EventBusInterface {
 		return $this->getService(EventBusInterface::class);
+	}
+	
+	/**
+	 * Returns the translation service instance
+	 * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
+	 */
+	protected function Translation(): TranslationService {
+		return $this->getService(TranslationService::class);
 	}
 	
 	/**
