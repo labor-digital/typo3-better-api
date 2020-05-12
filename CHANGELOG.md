@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.11.1](https://github.com/labor-digital/typo3-better-api/compare/v9.11.0...v9.11.1) (2020-05-12)
+
+
+### Bug Fixes
+
+* **RequestFacet:** fix issue when no POST is given ([03b2abc](https://github.com/labor-digital/typo3-better-api/commit/03b2abcb03a02857aecd852a66d35365d650b6e7))
+
 ## [9.11.0](https://github.com/labor-digital/typo3-better-api/compare/v9.10.0...v9.11.0) (2020-05-12)
 
 
