@@ -317,7 +317,6 @@ class TypoContext implements SingletonInterface {
 	 * @see FacetInterface
 	 */
 	protected function getOrMakeFacet(string $facetKey, string $facetClass): FacetInterface {
-		dbge("DA");
 		$context = $this->getRootContext();
 		$aspectKey = "facet.$facetKey";
 		if ($context->hasAspect($aspectKey)) return $context->getAspect($aspectKey)->get("");
