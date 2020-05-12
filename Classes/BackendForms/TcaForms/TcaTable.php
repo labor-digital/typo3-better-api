@@ -34,27 +34,6 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 class TcaTable extends AbstractTcaTable {
 	protected const DEFAULT_TCA = [
-		"@sql" => [
-			"additionalColumns" => [
-				"uid"           => "int(11) NOT NULL auto_increment",
-				"t3ver_oid"     => "int(11) DEFAULT '0' NOT NULL",
-				"t3ver_id"      => "int(11) DEFAULT '0' NOT NULL",
-				"t3ver_wsid"    => "int(11) DEFAULT '0' NOT NULL",
-				"t3ver_label"   => "varchar(30) DEFAULT '' NOT NULL",
-				"t3ver_state"   => "tinyint(4) DEFAULT '0' NOT NULL",
-				"t3ver_stage"   => "tinyint(4) DEFAULT '0' NOT NULL",
-				"t3ver_count"   => "int(11) DEFAULT '0' NOT NULL",
-				"t3ver_tstamp"  => "int(11) DEFAULT '0' NOT NULL",
-				"t3ver_move_id" => "int(11) DEFAULT '0' NOT NULL",
-				"t3_origuid"    => "int(11) DEFAULT '0' NOT NULL",
-				"editlock"      => "tinyint(4) DEFAULT '0' NOT NULL",
-				"deleted"       => "tinyint(4) DEFAULT '0' NOT NULL",
-			],
-			"meta"              => [
-				"PRIMARY KEY (`uid`)",
-			],
-		],
-		
 		"ctrl" => [
 			"label"                    => "uid",
 			"hideAtCopy"               => TRUE,
@@ -66,6 +45,7 @@ class TcaTable extends AbstractTcaTable {
 			"editlock"                 => "editlock",
 			"prepentAtCopy"            => "",
 			"transOrigPointerField"    => "l10n_parent",
+			"translationSource"        => "l10n_source",
 			"transOrigDiffSourceField" => "l10n_diffsource",
 			"languageField"            => "sys_language_uid",
 			"enablecolumns"            => [
@@ -79,23 +59,29 @@ class TcaTable extends AbstractTcaTable {
 		
 		"columns"  => [
 			"sys_language_uid" => [
-				"@sql"    => "int(11) DEFAULT '0' NOT NULL",
 				"exclude" => TRUE,
-				"label"   => "LLL:EXT:lang/locallang_general.xlf:LGL.language",
+				"label"   => "LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel",
 				"config"  => [
-					"type"       => "select",
-					"renderType" => "selectSingle",
-					"special"    => "languages",
-					"items"      => [
-						["LLL:EXT:lang/locallang_general.xlf:LGL.allLanguages", -1],
+					"type"                => "select",
+					"renderType"          => "selectSingle",
+					"foreign_table"       => "sys_language",
+					"foreign_table_where" => "ORDER BY sys_language.title",
+					"items"               => [
+						["LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages", -1],
+						["LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.default_value", 0],
+					],
+					"default"             => 0,
+					"fieldWizard"         => [
+						"selectIcons" => [
+							"disabled" => FALSE,
+						],
 					],
 				],
 			],
 			"l10n_parent"      => [
-				"@sql"        => "int(11) DEFAULT '0' NOT NULL",
 				"displayCond" => "FIELD:sys_language_uid:>:0",
 				"exclude"     => TRUE,
-				"label"       => "LLL:EXT:lang/locallang_general.xlf:LGL.l18n_parent",
+				"label"       => "LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent",
 				"config"      => [
 					"type"                => "select",
 					"renderType"          => "selectSingle",
@@ -106,61 +92,58 @@ class TcaTable extends AbstractTcaTable {
 				],
 			],
 			"l10n_diffsource"  => [
-				"@sql"   => "mediumblob NOT NULL",
 				"config" => [
 					"type"    => "passthrough",
 					"default" => "",
 				],
 			],
 			"l10n_source"      => [
-				"@sql"   => "int(11) DEFAULT '0' NOT NULL",
 				"config" => [
 					"type" => "passthrough",
 				],
 			],
 			"hidden"           => [
-				"@sql"    => "tinyint(4) DEFAULT '0' NOT NULL",
 				"exclude" => TRUE,
-				"label"   => "LLL:EXT:lang/locallang_general.xlf:LGL.hidden",
+				"label"   => "LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.visible",
 				"config"  => [
-					"type"    => "check",
-					"default" => 0,
+					"type"       => "check",
+					"renderType" => "checkboxToggle",
+					"items"      => [
+						[
+							0                    => "",
+							1                    => "",
+							"invertStateDisplay" => TRUE,
+						],
+					],
 				],
 			],
 			"cruser_id"        => [
-				"@sql"   => "int(11) DEFAULT '0' NOT NULL",
 				"label"  => "cruser_id",
 				"config" => ["type" => "passthrough"],
 			],
 			"pid"              => [
-				"@sql"   => "int(11) DEFAULT '0' NOT NULL",
 				"label"  => "pid",
 				"config" => ["type" => "passthrough"],
 			],
 			"crdate"           => [
-				"@sql"   => "int(11) DEFAULT '0' NOT NULL",
 				"label"  => "crdate",
 				"config" => ["type" => "passthrough"],
 			],
 			"tstamp"           => [
-				"@sql"   => "int(11) DEFAULT '0' NOT NULL",
 				"label"  => "tstamp",
 				"config" => ["type" => "passthrough"],
 			],
 			"sorting"          => [
-				"@sql"   => "int(11) DEFAULT '0' NOT NULL",
 				"label"  => "sorting",
 				"config" => ["type" => "passthrough"],
 			],
 			"starttime"        => [
-				"@sql"    => "int(11) DEFAULT '0' NOT NULL",
 				"exclude" => TRUE,
-				"label"   => "LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel",
+				"label"   => "LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime",
 				"config"  => [
 					"type"       => "input",
 					"renderType" => "inputDateTime",
-					"size"       => 16,
-					"eval"       => "datetime",
+					"eval"       => "datetime,int",
 					"default"    => 0,
 					"behaviour"  => [
 						"allowLanguageSynchronization" => TRUE,
@@ -168,38 +151,39 @@ class TcaTable extends AbstractTcaTable {
 				],
 			],
 			"endtime"          => [
-				"@sql"    => "int(11) DEFAULT '0' NOT NULL",
 				"exclude" => TRUE,
-				"label"   => "LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel",
+				"label"   => "LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime",
 				"config"  => [
 					"type"       => "input",
 					"renderType" => "inputDateTime",
-					"size"       => 16,
-					"eval"       => "datetime",
+					"eval"       => "datetime,int",
 					"default"    => 0,
+					"range"      => [
+						"upper" => 2208988800,
+					],
 					"behaviour"  => [
 						"allowLanguageSynchronization" => TRUE,
 					],
 				],
 			],
 			"fe_group"         => [
-				"@sql"    => "varchar(100) DEFAULT '0' NOT NULL",
 				"exclude" => TRUE,
-				"label"   => "LLL:EXT:lang/locallang_general.xlf:LGL.fe_group",
+				"label"   => "LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group",
 				"config"  => [
-					"type"                => "select",
-					"renderType"          => "selectMultipleSideBySide",
-					"size"                => 5,
-					"maxitems"            => 20,
-					"items"               =>
+					"type"                             => "select",
+					"renderType"                       => "selectMultipleSideBySide",
+					"size"                             => 5,
+					"maxitems"                         => 20,
+					"items"                            =>
 						[
-							["LLL:EXT:lang/locallang_general.xlf:LGL.hide_at_login", -1],
-							["LLL:EXT:lang/locallang_general.xlf:LGL.any_login", -2],
-							["LLL:EXT:lang/locallang_general.xlf:LGL.usergroups", "--div--"],
+							["LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login", -1],
+							["LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.any_login", -2],
+							["LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.usergroups", "--div--"],
 						],
-					"exclusiveKeys"       => "-1,-2",
-					"foreign_table"       => "fe_groups",
-					"foreign_table_where" => "ORDER BY fe_groups.title",
+					"exclusiveKeys"                    => "-1,-2",
+					"foreign_table"                    => "fe_groups",
+					"foreign_table_where"              => "ORDER BY fe_groups.title",
+					"enableMultiSelectFilterTextfield" => TRUE,
 				],
 			],
 			"t3_origuid"       => [
@@ -209,7 +193,7 @@ class TcaTable extends AbstractTcaTable {
 				],
 			],
 			"t3ver_label"      => [
-				"label"  => " LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel",
+				"label"  => "LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel",
 				"config" => [
 					"max"  => 255,
 					"size" => 30,
@@ -230,13 +214,13 @@ class TcaTable extends AbstractTcaTable {
 		],
 		"palettes" => [
 			"hidden"   => [
-				"showitem" => "hidden;betterApi.field.hidden",
+				"showitem" => "hidden",
 			],
 			"language" => [
-				"showitem" => "sys_language_uid;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel,l10n_parent",
+				"showitem" => "sys_language_uid,l10n_parent",
 			],
 			"access"   => [
-				"showitem" => "starttime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel, endtime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel, --linebreak--, fe_group;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:fe_group_formlabel",
+				"showitem" => "starttime,endtime,--linebreak--,fe_group",
 			],
 		],
 	];
