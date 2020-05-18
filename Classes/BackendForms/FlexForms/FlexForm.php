@@ -374,14 +374,17 @@ class FlexForm extends AbstractForm {
 	 *
 	 * @param ExtConfigContext $context    The ext config context object
 	 * @param string|null      $definition Optional, initial flex form definition
+	 * @param string|null      $tableName  Optional, name of the table to generate the flex form for
 	 *
 	 * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
+	 * @todo Merge this with makeInstance() when putting them into the constructor
 	 */
-	public static function makeStandaloneInstance(ExtConfigContext $context, ?string $definition = NULL): FlexForm {
-		$pseudoTableName = "pseudoFlexFormTable-" . md5(microtime(TRUE));
-		$table = TcaTable::makeInstance($pseudoTableName, $context);
+	public static function makeStandaloneInstance(ExtConfigContext $context, ?string $definition = NULL,
+												  ?string $tableName = NULL): FlexForm {
+		if (is_null($tableName)) $tableName = "pseudoFlexFormTable-" . md5(microtime(TRUE));
+		$table = TcaTable::makeInstance($tableName, $context);
 		$table->getType("default");
-		$flexForm = $table->getField("flexFormField")->getFlexFormConfig()->getForm();
+		$flexForm = $table->getField("flexFormField-" . md5(microtime(TRUE)))->getFlexFormConfig()->getForm();
 		if (!empty($definition)) $flexForm->loadDefinition($definition);
 		else $flexForm->loadDefinition("<T3DataStructure><sheets type='array'></sheets></T3DataStructure>");
 		return $flexForm;

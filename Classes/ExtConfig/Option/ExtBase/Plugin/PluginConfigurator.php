@@ -152,7 +152,7 @@ class PluginConfigurator extends AbstractElementConfigurator {
 		if (!empty($this->flexForm)) return $this->flexForm;
 		
 		// Create new instance
-		$this->flexForm = FlexForm::makeStandaloneInstance($this->context);
+		$this->flexForm = FlexForm::makeStandaloneInstance($this->context, NULL, "tt_content");
 		
 		// Try to load the default definition
 		try {
