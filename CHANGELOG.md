@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.11.2](https://github.com/labor-digital/typo3-better-api/compare/v9.11.1...v9.11.2) (2020-05-18)
+
+
+### Bug Fixes
+
+* **ExtendedReferenceIndex:** fix issue when deleting files ([6bb883e](https://github.com/labor-digital/typo3-better-api/commit/6bb883ee1730aa62e82dd1fb37bd00e8cbf225af))
+
 ### [9.11.1](https://github.com/labor-digital/typo3-better-api/compare/v9.11.0...v9.11.1) (2020-05-12)
 
 
