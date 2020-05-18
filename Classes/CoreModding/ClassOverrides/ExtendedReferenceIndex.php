@@ -44,8 +44,10 @@ class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex 
 		$id = key($this->recordCache);
 		
 		// Allow post processing
+		$hasRow = is_array($row);
+		if (!$hasRow) $row = [];
 		TypoEventBus::getInstance()->dispatch(($e = new RefIndexRecordDataFilterEvent($tableName, $uid, $row)));
-		$this->recordCache[$id] = $e->getRow();
+		if ($hasRow) $this->recordCache[$id] = $e->getRow();
 		
 		// Done
 		return $e->getRow();
