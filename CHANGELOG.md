@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.11.3](https://github.com/labor-digital/typo3-better-api/compare/v9.11.2...v9.11.3) (2020-05-20)
+
+
+### Bug Fixes
+
+* make sure flex form IRRE relations work correctly ([98fb36b](https://github.com/labor-digital/typo3-better-api/commit/98fb36bb31042833abd191cec15d2accab88c1b0))
+
 ### [9.11.2](https://github.com/labor-digital/typo3-better-api/compare/v9.11.1...v9.11.2) (2020-05-18)
 
 
