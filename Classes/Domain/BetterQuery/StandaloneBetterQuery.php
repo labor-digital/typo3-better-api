@@ -150,7 +150,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery {
 	 * @return \Doctrine\DBAL\Driver\Statement|int
 	 */
 	public function update(array $values) {
-		return $this->getQueryBuilder()->update($this->adapter->getTableName())->values($values, TRUE)->execute();
+		$queryBuilder = $this->getQueryBuilder()->update($this->adapter->getTableName());
+		foreach ($values as $column => $value)
+			$queryBuilder->set($column, $value, TRUE);
+		return $queryBuilder->execute();
 	}
 	
 	/**
