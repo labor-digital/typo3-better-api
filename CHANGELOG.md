@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.11.4](https://github.com/labor-digital/typo3-better-api/compare/v9.11.3...v9.11.4) (2020-05-22)
+
+
+### Bug Fixes
+
+* **StandaloneBetterQuery:** make sure the "update()" method sets the arguments correctly for the doctrine query builder ([6c333c6](https://github.com/labor-digital/typo3-better-api/commit/6c333c60951aba9125a4d3ce1a8391e9bb6d2bf7))
+
 ### [9.11.3](https://github.com/labor-digital/typo3-better-api/compare/v9.11.2...v9.11.3) (2020-05-20)
 
 
