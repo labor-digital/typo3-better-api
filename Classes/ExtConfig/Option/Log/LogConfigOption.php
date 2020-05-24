@@ -104,7 +104,7 @@ class LogConfigOption extends AbstractExtConfigOption {
 	protected function prepareLogOptions(array $options, array $additionalDefinition = []): array {
 		return Options::make($options, Arrays::merge([
 			"logLevel"  => [
-				"type"    => "string",
+				"type"    => ["string", "int"],
 				"default" => $this->context->TypoContext->getEnvAspect()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
 				"values"  => [
 					LogLevel::EMERGENCY, LogLevel::ERROR, LogLevel::CRITICAL, LogLevel::WARNING, LogLevel::NOTICE, LogLevel::INFO, LogLevel::DEBUG, LogLevel::ALERT,
@@ -118,7 +118,7 @@ class LogConfigOption extends AbstractExtConfigOption {
 									  Inflector::toCamelCase($this->context->getExtKey()),
 						]));
 				},
-				"filter"  => function ($v) {
+				"filter"  => static function ($v) {
 					return array_filter(explode("\\", $v));
 				},
 			],
@@ -138,7 +138,7 @@ class LogConfigOption extends AbstractExtConfigOption {
 	 *
 	 * @param array $options
 	 */
-	protected function applyLogConfiguration(array $options) {
+	protected function applyLogConfiguration(array $options): void {
 		$config = [
 			"writerConfiguration"    => [
 				$options["logLevel"] => $options["writer"],
