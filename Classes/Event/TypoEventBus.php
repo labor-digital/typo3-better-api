@@ -32,28 +32,34 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Event
  */
-class TypoEventBus extends EventBus implements SingletonInterface {
-	
-	/**
-	 * @var EventBusInterface
-	 */
-	protected static $eventBus;
-	
-	/**
-	 * Returns the event bus instance
-	 * @return \Neunerlei\EventBus\EventBusInterface
-	 */
-	public static function getInstance(): EventBusInterface {
-		return static::$eventBus;
-	}
-	
-	/**
-	 * Internal helper to inject the event bus instance into the class
-	 *
-	 * @param \Neunerlei\EventBus\EventBusInterface $eventBus
-	 */
-	public static function __setInstance(EventBusInterface $eventBus): void {
-		static::$eventBus = $eventBus;
-	}
-	
+class TypoEventBus extends EventBus implements SingletonInterface
+{
+    
+    /**
+     * @var EventBusInterface
+     */
+    protected static $eventBus;
+    
+    /**
+     * Returns the event bus instance
+     *
+     * @return \Neunerlei\EventBus\EventBusInterface
+     */
+    public static function getInstance(): EventBusInterface
+    {
+        return static::$eventBus;
+    }
+    
+    /**
+     * Internal helper to inject the event bus instance into the class
+     *
+     * @param   \Neunerlei\EventBus\EventBusInterface  $eventBus
+     *
+     * @internal
+     */
+    public static function setInstance(EventBusInterface $eventBus): void
+    {
+        static::$eventBus = $eventBus;
+    }
+    
 }

@@ -25,60 +25,69 @@ namespace LaborDigital\Typo3BetterApi\Event\Dispatcher;
 use LaborDigital\Typo3BetterApi\CoreModding\FailsafeWrapper;
 use LaborDigital\Typo3BetterApi\Event\EventException;
 use LaborDigital\Typo3BetterApi\Event\Events\SignalSlotEvent;
+use Neunerlei\EventBus\Dispatcher\EventBusDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
-class TypoDispatcher implements EventDispatcherInterface {
-	
-	/**
-	 * @var EventDispatcherInterface
-	 */
-	protected $lowLevelDispatcher;
-	
-	/**
-	 * @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
-	 */
-	protected $signalSlotDispatcher;
-	
-	/**
-	 * TypoDispatcher constructor.
-	 *
-	 * @param \Psr\EventDispatcher\ListenerProviderInterface $listenerProvider
-	 */
-	public function __construct(ListenerProviderInterface $listenerProvider) {
-		$this->lowLevelDispatcher = new \Crell\Tukio\Dispatcher($listenerProvider);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function dispatch(object $event) {
-		return FailsafeWrapper::handle(function () use ($event) {
-			
-			// Check if we got a signal slot event
-			if ($event instanceof SignalSlotEvent) {
-				// Fail if we don't have the dispatcher yet
-				if (empty($this->signalSlotDispatcher))
-					throw new EventException("You can't emit the signal slot event when the signal slot dispatcher is not loaded!");
-				
-				// Emit the event using the dispatcher
-				$args = $this->signalSlotDispatcher->dispatch($event->getClassName(), $event->getSignalName(), $event->getArgs());
-				$event->setArgs($args);
-				return $event;
-			}
-			
-			// Default handling
-			return $this->lowLevelDispatcher->dispatch($event);
-		});
-	}
-	
-	/**
-	 * Used to inject the signal slot dispatcher after it was instantiated
-	 *
-	 * @param \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $dispatcher
-	 */
-	public function setSignalSlotDispatcher(Dispatcher $dispatcher): void {
-		$this->signalSlotDispatcher = $dispatcher;
-	}
+class TypoDispatcher implements EventDispatcherInterface
+{
+    
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $lowLevelDispatcher;
+    
+    /**
+     * @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+     */
+    protected $signalSlotDispatcher;
+    
+    /**
+     * TypoDispatcher constructor.
+     *
+     * @param   \Psr\EventDispatcher\ListenerProviderInterface  $listenerProvider
+     */
+    public function __construct(ListenerProviderInterface $listenerProvider)
+    {
+        $this->lowLevelDispatcher = new EventBusDispatcher($listenerProvider);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function dispatch(object $event)
+    {
+        return FailsafeWrapper::handle(function () use ($event) {
+            
+            // Check if we got a signal slot event
+            if ($event instanceof SignalSlotEvent) {
+                // Fail if we don't have the dispatcher yet
+                if (empty($this->signalSlotDispatcher)) {
+                    throw new EventException("You can't emit the signal slot event when the signal slot dispatcher is not loaded!");
+                }
+                
+                // Emit the event using the dispatcher
+                $args
+                    = $this->signalSlotDispatcher->dispatch($event->getClassName(),
+                    $event->getSignalName(), $event->getArgs());
+                $event->setArgs($args);
+                
+                return $event;
+            }
+            
+            // Default handling
+            return $this->lowLevelDispatcher->dispatch($event);
+        });
+    }
+    
+    /**
+     * Used to inject the signal slot dispatcher after it was instantiated
+     *
+     * @param   \TYPO3\CMS\Extbase\SignalSlot\Dispatcher  $dispatcher
+     */
+    public function setSignalSlotDispatcher(Dispatcher $dispatcher): void
+    {
+        $this->signalSlotDispatcher = $dispatcher;
+    }
 }
