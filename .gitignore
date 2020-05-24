@@ -4,6 +4,8 @@
 vendor
 docs/node_modules
 
+Tests/Coverage
+
 # IDEA Code Style
 .idea/*
 !.idea/copyright/
