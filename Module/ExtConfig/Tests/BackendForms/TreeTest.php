@@ -10,6 +10,7 @@ use LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractFormTab;
 use LaborDigital\T3BA\ExtConfig\BackendForm\Tree\FormNode;
 use LaborDigital\T3BA\ExtConfig\BackendForm\Tree\FormTree;
 use LaborDigital\T3BA\ExtConfig\BackendForm\Tree\NonUniqueIdException;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,9 +34,11 @@ class TreeTest extends TestCase
 {
     public function testTreeInstantiation()
     {
-        $this->assertIsObject($this->getTree());
-        $this->assertIsObject($this->getTree()->getDefaultNode());
-        $this->assertTrue($this->getTree()->getRootNode()->isRoot());
+        $tree = $this->getTree();
+        $this->assertIsObject($tree);
+        $this->assertIsObject($tree->getDefaultNode());
+        $this->assertTrue($tree->getRootNode()->isRoot());
+        $this->assertSame($tree, $tree->getRootNode()->getTree());
     }
     
     public function provideTestNodeGenerationAndSimpleRetrievalData(): array
@@ -463,7 +466,10 @@ class TreeTest extends TestCase
         
         $container = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
         
+        $this->assertFalse($tree->hasConfiguredDefaultNode());
+        
         $tree->setDefaultNode($container);
+        $this->assertTrue($tree->hasConfiguredDefaultNode());
         $this->assertSame($container, $tree->getDefaultNode());
         
         $field = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
@@ -474,6 +480,7 @@ class TreeTest extends TestCase
         
         $tree->setDefaultNode(null);
         $this->assertSame($tree->getNode(0), $tree->getDefaultNode());
+        $this->assertFalse($tree->hasConfiguredDefaultNode());
         
         $field = $tree->makeNewNode('c', FormNode::TYPE_FIELD);
         $this->assertSame($tree->getNode(0), $field->getParent());
@@ -542,8 +549,8 @@ class TreeTest extends TestCase
     public function testSetAndGetEl()
     {
         $tree   = $this->getTree();
-        $mockEl = $this->getMockForAbstractClass(AbstractFormField::class);
         $node   = $tree->makeNewNode('el', FormNode::TYPE_FIELD);
+        $mockEl = $this->getMockForAbstractClass(AbstractFormField::class, [$node, $tree->getForm(), []]);
         $node->setEl($mockEl);
         $this->assertSame($mockEl, $node->getEl());
     }
@@ -551,8 +558,9 @@ class TreeTest extends TestCase
     protected function getTree(): FormTree
     {
         /** @var mixed $form */
-        $form     = $this->getMockForAbstractClass(AbstractForm::class);
-        $tabClass = get_class($this->getMockForAbstractClass(AbstractFormTab::class));
+        $context  = $this->getMockBuilder(ExtConfigContext::class)->disableOriginalConstructor()->getMock();
+        $form     = $this->getMockForAbstractClass(AbstractForm::class, [$context]);
+        $tabClass = get_class($this->getMockForAbstractClass(AbstractFormTab::class, [], '', false));
         
         return new FormTree($form, $tabClass);
     }

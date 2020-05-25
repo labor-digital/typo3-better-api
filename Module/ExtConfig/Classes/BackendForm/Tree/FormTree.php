@@ -22,6 +22,7 @@ namespace LaborDigital\T3BA\ExtConfig\BackendForm\Tree;
 
 use InvalidArgumentException;
 use LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractForm;
+use LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractFormTab;
 
 class FormTree
 {
@@ -74,6 +75,16 @@ class FormTree
         $this->form     = $form;
         $this->tabClass = $tabClass;
         $this->root     = new FormNode('root', FormNode::TYPE_ROOT, $this);
+    }
+    
+    /**
+     * Returns the linked form instance
+     *
+     * @return \LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractForm
+     */
+    public function getForm(): AbstractForm
+    {
+        return $this->form;
     }
     
     /**
@@ -130,7 +141,6 @@ class FormTree
     {
         // Check if we got a specific request
         if ($type !== null) {
-            
             // Special handling for container ids
             if ($type === FormNode::TYPE_CONTAINER) {
                 return $this->nodes[$type][$id] ?? $this->nodes[$type]['_' . $id] ?? null;
@@ -262,7 +272,6 @@ class FormTree
         int $insertMode,
         FormNode $pivotNode
     ): void {
-        
         // Ignore if the node to move is the pivot node -> this is wrong
         if ($nodeToMove === $pivotNode) {
             return;
@@ -339,6 +348,16 @@ class FormTree
     }
     
     /**
+     * Returns true if there is a default node configured, false if not
+     *
+     * @return bool
+     */
+    public function hasConfiguredDefaultNode(): bool
+    {
+        return $this->defaultNode !== null;
+    }
+    
+    /**
      * Sets the node to which all new nodes will be automatically added
      *
      * @param   \LaborDigital\T3BA\ExtConfig\BackendForm\Tree\FormNode|null  $node
@@ -367,7 +386,11 @@ class FormTree
         // Make sure we have at least a single tab
         if (empty($this->nodes[FormNode::TYPE_TAB])) {
             $node = $this->makeNewNode(0, FormNode::TYPE_TAB);
-            $node->setEl(new $this->tabClass($this->form, $node));
+            $tab  = new $this->tabClass($node, $this->form);
+            if ($tab instanceof AbstractFormTab) {
+                $tab->setLabel('betterApi.tab.general');
+            }
+            $node->setEl($tab);
         }
         
         // Return the last possible tab

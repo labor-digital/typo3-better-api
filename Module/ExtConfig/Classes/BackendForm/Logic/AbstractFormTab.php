@@ -22,4 +22,6 @@ namespace LaborDigital\T3BA\ExtConfig\BackendForm\Logic;
 
 abstract class AbstractFormTab extends AbstractFormElement
 {
+    use FormElementContainingTrait;
+    use FormElementContainingTrait;
 }

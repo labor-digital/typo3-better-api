@@ -98,6 +98,16 @@ class FormNode
     }
     
     /**
+     * Returns the tree this node is a part of
+     *
+     * @return \LaborDigital\T3BA\ExtConfig\BackendForm\Tree\FormTree
+     */
+    public function getTree(): FormTree
+    {
+        return $this->tree;
+    }
+    
+    /**
      * Returns the linked logic element represented by this node
      *
      * @return \LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractFormElement|mixed
@@ -240,7 +250,6 @@ class FormNode
         int $insertMode,
         ?FormNode $pivotNode = null
     ): void {
-        
         // Update the node's parent
         $node->getParent()->removeChild($node);
         $node->setParent($this);

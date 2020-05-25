@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -15,13 +14,16 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.24 at 11:35
+ * Last modified: 2020.05.25 at 23:52
  */
 
-namespace LaborDigital\T3BA\ExtConfig\BackendForm\Logic;
+declare(strict_types=1);
 
-abstract class AbstractFormContainer extends AbstractFormElement
+
+namespace LaborDigital\T3BA\ExtConfig;
+
+use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext as LegacyExtConfigContext;
+
+class ExtConfigContext extends LegacyExtConfigContext
 {
-    use FormElementContainingTrait;
-    use FormElementContainingTrait;
 }
