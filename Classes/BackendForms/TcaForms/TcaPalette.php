@@ -19,20 +19,19 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\TcaForms;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormContainer;
 
-class TcaPalette extends AbstractFormContainer {
-	
-	use LayoutMetaTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function setLabel(?string $label) {
-		// Make sure the label get's printed when the showItem string is build
-		$this->layoutMeta[0] = $label;
-		return parent::setLabel($label);
-	}
-	
+class TcaPalette extends AbstractFormContainer
+{
+    use LayoutMetaTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public function setLabel(?string $label)
+    {
+        // Make sure the label get's printed when the showItem string is build
+        $this->layoutMeta[0] = $label;
+        return parent::setLabel($label);
+    }
 }

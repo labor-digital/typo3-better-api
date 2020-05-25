@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\FileAndFolder\TempFs;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class TempFsException extends BetterApiException {
-	
+class TempFsException extends BetterApiException
+{
 }

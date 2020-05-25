@@ -17,23 +17,23 @@
  * Last modified: 2020.03.16 at 15:55
  */
 
-if (php_sapi_name() !== "cli"){
-	if($_GET["pass"] !== "labor"){
-		header("location: /");
-		exit();
-	}
+if (php_sapi_name() !== 'cli') {
+    if ($_GET['pass'] !== 'labor') {
+        header('location: /');
+        exit();
+    }
 }
 
 // Clear apcu cache
-if (function_exists("apcu_clear_cache")) {
-	apcu_clear_cache();
-	echo "Cleared APCU Cache" . PHP_EOL;
+if (function_exists('apcu_clear_cache')) {
+    apcu_clear_cache();
+    echo 'Cleared APCU Cache' . PHP_EOL;
 }
 
 // Clear apc cache
-if (function_exists("apc_clear_cache")) {
-	apc_clear_cache();
-	apc_clear_cache("user");
-	apc_clear_cache("opcode");
-	echo "Cleared APC Cache" . PHP_EOL;
+if (function_exists('apc_clear_cache')) {
+    apc_clear_cache();
+    apc_clear_cache('user');
+    apc_clear_cache('opcode');
+    echo 'Cleared APC Cache' . PHP_EOL;
 }

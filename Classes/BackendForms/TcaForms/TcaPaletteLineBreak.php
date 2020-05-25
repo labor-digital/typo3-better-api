@@ -21,6 +21,6 @@ namespace LaborDigital\Typo3BetterApi\BackendForms\TcaForms;
 
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormElement;
 
-class TcaPaletteLineBreak extends AbstractFormElement {
-	
+class TcaPaletteLineBreak extends AbstractFormElement
+{
 }

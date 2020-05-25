@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendPreview;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class BackendPreviewException extends BetterApiException {
-	
+class BackendPreviewException extends BetterApiException
+{
 }

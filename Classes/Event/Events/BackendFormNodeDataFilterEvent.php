@@ -32,55 +32,61 @@ use Neunerlei\Arrays\Arrays;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormNodeDataFilterEvent {
-	/**
-	 * The configuration data for the filtered form node
-	 * @var array
-	 */
-	protected $data;
-	
-	/**
-	 * BackendFormNodeDataFilterEvent constructor.
-	 *
-	 * @param array $data
-	 */
-	public function __construct(array $data) {
-		$this->data = $data;
-	}
-	
-	/**
-	 * Returns the configuration data for the filtered form node
-	 * @return array
-	 */
-	public function getData(): array {
-		return $this->data;
-	}
-	
-	/**
-	 * Sets the configuration data for the filtered form node
-	 *
-	 * @param array $data
-	 *
-	 * @return BackendFormNodeDataFilterEvent
-	 */
-	public function setData(array $data): BackendFormNodeDataFilterEvent {
-		$this->data = $data;
-		return $this;
-	}
-	
-	/**
-	 * Returns the name of the node type we should filter
-	 * @return string|null
-	 */
-	public function getType(): ?string {
-		return Arrays::getPath($this->data, "parameterArray.fieldConf.config.type");
-	}
-	
-	/**
-	 * Returns the render type of the node we should filter
-	 * @return string|null
-	 */
-	public function getRenderType(): ?string {
-		return $this->data["renderType"];
-	}
+class BackendFormNodeDataFilterEvent
+{
+    /**
+     * The configuration data for the filtered form node
+     * @var array
+     */
+    protected $data;
+    
+    /**
+     * BackendFormNodeDataFilterEvent constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
+    
+    /**
+     * Returns the configuration data for the filtered form node
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
+    }
+    
+    /**
+     * Sets the configuration data for the filtered form node
+     *
+     * @param array $data
+     *
+     * @return BackendFormNodeDataFilterEvent
+     */
+    public function setData(array $data): BackendFormNodeDataFilterEvent
+    {
+        $this->data = $data;
+        return $this;
+    }
+    
+    /**
+     * Returns the name of the node type we should filter
+     * @return string|null
+     */
+    public function getType(): ?string
+    {
+        return Arrays::getPath($this->data, 'parameterArray.fieldConf.config.type');
+    }
+    
+    /**
+     * Returns the render type of the node we should filter
+     * @return string|null
+     */
+    public function getRenderType(): ?string
+    {
+        return $this->data['renderType'];
+    }
 }

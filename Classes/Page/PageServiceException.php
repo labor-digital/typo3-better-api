@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\Page;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class PageServiceException extends BetterApiException {
-	
+class PageServiceException extends BetterApiException
+{
 }

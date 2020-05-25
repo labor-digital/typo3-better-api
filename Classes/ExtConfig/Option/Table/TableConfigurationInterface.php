@@ -19,22 +19,21 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Table;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface TableConfigurationInterface {
-	
-	/**
-	 * Use this to modify the given $table object, to configure the matching tca
-	 *
-	 * @param TcaTable         $table      The object representing the table you want to modify
-	 * @param ExtConfigContext $context    The context you are currently working in
-	 * @param bool             $isOverride True if this is called as table override. False if this is called as new
-	 *                                     table registration
-	 *
-	 * @return void
-	 */
-	public static function configureTable(TcaTable $table, ExtConfigContext $context, bool $isOverride): void;
-	
+interface TableConfigurationInterface
+{
+    
+    /**
+     * Use this to modify the given $table object, to configure the matching tca
+     *
+     * @param TcaTable         $table      The object representing the table you want to modify
+     * @param ExtConfigContext $context    The context you are currently working in
+     * @param bool             $isOverride True if this is called as table override. False if this is called as new
+     *                                     table registration
+     *
+     * @return void
+     */
+    public static function configureTable(TcaTable $table, ExtConfigContext $context, bool $isOverride): void;
 }

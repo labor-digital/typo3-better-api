@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Dispatcher;
 
-
 use LaborDigital\Typo3BetterApi\CoreModding\FailsafeWrapper;
 use LaborDigital\Typo3BetterApi\Event\EventException;
 use LaborDigital\Typo3BetterApi\Event\Events\SignalSlotEvent;
@@ -64,13 +63,16 @@ class TypoDispatcher implements EventDispatcherInterface
             if ($event instanceof SignalSlotEvent) {
                 // Fail if we don't have the dispatcher yet
                 if (empty($this->signalSlotDispatcher)) {
-                    throw new EventException("You can't emit the signal slot event when the signal slot dispatcher is not loaded!");
+                    throw new EventException('You can\'t emit the signal slot event when the signal slot dispatcher is not loaded!');
                 }
                 
                 // Emit the event using the dispatcher
                 $args
-                    = $this->signalSlotDispatcher->dispatch($event->getClassName(),
-                    $event->getSignalName(), $event->getArgs());
+                    = $this->signalSlotDispatcher->dispatch(
+                        $event->getClassName(),
+                        $event->getSignalName(),
+                        $event->getArgs()
+                    );
                 $event->setArgs($args);
                 
                 return $event;

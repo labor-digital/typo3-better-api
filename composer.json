@@ -16,9 +16,13 @@
         ],
         "test-phpunit": "vendor/bin/phpunit --colors=always --coverage-html Tests/Coverage",
         "test-php-cs-fixer": [
+            "vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --dry-run ./HookExtension/",
+            "vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --dry-run ./Classes/",
             "vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --dry-run ./Module/"
         ],
-        "run-php-cs-fixer": [
+        "php-cs-fixer": [
+            "vendor/bin/php-cs-fixer fix --config=.php_cs --verbose ./HookExtension/",
+            "vendor/bin/php-cs-fixer fix --config=.php_cs --verbose ./Classes/",
             "vendor/bin/php-cs-fixer fix --config=.php_cs --verbose ./Module/"
         ]
     },

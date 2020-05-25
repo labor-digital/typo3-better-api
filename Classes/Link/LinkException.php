@@ -19,13 +19,12 @@
 
 namespace LaborDigital\Typo3BetterApi\Link;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
 /**
  * Class LinkException
  * @package LaborDigital\Typo3BetterApi\LinkService
  */
-class LinkException extends BetterApiException {
-	
+class LinkException extends BetterApiException
+{
 }

@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionHandlerInterface as BackendActionHandlerInterfaceAlias;
 
 /**
@@ -32,62 +31,65 @@ use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionHandlerInterface as
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormActionPostProcessorEvent {
-	
-	/**
-	 * The instance of the context that was used by the applied callbacks
-	 * @var object
-	 */
-	protected $context;
-	
-	/**
-	 * The instance of the backend action handler class that was applied
-	 * @var object
-	 */
-	protected $handler;
-	
-	/**
-	 * The type of stack we should find the handlers for
-	 * @var string
-	 */
-	protected $stackType;
-	
-	/**
-	 * BackendFormActionPostProcessorEvent constructor.
-	 *
-	 * @param object $context
-	 * @param object $handler
-	 * @param string $stackType
-	 */
-	public function __construct(object $context, object $handler, string $stackType) {
-		$this->context = $context;
-		$this->handler = $handler;
-		$this->stackType = $stackType;
-	}
-	
-	/**
-	 * Returns the instance of the context that was used by the applied callbacks
-	 * @return object
-	 */
-	public function getContext(): object {
-		return $this->context;
-	}
-	
-	/**
-	 * Returns the instance of the backend action handler class that was applied
-	 * @return BackendActionHandlerInterfaceAlias
-	 */
-	public function getHandler(): object {
-		return $this->handler;
-	}
-	
-	/**
-	 * Returns the type of stack we should find the handlers for
-	 * @return string
-	 */
-	public function getStackType(): string {
-		return $this->stackType;
-	}
-	
-	
+class BackendFormActionPostProcessorEvent
+{
+    
+    /**
+     * The instance of the context that was used by the applied callbacks
+     * @var object
+     */
+    protected $context;
+    
+    /**
+     * The instance of the backend action handler class that was applied
+     * @var object
+     */
+    protected $handler;
+    
+    /**
+     * The type of stack we should find the handlers for
+     * @var string
+     */
+    protected $stackType;
+    
+    /**
+     * BackendFormActionPostProcessorEvent constructor.
+     *
+     * @param object $context
+     * @param object $handler
+     * @param string $stackType
+     */
+    public function __construct(object $context, object $handler, string $stackType)
+    {
+        $this->context = $context;
+        $this->handler = $handler;
+        $this->stackType = $stackType;
+    }
+    
+    /**
+     * Returns the instance of the context that was used by the applied callbacks
+     * @return object
+     */
+    public function getContext(): object
+    {
+        return $this->context;
+    }
+    
+    /**
+     * Returns the instance of the backend action handler class that was applied
+     * @return BackendActionHandlerInterfaceAlias
+     */
+    public function getHandler(): object
+    {
+        return $this->handler;
+    }
+    
+    /**
+     * Returns the type of stack we should find the handlers for
+     * @return string
+     */
+    public function getStackType(): string
+    {
+        return $this->stackType;
+    }
 }

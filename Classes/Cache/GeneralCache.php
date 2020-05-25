@@ -19,7 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\Cache;
 
-class GeneralCache extends AbstractCache {
-	protected $cacheEnabled   = TRUE;
-	protected $cacheConfigKey = "ba_cache_general";
+class GeneralCache extends AbstractCache
+{
+    protected $cacheEnabled   = true;
+    protected $cacheConfigKey = 'ba_cache_general';
 }

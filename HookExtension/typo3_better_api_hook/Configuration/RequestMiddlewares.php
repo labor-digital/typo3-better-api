@@ -19,7 +19,7 @@
 
 // Harmony event dispatching
 return (function () {
-	$bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
-	$bus->dispatch(($e = new \LaborDigital\Typo3BetterApi\Event\Events\MiddlewareRegistrationEvent()));
-	return $e->getMiddlewares();
+    $bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
+    $bus->dispatch(($e = new \LaborDigital\Typo3BetterApi\Event\Events\MiddlewareRegistrationEvent()));
+    return $e->getMiddlewares();
 })();

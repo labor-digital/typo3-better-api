@@ -19,7 +19,7 @@
 
 // Harmony event dispatching
 (function () {
-	$bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
-	$bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\LoadExtLocalConfIfTcaIsRequiredWithoutItEvent());
-	$bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\TcaWithoutOverridesLoadedEvent());
+    $bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
+    $bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\LoadExtLocalConfIfTcaIsRequiredWithoutItEvent());
+    $bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\TcaWithoutOverridesLoadedEvent());
 })();

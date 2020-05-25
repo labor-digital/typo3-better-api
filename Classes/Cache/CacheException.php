@@ -21,6 +21,6 @@ namespace LaborDigital\Typo3BetterApi\Cache;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class CacheException extends BetterApiException {
-	
+class CacheException extends BetterApiException
+{
 }

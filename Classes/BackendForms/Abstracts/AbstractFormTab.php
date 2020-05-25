@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\Abstracts;
 
-
-abstract class AbstractFormTab extends AbstractFormContainer {
-
+abstract class AbstractFormTab extends AbstractFormContainer
+{
 }

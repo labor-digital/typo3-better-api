@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class ExtConfigException extends BetterApiException {
-	
+class ExtConfigException extends BetterApiException
+{
 }

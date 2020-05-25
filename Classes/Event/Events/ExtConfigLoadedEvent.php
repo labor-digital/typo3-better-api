@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
 /**
@@ -30,27 +29,30 @@ use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
  * Dispatched after the ext config classes have been processed
  * @package LaborDigital\Typo3BetterApi\ExtConfig\Event
  */
-class ExtConfigLoadedEvent {
-	/**
-	 * The context instance that is passed between the ext config classes
-	 * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
-	 */
-	protected $context;
-	
-	/**
-	 * ExtConfigLoadedEvent constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
-	 */
-	public function __construct(ExtConfigContext $context) {
-		$this->context = $context;
-	}
-	
-	/**
-	 * Returns the context instance that is passed between the ext config classes
-	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
-	 */
-	public function getContext(): ExtConfigContext {
-		return $this->context;
-	}
+class ExtConfigLoadedEvent
+{
+    /**
+     * The context instance that is passed between the ext config classes
+     * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
+     */
+    protected $context;
+    
+    /**
+     * ExtConfigLoadedEvent constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     */
+    public function __construct(ExtConfigContext $context)
+    {
+        $this->context = $context;
+    }
+    
+    /**
+     * Returns the context instance that is passed between the ext config classes
+     * @return \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
+     */
+    public function getContext(): ExtConfigContext
+    {
+        return $this->context;
+    }
 }

@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\FlexForms;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormTab;
 
-class FlexTab extends AbstractFormTab {
-	
+class FlexTab extends AbstractFormTab
+{
 }

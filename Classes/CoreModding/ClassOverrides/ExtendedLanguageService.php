@@ -19,18 +19,19 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-
 use LaborDigital\Typo3BetterApi\Translation\TranslationLabelProvider;
 use TYPO3\CMS\Core\Localization\BetterApiClassOverrideCopy__LanguageService;
 
-class ExtendedLanguageService extends BetterApiClassOverrideCopy__LanguageService {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function sL($input) {
-		return TranslationLabelProvider::provideLabelFor($input, function ($input) {
-			return parent::sL($input);
-		});
-	}
+class ExtendedLanguageService extends BetterApiClassOverrideCopy__LanguageService
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public function sL($input)
+    {
+        return TranslationLabelProvider::provideLabelFor($input, function ($input) {
+            return parent::sL($input);
+        });
+    }
 }

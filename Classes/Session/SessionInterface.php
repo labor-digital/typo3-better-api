@@ -19,45 +19,44 @@
 
 namespace LaborDigital\Typo3BetterApi\Session;
 
-
 interface SessionInterface
 {
-	/**
-	 * Returns true if the given path exists in the current session
-	 *
-	 * @param string $path An Arrays::getPath() compatible selector path
-	 *
-	 * @return bool
-	 */
-	public function has(string $path): bool;
-	
-	/**
-	 * Returns either the value for the given path or null, if it does not exist
-	 * Will return the whole session data if null is given as path
-	 *
-	 * @param string|null $path    An Arrays::getPath() compatible selector path
-	 * @param null|mixed  $default An optional default value to be returned if the value does not exist
-	 *
-	 * @return mixed|null
-	 */
-	public function get(string $path = NULL, $default = NULL);
-	
-	/**
-	 * Sets the given value for the path
-	 *
-	 * @param string $path  An Arrays::getPath() compatible selector path
-	 * @param mixed  $value The value to set for the path
-	 *
-	 * @return $this
-	 */
-	public function set(string $path, $value);
-	
-	/**
-	 * Removes a given path from the session.
-	 *
-	 * @param string $path An Arrays::getPath() compatible selector path
-	 *
-	 * @return $this
-	 */
-	public function remove(string $path);
+    /**
+     * Returns true if the given path exists in the current session
+     *
+     * @param string $path An Arrays::getPath() compatible selector path
+     *
+     * @return bool
+     */
+    public function has(string $path): bool;
+    
+    /**
+     * Returns either the value for the given path or null, if it does not exist
+     * Will return the whole session data if null is given as path
+     *
+     * @param string|null $path    An Arrays::getPath() compatible selector path
+     * @param null|mixed  $default An optional default value to be returned if the value does not exist
+     *
+     * @return mixed|null
+     */
+    public function get(string $path = null, $default = null);
+    
+    /**
+     * Sets the given value for the path
+     *
+     * @param string $path  An Arrays::getPath() compatible selector path
+     * @param mixed  $value The value to set for the path
+     *
+     * @return $this
+     */
+    public function set(string $path, $value);
+    
+    /**
+     * Removes a given path from the session.
+     *
+     * @param string $path An Arrays::getPath() compatible selector path
+     *
+     * @return $this
+     */
+    public function remove(string $path);
 }

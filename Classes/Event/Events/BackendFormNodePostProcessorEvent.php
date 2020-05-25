@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\Traits\BackendFormNodeEventTrait;
 
 /**
@@ -32,6 +31,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\Traits\BackendFormNodeEventTrait;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormNodePostProcessorEvent {
-	use BackendFormNodeEventTrait;
+class BackendFormNodePostProcessorEvent
+{
+    use BackendFormNodeEventTrait;
 }

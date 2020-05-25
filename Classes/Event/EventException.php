@@ -21,9 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class EventException extends BetterApiException {
-	
+class EventException extends BetterApiException
+{
 }

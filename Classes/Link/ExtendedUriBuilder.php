@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\Link;
 
-
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -30,17 +29,20 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  *
  * @package LaborDigital\Typo3BetterApi\LinkService
  */
-class ExtendedUriBuilder extends UriBuilder {
-	
-	public function setContentObject(ContentObjectRenderer $cObject) {
-		$this->contentObject = $cObject;
-	}
-	
-	public function hasContentObject(): bool {
-		return !empty($this->contentObject);
-	}
-	
-	public function getContentObject(): ContentObjectRenderer {
-		return $this->contentObject;
-	}
+class ExtendedUriBuilder extends UriBuilder
+{
+    public function setContentObject(ContentObjectRenderer $cObject)
+    {
+        $this->contentObject = $cObject;
+    }
+    
+    public function hasContentObject(): bool
+    {
+        return !empty($this->contentObject);
+    }
+    
+    public function getContentObject(): ContentObjectRenderer
+    {
+        return $this->contentObject;
+    }
 }

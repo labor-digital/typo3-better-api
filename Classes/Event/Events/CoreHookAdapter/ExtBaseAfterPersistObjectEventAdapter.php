@@ -21,23 +21,26 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtBaseAfterPersistObjectEvent;
 use TYPO3\CMS\Extbase\Persistence\Generic\Backend;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
-class ExtBaseAfterPersistObjectEventAdapter extends AbstractCoreHookEventAdapter {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		TypoContainer::getInstance()->get(Dispatcher::class)->connect(
-			Backend::class, "afterPersistObject", function ($object) {
-			static::$bus->dispatch(($e = new ExtBaseAfterPersistObjectEvent($object)));
-			return [$e->getObject()];
-		});
-	}
-	
+class ExtBaseAfterPersistObjectEventAdapter extends AbstractCoreHookEventAdapter
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        TypoContainer::getInstance()->get(Dispatcher::class)->connect(
+            Backend::class,
+            'afterPersistObject',
+            function ($object) {
+                static::$bus->dispatch(($e = new ExtBaseAfterPersistObjectEvent($object)));
+                return [$e->getObject()];
+            }
+        );
+    }
 }

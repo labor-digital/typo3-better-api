@@ -31,32 +31,35 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class MiddlewareRegistrationEvent {
-	
-	/**
-	 * The list of middlewares that were collected by this event
-	 * @var array
-	 */
-	protected $middlewares = [];
-	
-	/**
-	 * Returns the list of all currently gathered middlewares
-	 * @return array
-	 */
-	public function getMiddlewares(): array {
-		return $this->middlewares;
-	}
-	
-	/**
-	 * Updates the list of all currently gathered middlewares.
-	 * The format is equivalent to the default configuration format you know from TYPO3
-	 *
-	 * @param array $middlewares
-	 *
-	 * @return MiddlewareRegistrationEvent
-	 */
-	public function setMiddlewares(array $middlewares): MiddlewareRegistrationEvent {
-		$this->middlewares = $middlewares;
-		return $this;
-	}
+class MiddlewareRegistrationEvent
+{
+    
+    /**
+     * The list of middlewares that were collected by this event
+     * @var array
+     */
+    protected $middlewares = [];
+    
+    /**
+     * Returns the list of all currently gathered middlewares
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+    
+    /**
+     * Updates the list of all currently gathered middlewares.
+     * The format is equivalent to the default configuration format you know from TYPO3
+     *
+     * @param array $middlewares
+     *
+     * @return MiddlewareRegistrationEvent
+     */
+    public function setMiddlewares(array $middlewares): MiddlewareRegistrationEvent
+    {
+        $this->middlewares = $middlewares;
+        return $this;
+    }
 }

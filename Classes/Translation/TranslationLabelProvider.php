@@ -19,57 +19,64 @@
 
 namespace LaborDigital\Typo3BetterApi\Translation;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 
-class TranslationLabelProvider {
-	
-	/**
-	 * Stores all requested labels to speed up subsequent requests
-	 * @var array
-	 */
-	protected static $labelCache = [];
-	
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\Translation\TranslationService
-	 */
-	protected static $translator;
-	
-	/**
-	 * Bridge for the translation service, used in the core modding classes
-	 *
-	 * @param          $input
-	 * @param callable $translationProvider
-	 *
-	 * @return mixed
-	 */
-	public static function provideLabelFor($input, callable $translationProvider) {
-		
-		// Ignore if the input is not a string
-		if (!is_string($input)) return $translationProvider($input);
-		$input = trim($input);
-		
-		// Skip events and override resolution if we already resolved this label
-		if (isset(static::$labelCache[$input]))
-			return static::$labelCache[$input] === TRUE ?
-				$translationProvider($input) : $translationProvider(static::$labelCache[$input]);
-		
-		// Resolve our label
-		$inputRaw = $input;
-		$input = static::getTranslator()->getTranslationKeyMaybe($input);
-		static::$labelCache[$input] = $inputRaw === $input ? TRUE : $input;
-		
-		// Do the translation
-		return $translationProvider($input);
-	}
-	
-	/**
-	 * Returns the translator instance
-	 * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
-	 */
-	protected static function getTranslator(): TranslationService {
-		if (!empty(static::$translator)) return static::$translator;
-		return static::$translator = TypoContainer::getInstance()->get(TranslationService::class);
-	}
+class TranslationLabelProvider
+{
+    
+    /**
+     * Stores all requested labels to speed up subsequent requests
+     * @var array
+     */
+    protected static $labelCache = [];
+    
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\Translation\TranslationService
+     */
+    protected static $translator;
+    
+    /**
+     * Bridge for the translation service, used in the core modding classes
+     *
+     * @param          $input
+     * @param callable $translationProvider
+     *
+     * @return mixed
+     */
+    public static function provideLabelFor($input, callable $translationProvider)
+    {
+        
+        // Ignore if the input is not a string
+        if (!is_string($input)) {
+            return $translationProvider($input);
+        }
+        $input = trim($input);
+        
+        // Skip events and override resolution if we already resolved this label
+        if (isset(static::$labelCache[$input])) {
+            return static::$labelCache[$input] === true ?
+                $translationProvider($input) : $translationProvider(static::$labelCache[$input]);
+        }
+        
+        // Resolve our label
+        $inputRaw = $input;
+        $input = static::getTranslator()->getTranslationKeyMaybe($input);
+        static::$labelCache[$input] = $inputRaw === $input ? true : $input;
+        
+        // Do the translation
+        return $translationProvider($input);
+    }
+    
+    /**
+     * Returns the translator instance
+     * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
+     */
+    protected static function getTranslator(): TranslationService
+    {
+        if (!empty(static::$translator)) {
+            return static::$translator;
+        }
+        return static::$translator = TypoContainer::getInstance()->get(TranslationService::class);
+    }
 }

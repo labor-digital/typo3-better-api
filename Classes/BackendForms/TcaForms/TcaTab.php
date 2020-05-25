@@ -21,7 +21,7 @@ namespace LaborDigital\Typo3BetterApi\BackendForms\TcaForms;
 
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormTab;
 
-class TcaTab extends AbstractFormTab {
-	
-	use LayoutMetaTrait;
+class TcaTab extends AbstractFormTab
+{
+    use LayoutMetaTrait;
 }

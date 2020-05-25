@@ -19,60 +19,64 @@
 
 namespace LaborDigital\Typo3BetterApi\Domain\ExtendedRelation;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
-class ExtendedRelationQueryResult extends QueryResult {
-	
-	/**
-	 * The settings for the extended relation service
-	 * @var array
-	 */
-	protected $settings;
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService
-	 */
-	protected $extendedRelationService;
-	
-	/**
-	 * @param \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService $extendedRelationService
-	 */
-	public function injectExtendedRelationService(ExtendedRelationService $extendedRelationService) {
-		$this->extendedRelationService = $extendedRelationService;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function initialize() {
-		$this->extendedRelationService->runWithRelationSettings($this->settings, function () {
-			parent::initialize();
-		});
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getFirst() {
-		return $this->extendedRelationService->runWithRelationSettings($this->settings, function () {
-			return parent::getFirst();
-		});
-	}
-	
-	/**
-	 * Factory method to create a new instance of myself
-	 *
-	 * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $result
-	 * @param array                                               $settings
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationQueryResult
-	 */
-	public static function makeInstance(QueryResultInterface $result, array $settings): ExtendedRelationQueryResult {
-		$self = TypoContainer::getInstance()->get(static::class, ["args" => [$result->getQuery()]]);
-		$self->settings = $settings;
-		return $self;
-	}
+class ExtendedRelationQueryResult extends QueryResult
+{
+    
+    /**
+     * The settings for the extended relation service
+     * @var array
+     */
+    protected $settings;
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService
+     */
+    protected $extendedRelationService;
+    
+    /**
+     * @param \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService $extendedRelationService
+     */
+    public function injectExtendedRelationService(ExtendedRelationService $extendedRelationService)
+    {
+        $this->extendedRelationService = $extendedRelationService;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function initialize()
+    {
+        $this->extendedRelationService->runWithRelationSettings($this->settings, function () {
+            parent::initialize();
+        });
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getFirst()
+    {
+        return $this->extendedRelationService->runWithRelationSettings($this->settings, function () {
+            return parent::getFirst();
+        });
+    }
+    
+    /**
+     * Factory method to create a new instance of myself
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $result
+     * @param array                                               $settings
+     *
+     * @return \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationQueryResult
+     */
+    public static function makeInstance(QueryResultInterface $result, array $settings): ExtendedRelationQueryResult
+    {
+        $self = TypoContainer::getInstance()->get(static::class, ['args' => [$result->getQuery()]]);
+        $self->settings = $settings;
+        return $self;
+    }
 }

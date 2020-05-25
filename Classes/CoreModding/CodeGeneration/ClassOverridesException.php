@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\CodeGeneration;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class ClassOverridesException extends BetterApiException {
-	
+class ClassOverridesException extends BetterApiException
+{
 }

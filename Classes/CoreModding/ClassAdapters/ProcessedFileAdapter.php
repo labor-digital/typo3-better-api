@@ -19,31 +19,33 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters;
 
-
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 
-class ProcessedFileAdapter extends ProcessedFile {
-	
-	/**
-	 * Internal helper to inject additional properties into processed files
-	 *
-	 * @param \TYPO3\CMS\Core\Resource\ProcessedFile $file
-	 * @param string                                 $key
-	 * @param                                        $value
-	 */
-	public static function injectProperty(ProcessedFile $file, string $key, $value) {
-		$file->properties[$key] = $value;
-	}
-	
-	/**
-	 * Extracts a single property from a processed file ignoring the original file completely
-	 *
-	 * @param \TYPO3\CMS\Core\Resource\ProcessedFile $file
-	 * @param string                                 $key
-	 *
-	 * @return mixed
-	 */
-	public static function getRawProperty(ProcessedFile $file, string $key) {
-		return $file->properties[$key];
-	}
+class ProcessedFileAdapter extends ProcessedFile
+{
+    
+    /**
+     * Internal helper to inject additional properties into processed files
+     *
+     * @param \TYPO3\CMS\Core\Resource\ProcessedFile $file
+     * @param string                                 $key
+     * @param                                        $value
+     */
+    public static function injectProperty(ProcessedFile $file, string $key, $value)
+    {
+        $file->properties[$key] = $value;
+    }
+    
+    /**
+     * Extracts a single property from a processed file ignoring the original file completely
+     *
+     * @param \TYPO3\CMS\Core\Resource\ProcessedFile $file
+     * @param string                                 $key
+     *
+     * @return mixed
+     */
+    public static function getRawProperty(ProcessedFile $file, string $key)
+    {
+        return $file->properties[$key];
+    }
 }

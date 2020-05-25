@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
-
 use LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
@@ -33,90 +32,99 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  * @property SiteFinder $SiteFinder
  * @deprecated will be removed in v10 -> Use SiteFacet instead
  */
-class SiteAspect implements AspectInterface {
-	use AutomaticAspectGetTrait;
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
-	 */
-	protected $facet;
-	
-	/**
-	 * SiteAspect constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet $facet
-	 */
-	public function __construct(SiteFacet $facet) {
-		$this->facet = $facet;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function get(string $name) {
-		if ($name === "FACET") return $this->facet;
-		return $this->handleGet($name);
-	}
-	
-	/**
-	 * Returns the instance of the current site
-	 *
-	 * @return \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite
-	 * @throws \TYPO3\CMS\Core\Exception\SiteNotFoundException
-	 * @deprecated will be removed in v10 -> Use SiteFacet instead
-	 */
-	public function getSite() {
-		return $this->facet->get();
-	}
-	
-	/**
-	 * Returns true if the site has been set
-	 * @return bool
-	 * @deprecated will be removed in v10 -> Use SiteFacet instead
-	 */
-	public function hasSite(): bool {
-		return $this->facet->exists();
-	}
-	
-	/**
-	 * Sets the instance of a site to the given object
-	 *
-	 * @param \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite $site
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
-	 * @throws \LaborDigital\Typo3BetterApi\BetterApiException
-	 * @deprecated will be removed in v10 -> Use SiteFacet instead
-	 */
-	public function setSite($site): SiteAspect {
-		$this->facet->set($site);
-		return $this;
-	}
-	
-	/**
-	 * Sets the site by it's identifier.
-	 *
-	 * @param string $identifier
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
-	 * @deprecated will be removed in v10 -> Use SiteFacet instead
-	 */
-	public function setSiteTo(string $identifier): SiteAspect {
-		$this->facet->setTo($identifier);
-		return $this;
-	}
-	
-	/**
-	 * Sets the site by a pid.
-	 *
-	 * @param string|int $pid      Either the numeric PID or a PID selector
-	 * @param array|null $rootLine An optional rootLine to traverse
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
-	 * @deprecated will be removed in v10 -> Use SiteFacet instead
-	 */
-	public function setSiteToPid($pid, ?array $rootLine = NULL): SiteAspect {
-		$this->facet->setToPid($pid, $rootLine);
-		return $this;
-	}
-	
+class SiteAspect implements AspectInterface
+{
+    use AutomaticAspectGetTrait;
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
+     */
+    protected $facet;
+    
+    /**
+     * SiteAspect constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet $facet
+     */
+    public function __construct(SiteFacet $facet)
+    {
+        $this->facet = $facet;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function get(string $name)
+    {
+        if ($name === 'FACET') {
+            return $this->facet;
+        }
+        return $this->handleGet($name);
+    }
+    
+    /**
+     * Returns the instance of the current site
+     *
+     * @return \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite
+     * @throws \TYPO3\CMS\Core\Exception\SiteNotFoundException
+     * @deprecated will be removed in v10 -> Use SiteFacet instead
+     */
+    public function getSite()
+    {
+        return $this->facet->get();
+    }
+    
+    /**
+     * Returns true if the site has been set
+     * @return bool
+     * @deprecated will be removed in v10 -> Use SiteFacet instead
+     */
+    public function hasSite(): bool
+    {
+        return $this->facet->exists();
+    }
+    
+    /**
+     * Sets the instance of a site to the given object
+     *
+     * @param \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite $site
+     *
+     * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
+     * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+     * @deprecated will be removed in v10 -> Use SiteFacet instead
+     */
+    public function setSite($site): SiteAspect
+    {
+        $this->facet->set($site);
+        return $this;
+    }
+    
+    /**
+     * Sets the site by it's identifier.
+     *
+     * @param string $identifier
+     *
+     * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
+     * @deprecated will be removed in v10 -> Use SiteFacet instead
+     */
+    public function setSiteTo(string $identifier): SiteAspect
+    {
+        $this->facet->setTo($identifier);
+        return $this;
+    }
+    
+    /**
+     * Sets the site by a pid.
+     *
+     * @param string|int $pid      Either the numeric PID or a PID selector
+     * @param array|null $rootLine An optional rootLine to traverse
+     *
+     * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
+     * @deprecated will be removed in v10 -> Use SiteFacet instead
+     */
+    public function setSiteToPid($pid, ?array $rootLine = null): SiteAspect
+    {
+        $this->facet->setToPid($pid, $rootLine);
+        return $this;
+    }
 }

@@ -19,6 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\Cache;
 
-class InvalidFileBasedCacheException extends CacheException {
-	
+class InvalidFileBasedCacheException extends CacheException
+{
 }

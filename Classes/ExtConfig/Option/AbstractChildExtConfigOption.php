@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 
 /**
@@ -29,35 +28,38 @@ use LaborDigital\Typo3BetterApi\Container\TypoContainer;
  *
  * @package LaborDigital\Typo3BetterApi\ExtConfig\Option
  */
-abstract class AbstractChildExtConfigOption extends AbstractExtConfigOption {
-	
-	/**
-	 * The parent config option
-	 * @var \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
-	 */
-	protected $parent;
-	
-	/**
-	 * Returns the parent object of this child configuration option
-	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
-	 */
-	public function getParent(): AbstractExtConfigOption {
-		return $this->parent;
-	}
-	
-	/**
-	 * Used by the parent option to create a new instance of this option class
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption $parent
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractChildExtConfigOption
-	 */
-	public static function makeInstance(AbstractExtConfigOption $parent): AbstractChildExtConfigOption {
-		$i = TypoContainer::getInstance()->get(static::class);
-		$parent->makeCacheFileName("foo");
-		$i->parent = $parent;
-		$i->setContext($parent->context);
-		$parent->context->EventBus->addSubscriber($i);
-		return $i;
-	}
+abstract class AbstractChildExtConfigOption extends AbstractExtConfigOption
+{
+    
+    /**
+     * The parent config option
+     * @var \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
+     */
+    protected $parent;
+    
+    /**
+     * Returns the parent object of this child configuration option
+     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
+     */
+    public function getParent(): AbstractExtConfigOption
+    {
+        return $this->parent;
+    }
+    
+    /**
+     * Used by the parent option to create a new instance of this option class
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption $parent
+     *
+     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractChildExtConfigOption
+     */
+    public static function makeInstance(AbstractExtConfigOption $parent): AbstractChildExtConfigOption
+    {
+        $i = TypoContainer::getInstance()->get(static::class);
+        $parent->makeCacheFileName('foo');
+        $i->parent = $parent;
+        $i->setContext($parent->context);
+        $parent->context->EventBus->addSubscriber($i);
+        return $i;
+    }
 }

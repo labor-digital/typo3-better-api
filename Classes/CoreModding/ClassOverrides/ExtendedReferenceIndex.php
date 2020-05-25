@@ -19,37 +19,44 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\RefIndexRecordDataFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Core\Database\BetterApiClassOverrideCopy__ReferenceIndex;
 
-class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex {
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function getRecordRawCached(string $tableName, int $uid) {
-		
-		// Store the current cache list length to detect changes
-		$listLength = count($this->recordCache);
-		$row = parent::getRecordRawCached($tableName, $uid);
-		$listLengthNow = count($this->recordCache);
-		
-		// Detect changes
-		if ($listLength === $listLengthNow) return $row;
-		
-		// Get changed id
-		end($this->recordCache);
-		$id = key($this->recordCache);
-		
-		// Allow post processing
-		$hasRow = is_array($row);
-		if (!$hasRow) $row = [];
-		TypoEventBus::getInstance()->dispatch(($e = new RefIndexRecordDataFilterEvent($tableName, $uid, $row)));
-		if ($hasRow) $this->recordCache[$id] = $e->getRow();
-		
-		// Done
-		return $e->getRow();
-	}
+class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex
+{
+    
+    /**
+     * @inheritDoc
+     */
+    protected function getRecordRawCached(string $tableName, int $uid)
+    {
+        
+        // Store the current cache list length to detect changes
+        $listLength = count($this->recordCache);
+        $row = parent::getRecordRawCached($tableName, $uid);
+        $listLengthNow = count($this->recordCache);
+        
+        // Detect changes
+        if ($listLength === $listLengthNow) {
+            return $row;
+        }
+        
+        // Get changed id
+        end($this->recordCache);
+        $id = key($this->recordCache);
+        
+        // Allow post processing
+        $hasRow = is_array($row);
+        if (!$hasRow) {
+            $row = [];
+        }
+        TypoEventBus::getInstance()->dispatch(($e = new RefIndexRecordDataFilterEvent($tableName, $uid, $row)));
+        if ($hasRow) {
+            $this->recordCache[$id] = $e->getRow();
+        }
+        
+        // Done
+        return $e->getRow();
+    }
 }

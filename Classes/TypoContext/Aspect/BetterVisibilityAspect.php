@@ -19,91 +19,100 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
-
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Context\VisibilityAspect;
 
-class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface {
-	use AutomaticAspectGetTrait;
-	
-	/**
-	 * @var TypoContext
-	 */
-	protected $context;
-	
-	/**
-	 * Inject the typo context instance
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
-	 */
-	public function injectContext(TypoContext $context) {
-		$this->context = $context;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function get(string $name) {
-		return $this->handleGet($name);
-	}
-	
-	/**
-	 * @param bool $includeHiddenPages
-	 *
-	 * @return BetterVisibilityAspect
-	 */
-	public function setIncludeHiddenPages(bool $includeHiddenPages): BetterVisibilityAspect {
-		$this->getRootVisibilityAspect()->includeHiddenPages = $includeHiddenPages;
-		return $this;
-	}
-	
-	/**
-	 * @param bool $includeHiddenContent
-	 *
-	 * @return BetterVisibilityAspect
-	 */
-	public function setIncludeHiddenContent(bool $includeHiddenContent): BetterVisibilityAspect {
-		$this->getRootVisibilityAspect()->includeHiddenContent = $includeHiddenContent;
-		return $this;
-	}
-	
-	/**
-	 * @param bool $includeDeletedRecords
-	 *
-	 * @return BetterVisibilityAspect
-	 */
-	public function setIncludeDeletedRecords(bool $includeDeletedRecords): BetterVisibilityAspect {
-		$this->getRootVisibilityAspect()->includeDeletedRecords = $includeDeletedRecords;
-		return $this;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function includeHiddenPages(): bool {
-		return $this->getRootVisibilityAspect()->includeHiddenPages();
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function includeHiddenContent(): bool {
-		return $this->getRootVisibilityAspect()->includeHiddenContent();
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function includeDeletedRecords(): bool {
-		return $this->getRootVisibilityAspect()->includeDeletedRecords();
-	}
-	
-	/**
-	 * Returns the root context's visibility aspect
-	 * @return \TYPO3\CMS\Core\Context\VisibilityAspect|mixed
-	 */
-	public function getRootVisibilityAspect(): VisibilityAspect {
-		return $this->context->getRootContext()->getAspect("visibility");
-	}
+class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
+{
+    use AutomaticAspectGetTrait;
+    
+    /**
+     * @var TypoContext
+     */
+    protected $context;
+    
+    /**
+     * Inject the typo context instance
+     *
+     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     */
+    public function injectContext(TypoContext $context)
+    {
+        $this->context = $context;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function get(string $name)
+    {
+        return $this->handleGet($name);
+    }
+    
+    /**
+     * @param bool $includeHiddenPages
+     *
+     * @return BetterVisibilityAspect
+     */
+    public function setIncludeHiddenPages(bool $includeHiddenPages): BetterVisibilityAspect
+    {
+        $this->getRootVisibilityAspect()->includeHiddenPages = $includeHiddenPages;
+        return $this;
+    }
+    
+    /**
+     * @param bool $includeHiddenContent
+     *
+     * @return BetterVisibilityAspect
+     */
+    public function setIncludeHiddenContent(bool $includeHiddenContent): BetterVisibilityAspect
+    {
+        $this->getRootVisibilityAspect()->includeHiddenContent = $includeHiddenContent;
+        return $this;
+    }
+    
+    /**
+     * @param bool $includeDeletedRecords
+     *
+     * @return BetterVisibilityAspect
+     */
+    public function setIncludeDeletedRecords(bool $includeDeletedRecords): BetterVisibilityAspect
+    {
+        $this->getRootVisibilityAspect()->includeDeletedRecords = $includeDeletedRecords;
+        return $this;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function includeHiddenPages(): bool
+    {
+        return $this->getRootVisibilityAspect()->includeHiddenPages();
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function includeHiddenContent(): bool
+    {
+        return $this->getRootVisibilityAspect()->includeHiddenContent();
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function includeDeletedRecords(): bool
+    {
+        return $this->getRootVisibilityAspect()->includeDeletedRecords();
+    }
+    
+    /**
+     * Returns the root context's visibility aspect
+     * @return \TYPO3\CMS\Core\Context\VisibilityAspect|mixed
+     */
+    public function getRootVisibilityAspect(): VisibilityAspect
+    {
+        return $this->context->getRootContext()->getAspect('visibility');
+    }
 }

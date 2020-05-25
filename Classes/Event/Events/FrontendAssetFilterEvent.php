@@ -32,14 +32,15 @@ use LaborDigital\Typo3BetterApi\Event\Events\Traits\AssetEventTrait;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class FrontendAssetFilterEvent implements CoreHookEventInterface {
-	use AssetEventTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAdapterClass(): string {
-		return AssetFilterEventAdapter::class;
-	}
-	
+class FrontendAssetFilterEvent implements CoreHookEventInterface
+{
+    use AssetEventTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getAdapterClass(): string
+    {
+        return AssetFilterEventAdapter::class;
+    }
 }

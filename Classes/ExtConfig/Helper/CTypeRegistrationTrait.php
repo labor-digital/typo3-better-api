@@ -19,75 +19,79 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Helper;
 
-
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
-trait CTypeRegistrationTrait {
-	
-	/**
-	 * A mostly internal helper that is used to inject a given list of elements as cTypes in the tt_content TCA array
-	 *
-	 * @param array $tca      the TCA array
-	 * @param array $elements A list of arrays that hold four values each.
-	 *                        The values are [$sectionLabel, $title, $signature, $icon]
-	 */
-	protected function registerCTypesForElements(array &$tca, array $elements): void {
-		// Get the correct slot in the tca
-		$itemList = Arrays::getPath($tca, ["tt_content", "columns", "CType", "config", "items"], []);
-		
-		// Build the section list from all entries
-		$sectionList = [];
-		$options = [];
-		foreach (array_reverse($itemList) as $k => $item) {
-			if ($item[1] === "--div--") {
-				$sectionId = Inflector::toUuid($item[0]);
-				$sectionList[$sectionId] = [
-					"item"    => $item,
-					"options" => array_reverse($options),
-				];
-				$options = [];
-				continue;
-			}
-			$options[] = $item;
-		}
-		$sectionList = array_reverse($sectionList);
-		
-		// Process the elements
-		foreach ($elements as $element) {
-			// Prepare the input
-			[$sectionLabel, $title, $signature, $icon] = array_values($element);
-			
-			// Find the section id
-			$sectionId = Inflector::toUuid($sectionLabel);
-			
-			// Create a new section if it does not exist
-			if (!isset($sectionList[$sectionId])) {
-				$sectionList[$sectionId] = [
-					"item"    => [
-						$sectionLabel,
-						"--div--",
-					],
-					"options" => [],
-				];
-			}
-			
-			// Create the element
-			$sectionList[$sectionId]["options"][] = [
-				$title,
-				$signature,
-				$icon,
-			];
-		}
-		
-		// Rebuild the list
-		$newItemList = [];
-		foreach ($sectionList as $section) {
-			if (empty($section["options"])) continue;
-			$newItemList[] = $section["item"];
-			foreach ($section["options"] as $option)
-				$newItemList[] = $option;
-		}
-		$tca = Arrays::setPath($tca, ["tt_content", "columns", "CType", "config", "items"], $newItemList);
-	}
+trait CTypeRegistrationTrait
+{
+    
+    /**
+     * A mostly internal helper that is used to inject a given list of elements as cTypes in the tt_content TCA array
+     *
+     * @param array $tca      the TCA array
+     * @param array $elements A list of arrays that hold four values each.
+     *                        The values are [$sectionLabel, $title, $signature, $icon]
+     */
+    protected function registerCTypesForElements(array &$tca, array $elements): void
+    {
+        // Get the correct slot in the tca
+        $itemList = Arrays::getPath($tca, ['tt_content', 'columns', 'CType', 'config', 'items'], []);
+        
+        // Build the section list from all entries
+        $sectionList = [];
+        $options = [];
+        foreach (array_reverse($itemList) as $k => $item) {
+            if ($item[1] === '--div--') {
+                $sectionId = Inflector::toUuid($item[0]);
+                $sectionList[$sectionId] = [
+                    'item'    => $item,
+                    'options' => array_reverse($options),
+                ];
+                $options = [];
+                continue;
+            }
+            $options[] = $item;
+        }
+        $sectionList = array_reverse($sectionList);
+        
+        // Process the elements
+        foreach ($elements as $element) {
+            // Prepare the input
+            [$sectionLabel, $title, $signature, $icon] = array_values($element);
+            
+            // Find the section id
+            $sectionId = Inflector::toUuid($sectionLabel);
+            
+            // Create a new section if it does not exist
+            if (!isset($sectionList[$sectionId])) {
+                $sectionList[$sectionId] = [
+                    'item'    => [
+                        $sectionLabel,
+                        '--div--',
+                    ],
+                    'options' => [],
+                ];
+            }
+            
+            // Create the element
+            $sectionList[$sectionId]['options'][] = [
+                $title,
+                $signature,
+                $icon,
+            ];
+        }
+        
+        // Rebuild the list
+        $newItemList = [];
+        foreach ($sectionList as $section) {
+            if (empty($section['options'])) {
+                continue;
+            }
+            $newItemList[] = $section['item'];
+            foreach ($section['options'] as $option) {
+                $newItemList[] = $option;
+            }
+        }
+        $tca = Arrays::setPath($tca, ['tt_content', 'columns', 'CType', 'config', 'items'], $newItemList);
+    }
 }

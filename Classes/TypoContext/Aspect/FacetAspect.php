@@ -19,32 +19,33 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
-
 use LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 
-class FacetAspect implements AspectInterface {
-	
-	/**
-	 * The linked facet
-	 * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface
-	 */
-	protected $facet;
-	
-	/**
-	 * FacetAspect constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface $facet
-	 */
-	public function __construct(FacetInterface $facet) {
-		$this->facet = $facet;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function get(?string $name = NULL) {
-		return $this->facet;
-	}
-	
+class FacetAspect implements AspectInterface
+{
+    
+    /**
+     * The linked facet
+     * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface
+     */
+    protected $facet;
+    
+    /**
+     * FacetAspect constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface $facet
+     */
+    public function __construct(FacetInterface $facet)
+    {
+        $this->facet = $facet;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function get(?string $name = null)
+    {
+        return $this->facet;
+    }
 }

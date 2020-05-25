@@ -22,7 +22,8 @@ namespace LaborDigital\Typo3BetterApi\BackendForms\CustomWizard;
 use LaborDigital\Typo3BetterApi\BackendForms\CustomElements\SharedCustomElementTrait;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 
-abstract class AbstractCustomWizard implements CustomWizardInterface {
-	use SharedCustomElementTrait;
-	use CommonServiceLocatorTrait;
+abstract class AbstractCustomWizard implements CustomWizardInterface
+{
+    use SharedCustomElementTrait;
+    use CommonServiceLocatorTrait;
 }

@@ -19,25 +19,24 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface CachedStackGeneratorInterface {
-	
-	/**
-	 * Should generate the element to be cached out of the given configuration classes
-	 *
-	 * The result of this method MUST be serializable!
-	 *
-	 * @param array                   $stack               The collected registration/override stack to iterate over
-	 * @param ExtConfigContext        $context             The current ext config context object
-	 * @param array                   $additionalArguments Additional arguments that may have been passed by the
-	 *                                                     outside world when the cached value was requested
-	 * @param AbstractExtConfigOption $option              The ext config option object that required this generator to
-	 *                                                     run
-	 *
-	 * @return mixed
-	 */
-	public function generate(array $stack, ExtConfigContext $context, array $additionalArguments, $option);
-	
+interface CachedStackGeneratorInterface
+{
+    
+    /**
+     * Should generate the element to be cached out of the given configuration classes
+     *
+     * The result of this method MUST be serializable!
+     *
+     * @param array                   $stack               The collected registration/override stack to iterate over
+     * @param ExtConfigContext        $context             The current ext config context object
+     * @param array                   $additionalArguments Additional arguments that may have been passed by the
+     *                                                     outside world when the cached value was requested
+     * @param AbstractExtConfigOption $option              The ext config option object that required this generator to
+     *                                                     run
+     *
+     * @return mixed
+     */
+    public function generate(array $stack, ExtConfigContext $context, array $additionalArguments, $option);
 }

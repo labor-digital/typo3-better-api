@@ -19,19 +19,18 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface ModuleConfigurationInterface {
-	
-	/**
-	 * Is used to configure a single ext base backend module.
-	 *
-	 * @param ModuleConfigurator $configurator
-	 * @param ExtConfigContext   $context
-	 *
-	 * @return mixed
-	 */
-	public static function configureModule(ModuleConfigurator $configurator, ExtConfigContext $context);
-	
+interface ModuleConfigurationInterface
+{
+    
+    /**
+     * Is used to configure a single ext base backend module.
+     *
+     * @param ModuleConfigurator $configurator
+     * @param ExtConfigContext   $context
+     *
+     * @return mixed
+     */
+    public static function configureModule(ModuleConfigurator $configurator, ExtConfigContext $context);
 }

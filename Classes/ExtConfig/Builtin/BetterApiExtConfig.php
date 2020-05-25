@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Builtin;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\FormPresets\Builtin\BasicFieldPreset;
 use LaborDigital\Typo3BetterApi\BackendForms\FormPresets\Builtin\CustomElementPreset;
 use LaborDigital\Typo3BetterApi\BackendForms\FormPresets\Builtin\InputFieldPreset;
@@ -45,57 +44,58 @@ use LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationSyncCommand;
 use LaborDigital\Typo3BetterApi\Translation\TranslationConfigOption;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigOption;
 
-class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterface {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function configure(ExtConfigOptionList $configurator, ExtConfigContext $context) {
-		
-		// Register translation
-		$configurator->translation()->registerContext("betterApi");
-		
-		// Register commands
-		$configurator->backend()->registerCommand(TranslationSyncCommand::class);
-		
-		// Register middlewares
-		$configurator->http()
-			->registerMiddleware(RequestCollectorMiddleware::class, "frontend", [
-				"after"  => "typo3/cms-frontend/site",
-				"before" => "typo3/cms-frontend/base-redirect-resolver",
-			])
-			->registerMiddleware(RequestCollectorMiddleware::class, "backend", [
-				"after" => "typo3/cms-backend/site-resolver",
-			]);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function extendExtConfig(ExtConfigExtensionRegistry $extender, ExtConfigContext $context) {
-		// Register extension handlers
-		$extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET, $context->getInstanceOf(FieldPresetApplierTraitGenerator::class));
-		$extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY, $context->getInstanceOf(ExtConfigOptionTraitGenerator::class));
-		
-		// Register default presets
-		$extender->registerFieldPreset(BasicFieldPreset::class);
-		$extender->registerFieldPreset(CustomElementPreset::class);
-		$extender->registerFieldPreset(InputFieldPreset::class);
-		$extender->registerFieldPreset(RelationPreset::class);
-		
-		// Register default options
-		$extender->registerOptionListEntry(LinkAndPidOption::class);
-		$extender->registerOptionListEntry(EventConfigOption::class);
-		$extender->registerOptionListEntry(TranslationConfigOption::class);
-		$extender->registerOptionListEntry(TypoScriptConfigOption::class);
-		$extender->registerOptionListEntry(CoreConfigOption::class);
-		$extender->registerOptionListEntry(FluidConfigOption::class);
-		$extender->registerOptionListEntry(BackendConfigOption::class);
-		$extender->registerOptionListEntry(TableOption::class);
-		$extender->registerOptionListEntry(ExtBaseOption::class);
-		$extender->registerOptionListEntry(LogConfigOption::class);
-		$extender->registerOptionListEntry(HttpConfigOption::class);
-	}
-	
-	
+class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterface
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public function configure(ExtConfigOptionList $configurator, ExtConfigContext $context)
+    {
+        
+        // Register translation
+        $configurator->translation()->registerContext('betterApi');
+        
+        // Register commands
+        $configurator->backend()->registerCommand(TranslationSyncCommand::class);
+        
+        // Register middlewares
+        $configurator->http()
+            ->registerMiddleware(RequestCollectorMiddleware::class, 'frontend', [
+                'after'  => 'typo3/cms-frontend/site',
+                'before' => 'typo3/cms-frontend/base-redirect-resolver',
+            ])
+            ->registerMiddleware(RequestCollectorMiddleware::class, 'backend', [
+                'after' => 'typo3/cms-backend/site-resolver',
+            ]);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function extendExtConfig(ExtConfigExtensionRegistry $extender, ExtConfigContext $context)
+    {
+        // Register extension handlers
+        $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET, $context->getInstanceOf(FieldPresetApplierTraitGenerator::class));
+        $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY, $context->getInstanceOf(ExtConfigOptionTraitGenerator::class));
+        
+        // Register default presets
+        $extender->registerFieldPreset(BasicFieldPreset::class);
+        $extender->registerFieldPreset(CustomElementPreset::class);
+        $extender->registerFieldPreset(InputFieldPreset::class);
+        $extender->registerFieldPreset(RelationPreset::class);
+        
+        // Register default options
+        $extender->registerOptionListEntry(LinkAndPidOption::class);
+        $extender->registerOptionListEntry(EventConfigOption::class);
+        $extender->registerOptionListEntry(TranslationConfigOption::class);
+        $extender->registerOptionListEntry(TypoScriptConfigOption::class);
+        $extender->registerOptionListEntry(CoreConfigOption::class);
+        $extender->registerOptionListEntry(FluidConfigOption::class);
+        $extender->registerOptionListEntry(BackendConfigOption::class);
+        $extender->registerOptionListEntry(TableOption::class);
+        $extender->registerOptionListEntry(ExtBaseOption::class);
+        $extender->registerOptionListEntry(LogConfigOption::class);
+        $extender->registerOptionListEntry(HttpConfigOption::class);
+    }
 }

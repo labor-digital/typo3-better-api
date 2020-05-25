@@ -29,67 +29,73 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ExtConfigExtendableFeatureFilterEvent {
-	/**
-	 * The list of all registered ext config extendable feature definition classes
-	 * @var array
-	 */
-	protected $registeredExtensions;
-	
-	/**
-	 * The list of registered extension handlers by their extension type
-	 * @var \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionHandlerInterface[]
-	 */
-	protected $handlers;
-	
-	/**
-	 * ExtConfigExtendableFeatureFilterEvent constructor.
-	 *
-	 * @param array $registeredExtensions
-	 * @param array $handlers
-	 */
-	public function __construct(array $registeredExtensions, array $handlers) {
-		$this->registeredExtensions = $registeredExtensions;
-		$this->handlers = $handlers;
-	}
-	
-	/**
-	 * Returns the list of all registered ext config extendable feature definition classes
-	 * @return array
-	 */
-	public function getRegisteredExtensions(): array {
-		return $this->registeredExtensions;
-	}
-	
-	/**
-	 * Can be used to update the list of all registered ext config extendable feature definition classes
-	 *
-	 * @param array $registeredExtensions
-	 *
-	 * @return ExtConfigExtendableFeatureFilterEvent
-	 */
-	public function setRegisteredExtensions(array $registeredExtensions): ExtConfigExtendableFeatureFilterEvent {
-		$this->registeredExtensions = $registeredExtensions;
-		return $this;
-	}
-	
-	/**
-	 * Returns the list of registered extension handlers by their extension type
-	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionHandlerInterface[]
-	 */
-	public function getHandlers(): array {
-		return $this->handlers;
-	}
-	
-	/**
-	 * Can be used to modify the list of registered extension handlers by their extension type
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionHandlerInterface[] $handlers
-	 *
-	 * @return ExtConfigExtendableFeatureFilterEvent
-	 */
-	public function setHandlers(array $handlers): ExtConfigExtendableFeatureFilterEvent {
-		$this->handlers = $handlers;
-		return $this;
-	}
+class ExtConfigExtendableFeatureFilterEvent
+{
+    /**
+     * The list of all registered ext config extendable feature definition classes
+     * @var array
+     */
+    protected $registeredExtensions;
+    
+    /**
+     * The list of registered extension handlers by their extension type
+     * @var \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionHandlerInterface[]
+     */
+    protected $handlers;
+    
+    /**
+     * ExtConfigExtendableFeatureFilterEvent constructor.
+     *
+     * @param array $registeredExtensions
+     * @param array $handlers
+     */
+    public function __construct(array $registeredExtensions, array $handlers)
+    {
+        $this->registeredExtensions = $registeredExtensions;
+        $this->handlers = $handlers;
+    }
+    
+    /**
+     * Returns the list of all registered ext config extendable feature definition classes
+     * @return array
+     */
+    public function getRegisteredExtensions(): array
+    {
+        return $this->registeredExtensions;
+    }
+    
+    /**
+     * Can be used to update the list of all registered ext config extendable feature definition classes
+     *
+     * @param array $registeredExtensions
+     *
+     * @return ExtConfigExtendableFeatureFilterEvent
+     */
+    public function setRegisteredExtensions(array $registeredExtensions): ExtConfigExtendableFeatureFilterEvent
+    {
+        $this->registeredExtensions = $registeredExtensions;
+        return $this;
+    }
+    
+    /**
+     * Returns the list of registered extension handlers by their extension type
+     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionHandlerInterface[]
+     */
+    public function getHandlers(): array
+    {
+        return $this->handlers;
+    }
+    
+    /**
+     * Can be used to modify the list of registered extension handlers by their extension type
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionHandlerInterface[] $handlers
+     *
+     * @return ExtConfigExtendableFeatureFilterEvent
+     */
+    public function setHandlers(array $handlers): ExtConfigExtendableFeatureFilterEvent
+    {
+        $this->handlers = $handlers;
+        return $this;
+    }
 }

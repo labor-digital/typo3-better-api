@@ -19,15 +19,16 @@
 
 namespace LaborDigital\Typo3BetterApi\Cache;
 
-class FrontendCache extends AbstractCache {
-	
-	protected $cacheConfigKey = "ba_cache_frontend";
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function prepareKey($key): string {
-		$key = parent::prepareKey($key);
-		return $key . "fe-" . $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId();
-	}
+class FrontendCache extends AbstractCache
+{
+    protected $cacheConfigKey = 'ba_cache_frontend';
+    
+    /**
+     * @inheritDoc
+     */
+    protected function prepareKey($key): string
+    {
+        $key = parent::prepareKey($key);
+        return $key . 'fe-' . $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId();
+    }
 }

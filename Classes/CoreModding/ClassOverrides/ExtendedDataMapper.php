@@ -24,17 +24,22 @@ use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\BetterApiClassOverrideCopy__DataMapper;
 
-class ExtendedDataMapper extends BetterApiClassOverrideCopy__DataMapper {
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function getPreparedQuery(DomainObjectInterface $parentObject, $propertyName, $fieldValue = '') {
-		$query = parent::getPreparedQuery($parentObject, $propertyName, $fieldValue);
-		TypoEventBus::getInstance()->dispatch(($e = new DataMapperQueryFilterEvent(
-			$query, $parentObject, $propertyName, $fieldValue, $this->getType(get_class($parentObject), $propertyName)
-		)));
-		return $e->getQuery();
-	}
-	
+class ExtendedDataMapper extends BetterApiClassOverrideCopy__DataMapper
+{
+    
+    /**
+     * @inheritDoc
+     */
+    protected function getPreparedQuery(DomainObjectInterface $parentObject, $propertyName, $fieldValue = '')
+    {
+        $query = parent::getPreparedQuery($parentObject, $propertyName, $fieldValue);
+        TypoEventBus::getInstance()->dispatch(($e = new DataMapperQueryFilterEvent(
+            $query,
+            $parentObject,
+            $propertyName,
+            $fieldValue,
+            $this->getType(get_class($parentObject), $propertyName)
+        )));
+        return $e->getQuery();
+    }
 }

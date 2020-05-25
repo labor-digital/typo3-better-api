@@ -19,19 +19,18 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface LinkSetConfigurationInterface {
-	
-	/**
-	 * Is used to collect the link sets this configuration provides
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector $collector
-	 * @param ExtConfigContext                                                         $context
-	 *
-	 * @return mixed
-	 */
-	public static function configureLinkSets(LinkSetCollector $collector, ExtConfigContext $context);
-	
+interface LinkSetConfigurationInterface
+{
+    
+    /**
+     * Is used to collect the link sets this configuration provides
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector $collector
+     * @param ExtConfigContext                                                         $context
+     *
+     * @return mixed
+     */
+    public static function configureLinkSets(LinkSetCollector $collector, ExtConfigContext $context);
 }

@@ -21,59 +21,63 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\Traits;
 
-
-trait BackendFormFilterEventTrait {
-	
-	/**
-	 * The name of the table that the current form applies to
-	 * @var string
-	 */
-	protected $tableName;
-	
-	/**
-	 * The data to be filtered
-	 * @var array
-	 */
-	protected $data;
-	
-	
-	/**
-	 * BackendFormFilterEvent constructor.
-	 *
-	 * @param string $tableName
-	 * @param array  $data
-	 */
-	public function __construct(string $tableName, array $data) {
-		$this->tableName = $tableName;
-		$this->data = $data;
-	}
-	
-	/**
-	 * Returns the name of the table that the current form applies to
-	 * @return string
-	 */
-	public function getTableName(): string {
-		return $this->tableName;
-	}
-	
-	
-	/**
-	 * Returns the data to be filtered
-	 * @return array
-	 */
-	public function getData(): array {
-		return $this->data;
-	}
-	
-	/**
-	 * Updates the data to be filtered
-	 *
-	 * @param array $data
-	 *
-	 * @return object
-	 */
-	public function setData(array $data) {
-		$this->data = $data;
-		return $this;
-	}
+trait BackendFormFilterEventTrait
+{
+    
+    /**
+     * The name of the table that the current form applies to
+     * @var string
+     */
+    protected $tableName;
+    
+    /**
+     * The data to be filtered
+     * @var array
+     */
+    protected $data;
+    
+    
+    /**
+     * BackendFormFilterEvent constructor.
+     *
+     * @param string $tableName
+     * @param array  $data
+     */
+    public function __construct(string $tableName, array $data)
+    {
+        $this->tableName = $tableName;
+        $this->data = $data;
+    }
+    
+    /**
+     * Returns the name of the table that the current form applies to
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+    
+    
+    /**
+     * Returns the data to be filtered
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
+    }
+    
+    /**
+     * Updates the data to be filtered
+     *
+     * @param array $data
+     *
+     * @return object
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
+        return $this;
+    }
 }

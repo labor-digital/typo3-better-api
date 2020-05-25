@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterEvent;
 use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
 use TYPO3\CMS\Backend\Form\FormDataProvider\InlineOverrideChildTca;
@@ -29,27 +28,32 @@ use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsRemoveUnused;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaGroup;
 use TYPO3\CMS\Backend\Form\FormDataProviderInterface;
 
-class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface {
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["formEngine"]["formDataGroup"]["tcaDatabaseRecord"][static::class] = [
-			"depends" => [DatabaseRowInitializeNew::class],
-			"before"  => [TcaGroup::class, TcaColumnsRemoveUnused::class],
-		];
-		$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["formEngine"]["formDataGroup"]["inlineParentRecord"][static::class] = [
-			"depends" => [InlineOverrideChildTca::class],
-			"before"  => [TcaColumnsRemoveUnused::class],
-		];
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function addData(array $result) {
-		if (!isset($result["tableName"])) return $result;
-		static::$bus->dispatch(($e = new BackendFormFilterEvent($result["tableName"], $result)));
-		return $e->getData();
-	}
+class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
+{
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class] = [
+            'depends' => [DatabaseRowInitializeNew::class],
+            'before'  => [TcaGroup::class, TcaColumnsRemoveUnused::class],
+        ];
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['inlineParentRecord'][static::class] = [
+            'depends' => [InlineOverrideChildTca::class],
+            'before'  => [TcaColumnsRemoveUnused::class],
+        ];
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function addData(array $result)
+    {
+        if (!isset($result['tableName'])) {
+            return $result;
+        }
+        static::$bus->dispatch(($e = new BackendFormFilterEvent($result['tableName'], $result)));
+        return $e->getData();
+    }
 }

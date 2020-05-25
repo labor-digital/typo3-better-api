@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\FileAndFolder;
 
-
-class FalFileUploadException extends FalFileServiceException {
-	
+class FalFileUploadException extends FalFileServiceException
+{
 }

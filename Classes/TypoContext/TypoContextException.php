@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class TypoContextException extends BetterApiException {
-	
+class TypoContextException extends BetterApiException
+{
 }

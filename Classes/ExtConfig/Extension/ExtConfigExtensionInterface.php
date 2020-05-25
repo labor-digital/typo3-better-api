@@ -19,22 +19,20 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Extension;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface ExtConfigExtensionInterface {
-	
-	public const TYPE_OPTION_LIST_ENTRY = "extConfigOptionListEntry";
-	public const TYPE_FORM_FIELD_PRESET = "extConfigFormFieldPreset";
-	
-	/**
-	 * This method is used to extend the functionality of ExtConfig by adding your own extenders and configuration
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry $extender
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                     $context
-	 *
-	 * @return void
-	 */
-	public static function extendExtConfig(ExtConfigExtensionRegistry $extender, ExtConfigContext $context);
-	
+interface ExtConfigExtensionInterface
+{
+    public const TYPE_OPTION_LIST_ENTRY = 'extConfigOptionListEntry';
+    public const TYPE_FORM_FIELD_PRESET = 'extConfigFormFieldPreset';
+    
+    /**
+     * This method is used to extend the functionality of ExtConfig by adding your own extenders and configuration
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry $extender
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                     $context
+     *
+     * @return void
+     */
+    public static function extendExtConfig(ExtConfigExtensionRegistry $extender, ExtConfigContext $context);
 }

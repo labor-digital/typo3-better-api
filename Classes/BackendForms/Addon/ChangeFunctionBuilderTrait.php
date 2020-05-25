@@ -19,50 +19,51 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\Addon;
 
-
 use Neunerlei\Options\Options;
 
-trait ChangeFunctionBuilderTrait {
-	
-	/**
-	 * This method is basically the extracted renderer for an element's fieldChangeFunc
-	 * javascript counterpart. It can be used to extend all elements which don't support the onChange
-	 * configuration natively or any new element you want to enhance with that behaviour.
-	 *
-	 * @param string $ElementHtml        The rendered html of the element mostly $result['html'] (when extending
-	 *                                   exiting elements)
-	 * @param array  $fieldChangeFunc    The array of field change javascript functions
-	 * @param array  $options            An array of advanced configuration options:
-	 *                                   - prependElementHtml bool (true) True to prepend the element html to the
-	 *                                   output
-	 *                                   - pregPattern string This is optional to replace the internal preg pattern to
-	 *                                   extract the element's id from the source.
-	 *                                   - eventToListenFor string (DOMAttrModified propertychange paste)
-	 *                                   Can be used to override the js event to listen for when waiting for a change
-	 *                                   - onlyForNewSections bool (FALSE): If this is set to true the event will only
-	 *                                   listen for elements in new flex form sections
-	 *
-	 * @return string The elementHtml with the attached javascript code / if $prependElementHtml is false only the js
-	 *                source is returned
-	 */
-	protected function buildOnChangeFunction(string $ElementHtml, array $fieldChangeFunc, array $options = []) {
-		// Prepare options
-		$options = Options::make($options, [
-			'prependElementHtml' => TRUE,
-			'pregPattern'        => '/<(?:[^<]*?) id=["\']([^"\']*?)["\']/si',
-			'eventToListenFor'   => 'DOMAttrModified propertychange paste',
-			"onlyForNewSections" => FALSE,
-		]);
-		
-		// Match the id in the given html
-		preg_match($options['pregPattern'], $ElementHtml, $m);
-		$id = $m[1];
-		
-		// Prepare the fieldchange func
-		$src = ';' . str_replace(PHP_EOL, '', implode(';', $fieldChangeFunc)) . ';';
-		
-		// Prepare the default code
-		$code = <<<JS
+trait ChangeFunctionBuilderTrait
+{
+    
+    /**
+     * This method is basically the extracted renderer for an element's fieldChangeFunc
+     * javascript counterpart. It can be used to extend all elements which don't support the onChange
+     * configuration natively or any new element you want to enhance with that behaviour.
+     *
+     * @param string $ElementHtml        The rendered html of the element mostly $result['html'] (when extending
+     *                                   exiting elements)
+     * @param array  $fieldChangeFunc    The array of field change javascript functions
+     * @param array  $options            An array of advanced configuration options:
+     *                                   - prependElementHtml bool (true) True to prepend the element html to the
+     *                                   output
+     *                                   - pregPattern string This is optional to replace the internal preg pattern to
+     *                                   extract the element's id from the source.
+     *                                   - eventToListenFor string (DOMAttrModified propertychange paste)
+     *                                   Can be used to override the js event to listen for when waiting for a change
+     *                                   - onlyForNewSections bool (FALSE): If this is set to true the event will only
+     *                                   listen for elements in new flex form sections
+     *
+     * @return string The elementHtml with the attached javascript code / if $prependElementHtml is false only the js
+     *                source is returned
+     */
+    protected function buildOnChangeFunction(string $ElementHtml, array $fieldChangeFunc, array $options = [])
+    {
+        // Prepare options
+        $options = Options::make($options, [
+            'prependElementHtml' => true,
+            'pregPattern'        => '/<(?:[^<]*?) id=["\']([^"\']*?)["\']/si',
+            'eventToListenFor'   => 'DOMAttrModified propertychange paste',
+            'onlyForNewSections' => false,
+        ]);
+        
+        // Match the id in the given html
+        preg_match($options['pregPattern'], $ElementHtml, $m);
+        $id = $m[1];
+        
+        // Prepare the fieldchange func
+        $src = ';' . str_replace(PHP_EOL, '', implode(';', $fieldChangeFunc)) . ';';
+        
+        // Prepare the default code
+        $code = <<<JS
 	var l = false;
 	var nextE = document.querySelector("#{$id}:not(.initialized)");
 	nextE.className += " initialized";
@@ -91,18 +92,18 @@ trait ChangeFunctionBuilderTrait {
 		}
 	}
 JS;
-		
-		// Build special handling when sections are required
-		if ($options["onlyForNewSections"]) {
-			$code = <<<JS
+        
+        // Build special handling when sections are required
+        if ($options['onlyForNewSections']) {
+            $code = <<<JS
 if(window.changeFuncInitialBindingsComplete){
 	$code
 }
 JS;
-		}
-		
-		// Append on change output
-		return ($options['prependElementHtml'] ? $ElementHtml : '') . PHP_EOL . <<<HTML
+        }
+        
+        // Append on change output
+        return ($options['prependElementHtml'] ? $ElementHtml : '') . PHP_EOL . <<<HTML
 <script type="text/javascript">
 if(window.changeFuncInitialBindingsComplete !== true) window.changeFuncInitialBindingsComplete = false;
 (function(){
@@ -113,5 +114,5 @@ $code
 })();
 </script>
 HTML;
-	}
+    }
 }

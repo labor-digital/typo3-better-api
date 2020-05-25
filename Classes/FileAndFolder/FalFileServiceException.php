@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\FileAndFolder;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class FalFileServiceException extends BetterApiException {
-	
+class FalFileServiceException extends BetterApiException
+{
 }

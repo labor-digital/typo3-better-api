@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
 
 /**
@@ -32,5 +31,4 @@ use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
  */
 class BackendFormException extends ExtConfigException
 {
-
 }

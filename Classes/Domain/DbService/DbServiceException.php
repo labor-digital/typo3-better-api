@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\Domain\DbService;
 
-
 use LaborDigital\Typo3BetterApi\Domain\DomainException;
 
-class DbServiceException extends DomainException {
-	
+class DbServiceException extends DomainException
+{
 }

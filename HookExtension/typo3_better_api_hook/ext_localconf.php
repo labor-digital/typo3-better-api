@@ -19,8 +19,8 @@
 
 // Harmony event dispatching
 (function () {
-	$bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
-	$bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\AfterExtLocalConfLoadedEvent());
-	$bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\ExtConfigInitEvent());
-	$bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent());
+    $bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
+    $bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\AfterExtLocalConfLoadedEvent());
+    $bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\ExtConfigInitEvent());
+    $bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent());
 })();

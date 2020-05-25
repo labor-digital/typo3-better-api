@@ -28,42 +28,44 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ClassOverrideStackFilterEvent {
-	/**
-	 * @var array
-	 */
-	protected $stack;
-	
-	/**
-	 * ClassOverrideStackFilterEvent constructor.
-	 *
-	 * @param array $stack
-	 */
-	public function __construct(array $stack) {
-		$this->stack = $stack;
-	}
-	
-	/**
-	 * Returns the list of steps that are required to resolve a class through
-	 * all it's overrides.
-	 * @return array
-	 */
-	public function getStack(): array {
-		return $this->stack;
-	}
-	
-	/**
-	 * Can be used to set the list of steps that are required to resolve a class through
-	 * all it's overrides.
-	 *
-	 * @param array $stack
-	 *
-	 * @return ClassOverrideStackFilterEvent
-	 */
-	public function setStack(array $stack): ClassOverrideStackFilterEvent {
-		$this->stack = $stack;
-		return $this;
-	}
-	
-	
+class ClassOverrideStackFilterEvent
+{
+    /**
+     * @var array
+     */
+    protected $stack;
+    
+    /**
+     * ClassOverrideStackFilterEvent constructor.
+     *
+     * @param array $stack
+     */
+    public function __construct(array $stack)
+    {
+        $this->stack = $stack;
+    }
+    
+    /**
+     * Returns the list of steps that are required to resolve a class through
+     * all it's overrides.
+     * @return array
+     */
+    public function getStack(): array
+    {
+        return $this->stack;
+    }
+    
+    /**
+     * Can be used to set the list of steps that are required to resolve a class through
+     * all it's overrides.
+     *
+     * @param array $stack
+     *
+     * @return ClassOverrideStackFilterEvent
+     */
+    public function setStack(array $stack): ClassOverrideStackFilterEvent
+    {
+        $this->stack = $stack;
+        return $this;
+    }
 }

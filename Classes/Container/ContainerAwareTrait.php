@@ -27,47 +27,51 @@ namespace LaborDigital\Typo3BetterApi\Container;
  *
  * @package LaborDigital\Typo3BetterApi\Container
  */
-trait ContainerAwareTrait {
-	
-	/**
-	 * Holds the container instance if it was injected
-	 * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-	 */
-	protected $__container;
-	
-	/**
-	 * Injects the container instance if possible
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-	 */
-	public function injectContainer(TypoContainerInterface $container) {
-		$this->__container = $container;
-	}
-	
-	/**
-	 * Returns the instance of the container
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-	 */
-	protected function Container(): TypoContainerInterface {
-		return isset($this->__container) ? $this->__container :
-			$this->__container = TypoContainer::getInstance();
-	}
-	
-	/**
-	 * You can use this method if you want to lazy load an object using the container instance.
-	 *
-	 * Note: You should try to avoid this method as hard as possible!
-	 * This is the opposite of IoC and how you should use dependency injection.
-	 * However: There are some good examples of where you might want to use it:
-	 * Inside Models, or callbacks that don't support dependency injection for example.
-	 *
-	 * @param string $class The class or interface you want to retrieve the object for
-	 * @param array  $args  Optional, additional constructor arguments
-	 *
-	 * @return mixed
-	 */
-	protected function getInstanceOf(string $class, array $args = []) {
-		return $this->Container()->get($class, ["args" => $args]);
-	}
+trait ContainerAwareTrait
+{
+    
+    /**
+     * Holds the container instance if it was injected
+     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     */
+    protected $__container;
+    
+    /**
+     * Injects the container instance if possible
+     *
+     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     */
+    public function injectContainer(TypoContainerInterface $container)
+    {
+        $this->__container = $container;
+    }
+    
+    /**
+     * Returns the instance of the container
+     *
+     * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     */
+    protected function Container(): TypoContainerInterface
+    {
+        return isset($this->__container) ? $this->__container :
+            $this->__container = TypoContainer::getInstance();
+    }
+    
+    /**
+     * You can use this method if you want to lazy load an object using the container instance.
+     *
+     * Note: You should try to avoid this method as hard as possible!
+     * This is the opposite of IoC and how you should use dependency injection.
+     * However: There are some good examples of where you might want to use it:
+     * Inside Models, or callbacks that don't support dependency injection for example.
+     *
+     * @param string $class The class or interface you want to retrieve the object for
+     * @param array  $args  Optional, additional constructor arguments
+     *
+     * @return mixed
+     */
+    protected function getInstanceOf(string $class, array $args = [])
+    {
+        return $this->Container()->get($class, ['args' => $args]);
+    }
 }

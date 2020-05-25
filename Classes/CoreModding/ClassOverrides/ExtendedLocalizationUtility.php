@@ -19,17 +19,18 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-
 use LaborDigital\Typo3BetterApi\Translation\TranslationLabelProvider;
 use TYPO3\CMS\Extbase\Utility\BetterApiClassOverrideCopy__LocalizationUtility;
 
-class ExtendedLocalizationUtility extends BetterApiClassOverrideCopy__LocalizationUtility {
-	/**
-	 * @inheritDoc
-	 */
-	public static function translate($key, $extensionName = NULL, $arguments = NULL, string $languageKey = NULL, array $alternativeLanguageKeys = NULL) {
-		return TranslationLabelProvider::provideLabelFor($key, function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
-			return parent::translate($input, $extensionName, $arguments, $languageKey, $alternativeLanguageKeys);
-		});
-	}
+class ExtendedLocalizationUtility extends BetterApiClassOverrideCopy__LocalizationUtility
+{
+    /**
+     * @inheritDoc
+     */
+    public static function translate($key, $extensionName = null, $arguments = null, string $languageKey = null, array $alternativeLanguageKeys = null)
+    {
+        return TranslationLabelProvider::provideLabelFor($key, function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
+            return parent::translate($input, $extensionName, $arguments, $languageKey, $alternativeLanguageKeys);
+        });
+    }
 }

@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiInit;
 use Neunerlei\EventBus\EventBusInterface;
 
@@ -33,52 +32,55 @@ use Neunerlei\EventBus\EventBusInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class InitInstanceFilterEvent {
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\BetterApiInit
-	 */
-	protected $init;
-	
-	/**
-	 * @var \Neunerlei\EventBus\EventBusInterface
-	 */
-	protected $eventBus;
-	
-	/**
-	 * InitInstanceFilterEvent constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\BetterApiInit $init
-	 * @param \Neunerlei\EventBus\EventBusInterface      $eventBus
-	 */
-	public function __construct(BetterApiInit $init, EventBusInterface $eventBus) {
-		$this->init = $init;
-		$this->eventBus = $eventBus;
-	}
-	
-	/**
-	 * Returns the instance of the event bus
-	 * @return \Neunerlei\EventBus\EventBusInterface
-	 */
-	public function getEventBus(): EventBusInterface {
-		return $this->eventBus;
-	}
-	
-	/**
-	 * Returns the init instance
-	 * @return \LaborDigital\Typo3BetterApi\BetterApiInit|object
-	 */
-	public function getInitInstance() {
-		return $this->init;
-	}
-	
-	/**
-	 * Can be used to overwrite the init instance
-	 *
-	 * @param object $init
-	 */
-	public function setInitInstance(object $init): void {
-		$this->init = $init;
-	}
-	
-	
+class InitInstanceFilterEvent
+{
+    /**
+     * @var \LaborDigital\Typo3BetterApi\BetterApiInit
+     */
+    protected $init;
+    
+    /**
+     * @var \Neunerlei\EventBus\EventBusInterface
+     */
+    protected $eventBus;
+    
+    /**
+     * InitInstanceFilterEvent constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\BetterApiInit $init
+     * @param \Neunerlei\EventBus\EventBusInterface      $eventBus
+     */
+    public function __construct(BetterApiInit $init, EventBusInterface $eventBus)
+    {
+        $this->init = $init;
+        $this->eventBus = $eventBus;
+    }
+    
+    /**
+     * Returns the instance of the event bus
+     * @return \Neunerlei\EventBus\EventBusInterface
+     */
+    public function getEventBus(): EventBusInterface
+    {
+        return $this->eventBus;
+    }
+    
+    /**
+     * Returns the init instance
+     * @return \LaborDigital\Typo3BetterApi\BetterApiInit|object
+     */
+    public function getInitInstance()
+    {
+        return $this->init;
+    }
+    
+    /**
+     * Can be used to overwrite the init instance
+     *
+     * @param object $init
+     */
+    public function setInitInstance(object $init): void
+    {
+        $this->init = $init;
+    }
 }

@@ -28,60 +28,65 @@ namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
  *
  * @package LaborDigital\Typo3BetterApi\Domain\BetterQuery
  */
-class RelatedRecordRow {
-	
-	/**
-	 * The unique id of the record in this row
-	 * @var int
-	 */
-	protected $uid;
-	
-	/**
-	 * The name of the table this row comes from
-	 * @var string
-	 */
-	protected $tableName;
-	
-	/**
-	 * The raw database row that was fetched
-	 * @var array
-	 */
-	protected $row;
-	
-	/**
-	 * RelatedRecordRow constructor.
-	 *
-	 * @param int    $uid
-	 * @param string $tableName
-	 * @param array  $row
-	 */
-	public function __construct(int $uid, string $tableName, array $row) {
-		$this->uid = $uid;
-		$this->tableName = $tableName;
-		$this->row = $row;
-	}
-	
-	/**
-	 * Returns the unique id of the record in this row
-	 * @return int
-	 */
-	public function getUid(): int {
-		return $this->uid;
-	}
-	
-	/**
-	 * Returns the name of the table this row comes from
-	 * @return string
-	 */
-	public function getTableName(): string {
-		return $this->tableName;
-	}
-	
-	/**
-	 * Returns the raw database row that was fetched
-	 * @return array
-	 */
-	public function getRow(): array {
-		return $this->row;
-	}
+class RelatedRecordRow
+{
+    
+    /**
+     * The unique id of the record in this row
+     * @var int
+     */
+    protected $uid;
+    
+    /**
+     * The name of the table this row comes from
+     * @var string
+     */
+    protected $tableName;
+    
+    /**
+     * The raw database row that was fetched
+     * @var array
+     */
+    protected $row;
+    
+    /**
+     * RelatedRecordRow constructor.
+     *
+     * @param int    $uid
+     * @param string $tableName
+     * @param array  $row
+     */
+    public function __construct(int $uid, string $tableName, array $row)
+    {
+        $this->uid = $uid;
+        $this->tableName = $tableName;
+        $this->row = $row;
+    }
+    
+    /**
+     * Returns the unique id of the record in this row
+     * @return int
+     */
+    public function getUid(): int
+    {
+        return $this->uid;
+    }
+    
+    /**
+     * Returns the name of the table this row comes from
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+    
+    /**
+     * Returns the raw database row that was fetched
+     * @return array
+     */
+    public function getRow(): array
+    {
+        return $this->row;
+    }
 }

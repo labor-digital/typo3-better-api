@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use TYPO3\CMS\Core\Cache\CacheManager;
 
 /**
@@ -33,77 +32,81 @@ use TYPO3\CMS\Core\Cache\CacheManager;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class CacheClearedEvent {
-	/**
-	 * The method that lead to the cache flushing
-	 * @var string
-	 */
-	protected $method;
-	
-	/**
-	 * The group that should be flushed
-	 * @var string|null
-	 */
-	protected $group;
-	
-	/**
-	 * The tag that should be flushed in the group
-	 * @var string|null
-	 */
-	protected $tag;
-	
-	/**
-	 * The cache manager instance
-	 * @var \TYPO3\CMS\Core\Cache\CacheManager
-	 */
-	protected $cacheManager;
-	
-	/**
-	 * CacheClearedEvent constructor.
-	 *
-	 * @param string                             $method
-	 * @param string|null                        $group
-	 * @param string|null                        $tag
-	 * @param \TYPO3\CMS\Core\Cache\CacheManager $cacheManager
-	 */
-	public function __construct(string $method, ?string $group, ?string $tag, CacheManager $cacheManager) {
-		$this->method = $method;
-		$this->group = $group;
-		$this->tag = $tag;
-		$this->cacheManager = $cacheManager;
-	}
-	
-	/**
-	 * Returns the method that lead to the cache flushing
-	 * @return string
-	 */
-	public function getMethod(): string {
-		return $this->method;
-	}
-	
-	/**
-	 * Returns the group that should be flushed
-	 * @return string|null
-	 */
-	public function getGroup(): ?string {
-		return $this->group;
-	}
-	
-	/**
-	 * Returns the tag that should be flushed in the group
-	 * @return string|null
-	 */
-	public function getTag(): ?string {
-		return $this->tag;
-	}
-	
-	/**
-	 * Returns the cache manager instance
-	 * @return \TYPO3\CMS\Core\Cache\CacheManager
-	 */
-	public function getCacheManager(): CacheManager {
-		return $this->cacheManager;
-	}
-	
-	
+class CacheClearedEvent
+{
+    /**
+     * The method that lead to the cache flushing
+     * @var string
+     */
+    protected $method;
+    
+    /**
+     * The group that should be flushed
+     * @var string|null
+     */
+    protected $group;
+    
+    /**
+     * The tag that should be flushed in the group
+     * @var string|null
+     */
+    protected $tag;
+    
+    /**
+     * The cache manager instance
+     * @var \TYPO3\CMS\Core\Cache\CacheManager
+     */
+    protected $cacheManager;
+    
+    /**
+     * CacheClearedEvent constructor.
+     *
+     * @param string                             $method
+     * @param string|null                        $group
+     * @param string|null                        $tag
+     * @param \TYPO3\CMS\Core\Cache\CacheManager $cacheManager
+     */
+    public function __construct(string $method, ?string $group, ?string $tag, CacheManager $cacheManager)
+    {
+        $this->method = $method;
+        $this->group = $group;
+        $this->tag = $tag;
+        $this->cacheManager = $cacheManager;
+    }
+    
+    /**
+     * Returns the method that lead to the cache flushing
+     * @return string
+     */
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+    
+    /**
+     * Returns the group that should be flushed
+     * @return string|null
+     */
+    public function getGroup(): ?string
+    {
+        return $this->group;
+    }
+    
+    /**
+     * Returns the tag that should be flushed in the group
+     * @return string|null
+     */
+    public function getTag(): ?string
+    {
+        return $this->tag;
+    }
+    
+    /**
+     * Returns the cache manager instance
+     * @return \TYPO3\CMS\Core\Cache\CacheManager
+     */
+    public function getCacheManager(): CacheManager
+    {
+        return $this->cacheManager;
+    }
 }

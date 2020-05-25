@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext;
 
 /**
@@ -32,57 +31,61 @@ use LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormCustomElementPostProcessorEvent {
-	
-	/**
-	 * The context that was passed to the custom element controller
-	 * @var \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
-	 */
-	protected $context;
-	
-	/**
-	 * The prepared result array for the form engine
-	 * @var array
-	 */
-	protected $result;
-	
-	/**
-	 * BackendFormCustomElementPostProcessorEvent constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext $context
-	 * @param array                                                                         $result
-	 */
-	public function __construct(CustomElementContext $context, array $result) {
-		$this->context = $context;
-		$this->result = $result;
-	}
-	
-	/**
-	 * Returns the context that was passed to the custom element controller
-	 * @return \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
-	 */
-	public function getContext(): CustomElementContext {
-		return $this->context;
-	}
-	
-	/**
-	 * Returns the prepared result array for the form engine
-	 * @return array
-	 */
-	public function getResult(): array {
-		return $this->result;
-	}
-	
-	/**
-	 * Sets the prepared result array for the form engine
-	 *
-	 * @param array $result
-	 *
-	 * @return BackendFormCustomElementPostProcessorEvent
-	 */
-	public function setResult(array $result): BackendFormCustomElementPostProcessorEvent {
-		$this->result = $result;
-		return $this;
-	}
-	
+class BackendFormCustomElementPostProcessorEvent
+{
+    
+    /**
+     * The context that was passed to the custom element controller
+     * @var \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
+     */
+    protected $context;
+    
+    /**
+     * The prepared result array for the form engine
+     * @var array
+     */
+    protected $result;
+    
+    /**
+     * BackendFormCustomElementPostProcessorEvent constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext $context
+     * @param array                                                                         $result
+     */
+    public function __construct(CustomElementContext $context, array $result)
+    {
+        $this->context = $context;
+        $this->result = $result;
+    }
+    
+    /**
+     * Returns the context that was passed to the custom element controller
+     * @return \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
+     */
+    public function getContext(): CustomElementContext
+    {
+        return $this->context;
+    }
+    
+    /**
+     * Returns the prepared result array for the form engine
+     * @return array
+     */
+    public function getResult(): array
+    {
+        return $this->result;
+    }
+    
+    /**
+     * Sets the prepared result array for the form engine
+     *
+     * @param array $result
+     *
+     * @return BackendFormCustomElementPostProcessorEvent
+     */
+    public function setResult(array $result): BackendFormCustomElementPostProcessorEvent
+    {
+        $this->result = $result;
+        return $this;
+    }
 }

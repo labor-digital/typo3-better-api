@@ -19,39 +19,44 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\Addon;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use TYPO3\CMS\Backend\Form\Element\GroupElement;
 
-class GroupElementsCanTriggerReloadApplier implements LazyEventSubscriberInterface {
-	use ChangeFunctionBuilderTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function subscribeToEvents(EventSubscriptionInterface $subscription) {
-		$subscription->subscribe(BackendFormNodePostProcessorEvent::class, "__onPostProcess");
-	}
-	
-	/**
-	 * This applier allows group elements to emit the page reload when they have changed.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent $event
-	 */
-	public function __onPostProcess(BackendFormNodePostProcessorEvent $event) {
-		if (!$event->getNode() instanceof GroupElement) return;
-		$fieldChangeFunc = Arrays::getPath($event->getProxy()->getProperty("data"), ["parameterArray", "fieldChangeFunc"]);
-		if (empty($fieldChangeFunc)) return;
-		
-		// Build the change function
-		$result = $event->getResult();
-		$result["html"] = $this->buildOnChangeFunction($result["html"], $fieldChangeFunc, [
-			"eventToListenFor" => "DOMNodeInserted",
-		]);
-		$event->setResult($result);
-	}
-	
+class GroupElementsCanTriggerReloadApplier implements LazyEventSubscriberInterface
+{
+    use ChangeFunctionBuilderTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    {
+        $subscription->subscribe(BackendFormNodePostProcessorEvent::class, '__onPostProcess');
+    }
+    
+    /**
+     * This applier allows group elements to emit the page reload when they have changed.
+     *
+     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent $event
+     */
+    public function __onPostProcess(BackendFormNodePostProcessorEvent $event)
+    {
+        if (!$event->getNode() instanceof GroupElement) {
+            return;
+        }
+        $fieldChangeFunc = Arrays::getPath($event->getProxy()->getProperty('data'), ['parameterArray', 'fieldChangeFunc']);
+        if (empty($fieldChangeFunc)) {
+            return;
+        }
+        
+        // Build the change function
+        $result = $event->getResult();
+        $result['html'] = $this->buildOnChangeFunction($result['html'], $fieldChangeFunc, [
+            'eventToListenFor' => 'DOMNodeInserted',
+        ]);
+        $event->setResult($result);
+    }
 }

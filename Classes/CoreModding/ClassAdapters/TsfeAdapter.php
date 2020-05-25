@@ -19,12 +19,13 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters;
 
-
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class TsfeAdapter extends TypoScriptFrontendController {
-	public static function getLanguageService(TypoScriptFrontendController $tsfe): LanguageService {
-		return $tsfe->languageService;
-	}
+class TsfeAdapter extends TypoScriptFrontendController
+{
+    public static function getLanguageService(TypoScriptFrontendController $tsfe): LanguageService
+    {
+        return $tsfe->languageService;
+    }
 }

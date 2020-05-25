@@ -61,5 +61,4 @@ class TypoEventBus extends EventBus implements SingletonInterface
     {
         static::$eventBus = $eventBus;
     }
-    
 }

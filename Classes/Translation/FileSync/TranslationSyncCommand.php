@@ -19,29 +19,31 @@
 
 namespace LaborDigital\Typo3BetterApi\Translation\FileSync;
 
-
 use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TranslationSyncCommand extends Command {
-	/**
-	 * @inheritDoc
-	 */
-	protected function configure() {
-		$this->setHelp("Synchronizes the translation files of a given extension");
-		$this->addArgument("extension", InputArgument::REQUIRED, "The extension key to synchronize the translations for");
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
-		$extKey = $input->getArgument("extension");
-		$output->writeln("Syncing translations for extension: " . $extKey);
-		TranslationFileSync::syncFilesOf(Naming::extkeyWithoutVendor($extKey));
-		$output->writeln("Done");
-	}
+class TranslationSyncCommand extends Command
+{
+    /**
+     * @inheritDoc
+     */
+    protected function configure()
+    {
+        $this->setHelp('Synchronizes the translation files of a given extension');
+        $this->addArgument('extension', InputArgument::REQUIRED, 'The extension key to synchronize the translations for');
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $extKey = $input->getArgument('extension');
+        $output->writeln('Syncing translations for extension: ' . $extKey);
+        TranslationFileSync::syncFilesOf(Naming::extkeyWithoutVendor($extKey));
+        $output->writeln('Done');
+    }
 }

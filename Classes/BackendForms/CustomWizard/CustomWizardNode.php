@@ -19,55 +19,58 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\CustomWizard;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\BackendFormException;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 
-class CustomWizardNode extends AbstractFormElement {
-	use CommonServiceLocatorTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function render() {
-		// Create the context object
-		$context = $this->getInstanceOf(CustomWizardContext::class, [
-			[
-				"rawData"     => $this->data,
-				"formElement" => $this,
-				"value"       => $this->extractValueFromRow($this->data),
-			],
-		]);
-		
-		// Get the controller instance
-		$class = $context->getOption("customWizardClass");
-		if (empty($class)) throw new BackendFormException("Could not create the custom wizard class, because it is not configured for this wizard!");
-		/** @var \LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardInterface $i */
-		$i = $this->getInstanceOf($class);
-		
-		// Call the controller
-		$result = $i->render($context);
-		
-		// Build result
-		$resultArray = $this->initializeResultArray();
-		$resultArray["html"] = $result;
-		return $resultArray;
-		
-	}
-	
-	/**
-	 * Internal helper to extract the value either from the row, from the given flex form path.
-	 *
-	 * @param array $config
-	 *
-	 * @return array|mixed|null
-	 */
-	protected function extractValueFromRow(array $config) {
-		$field = $config["fieldName"];
-		$row = $config["databaseRow"];
-		return empty($config["flexFormPath"]) ? $row[$field] :
-			Arrays::getPath($row[$field], $config["flexFormPath"], NULL, "/");
-	}
+class CustomWizardNode extends AbstractFormElement
+{
+    use CommonServiceLocatorTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public function render()
+    {
+        // Create the context object
+        $context = $this->getInstanceOf(CustomWizardContext::class, [
+            [
+                'rawData'     => $this->data,
+                'formElement' => $this,
+                'value'       => $this->extractValueFromRow($this->data),
+            ],
+        ]);
+        
+        // Get the controller instance
+        $class = $context->getOption('customWizardClass');
+        if (empty($class)) {
+            throw new BackendFormException('Could not create the custom wizard class, because it is not configured for this wizard!');
+        }
+        /** @var \LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardInterface $i */
+        $i = $this->getInstanceOf($class);
+        
+        // Call the controller
+        $result = $i->render($context);
+        
+        // Build result
+        $resultArray = $this->initializeResultArray();
+        $resultArray['html'] = $result;
+        return $resultArray;
+    }
+    
+    /**
+     * Internal helper to extract the value either from the row, from the given flex form path.
+     *
+     * @param array $config
+     *
+     * @return array|mixed|null
+     */
+    protected function extractValueFromRow(array $config)
+    {
+        $field = $config['fieldName'];
+        $row = $config['databaseRow'];
+        return empty($config['flexFormPath']) ? $row[$field] :
+            Arrays::getPath($row[$field], $config['flexFormPath'], null, '/');
+    }
 }

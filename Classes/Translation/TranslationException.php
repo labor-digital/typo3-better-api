@@ -21,6 +21,6 @@ namespace LaborDigital\Typo3BetterApi\Translation;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class TranslationException extends BetterApiException {
-	
+class TranslationException extends BetterApiException
+{
 }

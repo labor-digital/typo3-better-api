@@ -32,117 +32,126 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class DataHandlerRecordInfoFilterEvent {
-	
-	/**
-	 * The name of the table to request the information from
-	 * @var string
-	 */
-	protected $tableName;
-	
-	/**
-	 * UID of the record from $tableName or NEW... for a new record
-	 * @var int|string
-	 */
-	protected $id;
-	
-	/**
-	 * The field list for the SELECT query, eg. "*" or "uid,pid,...
-	 * @var string
-	 */
-	protected $fieldList;
-	
-	/**
-	 * The currently executed data handler instance
-	 * @var \TYPO3\CMS\Core\DataHandling\DataHandler
-	 */
-	protected $dataHandler;
-	
-	/**
-	 * The closure that is used to request the record information from the database
-	 * Can be modified to change the lookup method
-	 * @var \Closure
-	 */
-	protected $concreteInfoProvider;
-	
-	/**
-	 * DataHandlerRecordInfoFilterEvent constructor.
-	 *
-	 * @param string                                   $tableName
-	 * @param int|string                               $id
-	 * @param string                                   $fieldList
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
-	 * @param \Closure                                 $concreteInfoProvider
-	 */
-	public function __construct(string $tableName, $id, string $fieldList, DataHandler $dataHandler, Closure $concreteInfoProvider) {
-		$this->tableName = $tableName;
-		$this->id = $id;
-		$this->fieldList = $fieldList;
-		$this->dataHandler = $dataHandler;
-		$this->concreteInfoProvider = $concreteInfoProvider;
-	}
-	
-	/**
-	 * Returns the id of the entry that is requested
-	 * @return int|string
-	 */
-	public function getId() {
-		return $this->id;
-	}
-	
-	/**
-	 * Returns the name of the table that is currently requested
-	 * @return string
-	 */
-	public function getTableName(): string {
-		return $this->tableName;
-	}
-	
-	/**
-	 * Returns the currently executed data handler instance
-	 * @return \TYPO3\CMS\Core\DataHandling\DataHandler
-	 */
-	public function getDataHandler(): DataHandler {
-		return $this->dataHandler;
-	}
-	
-	/**
-	 * Returns the field list for the SELECT query, eg. "*" or "uid,pid,...
-	 * @return string
-	 */
-	public function getFieldList(): string {
-		return $this->fieldList;
-	}
-	
-	/**
-	 * Updates the field list for the SELECT query, eg. "*" or "uid,pid,...
-	 *
-	 * @param string $fieldList
-	 *
-	 * @return DataHandlerRecordInfoFilterEvent
-	 */
-	public function setFieldList(string $fieldList): DataHandlerRecordInfoFilterEvent {
-		$this->fieldList = $fieldList;
-		return $this;
-	}
-	
-	/**
-	 * Returns the closure that is used to request the record information from the database
-	 * @return \Closure
-	 */
-	public function getConcreteInfoProvider(): Closure {
-		return $this->concreteInfoProvider;
-	}
-	
-	/**
-	 * Updates the closure that is used to request the record information from the database
-	 *
-	 * @param \Closure $concreteInfoProvider
-	 *
-	 * @return DataHandlerRecordInfoFilterEvent
-	 */
-	public function setConcreteInfoProvider(Closure $concreteInfoProvider): DataHandlerRecordInfoFilterEvent {
-		$this->concreteInfoProvider = $concreteInfoProvider;
-		return $this;
-	}
+class DataHandlerRecordInfoFilterEvent
+{
+    
+    /**
+     * The name of the table to request the information from
+     * @var string
+     */
+    protected $tableName;
+    
+    /**
+     * UID of the record from $tableName or NEW... for a new record
+     * @var int|string
+     */
+    protected $id;
+    
+    /**
+     * The field list for the SELECT query, eg. "*" or "uid,pid,...
+     * @var string
+     */
+    protected $fieldList;
+    
+    /**
+     * The currently executed data handler instance
+     * @var \TYPO3\CMS\Core\DataHandling\DataHandler
+     */
+    protected $dataHandler;
+    
+    /**
+     * The closure that is used to request the record information from the database
+     * Can be modified to change the lookup method
+     * @var \Closure
+     */
+    protected $concreteInfoProvider;
+    
+    /**
+     * DataHandlerRecordInfoFilterEvent constructor.
+     *
+     * @param string                                   $tableName
+     * @param int|string                               $id
+     * @param string                                   $fieldList
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+     * @param \Closure                                 $concreteInfoProvider
+     */
+    public function __construct(string $tableName, $id, string $fieldList, DataHandler $dataHandler, Closure $concreteInfoProvider)
+    {
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->fieldList = $fieldList;
+        $this->dataHandler = $dataHandler;
+        $this->concreteInfoProvider = $concreteInfoProvider;
+    }
+    
+    /**
+     * Returns the id of the entry that is requested
+     * @return int|string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * Returns the name of the table that is currently requested
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+    
+    /**
+     * Returns the currently executed data handler instance
+     * @return \TYPO3\CMS\Core\DataHandling\DataHandler
+     */
+    public function getDataHandler(): DataHandler
+    {
+        return $this->dataHandler;
+    }
+    
+    /**
+     * Returns the field list for the SELECT query, eg. "*" or "uid,pid,...
+     * @return string
+     */
+    public function getFieldList(): string
+    {
+        return $this->fieldList;
+    }
+    
+    /**
+     * Updates the field list for the SELECT query, eg. "*" or "uid,pid,...
+     *
+     * @param string $fieldList
+     *
+     * @return DataHandlerRecordInfoFilterEvent
+     */
+    public function setFieldList(string $fieldList): DataHandlerRecordInfoFilterEvent
+    {
+        $this->fieldList = $fieldList;
+        return $this;
+    }
+    
+    /**
+     * Returns the closure that is used to request the record information from the database
+     * @return \Closure
+     */
+    public function getConcreteInfoProvider(): Closure
+    {
+        return $this->concreteInfoProvider;
+    }
+    
+    /**
+     * Updates the closure that is used to request the record information from the database
+     *
+     * @param \Closure $concreteInfoProvider
+     *
+     * @return DataHandlerRecordInfoFilterEvent
+     */
+    public function setConcreteInfoProvider(Closure $concreteInfoProvider): DataHandlerRecordInfoFilterEvent
+    {
+        $this->concreteInfoProvider = $concreteInfoProvider;
+        return $this;
+    }
 }

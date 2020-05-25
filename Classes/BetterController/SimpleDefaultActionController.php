@@ -30,31 +30,36 @@ use TYPO3\CMS\Fluid\View\Exception\InvalidTemplateResourceException;
  * Can be used to handle extremely simple extbase plugins that don't require a real controller for themselves.
  * @package LaborDigital\Typo3BetterApi\BetterControllers
  */
-abstract class SimpleDefaultActionController extends BetterActionController implements BackendPreviewRendererInterface {
-	use ExtBaseBackendPreviewRendererTrait;
-	
-	/**
-	 * Default handler for the main action of this plugin
-	 */
-	public function indexAction() {
-		// Add data to view
-		$this->view->assign("data", $this->data);
-		
-		// Check if an image has to be loaded
-		foreach (["image", "media", "image_a", "image_b"] as $field) {
-			if (empty($this->data[$field])) continue;
-			$this->view->assign($field, $this->FalFiles()->getFile($this->data["uid"], "tt_content", $field, $field !== "media"));
-		}
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function renderBackendPreview(BackendPreviewRendererContext $context) {
-		try {
-			return $this->getFluidView();
-		} catch (InvalidTemplateResourceException $e) {
-			return "";
-		}
-	}
+abstract class SimpleDefaultActionController extends BetterActionController implements BackendPreviewRendererInterface
+{
+    use ExtBaseBackendPreviewRendererTrait;
+    
+    /**
+     * Default handler for the main action of this plugin
+     */
+    public function indexAction()
+    {
+        // Add data to view
+        $this->view->assign('data', $this->data);
+        
+        // Check if an image has to be loaded
+        foreach (['image', 'media', 'image_a', 'image_b'] as $field) {
+            if (empty($this->data[$field])) {
+                continue;
+            }
+            $this->view->assign($field, $this->FalFiles()->getFile($this->data['uid'], 'tt_content', $field, $field !== 'media'));
+        }
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function renderBackendPreview(BackendPreviewRendererContext $context)
+    {
+        try {
+            return $this->getFluidView();
+        } catch (InvalidTemplateResourceException $e) {
+            return '';
+        }
+    }
 }

@@ -29,41 +29,43 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class SiteConfigFilterEvent {
-	/**
-	 * The site configuration array
-	 * @var array
-	 */
-	protected $config;
-	
-	/**
-	 * SiteConfigFilterEvent constructor.
-	 *
-	 * @param array $config
-	 */
-	public function __construct(array $config) {
-		$this->config = $config;
-	}
-	
-	/**
-	 * Returns the site configuration array
-	 * @return array
-	 */
-	public function getConfig(): array {
-		return $this->config;
-	}
-	
-	/**
-	 * Used to update the site configuration array
-	 *
-	 * @param array $config
-	 *
-	 * @return SiteConfigFilterEvent
-	 */
-	public function setConfig(array $config): SiteConfigFilterEvent {
-		$this->config = $config;
-		return $this;
-	}
-	
-	
+class SiteConfigFilterEvent
+{
+    /**
+     * The site configuration array
+     * @var array
+     */
+    protected $config;
+    
+    /**
+     * SiteConfigFilterEvent constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+    
+    /**
+     * Returns the site configuration array
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+    
+    /**
+     * Used to update the site configuration array
+     *
+     * @param array $config
+     *
+     * @return SiteConfigFilterEvent
+     */
+    public function setConfig(array $config): SiteConfigFilterEvent
+    {
+        $this->config = $config;
+        return $this;
+    }
 }

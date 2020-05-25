@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\TableSqlGenerator;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
 use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService;

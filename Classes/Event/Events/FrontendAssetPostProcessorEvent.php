@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\AssetPostProcessorEventAdapter;
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterface;
 use LaborDigital\Typo3BetterApi\Event\Events\Traits\AssetEventTrait;
@@ -33,14 +32,15 @@ use LaborDigital\Typo3BetterApi\Event\Events\Traits\AssetEventTrait;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class FrontendAssetPostProcessorEvent implements CoreHookEventInterface {
-	use AssetEventTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAdapterClass(): string {
-		return AssetPostProcessorEventAdapter::class;
-	}
-	
+class FrontendAssetPostProcessorEvent implements CoreHookEventInterface
+{
+    use AssetEventTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getAdapterClass(): string
+    {
+        return AssetPostProcessorEventAdapter::class;
+    }
 }

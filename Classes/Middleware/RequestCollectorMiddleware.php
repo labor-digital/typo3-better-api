@@ -19,23 +19,24 @@
 
 namespace LaborDigital\Typo3BetterApi\Middleware;
 
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class RequestCollectorMiddleware implements MiddlewareInterface {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		
-		// Store fallback request
-		$GLOBALS["TYPO3_REQUEST_FALLBACK"] = $request;
-		
-		// Done
-		return $handler->handle($request);
-	}
+class RequestCollectorMiddleware implements MiddlewareInterface
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        
+        // Store fallback request
+        $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
+        
+        // Done
+        return $handler->handle($request);
+    }
 }

@@ -21,6 +21,6 @@ namespace LaborDigital\Typo3BetterApi;
 
 use Exception;
 
-class BetterApiException extends Exception {
-	
+class BetterApiException extends Exception
+{
 }

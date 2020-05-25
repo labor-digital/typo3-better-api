@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\Container;
 
-
 use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface;
 use LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService;
 use LaborDigital\Typo3BetterApi\Link\LinkService;
@@ -39,78 +38,88 @@ use Neunerlei\EventBus\EventBusInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Container
  */
-trait CommonServiceDependencyTrait {
-	use LazyServiceDependencyTrait;
-	
-	/**
-	 * Returns the typo context instance
-	 * @return \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-	 */
-	protected function TypoContext(): TypoContext {
-		return $this->getService(TypoContext::class);
-	}
-	
-	/**
-	 * Returns the db service instance
-	 * @return \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface
-	 */
-	protected function Db(): DbServiceInterface {
-		return $this->getService(DbServiceInterface::class);
-	}
-	
-	/**
-	 * Returns the link service instance
-	 * @return \LaborDigital\Typo3BetterApi\Link\LinkService
-	 */
-	protected function Links(): LinkService {
-		return $this->getService(LinkService::class);
-	}
-	
-	/**
-	 * Returns the TSFE service instance
-	 * @return \LaborDigital\Typo3BetterApi\Tsfe\TsfeService
-	 */
-	protected function Tsfe(): TsfeService {
-		return $this->getService(TsfeService::class);
-	}
-	
-	/**
-	 * Returns the page service instance
-	 * @return \LaborDigital\Typo3BetterApi\Page\PageService
-	 */
-	protected function Page(): PageService {
-		return $this->getService(PageService::class);
-	}
-	
-	/**
-	 * Returns the fal file service instance
-	 * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService
-	 */
-	protected function FalFiles(): FalFileService {
-		return $this->getService(FalFileService::class);
-	}
-	
-	/**
-	 * Returns the event bus instance
-	 * @return \Neunerlei\EventBus\EventBusInterface
-	 */
-	protected function EventBus(): EventBusInterface {
-		return $this->getService(EventBusInterface::class);
-	}
-	
-	/**
-	 * Returns the translation service instance
-	 * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
-	 */
-	protected function Translation(): TranslationService {
-		return $this->getService(TranslationService::class);
-	}
-	
-	/**
-	 * Returns the environment simulator instance
-	 * @return \LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator
-	 */
-	protected function Simulator(): EnvironmentSimulator {
-		return $this->getInstanceOf(EnvironmentSimulator::class);
-	}
+trait CommonServiceDependencyTrait
+{
+    use LazyServiceDependencyTrait;
+    
+    /**
+     * Returns the typo context instance
+     * @return \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
+     */
+    protected function TypoContext(): TypoContext
+    {
+        return $this->getService(TypoContext::class);
+    }
+    
+    /**
+     * Returns the db service instance
+     * @return \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface
+     */
+    protected function Db(): DbServiceInterface
+    {
+        return $this->getService(DbServiceInterface::class);
+    }
+    
+    /**
+     * Returns the link service instance
+     * @return \LaborDigital\Typo3BetterApi\Link\LinkService
+     */
+    protected function Links(): LinkService
+    {
+        return $this->getService(LinkService::class);
+    }
+    
+    /**
+     * Returns the TSFE service instance
+     * @return \LaborDigital\Typo3BetterApi\Tsfe\TsfeService
+     */
+    protected function Tsfe(): TsfeService
+    {
+        return $this->getService(TsfeService::class);
+    }
+    
+    /**
+     * Returns the page service instance
+     * @return \LaborDigital\Typo3BetterApi\Page\PageService
+     */
+    protected function Page(): PageService
+    {
+        return $this->getService(PageService::class);
+    }
+    
+    /**
+     * Returns the fal file service instance
+     * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService
+     */
+    protected function FalFiles(): FalFileService
+    {
+        return $this->getService(FalFileService::class);
+    }
+    
+    /**
+     * Returns the event bus instance
+     * @return \Neunerlei\EventBus\EventBusInterface
+     */
+    protected function EventBus(): EventBusInterface
+    {
+        return $this->getService(EventBusInterface::class);
+    }
+    
+    /**
+     * Returns the translation service instance
+     * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
+     */
+    protected function Translation(): TranslationService
+    {
+        return $this->getService(TranslationService::class);
+    }
+    
+    /**
+     * Returns the environment simulator instance
+     * @return \LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator
+     */
+    protected function Simulator(): EnvironmentSimulator
+    {
+        return $this->getInstanceOf(EnvironmentSimulator::class);
+    }
 }

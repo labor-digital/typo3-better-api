@@ -21,27 +21,27 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
 
-interface CoreHookEventAdapterInterface {
-	/**
-	 * Provides some dependencies that are likely to be required in the event adapter implementation
-	 *
-	 * @param \Neunerlei\EventBus\EventBusInterface                         $bus
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $context
-	 * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-	 *
-	 * @return void
-	 */
-	public static function prepare(EventBusInterface $bus, TypoContext $context, TypoContainerInterface $container);
-	
-	/**
-	 * This method is called as soon as the first handler is registered for the matched event
-	 *
-	 * @return void
-	 */
-	public static function bind(): void;
+interface CoreHookEventAdapterInterface
+{
+    /**
+     * Provides some dependencies that are likely to be required in the event adapter implementation
+     *
+     * @param \Neunerlei\EventBus\EventBusInterface                         $bus
+     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $context
+     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     *
+     * @return void
+     */
+    public static function prepare(EventBusInterface $bus, TypoContext $context, TypoContainerInterface $container);
+    
+    /**
+     * This method is called as soon as the first handler is registered for the matched event
+     *
+     * @return void
+     */
+    public static function bind(): void;
 }

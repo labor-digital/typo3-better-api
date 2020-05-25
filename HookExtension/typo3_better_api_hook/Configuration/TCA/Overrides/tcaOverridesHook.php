@@ -19,6 +19,6 @@
 
 // Harmony event dispatching
 (function () {
-	$bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
-	$bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent());
+    $bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
+    $bus->dispatch(new \LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent());
 })();

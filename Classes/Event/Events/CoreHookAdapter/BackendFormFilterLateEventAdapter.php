@@ -21,33 +21,37 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterLateEvent;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineConfiguration;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineIsOnSymmetricSide;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInputPlaceholders;
 use TYPO3\CMS\Backend\Form\FormDataProviderInterface;
 
-class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface {
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["formEngine"]["formDataGroup"]["tcaDatabaseRecord"][static::class] = [
-			"depends" => [TcaInputPlaceholders::class],
-			"before"  => [TcaInlineIsOnSymmetricSide::class],
-		];
-		$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["formEngine"]["formDataGroup"]["inlineParentRecord"][static::class] = [
-			"depends" => [TcaInlineConfiguration::class],
-		];
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function addData(array $result) {
-		if (!isset($result["tableName"])) return $result;
-		static::$bus->dispatch(($e = new BackendFormFilterLateEvent($result["tableName"], $result)));
-		return $e->getData();
-	}
+class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
+{
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class] = [
+            'depends' => [TcaInputPlaceholders::class],
+            'before'  => [TcaInlineIsOnSymmetricSide::class],
+        ];
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['inlineParentRecord'][static::class] = [
+            'depends' => [TcaInlineConfiguration::class],
+        ];
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function addData(array $result)
+    {
+        if (!isset($result['tableName'])) {
+            return $result;
+        }
+        static::$bus->dispatch(($e = new BackendFormFilterLateEvent($result['tableName'], $result)));
+        return $e->getData();
+    }
 }

@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\ListenerProvider;
 
-
 use LaborDigital\Typo3BetterApi\Event\EventException;
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventAdapterInterface;
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterface;
@@ -119,35 +118,45 @@ class TypoListenerProvider extends EventBusListenerProvider
         if (! class_exists($eventClass)) {
             return;
         }
-        if (! in_array(CoreHookEventInterface::class,
-            class_implements($eventClass), true)) {
+        if (! in_array(
+            CoreHookEventInterface::class,
+            class_implements($eventClass),
+            true
+        )) {
             return;
         }
         
         // Check if we got the container
         if (empty($this->container)) {
-            throw new EventException("You can't register core hook events before the container instance is loaded!");
+            throw new EventException('You can\'t register core hook events before the container instance is loaded!');
         }
         
         // Validate the adapter class
-        $adapterClass = call_user_func([$eventClass, "getAdapterClass"]);
+        $adapterClass = call_user_func([$eventClass, 'getAdapterClass']);
         if (! class_exists($adapterClass)) {
             throw new EventException("The class \"$eventClass\" returned \"$adapterClass\" as it's core hook adapter, but the class does not exist!");
         }
-        if (! in_array(CoreHookEventAdapterInterface::class,
-            class_implements($adapterClass), true)) {
+        if (! in_array(
+            CoreHookEventAdapterInterface::class,
+            class_implements($adapterClass),
+            true
+        )) {
             throw new EventException("The class \"$eventClass\" returned \"$adapterClass\" as it's core hook adapter, but the adapter does not implement the required interface: \""
                                      . CoreHookEventAdapterInterface::class
-                                     . "\"!");
+                                     . '"!');
         }
         if (isset($this->boundCoreHooks[$adapterClass])) {
             return;
         }
         
         // Bind the adapter
-        call_user_func([$adapterClass, "prepare"], TypoEventBus::getInstance(),
-            $this->container->get(TypoContext::class), $this->container);
-        call_user_func([$adapterClass, "bind"]);
+        call_user_func(
+            [$adapterClass, 'prepare'],
+            TypoEventBus::getInstance(),
+            $this->container->get(TypoContext::class),
+            $this->container
+        );
+        call_user_func([$adapterClass, 'bind']);
         $this->boundCoreHooks[$adapterClass] = true;
         $this->boundCoreHooks[$eventClass]   = true;
     }
@@ -167,22 +176,21 @@ class TypoListenerProvider extends EventBusListenerProvider
         callable $listener
     ): bool {
         // Check if a valid "className.signal" event was given
-        if (class_exists($eventClass) || strpos($eventClass, ".") === false
-            || count(explode(".", $eventClass)) !== 2) {
+        if (class_exists($eventClass) || strpos($eventClass, '.') === false
+            || count(explode('.', $eventClass)) !== 2) {
             return false;
         }
         
         // Check if we got the signal slot dispatcher
         if (empty($this->signalSlotDispatcher)) {
-            throw new EventException("You can't register signal slot events events before the dispatcher instance is loaded!");
+            throw new EventException('You can\'t register signal slot events events before the dispatcher instance is loaded!');
         }
         
         // Unpack the selector and connect the signal
-        [$class, $signal] = array_map("trim", explode(".", $eventClass));
+        [$class, $signal] = array_map('trim', explode('.', $eventClass));
         $this->signalSlotDispatcher->connect($class, $signal, $listener);
         
         // Done
         return true;
     }
-    
 }

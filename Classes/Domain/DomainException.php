@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\Domain;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class DomainException extends BetterApiException {
-	
+class DomainException extends BetterApiException
+{
 }

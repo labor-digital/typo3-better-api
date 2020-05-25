@@ -21,12 +21,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
-interface CoreHookEventInterface {
-	
-	/**
-	 * Returns the name of the used adapter class for this event
-	 * @return string
-	 */
-	public static function getAdapterClass(): string;
+interface CoreHookEventInterface
+{
+    
+    /**
+     * Returns the name of the used adapter class for this event
+     * @return string
+     */
+    public static function getAdapterClass(): string;
 }

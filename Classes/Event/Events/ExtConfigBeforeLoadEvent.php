@@ -29,40 +29,44 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\ExtConfig\Event
  */
-class ExtConfigBeforeLoadEvent {
-	/**
-	 * The raw list of all registered ext config classes.
-	 * Contains a numeric list of arrays like: [$extKeyWithVendor, $configurationClass, $options]
-	 * @var array
-	 */
-	protected $rawConfigList;
-	
-	/**
-	 * ExtConfigBeforeLoadEvent constructor.
-	 *
-	 * @param array $rawConfigList
-	 */
-	public function __construct(array $rawConfigList) {
-		$this->rawConfigList = $rawConfigList;
-	}
-	
-	/**
-	 * Return the raw list of all registered ext config classes
-	 * @return array
-	 */
-	public function getRawConfigList(): array {
-		return $this->rawConfigList;
-	}
-	
-	/**
-	 * Sets the raw list of all registered ext config classes
-	 *
-	 * @param array $rawConfigList
-	 *
-	 * @return ExtConfigBeforeLoadEvent
-	 */
-	public function setRawConfigList(array $rawConfigList): ExtConfigBeforeLoadEvent {
-		$this->rawConfigList = $rawConfigList;
-		return $this;
-	}
+class ExtConfigBeforeLoadEvent
+{
+    /**
+     * The raw list of all registered ext config classes.
+     * Contains a numeric list of arrays like: [$extKeyWithVendor, $configurationClass, $options]
+     * @var array
+     */
+    protected $rawConfigList;
+    
+    /**
+     * ExtConfigBeforeLoadEvent constructor.
+     *
+     * @param array $rawConfigList
+     */
+    public function __construct(array $rawConfigList)
+    {
+        $this->rawConfigList = $rawConfigList;
+    }
+    
+    /**
+     * Return the raw list of all registered ext config classes
+     * @return array
+     */
+    public function getRawConfigList(): array
+    {
+        return $this->rawConfigList;
+    }
+    
+    /**
+     * Sets the raw list of all registered ext config classes
+     *
+     * @param array $rawConfigList
+     *
+     * @return ExtConfigBeforeLoadEvent
+     */
+    public function setRawConfigList(array $rawConfigList): ExtConfigBeforeLoadEvent
+    {
+        $this->rawConfigList = $rawConfigList;
+        return $this;
+    }
 }

@@ -21,35 +21,35 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
 
-abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInterface {
-	
-	/**
-	 * @var EventBusInterface
-	 */
-	protected static $bus;
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-	 */
-	protected static $container;
-	
-	/**
-	 * @var TypoContext
-	 */
-	protected static $context;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function prepare(EventBusInterface $bus, TypoContext $context, TypoContainerInterface $container): void {
-		static::$bus = $bus;
-		static::$container = $container;
-		static::$context = $context;
-	}
-	
+abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInterface
+{
+    
+    /**
+     * @var EventBusInterface
+     */
+    protected static $bus;
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     */
+    protected static $container;
+    
+    /**
+     * @var TypoContext
+     */
+    protected static $context;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function prepare(EventBusInterface $bus, TypoContext $context, TypoContainerInterface $container): void
+    {
+        static::$bus = $bus;
+        static::$container = $container;
+        static::$context = $context;
+    }
 }

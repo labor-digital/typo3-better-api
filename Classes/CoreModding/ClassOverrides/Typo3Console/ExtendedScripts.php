@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console;
 
-
 use Helhum\Typo3Console\Core\Booting\BetterApiClassOverrideCopy__Scripts;
 use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
@@ -37,29 +36,33 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * extend for our means. So we use this additional override to provide support for our required events
  * @package LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console
  */
-class ExtendedScripts extends BetterApiClassOverrideCopy__Scripts {
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected static function initializeCachingFramework(Bootstrap $bootstrap, bool $disableCaching = FALSE) {
-		parent::initializeCachingFramework($bootstrap, $disableCaching);
-		
-		// Trigger our event as we would in the bootstrap
-		TypoEventBus::getInstance()->dispatch(new CacheManagerCreatedEvent(
-			GeneralUtility::makeInstance(CacheManager::class), FALSE
-		));
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected static function initializePackageManagement(Bootstrap $bootstrap) {
-		parent::initializePackageManagement($bootstrap);
-		
-		// Trigger our event as we would in the bootstrap
-		TypoEventBus::getInstance()->dispatch(new RegisterRuntimePackagesEvent(
-			GeneralUtility::makeInstance(PackageManager::class)
-		));
-	}
+class ExtendedScripts extends BetterApiClassOverrideCopy__Scripts
+{
+    
+    /**
+     * @inheritDoc
+     */
+    protected static function initializeCachingFramework(Bootstrap $bootstrap, bool $disableCaching = false)
+    {
+        parent::initializeCachingFramework($bootstrap, $disableCaching);
+        
+        // Trigger our event as we would in the bootstrap
+        TypoEventBus::getInstance()->dispatch(new CacheManagerCreatedEvent(
+            GeneralUtility::makeInstance(CacheManager::class),
+            false
+        ));
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected static function initializePackageManagement(Bootstrap $bootstrap)
+    {
+        parent::initializePackageManagement($bootstrap);
+        
+        // Trigger our event as we would in the bootstrap
+        TypoEventBus::getInstance()->dispatch(new RegisterRuntimePackagesEvent(
+            GeneralUtility::makeInstance(PackageManager::class)
+        ));
+    }
 }

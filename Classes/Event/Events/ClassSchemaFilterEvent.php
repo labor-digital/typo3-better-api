@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use TYPO3\CMS\Extbase\Reflection\ClassSchema;
 
 /**
@@ -32,65 +31,72 @@ use TYPO3\CMS\Extbase\Reflection\ClassSchema;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ClassSchemaFilterEvent {
-	/**
-	 * The instance of the class schema to be filtered
-	 * @var ClassSchema
-	 */
-	protected $schema;
-	
-	/**
-	 * Either the class name or the object to create a schema for
-	 * @var mixed
-	 */
-	protected $classNameOrObject;
-	
-	/**
-	 * ClassSchemaFilterEvent constructor.
-	 *
-	 * @param \TYPO3\CMS\Extbase\Reflection\ClassSchema $schema
-	 * @param                                           $classNameOrObject
-	 */
-	public function __construct(ClassSchema $schema, $classNameOrObject) {
-		$this->schema = $schema;
-		$this->classNameOrObject = $classNameOrObject;
-	}
-	
-	/**
-	 * Returns the instance of the class schema to be filtered
-	 * @return \TYPO3\CMS\Extbase\Reflection\ClassSchema
-	 */
-	public function getSchema(): ClassSchema {
-		return $this->schema;
-	}
-	
-	/**
-	 * Sets the instance of the class schema to be filtered
-	 *
-	 * @param \TYPO3\CMS\Extbase\Reflection\ClassSchema $schema
-	 *
-	 * @return ClassSchemaFilterEvent
-	 */
-	public function setSchema(ClassSchema $schema): ClassSchemaFilterEvent {
-		$this->schema = $schema;
-		return $this;
-	}
-	
-	/**
-	 * Returns either the class name or the object to create a schema for
-	 * @return mixed
-	 */
-	public function getClassNameOrObject() {
-		return $this->classNameOrObject;
-	}
-	
-	/**
-	 * Always returns the class name of the class to create a schema for
-	 * @return string
-	 */
-	public function getClassName(): string {
-		if (is_string($this->classNameOrObject)) return $this->classNameOrObject;
-		return get_class($this->classNameOrObject);
-	}
-	
+class ClassSchemaFilterEvent
+{
+    /**
+     * The instance of the class schema to be filtered
+     * @var ClassSchema
+     */
+    protected $schema;
+    
+    /**
+     * Either the class name or the object to create a schema for
+     * @var mixed
+     */
+    protected $classNameOrObject;
+    
+    /**
+     * ClassSchemaFilterEvent constructor.
+     *
+     * @param \TYPO3\CMS\Extbase\Reflection\ClassSchema $schema
+     * @param                                           $classNameOrObject
+     */
+    public function __construct(ClassSchema $schema, $classNameOrObject)
+    {
+        $this->schema = $schema;
+        $this->classNameOrObject = $classNameOrObject;
+    }
+    
+    /**
+     * Returns the instance of the class schema to be filtered
+     * @return \TYPO3\CMS\Extbase\Reflection\ClassSchema
+     */
+    public function getSchema(): ClassSchema
+    {
+        return $this->schema;
+    }
+    
+    /**
+     * Sets the instance of the class schema to be filtered
+     *
+     * @param \TYPO3\CMS\Extbase\Reflection\ClassSchema $schema
+     *
+     * @return ClassSchemaFilterEvent
+     */
+    public function setSchema(ClassSchema $schema): ClassSchemaFilterEvent
+    {
+        $this->schema = $schema;
+        return $this;
+    }
+    
+    /**
+     * Returns either the class name or the object to create a schema for
+     * @return mixed
+     */
+    public function getClassNameOrObject()
+    {
+        return $this->classNameOrObject;
+    }
+    
+    /**
+     * Always returns the class name of the class to create a schema for
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        if (is_string($this->classNameOrObject)) {
+            return $this->classNameOrObject;
+        }
+        return get_class($this->classNameOrObject);
+    }
 }

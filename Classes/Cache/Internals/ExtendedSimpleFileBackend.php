@@ -21,17 +21,21 @@ namespace LaborDigital\Typo3BetterApi\Cache\Internals;
 
 use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
 
-class ExtendedSimpleFileBackend extends SimpleFileBackend implements ExtendedSimpleFileBackendInterface {
-	/**
-	 * Returns the filename for a cache key stored in this cache's directory
-	 *
-	 * @param string $key The key to look up
-	 *
-	 * @return mixed Either the filepath or false if no file was found for this key
-	 */
-	public function getFilenameForKey(string $key) {
-		$result = $this->findCacheFilesByIdentifier($key);
-		if (is_array($result)) return array_shift($result);
-		return $result;
-	}
+class ExtendedSimpleFileBackend extends SimpleFileBackend implements ExtendedSimpleFileBackendInterface
+{
+    /**
+     * Returns the filename for a cache key stored in this cache's directory
+     *
+     * @param string $key The key to look up
+     *
+     * @return mixed Either the filepath or false if no file was found for this key
+     */
+    public function getFilenameForKey(string $key)
+    {
+        $result = $this->findCacheFilesByIdentifier($key);
+        if (is_array($result)) {
+            return array_shift($result);
+        }
+        return $result;
+    }
 }

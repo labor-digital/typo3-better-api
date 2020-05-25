@@ -31,6 +31,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\Traits\ExtConfigTableTcaTypeFilterT
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ExtConfigTableTypeDefinitionFilterEvent {
-	use ExtConfigTableTcaTypeFilterTrait;
+class ExtConfigTableTypeDefinitionFilterEvent
+{
+    use ExtConfigTableTcaTypeFilterTrait;
 }

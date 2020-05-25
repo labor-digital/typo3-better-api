@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable;
 
 /**
@@ -31,58 +30,61 @@ use LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable;
  * Can be used to modify the defaults on a global or per table scope
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ExtConfigTableDefaultTcaFilterEvent {
-	
-	/**
-	 * The default TCA array to apply to the table
-	 * @var array
-	 */
-	protected $defaultTca;
-	
-	/**
-	 * The table instance the default should be applied to
-	 * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
-	 */
-	protected $table;
-	
-	/**
-	 * ExtConfigTableDefaultTcaFilterEvent constructor.
-	 *
-	 * @param array                                                       $defaultTca
-	 * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $table
-	 */
-	public function __construct(array $defaultTca, TcaTable $table) {
-		$this->defaultTca = $defaultTca;
-		$this->table = $table;
-	}
-	
-	/**
-	 * Returns the table instance the default should be applied to
-	 * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
-	 */
-	public function getTable(): TcaTable {
-		return $this->table;
-	}
-	
-	/**
-	 * Returns the default TCA array to apply to the table
-	 * @return array
-	 */
-	public function getDefaultTca(): array {
-		return $this->defaultTca;
-	}
-	
-	/**
-	 * Updates the default TCA array to apply to the table
-	 *
-	 * @param array $defaultTca
-	 *
-	 * @return ExtConfigTableDefaultTcaFilterEvent
-	 */
-	public function setDefaultTca(array $defaultTca): ExtConfigTableDefaultTcaFilterEvent {
-		$this->defaultTca = $defaultTca;
-		return $this;
-	}
-	
-	
+class ExtConfigTableDefaultTcaFilterEvent
+{
+    
+    /**
+     * The default TCA array to apply to the table
+     * @var array
+     */
+    protected $defaultTca;
+    
+    /**
+     * The table instance the default should be applied to
+     * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
+     */
+    protected $table;
+    
+    /**
+     * ExtConfigTableDefaultTcaFilterEvent constructor.
+     *
+     * @param array                                                       $defaultTca
+     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $table
+     */
+    public function __construct(array $defaultTca, TcaTable $table)
+    {
+        $this->defaultTca = $defaultTca;
+        $this->table = $table;
+    }
+    
+    /**
+     * Returns the table instance the default should be applied to
+     * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
+     */
+    public function getTable(): TcaTable
+    {
+        return $this->table;
+    }
+    
+    /**
+     * Returns the default TCA array to apply to the table
+     * @return array
+     */
+    public function getDefaultTca(): array
+    {
+        return $this->defaultTca;
+    }
+    
+    /**
+     * Updates the default TCA array to apply to the table
+     *
+     * @param array $defaultTca
+     *
+     * @return ExtConfigTableDefaultTcaFilterEvent
+     */
+    public function setDefaultTca(array $defaultTca): ExtConfigTableDefaultTcaFilterEvent
+    {
+        $this->defaultTca = $defaultTca;
+        return $this;
+    }
 }

@@ -19,20 +19,19 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface PluginConfigurationInterface {
-	
-	/**
-	 * This method is used to configure a single ext base plugin / content element using the
-	 * given configurator and context object
-	 *
-	 * @param PluginConfigurator $configurator
-	 * @param ExtConfigContext   $context
-	 *
-	 * @return mixed
-	 */
-	public static function configurePlugin(PluginConfigurator $configurator, ExtConfigContext $context);
-	
+interface PluginConfigurationInterface
+{
+    
+    /**
+     * This method is used to configure a single ext base plugin / content element using the
+     * given configurator and context object
+     *
+     * @param PluginConfigurator $configurator
+     * @param ExtConfigContext   $context
+     *
+     * @return mixed
+     */
+    public static function configurePlugin(PluginConfigurator $configurator, ExtConfigContext $context);
 }

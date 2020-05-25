@@ -24,26 +24,32 @@ namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 use LaborDigital\Typo3BetterApi\Event\Events\BackendListLabelFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent;
 
-class BackendListLabelFilterEventAdapter extends AbstractCoreHookEventAdapter {
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		static::$bus->addListener(TcaCompletelyLoadedEvent::class, function () {
-			$GLOBALS["TCA"]["tt_content"]["ctrl"]["label_userFunc"] = static::class . "->emit";
-		}, ["priority" => 300]);
-	}
-	
-	/**
-	 * Emit the hook for the content table
-	 *
-	 * @param array $args
-	 */
-	public function emit(array &$args) {
-		$e = new BackendListLabelFilterEvent($args["table"], empty($args["row"]) ? [] : $args["row"],
-			$args["title"], $args["options"]);
-		static::$bus->dispatch($e);
-		$args["title"] = $e->getTitle();
-	}
-	
+class BackendListLabelFilterEventAdapter extends AbstractCoreHookEventAdapter
+{
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        static::$bus->addListener(TcaCompletelyLoadedEvent::class, function () {
+            $GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'] = static::class . '->emit';
+        }, ['priority' => 300]);
+    }
+    
+    /**
+     * Emit the hook for the content table
+     *
+     * @param array $args
+     */
+    public function emit(array &$args)
+    {
+        $e = new BackendListLabelFilterEvent(
+            $args['table'],
+            empty($args['row']) ? [] : $args['row'],
+            $args['title'],
+            $args['options']
+        );
+        static::$bus->dispatch($e);
+        $args['title'] = $e->getTitle();
+    }
 }

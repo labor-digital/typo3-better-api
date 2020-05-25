@@ -21,6 +21,6 @@ namespace LaborDigital\Typo3BetterApi\Tsfe;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class TsfeNotLoadedException extends BetterApiException {
-	
+class TsfeNotLoadedException extends BetterApiException
+{
 }

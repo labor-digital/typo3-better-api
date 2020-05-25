@@ -34,14 +34,15 @@ use LaborDigital\Typo3BetterApi\Event\Events\Traits\BackendFormFilterEventTrait;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormFilterLateEvent implements CoreHookEventInterface {
-	use BackendFormFilterEventTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAdapterClass(): string {
-		return BackendFormFilterLateEventAdapter::class;
-	}
-	
+class BackendFormFilterLateEvent implements CoreHookEventInterface
+{
+    use BackendFormFilterEventTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getAdapterClass(): string
+    {
+        return BackendFormFilterLateEventAdapter::class;
+    }
 }

@@ -19,25 +19,24 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface CachedValueGeneratorInterface {
-	
-	/**
-	 * Should generate the value to be cached out of the given data array
-	 *
-	 * The result of this method MUST be serializable!
-	 *
-	 * @param array                   $data           The collected data that should be transformed into a cached
-	 *                                                value.
-	 * @param ExtConfigContext        $context        The current ext config context object
-	 * @param AbstractExtConfigOption $option         The ext config option object that required this generator to run
-	 * @param array                   $additionalData Optional data data may have been passed when
-	 *                                                getCachedValueOrRun() was called
-	 *
-	 * @return mixed
-	 */
-	public function generate(array $data, ExtConfigContext $context, array $additionalData, $option);
-	
+interface CachedValueGeneratorInterface
+{
+    
+    /**
+     * Should generate the value to be cached out of the given data array
+     *
+     * The result of this method MUST be serializable!
+     *
+     * @param array                   $data           The collected data that should be transformed into a cached
+     *                                                value.
+     * @param ExtConfigContext        $context        The current ext config context object
+     * @param AbstractExtConfigOption $option         The ext config option object that required this generator to run
+     * @param array                   $additionalData Optional data data may have been passed when
+     *                                                getCachedValueOrRun() was called
+     *
+     * @return mixed
+     */
+    public function generate(array $data, ExtConfigContext $context, array $additionalData, $option);
 }

@@ -184,15 +184,15 @@ class BetterApiInit
         TypoEventBus::setInstance($eventBus);
         
         // Load the global events
-        if (isset($GLOBALS["BETTER_API_LOW_LEVEL_EVENTS"])
-            && is_array($GLOBALS["BETTER_API_LOW_LEVEL_EVENTS"])) {
+        if (isset($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'])
+            && is_array($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'])) {
             foreach (
-                $GLOBALS["BETTER_API_LOW_LEVEL_EVENTS"] as $event => $handler
+                $GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'] as $event => $handler
             ) {
                 $eventBus->addListener($event, $handler);
             }
         }
-        unset($GLOBALS["BETTER_API_LOW_LEVEL_EVENTS"], $event, $handler);
+        unset($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'], $event, $handler);
         
         // Register the override generator's auto-loader
         ClassOverrideGenerator::init($composerClassLoader);
@@ -208,42 +208,52 @@ class BetterApiInit
         // Apply the first step of our bootstrap
         $self->applyCoreModding();
         $self->applyDebuggerConfig();
-        include __DIR__ . "/functions.php";
+        include __DIR__ . '/functions.php';
         
         // Check if we need to apply the compatibility script for helhum' console
-        if (PHP_SAPI === "cli") {
+        if (PHP_SAPI === 'cli') {
             $self->applyHelhumConsoleCompatibility();
         }
         
         // TYPO3 9
         // When the Cache Manager is instantiated we create the extBase cache
         // to prevent deprecation warnings...
-        $eventBus->addListener(CacheManagerCreatedEvent::class,
+        $eventBus->addListener(
+            CacheManagerCreatedEvent::class,
             static function (CacheManagerCreatedEvent $e) use ($self) {
                 $e->getCacheManager()
                   ->setCacheConfigurations($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']);
-                $e->getCacheManager()->getCache("extbase_reflection");
+                $e->getCacheManager()->getCache('extbase_reflection');
                 $self->registerErrorHandlerAdapter();
-            });
+            }
+        );
         
         // Handle the failsafe state
-        $eventBus->addListener(BootstrapFailsafeDefinitionEvent::class,
+        $eventBus->addListener(
+            BootstrapFailsafeDefinitionEvent::class,
             static function (BootstrapFailsafeDefinitionEvent $e) {
                 FailsafeWrapper::$isFailsafe = $e->isFailsafe();
-            });
+            }
+        );
         
         // Activate myself
-        $eventBus->addListener(RegisterRuntimePackagesEvent::class,
+        $eventBus->addListener(
+            RegisterRuntimePackagesEvent::class,
             static function (RegisterRuntimePackagesEvent $event) use ($self) {
                 $self->forceSelfActivation($event->getPackageManager());
-            });
-        $eventBus->addListener(RegisterRuntimePackagesEvent::class,
+            }
+        );
+        $eventBus->addListener(
+            RegisterRuntimePackagesEvent::class,
             static function (RegisterRuntimePackagesEvent $event) use ($self) {
                 $self->activateHookExtension($event->getPackageManager());
-            }, ["priority" => -500]);
+            },
+            ['priority' => -500]
+        );
         
         // Do remaining bootstrap
-        $eventBus->addListener(AfterExtLocalConfLoadedEvent::class,
+        $eventBus->addListener(
+            AfterExtLocalConfLoadedEvent::class,
             static function () use ($self) {
                 $self->setupContainer();
                 $self->dispatchInitEvent();
@@ -252,22 +262,31 @@ class BetterApiInit
                 $self->addFormEngineNodes();
                 $self->bindInternalEvents();
                 static::$initComplete = true;
-            }, ["priority" => 100]);
+            },
+            ['priority' => 100]
+        );
         
         // Make sure to destroy the context instance after the bootstrap finished
         // We need this for v9 because we require the Context class, before it is initialized
         // in the Application classes. This will lead to unexpected behaviour in the backend and edge cases.
-        $eventBus->addListener(BootstrapContainerFilterEvent::class,
+        $eventBus->addListener(
+            BootstrapContainerFilterEvent::class,
             static function () use ($self) {
-                GeneralUtility::removeSingletonInstance(Context::class,
-                    $self->context->getRootContext());
-                ObjectContainerAdapter::removeSingleton($self->container->get(Container::class),
-                    Context::class);
+                GeneralUtility::removeSingletonInstance(
+                    Context::class,
+                    $self->context->getRootContext()
+                );
+                ObjectContainerAdapter::removeSingleton(
+                    $self->container->get(Container::class),
+                    Context::class
+                );
                 $self->context->__unlinkContext();
-            });
+            }
+        );
         
         // Register a fallback that loads the ext localconf files if the install tool applies some TCA related checks
-        $eventBus->addListener(LoadExtLocalConfIfTcaIsRequiredWithoutItEvent::class,
+        $eventBus->addListener(
+            LoadExtLocalConfIfTcaIsRequiredWithoutItEvent::class,
             static function () {
                 // Ignore if the init is completed
                 if (BetterApiInit::isComplete()) {
@@ -276,8 +295,8 @@ class BetterApiInit
                 
                 // Load the ext local conf files
                 ExtensionManagementUtility::loadExtLocalconf(false);
-            });
-        
+            }
+        );
     }
     
     /**
@@ -297,7 +316,7 @@ class BetterApiInit
      */
     protected function forceSelfActivation(PackageManager $packageManager): void
     {
-        $packageKey = "typo3_better_api";
+        $packageKey = 'typo3_better_api';
         if ($packageManager->isPackageActive($packageKey)) {
             return;
         }
@@ -319,15 +338,14 @@ class BetterApiInit
     protected function activateHookExtension(PackageManager $packageManager): void
     {
         // Make sure the package was never enabled
-        $packageKey = "typo3_better_api_hook";
+        $packageKey = 'typo3_better_api_hook';
         if ($packageManager->isPackageActive($packageKey)) {
             $packageManager->deactivatePackage($packageKey);
         }
         
         // Create the package and register the base path
-        $package = new Package($packageManager, $packageKey, __DIR__ . "/../HookExtension/" . $packageKey . "/");
-        $adapter = new class extends PackageManager
-        {
+        $package = new Package($packageManager, $packageKey, __DIR__ . '/../HookExtension/' . $packageKey . '/');
+        $adapter = new class extends PackageManager {
             public function registerHookPackage(
                 PackageManager $packageManager,
                 PackageInterface $package
@@ -363,8 +381,10 @@ class BetterApiInit
         ClassOverrideGenerator::registerOverride(ReferenceIndex::class, ExtendedReferenceIndex::class);
         
         // Make sure we don't crash legacy code when changing the language service
-        ClassOverrideGenerator::registerOverride(LanguageService::class,
-            ExtendedLanguageService::class);
+        ClassOverrideGenerator::registerOverride(
+            LanguageService::class,
+            ExtendedLanguageService::class
+        );
         if (! class_exists(LanguageService::class, false)
             && ! class_exists(\TYPO3\CMS\Lang\LanguageService::class, false)) {
             class_alias(LanguageService::class, \TYPO3\CMS\Lang\LanguageService::class);
@@ -376,20 +396,20 @@ class BetterApiInit
      */
     protected function applyDebuggerConfig(): void
     {
-        if (function_exists("dbgConfig") && defined("_DBG_CONFIG_LOADED")) {
+        if (function_exists('dbgConfig') && defined('_DBG_CONFIG_LOADED')) {
             // Register our Plugins
             Kint::$plugins[] = LazyLoadingPlugin::class;
             Kint::$plugins[] = TypoInstanceTypePlugin::class;
             
             // Register pre hook to fix broken typo3 iframe
             $recursion = false;
-            dbgConfig("postHooks", static function () use (&$recursion) {
+            dbgConfig('postHooks', static function () use (&$recursion) {
                 if ($recursion) {
                     return;
                 }
                 $recursion = true;
                 try {
-                    if ((defined('TYPO3_MODE') && TYPO3_MODE === 'BE') && PHP_SAPI !== "cli") {
+                    if ((defined('TYPO3_MODE') && TYPO3_MODE === 'BE') && PHP_SAPI !== 'cli') {
                         if (Kint::$mode_default !== Kint::MODE_RICH) {
                             return;
                         }
@@ -438,21 +458,20 @@ HTML;
     {
         
         // Register production exception handler
-        if ($GLOBALS["TYPO3_CONF_VARS"]["SYS"]["productionExceptionHandler"]
+        if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
             !== ProductionExceptionHandler::class) {
-            ProductionExceptionHandler::__setDefaultExceptionHandler((string)$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["productionExceptionHandler"]);
-            $GLOBALS["TYPO3_CONF_VARS"]["SYS"]["productionExceptionHandler"]
+            ProductionExceptionHandler::__setDefaultExceptionHandler((string)$GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']);
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
                 = ProductionExceptionHandler::class;
         }
         
         // Register debug exception handler
-        if ($GLOBALS["TYPO3_CONF_VARS"]["SYS"]["debugExceptionHandler"]
+        if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
             !== DebugExceptionHandler::class) {
-            DebugExceptionHandler::__setDefaultExceptionHandler((string)$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["debugExceptionHandler"]);
-            $GLOBALS["TYPO3_CONF_VARS"]["SYS"]["debugExceptionHandler"]
+            DebugExceptionHandler::__setDefaultExceptionHandler((string)$GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']);
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
                 = DebugExceptionHandler::class;
         }
-        
     }
     
     /**
@@ -465,16 +484,24 @@ HTML;
         $this->container = TypoContainer::getInstance();
         
         // Register our overwrite implementations
-        $this->container->setClassFor(ExtendedCacheManager::class,
-            CacheManager::class);
+        $this->container->setClassFor(
+            ExtendedCacheManager::class,
+            CacheManager::class
+        );
         
         // Register implementations
-        $this->container->setClassFor(DbServiceInterface::class,
-            DbService::class);
-        $this->container->setClassFor(EventBusInterface::class,
-            TypoEventBus::class);
-        $this->container->setClassFor(TypoContainerInterface::class,
-            TypoContainer::class);
+        $this->container->setClassFor(
+            DbServiceInterface::class,
+            DbService::class
+        );
+        $this->container->setClassFor(
+            EventBusInterface::class,
+            TypoEventBus::class
+        );
+        $this->container->setClassFor(
+            TypoContainerInterface::class,
+            TypoContainer::class
+        );
         
         // Register existing instances
         /** @noinspection PhpParamsInspection */
@@ -485,8 +512,10 @@ HTML;
         
         // Register the lazy constructor injection hook
         $this->eventBus->addLazySubscriber(LazyConstructorInjectionHook::class);
-        $this->eventBus->dispatch(new ClassSchemaFilterEvent(new ClassSchema(LazyConstructorInjectionHook::class),
-            LazyConstructorInjectionHook::class));
+        $this->eventBus->dispatch(new ClassSchemaFilterEvent(
+            new ClassSchema(LazyConstructorInjectionHook::class),
+            LazyConstructorInjectionHook::class
+        ));
     }
     
     /**
@@ -537,7 +566,7 @@ HTML;
         // Always add those
         $this->eventBus
             ->addLazySubscriber(TempFs::class, static function () {
-                return TempFs::makeInstance("");
+                return TempFs::makeInstance('');
             })
             ->addLazySubscriber(TypoScriptService::class)
             ->addLazySubscriber(PidTcaFilter::class)
@@ -561,14 +590,20 @@ HTML;
         }
         
         // Make sure the exception handler is registered correctly
-        $this->eventBus->addListener(ExtLocalConfLoadedEvent::class,
+        $this->eventBus->addListener(
+            ExtLocalConfLoadedEvent::class,
             function () {
                 $this->registerErrorHandlerAdapter();
-            }, ["priority" => -500]);
+            },
+            ['priority' => -500]
+        );
         
         // Register our own ext config class
-        betterExtConfig("laborDigital.typo3_better_api",
-            BetterApiExtConfig::class, ["before" => ["first", "last"]]);
+        betterExtConfig(
+            'laborDigital.typo3_better_api',
+            BetterApiExtConfig::class,
+            ['before' => ['first', 'last']]
+        );
     }
     
     /**
@@ -576,31 +611,31 @@ HTML;
      */
     protected function applyCacheConfiguration(): void
     {
-        $cc                       = &$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["caching"]["cacheConfigurations"];
-        $cc["ba_cache_pageBased"] = [
-            "frontend" => VariableFrontend::class,
-            "backend"  => Typo3DatabaseBackend::class,
-            "options"  => [
-                "compression" => true,
+        $cc                       = &$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'];
+        $cc['ba_cache_pageBased'] = [
+            'frontend' => VariableFrontend::class,
+            'backend'  => Typo3DatabaseBackend::class,
+            'options'  => [
+                'compression' => true,
             ],
-            "groups"   => ["pages"],
+            'groups'   => ['pages'],
         ];
-        $cc["ba_cache_frontend"]  = [
-            "frontend" => VariableFrontend::class,
-            "backend"  => Typo3DatabaseBackend::class,
-            "options"  => [
-                "compression" => true,
+        $cc['ba_cache_frontend']  = [
+            'frontend' => VariableFrontend::class,
+            'backend'  => Typo3DatabaseBackend::class,
+            'options'  => [
+                'compression' => true,
             ],
-            "groups"   => ["pages"],
+            'groups'   => ['pages'],
         ];
-        $cc["ba_cache_general"]   = [
-            "frontend" => VariableFrontend::class,
-            "backend"  => Typo3DatabaseBackend::class,
-            "options"  => [
-                "compression"     => true,
-                "defaultLifetime" => 0,
+        $cc['ba_cache_general']   = [
+            'frontend' => VariableFrontend::class,
+            'backend'  => Typo3DatabaseBackend::class,
+            'options'  => [
+                'compression'     => true,
+                'defaultLifetime' => 0,
             ],
-            "groups"   => ["system"],
+            'groups'   => ['system'],
         ];
     }
     
@@ -614,25 +649,25 @@ HTML;
             return;
         }
         $nodeRegistry
-            = &$GLOBALS["TYPO3_CONF_VARS"]["SYS"]["formEngine"]["nodeRegistry"];
+            = &$GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'];
         
         // Register the custom element node
-        $nodeRegistry["betterApiCustomElement"] = [
-            "nodeName" => "betterApiCustomElement",
-            "priority" => 40,
-            "class"    => CustomElementNode::class,
+        $nodeRegistry['betterApiCustomElement'] = [
+            'nodeName' => 'betterApiCustomElement',
+            'priority' => 40,
+            'class'    => CustomElementNode::class,
         ];
         // Register the custom wizard node
-        $nodeRegistry["betterApiCustomWizard"] = [
-            "nodeName" => "betterApiCustomWizard",
-            "priority" => 40,
-            "class"    => CustomWizardNode::class,
+        $nodeRegistry['betterApiCustomWizard'] = [
+            'nodeName' => 'betterApiCustomWizard',
+            'priority' => 40,
+            'class'    => CustomWizardNode::class,
         ];
         // Register our custom slug node
-        $nodeRegistry["betterApiPathSegmentSlug"] = [
-            "nodeName" => "betterApiPathSegmentSlug",
-            "priority" => 40,
-            "class"    => PathSegmentSlugElementNode::class,
+        $nodeRegistry['betterApiPathSegmentSlug'] = [
+            'nodeName' => 'betterApiPathSegmentSlug',
+            'priority' => 40,
+            'class'    => PathSegmentSlugElementNode::class,
         ];
     }
     
@@ -642,7 +677,7 @@ HTML;
     protected function applyHelhumConsoleCompatibility(): void
     {
         // Check if we require the compatibility layer
-        if (php_sapi_name() !== "cli") {
+        if (php_sapi_name() !== 'cli') {
             return;
         }
         if (! class_exists(Kernel::class)) {
@@ -651,8 +686,8 @@ HTML;
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $found = false;
         foreach ($trace as $step) {
-            if (! isset($step["file"]) || ! is_string($step["file"])
-                || stripos($step["file"], "typo3-console") === false) {
+            if (! isset($step['file']) || ! is_string($step['file'])
+                || stripos($step['file'], 'typo3-console') === false) {
                 continue;
             }
             $found = true;
@@ -663,7 +698,9 @@ HTML;
         }
         
         // Register the extended scripts class
-        ClassOverrideGenerator::registerOverride(Scripts::class,
-            ExtendedScripts::class);
+        ClassOverrideGenerator::registerOverride(
+            Scripts::class,
+            ExtendedScripts::class
+        );
     }
 }

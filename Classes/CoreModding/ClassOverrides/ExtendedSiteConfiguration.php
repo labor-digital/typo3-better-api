@@ -19,33 +19,35 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\Event\Events\SiteConfigFilterEvent;
 use TYPO3\CMS\Core\Configuration\BetterApiClassOverrideCopy__SiteConfiguration;
 
-class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfiguration {
-	use CommonServiceLocatorTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getAllSiteConfigurationFromFiles(): array {
-		
-		// Create the configuration if it is not yet cached
-		$isCached = !empty($this->getCache()->get($this->cacheIdentifier));
-		$siteConfig = parent::getAllSiteConfigurationFromFiles();
-		if ($isCached) return $siteConfig;
-		
-		// Allow filtering
-		$this->EventBus->dispatch(($e = new SiteConfigFilterEvent($siteConfig)));
-		$siteConfig = $e->getConfig();
-		
-		// Update the cached value
-		$this->getCache()->set($this->cacheIdentifier, json_encode($siteConfig));
-		
-		// Done
-		return $siteConfig;
-	}
-	
+class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfiguration
+{
+    use CommonServiceLocatorTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public function getAllSiteConfigurationFromFiles(): array
+    {
+        
+        // Create the configuration if it is not yet cached
+        $isCached = !empty($this->getCache()->get($this->cacheIdentifier));
+        $siteConfig = parent::getAllSiteConfigurationFromFiles();
+        if ($isCached) {
+            return $siteConfig;
+        }
+        
+        // Allow filtering
+        $this->EventBus->dispatch(($e = new SiteConfigFilterEvent($siteConfig)));
+        $siteConfig = $e->getConfig();
+        
+        // Update the cached value
+        $this->getCache()->set($this->cacheIdentifier, json_encode($siteConfig));
+        
+        // Done
+        return $siteConfig;
+    }
 }

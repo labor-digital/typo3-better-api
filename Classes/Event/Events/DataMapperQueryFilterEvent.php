@@ -31,104 +31,112 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class DataMapperQueryFilterEvent {
-	
-	/**
-	 * The database query that is currently filtered
-	 * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
-	 */
-	protected $query;
-	
-	/**
-	 * The domain object for which the relation is created
-	 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	protected $parentObject;
-	
-	/**
-	 * The name of the property for which the relation is created
-	 * @var string
-	 */
-	protected $propertyName;
-	
-	/**
-	 * The value of the field that should be filtered
-	 * @var mixed
-	 */
-	protected $fieldValue;
-	
-	/**
-	 * The class name of the related object that should be resolved
-	 * @var string
-	 */
-	protected $propertyType;
-	
-	/**
-	 * DataMapperQueryFilterEvent constructor.
-	 *
-	 * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface         $query
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $parentObject
-	 * @param string                                                $propertyName
-	 * @param                                                       $fieldValue
-	 * @param string                                                $propertyType
-	 */
-	public function __construct(QueryInterface $query, DomainObjectInterface $parentObject, string $propertyName, $fieldValue, string $propertyType) {
-		$this->query = $query;
-		$this->parentObject = $parentObject;
-		$this->propertyName = $propertyName;
-		$this->fieldValue = $fieldValue;
-		$this->propertyType = $propertyType;
-	}
-	
-	/**
-	 * Returns the database query that is currently filtered
-	 * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
-	 */
-	public function getQuery(): QueryInterface {
-		return $this->query;
-	}
-	
-	/**
-	 * Updates the database query that is currently filtered
-	 *
-	 * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
-	 *
-	 * @return DataMapperQueryFilterEvent
-	 */
-	public function setQuery(QueryInterface $query): DataMapperQueryFilterEvent {
-		$this->query = $query;
-		return $this;
-	}
-	
-	/**
-	 * Returns the domain object for which the relation is created
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	public function getParentObject(): DomainObjectInterface {
-		return $this->parentObject;
-	}
-	
-	/**
-	 * Returns the name of the property for which the relation is created
-	 * @return string
-	 */
-	public function getPropertyName(): string {
-		return $this->propertyName;
-	}
-	
-	/**
-	 * Returns the value of the field that should be filtered
-	 * @return mixed
-	 */
-	public function getFieldValue() {
-		return $this->fieldValue;
-	}
-	
-	/**
-	 * Returns the class name of the related object that should be resolved
-	 * @return string
-	 */
-	public function getPropertyType(): string {
-		return $this->propertyType;
-	}
+class DataMapperQueryFilterEvent
+{
+    
+    /**
+     * The database query that is currently filtered
+     * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     */
+    protected $query;
+    
+    /**
+     * The domain object for which the relation is created
+     * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     */
+    protected $parentObject;
+    
+    /**
+     * The name of the property for which the relation is created
+     * @var string
+     */
+    protected $propertyName;
+    
+    /**
+     * The value of the field that should be filtered
+     * @var mixed
+     */
+    protected $fieldValue;
+    
+    /**
+     * The class name of the related object that should be resolved
+     * @var string
+     */
+    protected $propertyType;
+    
+    /**
+     * DataMapperQueryFilterEvent constructor.
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface         $query
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $parentObject
+     * @param string                                                $propertyName
+     * @param                                                       $fieldValue
+     * @param string                                                $propertyType
+     */
+    public function __construct(QueryInterface $query, DomainObjectInterface $parentObject, string $propertyName, $fieldValue, string $propertyType)
+    {
+        $this->query = $query;
+        $this->parentObject = $parentObject;
+        $this->propertyName = $propertyName;
+        $this->fieldValue = $fieldValue;
+        $this->propertyType = $propertyType;
+    }
+    
+    /**
+     * Returns the database query that is currently filtered
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     */
+    public function getQuery(): QueryInterface
+    {
+        return $this->query;
+    }
+    
+    /**
+     * Updates the database query that is currently filtered
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     *
+     * @return DataMapperQueryFilterEvent
+     */
+    public function setQuery(QueryInterface $query): DataMapperQueryFilterEvent
+    {
+        $this->query = $query;
+        return $this;
+    }
+    
+    /**
+     * Returns the domain object for which the relation is created
+     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     */
+    public function getParentObject(): DomainObjectInterface
+    {
+        return $this->parentObject;
+    }
+    
+    /**
+     * Returns the name of the property for which the relation is created
+     * @return string
+     */
+    public function getPropertyName(): string
+    {
+        return $this->propertyName;
+    }
+    
+    /**
+     * Returns the value of the field that should be filtered
+     * @return mixed
+     */
+    public function getFieldValue()
+    {
+        return $this->fieldValue;
+    }
+    
+    /**
+     * Returns the class name of the related object that should be resolved
+     * @return string
+     */
+    public function getPropertyType(): string
+    {
+        return $this->propertyType;
+    }
 }

@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\FlexForms;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormField;
 
-class FlexField extends AbstractFormField {
-	
+class FlexField extends AbstractFormField
+{
 }

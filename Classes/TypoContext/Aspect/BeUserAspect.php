@@ -19,40 +19,49 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
-
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContextException;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
-class BeUserAspect extends AbstractBetterUserAspect {
-	
-	/**
-	 * Returns the frontend user authentication object
-	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-	 * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
-	 */
-	public function getUser(): BackendUserAuthentication {
-		$user = $this->getUserObject();
-		if (empty($user))
-			throw new TypoContextException("Could not find a user object! Seems like you are to early in the lifecycle");
-		return $user;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function getRootAspectKey(): string {
-		return "backend.user";
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function getUserObject() {
-		if (!empty($this->resolvedUser)) return $this->resolvedUser;
-		$user = parent::getUserObject();
-		if (!empty($user)) return $user;
-		if (!empty($GLOBALS["BE_USER"]))
-			return $this->resolvedUser = $GLOBALS["BE_USER"];
-		return $user;
-	}
+class BeUserAspect extends AbstractBetterUserAspect
+{
+    
+    /**
+     * Returns the frontend user authentication object
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
+     */
+    public function getUser(): BackendUserAuthentication
+    {
+        $user = $this->getUserObject();
+        if (empty($user)) {
+            throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
+        }
+        return $user;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function getRootAspectKey(): string
+    {
+        return 'backend.user';
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function getUserObject()
+    {
+        if (!empty($this->resolvedUser)) {
+            return $this->resolvedUser;
+        }
+        $user = parent::getUserObject();
+        if (!empty($user)) {
+            return $user;
+        }
+        if (!empty($GLOBALS['BE_USER'])) {
+            return $this->resolvedUser = $GLOBALS['BE_USER'];
+        }
+        return $user;
+    }
 }

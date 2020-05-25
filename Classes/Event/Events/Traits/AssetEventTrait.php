@@ -21,59 +21,62 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\Traits;
 
-
 use TYPO3\CMS\Core\Page\PageRenderer;
 
-trait AssetEventTrait {
-	/**
-	 * The list of all assets to be filtered
-	 * @var array
-	 */
-	protected $assets;
-	
-	/**
-	 * The instance of the page renderer object
-	 * @var \TYPO3\CMS\Core\Page\PageRenderer
-	 */
-	protected $pageRenderer;
-	
-	/**
-	 * AssetFilterTrait constructor.
-	 *
-	 * @param array                             $assets
-	 * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer
-	 */
-	public function __construct(array $assets, PageRenderer $pageRenderer) {
-		$this->assets = $assets;
-		$this->pageRenderer = $pageRenderer;
-	}
-	
-	/**
-	 * Returns the list of all assets to be filtered
-	 * @return array
-	 */
-	public function getAssets(): array {
-		return $this->assets;
-	}
-	
-	/**
-	 * Updates the list of all assets to be filtered
-	 *
-	 * @param array $assets
-	 *
-	 * @return AssetEventTrait
-	 */
-	public function setAssets(array $assets): AssetEventTrait {
-		$this->assets = $assets;
-		return $this;
-	}
-	
-	/**
-	 * Returns the instance of the page renderer object
-	 * @return \TYPO3\CMS\Core\Page\PageRenderer
-	 */
-	public function getPageRenderer(): PageRenderer {
-		return $this->pageRenderer;
-	}
-	
+trait AssetEventTrait
+{
+    /**
+     * The list of all assets to be filtered
+     * @var array
+     */
+    protected $assets;
+    
+    /**
+     * The instance of the page renderer object
+     * @var \TYPO3\CMS\Core\Page\PageRenderer
+     */
+    protected $pageRenderer;
+    
+    /**
+     * AssetFilterTrait constructor.
+     *
+     * @param array                             $assets
+     * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer
+     */
+    public function __construct(array $assets, PageRenderer $pageRenderer)
+    {
+        $this->assets = $assets;
+        $this->pageRenderer = $pageRenderer;
+    }
+    
+    /**
+     * Returns the list of all assets to be filtered
+     * @return array
+     */
+    public function getAssets(): array
+    {
+        return $this->assets;
+    }
+    
+    /**
+     * Updates the list of all assets to be filtered
+     *
+     * @param array $assets
+     *
+     * @return AssetEventTrait
+     */
+    public function setAssets(array $assets): AssetEventTrait
+    {
+        $this->assets = $assets;
+        return $this;
+    }
+    
+    /**
+     * Returns the instance of the page renderer object
+     * @return \TYPO3\CMS\Core\Page\PageRenderer
+     */
+    public function getPageRenderer(): PageRenderer
+    {
+        return $this->pageRenderer;
+    }
 }

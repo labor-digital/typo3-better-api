@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use TYPO3\CMS\Core\Package\PackageManager;
 
 /**
@@ -31,27 +30,30 @@ use TYPO3\CMS\Core\Package\PackageManager;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class RegisterRuntimePackagesEvent {
-	
-	/**
-	 * @var \TYPO3\CMS\Core\Package\PackageManager
-	 */
-	protected $packageManager;
-	
-	/**
-	 * RegisterRuntimePackagesEvent constructor.
-	 *
-	 * @param \TYPO3\CMS\Core\Package\PackageManager $packageManager
-	 */
-	public function __construct(PackageManager $packageManager) {
-		$this->packageManager = $packageManager;
-	}
-	
-	/**
-	 * Returns the package manager instance
-	 * @return \TYPO3\CMS\Core\Package\PackageManager
-	 */
-	public function getPackageManager(): PackageManager {
-		return $this->packageManager;
-	}
+class RegisterRuntimePackagesEvent
+{
+    
+    /**
+     * @var \TYPO3\CMS\Core\Package\PackageManager
+     */
+    protected $packageManager;
+    
+    /**
+     * RegisterRuntimePackagesEvent constructor.
+     *
+     * @param \TYPO3\CMS\Core\Package\PackageManager $packageManager
+     */
+    public function __construct(PackageManager $packageManager)
+    {
+        $this->packageManager = $packageManager;
+    }
+    
+    /**
+     * Returns the package manager instance
+     * @return \TYPO3\CMS\Core\Package\PackageManager
+     */
+    public function getPackageManager(): PackageManager
+    {
+        return $this->packageManager;
+    }
 }

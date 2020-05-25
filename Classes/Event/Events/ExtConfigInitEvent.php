@@ -29,6 +29,6 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\ExtConfig\Event
  */
-class ExtConfigInitEvent {
-	
+class ExtConfigInitEvent
+{
 }

@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterface;
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\DataHandlerActionFilterEventAdapter;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -37,173 +36,186 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * @package LaborDigital\Typo3BetterApi\Event\Events
  * @see     \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerSavePostProcessorEvent
  */
-class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface {
-	/**
-	 * The data handler command that is currently processed
-	 * @var string
-	 */
-	protected $command;
-	
-	/**
-	 * The name of the table that is currently processed
-	 * @var string
-	 */
-	protected $tableName;
-	
-	/**
-	 * The id of the record that is currently processed
-	 * @var int|string
-	 */
-	protected $id;
-	
-	/**
-	 * The new id of the record that is currently processed if it was copied
-	 * @var int|string
-	 */
-	protected $newId;
-	
-	/**
-	 * This is... something (?)
-	 * @var mixed
-	 */
-	protected $value;
-	
-	/**
-	 * This is... something when copying records (?)
-	 * @var mixed
-	 */
-	protected $pasteSpecialData;
-	
-	/**
-	 * This is... something when copying records (?)
-	 * @var mixed
-	 */
-	protected $pasteDataMap;
-	
-	/**
-	 * The instance of the data handler that is currently processing the request
-	 * @var \TYPO3\CMS\Core\DataHandling\DataHandler
-	 */
-	protected $dataHandler;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAdapterClass(): string {
-		return DataHandlerActionFilterEventAdapter::class;
-	}
-	
-	/**
-	 * DataHandlerActionFilterEvent constructor.
-	 *
-	 * @param string                                   $command
-	 * @param string                                   $tableName
-	 * @param                                          $id
-	 * @param                                          $newId
-	 * @param                                          $value
-	 * @param                                          $pasteSpecialData
-	 * @param                                          $pasteDataMap
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
-	 */
-	public function __construct(string $command, string $tableName, $id, $newId, $value, $pasteSpecialData, $pasteDataMap, DataHandler $dataHandler) {
-		$this->command = $command;
-		$this->tableName = $tableName;
-		$this->id = $id;
-		$this->value = $value;
-		$this->pasteSpecialData = $pasteSpecialData;
-		$this->dataHandler = $dataHandler;
-		$this->newId = $newId;
-		$this->pasteDataMap = $pasteDataMap;
-	}
-	
-	/**
-	 * Returns the instance of the data handler that is currently processing the request
-	 * @return \TYPO3\CMS\Core\DataHandling\DataHandler
-	 */
-	public function getDataHandler(): DataHandler {
-		return $this->dataHandler;
-	}
-	
-	/**
-	 * Returns the data handler command that is currently processed
-	 * @return string
-	 */
-	public function getCommand(): string {
-		return $this->command;
-	}
-	
-	/**
-	 * Returns the name of the table that is currently processed
-	 * @return string
-	 */
-	public function getTableName(): string {
-		return $this->tableName;
-	}
-	
-	/**
-	 * Returns the id of the record that is currently processed
-	 * @return int|string
-	 */
-	public function getId() {
-		return $this->id;
-	}
-	
-	/**
-	 * Returns the new id of the record that is currently processed if it was copied
-	 * @return int|string
-	 */
-	public function getNewId() {
-		return $this->newId;
-	}
-	
-	/**
-	 * (?)
-	 * @return mixed
-	 * @todo investigate
-	 */
-	public function getValue() {
-		return $this->value;
-	}
-	
-	/**
-	 * (?)
-	 * @return mixed
-	 * @todo investigate
-	 */
-	public function getPasteSpecialData() {
-		return $this->pasteSpecialData;
-	}
-	
-	/**
-	 * (?)
-	 * @param mixed $pasteSpecialData
-	 *
-	 * @return DataHandlerActionPostProcessorEvent
-	 * @todo investigate
-	 */
-	public function setPasteSpecialData($pasteSpecialData): DataHandlerActionPostProcessorEvent {
-		$this->pasteSpecialData = $pasteSpecialData;
-		return $this;
-	}
-	
-	/**
-	 * (?)
-	 * @return mixed
-	 * @todo investigate
-	 */
-	public function getPasteDataMap() {
-		return $this->pasteDataMap;
-	}
-	
-	/**
-	 * (?)
-	 * @param mixed $pasteDataMap
-	 *
-	 * @return DataHandlerActionPostProcessorEvent
-	 * @todo investigate
-	 */
-	public function setPasteDataMap($pasteDataMap) {
-		$this->pasteDataMap = $pasteDataMap;
-		return $this;
-	}
+class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
+{
+    /**
+     * The data handler command that is currently processed
+     * @var string
+     */
+    protected $command;
+    
+    /**
+     * The name of the table that is currently processed
+     * @var string
+     */
+    protected $tableName;
+    
+    /**
+     * The id of the record that is currently processed
+     * @var int|string
+     */
+    protected $id;
+    
+    /**
+     * The new id of the record that is currently processed if it was copied
+     * @var int|string
+     */
+    protected $newId;
+    
+    /**
+     * This is... something (?)
+     * @var mixed
+     */
+    protected $value;
+    
+    /**
+     * This is... something when copying records (?)
+     * @var mixed
+     */
+    protected $pasteSpecialData;
+    
+    /**
+     * This is... something when copying records (?)
+     * @var mixed
+     */
+    protected $pasteDataMap;
+    
+    /**
+     * The instance of the data handler that is currently processing the request
+     * @var \TYPO3\CMS\Core\DataHandling\DataHandler
+     */
+    protected $dataHandler;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getAdapterClass(): string
+    {
+        return DataHandlerActionFilterEventAdapter::class;
+    }
+    
+    /**
+     * DataHandlerActionFilterEvent constructor.
+     *
+     * @param string                                   $command
+     * @param string                                   $tableName
+     * @param                                          $id
+     * @param                                          $newId
+     * @param                                          $value
+     * @param                                          $pasteSpecialData
+     * @param                                          $pasteDataMap
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+     */
+    public function __construct(string $command, string $tableName, $id, $newId, $value, $pasteSpecialData, $pasteDataMap, DataHandler $dataHandler)
+    {
+        $this->command = $command;
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->value = $value;
+        $this->pasteSpecialData = $pasteSpecialData;
+        $this->dataHandler = $dataHandler;
+        $this->newId = $newId;
+        $this->pasteDataMap = $pasteDataMap;
+    }
+    
+    /**
+     * Returns the instance of the data handler that is currently processing the request
+     * @return \TYPO3\CMS\Core\DataHandling\DataHandler
+     */
+    public function getDataHandler(): DataHandler
+    {
+        return $this->dataHandler;
+    }
+    
+    /**
+     * Returns the data handler command that is currently processed
+     * @return string
+     */
+    public function getCommand(): string
+    {
+        return $this->command;
+    }
+    
+    /**
+     * Returns the name of the table that is currently processed
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+    
+    /**
+     * Returns the id of the record that is currently processed
+     * @return int|string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * Returns the new id of the record that is currently processed if it was copied
+     * @return int|string
+     */
+    public function getNewId()
+    {
+        return $this->newId;
+    }
+    
+    /**
+     * (?)
+     * @return mixed
+     * @todo investigate
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+    
+    /**
+     * (?)
+     * @return mixed
+     * @todo investigate
+     */
+    public function getPasteSpecialData()
+    {
+        return $this->pasteSpecialData;
+    }
+    
+    /**
+     * (?)
+     * @param mixed $pasteSpecialData
+     *
+     * @return DataHandlerActionPostProcessorEvent
+     * @todo investigate
+     */
+    public function setPasteSpecialData($pasteSpecialData): DataHandlerActionPostProcessorEvent
+    {
+        $this->pasteSpecialData = $pasteSpecialData;
+        return $this;
+    }
+    
+    /**
+     * (?)
+     * @return mixed
+     * @todo investigate
+     */
+    public function getPasteDataMap()
+    {
+        return $this->pasteDataMap;
+    }
+    
+    /**
+     * (?)
+     * @param mixed $pasteDataMap
+     *
+     * @return DataHandlerActionPostProcessorEvent
+     * @todo investigate
+     */
+    public function setPasteDataMap($pasteDataMap)
+    {
+        $this->pasteDataMap = $pasteDataMap;
+        return $this;
+    }
 }

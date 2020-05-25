@@ -19,76 +19,81 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Service\DependencyOrderingService;
 
-class ConfigSorter {
-	/**
-	 * This method can be used to sort a list of elements by dependencies.
-	 * It uses Typo3's dependency ordering service internally, but handles some quirks it has to make
-	 * it easier to use and understand.
-	 *
-	 * Your list should look like ["a" => ["before" => "foo", "after" => ["foo", "bar"], "b" => ["before" => ...]]
-	 *
-	 * "before" defines either a single, or multiple elements that should be after this element.
-	 * "after" does the opposite and defines elements that should come before this element.
-	 * Both keys can either be an array or a single key value.
-	 *
-	 * There are two "special" keys. "first" and "last". You can do ["a" => ["before" => "end"] ["b" = ...]] to
-	 * always put this element to the end of the list. Using the "first" key does the opposite. You can always
-	 * use "after" => "last" and "before" => "first" which will be sorted with higher priority than "before" => "last"
-	 * and "after" => "first".
-	 *
-	 * @param array $list
-	 *
-	 * @return array
-	 * @throws \LaborDigital\Typo3BetterApi\BetterApiException
-	 */
-	public static function sortByDependencies(array $list): array {
-		// Prepare the storage list
-		$listClean = [
-			"first" => [],
-			"last"  => ["after" => "first"],
-		];
-		
-		// First pass apply the options
-		foreach ($list as $k => $v) {
-			if (empty($v)) continue;
-			if (!is_array($v)) throw new BetterApiException("The given list contains an element at key: $k which is not an array!");
-			
-			// Prepare options
-			$_v = Options::make($v, [
-				"before" => [
-					"default" => [],
-					"type"    => ["string", "array"],
-					"filter"  => function ($v) {
-						return !is_array($v) ? [$v] : $v;
-					},
-				],
-				"after"  => [
-					"default" => [],
-					"type"    => ["string", "array"],
-					"filter"  => function ($v) {
-						return !is_array($v) ? [$v] : $v;
-					},
-				],
-			], ["allowUnknown" => TRUE]);
-			
-			// Add it to the list
-			$listClean[$k] = $_v;
-		}
-		
-		// Sort the list
-		$listSorted = TypoContainer::getInstance()->get(DependencyOrderingService::class)->orderByDependencies($listClean);
-		
-		// Clean the list
-		unset($listSorted["first"]);
-		unset($listSorted["last"]);
-		
-		// Done
-		return $listSorted;
-	}
+class ConfigSorter
+{
+    /**
+     * This method can be used to sort a list of elements by dependencies.
+     * It uses Typo3's dependency ordering service internally, but handles some quirks it has to make
+     * it easier to use and understand.
+     *
+     * Your list should look like ["a" => ["before" => "foo", "after" => ["foo", "bar"], "b" => ["before" => ...]]
+     *
+     * "before" defines either a single, or multiple elements that should be after this element.
+     * "after" does the opposite and defines elements that should come before this element.
+     * Both keys can either be an array or a single key value.
+     *
+     * There are two "special" keys. "first" and "last". You can do ["a" => ["before" => "end"] ["b" = ...]] to
+     * always put this element to the end of the list. Using the "first" key does the opposite. You can always
+     * use "after" => "last" and "before" => "first" which will be sorted with higher priority than "before" => "last"
+     * and "after" => "first".
+     *
+     * @param array $list
+     *
+     * @return array
+     * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+     */
+    public static function sortByDependencies(array $list): array
+    {
+        // Prepare the storage list
+        $listClean = [
+            'first' => [],
+            'last'  => ['after' => 'first'],
+        ];
+        
+        // First pass apply the options
+        foreach ($list as $k => $v) {
+            if (empty($v)) {
+                continue;
+            }
+            if (!is_array($v)) {
+                throw new BetterApiException("The given list contains an element at key: $k which is not an array!");
+            }
+            
+            // Prepare options
+            $_v = Options::make($v, [
+                'before' => [
+                    'default' => [],
+                    'type'    => ['string', 'array'],
+                    'filter'  => function ($v) {
+                        return !is_array($v) ? [$v] : $v;
+                    },
+                ],
+                'after'  => [
+                    'default' => [],
+                    'type'    => ['string', 'array'],
+                    'filter'  => function ($v) {
+                        return !is_array($v) ? [$v] : $v;
+                    },
+                ],
+            ], ['allowUnknown' => true]);
+            
+            // Add it to the list
+            $listClean[$k] = $_v;
+        }
+        
+        // Sort the list
+        $listSorted = TypoContainer::getInstance()->get(DependencyOrderingService::class)->orderByDependencies($listClean);
+        
+        // Clean the list
+        unset($listSorted['first']);
+        unset($listSorted['last']);
+        
+        // Done
+        return $listSorted;
+    }
 }

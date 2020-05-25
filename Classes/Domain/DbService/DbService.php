@@ -32,208 +32,242 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
-class DbService implements DbServiceInterface {
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-	 */
-	protected $container;
-	
-	/**
-	 * @var \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
-	 */
-	protected $lazyPersistenceManager;
-	
-	/**
-	 * DbService constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-	 * @param \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface    $lazyPersistenceManager
-	 */
-	public function __construct(TypoContainerInterface $container, PersistenceManagerInterface $lazyPersistenceManager) {
-		$this->container = $container;
-		$this->lazyPersistenceManager = $lazyPersistenceManager;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function persistAll() {
-		$this->lazyPersistenceManager->persistAll();
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getQueryBuilder(?string $tableName = NULL, ?string $connectionName = NULL): QueryBuilder {
-		if (!empty($tableName))
-			$connection = $this->container->get(ConnectionPool::class)->getConnectionForTable($tableName);
-		else
-			$connection = $this->getConnection($connectionName);
-		$qb = $connection->createQueryBuilder();
-		if (!empty($tableName)) $qb->from($tableName);
-		return $qb;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getQuery(string $tableName, bool $disableDefaultConstraints = FALSE): StandaloneBetterQuery {
-		$queryBuilder = $this->getQueryBuilder($tableName);
-		$query = $this->container->get(StandaloneBetterQuery::class, ["args" => [$tableName, $queryBuilder]]);
-		if ($disableDefaultConstraints)
-			$query = $query->withIncludeHidden()->withIncludeDeleted()->withLanguage(FALSE);
-		return $query;
-	}
-	
-	/**
-	 * @inheritDoc
-	 * @deprecated
-	 */
-	public function query(string $query, array $args = []) {
-		// Get connection
-		$connection = $this->getConnection();
-		// Execute query
-		$statement = $connection->executeQuery($query, $args);
-		if ($statement->columnCount() > 0) return $statement->fetchAll();
-		return TRUE;
-	}
-	
-	/**
-	 * @inheritDoc
-	 * @deprecated
-	 */
-	public function multiQuery(iterable $queries, array $args = []) {
-		$connection = $this->getConnection();
-		$result = [];
-		$c = 0;
-		try {
-			$connection->beginTransaction();
-			foreach ($queries as $key => $query) {
-				$a = $c++ === 0 ? current($args) : next($args);
-				if (!is_string($query)) continue;
-				if (empty($a)) $a = [];
-				$result[] = $this->query($query, $a);
-			}
-			$connection->commit();
-		} catch (Exception $e) {
-			if ($connection->isTransactionActive()) $connection->rollBack();
-			throw $e;
-		}
-		return $result;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getConnection(?string $connectionName = NULL) {
-		/** @var ConnectionPool $pool */
-		$pool = $this->container->get(ConnectionPool::class);
-		return $pool->getConnectionByName(empty($connectionName) ? ConnectionPool::DEFAULT_CONNECTION_NAME : $connectionName);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getRecords(string $table, $uid, $fields = "*", $where = "", $orderBy = "", $limit = ""): array {
-		
-		$uid = Arrays::makeFromStringList($uid);
-		if (!empty($uid)) $where = "uid IN (" . implode(",", $uid) . ") " . $where;
-		// Get connection
-		$connection = $this->getConnection();
-		$builder = $connection->createQueryBuilder();
-		$builder->select(...Arrays::makeFromStringList($fields));
-		$builder->from($table);
-		$builder->where($where);
-		
-		// Prepare order by
-		if (!empty($orderBy)) {
-			$orderByParts = explode(",", $orderBy);
-			foreach ($orderByParts as $part) {
-				$parts = array_filter(array_map("trim", explode(" ", $part)));
-				$builder->addOrderBy(array_shift($parts), array_shift($parts));
-			}
-		}
-		
-		// Add Limit
-		if (!empty($limit)) {
-			$builder->setMaxResults((int)$limit);
-		}
-		
-		// Execute query
-		$result = $builder->execute()->fetchAll();
-		return !is_array($result) ? [] : $result;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function debugQuery($query) {
-		$result = $exception = $count = NULL;
-		$isStandalone = FALSE;
-		if ($query instanceof BetterQuery) $query = $query->getQuery();
-		if ($query instanceof QueryResult) $query = $query->getQuery();
-		if (!$query instanceof QueryInterface) {
-			if (!$query instanceof StandaloneBetterQuery)
-				throw new DbServiceException("The given query object can not be used!");
-			$dQuery = $query->getQueryBuilder();
-			$isStandalone = TRUE;
-		} else {
-			$parser = $this->container->get(Typo3DbQueryParser::class);
-			$dQuery = $parser->convertQueryToDoctrineQueryBuilder($query);
-			if (!empty($query->getLimit())) $dQuery->setMaxResults($query->getLimit());
-			if (!empty($query->getOffset())) $dQuery->setFirstResult($query->getOffset());
-		}
-		
-		// Build the query
-		$queryString = $dQuery->getSQL();
-		
-		// Prepare query with parameters
-		$in = $out = [];
-		foreach ($dQuery->getParameters() as $k => $v) {
-			$in[] = ":" . $k;
-			$out[] = "\"" . addslashes($v) . "\"";
-		}
-		$queryString = str_replace($in, $out, $queryString);
-		
-		// Try to execute the message
-		try {
-			if ($isStandalone) {
-				$first = $dQuery->getFirstResult();
-				$result = $dQuery->execute();
-			} else {
-				$first = $query->execute()->getFirst();
-				$result = $query->execute(TRUE);
-			}
-			
-		} catch (Exception $e) {
-			$exception = $e->getMessage();
-		}
-		
-		// Show general query information
-		echo "<h5>Query string</h5>";
-		if (function_exists("dbg")) dbg($queryString);
-		else DebuggerUtility::var_dump($queryString);
-		
-		try {
-			if (!empty($exception)) {
-				echo "<h5>Db Errors</h5>";
-				DebuggerUtility::var_dump($exception);
-			}
-			echo "<h5>Query Object</h5>";
-			DebuggerUtility::var_dump($query);
-			if (isset($first) && !empty($first)) {
-				echo "<h5>First result entity</h5>";
-				DebuggerUtility::var_dump($first);
-			}
-			echo "<h5>Raw result</h5>";
-			DebuggerUtility::var_dump($result);
-			echo "<h5>Db Connection</h5>";
-			DebuggerUtility::var_dump($GLOBALS["TYPO3_DB"]);
-		} catch (Exception $e) {
-			echo "<h2>Db Error!</h2>";
-			DebuggerUtility::var_dump($e);
-		}
-		exit();
-	}
+class DbService implements DbServiceInterface
+{
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     */
+    protected $container;
+    
+    /**
+     * @var \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
+     */
+    protected $lazyPersistenceManager;
+    
+    /**
+     * DbService constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface    $lazyPersistenceManager
+     */
+    public function __construct(TypoContainerInterface $container, PersistenceManagerInterface $lazyPersistenceManager)
+    {
+        $this->container = $container;
+        $this->lazyPersistenceManager = $lazyPersistenceManager;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function persistAll()
+    {
+        $this->lazyPersistenceManager->persistAll();
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getQueryBuilder(?string $tableName = null, ?string $connectionName = null): QueryBuilder
+    {
+        if (!empty($tableName)) {
+            $connection = $this->container->get(ConnectionPool::class)->getConnectionForTable($tableName);
+        } else {
+            $connection = $this->getConnection($connectionName);
+        }
+        $qb = $connection->createQueryBuilder();
+        if (!empty($tableName)) {
+            $qb->from($tableName);
+        }
+        return $qb;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getQuery(string $tableName, bool $disableDefaultConstraints = false): StandaloneBetterQuery
+    {
+        $queryBuilder = $this->getQueryBuilder($tableName);
+        $query = $this->container->get(StandaloneBetterQuery::class, ['args' => [$tableName, $queryBuilder]]);
+        if ($disableDefaultConstraints) {
+            $query = $query->withIncludeHidden()->withIncludeDeleted()->withLanguage(false);
+        }
+        return $query;
+    }
+    
+    /**
+     * @inheritDoc
+     * @deprecated
+     */
+    public function query(string $query, array $args = [])
+    {
+        // Get connection
+        $connection = $this->getConnection();
+        // Execute query
+        $statement = $connection->executeQuery($query, $args);
+        if ($statement->columnCount() > 0) {
+            return $statement->fetchAll();
+        }
+        return true;
+    }
+    
+    /**
+     * @inheritDoc
+     * @deprecated
+     */
+    public function multiQuery(iterable $queries, array $args = [])
+    {
+        $connection = $this->getConnection();
+        $result = [];
+        $c = 0;
+        try {
+            $connection->beginTransaction();
+            foreach ($queries as $key => $query) {
+                $a = $c++ === 0 ? current($args) : next($args);
+                if (!is_string($query)) {
+                    continue;
+                }
+                if (empty($a)) {
+                    $a = [];
+                }
+                $result[] = $this->query($query, $a);
+            }
+            $connection->commit();
+        } catch (Exception $e) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            throw $e;
+        }
+        return $result;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getConnection(?string $connectionName = null)
+    {
+        /** @var ConnectionPool $pool */
+        $pool = $this->container->get(ConnectionPool::class);
+        return $pool->getConnectionByName(empty($connectionName) ? ConnectionPool::DEFAULT_CONNECTION_NAME : $connectionName);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getRecords(string $table, $uid, $fields = '*', $where = '', $orderBy = '', $limit = ''): array
+    {
+        $uid = Arrays::makeFromStringList($uid);
+        if (!empty($uid)) {
+            $where = 'uid IN (' . implode(',', $uid) . ') ' . $where;
+        }
+        // Get connection
+        $connection = $this->getConnection();
+        $builder = $connection->createQueryBuilder();
+        $builder->select(...Arrays::makeFromStringList($fields));
+        $builder->from($table);
+        $builder->where($where);
+        
+        // Prepare order by
+        if (!empty($orderBy)) {
+            $orderByParts = explode(',', $orderBy);
+            foreach ($orderByParts as $part) {
+                $parts = array_filter(array_map('trim', explode(' ', $part)));
+                $builder->addOrderBy(array_shift($parts), array_shift($parts));
+            }
+        }
+        
+        // Add Limit
+        if (!empty($limit)) {
+            $builder->setMaxResults((int)$limit);
+        }
+        
+        // Execute query
+        $result = $builder->execute()->fetchAll();
+        return !is_array($result) ? [] : $result;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function debugQuery($query)
+    {
+        $result = $exception = $count = null;
+        $isStandalone = false;
+        if ($query instanceof BetterQuery) {
+            $query = $query->getQuery();
+        }
+        if ($query instanceof QueryResult) {
+            $query = $query->getQuery();
+        }
+        if (!$query instanceof QueryInterface) {
+            if (!$query instanceof StandaloneBetterQuery) {
+                throw new DbServiceException('The given query object can not be used!');
+            }
+            $dQuery = $query->getQueryBuilder();
+            $isStandalone = true;
+        } else {
+            $parser = $this->container->get(Typo3DbQueryParser::class);
+            $dQuery = $parser->convertQueryToDoctrineQueryBuilder($query);
+            if (!empty($query->getLimit())) {
+                $dQuery->setMaxResults($query->getLimit());
+            }
+            if (!empty($query->getOffset())) {
+                $dQuery->setFirstResult($query->getOffset());
+            }
+        }
+        
+        // Build the query
+        $queryString = $dQuery->getSQL();
+        
+        // Prepare query with parameters
+        $in = $out = [];
+        foreach ($dQuery->getParameters() as $k => $v) {
+            $in[] = ':' . $k;
+            $out[] = '"' . addslashes($v) . '"';
+        }
+        $queryString = str_replace($in, $out, $queryString);
+        
+        // Try to execute the message
+        try {
+            if ($isStandalone) {
+                $first = $dQuery->getFirstResult();
+                $result = $dQuery->execute();
+            } else {
+                $first = $query->execute()->getFirst();
+                $result = $query->execute(true);
+            }
+        } catch (Exception $e) {
+            $exception = $e->getMessage();
+        }
+        
+        // Show general query information
+        echo '<h5>Query string</h5>';
+        if (function_exists('dbg')) {
+            dbg($queryString);
+        } else {
+            DebuggerUtility::var_dump($queryString);
+        }
+        
+        try {
+            if (!empty($exception)) {
+                echo '<h5>Db Errors</h5>';
+                DebuggerUtility::var_dump($exception);
+            }
+            echo '<h5>Query Object</h5>';
+            DebuggerUtility::var_dump($query);
+            if (isset($first) && !empty($first)) {
+                echo '<h5>First result entity</h5>';
+                DebuggerUtility::var_dump($first);
+            }
+            echo '<h5>Raw result</h5>';
+            DebuggerUtility::var_dump($result);
+            echo '<h5>Db Connection</h5>';
+            DebuggerUtility::var_dump($GLOBALS['TYPO3_DB']);
+        } catch (Exception $e) {
+            echo '<h2>Db Error!</h2>';
+            DebuggerUtility::var_dump($e);
+        }
+        exit();
+    }
 }

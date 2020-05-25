@@ -19,65 +19,67 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\FlexForms;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormContainer;
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\DisplayConditionTrait;
 use Neunerlei\Inflection\Inflector;
 
-class FlexSection extends AbstractFormContainer {
-	use DisplayConditionTrait;
-	
-	/**
-	 * Holds the id of the section's inner container element
-	 * @var string
-	 */
-	protected $containerItemId = "item";
-	
-	/**
-	 * Holds the section's inner container element's label
-	 * @var string
-	 */
-	protected $containerItemLabel;
-	
-	/**
-	 * Returns the id of the section's inner container element
-	 * @return string
-	 */
-	public function getContainerItemId(): string {
-		return $this->containerItemId;
-	}
-	
-	/**
-	 * Sets the id of the section's inner container element
-	 *
-	 * @param string $containerItemId
-	 *
-	 * @return FlexSection
-	 */
-	public function setContainerItemId(string $containerItemId): FlexSection {
-		$this->containerItemId = $containerItemId;
-		return $this;
-	}
-	
-	/**
-	 * Returns the section's inner container element's label
-	 * @return string
-	 */
-	public function getContainerItemLabel(): string {
-		return empty($this->containerItemLabel) ? Inflector::toHuman($this->getContainerItemId()) : $this->containerItemLabel;
-	}
-	
-	/**
-	 * Sets the section's inner container element's label
-	 *
-	 * @param string $containerItemLabel
-	 *
-	 * @return FlexSection
-	 */
-	public function setContainerItemLabel(string $containerItemLabel): FlexSection {
-		$this->containerItemLabel = $containerItemLabel;
-		return $this;
-	}
-	
-	
+class FlexSection extends AbstractFormContainer
+{
+    use DisplayConditionTrait;
+    
+    /**
+     * Holds the id of the section's inner container element
+     * @var string
+     */
+    protected $containerItemId = 'item';
+    
+    /**
+     * Holds the section's inner container element's label
+     * @var string
+     */
+    protected $containerItemLabel;
+    
+    /**
+     * Returns the id of the section's inner container element
+     * @return string
+     */
+    public function getContainerItemId(): string
+    {
+        return $this->containerItemId;
+    }
+    
+    /**
+     * Sets the id of the section's inner container element
+     *
+     * @param string $containerItemId
+     *
+     * @return FlexSection
+     */
+    public function setContainerItemId(string $containerItemId): FlexSection
+    {
+        $this->containerItemId = $containerItemId;
+        return $this;
+    }
+    
+    /**
+     * Returns the section's inner container element's label
+     * @return string
+     */
+    public function getContainerItemLabel(): string
+    {
+        return empty($this->containerItemLabel) ? Inflector::toHuman($this->getContainerItemId()) : $this->containerItemLabel;
+    }
+    
+    /**
+     * Sets the section's inner container element's label
+     *
+     * @param string $containerItemLabel
+     *
+     * @return FlexSection
+     */
+    public function setContainerItemLabel(string $containerItemLabel): FlexSection
+    {
+        $this->containerItemLabel = $containerItemLabel;
+        return $this;
+    }
 }

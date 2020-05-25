@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\NamingConvention;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class NamingConventionException extends BetterApiException {
-	
+class NamingConventionException extends BetterApiException
+{
 }

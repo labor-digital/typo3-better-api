@@ -29,84 +29,91 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class PageContentsGridConfigFilterEvent {
-	
-	/**
-	 * The currently requested page id
-	 * @var int
-	 */
-	protected $pid;
-	
-	/**
-	 * The list of records that were resolved for this page
-	 * @var array
-	 */
-	protected $records;
-	
-	/**
-	 * The list of custom grid configurations that can be mapped
-	 * @var array
-	 */
-	protected $customGrids;
-	
-	/**
-	 * PageContentsGridConfigFilterEvent constructor.
-	 *
-	 * @param int   $pid
-	 * @param array $records
-	 * @param array $customGrids
-	 */
-	public function __construct(int $pid, array $records, array $customGrids) {
-		$this->pid = $pid;
-		$this->records = $records;
-		$this->customGrids = $customGrids;
-	}
-	
-	/**
-	 * Returns the currently requested page id
-	 * @return int
-	 */
-	public function getPid(): int {
-		return $this->pid;
-	}
-	
-	/**
-	 * Returns the list of records that were resolved for this page
-	 * @return array
-	 */
-	public function getRecords(): array {
-		return $this->records;
-	}
-	
-	/**
-	 * Used to update the list of records that were resolved for this page
-	 *
-	 * @param array $records
-	 *
-	 * @return PageContentsGridConfigFilterEvent
-	 */
-	public function setRecords(array $records): PageContentsGridConfigFilterEvent {
-		$this->records = $records;
-		return $this;
-	}
-	
-	/**
-	 * Returns the list of custom grid configurations that can be mapped
-	 * @return array
-	 */
-	public function getCustomGrids(): array {
-		return $this->customGrids;
-	}
-	
-	/**
-	 * Used to update the list of custom grid configurations that can be mapped
-	 *
-	 * @param array $customGrids
-	 *
-	 * @return PageContentsGridConfigFilterEvent
-	 */
-	public function setCustomGrids(array $customGrids): PageContentsGridConfigFilterEvent {
-		$this->customGrids = $customGrids;
-		return $this;
-	}
+class PageContentsGridConfigFilterEvent
+{
+    
+    /**
+     * The currently requested page id
+     * @var int
+     */
+    protected $pid;
+    
+    /**
+     * The list of records that were resolved for this page
+     * @var array
+     */
+    protected $records;
+    
+    /**
+     * The list of custom grid configurations that can be mapped
+     * @var array
+     */
+    protected $customGrids;
+    
+    /**
+     * PageContentsGridConfigFilterEvent constructor.
+     *
+     * @param int   $pid
+     * @param array $records
+     * @param array $customGrids
+     */
+    public function __construct(int $pid, array $records, array $customGrids)
+    {
+        $this->pid = $pid;
+        $this->records = $records;
+        $this->customGrids = $customGrids;
+    }
+    
+    /**
+     * Returns the currently requested page id
+     * @return int
+     */
+    public function getPid(): int
+    {
+        return $this->pid;
+    }
+    
+    /**
+     * Returns the list of records that were resolved for this page
+     * @return array
+     */
+    public function getRecords(): array
+    {
+        return $this->records;
+    }
+    
+    /**
+     * Used to update the list of records that were resolved for this page
+     *
+     * @param array $records
+     *
+     * @return PageContentsGridConfigFilterEvent
+     */
+    public function setRecords(array $records): PageContentsGridConfigFilterEvent
+    {
+        $this->records = $records;
+        return $this;
+    }
+    
+    /**
+     * Returns the list of custom grid configurations that can be mapped
+     * @return array
+     */
+    public function getCustomGrids(): array
+    {
+        return $this->customGrids;
+    }
+    
+    /**
+     * Used to update the list of custom grid configurations that can be mapped
+     *
+     * @param array $customGrids
+     *
+     * @return PageContentsGridConfigFilterEvent
+     */
+    public function setCustomGrids(array $customGrids): PageContentsGridConfigFilterEvent
+    {
+        $this->customGrids = $customGrids;
+        return $this;
+    }
 }

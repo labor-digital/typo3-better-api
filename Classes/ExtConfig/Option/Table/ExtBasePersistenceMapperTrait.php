@@ -19,32 +19,34 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Table;
 
-
 use Neunerlei\Arrays\Arrays;
 
-trait ExtBasePersistenceMapperTrait {
-	
-	/**
-	 * This helper receives a list of model classes and a table name they should map to.
-	 * It will generate the typoscript code to configure extbase accordingly.
-	 *
-	 * @param array  $modelList The list of model classes to map to the table name
-	 * @param string $tableName The table to map the given classes to
-	 * @param array  $columns   The list of mapped columns as array of $col => $property
-	 *
-	 * @return string
-	 */
-	protected function getPersistenceTs(array $modelList, string $tableName, array $columns = []): string {
-		$mapping = [];
-		foreach ($modelList as $model) {
-			// Map the columns of this model
-			$cols = Arrays::getPath($columns, [$model], []);
-			$colMap = "";
-			foreach ($cols as $col => $property)
-				$colMap .= "						$col.mapOnProperty = $property" . PHP_EOL;
-			
-			// Build the final mapping
-			$mapping[] = "
+trait ExtBasePersistenceMapperTrait
+{
+    
+    /**
+     * This helper receives a list of model classes and a table name they should map to.
+     * It will generate the typoscript code to configure extbase accordingly.
+     *
+     * @param array  $modelList The list of model classes to map to the table name
+     * @param string $tableName The table to map the given classes to
+     * @param array  $columns   The list of mapped columns as array of $col => $property
+     *
+     * @return string
+     */
+    protected function getPersistenceTs(array $modelList, string $tableName, array $columns = []): string
+    {
+        $mapping = [];
+        foreach ($modelList as $model) {
+            // Map the columns of this model
+            $cols = Arrays::getPath($columns, [$model], []);
+            $colMap = '';
+            foreach ($cols as $col => $property) {
+                $colMap .= "						$col.mapOnProperty = $property" . PHP_EOL;
+            }
+            
+            // Build the final mapping
+            $mapping[] = "
 			$model {
 				mapping {
 					tableName = $tableName
@@ -53,12 +55,14 @@ $colMap
 					}
 				}
 			}";
-		}
-		if (empty($mapping)) return "";
-		$mapping = implode(PHP_EOL, $mapping);
-		return "
+        }
+        if (empty($mapping)) {
+            return '';
+        }
+        $mapping = implode(PHP_EOL, $mapping);
+        return "
 		config.tx_extbase.persistence.classes{
 			$mapping
 		}";
-	}
+    }
 }

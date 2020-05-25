@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi;
 
-
-class NotImplementedException extends BetterApiException {
-	
+class NotImplementedException extends BetterApiException
+{
 }

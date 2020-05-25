@@ -19,22 +19,23 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters;
 
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class GeneralUtilityAdapter extends GeneralUtility {
-	
-	/**
-	 * Use the xml2array method without the need for a database connection...
-	 *
-	 * @param        $string
-	 * @param string $NSprefix
-	 * @param bool   $reportDocTag
-	 *
-	 * @return mixed
-	 * @see GeneralUtility::xml2array()
-	 */
-	public static function xml2arrayWithoutCache($string, $NSprefix = '', $reportDocTag = FALSE) {
-		return GeneralUtility::xml2arrayProcess($string, $NSprefix, $reportDocTag);
-	}
+class GeneralUtilityAdapter extends GeneralUtility
+{
+    
+    /**
+     * Use the xml2array method without the need for a database connection...
+     *
+     * @param        $string
+     * @param string $NSprefix
+     * @param bool   $reportDocTag
+     *
+     * @return mixed
+     * @see GeneralUtility::xml2array()
+     */
+    public static function xml2arrayWithoutCache($string, $NSprefix = '', $reportDocTag = false)
+    {
+        return GeneralUtility::xml2arrayProcess($string, $NSprefix, $reportDocTag);
+    }
 }

@@ -19,32 +19,34 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\TcaForms;
 
-
-trait LayoutMetaTrait {
-	
-	/**
-	 * Stores additional information, that were parsed out of the showitem string
-	 * @var array
-	 */
-	protected $layoutMeta = [];
-	
-	/**
-	 * Returns additional information, that were parsed out of the showitem string
-	 * @return array
-	 */
-	public function getLayoutMeta(): array {
-		return $this->layoutMeta;
-	}
-	
-	/**
-	 * Sets additional information, that were parsed out of the showitem string
-	 *
-	 * @param array $meta
-	 *
-	 * @return $this
-	 */
-	public function setLayoutMeta(array $meta) {
-		$this->layoutMeta = $meta;
-		return $this;
-	}
+trait LayoutMetaTrait
+{
+    
+    /**
+     * Stores additional information, that were parsed out of the showitem string
+     * @var array
+     */
+    protected $layoutMeta = [];
+    
+    /**
+     * Returns additional information, that were parsed out of the showitem string
+     * @return array
+     */
+    public function getLayoutMeta(): array
+    {
+        return $this->layoutMeta;
+    }
+    
+    /**
+     * Sets additional information, that were parsed out of the showitem string
+     *
+     * @param array $meta
+     *
+     * @return $this
+     */
+    public function setLayoutMeta(array $meta)
+    {
+        $this->layoutMeta = $meta;
+        return $this;
+    }
 }

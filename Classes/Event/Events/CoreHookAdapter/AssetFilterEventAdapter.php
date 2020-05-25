@@ -21,23 +21,25 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\BackendAssetFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\FrontendAssetFilterEvent;
 
-class AssetFilterEventAdapter extends AbstractCoreHookEventAdapter {
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		$GLOBALS["TYPO3_CONF_VARS"]["SC_OPTIONS"]["t3lib/class.t3lib_pagerenderer.php"]["render-preProcess"][static::class] = static::class . "->emit";
-	}
-	
-	public function emit(&$arguments, $pageRenderer) {
-		$event = static::$context->getEnvAspect()->isBackend() ?
-			new BackendAssetFilterEvent($arguments, $pageRenderer) :
-			new FrontendAssetFilterEvent($arguments, $pageRenderer);
-		static::$bus->dispatch($event);
-		$arguments = $event->getAssets();
-	}
+class AssetFilterEventAdapter extends AbstractCoreHookEventAdapter
+{
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][static::class] = static::class . '->emit';
+    }
+    
+    public function emit(&$arguments, $pageRenderer)
+    {
+        $event = static::$context->getEnvAspect()->isBackend() ?
+            new BackendAssetFilterEvent($arguments, $pageRenderer) :
+            new FrontendAssetFilterEvent($arguments, $pageRenderer);
+        static::$bus->dispatch($event);
+        $arguments = $event->getAssets();
+    }
 }

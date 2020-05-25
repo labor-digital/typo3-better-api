@@ -26,6 +26,7 @@ namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
  *
  * @package LaborDigital\Typo3BetterApi\TypoContext
  */
-interface FacetInterface {
-	// Silence :)
+interface FacetInterface
+{
+    // Silence :)
 }

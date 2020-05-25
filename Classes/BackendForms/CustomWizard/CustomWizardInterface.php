@@ -19,33 +19,32 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\CustomWizard;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormField;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface CustomWizardInterface {
-	/**
-	 * This method is called when, and ONLY IF the field is configured using the AbstractFormField's applyPreset method
-	 * It will receive the array of options as well as the field instance. You can use this method to apply additional
-	 * TCA configuration to the field, before it is cached for later usage.
-	 *
-	 * @param AbstractFormField $field   The instance of the field to apply this form wizard to
-	 *                                   The instance will already have the wizard configuration set
-	 * @param array             $options The additional options that were given in the applyPreset method
-	 * @param ExtConfigContext  $context The context of the extension, that is currently applying this wizard
-	 *
-	 * @return mixed
-	 */
-	public static function configureField(AbstractFormField $field, array $options, ExtConfigContext $context);
-	
-	/**
-	 * Receives the custom wizard context, containing the wizard configuration, should render the
-	 * html of the wizard and return it as a string.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardContext $context
-	 *
-	 * @return string
-	 */
-	public function render(CustomWizardContext $context): string;
-	
+interface CustomWizardInterface
+{
+    /**
+     * This method is called when, and ONLY IF the field is configured using the AbstractFormField's applyPreset method
+     * It will receive the array of options as well as the field instance. You can use this method to apply additional
+     * TCA configuration to the field, before it is cached for later usage.
+     *
+     * @param AbstractFormField $field   The instance of the field to apply this form wizard to
+     *                                   The instance will already have the wizard configuration set
+     * @param array             $options The additional options that were given in the applyPreset method
+     * @param ExtConfigContext  $context The context of the extension, that is currently applying this wizard
+     *
+     * @return mixed
+     */
+    public static function configureField(AbstractFormField $field, array $options, ExtConfigContext $context);
+    
+    /**
+     * Receives the custom wizard context, containing the wizard configuration, should render the
+     * html of the wizard and return it as a string.
+     *
+     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardContext $context
+     *
+     * @return string
+     */
+    public function render(CustomWizardContext $context): string;
 }

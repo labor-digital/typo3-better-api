@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
-
 use LaborDigital\Typo3BetterApi\BackendForms\TableSqlGenerator;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
@@ -54,14 +53,14 @@ class ExtConfigContext
      *
      * @var string
      */
-    protected $vendor = "LIMBO";
+    protected $vendor = 'LIMBO';
     
     /**
      * The extKey for the currently configured extension
      *
      * @var string
      */
-    protected $extKey = "LIMBO";
+    protected $extKey = 'LIMBO';
     
     /**
      * ExtConfigContext constructor.
@@ -70,20 +69,20 @@ class ExtConfigContext
      */
     public function __construct(TypoContext $context)
     {
-        $this->setServiceInstance(TempFs::class, TempFs::makeInstance("extConfig"));
+        $this->setServiceInstance(TempFs::class, TempFs::makeInstance('extConfig'));
         $this->setServiceFactory(ExtConfigExtensionRegistry::class, function (TypoContainerInterface $container) {
-            return $container->get(ExtConfigExtensionRegistry::class, ["args" => [$this]]);
+            return $container->get(ExtConfigExtensionRegistry::class, ['args' => [$this]]);
         });
         $this->addToServiceMap([
-            "SqlGenerator"       => function () {
+            'SqlGenerator'       => function () {
                 return $this->SqlGenerator();
             },
-            "DataHandlerActions" => function () {
+            'DataHandlerActions' => function () {
                 return $this->DataHandlerActions();
             },
-            "TypoContext"        => $context,
-            "Fs"                 => $this->getService(TempFs::class),
-            "ExtensionRegistry"  => function () {
+            'TypoContext'        => $context,
+            'Fs'                 => $this->getService(TempFs::class),
+            'ExtensionRegistry'  => function () {
                 return $this->ExtensionRegistry();
             },
         ]);
@@ -136,7 +135,7 @@ class ExtConfigContext
      */
     public function getExtKeyWithVendor(): string
     {
-        return ($this->getVendor() === "" ? "" : $this->getVendor() . ".") . $this->getExtKey();
+        return ($this->getVendor() === '' ? '' : $this->getVendor() . '.') . $this->getExtKey();
     }
     
     /**
@@ -155,9 +154,9 @@ class ExtConfigContext
             }
         } elseif (is_string($raw)) {
             $markers = [
-                "{{extKey}}"           => $this->getExtKey(),
-                "{{extKeyWithVendor}}" => $this->getExtKeyWithVendor(),
-                "{{vendor}}"           => $this->getVendor(),
+                '{{extKey}}'           => $this->getExtKey(),
+                '{{extKeyWithVendor}}' => $this->getExtKeyWithVendor(),
+                '{{vendor}}'           => $this->getVendor(),
             ];
             
             return str_ireplace(array_keys($markers), $markers, $raw);
@@ -214,8 +213,8 @@ class ExtConfigContext
     public function runWithCachedValueDataScope(array $data, callable $callback)
     {
         foreach ($data as $k => $el) {
-            $this->runWithExtKeyAndVendor($el["extKey"], $el["vendor"], function () use ($callback, $el, $k) {
-                call_user_func($callback, $el["value"], $k);
+            $this->runWithExtKeyAndVendor($el['extKey'], $el['vendor'], function () use ($callback, $el, $k) {
+                call_user_func($callback, $el['value'], $k);
             });
         }
     }
@@ -234,8 +233,8 @@ class ExtConfigContext
     public function runWithFirstCachedValueDataScope(array $data, callable $callback)
     {
         foreach ($data as $k => $el) {
-            return $this->runWithExtKeyAndVendor($el["extKey"], $el["vendor"], function () use ($callback, $el, $k) {
-                return call_user_func($callback, $el["value"], $k);
+            return $this->runWithExtKeyAndVendor($el['extKey'], $el['vendor'], function () use ($callback, $el, $k) {
+                return call_user_func($callback, $el['value'], $k);
             });
         }
         
@@ -252,8 +251,8 @@ class ExtConfigContext
     public function __injectOptionList($optionList)
     {
         if (! $optionList instanceof ExtConfigOptionList) {
-            throw new ExtConfigException("The given option list is not valid!");
+            throw new ExtConfigException('The given option list is not valid!');
         }
-        $this->addToServiceMap(["OptionList" => $optionList]);
+        $this->addToServiceMap(['OptionList' => $optionList]);
     }
 }

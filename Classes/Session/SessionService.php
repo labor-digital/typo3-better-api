@@ -19,39 +19,42 @@
 
 namespace LaborDigital\Typo3BetterApi\Session;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 
-class SessionService implements SingletonInterface {
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-	 */
-	protected $container;
-	
-	/**
-	 * Session constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-	 */
-	public function __construct(TypoContainerInterface $container) {
-		$this->container = $container;
-	}
-	
-	/**
-	 * Returns the instance of the frontend session
-	 * @return \LaborDigital\Typo3BetterApi\Session\SessionInterface
-	 */
-	public function getFrontendSession(): SessionInterface {
-		return $this->container->get(FrontendSessionProvider::class);
-	}
-	
-	/**
-	 * Returns the instance of the backend session
-	 * @return \LaborDigital\Typo3BetterApi\Session\SessionInterface
-	 */
-	public function getBackendSession(): SessionInterface {
-		return $this->container->get(BackendSessionProvider::class);
-	}
+class SessionService implements SingletonInterface
+{
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     */
+    protected $container;
+    
+    /**
+     * Session constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     */
+    public function __construct(TypoContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+    
+    /**
+     * Returns the instance of the frontend session
+     * @return \LaborDigital\Typo3BetterApi\Session\SessionInterface
+     */
+    public function getFrontendSession(): SessionInterface
+    {
+        return $this->container->get(FrontendSessionProvider::class);
+    }
+    
+    /**
+     * Returns the instance of the backend session
+     * @return \LaborDigital\Typo3BetterApi\Session\SessionInterface
+     */
+    public function getBackendSession(): SessionInterface
+    {
+        return $this->container->get(BackendSessionProvider::class);
+    }
 }

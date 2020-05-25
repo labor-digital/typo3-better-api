@@ -21,23 +21,25 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\BackendAssetPostProcessorEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\FrontendAssetPostProcessorEvent;
 
-class AssetPostProcessorEventAdapter extends AbstractCoreHookEventAdapter {
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		$GLOBALS["TYPO3_CONF_VARS"]["SC_OPTIONS"]["t3lib/class.t3lib_pagerenderer.php"]["render-postProcess"][static::class] = static::class . "->emit";
-	}
-	
-	public function emit(&$arguments, $pageRenderer) {
-		$event = static::$context->getEnvAspect()->isBackend() ?
-			new BackendAssetPostProcessorEvent($arguments, $pageRenderer) :
-			new FrontendAssetPostProcessorEvent($arguments, $pageRenderer);
-		static::$bus->dispatch($event);
-		$arguments = $event->getAssets();
-	}
+class AssetPostProcessorEventAdapter extends AbstractCoreHookEventAdapter
+{
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess'][static::class] = static::class . '->emit';
+    }
+    
+    public function emit(&$arguments, $pageRenderer)
+    {
+        $event = static::$context->getEnvAspect()->isBackend() ?
+            new BackendAssetPostProcessorEvent($arguments, $pageRenderer) :
+            new FrontendAssetPostProcessorEvent($arguments, $pageRenderer);
+        static::$bus->dispatch($event);
+        $arguments = $event->getAssets();
+    }
 }

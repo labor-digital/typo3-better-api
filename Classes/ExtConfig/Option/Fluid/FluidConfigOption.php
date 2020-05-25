@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -31,30 +30,36 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid
  */
-class FluidConfigOption extends AbstractExtConfigOption implements SingletonInterface {
-	
-	/**
-	 * Globally registers the extension's view helpers when $key and $namespace are empty.
-	 * The default key is the CamelCase of your extension key, and the namespace the CamelCase of
-	 * Vendor\ExtensionKey\ViewHelpers.
-	 *
-	 * You can also specify namespaces for other viewhelpers
-	 *
-	 * @param string|NULL $key       The key to use as prefix for the namespaced viewhelpers
-	 * @param string|NULL $namespace The namespace of the viewhelpers
-	 *
-	 * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption
-	 */
-	public function registerViewHelpers(string $key = NULL, string $namespace = NULL): FluidConfigOption {
-		if (empty($key)) $key = Inflector::toCamelCase($this->context->getExtKey());
-		if (empty($namespace)) {
-			$namespace = "";
-			if (!empty($this->context->getVendor())) $namespace = Inflector::toCamelCase($this->context->getVendor()) . "\\";
-			$namespace .= Inflector::toCamelCase($this->context->getExtKey());
-			$namespace .= "\\ViewHelpers";
-		}
-		$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces'][$this->replaceMarkers($key)] =
-			[$this->replaceMarkers($namespace)];
-		return $this;
-	}
+class FluidConfigOption extends AbstractExtConfigOption implements SingletonInterface
+{
+    
+    /**
+     * Globally registers the extension's view helpers when $key and $namespace are empty.
+     * The default key is the CamelCase of your extension key, and the namespace the CamelCase of
+     * Vendor\ExtensionKey\ViewHelpers.
+     *
+     * You can also specify namespaces for other viewhelpers
+     *
+     * @param string|NULL $key       The key to use as prefix for the namespaced viewhelpers
+     * @param string|NULL $namespace The namespace of the viewhelpers
+     *
+     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption
+     */
+    public function registerViewHelpers(string $key = null, string $namespace = null): FluidConfigOption
+    {
+        if (empty($key)) {
+            $key = Inflector::toCamelCase($this->context->getExtKey());
+        }
+        if (empty($namespace)) {
+            $namespace = '';
+            if (!empty($this->context->getVendor())) {
+                $namespace = Inflector::toCamelCase($this->context->getVendor()) . '\\';
+            }
+            $namespace .= Inflector::toCamelCase($this->context->getExtKey());
+            $namespace .= '\\ViewHelpers';
+        }
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces'][$this->replaceMarkers($key)] =
+            [$this->replaceMarkers($namespace)];
+        return $this;
+    }
 }

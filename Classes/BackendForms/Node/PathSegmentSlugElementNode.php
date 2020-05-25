@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendForms\Node;
 
-
 use TYPO3\CMS\Backend\Form\Element\InputSlugElement;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 
@@ -30,14 +29,18 @@ use TYPO3\CMS\Core\Site\Entity\SiteInterface;
  * url to show the editor that his final url will look different than what he sees in the field
  * @package LaborDigital\Typo3BetterApi\BackendForms\Node
  */
-class PathSegmentSlugElementNode extends InputSlugElement {
-	/**
-	 * @inheritDoc
-	 */
-	protected function getPrefix(SiteInterface $site, int $requestLanguageId = 0): string {
-		$prefix = parent::getPrefix($site, $requestLanguageId);
-		$lastChar = substr(trim(strrev($prefix)), 0, 1);
-		if ($lastChar !== "/") return $prefix . "/slug/of/the/page/";
-		return $prefix;
-	}
+class PathSegmentSlugElementNode extends InputSlugElement
+{
+    /**
+     * @inheritDoc
+     */
+    protected function getPrefix(SiteInterface $site, int $requestLanguageId = 0): string
+    {
+        $prefix = parent::getPrefix($site, $requestLanguageId);
+        $lastChar = substr(trim(strrev($prefix)), 0, 1);
+        if ($lastChar !== '/') {
+            return $prefix . '/slug/of/the/page/';
+        }
+        return $prefix;
+    }
 }

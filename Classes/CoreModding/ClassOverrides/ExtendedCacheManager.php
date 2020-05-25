@@ -19,55 +19,64 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\CacheClearedEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Core\Cache\BetterApiClassOverrideCopy__CacheManager;
 
-class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function flushCaches() {
-		parent::flushCaches();
-		$this->__emitFlushEvent(__FUNCTION__);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function flushCachesInGroup($groupIdentifier) {
-		parent::flushCachesInGroup($groupIdentifier);
-		$this->__emitFlushEvent(__FUNCTION__, $groupIdentifier);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function flushCachesInGroupByTag($groupIdentifier, $tag) {
-		parent::flushCachesInGroupByTag($groupIdentifier, $tag);
-		$this->__emitFlushEvent(__FUNCTION__, $groupIdentifier, $tag);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function flushCachesByTag($tag) {
-		parent::flushCachesByTag($tag);
-		$this->__emitFlushEvent(__FUNCTION__, NULL, $tag);
-	}
-	
-	/**
-	 * Internal helper to emit the clear cache event
-	 *
-	 * @param string      $caller
-	 * @param string|null $group
-	 * @param string|null $tag
-	 */
-	protected function __emitFlushEvent(string $caller, ?string $group = NULL, ?string $tag = NULL) {
-		/** @noinspection PhpParamsInspection */
-		TypoEventBus::getInstance()->dispatch(new CacheClearedEvent(
-			$caller, empty($group) ? "all" : $group, $tag, $this));
-	}
+class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public function flushCaches()
+    {
+        parent::flushCaches();
+        $this->__emitFlushEvent(__FUNCTION__);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesInGroup($groupIdentifier)
+    {
+        parent::flushCachesInGroup($groupIdentifier);
+        $this->__emitFlushEvent(__FUNCTION__, $groupIdentifier);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesInGroupByTag($groupIdentifier, $tag)
+    {
+        parent::flushCachesInGroupByTag($groupIdentifier, $tag);
+        $this->__emitFlushEvent(__FUNCTION__, $groupIdentifier, $tag);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesByTag($tag)
+    {
+        parent::flushCachesByTag($tag);
+        $this->__emitFlushEvent(__FUNCTION__, null, $tag);
+    }
+    
+    /**
+     * Internal helper to emit the clear cache event
+     *
+     * @param string      $caller
+     * @param string|null $group
+     * @param string|null $tag
+     */
+    protected function __emitFlushEvent(string $caller, ?string $group = null, ?string $tag = null)
+    {
+        /** @noinspection PhpParamsInspection */
+        TypoEventBus::getInstance()->dispatch(new CacheClearedEvent(
+            $caller,
+            empty($group) ? 'all' : $group,
+            $tag,
+            $this
+        ));
+    }
 }

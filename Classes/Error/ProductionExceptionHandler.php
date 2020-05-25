@@ -19,11 +19,11 @@
 
 namespace LaborDigital\Typo3BetterApi\Error;
 
-
-class ProductionExceptionHandler extends ExceptionHandlerAdapter {
-	/**
-	 * The name of the registered exception handler
-	 * @var string
-	 */
-	protected static $defaultExceptionHandler;
+class ProductionExceptionHandler extends ExceptionHandlerAdapter
+{
+    /**
+     * The name of the registered exception handler
+     * @var string
+     */
+    protected static $defaultExceptionHandler;
 }

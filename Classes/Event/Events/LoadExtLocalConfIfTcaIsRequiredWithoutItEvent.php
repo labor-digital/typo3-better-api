@@ -30,6 +30,6 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class LoadExtLocalConfIfTcaIsRequiredWithoutItEvent {
-	
+class LoadExtLocalConfIfTcaIsRequiredWithoutItEvent
+{
 }

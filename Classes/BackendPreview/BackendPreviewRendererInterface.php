@@ -19,17 +19,17 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendPreview;
 
-
-interface BackendPreviewRendererInterface {
-	
-	/**
-	 * Should use the given context object to render the backend preview.
-	 * The body of the preview can either be set into the $context or returned directly as a string.
-	 * If you set the body AND return a string, the returned value has priority and overrides the set value of the body.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext $context
-	 *
-	 * @return string|void
-	 */
-	public function renderBackendPreview(BackendPreviewRendererContext $context);
+interface BackendPreviewRendererInterface
+{
+    
+    /**
+     * Should use the given context object to render the backend preview.
+     * The body of the preview can either be set into the $context or returned directly as a string.
+     * If you set the body AND return a string, the returned value has priority and overrides the set value of the body.
+     *
+     * @param \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext $context
+     *
+     * @return string|void
+     */
+    public function renderBackendPreview(BackendPreviewRendererContext $context);
 }

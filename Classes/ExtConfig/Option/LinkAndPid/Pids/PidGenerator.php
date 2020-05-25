@@ -19,31 +19,34 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\CachedStackGeneratorInterface;
 
-class PidGenerator implements CachedStackGeneratorInterface {
-	/**
-	 * @inheritDoc
-	 */
-	public function generate(array $stack, ExtConfigContext $context, array $additionalData, $option) {
-		// Skip if there is nothing to do
-		if (empty($stack["main"])) return [];
-		
-		// Create the collector
-		$collector = $context->getInstanceOf(PidCollector::class);
-		
-		// Loop through the stack
-		$context->runWithCachedValueDataScope($stack["main"], function (string $configClass) use ($collector, $context) {
-			if (!in_array(PidConfigurationInterface::class, class_implements($configClass)))
-				throw new ExtConfigException("Invalid pid config class $configClass given. It has to implement the correct interface: " . PidConfigurationInterface::class);
-			call_user_func([$configClass, "configurePids"], $collector, $context);
-		});
-		
-		// Done
-		return $collector->getAll();
-	}
-	
+class PidGenerator implements CachedStackGeneratorInterface
+{
+    /**
+     * @inheritDoc
+     */
+    public function generate(array $stack, ExtConfigContext $context, array $additionalData, $option)
+    {
+        // Skip if there is nothing to do
+        if (empty($stack['main'])) {
+            return [];
+        }
+        
+        // Create the collector
+        $collector = $context->getInstanceOf(PidCollector::class);
+        
+        // Loop through the stack
+        $context->runWithCachedValueDataScope($stack['main'], function (string $configClass) use ($collector, $context) {
+            if (!in_array(PidConfigurationInterface::class, class_implements($configClass))) {
+                throw new ExtConfigException("Invalid pid config class $configClass given. It has to implement the correct interface: " . PidConfigurationInterface::class);
+            }
+            call_user_func([$configClass, 'configurePids'], $collector, $context);
+        });
+        
+        // Done
+        return $collector->getAll();
+    }
 }

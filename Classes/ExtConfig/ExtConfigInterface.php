@@ -19,21 +19,20 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList;
 use TYPO3\CMS\Core\SingletonInterface;
 
-interface ExtConfigInterface extends SingletonInterface {
-	
-	/**
-	 * This method is used to setup the configuration for your extension.
-	 * Use the $configurator object to see which options you current installation supports.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList $configurator
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext               $context
-	 *
-	 * @return void
-	 */
-	public function configure(ExtConfigOptionList $configurator, ExtConfigContext $context);
-	
+interface ExtConfigInterface extends SingletonInterface
+{
+    
+    /**
+     * This method is used to setup the configuration for your extension.
+     * Use the $configurator object to see which options you current installation supports.
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList $configurator
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext               $context
+     *
+     * @return void
+     */
+    public function configure(ExtConfigOptionList $configurator, ExtConfigContext $context);
 }

@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
@@ -36,77 +35,83 @@ use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ActionControllerRequestFilterEvent {
-	
-	/**
-	 * The ext base request object to handle
-	 * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
-	 */
-	protected $request;
-	
-	/**
-	 * The ext base response object to dump the contents into
-	 * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
-	 */
-	protected $response;
-	
-	/**
-	 * The controller to handle the request
-	 * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
-	 */
-	protected $controller;
-	
-	/**
-	 * True if the event is emitted before and false if emitted after the processRequest() method of the controller
-	 * @var bool
-	 */
-	protected $beforeProcessing;
-	
-	/**
-	 * ActionControllerRequestFilterEvent constructor.
-	 *
-	 * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface            $request
-	 * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface           $response
-	 * @param \TYPO3\CMS\Extbase\Mvc\Controller\ActionController $controller
-	 * @param bool                                               $beforeProcessing
-	 */
-	public function __construct(RequestInterface $request, ResponseInterface $response, ActionController $controller, bool $beforeProcessing) {
-		$this->request = $request;
-		$this->response = $response;
-		$this->controller = $controller;
-		$this->beforeProcessing = $beforeProcessing;
-	}
-	
-	/**
-	 * Returns the extbase request object to handle
-	 * @return \TYPO3\CMS\Extbase\Mvc\RequestInterface
-	 */
-	public function getRequest(): RequestInterface {
-		return $this->request;
-	}
-	
-	/**
-	 * Returns the ext base response object to dump the contents into
-	 * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
-	 */
-	public function getResponse(): ResponseInterface {
-		return $this->response;
-	}
-	
-	/**
-	 * Returns the controller to handle the request
-	 * @return \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
-	 */
-	public function getController(): ActionController {
-		return $this->controller;
-	}
-	
-	/**
-	 * Returns true if the event is emitted before and false if emitted after the processRequest() method of the
-	 * controller
-	 * @return bool
-	 */
-	public function isBeforeProcessing(): bool {
-		return $this->beforeProcessing;
-	}
+class ActionControllerRequestFilterEvent
+{
+    
+    /**
+     * The ext base request object to handle
+     * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
+     */
+    protected $request;
+    
+    /**
+     * The ext base response object to dump the contents into
+     * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
+     */
+    protected $response;
+    
+    /**
+     * The controller to handle the request
+     * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+     */
+    protected $controller;
+    
+    /**
+     * True if the event is emitted before and false if emitted after the processRequest() method of the controller
+     * @var bool
+     */
+    protected $beforeProcessing;
+    
+    /**
+     * ActionControllerRequestFilterEvent constructor.
+     *
+     * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface            $request
+     * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface           $response
+     * @param \TYPO3\CMS\Extbase\Mvc\Controller\ActionController $controller
+     * @param bool                                               $beforeProcessing
+     */
+    public function __construct(RequestInterface $request, ResponseInterface $response, ActionController $controller, bool $beforeProcessing)
+    {
+        $this->request = $request;
+        $this->response = $response;
+        $this->controller = $controller;
+        $this->beforeProcessing = $beforeProcessing;
+    }
+    
+    /**
+     * Returns the extbase request object to handle
+     * @return \TYPO3\CMS\Extbase\Mvc\RequestInterface
+     */
+    public function getRequest(): RequestInterface
+    {
+        return $this->request;
+    }
+    
+    /**
+     * Returns the ext base response object to dump the contents into
+     * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
+     */
+    public function getResponse(): ResponseInterface
+    {
+        return $this->response;
+    }
+    
+    /**
+     * Returns the controller to handle the request
+     * @return \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+     */
+    public function getController(): ActionController
+    {
+        return $this->controller;
+    }
+    
+    /**
+     * Returns true if the event is emitted before and false if emitted after the processRequest() method of the
+     * controller
+     * @return bool
+     */
+    public function isBeforeProcessing(): bool
+    {
+        return $this->beforeProcessing;
+    }
 }

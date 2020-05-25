@@ -19,9 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\Pid;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class InvalidPidException extends BetterApiException {
-	
+class InvalidPidException extends BetterApiException
+{
 }

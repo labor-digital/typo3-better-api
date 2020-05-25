@@ -22,15 +22,15 @@ namespace LaborDigital\Typo3BetterApi\ExtConfig\Option;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 
-interface ExtConfigOptionInterface extends EventSubscriberInterface {
-	
-	/**
-	 * Is called after the option was created and is used to inject the current context into it
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
-	 *
-	 * @return void
-	 */
-	public function setContext(ExtConfigContext $context);
-	
+interface ExtConfigOptionInterface extends EventSubscriberInterface
+{
+    
+    /**
+     * Is called after the option was created and is used to inject the current context into it
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     *
+     * @return void
+     */
+    public function setContext(ExtConfigContext $context);
 }

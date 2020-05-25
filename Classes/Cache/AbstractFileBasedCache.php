@@ -23,45 +23,50 @@ use LaborDigital\Typo3BetterApi\Cache\Internals\ExtendedSimpleFileBackendInterfa
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 
-abstract class AbstractFileBasedCache extends AbstractCache {
-	
-	/**
-	 * Returns the name of a given cache file inside the file cache directory
-	 *
-	 * @param string $key      The key to get the filename for
-	 * @param bool   $absolute True to return the absolute path for the file
-	 *
-	 * @return string|bool
-	 * @throws \LaborDigital\Typo3BetterApi\Cache\InvalidFileBasedCacheException
-	 */
-	public function getFileName($key, bool $absolute = FALSE) {
-		// Prepare key
-		$key = $this->prepareKey($key);
-		
-		// Check if the cache is disabled
-		if (!$this->isCacheEnabled()) {
-			// Check if the key is allowed even without cache
-			if (!Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key]))
-				return FALSE;
-		}
-		
-		// Get caching frontend
-		$cache = $this->getTypoCache();
-		
-		// Check if the backend exists
-		if (!method_exists($cache, "getBackend"))
-			throw new InvalidFileBasedCacheException("The current cache does not have a getBackend() method!");
-		
-		// Check if the backend implements our interface
-		$backend = $cache->getBackend();
-		if (!$backend instanceof ExtendedSimpleFileBackendInterface) {
-			if ($backend instanceof NullBackend) return "";
-			throw new InvalidFileBasedCacheException("The given cache backend does not implement the required interface: " .
-				ExtendedSimpleFileBackendInterface::class . "!");
-		}
-		
-		// Resolve the file
-		return !$absolute ? basename($backend->getFilenameForKey($key)) : $backend->getFilenameForKey($key);
-		
-	}
+abstract class AbstractFileBasedCache extends AbstractCache
+{
+    
+    /**
+     * Returns the name of a given cache file inside the file cache directory
+     *
+     * @param string $key      The key to get the filename for
+     * @param bool   $absolute True to return the absolute path for the file
+     *
+     * @return string|bool
+     * @throws \LaborDigital\Typo3BetterApi\Cache\InvalidFileBasedCacheException
+     */
+    public function getFileName($key, bool $absolute = false)
+    {
+        // Prepare key
+        $key = $this->prepareKey($key);
+        
+        // Check if the cache is disabled
+        if (!$this->isCacheEnabled()) {
+            // Check if the key is allowed even without cache
+            if (!Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
+                return false;
+            }
+        }
+        
+        // Get caching frontend
+        $cache = $this->getTypoCache();
+        
+        // Check if the backend exists
+        if (!method_exists($cache, 'getBackend')) {
+            throw new InvalidFileBasedCacheException('The current cache does not have a getBackend() method!');
+        }
+        
+        // Check if the backend implements our interface
+        $backend = $cache->getBackend();
+        if (!$backend instanceof ExtendedSimpleFileBackendInterface) {
+            if ($backend instanceof NullBackend) {
+                return '';
+            }
+            throw new InvalidFileBasedCacheException('The given cache backend does not implement the required interface: ' .
+                ExtendedSimpleFileBackendInterface::class . '!');
+        }
+        
+        // Resolve the file
+        return !$absolute ? basename($backend->getFilenameForKey($key)) : $backend->getFilenameForKey($key);
+    }
 }

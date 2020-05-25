@@ -19,11 +19,11 @@
 
 namespace LaborDigital\Typo3BetterApi\LazyLoading;
 
-
-interface LazyLoadingProxyInterface {
-	/**
-	 * Returns the real instance of the lazily loaded object
-	 * @return mixed
-	 */
-	public function __getInstance();
+interface LazyLoadingProxyInterface
+{
+    /**
+     * Returns the real instance of the lazily loaded object
+     * @return mixed
+     */
+    public function __getInstance();
 }

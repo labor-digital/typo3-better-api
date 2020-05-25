@@ -29,27 +29,30 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BootstrapFailsafeDefinitionEvent {
-	/**
-	 * True if the app is running in failsafe mode, false if not
-	 * @var bool
-	 */
-	protected $failsafe = FALSE;
-	
-	/**
-	 * BootstrapFailsafeDefinition constructor.
-	 *
-	 * @param bool $failsafe
-	 */
-	public function __construct(bool $failsafe) {
-		$this->failsafe = $failsafe;
-	}
-	
-	/**
-	 * Returns true if the bootstrap is running in failsafe mode
-	 * @return bool
-	 */
-	public function isFailsafe(): bool {
-		return $this->failsafe;
-	}
+class BootstrapFailsafeDefinitionEvent
+{
+    /**
+     * True if the app is running in failsafe mode, false if not
+     * @var bool
+     */
+    protected $failsafe = false;
+    
+    /**
+     * BootstrapFailsafeDefinition constructor.
+     *
+     * @param bool $failsafe
+     */
+    public function __construct(bool $failsafe)
+    {
+        $this->failsafe = $failsafe;
+    }
+    
+    /**
+     * Returns true if the bootstrap is running in failsafe mode
+     * @return bool
+     */
+    public function isFailsafe(): bool
+    {
+        return $this->failsafe;
+    }
 }

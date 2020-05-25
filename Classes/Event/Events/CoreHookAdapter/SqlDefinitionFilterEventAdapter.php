@@ -21,22 +21,25 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\Event\Events\SqlDefinitionFilterEvent;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
-class SqlDefinitionFilterEventAdapter extends AbstractCoreHookEventAdapter {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function bind(): void {
-		TypoContainer::getInstance()->get(Dispatcher::class)->connect(
-			"TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService", "tablesDefinitionIsBeingBuilt", function ($definitions) {
-			static::$bus->dispatch(($e = new SqlDefinitionFilterEvent($definitions)));
-			return [$e->getDefinitions()];
-		});
-	}
-	
+class SqlDefinitionFilterEventAdapter extends AbstractCoreHookEventAdapter
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public static function bind(): void
+    {
+        TypoContainer::getInstance()->get(Dispatcher::class)->connect(
+            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
+            'tablesDefinitionIsBeingBuilt',
+            function ($definitions) {
+                static::$bus->dispatch(($e = new SqlDefinitionFilterEvent($definitions)));
+                return [$e->getDefinitions()];
+            }
+        );
+    }
 }

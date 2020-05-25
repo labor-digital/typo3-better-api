@@ -29,25 +29,27 @@ use Throwable;
  *
  * @package LaborDigital\Typo3BetterApi\CoreModding
  */
-class FailsafeWrapper {
-	public static $isFailsafe = FALSE;
-	
-	/**
-	 * Executes the code, catches all exceptions and returns null if the executed code failed.
-	 *
-	 * @param callable $handler
-	 * @param array    $args
-	 *
-	 * @return mixed|null
-	 */
-	public static function handle(callable $handler, array $args = []) {
-		if (static::$isFailsafe) {
-			try {
-				return call_user_func_array($handler, $args);
-			} catch (Throwable $e) {
-				return NULL;
-			}
-		}
-		return call_user_func_array($handler, $args);
-	}
+class FailsafeWrapper
+{
+    public static $isFailsafe = false;
+    
+    /**
+     * Executes the code, catches all exceptions and returns null if the executed code failed.
+     *
+     * @param callable $handler
+     * @param array    $args
+     *
+     * @return mixed|null
+     */
+    public static function handle(callable $handler, array $args = [])
+    {
+        if (static::$isFailsafe) {
+            try {
+                return call_user_func_array($handler, $args);
+            } catch (Throwable $e) {
+                return null;
+            }
+        }
+        return call_user_func_array($handler, $args);
+    }
 }

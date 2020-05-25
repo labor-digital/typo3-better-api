@@ -19,28 +19,31 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
 
-
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContextException;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
-class FeUserAspect extends AbstractBetterUserAspect {
-	
-	/**
-	 * Returns the frontend user authentication object
-	 * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
-	 * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
-	 */
-	public function getUser(): FrontendUserAuthentication {
-		$user = $this->getUserObject();
-		if (empty($user))
-			throw new TypoContextException("Could not find a user object! Seems like you are to early in the lifecycle");
-		return $user;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	protected function getRootAspectKey(): string {
-		return "frontend.user";
-	}
+class FeUserAspect extends AbstractBetterUserAspect
+{
+    
+    /**
+     * Returns the frontend user authentication object
+     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+     * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
+     */
+    public function getUser(): FrontendUserAuthentication
+    {
+        $user = $this->getUserObject();
+        if (empty($user)) {
+            throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
+        }
+        return $user;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function getRootAspectKey(): string
+    {
+        return 'frontend.user';
+    }
 }

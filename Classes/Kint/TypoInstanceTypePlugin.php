@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\Kint;
 
-
 use Kint\Object\BasicObject;
 use Kint\Object\InstanceObject;
 use Kint\Parser\Parser;
@@ -32,50 +31,57 @@ use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
-class TypoInstanceTypePlugin extends Plugin {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getTypes() {
-		return ["object"];
-	}
-	
-	public function getTriggers() {
-		return Parser::TRIGGER_COMPLETE;
-	}
-	
-	public function parse(&$variable, BasicObject &$o, $trigger) {
-		
-		// Show the iterator first
-		if (!empty($o->getRepresentation("iterator"))) {
-			$r = $o->getRepresentation("iterator");
-			$o->removeRepresentation("iterator");
-			$o->addRepresentation($r, 0);
-		}
-		
-		// Add the uid of entities to the output
-		if ($variable instanceof AbstractEntity && $o instanceof InstanceObject)
-			$o->classname = $o->classname .= " - UID: " . $variable->getUid();
-		
-		// Remove the iterator representation from lazy objects
-		if ($variable instanceof LazyObjectStorage || $variable instanceof LazyLoadingProxy)
-			$o->removeRepresentation("iterator");
-		
-		// Add the real class name to lazy loading proxies
-		if ($variable instanceof LazyLoadingProxy) {
-			$realVal = $this->getLazyLoading()->getRealValue($variable);
-			$o->classname = $o->classname .= " - " . get_class($realVal) .
-				($realVal instanceof AbstractEntity ? " - UID: " . $realVal->getUid() : "");
-		}
-		
-		// Update size for countable objects
-		if ($variable instanceof LazyObjectStorage || $variable instanceof ObjectStorage || $variable instanceof QueryResultInterface)
-			$o->size = $variable->count();
-		
-	}
-	
-	protected function getLazyLoading(): LazyLoading {
-		return TypoContainer::getInstance()->get(LazyLoading::class);
-	}
+class TypoInstanceTypePlugin extends Plugin
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public function getTypes()
+    {
+        return ['object'];
+    }
+    
+    public function getTriggers()
+    {
+        return Parser::TRIGGER_COMPLETE;
+    }
+    
+    public function parse(&$variable, BasicObject &$o, $trigger)
+    {
+        
+        // Show the iterator first
+        if (!empty($o->getRepresentation('iterator'))) {
+            $r = $o->getRepresentation('iterator');
+            $o->removeRepresentation('iterator');
+            $o->addRepresentation($r, 0);
+        }
+        
+        // Add the uid of entities to the output
+        if ($variable instanceof AbstractEntity && $o instanceof InstanceObject) {
+            $o->classname = $o->classname .= ' - UID: ' . $variable->getUid();
+        }
+        
+        // Remove the iterator representation from lazy objects
+        if ($variable instanceof LazyObjectStorage || $variable instanceof LazyLoadingProxy) {
+            $o->removeRepresentation('iterator');
+        }
+        
+        // Add the real class name to lazy loading proxies
+        if ($variable instanceof LazyLoadingProxy) {
+            $realVal = $this->getLazyLoading()->getRealValue($variable);
+            $o->classname = $o->classname .= ' - ' . get_class($realVal) .
+                ($realVal instanceof AbstractEntity ? ' - UID: ' . $realVal->getUid() : '');
+        }
+        
+        // Update size for countable objects
+        if ($variable instanceof LazyObjectStorage || $variable instanceof ObjectStorage || $variable instanceof QueryResultInterface) {
+            $o->size = $variable->count();
+        }
+    }
+    
+    protected function getLazyLoading(): LazyLoading
+    {
+        return TypoContainer::getInstance()->get(LazyLoading::class);
+    }
 }

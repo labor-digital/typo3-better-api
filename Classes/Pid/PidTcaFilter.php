@@ -19,65 +19,72 @@
 
 namespace LaborDigital\Typo3BetterApi\Pid;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
-class PidTcaFilter implements LazyEventSubscriberInterface {
-	
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-	 */
-	protected $context;
-	
-	/**
-	 * PidTcaFilter constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
-	 */
-	public function __construct(TypoContext $context) {
-		$this->context = $context;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function subscribeToEvents(EventSubscriptionInterface $subscription) {
-		$subscription->subscribe(TcaCompletelyLoadedEvent::class, "__replaceAllPidInTca", ["priority" => 100]);
-	}
-	
-	/**
-	 * This filter is used to traverse the tca array and replace all $pid.selector and (at)pid.selector
-	 * references in strings it can find with the actual page id it stands for.
-	 */
-	public function __replaceAllPidInTca() {
-		// Prepare the placeholder list
-		$placeholders = [];
-		foreach (Arrays::flatten($this->context->getPidAspect()->getAllPids()) as $k => $v) {
-			$placeholders["\$pid." . $k] = $v;
-			$placeholders["@pid." . $k] = $v;
-		}
-		$placeholders = Arrays::sortByKeyStrLen($placeholders);
-		$find = array_keys($placeholders);
-		$replace = array_values($placeholders);
-		
-		// Skip if there is no tca
-		if (!is_array($GLOBALS["TCA"])) return;
-		
-		// Walker to traverse the tca array
-		$walker = function (array &$list, callable $walker) use ($find, $replace) {
-			foreach ($list as $k => &$v) {
-				if (is_array($v)) $walker($v, $walker);
-				else if (is_string($v)) $v = str_ireplace($find, $replace, $v);
-			}
-		};
-		
-		// Start the walker
-		$walker($GLOBALS["TCA"], $walker);
-	}
-	
+class PidTcaFilter implements LazyEventSubscriberInterface
+{
+    
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
+     */
+    protected $context;
+    
+    /**
+     * PidTcaFilter constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     */
+    public function __construct(TypoContext $context)
+    {
+        $this->context = $context;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    {
+        $subscription->subscribe(TcaCompletelyLoadedEvent::class, '__replaceAllPidInTca', ['priority' => 100]);
+    }
+    
+    /**
+     * This filter is used to traverse the tca array and replace all $pid.selector and (at)pid.selector
+     * references in strings it can find with the actual page id it stands for.
+     */
+    public function __replaceAllPidInTca()
+    {
+        // Prepare the placeholder list
+        $placeholders = [];
+        foreach (Arrays::flatten($this->context->getPidAspect()->getAllPids()) as $k => $v) {
+            $placeholders['$pid.' . $k] = $v;
+            $placeholders['@pid.' . $k] = $v;
+        }
+        $placeholders = Arrays::sortByKeyStrLen($placeholders);
+        $find = array_keys($placeholders);
+        $replace = array_values($placeholders);
+        
+        // Skip if there is no tca
+        if (!is_array($GLOBALS['TCA'])) {
+            return;
+        }
+        
+        // Walker to traverse the tca array
+        $walker = function (array &$list, callable $walker) use ($find, $replace) {
+            foreach ($list as $k => &$v) {
+                if (is_array($v)) {
+                    $walker($v, $walker);
+                } elseif (is_string($v)) {
+                    $v = str_ireplace($find, $replace, $v);
+                }
+            }
+        };
+        
+        // Start the walker
+        $walker($GLOBALS['TCA'], $walker);
+    }
 }

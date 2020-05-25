@@ -19,7 +19,6 @@
 
 namespace LaborDigital\Typo3BetterApi\Kint;
 
-
 use Kint\Object\BasicObject;
 use Kint\Object\InstanceObject;
 use Kint\Parser\IteratorPlugin;
@@ -31,48 +30,53 @@ use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 
-class LazyLoadingPlugin extends Plugin {
-	/**
-	 * @var \Kint\Parser\Parser
-	 */
-	protected $parser;
-	
-	public function getTypes() {
-		return ["object"];
-	}
-	
-	public function getTriggers() {
-		return Parser::TRIGGER_BEGIN;
-	}
-	
-	public function parse(&$variable, BasicObject &$o, $trigger) {
-		if ($variable instanceof LazyObjectStorage) {
-			/** @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $realVar */
-			$realVar = $this->getLazyLoading()->getRealValue($variable);
-			/** @var InstanceObject $object */
-			$object = InstanceObject::blank($o->name);
-			$object->transplant($o);
-			$object->classname = get_class($realVar);
-			$object->depth = $o->depth + 1;
-			
-			$object2 = InstanceObject::blank($o->name);
-			$object2 = $this->parser->parse(Arrays::makeFromObject($realVar), $object2);
-			$object->addRepresentation(reset($object2->getRepresentations()));
-			$o = $object;
-			$o->type = "object";
-			$o->size = $realVar->count();
-			IteratorPlugin::$blacklist[] = $object->classname;
-		} else if ($variable instanceof LazyLoadingProxy) {
-			$realVar = $this->getLazyLoading()->getRealValue($variable);
-			$object = BasicObject::blank($o->name);
-			$object->transplant($o);
-			$object->depth = $o->depth;
-			$o = $this->parser->parse($realVar, $object);
-		}
-		return;
-	}
-	
-	protected function getLazyLoading(): LazyLoading {
-		return TypoContainer::getInstance()->get(LazyLoading::class);
-	}
+class LazyLoadingPlugin extends Plugin
+{
+    /**
+     * @var \Kint\Parser\Parser
+     */
+    protected $parser;
+    
+    public function getTypes()
+    {
+        return ['object'];
+    }
+    
+    public function getTriggers()
+    {
+        return Parser::TRIGGER_BEGIN;
+    }
+    
+    public function parse(&$variable, BasicObject &$o, $trigger)
+    {
+        if ($variable instanceof LazyObjectStorage) {
+            /** @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $realVar */
+            $realVar = $this->getLazyLoading()->getRealValue($variable);
+            /** @var InstanceObject $object */
+            $object = InstanceObject::blank($o->name);
+            $object->transplant($o);
+            $object->classname = get_class($realVar);
+            $object->depth = $o->depth + 1;
+            
+            $object2 = InstanceObject::blank($o->name);
+            $object2 = $this->parser->parse(Arrays::makeFromObject($realVar), $object2);
+            $object->addRepresentation(reset($object2->getRepresentations()));
+            $o = $object;
+            $o->type = 'object';
+            $o->size = $realVar->count();
+            IteratorPlugin::$blacklist[] = $object->classname;
+        } elseif ($variable instanceof LazyLoadingProxy) {
+            $realVar = $this->getLazyLoading()->getRealValue($variable);
+            $object = BasicObject::blank($o->name);
+            $object->transplant($o);
+            $object->depth = $o->depth;
+            $o = $this->parser->parse($realVar, $object);
+        }
+        return;
+    }
+    
+    protected function getLazyLoading(): LazyLoading
+    {
+        return TypoContainer::getInstance()->get(LazyLoading::class);
+    }
 }

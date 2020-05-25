@@ -19,18 +19,19 @@
 
 namespace LaborDigital\Typo3BetterApi\LazyLoading;
 
-
-trait LazyLoadingTrait {
-	
-	/**
-	 * @var \LaborDigital\Typo3BetterApi\LazyLoading\LazyLoading
-	 */
-	protected $lazyLoading;
-	
-	/**
-	 * @param \LaborDigital\Typo3BetterApi\LazyLoading\LazyLoading $lazyLoading
-	 */
-	public function injectLazyLoading(LazyLoading $lazyLoading) {
-		$this->lazyLoading = $lazyLoading;
-	}
+trait LazyLoadingTrait
+{
+    
+    /**
+     * @var \LaborDigital\Typo3BetterApi\LazyLoading\LazyLoading
+     */
+    protected $lazyLoading;
+    
+    /**
+     * @param \LaborDigital\Typo3BetterApi\LazyLoading\LazyLoading $lazyLoading
+     */
+    public function injectLazyLoading(LazyLoading $lazyLoading)
+    {
+        $this->lazyLoading = $lazyLoading;
+    }
 }

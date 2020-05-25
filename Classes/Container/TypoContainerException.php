@@ -19,10 +19,9 @@
 
 namespace LaborDigital\Typo3BetterApi\Container;
 
-
 use LaborDigital\Typo3BetterApi\BetterApiException;
 use Psr\Container\ContainerExceptionInterface;
 
-class TypoContainerException extends BetterApiException implements ContainerExceptionInterface {
-	
+class TypoContainerException extends BetterApiException implements ContainerExceptionInterface
+{
 }

@@ -19,30 +19,31 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids;
 
-
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
-class PidTypoScriptGenerator {
-	/**
-	 * This helper is used to convert a list of pid's into the typoScript setup and constant code
-	 *
-	 * @param array $pids The result of PidService->getAll()
-	 *
-	 * @return array
-	 */
-	public function generate(array $pids): array {
-		
-		// Build the typoscript
-		$constantsTs = $ts = [];
-		foreach (Arrays::flatten($pids) as $k => $pid) {
-			$key = "config.betterApi.pid." . $k;
-			$ts[] = $key . '={$' . $key . '}';
-			$constantsTs[] = "#cat=betterApi/pid; type=int+; label=Page ID " . Inflector::toHuman($k);
-			$constantsTs[] = $key . "=" . $pid;
-		}
-		
-		// Done
-		return [implode(PHP_EOL, $ts), implode(PHP_EOL, $constantsTs)];
-	}
+class PidTypoScriptGenerator
+{
+    /**
+     * This helper is used to convert a list of pid's into the typoScript setup and constant code
+     *
+     * @param array $pids The result of PidService->getAll()
+     *
+     * @return array
+     */
+    public function generate(array $pids): array
+    {
+        
+        // Build the typoscript
+        $constantsTs = $ts = [];
+        foreach (Arrays::flatten($pids) as $k => $pid) {
+            $key = 'config.betterApi.pid.' . $k;
+            $ts[] = $key . '={$' . $key . '}';
+            $constantsTs[] = '#cat=betterApi/pid; type=int+; label=Page ID ' . Inflector::toHuman($k);
+            $constantsTs[] = $key . '=' . $pid;
+        }
+        
+        // Done
+        return [implode(PHP_EOL, $ts), implode(PHP_EOL, $constantsTs)];
+    }
 }

@@ -19,9 +19,9 @@
 
 namespace LaborDigital\Typo3BetterApi\BackendPreview;
 
-
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 
-abstract class AbstractBackendPreviewRenderer implements BackendPreviewRendererInterface {
-	use CommonServiceLocatorTrait;
+abstract class AbstractBackendPreviewRenderer implements BackendPreviewRendererInterface
+{
+    use CommonServiceLocatorTrait;
 }

@@ -31,55 +31,60 @@ use Throwable;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ErrorFilterEvent {
-	/**
-	 * The error that lead to this event
-	 * @var \Throwable
-	 */
-	protected $error;
-	
-	/**
-	 * Should contain something if you want to block the default exception handler
-	 * @var mixed|null
-	 */
-	protected $result;
-	
-	/**
-	 * ErrorFilterEvent constructor.
-	 *
-	 * @param \Throwable $error
-	 * @param            $result
-	 */
-	public function __construct(Throwable $error, $result) {
-		$this->error = $error;
-		$this->result = $result;
-	}
-	
-	/**
-	 * Returns the error that lead to this event
-	 * @return \Throwable
-	 */
-	public function getError(): Throwable {
-		return $this->error;
-	}
-	
-	/**
-	 * Returns the result that will be returned by the exception handler
-	 * @return mixed|null
-	 */
-	public function getResult() {
-		return $this->result;
-	}
-	
-	/**
-	 * Sets the result that will be returned by the exception handler
-	 *
-	 * @param mixed|null $result
-	 *
-	 * @return ErrorFilterEvent
-	 */
-	public function setResult($result): ErrorFilterEvent {
-		$this->result = $result;
-		return $this;
-	}
+class ErrorFilterEvent
+{
+    /**
+     * The error that lead to this event
+     * @var \Throwable
+     */
+    protected $error;
+    
+    /**
+     * Should contain something if you want to block the default exception handler
+     * @var mixed|null
+     */
+    protected $result;
+    
+    /**
+     * ErrorFilterEvent constructor.
+     *
+     * @param \Throwable $error
+     * @param            $result
+     */
+    public function __construct(Throwable $error, $result)
+    {
+        $this->error = $error;
+        $this->result = $result;
+    }
+    
+    /**
+     * Returns the error that lead to this event
+     * @return \Throwable
+     */
+    public function getError(): Throwable
+    {
+        return $this->error;
+    }
+    
+    /**
+     * Returns the result that will be returned by the exception handler
+     * @return mixed|null
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+    
+    /**
+     * Sets the result that will be returned by the exception handler
+     *
+     * @param mixed|null $result
+     *
+     * @return ErrorFilterEvent
+     */
+    public function setResult($result): ErrorFilterEvent
+    {
+        $this->result = $result;
+        return $this;
+    }
 }

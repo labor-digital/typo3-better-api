@@ -28,69 +28,75 @@ use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
 
-class BetterActionController extends ActionController {
-	use CommonServiceLocatorTrait;
-	use CommonServiceDependencyTrait {
-		CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
-		CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
-	}
-	
-	/**
-	 * The list of the raw content object data
-	 * @var array
-	 */
-	protected $data = [];
-	
-	/**
-	 * Implements new hooks, catches a weired typo3 exception if a dbal entry was not found
-	 * and provides additional data attribute, containing the raw content element data
-	 *
-	 * @see https://forum.typo3.org/index.php?t=msg&goto=740402&
-	 *
-	 * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface  $request
-	 * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response
-	 *
-	 * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
-	 * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-	 * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
-	 */
-	public function processRequest(RequestInterface $request, ResponseInterface $response) {
-		
-		// Load the data from the content object
-		if (empty($this->data))
-			$this->data = $this->configurationManager->getContentObject()->data;
-		
-		// Inject the this controller's request into the links object
-		$this->Links()->__setControllerRequest($request);
-		
-		// Allow filtering
-		$this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, TRUE));
-		
-		// Do the default stuff
-		try {
-			parent::processRequest($request, $response);
-		} catch (TargetNotFoundException $e) {
-			// Catch dbal overkill exceptions
-		}
-		
-		// Allow filtering
-		$this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, FALSE));
-	}
-	
-	/**
-	 * Resolves and checks the current action method name
-	 *
-	 * @return string Method name of the current action
-	 * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchActionException if the action specified in the request object
-	 *                                                                does not exist (and if there's no default action
-	 *                                                                either).
-	 */
-	protected function resolveActionMethodName() {
-		$actionName = parent::resolveActionMethodName();
-		$this->EventBus()->dispatch(($e = new ActionControllerMethodNameFilterEvent(
-			$actionName, $this->request, $this->response, $this)));
-		return $e->getActionMethodName();
-	}
-	
-	
+class BetterActionController extends ActionController
+{
+    use CommonServiceLocatorTrait;
+    use CommonServiceDependencyTrait {
+        CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+        CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
+    }
+    
+    /**
+     * The list of the raw content object data
+     * @var array
+     */
+    protected $data = [];
+    
+    /**
+     * Implements new hooks, catches a weired typo3 exception if a dbal entry was not found
+     * and provides additional data attribute, containing the raw content element data
+     *
+     * @see https://forum.typo3.org/index.php?t=msg&goto=740402&
+     *
+     * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface  $request
+     * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response
+     *
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
+     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
+     */
+    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    {
+        
+        // Load the data from the content object
+        if (empty($this->data)) {
+            $this->data = $this->configurationManager->getContentObject()->data;
+        }
+        
+        // Inject the this controller's request into the links object
+        $this->Links()->__setControllerRequest($request);
+        
+        // Allow filtering
+        $this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, true));
+        
+        // Do the default stuff
+        try {
+            parent::processRequest($request, $response);
+        } catch (TargetNotFoundException $e) {
+            // Catch dbal overkill exceptions
+        }
+        
+        // Allow filtering
+        $this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, false));
+    }
+    
+    /**
+     * Resolves and checks the current action method name
+     *
+     * @return string Method name of the current action
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchActionException if the action specified in the request object
+     *                                                                does not exist (and if there's no default action
+     *                                                                either).
+     */
+    protected function resolveActionMethodName()
+    {
+        $actionName = parent::resolveActionMethodName();
+        $this->EventBus()->dispatch(($e = new ActionControllerMethodNameFilterEvent(
+            $actionName,
+            $this->request,
+            $this->response,
+            $this
+        )));
+        return $e->getActionMethodName();
+    }
 }

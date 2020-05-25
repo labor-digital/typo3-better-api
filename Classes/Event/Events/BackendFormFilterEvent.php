@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events;
 
-
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\BackendFormFilterEventAdapter;
 use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterface;
 use LaborDigital\Typo3BetterApi\Event\Events\Traits\BackendFormFilterEventTrait;
@@ -38,14 +37,15 @@ use LaborDigital\Typo3BetterApi\Event\Events\Traits\BackendFormFilterEventTrait;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormFilterEvent implements CoreHookEventInterface {
-	use BackendFormFilterEventTrait;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAdapterClass(): string {
-		return BackendFormFilterEventAdapter::class;
-	}
-	
+class BackendFormFilterEvent implements CoreHookEventInterface
+{
+    use BackendFormFilterEventTrait;
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getAdapterClass(): string
+    {
+        return BackendFormFilterEventAdapter::class;
+    }
 }

@@ -19,24 +19,27 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-
 use LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection\LazyConstructorInjectionHook;
 use LaborDigital\Typo3BetterApi\Event\Events\ClassSchemaFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Extbase\Reflection\BetterApiClassOverrideCopy__ReflectionService;
 use TYPO3\CMS\Extbase\Reflection\ClassSchema;
 
-class ExtendedReflectionService extends BetterApiClassOverrideCopy__ReflectionService {
-	public function getClassSchema($classNameOrObject): ClassSchema {
-		$schema = parent::getClassSchema($classNameOrObject);
-		
-		// Avoid infinite recursion
-		if ($classNameOrObject === LazyConstructorInjectionHook::class ||
-			$classNameOrObject instanceof LazyConstructorInjectionHook) return $schema;
-		
-		// Allow filtering
-		$e = new ClassSchemaFilterEvent($schema, $classNameOrObject);
-		TypoEventBus::getInstance()->dispatch($e);
-		return $e->getSchema();
-	}
+class ExtendedReflectionService extends BetterApiClassOverrideCopy__ReflectionService
+{
+    public function getClassSchema($classNameOrObject): ClassSchema
+    {
+        $schema = parent::getClassSchema($classNameOrObject);
+        
+        // Avoid infinite recursion
+        if ($classNameOrObject === LazyConstructorInjectionHook::class ||
+            $classNameOrObject instanceof LazyConstructorInjectionHook) {
+            return $schema;
+        }
+        
+        // Allow filtering
+        $e = new ClassSchemaFilterEvent($schema, $classNameOrObject);
+        TypoEventBus::getInstance()->dispatch($e);
+        return $e->getSchema();
+    }
 }

@@ -27,72 +27,78 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class RefIndexRecordDataFilterEvent {
-	
-	/**
-	 * The name of the table for which the data is required
-	 * @var string
-	 */
-	protected $tableName;
-	
-	/**
-	 * The unique id of the table the data is required
-	 * @var int
-	 */
-	protected $uid;
-	
-	/**
-	 * The raw data for the record to be filtered
-	 * @var array
-	 */
-	protected $row;
-	
-	/**
-	 * RefIndexRecordDataFilterEvent constructor.
-	 *
-	 * @param string $tableName
-	 * @param int    $uid
-	 * @param array  $row
-	 */
-	public function __construct(string $tableName, int $uid, array $row) {
-		$this->tableName = $tableName;
-		$this->uid = $uid;
-		$this->row = $row;
-	}
-	
-	/**
-	 * Returns the name of the table for which the data is required
-	 * @return string
-	 */
-	public function getTableName(): string {
-		return $this->tableName;
-	}
-	
-	/**
-	 * Returns the unique id of the table the data is required
-	 * @return int
-	 */
-	public function getUid(): int {
-		return $this->uid;
-	}
-	
-	/**
-	 * Returns the raw data for the record to be filtered
-	 * @return array
-	 */
-	public function getRow(): array {
-		return $this->row;
-	}
-	
-	/**
-	 * Updates the raw data for the record to be filtered
-	 *
-	 * @param array $row
-	 *
-	 * @return RefIndexRecordDataFilterEvent
-	 */
-	public function setRow(array $row): RefIndexRecordDataFilterEvent {
-		$this->row = $row;
-		return $this;
-	}
+class RefIndexRecordDataFilterEvent
+{
+    
+    /**
+     * The name of the table for which the data is required
+     * @var string
+     */
+    protected $tableName;
+    
+    /**
+     * The unique id of the table the data is required
+     * @var int
+     */
+    protected $uid;
+    
+    /**
+     * The raw data for the record to be filtered
+     * @var array
+     */
+    protected $row;
+    
+    /**
+     * RefIndexRecordDataFilterEvent constructor.
+     *
+     * @param string $tableName
+     * @param int    $uid
+     * @param array  $row
+     */
+    public function __construct(string $tableName, int $uid, array $row)
+    {
+        $this->tableName = $tableName;
+        $this->uid = $uid;
+        $this->row = $row;
+    }
+    
+    /**
+     * Returns the name of the table for which the data is required
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+    
+    /**
+     * Returns the unique id of the table the data is required
+     * @return int
+     */
+    public function getUid(): int
+    {
+        return $this->uid;
+    }
+    
+    /**
+     * Returns the raw data for the record to be filtered
+     * @return array
+     */
+    public function getRow(): array
+    {
+        return $this->row;
+    }
+    
+    /**
+     * Updates the raw data for the record to be filtered
+     *
+     * @param array $row
+     *
+     * @return RefIndexRecordDataFilterEvent
+     */
+    public function setRow(array $row): RefIndexRecordDataFilterEvent
+    {
+        $this->row = $row;
+        return $this;
+    }
 }

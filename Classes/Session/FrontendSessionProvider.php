@@ -24,66 +24,85 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class FrontendSessionProvider implements SessionInterface, SingletonInterface {
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function has(string $path): bool {
-		return Arrays::hasPath($this->getSessionValues(), $path);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function get(string $path = NULL, $default = NULL) {
-		$values = $this->getSessionValues();
-		if ($path === NULL) return $values;
-		return Arrays::getPath($values, $path, $default);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function set(string $path, $value) {
-		$feUser = $this->getFeUser();
-		if (empty($feUser)) return $this;
-		$values = $this->getSessionValues();
-		$values = Arrays::setPath($values, $path, $value);
-		$feUser->setAndSaveSessionData("LaborTypo3BetterApi", $values);
-		return $this;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function remove(string $path) {
-		$feUser = $this->getFeUser();
-		if (empty($feUser)) return $this;
-		$values = $this->getSessionValues();
-		$values = Arrays::removePath($values, $path);
-		$feUser->setAndSaveSessionData("LaborTypo3BetterApi", $values);
-		return $this;
-	}
-	
-	/**
-	 * Helper to retrieve the session values from typo3
-	 * @return array
-	 */
-	protected function getSessionValues(): array {
-		$feUser = $this->getFeUser();
-		if (empty($feUser)) return [];
-		$value = $feUser->getKey("ses", "LaborTypo3BetterApi");
-		return is_array($value) ? $value : [];
-	}
-	
-	/**
-	 * Helper to get the instance of the typo3 frontend user
-	 * @return FrontendUserAuthentication|null
-	 */
-	protected function getFeUser() {
-		if (empty($GLOBALS["TSFE"]) || !$GLOBALS["TSFE"] instanceof TypoScriptFrontendController) return NULL;
-		if (empty($GLOBALS["TSFE"]->fe_user) || !$GLOBALS["TSFE"]->fe_user instanceof FrontendUserAuthentication) return NULL;
-		return $GLOBALS["TSFE"]->fe_user;
-	}
+class FrontendSessionProvider implements SessionInterface, SingletonInterface
+{
+    
+    /**
+     * @inheritDoc
+     */
+    public function has(string $path): bool
+    {
+        return Arrays::hasPath($this->getSessionValues(), $path);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function get(string $path = null, $default = null)
+    {
+        $values = $this->getSessionValues();
+        if ($path === null) {
+            return $values;
+        }
+        return Arrays::getPath($values, $path, $default);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function set(string $path, $value)
+    {
+        $feUser = $this->getFeUser();
+        if (empty($feUser)) {
+            return $this;
+        }
+        $values = $this->getSessionValues();
+        $values = Arrays::setPath($values, $path, $value);
+        $feUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
+        return $this;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function remove(string $path)
+    {
+        $feUser = $this->getFeUser();
+        if (empty($feUser)) {
+            return $this;
+        }
+        $values = $this->getSessionValues();
+        $values = Arrays::removePath($values, $path);
+        $feUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
+        return $this;
+    }
+    
+    /**
+     * Helper to retrieve the session values from typo3
+     * @return array
+     */
+    protected function getSessionValues(): array
+    {
+        $feUser = $this->getFeUser();
+        if (empty($feUser)) {
+            return [];
+        }
+        $value = $feUser->getKey('ses', 'LaborTypo3BetterApi');
+        return is_array($value) ? $value : [];
+    }
+    
+    /**
+     * Helper to get the instance of the typo3 frontend user
+     * @return FrontendUserAuthentication|null
+     */
+    protected function getFeUser()
+    {
+        if (empty($GLOBALS['TSFE']) || !$GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
+            return null;
+        }
+        if (empty($GLOBALS['TSFE']->fe_user) || !$GLOBALS['TSFE']->fe_user instanceof FrontendUserAuthentication) {
+            return null;
+        }
+        return $GLOBALS['TSFE']->fe_user;
+    }
 }

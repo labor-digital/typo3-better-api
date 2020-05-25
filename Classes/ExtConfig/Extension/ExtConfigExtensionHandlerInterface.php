@@ -21,23 +21,23 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Extension;
 
-
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface ExtConfigExtensionHandlerInterface {
-	
-	/**
-	 * ExtConfigExtensionHandlerInterface constructor.
-	 *
-	 * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
-	 */
-	public function __construct(ExtConfigContext $context);
-	
-	/**
-	 * Applied after the ext config service gathered all extensions.
-	 * Should be used to perform all required actions to apply the extensions.
-	 *
-	 * @param array $extensions
-	 */
-	public function generate(array $extensions): void;
+interface ExtConfigExtensionHandlerInterface
+{
+    
+    /**
+     * ExtConfigExtensionHandlerInterface constructor.
+     *
+     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     */
+    public function __construct(ExtConfigContext $context);
+    
+    /**
+     * Applied after the ext config service gathered all extensions.
+     * Should be used to perform all required actions to apply the extensions.
+     *
+     * @param array $extensions
+     */
+    public function generate(array $extensions): void;
 }

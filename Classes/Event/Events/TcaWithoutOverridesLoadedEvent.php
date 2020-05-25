@@ -32,6 +32,6 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class TcaWithoutOverridesLoadedEvent {
-	
+class TcaWithoutOverridesLoadedEvent
+{
 }
