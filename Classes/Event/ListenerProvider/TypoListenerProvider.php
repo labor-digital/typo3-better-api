@@ -28,6 +28,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterf
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\EventBus\Dispatcher\EventBusListenerProvider;
+use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 class TypoListenerProvider extends EventBusListenerProvider
@@ -46,15 +47,23 @@ class TypoListenerProvider extends EventBusListenerProvider
     protected $boundCoreHooks = [];
     
     /**
-     * Is used to set the signal slot dispatcher and the container instances
-     * after they are created
+     * The container instance to create core hooks
+     *
+     * @var \Psr\Container\ContainerInterface
+     */
+    protected $container;
+    
+    
+    /**
+     * Is used to set the signal slot dispatcher and the container instances after they are created
      *
      * @param   \TYPO3\CMS\Extbase\SignalSlot\Dispatcher  $dispatcher
+     * @param   \Psr\Container\ContainerInterface         $container
      */
-    public function setHighLevelDependencies(
-        Dispatcher $dispatcher
-    ): void {
+    public function setHighLevelDependencies(Dispatcher $dispatcher, ContainerInterface $container): void
+    {
         $this->signalSlotDispatcher = $dispatcher;
+        $this->container            = $container;
     }
     
     /**
@@ -107,10 +116,10 @@ class TypoListenerProvider extends EventBusListenerProvider
         if (isset($this->boundCoreHooks[$eventClass])) {
             return;
         }
-        if ( ! class_exists($eventClass)) {
+        if (! class_exists($eventClass)) {
             return;
         }
-        if ( ! in_array(CoreHookEventInterface::class,
+        if (! in_array(CoreHookEventInterface::class,
             class_implements($eventClass), true)) {
             return;
         }
@@ -122,10 +131,10 @@ class TypoListenerProvider extends EventBusListenerProvider
         
         // Validate the adapter class
         $adapterClass = call_user_func([$eventClass, "getAdapterClass"]);
-        if ( ! class_exists($adapterClass)) {
+        if (! class_exists($adapterClass)) {
             throw new EventException("The class \"$eventClass\" returned \"$adapterClass\" as it's core hook adapter, but the class does not exist!");
         }
-        if ( ! in_array(CoreHookEventAdapterInterface::class,
+        if (! in_array(CoreHookEventAdapterInterface::class,
             class_implements($adapterClass), true)) {
             throw new EventException("The class \"$eventClass\" returned \"$adapterClass\" as it's core hook adapter, but the adapter does not implement the required interface: \""
                                      . CoreHookEventAdapterInterface::class
@@ -158,7 +167,7 @@ class TypoListenerProvider extends EventBusListenerProvider
         callable $listener
     ): bool {
         // Check if a valid "className.signal" event was given
-        if (class_exists($eventClass) || stripos($eventClass, ".") === false
+        if (class_exists($eventClass) || strpos($eventClass, ".") === false
             || count(explode(".", $eventClass)) !== 2) {
             return false;
         }

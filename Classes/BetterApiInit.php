@@ -301,10 +301,10 @@ class BetterApiInit
         if ($packageManager->isPackageActive($packageKey)) {
             return;
         }
-        if ( ! $packageManager->isPackageAvailable($packageKey)) {
+        if (! $packageManager->isPackageAvailable($packageKey)) {
             $packageManager->scanAvailablePackages();
         }
-        if ( ! $packageManager->isPackageActive($packageKey)) {
+        if (! $packageManager->isPackageActive($packageKey)) {
             $packageManager->activatePackage($packageKey);
         }
     }
@@ -365,8 +365,8 @@ class BetterApiInit
         // Make sure we don't crash legacy code when changing the language service
         ClassOverrideGenerator::registerOverride(LanguageService::class,
             ExtendedLanguageService::class);
-        if ( ! class_exists(LanguageService::class, false)
-             && ! class_exists(\TYPO3\CMS\Lang\LanguageService::class, false)) {
+        if (! class_exists(LanguageService::class, false)
+            && ! class_exists(\TYPO3\CMS\Lang\LanguageService::class, false)) {
             class_alias(LanguageService::class, \TYPO3\CMS\Lang\LanguageService::class);
         }
     }
@@ -503,7 +503,7 @@ HTML;
         // Update the listener provider
         $listenerProvider = $this->eventBus->getConcreteListenerProvider();
         if ($listenerProvider instanceof TypoListenerProvider) {
-            $listenerProvider->setHighLevelDependencies($signalSlotDispatcher);
+            $listenerProvider->setHighLevelDependencies($signalSlotDispatcher, $this->container);
         }
         
         // Update the dispatcher instance
@@ -610,7 +610,7 @@ HTML;
     protected function addFormEngineNodes(): void
     {
         // Ignore if we are not in backend mode
-        if ( ! $this->context->Env()->isBackend()) {
+        if (! $this->context->Env()->isBackend()) {
             return;
         }
         $nodeRegistry
@@ -645,20 +645,20 @@ HTML;
         if (php_sapi_name() !== "cli") {
             return;
         }
-        if ( ! class_exists(Kernel::class)) {
+        if (! class_exists(Kernel::class)) {
             return;
         }
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $found = false;
         foreach ($trace as $step) {
-            if ( ! isset($step["file"]) || ! is_string($step["file"])
-                 || stripos($step["file"], "typo3-console") === false) {
+            if (! isset($step["file"]) || ! is_string($step["file"])
+                || stripos($step["file"], "typo3-console") === false) {
                 continue;
             }
             $found = true;
             break;
         }
-        if ( ! $found) {
+        if (! $found) {
             return;
         }
         

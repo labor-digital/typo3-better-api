@@ -44,7 +44,10 @@ use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 class ExtConfigContext
 {
     use CommonServiceLocatorTrait;
-    use ExtConfigContextPublicServiceTrait;
+    use ExtConfigContextPublicServiceTrait {
+        ExtConfigContextPublicServiceTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+        ExtConfigContextPublicServiceTrait::injectContainer insteadof CommonServiceLocatorTrait;
+    }
     
     /**
      * The vendor name for the currently configured extension
@@ -248,7 +251,7 @@ class ExtConfigContext
      */
     public function __injectOptionList($optionList)
     {
-        if ( ! $optionList instanceof ExtConfigOptionList) {
+        if (! $optionList instanceof ExtConfigOptionList) {
             throw new ExtConfigException("The given option list is not valid!");
         }
         $this->addToServiceMap(["OptionList" => $optionList]);
