@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.12.0](https://github.com/labor-digital/typo3-better-api/compare/v9.11.4...v9.12.0) (2020-05-25)
+
+
+### Features
+
+* **Event:** update code for new version of the eventbus library ([e9a0487](https://github.com/labor-digital/typo3-better-api/commit/e9a04875efbd7acb054595435645761e5f2f7809))
+* add setup for phpunit tests ([29d37ab](https://github.com/labor-digital/typo3-better-api/commit/29d37ab14bec8bb8fefe6afcd1ca6cd8ecf4a76e))
+* **ExtConfig:** implement new, faster form node tree ([5793c03](https://github.com/labor-digital/typo3-better-api/commit/5793c03c0019ebbd93b689ea270fbf08501939d9))
+
+
+### Bug Fixes
+
+* **Log:** make sure the logLevel allows integers as well as strings ([c30747d](https://github.com/labor-digital/typo3-better-api/commit/c30747dddc81de053205ab26ebd4b774b4bdf5ab))
+
 ### [9.11.4](https://github.com/labor-digital/typo3-better-api/compare/v9.11.3...v9.11.4) (2020-05-22)
 
 
