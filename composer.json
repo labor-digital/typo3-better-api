@@ -3,6 +3,15 @@
 	"description": "A package that overhauls the way you work with TYPO3 providing you with a new, better core API",
 	"type": "typo3-cms-extension",
 	"license": "Apache-2.0",
+	"repositories": [
+		{
+			"type": "path",
+			"url": "../*"
+		}
+	],
+	"scripts": {
+		"test": "vendor/bin/phpunit --colors=always --coverage-html Tests/Coverage"
+	},
 	"authors": [
 		{
 			"name": "LABOR.digital",
@@ -21,7 +30,7 @@
 		"typo3/cms-core": "^9.5",
 		"psr/simple-cache": "^1.0",
 		"psr/container": "^1.0",
-		"neunerlei/event-bus": "^1.1",
+		"neunerlei/event-bus": "^2.0",
 		"neunerlei/arrays": "^1.1",
 		"neunerlei/tiny-timy": "^1.1",
 		"neunerlei/path-util": "^2.4",
@@ -30,7 +39,12 @@
 		"neunerlei/filesystem": "^5.2",
 		"whitecube/lingua": "^1.0",
 		"zordius/lightncandy": "^1.2",
-		"labor-digital/typo3-better-api-composer-plugin": "*"
+		"labor-digital/typo3-better-api-composer-plugin": "^3.0"
+	},
+	"require-dev": {
+		"roave/security-advisories": "dev-master",
+		"phpunit/phpunit": "^9.1",
+		"neunerlei/dbg": "^1.9"
 	},
 	"support": {
 		"issues": "https://github.com/labor-digital/typo3-better-api/issues",
@@ -42,11 +56,16 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"LaborDigital\\Typo3BetterApi\\": "Classes"
+			"LaborDigital\\Typo3BetterApi\\": "Classes",
+			"LaborDigital\\T3BA\\ExtConfig\\": "Module/ExtConfig/Classes",
+			"LaborDigital\\T3BA\\ExtConfig\\Tests\\": "Module/ExtConfig/Tests"
 		}
 	},
 	"version": "9.11.4",
 	"extra": {
+		"T3BA": {
+			"isDev": true
+		},
 		"typo3/cms": {
 			"Package": {
 				"protected": true,

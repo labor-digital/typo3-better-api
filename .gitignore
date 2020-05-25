@@ -3,7 +3,7 @@
 .env
 vendor
 docs/node_modules
-
+public
 Tests/Coverage
 
 # IDEA Code Style
