@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -18,8 +19,9 @@
  */
 
 // Harmony event dispatching
-return (function () {
-	$bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
-	$bus->dispatch(($e = new \LaborDigital\Typo3BetterApi\Event\Events\CommandRegistrationEvent()));
-	return $e->getCommands();
+return (static function () {
+    $bus = \LaborDigital\Typo3BetterApi\Event\TypoEventBus::getInstance();
+    $bus->dispatch(($e = new \LaborDigital\Typo3BetterApi\Event\Events\CommandRegistrationEvent()));
+    
+    return $e->getCommands();
 })();

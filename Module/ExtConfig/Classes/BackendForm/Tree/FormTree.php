@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfig\BackendForm\Tree;
 
-
 use InvalidArgumentException;
 use LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractForm;
 
@@ -74,7 +73,7 @@ class FormTree
     {
         $this->form     = $form;
         $this->tabClass = $tabClass;
-        $this->root     = new FormNode("root", FormNode::TYPE_ROOT, $this);
+        $this->root     = new FormNode('root', FormNode::TYPE_ROOT, $this);
     }
     
     /**
@@ -134,7 +133,7 @@ class FormTree
             
             // Special handling for container ids
             if ($type === FormNode::TYPE_CONTAINER) {
-                return $this->nodes[$type][$id] ?? $this->nodes[$type]["_" . $id] ?? null;
+                return $this->nodes[$type][$id] ?? $this->nodes[$type]['_' . $id] ?? null;
             }
             
             // Normal lookup
@@ -153,7 +152,7 @@ class FormTree
         
         // Return either a container, or a tab
         return $this->nodes[FormNode::TYPE_CONTAINER][$id] ??
-               $this->nodes[FormNode::TYPE_CONTAINER]["_" . $id] ??
+               $this->nodes[FormNode::TYPE_CONTAINER]['_' . $id] ??
                null;
     }
     
@@ -177,7 +176,7 @@ class FormTree
             case FormNode::TYPE_CONTAINER:
                 foreach ($this->root->getChildren() as $tab) {
                     foreach ($tab->getChildren() as $child) {
-                        if ( ! $child->isContainer()) {
+                        if (! $child->isContainer()) {
                             continue;
                         }
                         yield $child;
@@ -187,7 +186,7 @@ class FormTree
             case FormNode::TYPE_FIELD:
                 foreach ($this->root->getChildren() as $tab) {
                     foreach ($tab->getChildren() as $child) {
-                        if ( ! $child->isContainer()) {
+                        if (! $child->isContainer()) {
                             yield $child;
                             continue;
                         }
@@ -198,7 +197,7 @@ class FormTree
                 }
                 break;
             default:
-                throw new InvalidArgumentException("The given type is not supported!");
+                throw new InvalidArgumentException('The given type is not supported!');
         }
     }
     
@@ -210,10 +209,8 @@ class FormTree
      * - "id": positions the element after the "id" elements
      *  - "before:id" positions the element in front of the "id" element
      *  - "after:id" positions the element after the "id" element
-     *  - "top:containerId" positions the element as first element of a
-     *  container/tab
-     *  - "bottom:containerId" positions the element as last element of a
-     *  container/tab
+     *  - "top:containerId" positions the element as first element of a container/tab
+     *  - "bottom:containerId" positions the element as last element of a container/tab
      *
      * If top/bottom are used in combination with a field (and not a container
      * element) it will be translated to before or after respectively.
@@ -230,22 +227,20 @@ class FormTree
     public function parseMovePosition(string $position): array
     {
         // Parse position into node
-        $positionParts = explode(":", $position);
+        $positionParts = explode(':', $position);
         $pivotId       = $positionParts[1] ?? $positionParts[0];
         $pivotNode     = $this->getNode($pivotId);
         
         // Build the insert mode
-        $defaultInsertMode = $pivotNode !== null && ! $pivotNode->isField()
-            ? "bottom" : "after";
-        $insertMode        = isset($positionParts[1]) ? $positionParts[0]
-            : $defaultInsertMode;
-        if ($insertMode === "bottom") {
+        $defaultInsertMode = $pivotNode !== null && ! $pivotNode->isField() ? 'bottom' : 'after';
+        $insertMode        = isset($positionParts[1]) ? $positionParts[0] : $defaultInsertMode;
+        if ($insertMode === 'bottom') {
             $insertMode = FormNode::INSERT_MODE_BOTTOM;
-        } elseif ($insertMode === "top") {
+        } elseif ($insertMode === 'top') {
             $insertMode = FormNode::INSERT_MODE_TOP;
-        } elseif ($insertMode === "before") {
+        } elseif ($insertMode === 'before') {
             $insertMode = FormNode::INSERT_MODE_BEFORE;
-        } elseif ($insertMode === "after") {
+        } elseif ($insertMode === 'after') {
             $insertMode = FormNode::INSERT_MODE_AFTER;
         }
         
@@ -258,8 +253,7 @@ class FormTree
      * given pivot node.
      *
      * @param   FormNode  $nodeToMove  The node to move somewhere
-     * @param   int       $insertMode  One of FormNode::INSERT_MODE_ to
-     *                                 determine where to place the $nodeToMove
+     * @param   int       $insertMode  One of FormNode::INSERT_MODE_ to determine where to place the $nodeToMove
      *                                 in relation to $pivotNode
      * @param   FormNode  $pivotNode   The node to use as relation
      */
@@ -295,9 +289,7 @@ class FormTree
             if ($pivotNode->isField()) {
                 $nodeToAddNodeTo         = $pivotNode->getParent();
                 $allowOnlyBeforeAndAfter = true;
-                
-            } elseif ($insertMode === FormNode::INSERT_MODE_TOP
-                      || $insertMode === FormNode::INSERT_MODE_BOTTOM
+            } elseif ($insertMode === FormNode::INSERT_MODE_TOP || $insertMode === FormNode::INSERT_MODE_BOTTOM
                       || $pivotNode->isTab()) {
                 $nodeToAddNodeTo = $pivotNode;
             } else {

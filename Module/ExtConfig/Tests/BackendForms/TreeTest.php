@@ -31,7 +31,6 @@ use PHPUnit\Framework\TestCase;
  */
 class TreeTest extends TestCase
 {
-    
     public function testTreeInstantiation()
     {
         $this->assertIsObject($this->getTree());
@@ -43,25 +42,25 @@ class TreeTest extends TestCase
     {
         return [
             [
-                "id"             => "f-a",
-                "expectId"       => "f-a",
-                "type"           => FormNode::TYPE_FIELD,
-                "typeValidation" => "isField",
-                "parentFinder"   => "getDefaultNode",
+                'id'             => 'f-a',
+                'expectId'       => 'f-a',
+                'type'           => FormNode::TYPE_FIELD,
+                'typeValidation' => 'isField',
+                'parentFinder'   => 'getDefaultNode',
             ],
             [
-                "id"             => 0,
-                "expectId"       => 0,
-                "type"           => FormNode::TYPE_TAB,
-                "typeValidation" => "isTab",
-                "parentFinder"   => "getRootNode",
+                'id'             => 0,
+                'expectId'       => 0,
+                'type'           => FormNode::TYPE_TAB,
+                'typeValidation' => 'isTab',
+                'parentFinder'   => 'getRootNode',
             ],
             [
-                "id"             => "c-a",
-                "expectId"       => "_c-a",
-                "type"           => FormNode::TYPE_CONTAINER,
-                "typeValidation" => "isContainer",
-                "parentFinder"   => "getDefaultNode",
+                'id'             => 'c-a',
+                'expectId'       => '_c-a',
+                'type'           => FormNode::TYPE_CONTAINER,
+                'typeValidation' => 'isContainer',
+                'parentFinder'   => 'getDefaultNode',
             ],
         ];
     }
@@ -88,8 +87,10 @@ class TreeTest extends TestCase
         $this->assertEquals($expectId, $node->getId());
         $this->assertEquals($type, $node->getType());
         $this->assertTrue($node->$typeValidator());
-        $this->assertSame($tree->$parentFinder(),
-            $node->getParent());
+        $this->assertSame(
+            $tree->$parentFinder(),
+            $node->getParent()
+        );
         
         $this->assertSame($node, $tree->getNode($id));
     }
@@ -98,117 +99,116 @@ class TreeTest extends TestCase
     {
         $tree = $this->getTree();
         
-        $field     = $tree->makeNewNode("a", FormNode::TYPE_FIELD);
-        $container = $tree->makeNewNode("a", FormNode::TYPE_CONTAINER);
+        $field     = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
+        $container = $tree->makeNewNode('a', FormNode::TYPE_CONTAINER);
         // Tab with id "0" is implicitly added and therefore should exist
         $tab = $tree->makeNewNode(1, FormNode::TYPE_TAB);
         
         // Check if "has" works as expected
         $this->assertTrue($tree->hasNode(0));
         $this->assertTrue($tree->hasNode(1));
-        $this->assertTrue($tree->hasNode("a"));
-        $this->assertTrue($tree->hasNode("a", FormNode::TYPE_CONTAINER));
-        $this->assertTrue($tree->hasNode("_a"));
-        $this->assertTrue($tree->hasNode("_a", FormNode::TYPE_CONTAINER));
+        $this->assertTrue($tree->hasNode('a'));
+        $this->assertTrue($tree->hasNode('a', FormNode::TYPE_CONTAINER));
+        $this->assertTrue($tree->hasNode('_a'));
+        $this->assertTrue($tree->hasNode('_a', FormNode::TYPE_CONTAINER));
         
         // Check if the retrieval works as expected
-        $this->assertSame($field, $tree->getNode("a"));
-        $this->assertSame($container, $tree->getNode("a", FormNode::TYPE_CONTAINER));
-        $this->assertSame($container, $tree->getNode("_a"));
+        $this->assertSame($field, $tree->getNode('a'));
+        $this->assertSame($container, $tree->getNode('a', FormNode::TYPE_CONTAINER));
+        $this->assertSame($container, $tree->getNode('_a'));
         $this->assertSame($tab, $tree->getNode(1));
         $this->assertNotSame($tab, $tree->getNode(0));
         $this->assertEquals(FormNode::TYPE_TAB, $tree->getNode(1)->getType());
         
         // Don't retrieve the container if we explicitly ask for a field
-        $this->assertNull($tree->getNode("_a", FormNode::TYPE_FIELD));
+        $this->assertNull($tree->getNode('_a', FormNode::TYPE_FIELD));
     }
     
     public function testIfDuplicateNodeIdThrowsException()
     {
         $this->expectException(NonUniqueIdException::class);
         $tree = $this->getTree();
-        $tree->makeNewNode("0", FormNode::TYPE_FIELD);
-        $tree->makeNewNode("0", FormNode::TYPE_FIELD);
+        $tree->makeNewNode('0', FormNode::TYPE_FIELD);
+        $tree->makeNewNode('0', FormNode::TYPE_FIELD);
     }
     
     public function provideTestSortedListLookupData(): array
     {
         return [
             [
-                "generator"  => function (FormTree $tree): array {
+                'generator'  => function (FormTree $tree): array {
                     return [
-                        $tree->makeNewNode("a", FormNode::TYPE_FIELD),
-                        $tree->makeNewNode("b", FormNode::TYPE_FIELD),
-                        $tree->makeNewNode("c", FormNode::TYPE_FIELD),
-                    ];
-                    
-                },
-                "lookupType" => FormNode::TYPE_FIELD,
-            ],
-            [
-                "generator"  => function (FormTree $tree): array {
-                    return [
-                        $tree->makeNewNode("a", FormNode::TYPE_CONTAINER),
-                        $tree->makeNewNode("b", FormNode::TYPE_CONTAINER),
-                        $tree->makeNewNode("c", FormNode::TYPE_CONTAINER),
+                        $tree->makeNewNode('a', FormNode::TYPE_FIELD),
+                        $tree->makeNewNode('b', FormNode::TYPE_FIELD),
+                        $tree->makeNewNode('c', FormNode::TYPE_FIELD),
                     ];
                 },
-                "lookupType" => FormNode::TYPE_CONTAINER,
+                'lookupType' => FormNode::TYPE_FIELD,
             ],
             [
-                "generator"  => function (FormTree $tree): array {
+                'generator'  => function (FormTree $tree): array {
+                    return [
+                        $tree->makeNewNode('a', FormNode::TYPE_CONTAINER),
+                        $tree->makeNewNode('b', FormNode::TYPE_CONTAINER),
+                        $tree->makeNewNode('c', FormNode::TYPE_CONTAINER),
+                    ];
+                },
+                'lookupType' => FormNode::TYPE_CONTAINER,
+            ],
+            [
+                'generator'  => function (FormTree $tree): array {
                     return [
                         $tree->makeNewNode(1, FormNode::TYPE_TAB),
                         $tree->makeNewNode(2, FormNode::TYPE_TAB),
                         $tree->makeNewNode(3, FormNode::TYPE_TAB),
                     ];
                 },
-                "lookupType" => FormNode::TYPE_TAB,
+                'lookupType' => FormNode::TYPE_TAB,
             ],
             // Now mix and match a bit
             [
-                "generator"  => function (FormTree $tree): array {
+                'generator'  => function (FormTree $tree): array {
                     $expect   = [];
-                    $expect[] = $tree->makeNewNode("a", FormNode::TYPE_FIELD);
-                    $tree->makeNewNode("a", FormNode::TYPE_CONTAINER);
-                    $expect[] = $tree->makeNewNode("b", FormNode::TYPE_FIELD);
+                    $expect[] = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
+                    $tree->makeNewNode('a', FormNode::TYPE_CONTAINER);
+                    $expect[] = $tree->makeNewNode('b', FormNode::TYPE_FIELD);
                     $tree->makeNewNode(1, FormNode::TYPE_TAB);
-                    $container = $tree->makeNewNode("b", FormNode::TYPE_CONTAINER);
-                    $expect[]  = $containerChild = $tree->makeNewNode("c", FormNode::TYPE_FIELD);
+                    $container = $tree->makeNewNode('b', FormNode::TYPE_CONTAINER);
+                    $expect[]  = $containerChild = $tree->makeNewNode('c', FormNode::TYPE_FIELD);
                     $container->addChild($containerChild, FormNode::INSERT_MODE_BOTTOM);
                     
                     return $expect;
                 },
-                "lookupType" => FormNode::TYPE_FIELD,
+                'lookupType' => FormNode::TYPE_FIELD,
             ],
             [
-                "generator"  => function (FormTree $tree): array {
+                'generator'  => function (FormTree $tree): array {
                     $expect = [];
-                    $tree->makeNewNode("a", FormNode::TYPE_FIELD);
-                    $expect[] = $tree->makeNewNode("a", FormNode::TYPE_CONTAINER);
-                    $tree->makeNewNode("b", FormNode::TYPE_FIELD);
+                    $tree->makeNewNode('a', FormNode::TYPE_FIELD);
+                    $expect[] = $tree->makeNewNode('a', FormNode::TYPE_CONTAINER);
+                    $tree->makeNewNode('b', FormNode::TYPE_FIELD);
                     $tree->makeNewNode(1, FormNode::TYPE_TAB);
-                    $expect[] = $tree->makeNewNode("b", FormNode::TYPE_CONTAINER);
-                    $tree->makeNewNode("c", FormNode::TYPE_FIELD);
+                    $expect[] = $tree->makeNewNode('b', FormNode::TYPE_CONTAINER);
+                    $tree->makeNewNode('c', FormNode::TYPE_FIELD);
                     
                     return $expect;
                 },
-                "lookupType" => FormNode::TYPE_CONTAINER,
+                'lookupType' => FormNode::TYPE_CONTAINER,
             ],
             [
-                "generator"  => function (FormTree $tree): array {
+                'generator'  => function (FormTree $tree): array {
                     $expect = [];
-                    $tree->makeNewNode("a", FormNode::TYPE_FIELD);
-                    $tree->makeNewNode("a", FormNode::TYPE_CONTAINER);
-                    $tree->makeNewNode("b", FormNode::TYPE_FIELD);
+                    $tree->makeNewNode('a', FormNode::TYPE_FIELD);
+                    $tree->makeNewNode('a', FormNode::TYPE_CONTAINER);
+                    $tree->makeNewNode('b', FormNode::TYPE_FIELD);
                     $expect[] = $tree->getNode(0); // We have to fetch the implicitly created first tab here!
                     $expect[] = $tree->makeNewNode(1, FormNode::TYPE_TAB);
-                    $tree->makeNewNode("b", FormNode::TYPE_CONTAINER);
-                    $tree->makeNewNode("c", FormNode::TYPE_FIELD);
+                    $tree->makeNewNode('b', FormNode::TYPE_CONTAINER);
+                    $tree->makeNewNode('c', FormNode::TYPE_FIELD);
                     
                     return $expect;
                 },
-                "lookupType" => FormNode::TYPE_TAB,
+                'lookupType' => FormNode::TYPE_TAB,
             ],
         ];
     }
@@ -245,17 +245,17 @@ class TreeTest extends TestCase
         
         // Generate the tree
         // ================================= START
-        $fieldA = $tree->makeNewNode("a", FormNode::TYPE_FIELD);
+        $fieldA = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
         $tab0   = $tree->getNode(0);
         
         // A new tab is generated -> This means all new fields will implicitly be added to the new tab
         $tab1   = $tree->makeNewNode(1, FormNode::TYPE_TAB);
-        $fieldB = $tree->makeNewNode("b", FormNode::TYPE_FIELD);
-        $fieldC = $tree->makeNewNode("c", FormNode::TYPE_FIELD);
+        $fieldB = $tree->makeNewNode('b', FormNode::TYPE_FIELD);
+        $fieldC = $tree->makeNewNode('c', FormNode::TYPE_FIELD);
         
         // Add fields to a container
-        $container = $tree->makeNewNode("container", FormNode::TYPE_CONTAINER);
-        $fieldD    = $tree->makeNewNode("d", FormNode::TYPE_FIELD);
+        $container = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
+        $fieldD    = $tree->makeNewNode('d', FormNode::TYPE_FIELD);
         $container->addChild($fieldD, FormNode::INSERT_MODE_BOTTOM);
         // ================================= END
         
@@ -282,25 +282,25 @@ class TreeTest extends TestCase
     public function testPositionParsing()
     {
         $tree       = $this->getTree();
-        $fieldA     = $tree->makeNewNode("a", FormNode::TYPE_FIELD);
-        $containerA = $tree->makeNewNode("a", FormNode::TYPE_CONTAINER);
-        $containerB = $tree->makeNewNode("container", FormNode::TYPE_CONTAINER);
+        $fieldA     = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
+        $containerA = $tree->makeNewNode('a', FormNode::TYPE_CONTAINER);
+        $containerB = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
         $tab        = $tree->makeNewNode(1, FormNode::TYPE_TAB);
         
         // Automatic insert mode based on the pivot node
-        $this->assertEquals([FormNode::INSERT_MODE_AFTER, $fieldA], $tree->parseMovePosition("a"));
-        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $containerA], $tree->parseMovePosition("_a"));
-        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $containerB], $tree->parseMovePosition("container"));
-        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $tab], $tree->parseMovePosition("1"));
-        $this->assertEquals([FormNode::INSERT_MODE_AFTER, null], $tree->parseMovePosition("foo"));
+        $this->assertEquals([FormNode::INSERT_MODE_AFTER, $fieldA], $tree->parseMovePosition('a'));
+        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $containerA], $tree->parseMovePosition('_a'));
+        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $containerB], $tree->parseMovePosition('container'));
+        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $tab], $tree->parseMovePosition('1'));
+        $this->assertEquals([FormNode::INSERT_MODE_AFTER, null], $tree->parseMovePosition('foo'));
         
         // Insert mode parsing
-        $this->assertEquals([FormNode::INSERT_MODE_AFTER, $fieldA], $tree->parseMovePosition("after:a"));
-        $this->assertEquals([FormNode::INSERT_MODE_TOP, $fieldA], $tree->parseMovePosition("top:a"));
-        $this->assertEquals([FormNode::INSERT_MODE_AFTER, $containerB], $tree->parseMovePosition("after:container"));
-        $this->assertEquals([FormNode::INSERT_MODE_BEFORE, $fieldA], $tree->parseMovePosition("before:a"));
-        $this->assertEquals([FormNode::INSERT_MODE_TOP, $containerB], $tree->parseMovePosition("top:container"));
-        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $tab], $tree->parseMovePosition("bottom:1"));
+        $this->assertEquals([FormNode::INSERT_MODE_AFTER, $fieldA], $tree->parseMovePosition('after:a'));
+        $this->assertEquals([FormNode::INSERT_MODE_TOP, $fieldA], $tree->parseMovePosition('top:a'));
+        $this->assertEquals([FormNode::INSERT_MODE_AFTER, $containerB], $tree->parseMovePosition('after:container'));
+        $this->assertEquals([FormNode::INSERT_MODE_BEFORE, $fieldA], $tree->parseMovePosition('before:a'));
+        $this->assertEquals([FormNode::INSERT_MODE_TOP, $containerB], $tree->parseMovePosition('top:container'));
+        $this->assertEquals([FormNode::INSERT_MODE_BOTTOM, $tab], $tree->parseMovePosition('bottom:1'));
     }
     
     public function testMoving()
@@ -309,23 +309,23 @@ class TreeTest extends TestCase
         
         // Generate the tree
         // ================================= START
-        $fieldA = $tree->makeNewNode("a", FormNode::TYPE_FIELD);
+        $fieldA = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
         $tab0   = $tree->getNode(0);
         
         // A new tab is generated -> This means all new fields will implicitly be added to the new tab
         $tab1 = $tree->makeNewNode(1, FormNode::TYPE_TAB);
         
         // Add fields to a container
-        $container = $tree->makeNewNode("container", FormNode::TYPE_CONTAINER);
-        $fieldB    = $tree->makeNewNode("b", FormNode::TYPE_FIELD);
+        $container = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
+        $fieldB    = $tree->makeNewNode('b', FormNode::TYPE_FIELD);
         $container->addChild($fieldB, FormNode::INSERT_MODE_BOTTOM);
         // ================================= END
         
         // Move $fieldA to the BOTTOM of container
-        $fieldA->moveTo("container");
+        $fieldA->moveTo('container');
         $this->assertSame($tab1, $fieldA->getContainingTab());
         $this->assertSame($container, $fieldA->getParent());
-        $this->assertSame($fieldA, $tree->getNode("a"));
+        $this->assertSame($fieldA, $tree->getNode('a'));
         $this->assertEquals([], $tab0->getChildren());
         $this->assertEquals([
             $fieldB->getId() => $fieldB,
@@ -333,7 +333,7 @@ class TreeTest extends TestCase
         ], $container->getChildren());
         
         // Move $fieldA to the TOP of container
-        $fieldA->moveTo("top:container");
+        $fieldA->moveTo('top:container');
         $this->assertSame($container, $fieldA->getParent());
         $this->assertEquals([
             $fieldA->getId() => $fieldA,
@@ -341,7 +341,7 @@ class TreeTest extends TestCase
         ], $container->getChildren());
         
         // Move $fieldA to the TOP of $tab1
-        $fieldA->moveTo("top:1");
+        $fieldA->moveTo('top:1');
         $this->assertSame($tab1, $fieldA->getParent());
         $this->assertEquals([
             $fieldB->getId() => $fieldB,
@@ -352,7 +352,7 @@ class TreeTest extends TestCase
         ], $tab1->getChildren());
         
         // Move $fieldA BEFORE $fieldB using TOP
-        $fieldA->moveTo("top:b");
+        $fieldA->moveTo('top:b');
         $this->assertSame($container, $fieldA->getParent());
         $this->assertEquals([
             $fieldA->getId() => $fieldA,
@@ -360,7 +360,7 @@ class TreeTest extends TestCase
         ], $container->getChildren());
         
         // Move $fieldA AFTER $fieldB using BOTTOM
-        $fieldA->moveTo("bottom:b");
+        $fieldA->moveTo('bottom:b');
         $this->assertSame($container, $fieldA->getParent());
         $this->assertEquals([
             $fieldB->getId() => $fieldB,
@@ -368,7 +368,7 @@ class TreeTest extends TestCase
         ], $container->getChildren());
         
         // Check if move to self is correctly ignored
-        $fieldA->moveTo("top:a");
+        $fieldA->moveTo('top:a');
         $this->assertSame($container, $fieldA->getParent());
         $this->assertSame($tab1, $fieldA->getContainingTab());
         $this->assertEquals([
@@ -377,7 +377,7 @@ class TreeTest extends TestCase
         ], $container->getChildren());
         
         // Move $tab1 BEFORE $tab0
-        $tab1->moveTo("before:0");
+        $tab1->moveTo('before:0');
         $this->assertSame($tree->getRootNode(), $tab1->getParent());
         $this->assertEquals([
             $tab1->getId() => $tab1,
@@ -386,14 +386,14 @@ class TreeTest extends TestCase
         
         // Now test if we can move $tab1 INTO $tab0 -> This should not work, and
         // the tab should end up either before or after the other tab.
-        $tab1->moveTo("bottom:0");
+        $tab1->moveTo('bottom:0');
         $this->assertSame($tree->getRootNode(), $tab1->getParent());
         $this->assertEquals([
             $tab0->getId() => $tab0,
             $tab1->getId() => $tab1,
         ], $tree->getRootNode()->getChildren());
         
-        $tab1->moveTo("top:0");
+        $tab1->moveTo('top:0');
         $this->assertSame($tree->getRootNode(), $tab1->getParent());
         $this->assertEquals([
             $tab1->getId() => $tab1,
@@ -401,14 +401,14 @@ class TreeTest extends TestCase
         ], $tree->getRootNode()->getChildren());
         
         // Test to move a tab into a container -> This should not work either
-        $tab0->moveTo("top:container");
+        $tab0->moveTo('top:container');
         $this->assertSame($tree->getRootNode(), $tab0->getParent());
         $this->assertEquals([
             $tab0->getId() => $tab0, // The command translates to "before:1"
             $tab1->getId() => $tab1,
         ], $tree->getRootNode()->getChildren());
         
-        $tab0->moveTo("after:container");
+        $tab0->moveTo('after:container');
         $this->assertSame($tree->getRootNode(), $tab0->getParent());
         $this->assertEquals([
             $tab1->getId() => $tab1,
@@ -417,13 +417,13 @@ class TreeTest extends TestCase
         
         // Test if we can move a field before / after a tab
         // This should move the element to the top/bottom of the respective tab instead.
-        $fieldA->moveTo("before:0");
+        $fieldA->moveTo('before:0');
         $this->assertSame($tab0, $fieldA->getParent());
         $this->assertEquals([
             $fieldA->getId() => $fieldA,  // The command translates to "top:0"
         ], $tab0->getChildren());
         
-        $fieldA->moveTo("after:1");
+        $fieldA->moveTo('after:1');
         $this->assertSame($tab1, $fieldA->getParent());
         $this->assertEquals([
             $container->getId() => $container,
@@ -431,9 +431,9 @@ class TreeTest extends TestCase
         ], $tab1->getChildren());
         
         // Test to move a container between tabs
-        $fieldA->moveTo("container");
+        $fieldA->moveTo('container');
         $this->assertEquals([$container->getId() => $container], $tab1->getChildren());
-        $container->moveTo("0");
+        $container->moveTo('0');
         $this->assertSame($tab0, $container->getParent());
         $this->assertSame($tab0, $container->getContainingTab());
         $this->assertSame($tab0, $fieldA->getContainingTab());
@@ -443,16 +443,16 @@ class TreeTest extends TestCase
         
         // Test if we can move a container before / after a tab
         // Similar to a field, this should move the element to the top/bottom of the respective tab instead.
-        $container->moveTo("before:0");
+        $container->moveTo('before:0');
         $this->assertSame($tab0, $container->getParent());
         $this->assertEquals([$container->getId() => $container], $tab0->getChildren());
         
-        $container->moveTo("after:1");
+        $container->moveTo('after:1');
         $this->assertSame($tab1, $container->getParent());
         $this->assertEquals([$container->getId() => $container], $tab1->getChildren());
         
         // Test if we ignore a move to a non-existent element
-        $container->moveTo("after:5");
+        $container->moveTo('after:5');
         $this->assertSame($tab1, $container->getParent());
         $this->assertEquals([$container->getId() => $container], $tab1->getChildren());
     }
@@ -461,21 +461,21 @@ class TreeTest extends TestCase
     {
         $tree = $this->getTree();
         
-        $container = $tree->makeNewNode("container", FormNode::TYPE_CONTAINER);
+        $container = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
         
         $tree->setDefaultNode($container);
         $this->assertSame($container, $tree->getDefaultNode());
         
-        $field = $tree->makeNewNode("a", FormNode::TYPE_FIELD);
+        $field = $tree->makeNewNode('a', FormNode::TYPE_FIELD);
         $this->assertSame($container, $field->getParent());
         
-        $field = $tree->makeNewNode("b", FormNode::TYPE_FIELD);
+        $field = $tree->makeNewNode('b', FormNode::TYPE_FIELD);
         $this->assertSame($container, $field->getParent());
         
         $tree->setDefaultNode(null);
         $this->assertSame($tree->getNode(0), $tree->getDefaultNode());
         
-        $field = $tree->makeNewNode("c", FormNode::TYPE_FIELD);
+        $field = $tree->makeNewNode('c', FormNode::TYPE_FIELD);
         $this->assertSame($tree->getNode(0), $field->getParent());
         
         // Make sure fields cannot be set as default nodes
@@ -489,31 +489,31 @@ class TreeTest extends TestCase
         
         // Generate the tree
         // ================================= START
-        $tree->makeNewNode("a", FormNode::TYPE_FIELD);
+        $tree->makeNewNode('a', FormNode::TYPE_FIELD);
         $tab0 = $tree->getNode(0);
         
         // A new tab is generated -> This means all new fields will implicitly be added to the new tab
         $tab1   = $tree->makeNewNode(1, FormNode::TYPE_TAB);
-        $fieldB = $tree->makeNewNode("b", FormNode::TYPE_FIELD);
-        $fieldC = $tree->makeNewNode("c", FormNode::TYPE_FIELD);
+        $fieldB = $tree->makeNewNode('b', FormNode::TYPE_FIELD);
+        $fieldC = $tree->makeNewNode('c', FormNode::TYPE_FIELD);
         
         // Add fields to a container
-        $container = $tree->makeNewNode("container", FormNode::TYPE_CONTAINER);
-        $fieldD    = $tree->makeNewNode("d", FormNode::TYPE_FIELD);
+        $container = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
+        $fieldD    = $tree->makeNewNode('d', FormNode::TYPE_FIELD);
         $container->addChild($fieldD, FormNode::INSERT_MODE_BOTTOM);
         // ================================= END
         
         // Remove a field from a container
         $fieldD->remove();
         $this->assertEquals([], $container->getChildren());
-        $this->assertNull($tree->getNode("d", FormNode::TYPE_FIELD));
+        $this->assertNull($tree->getNode('d', FormNode::TYPE_FIELD));
         
         // Remove a whole container
-        $fieldB->moveTo("container");
+        $fieldB->moveTo('container');
         $container->remove();
         $this->assertEquals([], $container->getChildren());
-        $this->assertNull($tree->getNode("b", FormNode::TYPE_FIELD));
-        $this->assertNull($tree->getNode("container", FormNode::TYPE_CONTAINER));
+        $this->assertNull($tree->getNode('b', FormNode::TYPE_FIELD));
+        $this->assertNull($tree->getNode('container', FormNode::TYPE_CONTAINER));
         $this->assertEquals([$fieldC->getId() => $fieldC], $tab1->getChildren());
         
         // Remove all tabs
@@ -523,7 +523,7 @@ class TreeTest extends TestCase
         
         // Look inside the tree to check if the nodes have been flushed correctly
         $ref     = new \ReflectionObject($tree);
-        $propRef = $ref->getProperty("nodes");
+        $propRef = $ref->getProperty('nodes');
         $propRef->setAccessible(true);
         $nodes = $propRef->getValue($tree);
         $this->assertEmpty(array_filter($nodes));
@@ -532,7 +532,7 @@ class TreeTest extends TestCase
         $this->assertIsObject($tree->getDefaultNode());
         
         // Make sure the "default" object is reset correctly
-        $container = $tree->makeNewNode("container", FormNode::TYPE_CONTAINER);
+        $container = $tree->makeNewNode('container', FormNode::TYPE_CONTAINER);
         $tree->setDefaultNode($container);
         $this->assertSame($container, $tree->getDefaultNode());
         $container->remove();
@@ -543,7 +543,7 @@ class TreeTest extends TestCase
     {
         $tree   = $this->getTree();
         $mockEl = $this->getMockForAbstractClass(AbstractFormField::class);
-        $node   = $tree->makeNewNode("el", FormNode::TYPE_FIELD);
+        $node   = $tree->makeNewNode('el', FormNode::TYPE_FIELD);
         $node->setEl($mockEl);
         $this->assertSame($mockEl, $node->getEl());
     }

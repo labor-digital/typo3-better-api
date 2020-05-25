@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfig\BackendForm\Tree;
 
-
 use LaborDigital\T3BA\ExtConfig\BackendForm\Logic\AbstractFormElement;
 
 class FormNode
@@ -178,7 +177,7 @@ class FormNode
         // Containers have a "_" as prefix in their id to avoid
         // conflicts between fields and containers with the same name
         if ($this->isContainer()) {
-            return "_" . $this->id;
+            return '_' . $this->id;
         }
         
         return $this->id;

@@ -5,10 +5,9 @@ vendor
 docs/node_modules
 public
 Tests/Coverage
+.php_cs.cache
 
 # IDEA Code Style
 .idea/*
 !.idea/copyright/
 !.idea/copyright/*
-!.idea/codeStyles/
-!.idea/codeStyles/*

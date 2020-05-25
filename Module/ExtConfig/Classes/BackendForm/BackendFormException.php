@@ -24,5 +24,4 @@ use LaborDigital\Typo3BetterApi\BackendForms\BackendFormException as LegacyFormE
 
 class BackendFormException extends LegacyFormException
 {
-    
 }

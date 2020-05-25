@@ -20,8 +20,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfig\BackendForm\Logic;
 
-
 abstract class AbstractFormElement
 {
-    
 }

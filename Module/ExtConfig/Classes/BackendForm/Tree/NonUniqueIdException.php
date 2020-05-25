@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -19,10 +20,8 @@
 
 namespace LaborDigital\T3BA\ExtConfig\BackendForm\Tree;
 
-
 use LaborDigital\T3BA\ExtConfig\BackendForm\BackendFormException;
 
 class NonUniqueIdException extends BackendFormException
 {
-    
 }
