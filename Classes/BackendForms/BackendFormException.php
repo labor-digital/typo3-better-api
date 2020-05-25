@@ -22,6 +22,15 @@ namespace LaborDigital\Typo3BetterApi\BackendForms;
 
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
 
-class BackendFormException extends ExtConfigException {
-	
+/**
+ * Class BackendFormException
+ *
+ * @package    LaborDigital\Typo3BetterApi\BackendForms
+ *
+ * @deprecated use the T3BA variant instead
+ * @see        \LaborDigital\T3BA\ExtConfig\BackendForm\BackendFormException
+ */
+class BackendFormException extends ExtConfigException
+{
+
 }
