@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.13.0](https://github.com/labor-digital/typo3-better-api/compare/v9.12.2...v9.13.0) (2020-05-28)
+
+
+### Features
+
+* **BackendForm:** implement new logic abstracts ([d328f42](https://github.com/labor-digital/typo3-better-api/commit/d328f422f17c6d455e7104ba90d214cdde4a729e))
+
+
+### Bug Fixes
+
+* **Typoscript:** fix issue when the typoscript is empty ([cd452fe](https://github.com/labor-digital/typo3-better-api/commit/cd452fe7dea123ff0fd21348466dc481ec4cef23))
+
 ### [9.12.2](https://github.com/labor-digital/typo3-better-api/compare/v9.12.1...v9.12.2) (2020-05-25)
 
 
