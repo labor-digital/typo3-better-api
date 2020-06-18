@@ -34,37 +34,40 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
     public function generate(array $data, ExtConfigContext $context, array $additionalData, $option)
     {
         $routeEnhancers = [];
-        $context->runWithCachedValueDataScope($data, function (array $options, string $key) use (&$routeEnhancers, $context, $additionalData) {
-            
-            // Select the method to build the config with
-            if (!isset($options['routeType']) || !is_string($options['routeType'])) {
-                throw new ExtConfigException('The given route enhancer did not define a route type to build the config for!');
-            }
-            $method = 'make' . ucfirst($options['routeType']) . 'Config';
-            if (!method_exists($this, $method)) {
-                throw new ExtConfigException('The given route enhancer did specify an enhancer with type: ' .
-                    $options['routeType'] . " but there is no configuration method with the name $method in the generator class!");
-            }
-            
-            // Build the configuration
-            $config = call_user_func([$this, $method], $options, $context, $key, $additionalData);
-            $routeEnhancers[$key] = $config;
-        });
+        $context->runWithCachedValueDataScope($data,
+            function (array $options, string $key) use (&$routeEnhancers, $context, $additionalData) {
+                // Select the method to build the config with
+                if (! isset($options['routeType']) || ! is_string($options['routeType'])) {
+                    throw new ExtConfigException('The given route enhancer did not define a route type to build the config for!');
+                }
+                $method = 'make' . ucfirst($options['routeType']) . 'Config';
+                if (! method_exists($this, $method)) {
+                    throw new ExtConfigException('The given route enhancer did specify an enhancer with type: ' .
+                                                 $options['routeType']
+                                                 . " but there is no configuration method with the name $method in the generator class!");
+                }
+                
+                // Build the configuration
+                $config               = call_user_func([$this, $method], $options, $context, $key, $additionalData);
+                $routeEnhancers[$key] = $config;
+            });
+        
         return $routeEnhancers;
     }
     
     /**
      * Generates the configuration for a pagination route enhancement
      *
-     * @param array                                                   $options
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   array                                                    $options
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
      * @return array
      */
     protected function makePaginationConfig(array $options, ExtConfigContext $context): array
     {
         $options = $this->prepareOptions($options, $context);
-        $config = $this->prepareRawConfig($options);
+        $config  = $this->prepareRawConfig($options);
+        
         return Arrays::merge([
             'routePath'    => '/{page}',
             'requirements' => [
@@ -86,18 +89,19 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
     /**
      * Generates the configuration for a value route enhancement
      *
-     * @param array                                                   $options
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   array                                                    $options
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
      * @return array
      */
     protected function makeValueConfig(array $options, ExtConfigContext $context): array
     {
         $options = $this->prepareOptionsWithRoutePath($options, $context);
-        $config = $this->prepareRawConfig($options);
-        $config = $this->prepareDbArgs($config, $options, $context);
-        $config = $this->prepareLocaleArgs($config, $options);
-        $config = $this->prepareStaticArgs($config, $options);
+        $config  = $this->prepareRawConfig($options);
+        $config  = $this->prepareDbArgs($config, $options, $context);
+        $config  = $this->prepareLocaleArgs($config, $options);
+        $config  = $this->prepareStaticArgs($config, $options);
+        
         return Arrays::merge([
             'routePath'    => $options['routePath'],
             'requirements' => $options['requirements'],
@@ -108,14 +112,17 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
      * Internal helper to build the options array with the
      * addition to add additional definition entries for the different configuration options
      *
-     * @param array                                                   $options
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
-     * @param array                                                   $additionalDefinition
+     * @param   array                                                    $options
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
+     * @param   array                                                    $additionalDefinition
      *
      * @return array
      */
-    protected function prepareOptions(array $options, ExtConfigContext $context, array $additionalDefinition = []): array
-    {
+    protected function prepareOptions(
+        array $options,
+        ExtConfigContext $context,
+        array $additionalDefinition = []
+    ): array {
         $definition = Arrays::merge([
             'pids'      => [
                 'type'    => 'array',
@@ -127,6 +134,7 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
                             $pids[$k] = $context->TypoContext->getPidAspect()->getPid($v);
                         }
                     }
+                    
                     return $pids;
                 },
             ],
@@ -140,20 +148,24 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
             ],
             'routeType' => '',
         ], $additionalDefinition);
+        
         return Options::make($options, $definition);
     }
     
     /**
      * Similar to the prepareOptions() method, but also adds special definitions for route path and requirement options
      *
-     * @param array                                                   $options
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
-     * @param array                                                   $additionalDefinition
+     * @param   array                                                    $options
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
+     * @param   array                                                    $additionalDefinition
      *
      * @return array
      */
-    protected function prepareOptionsWithRoutePath(array $options, ExtConfigContext $context, array $additionalDefinition = []): array
-    {
+    protected function prepareOptionsWithRoutePath(
+        array $options,
+        ExtConfigContext $context,
+        array $additionalDefinition = []
+    ): array {
         return $this->prepareOptions($options, $context, Arrays::merge([
             'routePath'    => [
                 'type'   => 'string',
@@ -164,16 +176,18 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
             'requirements' => [
                 'type'    => 'array',
                 'default' => [],
-                'filter'  => function (array $list, $key, array $options) {
-                    if (!isset($options['routePath'])) {
+                'filter'  => function (array $list, $k, array $options) {
+                    if (! isset($options['routePath'])) {
                         return [];
                     }
                     preg_match_all('~({.*?})~si', $options['routePath'], $m);
                     foreach ($m[1] as $key) {
-                        if (!isset($list[$key])) {
-                            $list[trim($key, '}{')] = "[a-zA-Z0-9\-_.]*";
+                        $key = trim($key, '}{ ');
+                        if (! isset($list[$key])) {
+                            $list[$key] = "[a-zA-Z0-9\-_.]*";
                         }
                     }
+                    
                     return $list;
                 },
             ],
@@ -199,32 +213,34 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
     /**
      * Internal helper to prepare the raw configuration object based on the given options
      *
-     * @param array $options
+     * @param   array  $options
      *
      * @return array
      */
     protected function prepareRawConfig(array $options): array
     {
         $config = $options['raw'];
-        if (!empty($options['pids'])) {
+        if (! empty($options['pids'])) {
             $config['limitToPages'] = $options['pids'];
         }
-        if (!isset($config['type'])) {
+        if (! isset($config['type'])) {
             $config['type'] = 'Simple';
         }
-        if (!empty($options['defaults'])) {
-            $config['defaults'] = Arrays::merge((is_array($config['defaults']) ? $config['defaults'] : []), $options['defaults']);
+        if (! empty($options['defaults'])) {
+            $config['defaults'] = Arrays::merge((is_array($config['defaults']) ? $config['defaults'] : []),
+                $options['defaults']);
         }
         $config['@site'] = $options['site'];
+        
         return $config;
     }
     
     /**
      * Internal helper to generate the PersistedAliasMapper configuration based on the given dbArgs
      *
-     * @param array                                                   $config
-     * @param array                                                   $options
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   array                                                    $config
+     * @param   array                                                    $options
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -236,19 +252,22 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
         }
         foreach ($options['dbArgs'] as $field => $fieldConfig) {
             // Validate the input
-            if (!is_string($field)) {
-                throw new ExtConfigException('Invalid configuration for a dbArgs in the configuration of route: ' . $options['routePath'] . '! A numeric key can\'t be an alias name!');
+            if (! is_string($field)) {
+                throw new ExtConfigException('Invalid configuration for a dbArgs in the configuration of route: '
+                                             . $options['routePath'] . '! A numeric key can\'t be an alias name!');
             }
-            $baseError = "Invalid configuration for the dbArgs \"$field\" in the configuration of route: " . $options['routePath'] . '!';
-            if (!is_array($fieldConfig) || count($fieldConfig) !== 2) {
-                throw new ExtConfigException($baseError . ' The field configuration has to be an array with exactly two elements!');
+            $baseError = "Invalid configuration for the dbArgs \"$field\" in the configuration of route: "
+                         . $options['routePath'] . '!';
+            if (! is_array($fieldConfig) || count($fieldConfig) !== 2) {
+                throw new ExtConfigException($baseError
+                                             . ' The field configuration has to be an array with exactly two elements!');
             }
-            if (!is_string($fieldConfig[0]) || !is_string($fieldConfig[1])) {
+            if (! is_string($fieldConfig[0]) || ! is_string($fieldConfig[1])) {
                 throw new ExtConfigException($baseError . ' Both elements have to be strings!');
             }
             
             // Prepare the table name
-            $table = $context->OptionList->table()->getRealTableName($fieldConfig[0]);
+            $table      = $context->OptionList->table()->getRealTableName($fieldConfig[0]);
             $tableField = $fieldConfig[1];
             
             // Build the aspect
@@ -258,14 +277,15 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
                 'routeFieldName' => $tableField,
             ];
         }
+        
         return $config;
     }
     
     /**
      * Internal helper to generate the LocaleModifier configuration based on the given localeArgs
      *
-     * @param array $config
-     * @param array $options
+     * @param   array  $config
+     * @param   array  $options
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -277,11 +297,13 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
         }
         foreach ($options['localeArgs'] as $field => $fieldConfig) {
             // Validate the input
-            if (!is_string($field)) {
-                throw new ExtConfigException('Invalid configuration for a localeArgs in the configuration of route: ' . $options['routePath'] . '! A numeric key can\'t be an alias name!');
+            if (! is_string($field)) {
+                throw new ExtConfigException('Invalid configuration for a localeArgs in the configuration of route: '
+                                             . $options['routePath'] . '! A numeric key can\'t be an alias name!');
             }
-            $baseError = "Invalid configuration for the localeArgs \"$field\" in the configuration of route: " . $options['routePath'] . '!';
-            if (!is_array($fieldConfig)) {
+            $baseError = "Invalid configuration for the localeArgs \"$field\" in the configuration of route: "
+                         . $options['routePath'] . '!';
+            if (! is_array($fieldConfig)) {
                 throw new ExtConfigException($baseError . ' The field configuration has to be an array!');
             }
             
@@ -315,8 +337,8 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
     /**
      * Internal helper to generate the StaticValueMapper configuration based on the given staticArgs
      *
-     * @param array $config
-     * @param array $options
+     * @param   array  $config
+     * @param   array  $options
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -328,16 +350,18 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
         }
         foreach ($options['staticArgs'] as $field => $fieldConfig) {
             // Validate the input
-            if (!is_string($field)) {
-                throw new ExtConfigException('Invalid configuration for a staticArgs in the configuration of route: ' . $options['routePath'] . '! A numeric key can\'t be an alias name!');
+            if (! is_string($field)) {
+                throw new ExtConfigException('Invalid configuration for a staticArgs in the configuration of route: '
+                                             . $options['routePath'] . '! A numeric key can\'t be an alias name!');
             }
-            $baseError = "Invalid configuration for the staticArgs \"$field\" in the configuration of route: " . $options['routePath'] . '!';
-            if (!is_array($fieldConfig)) {
+            $baseError = "Invalid configuration for the staticArgs \"$field\" in the configuration of route: "
+                         . $options['routePath'] . '!';
+            if (! is_array($fieldConfig)) {
                 throw new ExtConfigException($baseError . ' The field configuration has to be an array!');
             }
             
             // Build map
-            $map = [];
+            $map       = [];
             $localeMap = [];
             foreach ($fieldConfig as $value => $label) {
                 // Handle locale array-definition
