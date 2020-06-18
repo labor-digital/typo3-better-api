@@ -19,6 +19,8 @@
 
 namespace LaborDigital\Typo3BetterApi\Link;
 
+use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\CacheHashCalculatorAdapter;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -137,6 +139,13 @@ class TypoLink
     protected $cHash = true;
     
     /**
+     * A list of arguments that should be ignored when the chash is generated for this link
+     *
+     * @var array
+     */
+    protected $cHashExcludedArgs = [];
+    
+    /**
      * Holds the user defined request object
      *
      * @var Request
@@ -236,7 +245,11 @@ class TypoLink
      */
     public function getRequest(bool $alsoInternal): ?Request
     {
-        return ! empty($this->request) ? $this->request : ($alsoInternal ? $this->context->getRequest() : null);
+        if (! empty($this->request)) {
+            return $this->request;
+        }
+        
+        return $alsoInternal ? $this->context->getRequest() : null;
     }
     
     /**
@@ -266,8 +279,11 @@ class TypoLink
      */
     public function getUriBuilder(bool $alsoInternal): UriBuilder
     {
-        return ! empty($this->uriBuilder) ? $this->uriBuilder
-            : ($alsoInternal ? $this->context->getUriBuilder() : null);
+        if (! empty($this->uriBuilder)) {
+            return $this->uriBuilder;
+        }
+        
+        return $alsoInternal ? $this->context->getUriBuilder() : null;
     }
     
     /**
@@ -325,7 +341,9 @@ class TypoLink
                 'type' => 'denied',
                 'list' => $this->deniedQueryArgs,
             ];
-        } elseif (! empty($this->allowedQueryArgs)) {
+        }
+        
+        if (! empty($this->allowedQueryArgs)) {
             return [
                 'type' => 'allowed',
                 'list' => $this->deniedQueryArgs,
@@ -611,6 +629,31 @@ class TypoLink
     }
     
     /**
+     * Returns the list of arguments that should be excluded from cHash generation when the url is being build
+     *
+     * @return array
+     */
+    public function getCHashExcludedArgs(): array
+    {
+        return $this->cHashExcludedArgs;
+    }
+    
+    /**
+     * Sets the list of arguments that should be excluded from cHash generation when the url is being build
+     *
+     * @param   array  $argsToExclude
+     *
+     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     */
+    public function withCHashExcludedArgs(array $argsToExclude): TypoLink
+    {
+        $clone                    = clone $this;
+        $clone->cHashExcludedArgs = $argsToExclude;
+        
+        return $clone;
+    }
+    
+    /**
      * Returns the currently set arguments
      *
      * @return array
@@ -682,7 +725,7 @@ class TypoLink
             if (! is_object($language)) {
                 $languages = $this->context->TypoContext->getSiteAspect()->getSite()->getLanguages();
                 foreach ($languages as $lang) {
-                    if (is_numeric($language) && $lang->getLanguageId() === (int)$language
+                    if ((is_numeric($language) && $lang->getLanguageId() === (int)$language)
                         || strtolower($lang->getTwoLetterIsoCode()) == $language) {
                         $language = $lang;
                         break;
@@ -771,19 +814,17 @@ class TypoLink
         if ($options['forMe']) {
             $request = $this->controllerRequest;
         }
-        if (empty($request)) {
+        if (! isset($request) || $request === null) {
             $request = $this->request;
         }
         
         // Check if for me can be used
-        if ($options['forMe']) {
-            if (empty($request)) {
-                throw new LinkException('The "forMe" flag can only be used if you are inside a better api extbase controller, or if you manually supplied a Request object using setRequest()!');
-            }
+        if ($options['forMe'] && $request === null) {
+            throw new LinkException('The "forMe" flag can only be used if you are inside a better api extbase controller, or if you manually supplied a Request object using setRequest()!');
         }
         
         // Get our context's request object if nothing was supplied
-        if (empty($request)) {
+        if ($request === null) {
             $request = $this->context->getRequest();
         }
         
@@ -941,7 +982,23 @@ class TypoLink
                     $uri);
             }
         } else {
+            // Simulate the ignored cHash fields
+            if (! empty($this->cHashExcludedArgs)) {
+                $calculator = CacheHashCalculatorAdapter::getGlobalCalculator();
+                // @todo automatic rewrite for extbase arguments
+                $cHashExcludedParametersBackup = CacheHashCalculatorAdapter::getExcludedParameters($calculator);
+                CacheHashCalculatorAdapter::updateExcludedParameters(
+                    $calculator, Arrays::attach($cHashExcludedParametersBackup, $this->cHashExcludedArgs));
+            }
+            
+            // Build the url
             $uri = $ub->buildFrontendUri();
+            
+            // Restore cHash fields if required
+            if (isset($calculator, $cHashExcludedParametersBackup)) {
+                CacheHashCalculatorAdapter::updateExcludedParameters($calculator, $cHashExcludedParametersBackup);
+                unset($cHashExcludedParametersBackup);
+            }
         }
         
         // Build the fragment / anchor
@@ -964,7 +1021,7 @@ class TypoLink
         if (isset($backupRequest)) {
             $ub->setRequest($backupRequest);
         }
-        if (empty($this->uriBuilder)) {
+        if (! isset($this->uriBuilder)) {
             $ub->reset();
         }
         
@@ -990,6 +1047,7 @@ class TypoLink
      * @param   array  $requiredFragmentArgs
      *
      * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @deprecated Will be renamed in v10
      */
     public function __withRequiredElements(array $requiredArgs, array $requiredFragmentArgs)
     {

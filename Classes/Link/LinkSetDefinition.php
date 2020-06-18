@@ -116,6 +116,13 @@ class LinkSetDefinition
     protected $cHash = true;
     
     /**
+     * A list of arguments that should be ignored when the chash is generated for this link
+     *
+     * @var array
+     */
+    protected $cHashExcludedArgs = [];
+    
+    /**
      * Holds the user defined request object
      *
      * @var Request
@@ -199,7 +206,9 @@ class LinkSetDefinition
                 'type' => 'denied',
                 'list' => $this->deniedQueryArgs,
             ];
-        } elseif (! empty($this->allowedQueryArgs)) {
+        }
+        
+        if (! empty($this->allowedQueryArgs)) {
             return [
                 'type' => 'allowed',
                 'list' => $this->deniedQueryArgs,
@@ -474,6 +483,30 @@ class LinkSetDefinition
     }
     
     /**
+     * Returns the list of arguments that should be excluded from cHash generation when the url is being build
+     *
+     * @return array
+     */
+    public function getCHashExcludedArgs(): array
+    {
+        return $this->cHashExcludedArgs;
+    }
+    
+    /**
+     * Sets the list of arguments that should be excluded from cHash generation when the url is being build
+     *
+     * @param   array  $argsToExclude
+     *
+     * @return \LaborDigital\Typo3BetterApi\Link\LinkSetDefinition
+     */
+    public function setCHashExcludedArgs(array $argsToExclude): LinkSetDefinition
+    {
+        $this->cHashExcludedArgs = $argsToExclude;
+        
+        return $this;
+    }
+    
+    /**
      * Returns the currently set arguments
      *
      * @return array
@@ -563,6 +596,7 @@ class LinkSetDefinition
      * @param   \LaborDigital\Typo3BetterApi\Link\TypoLink  $link
      *
      * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @deprecated Will be renamed in v10
      */
     public function __applyToLink(TypoLink $link): TypoLink
     {
@@ -584,6 +618,9 @@ class LinkSetDefinition
         }
         if (! empty($this->pluginName)) {
             $link = $link->withPluginName($this->pluginName);
+        }
+        if (! empty($this->cHashExcludedArgs)) {
+            $link = $link->withCHashExcludedArgs($this->cHashExcludedArgs);
         }
         if (is_bool($this->cHash)) {
             $link = $link->withCHash($this->cHash);
