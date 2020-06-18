@@ -189,10 +189,12 @@ trait CommonServiceLocatorDeprecationTrait
 
 /**
  * Trait CommonServiceLocatorTrait
+ *
  * @mixin CommonServiceLocatorDeprecationTrait
  * @package    LaborDigital\Typo3BetterApi\Container
  *
- * @deprecated Will be removed in v10 - Use ContainerAwareTrait, CommonServiceDependencyTrait or LazySingletonTrait instead
+ * @deprecated Will be removed in v10 - Use ContainerAwareTrait, CommonServiceDependencyTrait or LazySingletonTrait
+ *             instead
  * @see        \LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait
  * @see        \LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait
  * @see        \LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait
@@ -202,24 +204,28 @@ trait CommonServiceLocatorTrait
     
     /**
      * The instance of the container we will use as service locator
+     *
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $__container;
     
     /**
      * The local instance cache to avoid asking the container over and over again...
+     *
      * @var array
      */
     protected $__instances = [];
     
     /**
      * The map of the variable name to the matching service class
+     *
      * @var array
      */
     protected $__serviceMap = [];
     
     /**
      * True if the trait was initialized and the static mapping was loaded
+     *
      * @var bool
      */
     protected $__traitInitialized = false;
@@ -227,7 +233,7 @@ trait CommonServiceLocatorTrait
     /**
      * Injects the container instance we use as service locator
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function injectContainer(TypoContainerInterface $container)
     {
@@ -242,20 +248,21 @@ trait CommonServiceLocatorTrait
      * However: There are some good examples of where you might want to use it:
      * Inside Models, or callbacks that don't support dependency injection for example.
      *
-     * @param string $class The class or interface you want to retrieve the object for
-     * @param array  $args  Optional, additional constructor arguments
+     * @param   string  $class  The class or interface you want to retrieve the object for
+     * @param   array   $args   Optional, additional constructor arguments
      *
      * @return mixed
      * @deprecated Will be removed in v10
      */
     public function getInstanceOf(string $class, array $args = [])
     {
-        if (!$this->__traitInitialized) {
+        if (! $this->__traitInitialized) {
             $this->__initializeTrait();
         }
         if (empty($this->__container)) {
             $this->__container = TypoContainer::getInstance();
         }
+        
         return $this->__container->get($class, ['args' => $args]);
     }
     
@@ -263,15 +270,15 @@ trait CommonServiceLocatorTrait
      * Should be called in the __construct method of the including class.
      * Can be used to add additional service classes to the list of resolvable properties
      *
-     * @param array $map A list of "PropertyName" => My\Class\Name to define additional services
-     *                   If the instance of an object is passed as value in the mapping array it will be used as
-     *                   instance for that property
+     * @param   array  $map  A list of "PropertyName" => My\Class\Name to define additional services
+     *                       If the instance of an object is passed as value in the mapping array it will be used as
+     *                       instance for that property
      *
      * @deprecated Will be removed in v10
      */
     public function addToServiceMap(array $map)
     {
-        if (!$this->__traitInitialized) {
+        if (! $this->__traitInitialized) {
             $this->__initializeTrait();
         }
         $this->__serviceMap = array_merge($this->__serviceMap, $map);
@@ -287,27 +294,27 @@ trait CommonServiceLocatorTrait
     public function __get($name)
     {
         // Initialize if required
-        if (!$this->__traitInitialized) {
+        if (! $this->__traitInitialized) {
             $this->__initializeTrait();
         }
         
         // Return existing instances
-        if (!empty($this->__instances[$name])) {
+        if (! empty($this->__instances[$name])) {
             return $this->__instances[$name];
         }
         
         // Try to fix broken names
-        if (!isset($this->__serviceMap[$name])) {
+        if (! isset($this->__serviceMap[$name])) {
             $name = Inflector::toCamelCase($name);
         }
         
         // Ignore not registered services
-        if (!isset($this->__serviceMap[$name])) {
+        if (! isset($this->__serviceMap[$name])) {
             return null;
         }
         
         // Return existing instances with fixed names...
-        if (!empty($this->__instances[$name])) {
+        if (! empty($this->__instances[$name])) {
             return $this->__instances[$name];
         }
         

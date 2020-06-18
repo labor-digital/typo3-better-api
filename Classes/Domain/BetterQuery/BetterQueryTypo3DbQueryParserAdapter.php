@@ -32,6 +32,7 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
     
     /**
      * The singleton instance to avoid overhead
+     *
      * @var Typo3DbQueryParser
      */
     protected static $concreteQueryParser;
@@ -41,30 +42,35 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
      * So I use the settings object internally and force the constraints using the db query parser object
      * on the query builder
      *
-     * @param string                                                        $tableName
-     * @param \TYPO3\CMS\Core\Database\Query\QueryBuilder                   $queryBuilder
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $settings
+     * @param   string                                                         $tableName
+     * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
+     * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
      */
-    public static function addConstraintsOfSettings(string $tableName, QueryBuilder $queryBuilder, QuerySettingsInterface $settings): void
-    {
-        $self = static::getConcreteQueryParser();
+    public static function addConstraintsOfSettings(
+        string $tableName,
+        QueryBuilder $queryBuilder,
+        QuerySettingsInterface $settings
+    ): void {
+        $self               = static::getConcreteQueryParser();
         $self->queryBuilder = $queryBuilder;
-        $dummyQuery = new Query('');
+        $dummyQuery         = new Query('');
         $dummyQuery->setQuerySettings($settings);
-        $self->tableAliasMap = [];
+        $self->tableAliasMap             = [];
         $self->tableAliasMap[$tableName] = $tableName;
         $self->addTypo3Constraints($dummyQuery);
     }
     
     /**
      * Internal helper to access the instance of the query parser object
+     *
      * @return \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser
      */
     public static function getConcreteQueryParser(): Typo3DbQueryParser
     {
-        if (!empty(static::$concreteQueryParser)) {
+        if (! empty(static::$concreteQueryParser)) {
             return static::$concreteQueryParser;
         }
+        
         return static::$concreteQueryParser = TypoContainer::getInstance()->get(Typo3DbQueryParser::class);
     }
 }

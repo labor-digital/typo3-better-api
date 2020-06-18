@@ -32,9 +32,9 @@ class Permissions
      * This method is built to handle errors silently. The result of the method shows if there was an error (FALSE) or
      * not (TRUE)
      *
-     * @param string      $filename The absolute path of the file to set the permissions for
-     * @param string|null $mode     Optionally set a permission set like 0644 -> Make sure to use strings
-     * @param string|null $group    Optionally set a group to set, otherwise the parent folder"s group will be used.
+     * @param   string       $filename  The absolute path of the file to set the permissions for
+     * @param   string|null  $mode      Optionally set a permission set like 0644 -> Make sure to use strings
+     * @param   string|null  $group     Optionally set a group to set, otherwise the parent folder"s group will be used.
      *
      * @return bool
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
@@ -47,12 +47,12 @@ class Permissions
         }
         
         // Check if we can access the given file
-        if (!file_exists($filename) || !is_writable($filename)) {
+        if (! file_exists($filename) || ! is_writable($filename)) {
             return false;
         }
         
         // Make sure we have values
-        $inheritMode = !empty($mode);
+        $inheritMode = ! empty($mode);
         if ($mode === null) {
             if (is_file($filename)) {
                 $mode = isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask'])
@@ -64,7 +64,7 @@ class Permissions
                     : '0775';
             }
         }
-        $inheritGroup = !empty($group);
+        $inheritGroup = ! empty($group);
         if ($group === null) {
             if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['createGroup'])) {
                 $group = $GLOBALS['TYPO3_CONF_VARS']['SYS']['createGroup'];
@@ -110,12 +110,13 @@ class Permissions
         // Update a file
         try {
             Fs::setPermissions($filename, $mode);
-            if (!empty($group)) {
+            if (! empty($group)) {
                 Fs::setGroup($filename, $group);
             }
         } catch (Exception $e) {
             return false;
         }
+        
         return true;
     }
 }

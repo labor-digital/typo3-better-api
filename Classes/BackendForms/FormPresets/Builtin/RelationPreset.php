@@ -33,22 +33,25 @@ class RelationPreset extends AbstractFormPreset
     /**
      * Converts your field into a category field. That's it actually...
      * For further details on what categories are and how they work take a look at:
+     *
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Categories/Index.html
      *
-     * @param array $options Additional options for this preset
-     *                       - minItems int (0): The minimum number of items required to be valid
-     *                       - maxItems int: The maximum number of items allowed in this field
-     *                       - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                       This is identical with setting minItems to 1
-     *                       - sideBySide bool (FALSE): If set to true the categories are shown as two columns instead
-     *                       of the tree view
-     *                       - limitToPids int|string|bool|array (TRUE) Can be used to limit the category selection
-     *                       to a certain pid, or a list of pids.
-     *                       --- TRUE: Setting this to true will only show categories on the same pid than the record
-     *                       --- FALSE: Setting this to false will disable the pid constrain and show all categories
-     *                       --- number: Sets the pid constraint to that specific page
-     *                       --- (at)pid...: Sets the pid constraint to the page registered with that selector
-     *                       --- array: Sets the pid constraint to any of the pids in the list
+     * @param   array  $options  Additional options for this preset
+     *                           - minItems int (0): The minimum number of items required to be valid
+     *                           - maxItems int: The maximum number of items allowed in this field
+     *                           - required bool (FALSE): If set to true, the field requires at least 1 item.
+     *                           This is identical with setting minItems to 1
+     *                           - sideBySide bool (FALSE): If set to true the categories are shown as two columns
+     *                           instead of the tree view
+     *                           - limitToPids int|string|bool|array (TRUE) Can be used to limit the category selection
+     *                           to a certain pid, or a list of pids.
+     *                           --- TRUE: Setting this to true will only show categories on the same pid than the
+     *                           record
+     *                           --- FALSE: Setting this to false will disable the pid constrain and show all
+     *                           categories
+     *                           --- number: Sets the pid constraint to that specific page
+     *                           --- (at)pid...: Sets the pid constraint to the page registered with that selector
+     *                           --- array: Sets the pid constraint to any of the pids in the list
      */
     public function categorize(array $options = [])
     {
@@ -72,17 +75,18 @@ class RelationPreset extends AbstractFormPreset
         );
         
         // Prepare the config
-        $config = CategoryRegistry::getTcaFieldConfiguration($this->getTcaTable()->getTableName(), $this->field->getId());
+        $config         = CategoryRegistry::getTcaFieldConfiguration($this->getTcaTable()->getTableName(),
+            $this->field->getId());
         $config['size'] = 7;
         
         // Prepare the pid limiter
-        if (!empty($options['limitToPids'])) {
+        if (! empty($options['limitToPids'])) {
             $pidSelector = '';
             if (is_array($options['limitToPids'])) {
                 $options['limitToPids'] = implode(',', $options['limitToPids']);
             }
             if (is_string($options['limitToPids'])) {
-                if (!empty($tmp = $this->TypoContext->getPidAspect()->getPid($options['limitToPids'], 0))) {
+                if (! empty($tmp = $this->TypoContext->getPidAspect()->getPid($options['limitToPids'], 0))) {
                     $pidSelector = ' = ' . $tmp;
                 }
             }
@@ -101,15 +105,23 @@ class RelationPreset extends AbstractFormPreset
         
         // Convert the render type if required
         if ($options['sideBySide']) {
-            $config['renderType'] = 'selectMultipleSideBySide';
+            $config['renderType']                       = 'selectMultipleSideBySide';
             $config['enableMultiSelectFilterTextfield'] = true;
         }
         
         // Register opposite references for the foreign side of a relation
-        $path = ['TCA', 'sys_category', 'columns', 'items', 'config', 'MM_oppositeUsage', $this->getTcaTable()->getTableName()];
-        $fieldList = Arrays::getPath($GLOBALS, $path, []);
-        $fieldList[] = $this->field->getId();
-        $fieldList = array_unique($fieldList);
+        $path           = [
+            'TCA',
+            'sys_category',
+            'columns',
+            'items',
+            'config',
+            'MM_oppositeUsage',
+            $this->getTcaTable()->getTableName(),
+        ];
+        $fieldList      = Arrays::getPath($GLOBALS, $path, []);
+        $fieldList[]    = $this->field->getId();
+        $fieldList      = array_unique($fieldList);
         $GLOBALS['TCA'] = Arrays::setPath($GLOBALS, $path, $fieldList)['TCA'];
         
         // Set the sql
@@ -124,34 +136,35 @@ class RelationPreset extends AbstractFormPreset
      * to choose records from anywhere on your page using a selector popup. This type also allows the relation to
      * multiple, different types of other records to relate to.
      *
-     * @param string|array $foreignTable Either a single table, or an array of tables to relate to.
-     *                                   Hint: using ...table will automatically unfold your table to
-     *                                   tx_yourext_domain_model_table
-     * @param array        $options      Additional options for the relation
-     *                                   - minItems int (0): The minimum number of items required to be valid
-     *                                   - maxItems int: The maximum number of items allowed in this field
-     *                                   - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                                   This is identical with setting minItems to 1
-     *                                   - basePid int|string: Can be set to preset the "select window" to a certain
-     *                                   page id. Highly convenient for the editor
-     *                                   - limitToBasePid bool (FALSE): If set to true the "select window" will only
-     *                                   show the records on the configured "basePid"
-     *                                   - allowNew bool (FALSE): If set new records can be created with the new record
-     *                                   wizard
-     *                                   - allowEdit bool (TRUE): Can be used to disable the editing of records in the
-     *                                   current group
-     *                                   - filters array: A list of filter functions to apply for this group.
-     *                                   The filter should be supplied like a typical Typo3 callback class->function.
-     *                                   If the filter is given as array, the first value will be used as callback
-     *                                   and the second as parameters.
-     *                                   Note: This feature is not implemented in the element browser for Flex forms in
-     *                                   the TYPO3 core... The filtering of the element browser only works for TCA
-     *                                   fields!
-     *                                   - mmTable bool (AUTO): By default the script will automatically create
-     *                                   an mm table for this field if it is required. If your field defines
-     *                                   maxItems = 1 there is no requirement for an mm table so we will just
-     *                                   use a 1:1 relation in the database. If you, however want this field
-     *                                   to always use an mmTable, just set this to TRUE manually
+     * @param   string|array  $foreignTable  Either a single table, or an array of tables to relate to.
+     *                                       Hint: using ...table will automatically unfold your table to
+     *                                       tx_yourext_domain_model_table
+     * @param   array         $options       Additional options for the relation
+     *                                       - minItems int (0): The minimum number of items required to be valid
+     *                                       - maxItems int: The maximum number of items allowed in this field
+     *                                       - required bool (FALSE): If set to true, the field requires at least 1
+     *                                       item. This is identical with setting minItems to 1
+     *                                       - basePid int|string: Can be set to preset the "select window" to a
+     *                                       certain
+     *                                       page id. Highly convenient for the editor
+     *                                       - limitToBasePid bool (FALSE): If set to true the "select window" will
+     *                                       only
+     *                                       show the records on the configured "basePid"
+     *                                       - allowNew bool (FALSE): If set new records can be created with the new
+     *                                       record wizard
+     *                                       - allowEdit bool (TRUE): Can be used to disable the editing of records in
+     *                                       the current group
+     *                                       - filters array: A list of filter functions to apply for this group.
+     *                                       The filter should be supplied like a typical Typo3 callback
+     *                                       class->function. If the filter is given as array, the first value will be
+     *                                       used as callback and the second as parameters. Note: This feature is not
+     *                                       implemented in the element browser for Flex forms in the TYPO3 core... The
+     *                                       filtering of the element browser only works for TCA fields!
+     *                                       - mmTable bool (AUTO): By default the script will automatically create
+     *                                       an mm table for this field if it is required. If your field defines
+     *                                       maxItems = 1 there is no requirement for an mm table so we will just
+     *                                       use a 1:1 relation in the database. If you, however want this field
+     *                                       to always use an mmTable, just set this to TRUE manually
      *
      *                                   LEGACY SUPPORT
      *                                   - mmTableName string: When given this table name is set as mm table name
@@ -175,6 +188,7 @@ class RelationPreset extends AbstractFormPreset
                                         if ($given['maxItems'] == 1) {
                                             return false;
                                         }
+                                        
                                         return true;
                                     },
                                 ],
@@ -214,7 +228,7 @@ class RelationPreset extends AbstractFormPreset
         // Add filters
         $filters = [];
         foreach ($options['filters'] as $filter) {
-            if (!is_array($filter)) {
+            if (! is_array($filter)) {
                 $filter = [$filter, []];
             }
             
@@ -224,7 +238,7 @@ class RelationPreset extends AbstractFormPreset
                 'parameters' => $filter[1],
             ];
         }
-        if (!empty($filters)) {
+        if (! empty($filters)) {
             $config['filter'] = $filters;
         }
         
@@ -243,18 +257,18 @@ class RelationPreset extends AbstractFormPreset
      * This sets your field to be a relation to a single, or multiple pages.
      * By default only a single page can be set, but you may use maxItems to create relations to multiple pages
      *
-     * @param array $options  Additional options for the relation
-     *                        - minItems int (0): The minimum number of items required to be valid
-     *                        - maxItems int: The maximum number of items allowed in this field
-     *                        - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                        This is identical with setting minItems to 1
+     * @param   array  $options  Additional options for the relation
+     *                           - minItems int (0): The minimum number of items required to be valid
+     *                           - maxItems int: The maximum number of items allowed in this field
+     *                           - required bool (FALSE): If set to true, the field requires at least 1 item.
+     *                           This is identical with setting minItems to 1
      */
     public function relationPage(array $options = [])
     {
-        if (!isset($options['maxItems'])) {
+        if (! isset($options['maxItems'])) {
             $options['maxItems'] = 1;
         }
-        if (!isset($options['allowEdit'])) {
+        if (! isset($options['allowEdit'])) {
             $options['allowEdit'] = false;
         }
         $this->relationGroup('pages', $options);
@@ -263,18 +277,18 @@ class RelationPreset extends AbstractFormPreset
     /**
      * This sets your field to be a relation to one or multiple files in TYPO3's FAL storage.
      *
-     * @param array $options  Additional options for the relation
-     *                        - minItems int (0): The minimum number of items required to be valid
-     *                        - maxItems int: The maximum number of items allowed in this field
-     *                        - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                        This is identical with setting minItems to 1
-     *                        - allowList string: A comma separated list of file extensions that are specifically
-     *                        ALLOWED to be uploaded, every other extension will be blocked
-     *                        - blockList string: A comma separated list of file extensions that are specifically
-     *                        BLOCKED to be uploaded, every other extension will be allowed
-     *                        - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
-     *                        a simple folder name like folder-name that is always used/selected by default
-     *                        if the object browser is opened
+     * @param   array  $options  Additional options for the relation
+     *                           - minItems int (0): The minimum number of items required to be valid
+     *                           - maxItems int: The maximum number of items allowed in this field
+     *                           - required bool (FALSE): If set to true, the field requires at least 1 item.
+     *                           This is identical with setting minItems to 1
+     *                           - allowList string: A comma separated list of file extensions that are specifically
+     *                           ALLOWED to be uploaded, every other extension will be blocked
+     *                           - blockList string: A comma separated list of file extensions that are specifically
+     *                           BLOCKED to be uploaded, every other extension will be allowed
+     *                           - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
+     *                           a simple folder name like folder-name that is always used/selected by default
+     *                           if the object browser is opened
      */
     public function relationFile(array $options = [])
     {
@@ -341,11 +355,11 @@ class RelationPreset extends AbstractFormPreset
         }
         
         // Add base dir if not empty
-        if (!empty($options['baseDir'])) {
+        if (! empty($options['baseDir'])) {
             $config['baseDir'] = $options['baseDir'];
             
             // Allow direct upload
-            if (!$this->isInFlexFormSection()) {
+            if (! $this->isInFlexFormSection()) {
                 $config['appearance']['fileUploadAllowed'] = true;
             }
         }
@@ -360,7 +374,7 @@ class RelationPreset extends AbstractFormPreset
     /**
      * Similar to relationFile but is already preconfigured to show online media, like youtube or vimeo videos.
      *
-     * @param array $options     Additional options for the relation
+     * @param   array  $options  Additional options for the relation
      *                           - allowYoutube bool (TRUE): Allow youtube videos
      *                           - allowVimeo bool (FALSE): Allow vimeo videos
      *                           - minItems int (0): The minimum number of items required to be valid
@@ -385,7 +399,7 @@ class RelationPreset extends AbstractFormPreset
         ], ['allowUnknown' => true]);
         
         // Build the allow list
-        $allowList = implode(',', array_filter([
+        $allowList            = implode(',', array_filter([
             $options['allowYoutube'] ? 'youtube' : '',
             $options['allowVimeo'] ? 'vimeo' : '',
         ]));
@@ -400,30 +414,30 @@ class RelationPreset extends AbstractFormPreset
     /**
      * Similar to relationFile but is already preconfigured to allow only image files
      *
-     * @param array $options    Additional options for the relation
-     *                          - minItems int (0): The minimum number of items required to be valid
-     *                          - maxItems int: The maximum number of items allowed in this field
-     *                          - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                          This is identical with setting minItems to 1
-     *                          - allowList string (jpg,jpeg,png,svg,webp,gif): A comma separated list of file
-     *                          extensions that are specifically ALLOWED to be uploaded, every other extension
-     *                          will be blocked
-     *                          - blockList string: A comma separated list of file extensions that are specifically
-     *                          BLOCKED to be uploaded, every other extension will be allowed
-     *                          - allowCrop bool (TRUE): By default all images are allowed to be cropped using the
-     *                          "crop" button. If you don't want that feature set this to FALSE
-     *                          - useDefaultCropVariant bool (TRUE): Set this to FALSE to disable the default crop
-     *                          variant
-     *                          - cropVariants array: A list of different crop variants you want to use for this image
-     *                          You define a crop variant by using an array like the definition, seen below.
-     *                          By default the aspect ratio for cropping images is free, but as you see, you can use
-     *                          "aspectRatios" to provide additional aspect ratios that will be available for
-     *                          this image. Define the ratios in an array where key is the aspect ratio like "1:1" and
-     *                          the value is the label that describes that aspect ratio for the backend editor
-     *                          You can use the special "free" or "NaN" keys to provide an additional "free" mode
-     *                          - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
-     *                          a simple folder name like folder-name that is always used/selected by default
-     *                          if the object browser is opened
+     * @param   array  $options  Additional options for the relation
+     *                           - minItems int (0): The minimum number of items required to be valid
+     *                           - maxItems int: The maximum number of items allowed in this field
+     *                           - required bool (FALSE): If set to true, the field requires at least 1 item.
+     *                           This is identical with setting minItems to 1
+     *                           - allowList string (jpg,jpeg,png,svg,webp,gif): A comma separated list of file
+     *                           extensions that are specifically ALLOWED to be uploaded, every other extension
+     *                           will be blocked
+     *                           - blockList string: A comma separated list of file extensions that are specifically
+     *                           BLOCKED to be uploaded, every other extension will be allowed
+     *                           - allowCrop bool (TRUE): By default all images are allowed to be cropped using the
+     *                           "crop" button. If you don't want that feature set this to FALSE
+     *                           - useDefaultCropVariant bool (TRUE): Set this to FALSE to disable the default crop
+     *                           variant
+     *                           - cropVariants array: A list of different crop variants you want to use for this image
+     *                           You define a crop variant by using an array like the definition, seen below.
+     *                           By default the aspect ratio for cropping images is free, but as you see, you can use
+     *                           "aspectRatios" to provide additional aspect ratios that will be available for
+     *                           this image. Define the ratios in an array where key is the aspect ratio like "1:1" and
+     *                           the value is the label that describes that aspect ratio for the backend editor
+     *                           You can use the special "free" or "NaN" keys to provide an additional "free" mode
+     *                           - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
+     *                           a simple folder name like folder-name that is always used/selected by default
+     *                           if the object browser is opened
      *
      * CropVariantsArray:
      *  "cropVariants" => [
@@ -527,13 +541,12 @@ class RelationPreset extends AbstractFormPreset
         
         // Apply settings for image cropping
         // There seems to be no cropping capability for images in flex forms ?
-        if ($options['allowCrop'] && !$this->isFlexForm()) {
-            
+        if ($options['allowCrop'] && ! $this->isFlexForm()) {
             // Build real crop variants array
             $cropVariants = [];
             foreach ($options['cropVariants'] as $k => $c) {
                 // Build aspect ratio list by converting the simple format to the Typo3 format
-                if (!is_array($c['allowedAspectRatios'])) {
+                if (! is_array($c['allowedAspectRatios'])) {
                     $c['allowedAspectRatios'] = [];
                 }
                 if (is_array($c['aspectRatios'])) {
@@ -544,8 +557,8 @@ class RelationPreset extends AbstractFormPreset
                         $value = 0;
                         if ($ratio !== 'NaN') {
                             $ratioParts = array_map('trim', explode(':', $ratio));
-                            if (count($ratioParts) !== 2 || !is_numeric($ratioParts[0]) || !is_numeric($ratioParts[1]) ||
-                                (int)$ratioParts[1] === 0) {
+                            if (count($ratioParts) !== 2 || ! is_numeric($ratioParts[0]) || ! is_numeric($ratioParts[1])
+                                || (int)$ratioParts[1] === 0) {
                                 throw new BackendFormException("Invalid image ratio definition: \"$ratio\" given!");
                             }
                             $value = $ratioParts[0] / $ratioParts[1];
@@ -559,13 +572,13 @@ class RelationPreset extends AbstractFormPreset
                 unset($c['aspectRatios']);
                 
                 // Add the selected aspect ratio if it is not defined
-                if (!isset($c['selectedRatio']) && !empty($c['allowedAspectRatios'])) {
+                if (! isset($c['selectedRatio']) && ! empty($c['allowedAspectRatios'])) {
                     reset($c['allowedAspectRatios']);
                     $c['selectedRatio'] = key($c['allowedAspectRatios']);
                 }
                 
                 // Add the crop area if it is not defined
-                if (!isset($c['cropArea'])) {
+                if (! isset($c['cropArea'])) {
                     $c['cropArea'] = [
                         'height' => 1.0,
                         'width'  => 1.0,
@@ -586,7 +599,7 @@ class RelationPreset extends AbstractFormPreset
             $cropConfig = [
                 'type' => 'imageManipulation',
             ];
-            if (!empty($cropVariants)) {
+            if (! empty($cropVariants)) {
                 $cropConfig['cropVariants'] = $cropVariants;
             }
             
@@ -620,27 +633,28 @@ class RelationPreset extends AbstractFormPreset
      * based on your configuration of "maxItems". maxItems = 1 means a select box, maxItems > 1 means the select
      * multiple interface
      *
-     * @param string $foreignTable The foreign table to create the relations to
-     *                             Hint: using ...table will automatically unfold your table to
-     *                             tx_yourext_domain_model_table
-     * @param array  $options      Additional options for the relation
-     *                             - minItems int (0): The minimum number of items required to be valid
-     *                             - maxItems int: The maximum number of items allowed in this field
-     *                             - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                             This is identical with setting minItems to 1
-     *                             - where string: Can be used to limit the selection of records from the foreign
-     *                             table. This should be a SQL conform string that starts with an "AND ..." see also:
-     *                             https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
-     *                             - basePid int|string: Can be used if "where" is empty to automatically apply the
-     *                             where string for the base pid
-     *                             - userFunc string: Can be given like any select itemProcFunc in typo3 as:
-     *                             vendor\className->methodName and is used as a filter for the items in the select
-     *                             field
-     *                             - mmTable bool (AUTO): By default the script will automatically create
-     *                             an mm table for this field if it is required. If your field defines
-     *                             maxItems = 1 there is no requirement for an mm table so we will just
-     *                             use a 1:1 relation in the database. If you, however want this field
-     *                             to always use an mmTable, just set this to TRUE manually
+     * @param   string  $foreignTable  The foreign table to create the relations to
+     *                                 Hint: using ...table will automatically unfold your table to
+     *                                 tx_yourext_domain_model_table
+     * @param   array   $options       Additional options for the relation
+     *                                 - minItems int (0): The minimum number of items required to be valid
+     *                                 - maxItems int: The maximum number of items allowed in this field
+     *                                 - required bool (FALSE): If set to true, the field requires at least 1 item.
+     *                                 This is identical with setting minItems to 1
+     *                                 - where string: Can be used to limit the selection of records from the foreign
+     *                                 table. This should be a SQL conform string that starts with an "AND ..." see
+     *                                 also:
+     *                                 https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
+     *                                 - basePid int|string: Can be used if "where" is empty to automatically apply the
+     *                                 where string for the base pid
+     *                                 - userFunc string: Can be given like any select itemProcFunc in typo3 as:
+     *                                 vendor\className->methodName and is used as a filter for the items in the select
+     *                                 field
+     *                                 - mmTable bool (AUTO): By default the script will automatically create
+     *                                 an mm table for this field if it is required. If your field defines
+     *                                 maxItems = 1 there is no requirement for an mm table so we will just
+     *                                 use a 1:1 relation in the database. If you, however want this field
+     *                                 to always use an mmTable, just set this to TRUE manually
      *
      *                             AVAILABLE WHEN maxItems > 1:
      *                             - allowNew bool (FALSE): If set new records can be created with the new record
@@ -654,7 +668,6 @@ class RelationPreset extends AbstractFormPreset
      */
     public function relationSelect(string $foreignTable, array $options = [])
     {
-        
         // Prepare options
         $optionDefinition = $this->addEvalOptions(
             $this->addBasePidOptions(
@@ -676,6 +689,7 @@ class RelationPreset extends AbstractFormPreset
                                     if ($given['maxItems'] == 1) {
                                         return false;
                                     }
+                                    
                                     return true;
                                 },
                             ],
@@ -705,14 +719,15 @@ class RelationPreset extends AbstractFormPreset
         $foreignTable = reset($foreignTable);
         
         // Prepare the where clause
-        if (empty($options['where']) && !empty($options['basePid'])) {
+        if (empty($options['where']) && ! empty($options['basePid'])) {
             $options['where'] = "AND $foreignTable.pid = " . $options['basePid'];
         }
         
         // Build the tca
         $config = [
             'type'                                   => 'select',
-            'renderType'                             => $options['maxItems'] > 1 ? 'selectMultipleSideBySide' : 'selectSingle',
+            'renderType'                             => $options['maxItems'] > 1 ? 'selectMultipleSideBySide'
+                : 'selectSingle',
             'foreign_table'                          => $foreignTable,
             'foreign_table_where'                    => $options['where'],
             'multiple'                               => false,
@@ -738,8 +753,8 @@ class RelationPreset extends AbstractFormPreset
      */
     public function setMmTable()
     {
-        $raw = $this->field->getRaw();
-        $config = Arrays::getPath($raw, 'config', []);
+        $raw           = $this->field->getRaw();
+        $config        = Arrays::getPath($raw, 'config', []);
         $raw['config'] = $this->addMmTableConfig($config, []);
         $this->field->setRaw($raw);
     }

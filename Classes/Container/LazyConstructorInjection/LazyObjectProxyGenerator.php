@@ -32,18 +32,21 @@ class LazyObjectProxyGenerator
     
     /**
      * The static instance of myself
+     *
      * @var \LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection\LazyObjectProxyGenerator
      */
     protected static $self;
     
     /**
      * The instance of the file system we use
+     *
      * @var \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs
      */
     protected $fs;
     
     /**
      * The list of loaded proxy files, to avoid running multiple times...
+     *
      * @var array
      */
     protected $loadedFiles = [];
@@ -58,13 +61,15 @@ class LazyObjectProxyGenerator
     
     /**
      * Returns the singleton instance of this object
+     *
      * @return \LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection\LazyObjectProxyGenerator
      */
     public static function getInstance(): LazyObjectProxyGenerator
     {
-        if (!empty(static::$self)) {
+        if (! empty(static::$self)) {
             return static::$self;
         }
+        
         return static::$self = new static();
     }
     
@@ -72,17 +77,17 @@ class LazyObjectProxyGenerator
      * Receives the name of an interface to provide as lazy loading proxy.
      * The proxy class will be generated and cached, before it's name is returned as result of this method.
      *
-     * @param string $interfaceName
+     * @param   string  $interfaceName
      *
      * @return string
      */
     public function provideProxyForClassSchemaParameter(string $interfaceName): string
     {
         $proxyClassName = $this->makeProxyClassName($interfaceName);
-        $proxyFileName = $this->makeProxyFileName($proxyClassName);
+        $proxyFileName  = $this->makeProxyFileName($proxyClassName);
         
         // Check if the file is already loaded
-        if (!isset($this->loadedFiles[$proxyFileName])) {
+        if (! isset($this->loadedFiles[$proxyFileName])) {
             // Check if we already have the proxy
             $rebuildProxy = true;
             if ($this->fs->hasFile($proxyFileName)) {
@@ -92,8 +97,9 @@ class LazyObjectProxyGenerator
                 $definition = @json_decode($m[1], true);
                 if (is_array($definition)) {
                     $staleProxy = filemtime($definition['filename']) != $definition['timestamp'];
-                    $staleProxy = $staleProxy || $this->fs->getFile($proxyFileName)->getMTime() < $definition['timestamp'];
-                    if (!$staleProxy) {
+                    $staleProxy = $staleProxy
+                                  || $this->fs->getFile($proxyFileName)->getMTime() < $definition['timestamp'];
+                    if (! $staleProxy) {
                         $rebuildProxy = false;
                     }
                 }
@@ -117,8 +123,8 @@ class LazyObjectProxyGenerator
     /**
      * Generates the proxy config array based on the interface and the proxy class names
      *
-     * @param string $interfaceName
-     * @param string $proxyClassName
+     * @param   string  $interfaceName
+     * @param   string  $proxyClassName
      *
      * @return array
      */
@@ -126,6 +132,7 @@ class LazyObjectProxyGenerator
     {
         // Create the reflection
         $ref = new ReflectionClass($interfaceName);
+        
         return [
             'interface' => $interfaceName,
             'class'     => $proxyClassName,
@@ -137,8 +144,8 @@ class LazyObjectProxyGenerator
     /**
      * Generates the source code of a single proxy class
      *
-     * @param string $interfaceName
-     * @param string $proxyClassName
+     * @param   string  $interfaceName
+     * @param   string  $proxyClassName
      *
      * @return string
      */
@@ -150,9 +157,10 @@ class LazyObjectProxyGenerator
         // Generate the body
         $body = [];
         foreach ($ref->getMethods() as $method) {
-            $methodName = $method->getName();
-            $returnString = $method->hasReturnType() ? ($method->getReturnType()->getName() === 'void' ? '' : 'return') : 'return';
-            $body[] = $this->generateMethodSignature($method) . "{
+            $methodName   = $method->getName();
+            $returnString = $method->hasReturnType() ? ($method->getReturnType()->getName() === 'void' ? '' : 'return')
+                : 'return';
+            $body[]       = $this->generateMethodSignature($method) . "{
 	$returnString \$this->__call(\"$methodName\", {$this->makeCallArguments($method)});
 }";
         }
@@ -177,12 +185,13 @@ class LazyObjectProxyGenerator
         
         // Attach the definition to the footer
         $definition = json_encode($this->makeProxyDefinition($interfaceName, $proxyClassName));
-        $body[] = "/* __LAZY_PROXY_DEFINITION::$definition::__ */";
+        $body[]     = "/* __LAZY_PROXY_DEFINITION::$definition::__ */";
         
         // Generate the wrap
-        $body = implode(PHP_EOL . PHP_EOL, $body);
+        $body      = implode(PHP_EOL . PHP_EOL, $body);
         $namespace = Path::classNamespace($proxyClassName);
-        $basename = Path::classBasename($proxyClassName);
+        $basename  = Path::classBasename($proxyClassName);
+        
         return "<?php
 namespace $namespace;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
@@ -204,7 +213,7 @@ final class $basename implements \\$interfaceName, \LaborDigital\Typo3BetterApi\
     /**
      * Generates the __call method arguments which are required because func_get_args() does ignore references
      *
-     * @param \ReflectionMethod $ref
+     * @param   \ReflectionMethod  $ref
      *
      * @return string
      */
@@ -214,26 +223,28 @@ final class $basename implements \\$interfaceName, \LaborDigital\Typo3BetterApi\
         foreach ($ref->getParameters() as $parameter) {
             $params[] = ($parameter->isPassedByReference() ? '&' : '') . '$' . $parameter->getName();
         }
+        
         return '[' . implode(',', $params) . ']';
     }
     
     /**
      * Generates the name of the proxy class we want to generate
      *
-     * @param string $interfaceName
+     * @param   string  $interfaceName
      *
      * @return string
      */
     protected function makeProxyClassName(string $interfaceName): string
     {
         $baseName = Path::classBasename($interfaceName);
+        
         return 'LaborDigital\\Typo3BetterApi\\Container\\LazyConstructorInjection\\Proxy\\' . $baseName . 'Proxy';
     }
     
     /**
      * Generates the cache key for the given proxy class
      *
-     * @param string $proxyClassName
+     * @param   string  $proxyClassName
      *
      * @return string
      */

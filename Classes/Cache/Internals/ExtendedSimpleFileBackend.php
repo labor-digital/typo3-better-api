@@ -26,7 +26,7 @@ class ExtendedSimpleFileBackend extends SimpleFileBackend implements ExtendedSim
     /**
      * Returns the filename for a cache key stored in this cache's directory
      *
-     * @param string $key The key to look up
+     * @param   string  $key  The key to look up
      *
      * @return mixed Either the filepath or false if no file was found for this key
      */
@@ -36,6 +36,7 @@ class ExtendedSimpleFileBackend extends SimpleFileBackend implements ExtendedSim
         if (is_array($result)) {
             return array_shift($result);
         }
+        
         return $result;
     }
 }

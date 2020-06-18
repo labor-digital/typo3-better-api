@@ -33,6 +33,7 @@ class BootstrapFailsafeDefinitionEvent
 {
     /**
      * True if the app is running in failsafe mode, false if not
+     *
      * @var bool
      */
     protected $failsafe = false;
@@ -40,7 +41,7 @@ class BootstrapFailsafeDefinitionEvent
     /**
      * BootstrapFailsafeDefinition constructor.
      *
-     * @param bool $failsafe
+     * @param   bool  $failsafe
      */
     public function __construct(bool $failsafe)
     {
@@ -49,6 +50,7 @@ class BootstrapFailsafeDefinitionEvent
     
     /**
      * Returns true if the bootstrap is running in failsafe mode
+     *
      * @return bool
      */
     public function isFailsafe(): bool

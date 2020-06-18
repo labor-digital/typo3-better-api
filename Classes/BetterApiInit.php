@@ -345,7 +345,8 @@ class BetterApiInit
         
         // Create the package and register the base path
         $package = new Package($packageManager, $packageKey, __DIR__ . '/../HookExtension/' . $packageKey . '/');
-        $adapter = new class extends PackageManager {
+        $adapter = new class extends PackageManager
+        {
             public function registerHookPackage(
                 PackageManager $packageManager,
                 PackageInterface $package
@@ -456,7 +457,6 @@ HTML;
      */
     protected function registerErrorHandlerAdapter(): void
     {
-        
         // Register production exception handler
         if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
             !== ProductionExceptionHandler::class) {
@@ -479,7 +479,6 @@ HTML;
      */
     protected function setupContainer(): void
     {
-        
         // Create the container instance
         $this->container = TypoContainer::getInstance();
         

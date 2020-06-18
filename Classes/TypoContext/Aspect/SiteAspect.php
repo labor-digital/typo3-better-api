@@ -27,6 +27,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * Class SiteAspect
+ *
  * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect*
  *
  * @property SiteFinder $SiteFinder
@@ -44,7 +45,7 @@ class SiteAspect implements AspectInterface
     /**
      * SiteAspect constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet $facet
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet  $facet
      */
     public function __construct(SiteFacet $facet)
     {
@@ -59,6 +60,7 @@ class SiteAspect implements AspectInterface
         if ($name === 'FACET') {
             return $this->facet;
         }
+        
         return $this->handleGet($name);
     }
     
@@ -76,6 +78,7 @@ class SiteAspect implements AspectInterface
     
     /**
      * Returns true if the site has been set
+     *
      * @return bool
      * @deprecated will be removed in v10 -> Use SiteFacet instead
      */
@@ -87,7 +90,7 @@ class SiteAspect implements AspectInterface
     /**
      * Sets the instance of a site to the given object
      *
-     * @param \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite $site
+     * @param   \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite  $site
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
@@ -96,13 +99,14 @@ class SiteAspect implements AspectInterface
     public function setSite($site): SiteAspect
     {
         $this->facet->set($site);
+        
         return $this;
     }
     
     /**
      * Sets the site by it's identifier.
      *
-     * @param string $identifier
+     * @param   string  $identifier
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
      * @deprecated will be removed in v10 -> Use SiteFacet instead
@@ -110,14 +114,15 @@ class SiteAspect implements AspectInterface
     public function setSiteTo(string $identifier): SiteAspect
     {
         $this->facet->setTo($identifier);
+        
         return $this;
     }
     
     /**
      * Sets the site by a pid.
      *
-     * @param string|int $pid      Either the numeric PID or a PID selector
-     * @param array|null $rootLine An optional rootLine to traverse
+     * @param   string|int  $pid       Either the numeric PID or a PID selector
+     * @param   array|null  $rootLine  An optional rootLine to traverse
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
      * @deprecated will be removed in v10 -> Use SiteFacet instead
@@ -125,6 +130,7 @@ class SiteAspect implements AspectInterface
     public function setSiteToPid($pid, ?array $rootLine = null): SiteAspect
     {
         $this->facet->setToPid($pid, $rootLine);
+        
         return $this;
     }
 }

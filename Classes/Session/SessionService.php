@@ -33,7 +33,7 @@ class SessionService implements SingletonInterface
     /**
      * Session constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function __construct(TypoContainerInterface $container)
     {
@@ -42,6 +42,7 @@ class SessionService implements SingletonInterface
     
     /**
      * Returns the instance of the frontend session
+     *
      * @return \LaborDigital\Typo3BetterApi\Session\SessionInterface
      */
     public function getFrontendSession(): SessionInterface
@@ -51,6 +52,7 @@ class SessionService implements SingletonInterface
     
     /**
      * Returns the instance of the backend session
+     *
      * @return \LaborDigital\Typo3BetterApi\Session\SessionInterface
      */
     public function getBackendSession(): SessionInterface

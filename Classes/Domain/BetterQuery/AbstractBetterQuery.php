@@ -52,12 +52,14 @@ abstract class AbstractBetterQuery
     
     /**
      * Defines, if set the number of items that are on a logical "page" when using the getPage() or getPages() methods
+     *
      * @var int|null
      */
     protected $itemsPerPage;
     
     /**
      * Contains the currently configured where statement
+     *
      * @var array
      */
     protected $where = [];
@@ -66,19 +68,18 @@ abstract class AbstractBetterQuery
     /**
      * BetterQuery constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter\AbstractQueryAdapter $adapter
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext                         $typoContext
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\Session                               $session
+     * @param   \LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter\AbstractQueryAdapter  $adapter
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext                          $typoContext
+     * @param   \TYPO3\CMS\Extbase\Persistence\Generic\Session                                $session
      */
     public function __construct(
         AbstractQueryAdapter $adapter,
         TypoContext $typoContext,
         Session $session
-    )
-    {
-        $this->adapter = $adapter;
+    ) {
+        $this->adapter     = $adapter;
         $this->typoContext = $typoContext;
-        $this->session = $session;
+        $this->session     = $session;
     }
     
     /**
@@ -91,6 +92,7 @@ abstract class AbstractBetterQuery
     
     /**
      * Returns the configured instance of the query builder for this query
+     *
      * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     abstract public function getQueryBuilder(): QueryBuilder;
@@ -104,6 +106,7 @@ abstract class AbstractBetterQuery
     
     /**
      * Returns the total number of items in the result set, matching the given query parameters
+     *
      * @return int
      */
     abstract public function getCount(): int;
@@ -122,17 +125,17 @@ abstract class AbstractBetterQuery
      * Keep in mind tho, that the pid limitations apply to all objects you are looking up, even if you
      * are searching for child properties, the child has to match your pid constraints!
      *
-     * @param string|array|int|bool $pids The list of pids you want to set as constraints.
-     *                                    Either a single value, or an array of values.
-     *                                    You may use pid selectors using the PidService like (at)pid.storage.something
-     *                                    If you set this to TRUE the current page id will be used.
-     *                                    Setting this to FALSE will remove the pid restrictions
+     * @param   string|array|int|bool  $pids  The list of pids you want to set as constraints.
+     *                                        Either a single value, or an array of values.
+     *                                        You may use pid selectors using the PidService like
+     *                                        (at)pid.storage.something If you set this to TRUE the current page id
+     *                                        will be used. Setting this to FALSE will remove the pid restrictions
      *
      * @return $this
      */
     public function withPids($pids)
     {
-        $clone = clone $this;
+        $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
         
         // Handle special pid values
@@ -140,19 +143,20 @@ abstract class AbstractBetterQuery
             // True means use current pid
             if ($pids) {
                 $pids = $clone->typoContext->getPidAspect()->getCurrentPid();
-            }
-            // False means reset storage page
+            } // False means reset storage page
             else {
                 $settings->setRespectStoragePage(false);
+                
                 return $clone;
             }
         }
         
         // Apply possible pid values
         $pids = array_map(function ($v) use ($clone) {
-            if (!is_string($v) || !$clone->typoContext->getPidAspect()->hasPid($v)) {
+            if (! is_string($v) || ! $clone->typoContext->getPidAspect()->hasPid($v)) {
                 return $v;
             }
+            
             return $clone->typoContext->getPidAspect()->getPid($v);
         }, $clone->adapter->ensureArrayValue($pids, 'pid'));
         
@@ -179,23 +183,23 @@ abstract class AbstractBetterQuery
      * Used to set the language restriction for the current query.
      * By default only records of the currently active language will be returned.
      *
-     * @param string|int|SiteLanguage|bool $language The language you want to limit your query to.
-     *                                               Can be either the sys_language_uid value of the language,
-     *                                               can also be a Language object returned by the LanguageService.
-     *                                               If this is set to TRUE you can reset the limitations back to the
-     *                                               current language uid If this is set to FALSE you disable all
-     *                                               language constraints
-     * @param bool                         $strict   If you specify a language, all entities for this language, as well
-     *                                               as the default language entities will be returned. If you ONLY
-     *                                               want to retrieve elements for the given language and not the
-     *                                               default language, you can set strict to TRUE.
+     * @param   string|int|SiteLanguage|bool  $language  The language you want to limit your query to.
+     *                                                   Can be either the sys_language_uid value of the language,
+     *                                                   can also be a Language object returned by the LanguageService.
+     *                                                   If this is set to TRUE you can reset the limitations back to
+     *                                                   the current language uid If this is set to FALSE you disable
+     *                                                   all language constraints
+     * @param   bool                          $strict    If you specify a language, all entities for this language, as
+     *                                                   well as the default language entities will be returned. If you
+     *                                                   ONLY want to retrieve elements for the given language and not
+     *                                                   the default language, you can set strict to TRUE.
      *
      * @return $this
      * @throws \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceException
      */
     public function withLanguage($language, bool $strict = false)
     {
-        $clone = clone $this;
+        $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
         
         // Reset the ext base object cache
@@ -212,6 +216,7 @@ abstract class AbstractBetterQuery
                     $clone->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId()
                 );
             }
+            
             return $clone;
         }
         
@@ -222,8 +227,9 @@ abstract class AbstractBetterQuery
         if (is_string($language)) {
             $language = (int)$language;
         }
-        if (!is_int($language)) {
-            throw new DbServiceException('The given language is invalid! Only integers or objects of ' . SiteLanguage::class . ' are allowed!');
+        if (! is_int($language)) {
+            throw new DbServiceException('The given language is invalid! Only integers or objects of '
+                                         . SiteLanguage::class . ' are allowed!');
         }
         $settings->setRespectSysLanguage(true);
         $settings->setLanguageUid($language);
@@ -235,18 +241,19 @@ abstract class AbstractBetterQuery
     /**
      * Set this to true if you want the query to retrieve hidden / disabled elements as well
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return $this
      */
     public function withIncludeHidden(bool $state = true)
     {
-        $clone = clone $this;
+        $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
         $settings->setIgnoreEnableFields($state);
         if ($state) {
             $settings->setEnableFieldsToBeIgnored(['disabled']);
         }
+        
         return $clone;
     }
     
@@ -255,23 +262,24 @@ abstract class AbstractBetterQuery
      *
      * Attention: If you set this to TRUE you will also receive all hidden records!
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return $this
      */
     public function withIncludeDeleted(bool $state = true)
     {
-        $clone = clone $this;
+        $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
         $settings->setIgnoreEnableFields($state);
         $settings->setIncludeDeleted($state);
+        
         return $clone;
     }
     
     /**
      * Set the limit of items retrieved by this demand
      *
-     * @param int $limit
+     * @param   int  $limit
      *
      * @return $this
      */
@@ -279,13 +287,14 @@ abstract class AbstractBetterQuery
     {
         $clone = clone $this;
         $clone->adapter->setLimit($limit);
+        
         return $clone;
     }
     
     /**
      * Sets the offset in the database table
      *
-     * @param int $offset
+     * @param   int  $offset
      *
      * @return $this
      */
@@ -293,6 +302,7 @@ abstract class AbstractBetterQuery
     {
         $clone = clone $this;
         $clone->adapter->setOffset($offset);
+        
         return $clone;
     }
     
@@ -301,11 +311,11 @@ abstract class AbstractBetterQuery
      * Can be either a key / direction pair or an array of key / direction pairs if you want to sort the
      * results by multiple fields.
      *
-     * @param string|array $field     Either the field to sort by, or an array of key direction pairs
-     * @param string|null  $direction If $field is a string, this should define the direction.
-     *                                You may use asc | desc | ASC | DESC | QueryInterface::ORDER_ASCENDING
-     *                                | QueryInterface::ORDER_DESCENDING.
-     *                                If $field is an array this parameter is ignored
+     * @param   string|array  $field      Either the field to sort by, or an array of key direction pairs
+     * @param   string|null   $direction  If $field is a string, this should define the direction.
+     *                                    You may use asc | desc | ASC | DESC | QueryInterface::ORDER_ASCENDING
+     *                                    | QueryInterface::ORDER_DESCENDING.
+     *                                    If $field is an array this parameter is ignored
      *
      * @return $this
      */
@@ -314,7 +324,7 @@ abstract class AbstractBetterQuery
         $clone = clone $this;
         
         // Unify the input to an array
-        if (!is_array($field)) {
+        if (! is_array($field)) {
             $field = [$field => $direction];
         }
         
@@ -330,6 +340,7 @@ abstract class AbstractBetterQuery
             $orderings[$k] = $direction;
         }
         $clone->adapter->setOrderings($orderings);
+        
         return $clone;
     }
     
@@ -406,8 +417,8 @@ abstract class AbstractBetterQuery
      * $query->where(["branch.uid has" => 12])->getAll()
      * This will return all branches that belong to the company with uid 12.
      *
-     * @param array  $query
-     * @param string $groupName An optional name of a query group to set this where statement to
+     * @param   array   $query
+     * @param   string  $groupName  An optional name of a query group to set this where statement to
      *
      * @return $this
      */
@@ -418,19 +429,20 @@ abstract class AbstractBetterQuery
         $orOperator = false;
         if (strtolower(substr($groupName, 0, 3)) === 'or ') {
             $orOperator = true;
-            $groupName = trim(substr($groupName, 3));
+            $groupName  = trim(substr($groupName, 3));
         }
         $clone->where[$groupName] = [
             'query' => $query,
             'or'    => $orOperator,
         ];
+        
         return $clone;
     }
     
     /**
      * Returns the currently configured where query
      *
-     * @param string $groupName
+     * @param   string  $groupName
      *
      * @return array
      */
@@ -439,14 +451,16 @@ abstract class AbstractBetterQuery
         if (strtolower(substr($groupName, 0, 3)) === 'or ') {
             $groupName = trim(substr($groupName, 3));
         }
-        if (!isset($this->where[$groupName])) {
+        if (! isset($this->where[$groupName])) {
             return [];
         }
+        
         return $this->where[$groupName]['query'];
     }
     
     /**
      * Returns all currently set where groups as an array
+     *
      * @return array
      */
     public function getWhereGroups(): array
@@ -457,30 +471,32 @@ abstract class AbstractBetterQuery
     /**
      * Can be used to remove a single where group
      *
-     * @param string $groupName
+     * @param   string  $groupName
      *
      * @return $this
      */
     public function removeWhereGroup(string $groupName)
     {
         unset($this->where[$groupName]);
+        
         return $this;
     }
     
     /**
      * Can be used to batch set the where groups of this query
      *
-     * @param array $groups Should be an array of "yourGroupName" => [$yourWhereArrayHere]
+     * @param   array  $groups  Should be an array of "yourGroupName" => [$yourWhereArrayHere]
      *
      * @return $this
      */
     public function withWhereGroups(array $groups)
     {
-        $clone = clone $this;
+        $clone       = clone $this;
         $this->where = [];
         foreach ($groups as $groupName => $where) {
             $clone = $clone->withWhere($where, $groupName);
         }
+        
         return $clone;
     }
     
@@ -488,14 +504,15 @@ abstract class AbstractBetterQuery
      * Is used to set the number of items per pages, that will be used in the getPage() and getPages()
      * methods of this query object
      *
-     * @param int $items The number of items on a single page
+     * @param   int  $items  The number of items on a single page
      *
      * @return $this
      */
     public function withItemsPerPage(int $items)
     {
-        $clone = clone $this;
+        $clone               = clone $this;
         $clone->itemsPerPage = $items;
+        
         return $clone;
     }
     
@@ -504,7 +521,7 @@ abstract class AbstractBetterQuery
      * The number of pages depends on the number of items on a page, which can be configured
      * using the setItemsPerPage() method
      *
-     * @param int $page           The number of the page you want to retrieve. See getPages() for the range of possible
+     * @param   int  $page        The number of the page you want to retrieve. See getPages() for the range of possible
      *                            pages
      *
      * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
@@ -515,12 +532,13 @@ abstract class AbstractBetterQuery
             return $this->getAll();
         }
         $offset = $this->adapter->getOffset();
-        $limit = $this->adapter->getLimit();
+        $limit  = $this->adapter->getLimit();
         $this->adapter->setOffset(max(0, $page * $this->itemsPerPage));
         $this->adapter->setLimit($this->itemsPerPage);
         $result = $this->getAll();
         $this->adapter->setOffset($offset);
         $this->adapter->setLimit($limit);
+        
         return $result;
     }
     
@@ -528,6 +546,7 @@ abstract class AbstractBetterQuery
      * Returns the number of logical pages that are in the current result list.
      * The number of pages depends on the number of items on a page, which can be configured
      * using the setItemsPerPage() method
+     *
      * @return int
      */
     public function getPages(): int
@@ -536,12 +555,13 @@ abstract class AbstractBetterQuery
             return 1;
         }
         $offset = $this->adapter->getOffset();
-        $limit = $this->adapter->getLimit();
+        $limit  = $this->adapter->getLimit();
         $this->adapter->setOffset(0);
         $this->adapter->setLimit(0);
         $pages = (int)ceil($this->getCount() / $this->itemsPerPage);
         $this->adapter->setOffset($offset);
         $this->adapter->setLimit($limit);
+        
         return $pages;
     }
     
@@ -567,8 +587,8 @@ abstract class AbstractBetterQuery
          * To circumvent that and to make the usage more intuitive we have this wrapper that will either look for a UID of 3
          * or for all elements that have a transOrigPointerField column that matched our uid. This way we can also resolve all translations of a single entity.
          *
-         * @param string|int $key
-         * @param \Closure   $constraintGenerator
+         * @param   string|int  $key
+         * @param   \Closure    $constraintGenerator
          *
          * @return \TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression
          */
@@ -581,7 +601,8 @@ abstract class AbstractBetterQuery
             }
             
             // Load TCA configuration
-            $parentUidField = Arrays::getPath($GLOBALS, ['TCA', $this->adapter->getTableName(), 'ctrl', 'transOrigPointerField']);
+            $parentUidField = Arrays::getPath($GLOBALS,
+                ['TCA', $this->adapter->getTableName(), 'ctrl', 'transOrigPointerField']);
             
             // Ignore if we don't have a parent uid field configured in the TCA
             if (empty($parentUidField)) {
@@ -598,8 +619,8 @@ abstract class AbstractBetterQuery
         /**
          * Internal walker to handle potential recursions inside the query
          *
-         * @param array $query
-         * @param       $constraintBuilder
+         * @param   array  $query
+         * @param          $constraintBuilder
          *
          * @return \TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression
          */
@@ -610,17 +631,17 @@ abstract class AbstractBetterQuery
             $chunks = [];
             foreach ($query as $k => $v) {
                 // Store everything that is not an or...
-                if (!(is_numeric($k) && is_string($v) && strtolower(trim($v)) === 'or')) {
+                if (! (is_numeric($k) && is_string($v) && strtolower(trim($v)) === 'or')) {
                     $conditions[$k] = $v;
                     continue;
                 }
                 // Create a new chunk
-                if (!empty($conditions)) {
+                if (! empty($conditions)) {
                     $chunks[] = $conditions;
                 }
                 $conditions = [];
             }
-            if (!empty($conditions)) {
+            if (! empty($conditions)) {
                 $chunks[] = $conditions;
             }
             $conditions = [];
@@ -631,10 +652,11 @@ abstract class AbstractBetterQuery
                 foreach ($chunks as $k => $chunk) {
                     $chunks[$k] = $constraintBuilder($chunk, $constraintBuilder);
                 }
+                
                 return $this->adapter->makeOr($chunks);
             }
             
-            $validOperators = ['>', '<', '=', '>=', '<=', 'in', 'like'];
+            $validOperators   = ['>', '<', '=', '>=', '<=', 'in', 'like'];
             $extBaseOperators = ['has', 'hasany', 'hasall'];
             if ($this->adapter instanceof ExtBaseQueryAdapter) {
                 $validOperators = Arrays::attach($validOperators, ['has', 'hasany', 'hasall']);
@@ -643,35 +665,35 @@ abstract class AbstractBetterQuery
             foreach ($query as $k => $v) {
                 if (is_string($k)) {
                     $operator = ' = ';
-                    $negated = false;
+                    $negated  = false;
                     
                     // Key value pair
                     $k = trim($k);
                     
                     // Check if there is a space in the key
                     if (stripos($k, ' ')) {
-                        $kParts = explode(' ', $k);
+                        $kParts    = explode(' ', $k);
                         $lastKPart = strtolower(trim((string)end($kParts)));
                         
                         // Check for negation
                         if (substr($lastKPart, 0, 1) === '!') {
-                            $negated = true;
+                            $negated   = true;
                             $lastKPart = substr($lastKPart, 1);
                         }
                         
                         // Check if the operator is valid
-                        if (!in_array($lastKPart, $validOperators)) {
+                        if (! in_array($lastKPart, $validOperators)) {
                             throw new DbServiceException("Invalid operator \"$lastKPart\" for given for: \"$k\"!");
                         }
                         
                         // Valid operator found
                         array_pop($kParts);
-                        $k = trim(implode(' ', $kParts));
+                        $k        = trim(implode(' ', $kParts));
                         $operator = $lastKPart;
                     }
                     
                     // Handle operators
-                    if (!in_array($operator, $extBaseOperators)) {
+                    if (! in_array($operator, $extBaseOperators)) {
                         $condition = $uidSpecialConstraintWrapper($k, function ($k) use ($operator, $v, $negated) {
                             return $this->adapter->makeCondition($operator, $k, $v, $negated);
                         });
@@ -703,14 +725,16 @@ abstract class AbstractBetterQuery
             
             // Combine the conditions
             if (empty($conditions)) {
-                throw new BetterQueryException('Failed to convert the query into a constraint! The given query was: ' . json_encode($query));
+                throw new BetterQueryException('Failed to convert the query into a constraint! The given query was: '
+                                               . json_encode($query));
             }
+            
             return $this->adapter->makeAnd($conditions);
         };
         // Run the constraint builder recursively
         $whereGroups = ['and' => [], 'or' => []];
         foreach ($this->where as $whereGroup => $where) {
-            if (!empty($where['query'])) {
+            if (! empty($where['query'])) {
                 $whereGroups[$where['or'] ? 'or' : 'and'][] = $constraintBuilder($where['query'], $constraintBuilder);
             }
         }
@@ -719,16 +743,16 @@ abstract class AbstractBetterQuery
         $constraints = [];
         if (count($whereGroups['and']) > 1) {
             $constraints = $this->adapter->makeAnd($whereGroups['and']);
-        } elseif (!empty($whereGroups['and'])) {
+        } elseif (! empty($whereGroups['and'])) {
             $constraints = reset($whereGroups['and']);
         }
         
         // Add "OR" to constraints
         $orConstraints = [];
-        if (!empty($whereGroups['or'])) {
+        if (! empty($whereGroups['or'])) {
             $orConstraints = $whereGroups['or'];
         }
-        if (!empty($constraints)) {
+        if (! empty($constraints)) {
             array_unshift($orConstraints, $constraints);
         }
         if (count($orConstraints) > 1) {

@@ -39,12 +39,14 @@ class PidGenerator implements CachedStackGeneratorInterface
         $collector = $context->getInstanceOf(PidCollector::class);
         
         // Loop through the stack
-        $context->runWithCachedValueDataScope($stack['main'], function (string $configClass) use ($collector, $context) {
-            if (!in_array(PidConfigurationInterface::class, class_implements($configClass))) {
-                throw new ExtConfigException("Invalid pid config class $configClass given. It has to implement the correct interface: " . PidConfigurationInterface::class);
-            }
-            call_user_func([$configClass, 'configurePids'], $collector, $context);
-        });
+        $context->runWithCachedValueDataScope($stack['main'],
+            function (string $configClass) use ($collector, $context) {
+                if (! in_array(PidConfigurationInterface::class, class_implements($configClass))) {
+                    throw new ExtConfigException("Invalid pid config class $configClass given. It has to implement the correct interface: "
+                                                 . PidConfigurationInterface::class);
+                }
+                call_user_func([$configClass, 'configurePids'], $collector, $context);
+            });
         
         // Done
         return $collector->getAll();

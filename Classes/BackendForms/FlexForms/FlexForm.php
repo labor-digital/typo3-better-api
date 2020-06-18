@@ -47,12 +47,14 @@ class FlexForm extends AbstractForm
     
     /**
      * Contains additional metadata that was stored in the head of the flex form config
+     *
      * @var array
      */
     protected $meta = [];
     
     /**
      * The form field reference which holds this flex form
+     *
      * @var AbstractFormField
      */
     protected $containingField;
@@ -71,14 +73,16 @@ class FlexForm extends AbstractForm
      */
     public function getFileName(): ?string
     {
-        if (!$this->context->Fs->hasFile($this->getFlexFormCacheFilePath())) {
+        if (! $this->context->Fs->hasFile($this->getFlexFormCacheFilePath())) {
             return null;
         }
+        
         return $this->context->Fs->getFile($this->getFlexFormCacheFilePath())->getPathname();
     }
     
     /**
      * Returns the cache key under which the flex form definition will be stored
+     *
      * @return string
      */
     public function getFlexFormId(): string
@@ -88,6 +92,7 @@ class FlexForm extends AbstractForm
     
     /**
      * Internal helper to create the filename of a flex form file for the temp fs lookup
+     *
      * @return string
      */
     protected function getFlexFormCacheFilePath(): string
@@ -113,6 +118,7 @@ class FlexForm extends AbstractForm
             } catch (Exception $e) {
             }
         }
+        
         return parent::getElement($id);
     }
     
@@ -121,7 +127,7 @@ class FlexForm extends AbstractForm
      * Returns the instance of a certain tab.
      * Note: If the tab not exists, a new one will be created at the end of the form
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexTab
      */
@@ -136,7 +142,7 @@ class FlexForm extends AbstractForm
      * Returns a single section instance
      * Note: If the section not exists, a new one will be created at the end of the form
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexSection
      */
@@ -150,7 +156,7 @@ class FlexForm extends AbstractForm
     /**
      * Returns true if the layout has a section with that id already registered
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return bool
      */
@@ -180,7 +186,7 @@ class FlexForm extends AbstractForm
      * on a method like this. A path is sDef->section->field the "->" works as a separator between the parts of the
      * path.
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexField
      */
@@ -188,11 +194,12 @@ class FlexForm extends AbstractForm
     {
         // Field instance generator
         $generator = function ($_id = null) use ($id) {
-            if (!empty($_id)) {
+            if (! empty($_id)) {
                 $id = $_id;
             } // Override external id when path lookup is used...
             $tca = isset($this->config[$id]) ? $this->config[$id] : static::DEFAULT_FIELD_CONFIG;
             unset($this->config[$id]);
+            
             return FlexField::makeFromTcaConfig($id, $tca, $this->context, $this);
         };
         
@@ -203,6 +210,7 @@ class FlexForm extends AbstractForm
             } catch (Exception $e) {
             }
         }
+        
         // Default lookup
         return $this->getOrCreateElement($id, static::TYPE_ELEMENT, $generator);
     }
@@ -217,7 +225,7 @@ class FlexForm extends AbstractForm
      * this will then automatically look for the flex form definition in your current extension's Configuration
      * directory.
      *
-     * @param string $definition
+     * @param   string  $definition
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -229,7 +237,7 @@ class FlexForm extends AbstractForm
         if (substr(strtolower($definition), 0, 5) === 'file:') {
             // Load a static file
             $filePath = $this->context->TypoContext->getPathAspect()->typoPathToRealPath($definition);
-            if (!file_exists($filePath)) {
+            if (! file_exists($filePath)) {
                 // Check if this was a shortname for a flexform
                 $filePath = basename(substr($definition, 5));
                 $filePath = 'FILE:EXT:' . $this->context->getExtKey() . '/Configuration/FlexForms/' . $filePath;
@@ -239,8 +247,9 @@ class FlexForm extends AbstractForm
                 
                 // Try again
                 $filePath = $this->context->TypoContext->getPathAspect()->typoPathToRealPath($filePath);
-                if (!file_exists($filePath)) {
-                    throw new BackendFormException('Could not load the flexform file at: ' . $definition . '! The file does not exist', 999);
+                if (! file_exists($filePath)) {
+                    throw new BackendFormException('Could not load the flexform file at: ' . $definition
+                                                   . '! The file does not exist', 999);
                 }
             }
             // Load the definition
@@ -251,7 +260,7 @@ class FlexForm extends AbstractForm
         $definitionArray = GeneralUtilityAdapter::xml2arrayWithoutCache($definition);
         
         // Check if we have sheets or forcefully create them
-        if (!isset($definitionArray['sheets'])) {
+        if (! isset($definitionArray['sheets'])) {
             if (isset($definitionArray['sDEF'])) {
                 $sheets = $definitionArray;
             } elseif (isset($definitionArray['ROOT'])) {
@@ -267,28 +276,28 @@ class FlexForm extends AbstractForm
             if (empty($path)) {
                 // Currently iterating sheets
                 foreach ($list as $k => $sheet) {
-                    
                     // Add new tabs
                     $tab = $this->getTab($k);
                     
                     // Try to load the label
                     $label = Arrays::getPath($sheet, ['ROOT', 'TCEforms', 'sheetTitle']);
-                    if (!empty($label)) {
+                    if (! empty($label)) {
                         $tab->setLabel($label);
                     }
                     
                     // Try to iterate my children
                     $children = Arrays::getPath($sheet, ['ROOT', 'el'], []);
-                    if (!empty($children)) {
+                    if (! empty($children)) {
                         $walker($children, [$k], $walker);
                     }
                 }
+                
                 return;
             } elseif (count($path) === 1) {
                 // Iterating sheet objects
                 foreach ($list as $k => $element) {
                     // Test for containers
-                    if (!empty($element['section'])) {
+                    if (! empty($element['section'])) {
                         $children = Arrays::getPath($element, ['el'], []);
                         if (empty($children)) {
                             continue;
@@ -296,14 +305,14 @@ class FlexForm extends AbstractForm
                         
                         // Get the first element -> This is the element which is then repeatable
                         $container = reset($children);
-                        $section = $this->getSection($k);
+                        $section   = $this->getSection($k);
                         $section->setContainerItemId((string)key($children));
                         
                         // Load section labels
-                        if (!empty($element['title'])) {
+                        if (! empty($element['title'])) {
                             $section->setLabel($element['title']);
                         }
-                        if (!empty($container['title'])) {
+                        if (! empty($container['title'])) {
                             $section->setContainerItemLabel($container['title']);
                         }
                         
@@ -315,10 +324,12 @@ class FlexForm extends AbstractForm
                         
                         // Loop over the items inside this container
                         foreach ($children as $_k => $_element) {
-                            if (!empty($_element['TCEforms'])) {
+                            if (! empty($_element['TCEforms'])) {
                                 $this->config[$_k] = $_element['TCEforms'];
                                 $this->getField(implode(static::PATH_SEPARATOR, Arrays::attach($path, [$k, $_k])));
-                            } elseif (is_array($_element['config']) && (isset($_element['config']['type']) || isset($_element['config']['renderType']))) {
+                            } elseif (is_array($_element['config'])
+                                      && (isset($_element['config']['type'])
+                                          || isset($_element['config']['renderType']))) {
                                 // Check if the element is wrongly formatted
                                 $this->config[$_k] = $_element;
                                 $this->getField(implode(static::PATH_SEPARATOR, Arrays::attach($path, [$k, $_k])));
@@ -327,10 +338,12 @@ class FlexForm extends AbstractForm
                     }
                     
                     // Test for element
-                    if (!empty($element['TCEforms'])) {
+                    if (! empty($element['TCEforms'])) {
                         $this->config[$k] = $element['TCEforms'];
                         $this->getField($k);
-                    } elseif (is_array($element['config']) && (isset($element['config']['type']) || isset($element['config']['renderType']))) {
+                    } elseif (is_array($element['config'])
+                              && (isset($element['config']['type'])
+                                  || isset($element['config']['renderType']))) {
                         // Check if the element is wrongly formatted
                         $this->config[$k] = $element;
                         $this->getField($k);
@@ -340,12 +353,12 @@ class FlexForm extends AbstractForm
         };
         
         // Get meta if there is some
-        if (!empty($definitionArray['meta'])) {
+        if (! empty($definitionArray['meta'])) {
             $this->meta = $definitionArray['meta'];
         }
         
         // Check if there are sheets -> Start the recursive walker
-        if (!empty($definitionArray['sheets'])) {
+        if (! empty($definitionArray['sheets'])) {
             $walker($definitionArray['sheets'], [], $walker);
         }
         
@@ -364,6 +377,7 @@ class FlexForm extends AbstractForm
     
     /**
      * Returns the form field which holds this flex form
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormField
      */
     public function getContainingField(): AbstractFormField
@@ -373,6 +387,7 @@ class FlexForm extends AbstractForm
     
     /**
      * Internal helper to dump the definition into the cache file
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
      */
     public function __build(): FlexForm
@@ -380,28 +395,31 @@ class FlexForm extends AbstractForm
         // Dump the definition and store it into a cached value
         $definition = $this->dumpXmlDefinition();
         $this->context->Fs->setFileContent($this->getFlexFormCacheFilePath(), $definition);
+        
         return $this;
     }
     
     /**
      * Factory method to create new form instances
      *
-     * @param string                                                      $definition
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext     $context
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField $field
+     * @param   string                                                       $definition
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext      $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField  $field
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
      */
     public static function makeInstance(string $definition, ExtConfigContext $context, TcaField $field): FlexForm
     {
-        $id = Inflector::toUuid($field->getForm()->getTableName() . $field->getColumnName() . $field->getForm()->getId() . $field->getForm()->getTypeKey());
-        $i = TypoContainer::getInstance()->get(static::class, ['args' => [$id, $context]]);
+        $id = Inflector::toUuid($field->getForm()->getTableName() . $field->getColumnName() . $field->getForm()->getId()
+                                . $field->getForm()->getTypeKey());
+        $i  = TypoContainer::getInstance()->get(static::class, ['args' => [$id, $context]]);
         $i->loadDefinition($definition);
         $i->ensureInitialTab(true);
         $i->containingField = $field;
         
         // Make sure we can retrieve the filename
         $context->Fs->setFileContent($i->getFlexFormCacheFilePath(), '');
+        
         return $i;
     }
     
@@ -409,9 +427,9 @@ class FlexForm extends AbstractForm
      * Can be used to create a new flex form instance that is not linked to any database table.
      * Can be used if another ext config element requires a flex form definition.
      *
-     * @param ExtConfigContext $context    The ext config context object
-     * @param string|null      $definition Optional, initial flex form definition
-     * @param string|null      $tableName  Optional, name of the table to generate the flex form for
+     * @param   ExtConfigContext  $context     The ext config context object
+     * @param   string|null       $definition  Optional, initial flex form definition
+     * @param   string|null       $tableName   Optional, name of the table to generate the flex form for
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
      * @todo Merge this with makeInstance() when putting them into the constructor
@@ -420,19 +438,19 @@ class FlexForm extends AbstractForm
         ExtConfigContext $context,
         ?string $definition = null,
         ?string $tableName = null
-    ): FlexForm
-    {
+    ): FlexForm {
         if (is_null($tableName)) {
             $tableName = 'pseudoFlexFormTable-' . md5(microtime(true));
         }
         $table = TcaTable::makeInstance($tableName, $context);
         $table->getType('default');
         $flexForm = $table->getField('flexFormField-' . md5(microtime(true)))->getFlexFormConfig()->getForm();
-        if (!empty($definition)) {
+        if (! empty($definition)) {
             $flexForm->loadDefinition($definition);
         } else {
             $flexForm->loadDefinition('<T3DataStructure><sheets type=\'array\'></sheets></T3DataStructure>');
         }
+        
         return $flexForm;
     }
     
@@ -441,10 +459,10 @@ class FlexForm extends AbstractForm
      */
     protected function ensureInitialTab(bool $internal = false)
     {
-        if (!$internal) {
+        if (! $internal) {
             return;
         }
-        if (!empty($this->elements)) {
+        if (! empty($this->elements)) {
             return;
         }
         $this->getTab('sDEF')->setLabel('LLL:EXT:lang/locallang_core.xlf:labels.generalTab');
@@ -464,31 +482,35 @@ class FlexForm extends AbstractForm
                     case self::TYPE_ALL:
                         return $result;
                     case self::TYPE_ELEMENT:
-                        if (!$result instanceof AbstractFormField) {
+                        if (! $result instanceof AbstractFormField) {
                             throw new Exception();
                         }
+                        
                         return $result;
                     case self::TYPE_CONTAINER:
-                        if (!$this->elIsContainer($result)) {
+                        if (! $this->elIsContainer($result)) {
                             throw new Exception();
                         }
+                        
                         return $result;
                     case static::TYPE_TAB:
-                        if (!$this->elIsTab($result)) {
+                        if (! $this->elIsTab($result)) {
                             throw new Exception();
                         }
+                        
                         return $result;
                 }
             } catch (Exception $e) {
             }
         }
+        
         return parent::getElementInternal($id, $type, $finds);
     }
     
     /**
      * Internal helper which takes a path and unifies it into an array
      *
-     * @param array|string $path
+     * @param   array|string  $path
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -499,9 +521,10 @@ class FlexForm extends AbstractForm
         if (is_string($path)) {
             $path = Arrays::parsePath($path, static::PATH_SEPARATOR);
         }
-        if (!is_array($path) || empty($path)) {
+        if (! is_array($path) || empty($path)) {
             throw new BackendFormException('Invalid path given! ' . json_encode($path));
         }
+        
         return $path;
     }
     
@@ -510,8 +533,8 @@ class FlexForm extends AbstractForm
      *
      * The generator will receive the real id of the element as a parameter.
      *
-     * @param array|string $path      The path to the element to retrieve
-     * @param callable     $generator The method to create a new instance of the element
+     * @param   array|string  $path       The path to the element to retrieve
+     * @param   callable      $generator  The method to create a new instance of the element
      *
      * @return FlexForm|AbstractFormElement|mixed
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -524,14 +547,14 @@ class FlexForm extends AbstractForm
         } catch (BackendFormException $exception) {
             // Prepare id and parent path
             $parentPath = $path;
-            $id = array_pop($parentPath);
+            $id         = array_pop($parentPath);
             
             // Find the parent or die...
             $parent = $this->getElementByPathInternal($parentPath);
             
             // Use the generator to create a new element
             $i = call_user_func($generator, $id);
-            if (!$i instanceof AbstractFormElement) {
+            if (! $i instanceof AbstractFormElement) {
                 throw new BackendFormException('Error while generating an element! The result of the generator should be a child of AbstractFormElement!');
             }
             
@@ -555,7 +578,7 @@ class FlexForm extends AbstractForm
         // Iterate through the path
         $pointer = $this;
         foreach ($path as $part) {
-            if (!$pointer instanceof AbstractFormContainer) {
+            if (! $pointer instanceof AbstractFormContainer) {
                 continue;
             }
             $children = $pointer->getChildren();
@@ -567,6 +590,7 @@ class FlexForm extends AbstractForm
                 throw new BackendFormException('Could not find the element with path: ' . implode(' -> ', $path));
             }
         }
+        
         return $pointer;
     }
     
@@ -580,7 +604,7 @@ class FlexForm extends AbstractForm
         $out = [];
         
         // Add meta information
-        if (!empty($this->meta)) {
+        if (! empty($this->meta)) {
             $out['meta'] = $this->meta;
         }
         
@@ -589,21 +613,21 @@ class FlexForm extends AbstractForm
         foreach ($this->getLayoutArray() as $tabId => $tabChildren) {
             /** @var \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexTab $tab */
             $tab = $tabChildren['@node'];
-            $t = [];
+            $t   = [];
             
             // Add label if there is one
-            if (!empty($tab->getLabel())) {
+            if (! empty($tab->getLabel())) {
                 $t['TCEforms']['sheetTitle'] = $tab->getLabel();
             }
             $t['type'] = 'array';
-            $t['el'] = [];
+            $t['el']   = [];
             
             // Run through the children
             unset($tabChildren['@node']);
             foreach ($tabChildren as $k => $child) {
                 /** @var AbstractFormElement $child */
                 // Check if we got a section
-                if (!is_numeric($k) && is_array($child)) {
+                if (! is_numeric($k) && is_array($child)) {
                     // Handle section
                     /** @var \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexSection $section */
                     $section = $child['@node'];
@@ -617,18 +641,18 @@ class FlexForm extends AbstractForm
                     }
                     
                     // Build section definition
-                    $s = [];
+                    $s          = [];
                     $s['title'] = $section->getContainerItemLabel();
-                    $s['type'] = 'array';
-                    $s['el'] = $sEl;
+                    $s['type']  = 'array';
+                    $s['el']    = $sEl;
                     
                     // Wrap the definition in the outer container
                     $sOuter = $section->config;
-                    if (!empty($section->getLabel())) {
+                    if (! empty($section->getLabel())) {
                         $sOuter['title'] = $section->getLabel();
                     }
-                    $sOuter['section'] = 1;
-                    $sOuter['type'] = 'array';
+                    $sOuter['section']                            = 1;
+                    $sOuter['type']                               = 'array';
                     $sOuter['el'][$section->getContainerItemId()] = $s;
                     
                     // Add to tab

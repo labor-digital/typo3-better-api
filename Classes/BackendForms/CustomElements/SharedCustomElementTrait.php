@@ -32,18 +32,21 @@ trait SharedCustomElementTrait
     
     /**
      * True if the global event handler for injecting the backend assets is already bound
+     *
      * @var bool
      */
     protected static $eventBound = false;
     
     /**
      * The list of javascript files that are registered for the backend
+     *
      * @var array
      */
     protected static $js = [];
     
     /**
      * The list of registered css files for the backend
+     *
      * @var array
      */
     protected static $css = [];
@@ -56,7 +59,7 @@ trait SharedCustomElementTrait
     /**
      * Internal helper which is used to inject the custom element context for easier access
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext  $context
      */
     public function __injectContext(CustomElementContext $context)
     {
@@ -68,11 +71,11 @@ trait SharedCustomElementTrait
      * It will receive the array of options as well as the field instance. You can use this method to apply additional
      * TCA configuration to the field, before it is cached for later usage.
      *
-     * @param AbstractFormField $field   The instance of the field to apply this form element to
-     *                                   The instance will already be preconfigured to be rendered as a custom node in
-     *                                   the form framework
-     * @param array             $options The additional options that were given in the applyPreset method
-     * @param ExtConfigContext  $context The context of the extension, that is currently applying this element
+     * @param   AbstractFormField  $field    The instance of the field to apply this form element to
+     *                                       The instance will already be preconfigured to be rendered as a custom node
+     *                                       in the form framework
+     * @param   array              $options  The additional options that were given in the applyPreset method
+     * @param   ExtConfigContext   $context  The context of the extension, that is currently applying this element
      *
      * @return mixed|void
      */
@@ -99,11 +102,11 @@ trait SharedCustomElementTrait
      *  In your custom element call $this->callUserFunc("userFunc") and you are done... the result will be either the
      *  result of the registered user function or null ($defaultData)
      *
-     * @param string $configKey     The key in your field's TCA config that should be searched for
-     * @param array  $arguments     Additional arguments that are passed to the user function
-     * @param null   $defaultData   The default data, which is returned if there was no userFunction registered
-     * @param bool   $allowMultiple By default only a single userFunc is allowed. If you want to register multiple
-     *                              functions, set this to true. Your TCA now supports an array for "userFunc".
+     * @param   string  $configKey      The key in your field's TCA config that should be searched for
+     * @param   array   $arguments      Additional arguments that are passed to the user function
+     * @param   null    $defaultData    The default data, which is returned if there was no userFunction registered
+     * @param   bool    $allowMultiple  By default only a single userFunc is allowed. If you want to register multiple
+     *                                  functions, set this to true. Your TCA now supports an array for "userFunc".
      *
      *                              Keep in mind tho, that now your user function will always return either
      *                              $defaultData or the result of the previous user function as the first attribute!
@@ -111,13 +114,18 @@ trait SharedCustomElementTrait
      * @return mixed|null
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
      */
-    protected function callUserFunc(string $configKey, array $arguments = [], $defaultData = null, bool $allowMultiple = false)
-    {
+    protected function callUserFunc(
+        string $configKey,
+        array $arguments = [],
+        $defaultData = null,
+        bool $allowMultiple = false
+    ) {
         // Load the config array
         $config = Arrays::getPath($this->context->getConfig(), 'config', []);
         
         // First try the @customOptions, then the field config
-        $functionStack = Arrays::getPath($config, ['@customOptions', $configKey], Arrays::getPath($config, [$configKey], []));
+        $functionStack = Arrays::getPath($config, ['@customOptions', $configKey],
+            Arrays::getPath($config, [$configKey], []));
         
         // Skip if the stack is empty
         if (empty($functionStack)) {
@@ -132,11 +140,13 @@ trait SharedCustomElementTrait
         if (is_array($functionStack) && count($functionStack) === 2 && class_exists(reset($functionStack))) {
             $functionStack = [$functionStack];
         }
-        if (!is_array($functionStack)) {
-            throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName() . ' is invalid! Only strings and arrays are allowed!');
+        if (! is_array($functionStack)) {
+            throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName()
+                                           . ' is invalid! Only strings and arrays are allowed!');
         }
-        if (!$allowMultiple && count($functionStack) > 1) {
-            throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName() . ' is invalid! Only a single function is allowed!');
+        if (! $allowMultiple && count($functionStack) > 1) {
+            throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName()
+                                           . ' is invalid! Only a single function is allowed!');
         }
         
         // Run the stack
@@ -145,19 +155,24 @@ trait SharedCustomElementTrait
             if (is_string($func)) {
                 $func = Naming::typoCallbackToArray($func);
             }
-            if (!is_array($func) || count($func) !== 2 && !class_exists(reset($func))) {
-                throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName() . ' is invalid!');
+            if (! is_array($func) || count($func) !== 2 && ! class_exists(reset($func))) {
+                throw new BackendFormException('The configured user function of field: '
+                                               . $this->context->getFieldName() . ' is invalid!');
             }
             if (is_array($func) && count($func) === 2 && Arrays::isSequential($func)) {
                 $func = ['class' => $func[0], 'method' => $func[1]];
             }
             
             // Validate the class and the method
-            if (!class_exists($func['class'])) {
-                throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName() . ' is invalid! The registered class: ' . $func['class'] . ' does not exist!');
+            if (! class_exists($func['class'])) {
+                throw new BackendFormException('The configured user function of field: '
+                                               . $this->context->getFieldName() . ' is invalid! The registered class: '
+                                               . $func['class'] . ' does not exist!');
             }
-            if (!method_exists($func['class'], $func['method'])) {
-                throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName() . ' is invalid! The registered method: ' . $func['method'] . ' does not exist!');
+            if (! method_exists($func['class'], $func['method'])) {
+                throw new BackendFormException('The configured user function of field: '
+                                               . $this->context->getFieldName() . ' is invalid! The registered method: '
+                                               . $func['method'] . ' does not exist!');
             }
             
             // Update first argument when multiple elements are allowed
@@ -167,10 +182,11 @@ trait SharedCustomElementTrait
             }
             
             // Run the function
-            $result = call_user_func_array([$this->context->getInstanceOf($func['class']), $func['method']], $arguments);
+            $result = call_user_func_array([$this->context->getInstanceOf($func['class']), $func['method']],
+                $arguments);
             
             // Check if we are running multiple
-            if (!$allowMultiple) {
+            if (! $allowMultiple) {
                 break;
             }
         }
@@ -183,13 +199,14 @@ trait SharedCustomElementTrait
      * Can be used to register an additional JS file to the typo3 backend.
      * The file is only included when the element is rendered.
      *
-     * @param string $path Either a fully qualified url or a typo path like EXT:...
+     * @param   string  $path  Either a fully qualified url or a typo path like EXT:...
      *
      * @return $this
      */
     public function registerBackendJs(string $path)
     {
         $this->addAsset($path);
+        
         return $this;
     }
     
@@ -197,13 +214,14 @@ trait SharedCustomElementTrait
      * Can be used to register an additional css file to the typo3 backend.
      * The file is only included when the element is rendered.
      *
-     * @param string $path Either a fully qualified url or a typo path like EXT:...
+     * @param   string  $path  Either a fully qualified url or a typo path like EXT:...
      *
      * @return $this
      */
     public function registerBackendCss(string $path)
     {
         $this->addAsset($path, true);
+        
         return $this;
     }
     
@@ -211,8 +229,8 @@ trait SharedCustomElementTrait
      * Internal helper to append a given js / css path to our stacks
      * It will check if the file was already added do avoid duplicates
      *
-     * @param string $path
-     * @param bool   $css
+     * @param   string  $path
+     * @param   bool    $css
      */
     protected function addAsset(string $path, bool $css = false)
     {
@@ -220,10 +238,10 @@ trait SharedCustomElementTrait
         $this->bindEventHandlerIfRequired();
         
         // Helper to resolve urls
-        if (!filter_var($path, FILTER_VALIDATE_URL)) {
+        if (! filter_var($path, FILTER_VALIDATE_URL)) {
             $pathAspect = $this->context->TypoContext->getPathAspect();
-            $path = $pathAspect->typoPathToRealPath($path);
-            $path = Path::makeRelative($path, $pathAspect->getPublicPath());
+            $path       = $pathAspect->typoPathToRealPath($path);
+            $path       = Path::makeRelative($path, $pathAspect->getPublicPath());
             if (stripos($path, './') === 0) {
                 $path = '.' . $path;
             }
@@ -258,12 +276,12 @@ trait SharedCustomElementTrait
         // Register event handler to inject the backend assets for this
         $this->context->EventBus->addListener(BackendAssetFilterEvent::class, function (BackendAssetFilterEvent $e) {
             // Register files
-            if (!empty(static::$js)) {
+            if (! empty(static::$js)) {
                 foreach (static::$js as $file) {
                     $e->getPageRenderer()->addJsFooterFile($file, 'text/javascript', false, false, '', true);
                 }
             }
-            if (!empty(static::$css)) {
+            if (! empty(static::$css)) {
                 foreach (static::$css as $file) {
                     $e->getPageRenderer()->addCssFile($file, 'stylesheet', 'all', '', false);
                 }

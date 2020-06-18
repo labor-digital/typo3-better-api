@@ -32,9 +32,8 @@ class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfigur
      */
     public function getAllSiteConfigurationFromFiles(): array
     {
-        
         // Create the configuration if it is not yet cached
-        $isCached = !empty($this->getCache()->get($this->cacheIdentifier));
+        $isCached   = ! empty($this->getCache()->get($this->cacheIdentifier));
         $siteConfig = parent::getAllSiteConfigurationFromFiles();
         if ($isCached) {
             return $siteConfig;

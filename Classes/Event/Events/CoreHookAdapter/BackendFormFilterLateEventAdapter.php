@@ -34,7 +34,7 @@ class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter imp
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class] = [
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class]  = [
             'depends' => [TcaInputPlaceholders::class],
             'before'  => [TcaInlineIsOnSymmetricSide::class],
         ];
@@ -48,10 +48,11 @@ class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter imp
      */
     public function addData(array $result)
     {
-        if (!isset($result['tableName'])) {
+        if (! isset($result['tableName'])) {
             return $result;
         }
         static::$bus->dispatch(($e = new BackendFormFilterLateEvent($result['tableName'], $result)));
+        
         return $e->getData();
     }
 }

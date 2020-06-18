@@ -52,12 +52,14 @@ abstract class BetterRepository extends Repository
     
     /**
      * When set, it will contain the cached table name so we don't need to build the mapping again
+     *
      * @var string
      */
     protected $tableNameCache;
     
     /**
      * Is used to allow RepositoryWrapper to rewrite the $this variable to the stored repository
+     *
      * @var \LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository
      */
     protected $selfReference;
@@ -69,17 +71,17 @@ abstract class BetterRepository extends Repository
         ObjectManagerInterface $objectManager,
         TypoContainerInterface $container,
         DataMapper $dataMapper
-    )
-    {
+    ) {
         parent::__construct($objectManager);
         $this->selfReference = $this;
         $this->objectManager = $objectManager;
-        $this->container = $container;
-        $this->dataMapper = $dataMapper;
+        $this->container     = $container;
+        $this->dataMapper    = $dataMapper;
     }
     
     /**
      * Returns the name of the database table this repository works with
+     *
      * @return string
      */
     public function getTableName(): string
@@ -87,6 +89,7 @@ abstract class BetterRepository extends Repository
         if (isset($this->tableNameCache)) {
             return $this->tableNameCache;
         }
+        
         return $this->tableNameCache = $this->dataMapper->getDataMap($this->selfReference->objectType)->getTableName();
     }
     
@@ -101,14 +104,15 @@ abstract class BetterRepository extends Repository
     public function getTableForModel($modelOrClass): string
     {
         if (is_object($modelOrClass)) {
-            if (!$modelOrClass instanceof AbstractEntity) {
+            if (! $modelOrClass instanceof AbstractEntity) {
                 throw new DomainException('Invalid model given! A child of AbstractEntity is required!');
             }
             $modelOrClass = get_class($modelOrClass);
         }
-        if (!is_string($modelOrClass)) {
+        if (! is_string($modelOrClass)) {
             throw new DomainException('Invalid model given! Either an object or a string are allowed!');
         }
+        
         return $this->dataMapper->getDataMap($modelOrClass)->getTableName();
     }
     
@@ -120,6 +124,7 @@ abstract class BetterRepository extends Repository
      *
      * The returned query is a one time only object. Every time you use this method you will receive a new
      * instance of a fresh query object.
+     *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
     public function getQuery(): BetterQuery
@@ -132,7 +137,7 @@ abstract class BetterRepository extends Repository
      * Just pass the instance of your repository into this method and you can use demands and all other magic
      * as you would with a dedicated BetterRepository.
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\Repository $repository
+     * @param   \TYPO3\CMS\Extbase\Persistence\Repository  $repository
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository
      */
@@ -143,6 +148,7 @@ abstract class BetterRepository extends Repository
         }
         $wrapper = TypoContainer::getInstance()->get(RepositoryWrapper::class);
         $wrapper->__initialize($repository);
+        
         return $wrapper;
     }
     

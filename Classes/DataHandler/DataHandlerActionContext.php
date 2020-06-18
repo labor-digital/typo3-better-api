@@ -27,6 +27,7 @@ class DataHandlerActionContext
     
     /**
      * True if the value of this element was changed -> meaning we have to update it
+     *
      * @var bool
      */
     protected $valueDirty = false;
@@ -34,18 +35,21 @@ class DataHandlerActionContext
     /**
      * This is true if the current context applies to a table,
      * and not a specific field in said table.
+     *
      * @var bool
      */
     protected $appliesToTable = false;
     
     /**
      * The action that is currently performed in the backend
+     *
      * @var string
      */
     protected $action = 'save';
     
     /**
      * The name of the table this element is part of
+     *
      * @var string
      */
     protected $tableName = '';
@@ -53,12 +57,14 @@ class DataHandlerActionContext
     /**
      * The uid of the current element's record in the table defined in $tableName
      * If this has a new record's context this will be a string of some sort
+     *
      * @var int|string
      */
     protected $uid = 0;
     
     /**
      * The key of the field that represents the custom element
+     *
      * @var string
      */
     protected $key;
@@ -75,24 +81,28 @@ class DataHandlerActionContext
      * The row of the record we are currently working with.
      * This does not have to be the whole row of the record!
      * In the backend save filter this is probably just a part of the record we received
+     *
      * @var array
      */
     protected $row = [];
     
     /**
      * The TCA config for this elements table column
+     *
      * @var array
      */
     protected $config = [];
     
     /**
      * The instance of the event, which may contain additional data, that was not handled by this interface
+     *
      * @var object
      */
     protected $event;
     
     /**
      * The path on which the value is stored
+     *
      * @var array
      */
     protected $path;
@@ -100,7 +110,7 @@ class DataHandlerActionContext
     /**
      * Is used internally to inject the context array into this object
      *
-     * @param array $context
+     * @param   array  $context
      */
     public function __setContextArray(array $context)
     {
@@ -146,6 +156,7 @@ class DataHandlerActionContext
     
     /**
      * Returns the name of the table this element is part of
+     *
      * @return string
      */
     public function getTableName(): string
@@ -156,6 +167,7 @@ class DataHandlerActionContext
     /**
      * Returns the uid of the current element's record in the table defined in $tableName
      * If this has a new record's context this will be a string of some sort
+     *
      * @return int|string
      */
     public function getUid()
@@ -191,14 +203,15 @@ class DataHandlerActionContext
     /**
      * Can be used to change the value of this field to anything else.
      *
-     * @param mixed $value
+     * @param   mixed  $value
      *
      * @return DataHandlerActionContext
      */
     public function setValue($value)
     {
         $this->valueDirty = true;
-        $this->value = $value;
+        $this->value      = $value;
+        
         return $this;
     }
     
@@ -227,6 +240,7 @@ class DataHandlerActionContext
     
     /**
      * Returns the instance of the event, which may contain additional data, that was not handled by this interface
+     *
      * @return object
      */
     public function getEvent(): object
@@ -247,6 +261,7 @@ class DataHandlerActionContext
     /**
      * Returns the path, inside the current row on which the value is stored
      * This returns an empty array if isAppliesToTable() returns true.
+     *
      * @return array
      */
     public function getPath(): array

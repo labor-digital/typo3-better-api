@@ -31,10 +31,9 @@ class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex
      */
     protected function getRecordRawCached(string $tableName, int $uid)
     {
-        
         // Store the current cache list length to detect changes
-        $listLength = count($this->recordCache);
-        $row = parent::getRecordRawCached($tableName, $uid);
+        $listLength    = count($this->recordCache);
+        $row           = parent::getRecordRawCached($tableName, $uid);
         $listLengthNow = count($this->recordCache);
         
         // Detect changes
@@ -48,7 +47,7 @@ class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex
         
         // Allow post processing
         $hasRow = is_array($row);
-        if (!$hasRow) {
+        if (! $hasRow) {
             $row = [];
         }
         TypoEventBus::getInstance()->dispatch(($e = new RefIndexRecordDataFilterEvent($tableName, $uid, $row)));

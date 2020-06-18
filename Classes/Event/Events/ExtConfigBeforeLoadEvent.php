@@ -34,6 +34,7 @@ class ExtConfigBeforeLoadEvent
     /**
      * The raw list of all registered ext config classes.
      * Contains a numeric list of arrays like: [$extKeyWithVendor, $configurationClass, $options]
+     *
      * @var array
      */
     protected $rawConfigList;
@@ -41,7 +42,7 @@ class ExtConfigBeforeLoadEvent
     /**
      * ExtConfigBeforeLoadEvent constructor.
      *
-     * @param array $rawConfigList
+     * @param   array  $rawConfigList
      */
     public function __construct(array $rawConfigList)
     {
@@ -50,6 +51,7 @@ class ExtConfigBeforeLoadEvent
     
     /**
      * Return the raw list of all registered ext config classes
+     *
      * @return array
      */
     public function getRawConfigList(): array
@@ -60,13 +62,14 @@ class ExtConfigBeforeLoadEvent
     /**
      * Sets the raw list of all registered ext config classes
      *
-     * @param array $rawConfigList
+     * @param   array  $rawConfigList
      *
      * @return ExtConfigBeforeLoadEvent
      */
     public function setRawConfigList(array $rawConfigList): ExtConfigBeforeLoadEvent
     {
         $this->rawConfigList = $rawConfigList;
+        
         return $this;
     }
 }

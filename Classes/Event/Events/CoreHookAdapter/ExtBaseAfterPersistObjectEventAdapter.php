@@ -39,6 +39,7 @@ class ExtBaseAfterPersistObjectEventAdapter extends AbstractCoreHookEventAdapter
             'afterPersistObject',
             function ($object) {
                 static::$bus->dispatch(($e = new ExtBaseAfterPersistObjectEvent($object)));
+                
                 return [$e->getObject()];
             }
         );

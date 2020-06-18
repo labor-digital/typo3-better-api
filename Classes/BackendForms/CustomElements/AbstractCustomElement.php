@@ -70,7 +70,7 @@ abstract class AbstractCustomElement implements CustomElementInterface
      * a class use the $mergeAttributes like ["class" => ["myClass"]] to supply your additional class to the built
      * output. You can't specify the class attribute twice, that will not be parsed correctly by the browser!
      *
-     * @param array $mergeAttributes
+     * @param   array  $mergeAttributes
      *
      * @return string
      */
@@ -80,8 +80,8 @@ abstract class AbstractCustomElement implements CustomElementInterface
         $config = Arrays::getPath($this->context->getConfig(), ['config'], []);
         // Build required attribute values
         $jsonValidation = $this->context->getRootNode()->__callMethod('getValidationDataAsJsonString', [$config]);
-        $evalList = implode(',', array_unique(Arrays::makeFromStringList(Arrays::getPath($config, 'eval', ''))));
-        $isIn = trim(Arrays::getPath($config, 'is_in', ''));
+        $evalList       = implode(',', array_unique(Arrays::makeFromStringList(Arrays::getPath($config, 'eval', ''))));
+        $isIn           = trim(Arrays::getPath($config, 'is_in', ''));
         
         // Build default attributes
         $attributes = [
@@ -102,6 +102,7 @@ abstract class AbstractCustomElement implements CustomElementInterface
         
         // Merge and implode attributes
         $attributes = Arrays::merge($attributes, $mergeAttributes);
+        
         return GeneralUtility::implodeAttributes($attributes, true);
     }
     
@@ -112,7 +113,7 @@ abstract class AbstractCustomElement implements CustomElementInterface
      *
      * It sets the NAME and the VALUE attribute by default.
      *
-     * @param array $mergeAttributes
+     * @param   array  $mergeAttributes
      *
      * @return string
      */
@@ -136,6 +137,7 @@ abstract class AbstractCustomElement implements CustomElementInterface
         
         // Merge and implode attributes
         $attributes = Arrays::merge($attributes, $mergeAttributes);
+        
         return GeneralUtility::implodeAttributes($attributes, true);
     }
     
@@ -148,13 +150,14 @@ abstract class AbstractCustomElement implements CustomElementInterface
      *
      * Also see getHiddenAttributes() for how to adjust the attributes of the generated input
      *
-     * @param array $mergeAttributes
+     * @param   array  $mergeAttributes
      *
      * @return string
      */
     protected function getHiddenHtml(array $mergeAttributes = []): string
     {
         $attr = $this->getHiddenAttributes($mergeAttributes);
+        
         return "<input type=\"hidden\" $attr />";
     }
     
@@ -171,9 +174,9 @@ abstract class AbstractCustomElement implements CustomElementInterface
      *  - {{{hiddenField}}} The preconfigured hidden field to hold your data (mind the 3 curly braces)
      *  - {{{hiddenAttributes}}} The html attributes for the hidden input field (mind the 3 curly braces)
      *
-     * @param string $template
-     * @param array  $data
-     * @param array  $options
+     * @param   string  $template
+     * @param   array   $data
+     * @param   array   $options
      *
      * @return string
      *
@@ -181,24 +184,25 @@ abstract class AbstractCustomElement implements CustomElementInterface
      */
     protected function renderTemplate(string $template, array $data = [], array $options = []): string
     {
-        if (!isset($data['value'])) {
+        if (! isset($data['value'])) {
             $data['value'] = $this->context->getValue();
         }
-        if (!isset($data['inputAttributes'])) {
+        if (! isset($data['inputAttributes'])) {
             $data['inputAttributes'] = $this->getInputAttributes();
         }
-        if (!isset($data['renderId'])) {
+        if (! isset($data['renderId'])) {
             $data['renderId'] = $this->context->getRenderId();
         }
-        if (!isset($data['renderName'])) {
+        if (! isset($data['renderName'])) {
             $data['renderName'] = $this->context->getRenderName();
         }
-        if (!isset($data['hiddenField'])) {
+        if (! isset($data['hiddenField'])) {
             $data['hiddenField'] = $this->getHiddenHtml();
         }
-        if (!isset($data['hiddenAttributes'])) {
+        if (! isset($data['hiddenAttributes'])) {
             $data['hiddenAttributes'] = $this->getHiddenAttributes();
         }
+        
         return $this->context->TemplateRendering->renderMustache($template, $data, $options);
     }
 }

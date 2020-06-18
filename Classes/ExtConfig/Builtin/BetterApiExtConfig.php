@@ -52,7 +52,6 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
      */
     public function configure(ExtConfigOptionList $configurator, ExtConfigContext $context)
     {
-        
         // Register translation
         $configurator->translation()->registerContext('betterApi');
         
@@ -61,13 +60,13 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
         
         // Register middlewares
         $configurator->http()
-            ->registerMiddleware(RequestCollectorMiddleware::class, 'frontend', [
-                'after'  => 'typo3/cms-frontend/site',
-                'before' => 'typo3/cms-frontend/base-redirect-resolver',
-            ])
-            ->registerMiddleware(RequestCollectorMiddleware::class, 'backend', [
-                'after' => 'typo3/cms-backend/site-resolver',
-            ]);
+                     ->registerMiddleware(RequestCollectorMiddleware::class, 'frontend', [
+                         'after'  => 'typo3/cms-frontend/site',
+                         'before' => 'typo3/cms-frontend/base-redirect-resolver',
+                     ])
+                     ->registerMiddleware(RequestCollectorMiddleware::class, 'backend', [
+                         'after' => 'typo3/cms-backend/site-resolver',
+                     ]);
     }
     
     /**
@@ -76,8 +75,10 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
     public static function extendExtConfig(ExtConfigExtensionRegistry $extender, ExtConfigContext $context)
     {
         // Register extension handlers
-        $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET, $context->getInstanceOf(FieldPresetApplierTraitGenerator::class));
-        $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY, $context->getInstanceOf(ExtConfigOptionTraitGenerator::class));
+        $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_FORM_FIELD_PRESET,
+            $context->getInstanceOf(FieldPresetApplierTraitGenerator::class));
+        $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY,
+            $context->getInstanceOf(ExtConfigOptionTraitGenerator::class));
         
         // Register default presets
         $extender->registerFieldPreset(BasicFieldPreset::class);

@@ -29,18 +29,21 @@ class EnvFacet implements FacetInterface
     
     /**
      * Stores the current typo3 version as integer
+     *
      * @var int
      */
     protected $versionInt;
     
     /**
      * Stores the version comparisons to save repetitive overhead
+     *
      * @var array
      */
     protected $versionComparisons = [];
     
     /**
      * Returns typo3's application context object
+     *
      * @return \TYPO3\CMS\Core\Core\ApplicationContext
      */
     public function getApplicationContext(): ApplicationContext
@@ -71,12 +74,12 @@ class EnvFacet implements FacetInterface
     /**
      * Can be used to compare a given version with the current typo3 version
      *
-     * @param string|double|int $version  The version to check for.
-     *                                    If just a single number, like 7, 8 or 9 is given, this method will fuzzy
-     *                                    compare the Typo3 major-version with the given number.
-     * @param string            $operator The operator to use when checking the version.
-     *                                    The operator can be one of: =, !=, <, >, <= or >=
-     *                                    The final statement will be read as: $typo3Version $operator $yourVersion
+     * @param   string|double|int  $version   The version to check for.
+     *                                        If just a single number, like 7, 8 or 9 is given, this method will fuzzy
+     *                                        compare the Typo3 major-version with the given number.
+     * @param   string             $operator  The operator to use when checking the version.
+     *                                        The operator can be one of: =, !=, <, >, <= or >=
+     *                                        The final statement will be read as: $typo3Version $operator $yourVersion
      *
      * @return bool
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
@@ -133,7 +136,7 @@ class EnvFacet implements FacetInterface
     /**
      * Returns the current typo3 version as a semver string.
      *
-     * @param bool $exact If this is set to true the version may contain suffixes like "-dev" "-rc..." or similar.
+     * @param   bool  $exact  If this is set to true the version may contain suffixes like "-dev" "-rc..." or similar.
      *
      * @return string
      */
@@ -174,11 +177,13 @@ class EnvFacet implements FacetInterface
     
     /**
      * Returns true if the current call was performed in the typo3 install tool
+     *
      * @return bool
      */
     public function isInstall(): bool
     {
-        return TYPO3_REQUESTTYPE === TYPO3_REQUESTTYPE_INSTALL || TYPO3_REQUESTTYPE === (TYPO3_REQUESTTYPE_INSTALL + TYPO3_REQUESTTYPE_BE);
+        return TYPO3_REQUESTTYPE === TYPO3_REQUESTTYPE_INSTALL
+               || TYPO3_REQUESTTYPE === (TYPO3_REQUESTTYPE_INSTALL + TYPO3_REQUESTTYPE_BE);
     }
     
     /**
@@ -194,14 +199,14 @@ class EnvFacet implements FacetInterface
     /**
      * Returns true if the current instance is running in production OR staging context
      *
-     * @param bool $includeStaging If this is set to false the method will not check for a staging version,
-     *                             instead it only returns true IF the context is set to production
+     * @param   bool  $includeStaging  If this is set to false the method will not check for a staging version,
+     *                                 instead it only returns true IF the context is set to production
      *
      * @return bool
      */
     public function isProduction(bool $includeStaging = true): bool
     {
-        return $includeStaging ? !$this->isDev() : Environment::getContext()->isProduction();
+        return $includeStaging ? ! $this->isDev() : Environment::getContext()->isProduction();
     }
     
     /**

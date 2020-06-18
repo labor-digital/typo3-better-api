@@ -52,6 +52,7 @@ class ExtConfigService implements LazyEventSubscriberInterface
     
     /**
      * A list of all registered extensions
+     *
      * @var array
      */
     protected static $registeredExtensions = [];
@@ -59,15 +60,18 @@ class ExtConfigService implements LazyEventSubscriberInterface
     /**
      * ExtConfigService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $typoContext
-     * @param \Neunerlei\EventBus\EventBusInterface                         $eventBus
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $typoContext
+     * @param   \Neunerlei\EventBus\EventBusInterface                          $eventBus
      */
-    public function __construct(TypoContainerInterface $container, TypoContext $typoContext, EventBusInterface $eventBus)
-    {
-        $this->container = $container;
+    public function __construct(
+        TypoContainerInterface $container,
+        TypoContext $typoContext,
+        EventBusInterface $eventBus
+    ) {
+        $this->container   = $container;
         $this->typoContext = $typoContext;
-        $this->eventBus = $eventBus;
+        $this->eventBus    = $eventBus;
     }
     
     /**
@@ -81,15 +85,18 @@ class ExtConfigService implements LazyEventSubscriberInterface
     /**
      * Internal helper to register an extension using the betterExtConfig() function
      *
-     * @param string $extKeyWithVendor
-     * @param string $configurationClass
-     * @param array  $options
+     * @param   string  $extKeyWithVendor
+     * @param   string  $configurationClass
+     * @param   array   $options
      *
      * @see betterExtConfig()
      * @internal
      */
-    public static function __registerExtension(string $extKeyWithVendor, string $configurationClass, array $options = []): void
-    {
+    public static function __registerExtension(
+        string $extKeyWithVendor,
+        string $configurationClass,
+        array $options = []
+    ): void {
         static::$registeredExtensions[] = [$extKeyWithVendor, $configurationClass, $options];
     }
     
@@ -100,7 +107,6 @@ class ExtConfigService implements LazyEventSubscriberInterface
      */
     public function __init()
     {
-        
         // Create the list of available configuration objects
         $e = new ExtConfigBeforeLoadEvent(static::$registeredExtensions);
         $this->eventBus->dispatch($e);
@@ -111,33 +117,36 @@ class ExtConfigService implements LazyEventSubscriberInterface
         foreach ($rawConfigList as $rawConfig) {
             [$extKeyWithVendor, $configurationClass, $options] = $rawConfig;
             // Parse extKey and vendor
-            $extKey = Naming::extkeyWithoutVendor($extKeyWithVendor);
-            $vendor = ucfirst(Naming::vendorFromExtkey($extKeyWithVendor));
-            $isExtension = in_array(ExtConfigExtensionInterface::class, class_implements($configurationClass));
+            $extKey          = Naming::extkeyWithoutVendor($extKeyWithVendor);
+            $vendor          = ucfirst(Naming::vendorFromExtkey($extKeyWithVendor));
+            $isExtension     = in_array(ExtConfigExtensionInterface::class, class_implements($configurationClass));
             $isConfiguration = in_array(ExtConfigInterface::class, class_implements($configurationClass));
             
             // Validate the class
             if (isset($configList[$configurationClass])) {
                 // Ignore double registration
-                if ($configList[$configurationClass]['extKey'] === $extKey &&
-                    $configList[$configurationClass]['vendor'] === $vendor) {
+                if ($configList[$configurationClass]['extKey'] === $extKey
+                    && $configList[$configurationClass]['vendor'] === $vendor) {
                     continue;
                 }
-                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor . ' was already registered!');
+                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor
+                                             . ' was already registered!');
             }
-            if (!class_exists($configurationClass)) {
-                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor . ' was not found!');
+            if (! class_exists($configurationClass)) {
+                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor
+                                             . ' was not found!');
             }
-            if (!$isExtension && !$isConfiguration) {
-                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor . ' has to implement the ' . ExtConfigInterface::class . ' interface!');
+            if (! $isExtension && ! $isConfiguration) {
+                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor
+                                             . ' has to implement the ' . ExtConfigInterface::class . ' interface!');
             }
             
             // Store configuration
-            $options['class'] = $configurationClass;
-            $options['extKey'] = $extKey;
-            $options['vendor'] = $vendor;
-            $options['isExtension'] = $isExtension;
-            $options['isConfiguration'] = $isConfiguration;
+            $options['class']                = $configurationClass;
+            $options['extKey']               = $extKey;
+            $options['vendor']               = $vendor;
+            $options['isExtension']          = $isExtension;
+            $options['isConfiguration']      = $isConfiguration;
             $configList[$configurationClass] = $options;
         }
         
@@ -154,12 +163,12 @@ class ExtConfigService implements LazyEventSubscriberInterface
         $e = new ExtConfigClassListFilterEvent($configList, $context, $extensionRegistry);
         $this->eventBus->dispatch($e);
         $extensionRegistry = $e->getExtensionRegistry();
-        $configList = $e->getConfigList();
-        $context = $e->getContext();
+        $configList        = $e->getConfigList();
+        $context           = $e->getContext();
         
         // Pass 2: Collect extensions
         foreach ($configList as $config) {
-            if (!$config['isExtension']) {
+            if (! $config['isExtension']) {
                 continue;
             }
             
@@ -184,7 +193,7 @@ class ExtConfigService implements LazyEventSubscriberInterface
         
         // Pass 3: Apply the configuration passes
         foreach ($configList as $config) {
-            if (!$config['isConfiguration']) {
+            if (! $config['isConfiguration']) {
                 continue;
             }
             

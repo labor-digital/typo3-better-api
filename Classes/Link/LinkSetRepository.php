@@ -31,6 +31,7 @@ class LinkSetRepository implements SingletonInterface
     
     /**
      * Returns all currently registered link sets
+     *
      * @return array
      */
     public function getAll(): array
@@ -41,7 +42,7 @@ class LinkSetRepository implements SingletonInterface
     /**
      * Returns true if the set with the given key exists, false if not
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return bool
      */
@@ -53,16 +54,17 @@ class LinkSetRepository implements SingletonInterface
     /**
      * Returns the configuration for a certain link set's key if it exists
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return \LaborDigital\Typo3BetterApi\Link\LinkSetDefinition
      * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
      */
     public function get(string $key): LinkSetDefinition
     {
-        if (!$this->has($key)) {
+        if (! $this->has($key)) {
             throw new LinkException('The requested link set with key: "' . $key . '" was not found!');
         }
+        
         return $this->linkSets[$key];
     }
     
@@ -72,14 +74,15 @@ class LinkSetRepository implements SingletonInterface
      * A link set is basically the same as a link but can hold "placeholders" and are reusable.
      * If the link does not contain all required arguments (which you defined as placeholders) an exception is thrown.
      *
-     * @param string            $key        The identifier of your link set
-     * @param LinkSetDefinition $definition The definition to set for this link set
+     * @param   string             $key         The identifier of your link set
+     * @param   LinkSetDefinition  $definition  The definition to set for this link set
      *
      * @return \LaborDigital\Typo3BetterApi\Link\LinkSetRepository
      */
     public function set(string $key, LinkSetDefinition $definition): LinkSetRepository
     {
         $this->linkSets[$key] = $definition;
+        
         return $this;
     }
 }

@@ -23,6 +23,7 @@ use LaborDigital\Typo3BetterApi\BetterApiException;
 
 /**
  * Class LinkException
+ *
  * @package LaborDigital\Typo3BetterApi\LinkService
  */
 class LinkException extends BetterApiException

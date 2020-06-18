@@ -36,7 +36,7 @@ trait DisplayConditionTrait
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Columns/Index.html#displaycond
      *
-     * @param string|array $condition
+     * @param   string|array  $condition
      *
      * @return $this
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -51,6 +51,7 @@ trait DisplayConditionTrait
                 if (count($condition) === 3 && Arrays::isSequential($condition)) {
                     $condition = 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
                 }
+                
                 return $condition;
             };
             if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
@@ -60,10 +61,11 @@ trait DisplayConditionTrait
             } else {
                 $condition = $fieldProcessor($condition);
             }
-        } elseif (!is_string($condition)) {
+        } elseif (! is_string($condition)) {
             throw new BackendFormException('Only strings and arrays are allowed as display conditions!');
         }
         $this->config['displayCond'] = $condition;
+        
         return $this;
     }
     

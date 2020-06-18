@@ -33,6 +33,7 @@ class SiteConfigFilterEvent
 {
     /**
      * The site configuration array
+     *
      * @var array
      */
     protected $config;
@@ -40,7 +41,7 @@ class SiteConfigFilterEvent
     /**
      * SiteConfigFilterEvent constructor.
      *
-     * @param array $config
+     * @param   array  $config
      */
     public function __construct(array $config)
     {
@@ -49,6 +50,7 @@ class SiteConfigFilterEvent
     
     /**
      * Returns the site configuration array
+     *
      * @return array
      */
     public function getConfig(): array
@@ -59,13 +61,14 @@ class SiteConfigFilterEvent
     /**
      * Used to update the site configuration array
      *
-     * @param array $config
+     * @param   array  $config
      *
      * @return SiteConfigFilterEvent
      */
     public function setConfig(array $config): SiteConfigFilterEvent
     {
         $this->config = $config;
+        
         return $this;
     }
 }

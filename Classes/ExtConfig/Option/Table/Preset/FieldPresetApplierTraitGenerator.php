@@ -43,6 +43,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
     
     /**
      * The list of preset configurations that have been gathered
+     *
      * @var array
      */
     protected $presets;
@@ -59,7 +60,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
      * Returns either the class name for a preset method name or null
      * if none was registered
      *
-     * @param string $presetName The name of the preset method to check for
+     * @param   string  $presetName  The name of the preset method to check for
      *
      * @return string|null
      */
@@ -78,7 +79,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
         
         // Get or generate the preset list
         $fileName = "FieldPresetList-$hash.php";
-        if (!$this->context->Fs->hasFile($fileName)) {
+        if (! $this->context->Fs->hasFile($fileName)) {
             $this->presets = $this->generatePresetList($extensions);
             $this->context->Fs->setFileContent($fileName, $this->presets);
         } else {
@@ -87,7 +88,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
         
         // Compile if the trait does not exist
         $fileName = "FieldPresetApplierTrait-$hash.php";
-        if (!$this->context->Fs->hasFile($fileName)) {
+        if (! $this->context->Fs->hasFile($fileName)) {
             $methods = [];
             foreach ($this->presets as $name => $class) {
                 $methods[] = $this->makePresetSrc(new ReflectionMethod($class, $name));
@@ -96,7 +97,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
         }
         
         // Include the trait if it does not exist yet
-        if (!trait_exists(static::TRAIT_NAME)) {
+        if (! trait_exists(static::TRAIT_NAME)) {
             $this->context->Fs->includeFile($fileName);
         }
     }
@@ -104,7 +105,7 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
     /**
      * Returns the list of all generated presets based on the given extensions
      *
-     * @param array $extensions
+     * @param   array  $extensions
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -115,17 +116,19 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
         $presets = [];
         foreach ($extensions as $class => $args) {
             // Validate class
-            if (!class_exists($class)) {
-                throw new ExtConfigException('Failed to register a form field preset, because the given class: ' . $class . ' does not exist!');
+            if (! class_exists($class)) {
+                throw new ExtConfigException('Failed to register a form field preset, because the given class: '
+                                             . $class . ' does not exist!');
             }
-            if (!in_array(FormPresetInterface::class, class_implements($class))) {
-                throw new ExtConfigException('Failed to register a form field preset, because the given class: ' . $class . ' does not implement the required interface: ' . FormPresetInterface::class . '!');
+            if (! in_array(FormPresetInterface::class, class_implements($class))) {
+                throw new ExtConfigException('Failed to register a form field preset, because the given class: '
+                                             . $class . ' does not implement the required interface: '
+                                             . FormPresetInterface::class . '!');
             }
             
             // Loop through methods
             $ref = new ReflectionClass($class);
             foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                
                 // Ignore inherited classes
                 if (in_array($method->getDeclaringClass()->getName(), [AbstractFormPreset::class])) {
                     continue;
@@ -133,31 +136,35 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
                 
                 // Avoid overlap
                 if (isset($presets[$method->getName()])) {
-                    throw new ExtConfigException('Can\'t redefine a preset with name ' . $method->getName() . ', because it was already defined by: ' . $presets[$method->getName()]['class']);
+                    throw new ExtConfigException('Can\'t redefine a preset with name ' . $method->getName()
+                                                 . ', because it was already defined by: '
+                                                 . $presets[$method->getName()]['class']);
                 }
                 
                 // Register method as handler
                 $presets[$method->getName()] = $class;
             }
         }
+        
         return $presets;
     }
     
     /**
      * Builds the source code for a single preset method
      *
-     * @param \ReflectionMethod $method
+     * @param   \ReflectionMethod  $method
      *
      * @return string
      */
     protected function makePresetSrc(ReflectionMethod $method): string
     {
-        $args = $this->generateMethodArgs($method);
-        $desc = $method->getDocComment();
-        $desc = $this->sanitizeDesc($desc);
-        $class = $method->getDeclaringClass()->getName();
+        $args       = $this->generateMethodArgs($method);
+        $desc       = $method->getDocComment();
+        $desc       = $this->sanitizeDesc($desc);
+        $class      = $method->getDeclaringClass()->getName();
         $fieldClass = AbstractFormField::class;
-        $key = $method->getName();
+        $key        = $method->getName();
+        
         return "
 	/**
 	 * $desc
@@ -174,15 +181,16 @@ class FieldPresetApplierTraitGenerator implements ExtConfigExtensionHandlerInter
     /**
      * Creates the outer body of the generated trait
      *
-     * @param array $methods
+     * @param   array  $methods
      *
      * @return string
      */
     protected function makeTraitSrc(array $methods): string
     {
-        $body = implode(PHP_EOL . PHP_EOL, $methods);
+        $body      = implode(PHP_EOL . PHP_EOL, $methods);
         $namespace = Path::classNamespace(static::TRAIT_NAME);
         $className = Path::classBasename(static::TRAIT_NAME);
+        
         return "<?php
 namespace $namespace;
 

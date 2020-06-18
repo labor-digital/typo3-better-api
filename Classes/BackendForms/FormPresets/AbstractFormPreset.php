@@ -35,18 +35,31 @@ abstract class AbstractFormPreset implements FormPresetInterface
 {
     use CommonServiceLocatorTrait;
     
-    const EVAL_TYPES = ['required', 'trim', 'date', 'datetime', 'lower', 'int', 'email',
-                        'password', 'unique', 'uniqueInSite', 'null',
-    ];
+    const EVAL_TYPES
+        = [
+            'required',
+            'trim',
+            'date',
+            'datetime',
+            'lower',
+            'int',
+            'email',
+            'password',
+            'unique',
+            'uniqueInSite',
+            'null',
+        ];
     
     /**
      * Holds the instance of the form field to configure
+     *
      * @var AbstractFormField
      */
     protected $field;
     
     /**
      * The context of the field
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     protected $context;
@@ -71,12 +84,12 @@ abstract class AbstractFormPreset implements FormPresetInterface
      * Internal helper to add the different eval options to the Options::make definition.
      * The default eval types are: "required", "trim", "datetime", "lower", "int", "email", "password"
      *
-     * @param array $optionDefinition The option definition to add the eval rules to
-     * @param array $evalFilter       If given an array of eval types that are whitelisted everything else will not be
-     *                                added as option
-     * @param array $evalDefaults     Can be used to set the default values for given eval types.
-     *                                setting this to ["trim" => TRUE] will set trim to be true by default, otherwise
-     *                                all eval rules start with a value of FALSE.
+     * @param   array  $optionDefinition  The option definition to add the eval rules to
+     * @param   array  $evalFilter        If given an array of eval types that are whitelisted everything else will not
+     *                                    be added as option
+     * @param   array  $evalDefaults      Can be used to set the default values for given eval types.
+     *                                    setting this to ["trim" => TRUE] will set trim to be true by default,
+     *                                    otherwise all eval rules start with a value of FALSE.
      *
      * @return array
      */
@@ -90,15 +103,16 @@ abstract class AbstractFormPreset implements FormPresetInterface
                 ];
             }
         }
+        
         return $optionDefinition;
     }
     
     /**
      * Internal helper to add the different eval config options as a string to "config"->"eval"
      *
-     * @param array $config           The configuration array to add the eval string to
-     * @param array $options          The current fields options to check for eval config
-     * @param array $evalFilter       If given an array of eval types that are whitelisted everything else will not be
+     * @param   array  $config        The configuration array to add the eval string to
+     * @param   array  $options       The current fields options to check for eval config
+     * @param   array  $evalFilter    If given an array of eval types that are whitelisted everything else will not be
      *                                added as option
      *
      * @return array
@@ -115,18 +129,19 @@ abstract class AbstractFormPreset implements FormPresetInterface
         $evalString = implode(',', $eval);
         
         // Add eval only if we got it configured
-        if (!empty($evalString)) {
+        if (! empty($evalString)) {
             $config['eval'] = $evalString;
         } else {
             unset($config['eval']);
         }
+        
         return $config;
     }
     
     /**
      * Internal helper which is used to add the "readOnly" option to the field configuration
      *
-     * @param array $optionDefinition
+     * @param   array  $optionDefinition
      *
      * @return array
      */
@@ -136,14 +151,15 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => false,
         ];
+        
         return $optionDefinition;
     }
     
     /**
      * Internal helper to add the "read only" configuration to the config array if the matching option was set
      *
-     * @param array $config
-     * @param array $options
+     * @param   array  $config
+     * @param   array  $options
      *
      * @return array
      */
@@ -152,13 +168,14 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($options['readOnly'] === true) {
             $config['readOnly'] = true;
         }
+        
         return $config;
     }
     
     /**
      * Internal helper which is used to add the "edit record" wizard option to the Options::make definition.
      *
-     * @param array $optionDefinition
+     * @param   array  $optionDefinition
      *
      * @return array
      */
@@ -168,20 +185,21 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => true,
         ];
+        
         return $optionDefinition;
     }
     
     /**
      * Internal helper to apply the "edit record" wizard option to the config array
      *
-     * @param array $config  The configuration array to add the wizard to
-     * @param array $options The current fields options to check if the wizard was enabled
+     * @param   array  $config   The configuration array to add the wizard to
+     * @param   array  $options  The current fields options to check if the wizard was enabled
      *
      * @return array
      */
     protected function addAllowEditConfig(array $config, array $options): array
     {
-        if (!$options['allowEdit']) {
+        if (! $options['allowEdit']) {
             return $config;
         }
         
@@ -198,7 +216,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
     /**
      * Internal helper which is used to add the "new record" wizard option to the Options::make definition.
      *
-     * @param array $optionDefinition
+     * @param   array  $optionDefinition
      *
      * @return array
      */
@@ -208,20 +226,21 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => false,
         ];
+        
         return $optionDefinition;
     }
     
     /**
      * Internal helper to apply the "new record" wizard option to the config array
      *
-     * @param array $config  The configuration array to add the wizard to
-     * @param array $options The current fields options to check if the wizard was enabled
+     * @param   array  $config   The configuration array to add the wizard to
+     * @param   array  $options  The current fields options to check if the wizard was enabled
      *
      * @return array
      */
     protected function addAllowNewConfig(array $config, array $options): array
     {
-        if (!$options['allowNew']) {
+        if (! $options['allowNew']) {
             return $config;
         }
         
@@ -233,14 +252,15 @@ abstract class AbstractFormPreset implements FormPresetInterface
                 'pid'      => '###CURRENT_PID###',
             ],
         ];
+        
         return $config;
     }
     
     /**
      * Internal helper to add a placeholder definition to the option array
      *
-     * @param array       $optionDefinition
-     * @param string|null $defaultPlaceholder Optional default placeholder value
+     * @param   array        $optionDefinition
+     * @param   string|null  $defaultPlaceholder  Optional default placeholder value
      *
      * @return array
      */
@@ -250,14 +270,15 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => ['string', 'null'],
             'default' => $defaultPlaceholder,
         ];
+        
         return $optionDefinition;
     }
     
     /**
      * Adds the placeholder config option to the config array of the field
      *
-     * @param array $config
-     * @param array $options
+     * @param   array  $config
+     * @param   array  $options
      *
      * @return array
      */
@@ -267,6 +288,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
             return $config;
         }
         $config['placeholder'] = $options['placeholder'];
+        
         return $config;
     }
     
@@ -274,13 +296,13 @@ abstract class AbstractFormPreset implements FormPresetInterface
      * Internal helper to apply the "basePid" and "limitToBasePid" config option to the Options::make definition.
      * BasePid can be used to limit group or select fields to a certain page
      *
-     * @param array $optionDefinition
+     * @param   array  $optionDefinition
      *
      * @return array
      */
     protected function addBasePidOptions(array $optionDefinition): array
     {
-        $optionDefinition['basePid'] = [
+        $optionDefinition['basePid']        = [
             'type'    => ['int', 'null', 'string'],
             'default' => null,
         ];
@@ -288,14 +310,15 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => false,
         ];
+        
         return $optionDefinition;
     }
     
     /**
      * Internal helper to apply the "basePid" and "limitToBasePid" config options to the config array of the field
      *
-     * @param array $config
-     * @param array $options
+     * @param   array  $config
+     * @param   array  $options
      *
      * @return array
      */
@@ -303,27 +326,27 @@ abstract class AbstractFormPreset implements FormPresetInterface
     {
         if ($options['basePid'] !== null) {
             $pid = $options['basePid'];
-            if (!is_numeric($pid) && $this->TypoContext->getPidAspect()->hasPid($pid)) {
+            if (! is_numeric($pid) && $this->TypoContext->getPidAspect()->hasPid($pid)) {
                 $config['basePid'] = $this->TypoContext->getPidAspect()->getPid($pid);
             }
         }
         if ($options['limitToBasePid'] && isset($config['basePid'])) {
             $config['limitToBasePid'] = true;
         }
+        
         return $config;
     }
     
     /**
      * Internal helper to configure an mm table for the current field.
      *
-     * @param array $config The current "config" array of the field, to add the mm table to
-     * @param array $options
+     * @param   array  $config  The current "config" array of the field, to add the mm table to
+     * @param   array  $options
      *
      * @return array
      */
     protected function addMmTableConfig(array $config, array $options): array
     {
-        
         // Skip if we should not use an mm table
         if ($options['mmTable'] === false) {
             return $config;
@@ -342,15 +365,17 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($this->isInFlexFormSection()) {
             // MM Tables are not supported in sections
             unset($config['MM']);
+            
             return $config;
         }
         
         // Add the mm table
-        $mmTableName = $this->context->SqlGenerator->addMmTableDefinition($this->getTcaTable()->getTableName(), $fieldId, $options['mmTableName']);
+        $mmTableName = $this->context->SqlGenerator->addMmTableDefinition($this->getTcaTable()->getTableName(),
+            $fieldId, $options['mmTableName']);
         $this->setSqlDefinitionForTcaField('int(11) DEFAULT \'0\'');
         
         // Create the mm table configuration
-        $config['MM'] = $mmTableName;
+        $config['MM']            = $mmTableName;
         $config['prepend_tname'] = true;
         
         // Done
@@ -367,6 +392,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'int',
             'default' => is_numeric($options['maxItems']) ? (int)$options['maxItems'] : 999,
         ];
+        
         return $optionDefinition;
     }
     
@@ -378,6 +404,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
         }
         $config['minitems'] = $options['minItems'];
         $config['maxitems'] = $options['maxItems'];
+        
         return $config;
     }
     
@@ -385,14 +412,17 @@ abstract class AbstractFormPreset implements FormPresetInterface
      * Internal helper to add the "maxLength" config option to the Options::make definition.
      * This makes only sense for "input" type fields
      *
-     * @param array $optionsDefinition
-     * @param int   $defaultMax The default value of the maximal input length
-     * @param int   $defaultMin The default value for the minimal input length
+     * @param   array  $optionsDefinition
+     * @param   int    $defaultMax  The default value of the maximal input length
+     * @param   int    $defaultMin  The default value for the minimal input length
      *
      * @return array
      */
-    protected function addMinMaxLengthOptions(array $optionsDefinition, int $defaultMax = 512, int $defaultMin = 0): array
-    {
+    protected function addMinMaxLengthOptions(
+        array $optionsDefinition,
+        int $defaultMax = 512,
+        int $defaultMin = 0
+    ): array {
         $optionsDefinition['maxLength'] = [
             'type'    => 'int',
             'default' => $defaultMax,
@@ -401,30 +431,32 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'int',
             'default' => $defaultMin,
         ];
+        
         return $optionsDefinition;
     }
     
     /**
      * Internal helper to apply the "maxLength" configuration to the config array of a input field
      *
-     * @param array $config
-     * @param array $options
-     * @param bool  $addSqlStatement If set to true the sql statement of this column will automatically be
+     * @param   array  $config
+     * @param   array  $options
+     * @param   bool   $addSqlStatement  If set to true the sql statement of this column will automatically be
      *
      * @return array
      */
     protected function addMaxLengthConfig(array $config, array $options, bool $addSqlStatement = false): array
     {
-        if (!empty($options['maxLength'])) {
+        if (! empty($options['maxLength'])) {
             $config['max'] = $options['maxLength'];
         }
-        if (!empty($options['minLength'])) {
+        if (! empty($options['minLength'])) {
             $config['min'] = $options['minLength'];
         }
         
         if ($addSqlStatement) {
             // Make sure we don't create varChars that are too long...
-            $sqlType = (int)$options['maxLength'] <= 4096 ? 'varchar(' . $options['maxLength'] . ') DEFAULT \'\'' : 'text';
+            $sqlType = (int)$options['maxLength'] <= 4096 ? 'varchar(' . $options['maxLength'] . ') DEFAULT \'\''
+                : 'text';
             $this->setSqlDefinitionForTcaField($sqlType);
         }
         
@@ -444,11 +476,11 @@ abstract class AbstractFormPreset implements FormPresetInterface
      */
     protected function generateTableNameList($tableInput): array
     {
-        if (!is_array($tableInput)) {
+        if (! is_array($tableInput)) {
             if (is_string($tableInput)) {
                 $tableInput = Arrays::makeFromStringList($tableInput);
             }
-            if (!is_array($tableInput)) {
+            if (! is_array($tableInput)) {
                 throw new BackendFormException('The given value for $table is invalid! Please use either an array of table names, or a single table as string!');
             }
         }
@@ -456,11 +488,13 @@ abstract class AbstractFormPreset implements FormPresetInterface
             return $this->context->OptionList->table()->getRealTableName($table);
         }, $tableInput);
         $tables = array_unique($tables);
+        
         return $tables;
     }
     
     /**
      * Returns true if the currently configured field is the child of a flex form
+     *
      * @return bool
      */
     protected function isFlexForm(): bool
@@ -480,6 +514,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
     
     /**
      * Returns the instance of the tca table, even if this field is part of a flex form
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     protected function getTcaTable(): TcaTable
@@ -492,11 +527,13 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($form instanceof TcaTableType) {
             $form = $form->getParent();
         }
+        
         return $form;
     }
     
     /**
      * Returns the tca field, even if the currently configured field is part of a flex form
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField
      */
     protected function getTcaField(): TcaField
@@ -505,6 +542,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
             /** @noinspection PhpIncompatibleReturnTypeInspection */
             return $this->field->getForm()->getContainingField();
         }
+        
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->field;
     }
@@ -513,7 +551,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
      * Internal helper to set the sql definition for a field. But only if said field is a tca field and not part of a
      * flex form
      *
-     * @param string $definition
+     * @param   string  $definition
      */
     protected function setSqlDefinitionForTcaField(string $definition)
     {

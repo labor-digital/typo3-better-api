@@ -27,12 +27,14 @@ use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
  * Class ExtConfigLoadedEvent
  *
  * Dispatched after the ext config classes have been processed
+ *
  * @package LaborDigital\Typo3BetterApi\ExtConfig\Event
  */
 class ExtConfigLoadedEvent
 {
     /**
      * The context instance that is passed between the ext config classes
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     protected $context;
@@ -40,7 +42,7 @@ class ExtConfigLoadedEvent
     /**
      * ExtConfigLoadedEvent constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      */
     public function __construct(ExtConfigContext $context)
     {
@@ -49,6 +51,7 @@ class ExtConfigLoadedEvent
     
     /**
      * Returns the context instance that is passed between the ext config classes
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     public function getContext(): ExtConfigContext

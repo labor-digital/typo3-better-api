@@ -27,6 +27,7 @@ class LinkSetCollector
     
     /**
      * The list of registered set definitions
+     *
      * @var array
      */
     protected $definitions = [];
@@ -39,7 +40,7 @@ class LinkSetCollector
     /**
      * LinkSetCollector constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function __construct(TypoContainerInterface $container)
     {
@@ -51,7 +52,7 @@ class LinkSetCollector
      * Note: If another extension already defined the set with the given key the existing instance will be returned!
      * This can be used to override existing link sets
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return \LaborDigital\Typo3BetterApi\Link\LinkSetDefinition
      */
@@ -60,13 +61,14 @@ class LinkSetCollector
         if (isset($this->definitions[$key])) {
             return $this->definitions[$key];
         }
+        
         return $this->definitions[$key] = $this->container->get(LinkSetDefinition::class);
     }
     
     /**
      * Can be used to check if a set exists or not
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return bool
      */
@@ -79,18 +81,20 @@ class LinkSetCollector
      * Can be used to remove a set completely.
      * Becomes useful if you want to completely change an existing set of an another extension
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector
      */
     public function removeSet(string $key): LinkSetCollector
     {
         unset($this->definitions[$key]);
+        
         return $this;
     }
     
     /**
      * Internal helper to extract all the definitions that we collected
+     *
      * @return array
      */
     public function __getDefinitions(): array

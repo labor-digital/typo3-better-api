@@ -43,6 +43,7 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         if ($path === null) {
             return $values;
         }
+        
         return Arrays::getPath($values, $path, $default);
     }
     
@@ -58,6 +59,7 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         $values = $this->getSessionValues();
         $values = Arrays::setPath($values, $path, $value);
         $beUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
+        
         return $this;
     }
     
@@ -73,11 +75,13 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         $values = $this->getSessionValues();
         $values = Arrays::removePath($values, $path);
         $beUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
+        
         return $this;
     }
     
     /**
      * Helper to retrieve the stored data from the session
+     *
      * @return array
      */
     protected function getSessionValues()
@@ -87,11 +91,13 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
             return [];
         }
         $value = $beUser->getSessionData('LaborTypo3BetterApi');
+        
         return is_array($value) ? $value : [];
     }
     
     /**
      * Helper to get the backend user instance
+     *
      * @return FrontendBackendUserAuthentication|null
      */
     protected function getBeUser()

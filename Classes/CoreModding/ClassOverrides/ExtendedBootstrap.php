@@ -39,8 +39,9 @@ class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
     {
         TypoEventBus::getInstance()->dispatch(new BootstrapFailsafeDefinitionEvent($failsafe));
         $container = parent::init($classLoader, $failsafe);
-        $e = new BootstrapContainerFilterEvent($container, $failsafe);
+        $e         = new BootstrapContainerFilterEvent($container, $failsafe);
         TypoEventBus::getInstance()->dispatch($e);
+        
         return $e->getContainer();
     }
     
@@ -51,6 +52,7 @@ class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
     {
         $cacheManager = parent::createCacheManager($disableCaching);
         TypoEventBus::getInstance()->dispatch(new CacheManagerCreatedEvent($cacheManager, $disableCaching));
+        
         return $cacheManager;
     }
     

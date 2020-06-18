@@ -39,7 +39,7 @@ class BackendListLabelFilterEventAdapter extends AbstractCoreHookEventAdapter
     /**
      * Emit the hook for the content table
      *
-     * @param array $args
+     * @param   array  $args
      */
     public function emit(array &$args)
     {

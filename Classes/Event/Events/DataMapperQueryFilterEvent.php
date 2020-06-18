@@ -36,30 +36,35 @@ class DataMapperQueryFilterEvent
     
     /**
      * The database query that is currently filtered
+     *
      * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     protected $query;
     
     /**
      * The domain object for which the relation is created
+     *
      * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
     protected $parentObject;
     
     /**
      * The name of the property for which the relation is created
+     *
      * @var string
      */
     protected $propertyName;
     
     /**
      * The value of the field that should be filtered
+     *
      * @var mixed
      */
     protected $fieldValue;
     
     /**
      * The class name of the related object that should be resolved
+     *
      * @var string
      */
     protected $propertyType;
@@ -67,23 +72,29 @@ class DataMapperQueryFilterEvent
     /**
      * DataMapperQueryFilterEvent constructor.
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface         $query
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $parentObject
-     * @param string                                                $propertyName
-     * @param                                                       $fieldValue
-     * @param string                                                $propertyType
+     * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface          $query
+     * @param   \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface  $parentObject
+     * @param   string                                                 $propertyName
+     * @param                                                          $fieldValue
+     * @param   string                                                 $propertyType
      */
-    public function __construct(QueryInterface $query, DomainObjectInterface $parentObject, string $propertyName, $fieldValue, string $propertyType)
-    {
-        $this->query = $query;
+    public function __construct(
+        QueryInterface $query,
+        DomainObjectInterface $parentObject,
+        string $propertyName,
+        $fieldValue,
+        string $propertyType
+    ) {
+        $this->query        = $query;
         $this->parentObject = $parentObject;
         $this->propertyName = $propertyName;
-        $this->fieldValue = $fieldValue;
+        $this->fieldValue   = $fieldValue;
         $this->propertyType = $propertyType;
     }
     
     /**
      * Returns the database query that is currently filtered
+     *
      * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     public function getQuery(): QueryInterface
@@ -94,18 +105,20 @@ class DataMapperQueryFilterEvent
     /**
      * Updates the database query that is currently filtered
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface  $query
      *
      * @return DataMapperQueryFilterEvent
      */
     public function setQuery(QueryInterface $query): DataMapperQueryFilterEvent
     {
         $this->query = $query;
+        
         return $this;
     }
     
     /**
      * Returns the domain object for which the relation is created
+     *
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
     public function getParentObject(): DomainObjectInterface
@@ -115,6 +128,7 @@ class DataMapperQueryFilterEvent
     
     /**
      * Returns the name of the property for which the relation is created
+     *
      * @return string
      */
     public function getPropertyName(): string
@@ -124,6 +138,7 @@ class DataMapperQueryFilterEvent
     
     /**
      * Returns the value of the field that should be filtered
+     *
      * @return mixed
      */
     public function getFieldValue()
@@ -133,6 +148,7 @@ class DataMapperQueryFilterEvent
     
     /**
      * Returns the class name of the related object that should be resolved
+     *
      * @return string
      */
     public function getPropertyType(): string

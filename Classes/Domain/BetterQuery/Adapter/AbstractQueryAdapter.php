@@ -44,7 +44,7 @@ abstract class AbstractQueryAdapter
     public function __construct(string $tableName, QuerySettingsInterface $settings)
     {
         $this->tableName = $tableName;
-        $this->settings = $settings;
+        $this->settings  = $settings;
         
         // Reset the settings
         $this->settings->setRespectStoragePage(false);
@@ -61,6 +61,7 @@ abstract class AbstractQueryAdapter
     
     /**
      * Returns the name of the table
+     *
      * @return string
      */
     public function getTableName(): string
@@ -70,6 +71,7 @@ abstract class AbstractQueryAdapter
     
     /**
      * Returns the Query settings object
+     *
      * @return \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface
      */
     public function getSettings(): QuerySettingsInterface
@@ -80,12 +82,13 @@ abstract class AbstractQueryAdapter
     /**
      * Sets the max items in the result
      *
-     * @param int $limit
+     * @param   int  $limit
      */
     abstract public function setLimit(int $limit): void;
     
     /**
      * Returns the max items in the result
+     *
      * @return int
      */
     abstract public function getLimit(): int;
@@ -93,12 +96,13 @@ abstract class AbstractQueryAdapter
     /**
      * Sets the offset to the first result
      *
-     * @param int $offset
+     * @param   int  $offset
      */
     abstract public function setOffset(int $offset): void;
     
     /**
      * Returns the offset to the first result
+     *
      * @return int
      */
     abstract public function getOffset(): int;
@@ -106,7 +110,7 @@ abstract class AbstractQueryAdapter
     /**
      * Sets the order fields as $field => $direction
      *
-     * @param array $orderings
+     * @param   array  $orderings
      *
      * @return mixed
      */
@@ -129,7 +133,7 @@ abstract class AbstractQueryAdapter
     /**
      * Returns a prepared or conditional for the current implementation
      *
-     * @param array $list
+     * @param   array  $list
      *
      * @return mixed
      */
@@ -138,7 +142,7 @@ abstract class AbstractQueryAdapter
     /**
      * Returns a prepared and conditional for the current implementation
      *
-     * @param array $list
+     * @param   array  $list
      *
      * @return mixed
      */
@@ -147,10 +151,10 @@ abstract class AbstractQueryAdapter
     /**
      * Returns a prepared condition for the current implementation
      *
-     * @param string $operator Something like ">=", "<" or "=" to define which condition should be build
-     * @param string $key      The field name in the database the query should be build with
-     * @param mixed  $value    The value that should be used to build the condition
-     * @param bool   $negated  True if the value should be negated, false if not
+     * @param   string  $operator  Something like ">=", "<" or "=" to define which condition should be build
+     * @param   string  $key       The field name in the database the query should be build with
+     * @param   mixed   $value     The value that should be used to build the condition
+     * @param   bool    $negated   True if the value should be negated, false if not
      *
      * @return mixed
      */
@@ -170,15 +174,15 @@ abstract class AbstractQueryAdapter
      * or at least a comma separated string or a single number. It will then make sure that the resulting
      * value is an array or throw an exceptions
      *
-     * @param array|string|int $value The value to validate
-     * @param string           $field The name of the validated field for the speaking exception
+     * @param   array|string|int  $value  The value to validate
+     * @param   string            $field  The name of the validated field for the speaking exception
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceException
      */
     public function ensureArrayValue($value, string $field): array
     {
-        if ((!is_array($value))) {
+        if ((! is_array($value))) {
             if ((is_string($value) || is_numeric($value))) {
                 $value = Arrays::makeFromStringList($value);
             } elseif ($value instanceof ObjectStorage) {
@@ -189,6 +193,7 @@ abstract class AbstractQueryAdapter
                 throw new DbServiceException("Invalid value for \"$field\" given! Only strings, numbers or arrays are allowed!");
             }
         }
+        
         return $value;
     }
 }

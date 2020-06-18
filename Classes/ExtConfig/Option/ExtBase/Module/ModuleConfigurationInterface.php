@@ -27,8 +27,8 @@ interface ModuleConfigurationInterface
     /**
      * Is used to configure a single ext base backend module.
      *
-     * @param ModuleConfigurator $configurator
-     * @param ExtConfigContext   $context
+     * @param   ModuleConfigurator  $configurator
+     * @param   ExtConfigContext    $context
      *
      * @return mixed
      */

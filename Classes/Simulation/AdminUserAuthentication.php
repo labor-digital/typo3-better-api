@@ -45,7 +45,7 @@ class AdminUserAuthentication extends BackendUserAuthentication
     {
         $this->dontSetCookie = true;
         parent::__construct();
-        $this->dbService = $db;
+        $this->dbService           = $db;
         $this->passwordHashFactory = $passwordHashFactory;
     }
     
@@ -85,7 +85,7 @@ class AdminUserAuthentication extends BackendUserAuthentication
     protected function loginUser()
     {
         // Skip if we already are logged in
-        if (!empty($this->user['uid'])) {
+        if (! empty($this->user['uid'])) {
             return;
         }
         
@@ -118,17 +118,17 @@ class AdminUserAuthentication extends BackendUserAuthentication
     {
         // Make sure that there are no other remnants of this user...
         $this->dbService->getQuery('be_users', true)
-            ->withWhere(['username' => static::ADMIN_USERNAME])->delete();
+                        ->withWhere(['username' => static::ADMIN_USERNAME])->delete();
         
         // Create a new user
         $this->dbService->getQuery('be_users', true)
-            ->insert([
-                'username' => static::ADMIN_USERNAME,
-                'password' => $this->generateHashedPassword(),
-                'admin'    => 1,
-                'tstamp'   => $GLOBALS['EXEC_TIME'],
-                'crdate'   => $GLOBALS['EXEC_TIME'],
-            ]);
+                        ->insert([
+                            'username' => static::ADMIN_USERNAME,
+                            'password' => $this->generateHashedPassword(),
+                            'admin'    => 1,
+                            'tstamp'   => $GLOBALS['EXEC_TIME'],
+                            'crdate'   => $GLOBALS['EXEC_TIME'],
+                        ]);
     }
     
     /**
@@ -139,6 +139,7 @@ class AdminUserAuthentication extends BackendUserAuthentication
     protected function generateHashedPassword()
     {
         $hashing = $this->passwordHashFactory->getDefaultHashInstance('BE');
+        
         return $hashing->getHashedPassword(random_bytes(20));
     }
 }

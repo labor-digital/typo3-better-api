@@ -51,12 +51,14 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * The baseDirectory as a path relative to the better api root directory.
      * This is required for typo script and flex form registration.
+     *
      * @var string|null
      */
     protected $relativeBaseDirectory;
     
     /**
      * The base directory where the file system will work in
+     *
      * @var string
      */
     protected $baseDirectory;
@@ -64,7 +66,7 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * TempFs constructor.
      *
-     * @param string $path An additional root path inside the typo3 temp directory
+     * @param   string  $path  An additional root path inside the typo3 temp directory
      *
      * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
      */
@@ -77,11 +79,11 @@ class TempFs implements LazyEventSubscriberInterface
         if (is_file($this->baseDirectory)) {
             throw new TempFsException("The given base directory \"$this->baseDirectory\" resolves to a file!");
         }
-        if (!is_writable($this->baseDirectory)) {
+        if (! is_writable($this->baseDirectory)) {
             Fs::mkdir($this->baseDirectory);
             Permissions::setFilePermissions($this->baseDirectory);
         }
-        if (!is_writable($this->baseDirectory) && !is_writable(dirname($this->baseDirectory))) {
+        if (! is_writable($this->baseDirectory) && ! is_writable(dirname($this->baseDirectory))) {
             throw new TempFsException("The temporary directory \"$this->baseDirectory\" is not writable by the web-server!");
         }
     }
@@ -97,20 +99,21 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * Returns true if a file exists, false if not
      *
-     * @param string $filePath The name / relative path of the file to check
+     * @param   string  $filePath  The name / relative path of the file to check
      *
      * @return bool
      */
     public function hasFile(string $filePath): bool
     {
         $filePathReal = $this->resolvePath($filePath);
+        
         return $this->hasFileInternal($filePathReal);
     }
     
     /**
      * Returns the file object for the required file path
      *
-     * @param string $filePath The name / relative path of the file to retrieve
+     * @param   string  $filePath  The name / relative path of the file to retrieve
      *
      * @return \SplFileInfo
      * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
@@ -118,9 +121,10 @@ class TempFs implements LazyEventSubscriberInterface
     public function getFile(string $filePath): SplFileInfo
     {
         $filePathReal = $this->resolvePath($filePath);
-        if (!$this->hasFileInternal($filePathReal)) {
+        if (! $this->hasFileInternal($filePathReal)) {
             throw new TempFsException("Could not get the file: \"$filePath\" because it does not exist!");
         }
+        
         return new SplFileInfo($filePathReal);
     }
     
@@ -128,17 +132,16 @@ class TempFs implements LazyEventSubscriberInterface
      * Returns the content of a required file.
      * It will automatically unpack serialized values back into their PHP values
      *
-     * @param string $filePath The name / relative path of the file to read
+     * @param   string  $filePath  The name / relative path of the file to read
      *
      * @return mixed
      * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
      */
     public function getFileContent(string $filePath)
     {
-        
         // Try to load the content
         $filePathReal = $this->resolvePath($filePath);
-        if (!$this->hasFileInternal($filePathReal)) {
+        if (! $this->hasFileInternal($filePathReal)) {
             throw new TempFsException("Could not get the contents of file: \"$filePath\" because it does not exist!");
         }
         $content = Fs::readFile($filePathReal);
@@ -156,16 +159,16 @@ class TempFs implements LazyEventSubscriberInterface
      * Is used to dump some content into a file.
      * Automatically serializes non-string/numeric content before writing it as a file
      *
-     * @param string       $filePath The name / relative path of the file to dump the content to
-     * @param string|mixed $content  Either a string (will be dumped as string) or anything else (will be dumped as
-     *                               serialized value)
+     * @param   string        $filePath  The name / relative path of the file to dump the content to
+     * @param   string|mixed  $content   Either a string (will be dumped as string) or anything else (will be dumped as
+     *                                   serialized value)
      */
     public function setFileContent(string $filePath, $content): void
     {
         $filePathReal = $this->resolvePath($filePath);
         
         // Prepare the content
-        if (!is_string($content) && !is_numeric($content)) {
+        if (! is_string($content) && ! is_numeric($content)) {
             $content = static::SERIALIZED_MARKER . serialize($content);
         }
         
@@ -178,9 +181,9 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * Includes a file as a PHP resource
      *
-     * @param string $filePath The name of the file to include
-     * @param bool   $once     by default we include the file with include_once, if you set this to FALSE the plain
-     *                         include is used instead.
+     * @param   string  $filePath  The name of the file to include
+     * @param   bool    $once      by default we include the file with include_once, if you set this to FALSE the plain
+     *                             include is used instead.
      *
      * @return mixed
      * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
@@ -188,9 +191,10 @@ class TempFs implements LazyEventSubscriberInterface
     public function includeFile(string $filePath, bool $once = true)
     {
         $filePathReal = $this->resolvePath($filePath);
-        if (!$this->hasFileInternal($filePathReal)) {
+        if (! $this->hasFileInternal($filePathReal)) {
             throw new TempFsException("Could not include file: \"$filePath\" because it does not exist!");
         }
+        
         return tempFsIncludeHelper($filePathReal, $once);
     }
     
@@ -198,23 +202,24 @@ class TempFs implements LazyEventSubscriberInterface
      * Returns the configured base directory, either as absolute, or as relative path (relative to the typo3_better_api
      * root directory)
      *
-     * @param bool $relative Set this to true if you want to retrieve the relative path based on the better api extension.
-     *                       Useful for compiling typoscript or flexform files
+     * @param   bool  $relative  Set this to true if you want to retrieve the relative path based on the better api
+     *                           extension. Useful for compiling typoscript or flexform files
      *
      * @return string
      */
     public function getBaseDirectoryPath(bool $relative = false): string
     {
-        if (!$relative) {
+        if (! $relative) {
             return $this->baseDirectory;
         }
-        if (!empty($this->relativeBaseDirectory)) {
+        if (! empty($this->relativeBaseDirectory)) {
             return $this->relativeBaseDirectory;
         }
+        
         return $this->relativeBaseDirectory = Path::makeRelative(
-            $this->baseDirectory,
-            Path::unifyPath(realpath(ExtensionManagementUtility::extPath('typo3_better_api')))
-        ) . DIRECTORY_SEPARATOR;
+                $this->baseDirectory,
+                Path::unifyPath(realpath(ExtensionManagementUtility::extPath('typo3_better_api')))
+            ) . DIRECTORY_SEPARATOR;
     }
     
     /**
@@ -228,7 +233,7 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * Flushes the directory if the "all" Cache is cleared
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\CacheClearedEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\CacheClearedEvent  $event
      */
     public function __onCacheClear(CacheClearedEvent $event)
     {
@@ -241,25 +246,26 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * Internal helper to resolve relative path's inside the base directory
      *
-     * @param string $path
+     * @param   string  $path
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFsException
      */
     protected function resolvePath(string $path): string
     {
-        $path = Path::unifyPath($path);
+        $path    = Path::unifyPath($path);
         $pathAbs = Path::makeAbsolute(ltrim($path, DIRECTORY_SEPARATOR), $this->baseDirectory);
         if (stripos($pathAbs, $this->baseDirectory) !== 0 && stripos($pathAbs . '/', $this->baseDirectory) !== 0) {
             throw new TempFsException("The requested path \"$path\" does resolve outside the base directory at \"$this->baseDirectory\". It would resolve to: \"$pathAbs\"!");
         }
+        
         return $pathAbs;
     }
     
     /**
      * Internal helper to check if a file exists
      *
-     * @param string $filePathReal
+     * @param   string  $filePathReal
      *
      * @return bool
      */
@@ -271,7 +277,7 @@ class TempFs implements LazyEventSubscriberInterface
     /**
      * Factory method to create a new instance of myself
      *
-     * @param string $path
+     * @param   string  $path
      *
      * @return \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs
      */
@@ -284,8 +290,8 @@ class TempFs implements LazyEventSubscriberInterface
 /**
  * External helper to make sure the file does not inherit the $this context
  *
- * @param string $file
- * @param bool   $once
+ * @param   string  $file
+ * @param   bool    $once
  *
  * @return mixed
  */
@@ -294,5 +300,6 @@ function tempFsIncludeHelper(string $file, bool $once)
     if ($once) {
         return include_once $file;
     }
+    
     return include $file;
 }

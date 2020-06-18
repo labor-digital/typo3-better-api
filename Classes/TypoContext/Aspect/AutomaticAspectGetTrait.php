@@ -30,6 +30,7 @@ trait AutomaticAspectGetTrait
     /**
      * The internal storage of possible properties to retrieve from this aspect.
      * This storage is automatically generated based on the method names
+     *
      * @var array|null
      */
     protected $properties;
@@ -37,7 +38,7 @@ trait AutomaticAspectGetTrait
     /**
      * Can be used inside the aspect's "get" method to automatically find the properties based on the public methods.
      *
-     * @param string $name
+     * @param   string  $name
      *
      * @return mixed
      * @throws \TYPO3\CMS\Core\Context\Exception\AspectPropertyNotFoundException
@@ -53,21 +54,22 @@ trait AutomaticAspectGetTrait
     
     /**
      * Internal helper to find the the list of possible properties by the public method names of the aspect class
+     *
      * @return array
      */
     protected function findPropertyList(): array
     {
-        if (!is_null($this->properties)) {
+        if (! is_null($this->properties)) {
             return $this->properties;
         }
         $properties = [];
-        $ref = new ReflectionObject($this);
+        $ref        = new ReflectionObject($this);
         foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if ($methodName === 'get') {
                 continue;
             }
-            if (!preg_match('~^(is|has|get)~si', $methodName)) {
+            if (! preg_match('~^(is|has|get)~si', $methodName)) {
                 continue;
             }
             foreach ($method->getParameters() as $param) {
@@ -82,6 +84,7 @@ trait AutomaticAspectGetTrait
             $properties[$propertyName] = $methodName;
         }
         $this->properties = $properties;
+        
         return $properties;
     }
 }

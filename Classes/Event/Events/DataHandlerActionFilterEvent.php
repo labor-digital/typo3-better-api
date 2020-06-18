@@ -41,36 +41,42 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     
     /**
      * The data handler command that is currently processed
+     *
      * @var string
      */
     protected $command;
     
     /**
      * The name of the table that is currently processed
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The id of the record that is currently processed
+     *
      * @var int|string
      */
     protected $id;
     
     /**
      * This is... something (?)
+     *
      * @var mixed
      */
     protected $value;
     
     /**
      * This is... something when copying records (?)
+     *
      * @var mixed
      */
     protected $pasteSpecialData;
     
     /**
      * The instance of the data handler that is currently processing the request
+     *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
@@ -86,25 +92,32 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     /**
      * DataHandlerActionFilterEvent constructor.
      *
-     * @param string                                   $command
-     * @param string                                   $tableName
-     * @param                                          $id
-     * @param                                          $value
-     * @param                                          $pasteSpecialData
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+     * @param   string                                    $command
+     * @param   string                                    $tableName
+     * @param                                             $id
+     * @param                                             $value
+     * @param                                             $pasteSpecialData
+     * @param   \TYPO3\CMS\Core\DataHandling\DataHandler  $dataHandler
      */
-    public function __construct(string $command, string $tableName, $id, $value, $pasteSpecialData, DataHandler $dataHandler)
-    {
-        $this->command = $command;
-        $this->tableName = $tableName;
-        $this->id = $id;
-        $this->value = $value;
+    public function __construct(
+        string $command,
+        string $tableName,
+        $id,
+        $value,
+        $pasteSpecialData,
+        DataHandler $dataHandler
+    ) {
+        $this->command          = $command;
+        $this->tableName        = $tableName;
+        $this->id               = $id;
+        $this->value            = $value;
         $this->pasteSpecialData = $pasteSpecialData;
-        $this->dataHandler = $dataHandler;
+        $this->dataHandler      = $dataHandler;
     }
     
     /**
      * Returns the instance of the data handler that is currently processing the request
+     *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     public function getDataHandler(): DataHandler
@@ -114,6 +127,7 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     
     /**
      * Returns the data handler command that is currently processed
+     *
      * @return string
      */
     public function getCommand(): string
@@ -124,18 +138,20 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     /**
      * Can be used to update the data handler command that is currently processed
      *
-     * @param string $command
+     * @param   string  $command
      *
      * @return DataHandlerActionFilterEvent
      */
     public function setCommand(string $command): DataHandlerActionFilterEvent
     {
         $this->command = $command;
+        
         return $this;
     }
     
     /**
      * Returns the name of the table that is currently processed
+     *
      * @return string
      */
     public function getTableName(): string
@@ -146,18 +162,20 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     /**
      * Updates the name of the table that is currently processed
      *
-     * @param string $tableName
+     * @param   string  $tableName
      *
      * @return DataHandlerActionFilterEvent
      */
     public function setTableName(string $tableName): DataHandlerActionFilterEvent
     {
         $this->tableName = $tableName;
+        
         return $this;
     }
     
     /**
      * Returns the id of the record that is currently processed
+     *
      * @return int|string
      */
     public function getId()
@@ -168,13 +186,14 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     /**
      * Updates the id of the record that is currently processed
      *
-     * @param int|string $id
+     * @param   int|string  $id
      *
      * @return DataHandlerActionFilterEvent
      */
     public function setId($id)
     {
         $this->id = $id;
+        
         return $this;
     }
     
@@ -188,7 +207,7 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     }
     
     /**
-     * (?) @param mixed $value
+     * (?) @param   mixed  $value
      *
      * @return DataHandlerActionFilterEvent
      * @todo investigate
@@ -196,6 +215,7 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     public function setValue($value)
     {
         $this->value = $value;
+        
         return $this;
     }
     
@@ -209,7 +229,7 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     }
     
     /**
-     * (?) @param mixed $pasteSpecialData
+     * (?) @param   mixed  $pasteSpecialData
      *
      * @return DataHandlerActionFilterEvent
      * @todo investigate
@@ -217,6 +237,7 @@ class DataHandlerActionFilterEvent implements CoreHookEventInterface
     public function setPasteSpecialData($pasteSpecialData)
     {
         $this->pasteSpecialData = $pasteSpecialData;
+        
         return $this;
     }
 }

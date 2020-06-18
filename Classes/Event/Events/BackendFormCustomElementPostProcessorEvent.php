@@ -36,12 +36,14 @@ class BackendFormCustomElementPostProcessorEvent
     
     /**
      * The context that was passed to the custom element controller
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
      */
     protected $context;
     
     /**
      * The prepared result array for the form engine
+     *
      * @var array
      */
     protected $result;
@@ -49,17 +51,18 @@ class BackendFormCustomElementPostProcessorEvent
     /**
      * BackendFormCustomElementPostProcessorEvent constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext $context
-     * @param array                                                                         $result
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext  $context
+     * @param   array                                                                          $result
      */
     public function __construct(CustomElementContext $context, array $result)
     {
         $this->context = $context;
-        $this->result = $result;
+        $this->result  = $result;
     }
     
     /**
      * Returns the context that was passed to the custom element controller
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
      */
     public function getContext(): CustomElementContext
@@ -69,6 +72,7 @@ class BackendFormCustomElementPostProcessorEvent
     
     /**
      * Returns the prepared result array for the form engine
+     *
      * @return array
      */
     public function getResult(): array
@@ -79,13 +83,14 @@ class BackendFormCustomElementPostProcessorEvent
     /**
      * Sets the prepared result array for the form engine
      *
-     * @param array $result
+     * @param   array  $result
      *
      * @return BackendFormCustomElementPostProcessorEvent
      */
     public function setResult(array $result): BackendFormCustomElementPostProcessorEvent
     {
         $this->result = $result;
+        
         return $this;
     }
 }

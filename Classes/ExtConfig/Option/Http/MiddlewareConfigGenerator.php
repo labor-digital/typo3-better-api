@@ -28,8 +28,8 @@ class MiddlewareConfigGenerator
     /**
      * Generates the combined middleware list of all middlewares, registered using the ext config option
      *
-     * @param array $middlewares
-     * @param array $disabledMiddlewares
+     * @param   array  $middlewares
+     * @param   array  $disabledMiddlewares
      *
      * @return array
      */
@@ -43,19 +43,19 @@ class MiddlewareConfigGenerator
             
             // Get identifier
             $identifier = Arrays::getPath($config, ['options', 'identifier']);
-            if (empty($identifier) || !is_string($identifier)) {
+            if (empty($identifier) || ! is_string($identifier)) {
                 $identifier = $this->makeMiddlewareIdentifier($config['class']);
             }
             
             // Prepare ordering
             $before = $after = [];
-            if (!empty($config['options']['before'])) {
+            if (! empty($config['options']['before'])) {
                 $before = $config['options']['before'];
             }
             if (is_string($before)) {
                 $before = [$before];
             }
-            if (!empty($config['options']['after'])) {
+            if (! empty($config['options']['after'])) {
                 $after = $config['options']['after'];
             }
             if (is_string($after)) {
@@ -65,11 +65,11 @@ class MiddlewareConfigGenerator
             
             // Build the config
             $target = $config['target'] === 'frontend' ? 'frontend' : 'backend';
-            $c = ['target' => $config['class']];
-            if (!empty($before)) {
+            $c      = ['target' => $config['class']];
+            if (! empty($before)) {
                 $c['before'] = $before;
             }
-            if (!empty($after)) {
+            if (! empty($after)) {
                 $c['after'] = $after;
             }
             $middlewareConfig[$target][$identifier] = $c;
@@ -86,7 +86,8 @@ class MiddlewareConfigGenerator
             }
             
             // Build the config
-            $target = $config['target'] === 'frontend' ? 'frontend' : 'backend';
+            $target                                             = $config['target'] === 'frontend' ? 'frontend'
+                : 'backend';
             $middlewareConfig[$target][$identifier]['disabled'] = true;
         }
         
@@ -97,7 +98,7 @@ class MiddlewareConfigGenerator
     /**
      * Builds an automatic middleware identifier out of the given class name and the extension key
      *
-     * @param string $className The name of the class to generate the middleware identifier for
+     * @param   string  $className  The name of the class to generate the middleware identifier for
      *
      * @return string
      */

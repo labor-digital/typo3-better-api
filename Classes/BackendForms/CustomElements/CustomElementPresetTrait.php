@@ -43,12 +43,12 @@ trait CustomElementPresetTrait
      * and passes them into this helper afterwards. It will take care of all the heavy lifting and class
      * validation for you.
      *
-     * @param AbstractFormField $field              The reference of the field you currently configure.
-     *                                              Typically $this->field
-     * @param ExtConfigContext  $context            The ext config context. Typically $this->context
-     * @param string            $customElementClass The class name of the custom element you want to register.
-     *                                              The class has to implement the CustomElementInterface interface
-     * @param array             $options            Any options you want to specify for your custom element
+     * @param   AbstractFormField  $field               The reference of the field you currently configure.
+     *                                                  Typically $this->field
+     * @param   ExtConfigContext   $context             The ext config context. Typically $this->context
+     * @param   string             $customElementClass  The class name of the custom element you want to register.
+     *                                                  The class has to implement the CustomElementInterface interface
+     * @param   array              $options             Any options you want to specify for your custom element
      *
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
      */
@@ -57,15 +57,16 @@ trait CustomElementPresetTrait
         ExtConfigContext $context,
         string $customElementClass,
         array $options = []
-    ): void
-    {
-        
+    ): void {
         // Validate if the class exists
-        if (!class_exists($customElementClass)) {
-            throw new BackendFormException('Could not configure your field: ' . $field->getId() . " to use the custom element with class: $customElementClass. Because the class does not exist!");
+        if (! class_exists($customElementClass)) {
+            throw new BackendFormException('Could not configure your field: ' . $field->getId()
+                                           . " to use the custom element with class: $customElementClass. Because the class does not exist!");
         }
-        if (!in_array(CustomElementInterface::class, class_implements($customElementClass))) {
-            throw new BackendFormException('Could not configure your field: ' . $field->getId() . " to use the custom element with class: $customElementClass. Because the class does not implement the required " . CustomElementInterface::class . ' interface!');
+        if (! in_array(CustomElementInterface::class, class_implements($customElementClass))) {
+            throw new BackendFormException('Could not configure your field: ' . $field->getId()
+                                           . " to use the custom element with class: $customElementClass. Because the class does not implement the required "
+                                           . CustomElementInterface::class . ' interface!');
         }
         
         // Apply the configuration of the field
@@ -84,7 +85,7 @@ trait CustomElementPresetTrait
         
         
         // Register backend handlers if required
-        $ref = new ReflectionClass($customElementClass);
+        $ref     = new ReflectionClass($customElementClass);
         $methods = [
             'backendSaveFilter'    => 'registerBackendSaveFilter',
             'backendFormFilter'    => 'registerBackendFormFilter',

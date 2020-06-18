@@ -58,7 +58,7 @@ class TypoContext implements SingletonInterface
     /**
      * TypoContext constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function __construct(TypoContainerInterface $container)
     {
@@ -67,6 +67,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the TYPO3 root context
+     *
      * @return \TYPO3\CMS\Core\Context\Context
      */
     public function getRootContext(): Context
@@ -74,6 +75,7 @@ class TypoContext implements SingletonInterface
         if (isset($this->context)) {
             return $this->context;
         }
+        
         return $this->context = $this->container->get(Context::class);
     }
     
@@ -85,6 +87,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the workspace aspect which holds information about the currently accessed workspace.
+     *
      * @return \TYPO3\CMS\Core\Context\WorkspaceAspect|mixed
      */
     public function Workspace(): WorkspaceAspect
@@ -96,6 +99,7 @@ class TypoContext implements SingletonInterface
      * Returns the language aspect of this request.
      * Note: This is not the core language aspect, but a better language aspect,
      * which holds additional methods to retrieve language information.
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\BetterLanguageAspect
      */
     public function Language(): BetterLanguageAspect
@@ -105,6 +109,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns information about the visibility of records
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\BetterVisibilityAspect
      */
     public function Visibility(): BetterVisibilityAspect
@@ -114,6 +119,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the frontend user context aspect
+     *
      * @return FeUserAspect
      */
     public function FeUser(): FeUserAspect
@@ -123,6 +129,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the backend user context aspect
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\BeUserAspect
      */
     public function BeUser(): BeUserAspect
@@ -139,6 +146,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the workspace aspect which holds information about the currently accessed workspace.
+     *
      * @return \TYPO3\CMS\Core\Context\WorkspaceAspect|mixed
      * @deprecated use Workspace() instead!
      */
@@ -149,6 +157,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns information about the visibility of records
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\BetterVisibilityAspect
      * @deprecated use Visibility() instead!
      */
@@ -161,6 +170,7 @@ class TypoContext implements SingletonInterface
      * Returns the language aspect of this request.
      * Note: This is not the core language aspect, but a better language aspect,
      * which holds additional methods to retrieve language information.
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\BetterLanguageAspect
      * @deprecated Use Language() instead!
      */
@@ -171,6 +181,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the frontend user context aspect
+     *
      * @return FeUserAspect
      * @deprecated Use FeUser() instead!
      */
@@ -181,6 +192,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the backend user context aspect
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\BeUserAspect
      * @deprecated Use BeUser() instead!
      */
@@ -197,6 +209,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns information about the environment
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\EnvironmentAspect
      * @deprecated will be removed in v10 -> Use Env() instead
      */
@@ -207,6 +220,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Contains a repository of path information and path resolving functions
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\PathAspect
      * @deprecated will be removed in v10 -> Use Path() instead
      */
@@ -217,6 +231,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Contains information about the current typo3 site.
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\SiteAspect
      * @deprecated will be removed in v10 -> Use Site() instead
      */
@@ -227,6 +242,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the aspect which holds information about the http request.
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\RequestAspect
      * @deprecated will be removed in v10 -> Use Request() instead
      */
@@ -237,6 +253,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Returns the aspect which contains information about registered pids and the local page id
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\PidAspect
      * @deprecated will be removed in v10 -> Use Pid() instead
      */
@@ -254,6 +271,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Repository of path information and path resolving functions
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\PathFacet
      */
     public function Path(): PathFacet
@@ -263,6 +281,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Repository of information about the environment
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\EnvFacet
      */
     public function Env(): EnvFacet
@@ -272,6 +291,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Repository of information about the current typo3 site
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
      */
     public function Site(): SiteFacet
@@ -281,6 +301,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Repository of information about the current HTTP request
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\RequestFacet
      */
     public function Request(): RequestFacet
@@ -290,6 +311,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Repository of information about registered PIDs and the local page id
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\PidFacet
      */
     public function Pid(): PidFacet
@@ -299,6 +321,7 @@ class TypoContext implements SingletonInterface
     
     /**
      * Repository for the different, global configuration options in TYPO3
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\ConfigFacet
      */
     public function Config(): ConfigFacet
@@ -318,8 +341,8 @@ class TypoContext implements SingletonInterface
      * Internal helper to request an aspect from the context, or if it is a custom aspect
      * create a new instance which is then provided to the context's storage.
      *
-     * @param string      $aspectKey   The key of the aspect to store / load from the context
-     * @param string|null $aspectClass An optional class to be instantiated.
+     * @param   string       $aspectKey    The key of the aspect to store / load from the context
+     * @param   string|null  $aspectClass  An optional class to be instantiated.
      *
      * @return \TYPO3\CMS\Core\Context\AspectInterface|mixed
      */
@@ -334,6 +357,7 @@ class TypoContext implements SingletonInterface
         }
         $aspect = $this->container->get($aspectClass);
         $context->setAspect($aspectKey, $aspect);
+        
         return $aspect;
     }
     
@@ -341,8 +365,8 @@ class TypoContext implements SingletonInterface
      * Facets are basically the same as an aspect but without the stupid get() method.
      * To store a facet on our root context we have to warp them in a pseudo-aspect called a FacetAspect
      *
-     * @param string $facetKey   A unique name for this facet
-     * @param string $facetClass The name of the facet class to instantiate if it does not exist yet
+     * @param   string  $facetKey    A unique name for this facet
+     * @param   string  $facetClass  The name of the facet class to instantiate if it does not exist yet
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface|mixed
      * @see \LaborDigital\Typo3BetterApi\TypoContext\TypoContext::getOrMakeAspect()
@@ -350,14 +374,15 @@ class TypoContext implements SingletonInterface
      */
     protected function getOrMakeFacet(string $facetKey, string $facetClass): FacetInterface
     {
-        $context = $this->getRootContext();
+        $context   = $this->getRootContext();
         $aspectKey = "facet.$facetKey";
         if ($context->hasAspect($aspectKey)) {
             return $context->getAspect($aspectKey)->get('');
         }
-        $facet = $this->container->get($facetClass);
+        $facet  = $this->container->get($facetClass);
         $aspect = $this->container->get(FacetAspect::class, ['args' => [$facet]]);
         $context->setAspect($aspectKey, $aspect);
+        
         return $facet;
     }
 }

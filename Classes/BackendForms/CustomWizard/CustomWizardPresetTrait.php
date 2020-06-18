@@ -35,19 +35,19 @@ trait CustomWizardPresetTrait
      * and passes them into this helper afterwards. It will take care of all the heavy lifting and class
      * validation for you.
      *
-     * @param AbstractFormField $field       The reference of the field you currently configure.
-     *                                       Typically $this->field
-     * @param ExtConfigContext  $context     The ext config context. Typically $this->context
-     * @param string            $wizardClass The class name of the custom wizard you want to register.
-     *                                       The class has to implement the CustomWizardInterface interface
-     * @param array             $options     Any options you want to specify for your custom wizard
-     *                                       Generic options on all wizards are:
-     *                                       - before array|string: A list of other wizards that should be displayed
-     *                                       after this wizard
-     *                                       - after array|string: A list of other wizards that should be displayed
-     *                                       before this wizard
-     *                                       - wizardId string: Can be used to manually set the wizard id.
-     *                                       If left empty the id will be automatically created.
+     * @param   AbstractFormField  $field        The reference of the field you currently configure.
+     *                                           Typically $this->field
+     * @param   ExtConfigContext   $context      The ext config context. Typically $this->context
+     * @param   string             $wizardClass  The class name of the custom wizard you want to register.
+     *                                           The class has to implement the CustomWizardInterface interface
+     * @param   array              $options      Any options you want to specify for your custom wizard
+     *                                           Generic options on all wizards are:
+     *                                           - before array|string: A list of other wizards that should be displayed
+     *                                           after this wizard
+     *                                           - after array|string: A list of other wizards that should be displayed
+     *                                           before this wizard
+     *                                           - wizardId string: Can be used to manually set the wizard id.
+     *                                           If left empty the id will be automatically created.
      *
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
      */
@@ -56,15 +56,16 @@ trait CustomWizardPresetTrait
         ExtConfigContext $context,
         string $wizardClass,
         array $options = []
-    ): void
-    {
-        
+    ): void {
         // Validate if the class exists
-        if (!class_exists($wizardClass)) {
-            throw new BackendFormException('Could not configure your field: ' . $field->getId() . " to use the custom wizard with class: $wizardClass. Because the class does not exist!");
+        if (! class_exists($wizardClass)) {
+            throw new BackendFormException('Could not configure your field: ' . $field->getId()
+                                           . " to use the custom wizard with class: $wizardClass. Because the class does not exist!");
         }
-        if (!in_array(CustomWizardInterface::class, class_implements($wizardClass))) {
-            throw new BackendFormException('Could not configure your field: ' . $field->getId() . " to use the custom wizard with class: $wizardClass. Because the class does not implement the required " . CustomWizardInterface::class . ' interface!');
+        if (! in_array(CustomWizardInterface::class, class_implements($wizardClass))) {
+            throw new BackendFormException('Could not configure your field: ' . $field->getId()
+                                           . " to use the custom wizard with class: $wizardClass. Because the class does not implement the required "
+                                           . CustomWizardInterface::class . ' interface!');
         }
         
         // Prepare options
@@ -85,13 +86,13 @@ trait CustomWizardPresetTrait
         
         // Prepare ordering
         $before = $after = [];
-        if (!empty($options['before'])) {
+        if (! empty($options['before'])) {
             $before = $options['before'];
         }
         if (is_string($before)) {
             $before = [$before];
         }
-        if (!empty($options['after'])) {
+        if (! empty($options['after'])) {
             $after = $options['after'];
         }
         if (is_string($after)) {

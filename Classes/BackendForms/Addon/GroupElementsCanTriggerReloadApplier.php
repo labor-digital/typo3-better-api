@@ -40,20 +40,21 @@ class GroupElementsCanTriggerReloadApplier implements LazyEventSubscriberInterfa
     /**
      * This applier allows group elements to emit the page reload when they have changed.
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent  $event
      */
     public function __onPostProcess(BackendFormNodePostProcessorEvent $event)
     {
-        if (!$event->getNode() instanceof GroupElement) {
+        if (! $event->getNode() instanceof GroupElement) {
             return;
         }
-        $fieldChangeFunc = Arrays::getPath($event->getProxy()->getProperty('data'), ['parameterArray', 'fieldChangeFunc']);
+        $fieldChangeFunc = Arrays::getPath($event->getProxy()->getProperty('data'),
+            ['parameterArray', 'fieldChangeFunc']);
         if (empty($fieldChangeFunc)) {
             return;
         }
         
         // Build the change function
-        $result = $event->getResult();
+        $result         = $event->getResult();
         $result['html'] = $this->buildOnChangeFunction($result['html'], $fieldChangeFunc, [
             'eventToListenFor' => 'DOMNodeInserted',
         ]);

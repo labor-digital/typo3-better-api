@@ -33,12 +33,14 @@ abstract class AbstractChildExtConfigOption extends AbstractExtConfigOption
     
     /**
      * The parent config option
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
      */
     protected $parent;
     
     /**
      * Returns the parent object of this child configuration option
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
      */
     public function getParent(): AbstractExtConfigOption
@@ -49,7 +51,7 @@ abstract class AbstractChildExtConfigOption extends AbstractExtConfigOption
     /**
      * Used by the parent option to create a new instance of this option class
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption $parent
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption  $parent
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractChildExtConfigOption
      */
@@ -60,6 +62,7 @@ abstract class AbstractChildExtConfigOption extends AbstractExtConfigOption
         $i->parent = $parent;
         $i->setContext($parent->context);
         $parent->context->EventBus->addSubscriber($i);
+        
         return $i;
     }
 }

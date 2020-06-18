@@ -40,48 +40,56 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
 {
     /**
      * The data handler command that is currently processed
+     *
      * @var string
      */
     protected $command;
     
     /**
      * The name of the table that is currently processed
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The id of the record that is currently processed
+     *
      * @var int|string
      */
     protected $id;
     
     /**
      * The new id of the record that is currently processed if it was copied
+     *
      * @var int|string
      */
     protected $newId;
     
     /**
      * This is... something (?)
+     *
      * @var mixed
      */
     protected $value;
     
     /**
      * This is... something when copying records (?)
+     *
      * @var mixed
      */
     protected $pasteSpecialData;
     
     /**
      * This is... something when copying records (?)
+     *
      * @var mixed
      */
     protected $pasteDataMap;
     
     /**
      * The instance of the data handler that is currently processing the request
+     *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
@@ -97,29 +105,38 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     /**
      * DataHandlerActionFilterEvent constructor.
      *
-     * @param string                                   $command
-     * @param string                                   $tableName
-     * @param                                          $id
-     * @param                                          $newId
-     * @param                                          $value
-     * @param                                          $pasteSpecialData
-     * @param                                          $pasteDataMap
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+     * @param   string                                    $command
+     * @param   string                                    $tableName
+     * @param                                             $id
+     * @param                                             $newId
+     * @param                                             $value
+     * @param                                             $pasteSpecialData
+     * @param                                             $pasteDataMap
+     * @param   \TYPO3\CMS\Core\DataHandling\DataHandler  $dataHandler
      */
-    public function __construct(string $command, string $tableName, $id, $newId, $value, $pasteSpecialData, $pasteDataMap, DataHandler $dataHandler)
-    {
-        $this->command = $command;
-        $this->tableName = $tableName;
-        $this->id = $id;
-        $this->value = $value;
+    public function __construct(
+        string $command,
+        string $tableName,
+        $id,
+        $newId,
+        $value,
+        $pasteSpecialData,
+        $pasteDataMap,
+        DataHandler $dataHandler
+    ) {
+        $this->command          = $command;
+        $this->tableName        = $tableName;
+        $this->id               = $id;
+        $this->value            = $value;
         $this->pasteSpecialData = $pasteSpecialData;
-        $this->dataHandler = $dataHandler;
-        $this->newId = $newId;
-        $this->pasteDataMap = $pasteDataMap;
+        $this->dataHandler      = $dataHandler;
+        $this->newId            = $newId;
+        $this->pasteDataMap     = $pasteDataMap;
     }
     
     /**
      * Returns the instance of the data handler that is currently processing the request
+     *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     public function getDataHandler(): DataHandler
@@ -129,6 +146,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     
     /**
      * Returns the data handler command that is currently processed
+     *
      * @return string
      */
     public function getCommand(): string
@@ -138,6 +156,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     
     /**
      * Returns the name of the table that is currently processed
+     *
      * @return string
      */
     public function getTableName(): string
@@ -147,6 +166,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     
     /**
      * Returns the id of the record that is currently processed
+     *
      * @return int|string
      */
     public function getId()
@@ -156,6 +176,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     
     /**
      * Returns the new id of the record that is currently processed if it was copied
+     *
      * @return int|string
      */
     public function getNewId()
@@ -185,7 +206,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     
     /**
      * (?)
-     * @param mixed $pasteSpecialData
+     * @param   mixed  $pasteSpecialData
      *
      * @return DataHandlerActionPostProcessorEvent
      * @todo investigate
@@ -193,6 +214,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     public function setPasteSpecialData($pasteSpecialData): DataHandlerActionPostProcessorEvent
     {
         $this->pasteSpecialData = $pasteSpecialData;
+        
         return $this;
     }
     
@@ -208,7 +230,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     
     /**
      * (?)
-     * @param mixed $pasteDataMap
+     * @param   mixed  $pasteDataMap
      *
      * @return DataHandlerActionPostProcessorEvent
      * @todo investigate
@@ -216,6 +238,7 @@ class DataHandlerActionPostProcessorEvent implements CoreHookEventInterface
     public function setPasteDataMap($pasteDataMap)
     {
         $this->pasteDataMap = $pasteDataMap;
+        
         return $this;
     }
 }

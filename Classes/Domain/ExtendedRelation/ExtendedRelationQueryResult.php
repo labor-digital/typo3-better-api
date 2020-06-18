@@ -28,6 +28,7 @@ class ExtendedRelationQueryResult extends QueryResult
     
     /**
      * The settings for the extended relation service
+     *
      * @var array
      */
     protected $settings;
@@ -38,7 +39,7 @@ class ExtendedRelationQueryResult extends QueryResult
     protected $extendedRelationService;
     
     /**
-     * @param \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService $extendedRelationService
+     * @param   \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService  $extendedRelationService
      */
     public function injectExtendedRelationService(ExtendedRelationService $extendedRelationService)
     {
@@ -68,15 +69,16 @@ class ExtendedRelationQueryResult extends QueryResult
     /**
      * Factory method to create a new instance of myself
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $result
-     * @param array                                               $settings
+     * @param   \TYPO3\CMS\Extbase\Persistence\QueryResultInterface  $result
+     * @param   array                                                $settings
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationQueryResult
      */
     public static function makeInstance(QueryResultInterface $result, array $settings): ExtendedRelationQueryResult
     {
-        $self = TypoContainer::getInstance()->get(static::class, ['args' => [$result->getQuery()]]);
+        $self           = TypoContainer::getInstance()->get(static::class, ['args' => [$result->getQuery()]]);
         $self->settings = $settings;
+        
         return $self;
     }
 }

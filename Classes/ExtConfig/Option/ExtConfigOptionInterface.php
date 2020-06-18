@@ -28,7 +28,7 @@ interface ExtConfigOptionInterface extends EventSubscriberInterface
     /**
      * Is called after the option was created and is used to inject the current context into it
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
      * @return void
      */

@@ -23,30 +23,35 @@ class TranslationFileUnit
 {
     /**
      * The id / key for this translation pair
+     *
      * @var string
      */
     public $id;
     
     /**
      * The source language value for this id
+     *
      * @var string
      */
     public $source;
     
     /**
      * The target value for this language, or null if this is the base/origin file or if $isNote is true
+     *
      * @var string|null
      */
     public $target;
     
     /**
      * Contains the content of "note" nodes if $isNote is true, otherwise null
+     *
      * @var string|null
      */
     public $note;
     
     /**
      * True if this unit is a note block
+     *
      * @var bool
      */
     public $isNote = false;

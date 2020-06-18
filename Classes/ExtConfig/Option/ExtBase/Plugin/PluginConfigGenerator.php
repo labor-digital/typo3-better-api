@@ -40,7 +40,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     public function generate(array $stack, ExtConfigContext $context, array $additionalData, $option)
     {
         // Prepare temporary storage
-        $tmp = new class {
+        $tmp = new class
+        {
             public $typoScript                = [];
             public $tsConfig                  = [];
             public $configurePluginArgs       = [];
@@ -62,12 +63,14 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
                 $configurator = $context->getInstanceOf(PluginConfigurator::class, [$pluginName, $context]);
                 
                 // Loop through the stack
-                $context->runWithCachedValueDataScope($data, function (string $configClass) use ($context, $configurator, $pluginName) {
-                    if (!in_array(PluginConfigurationInterface::class, class_implements($configClass))) {
-                        throw new ExtConfigException("Invalid configuration class: $configClass for plugin: $pluginName. It has to implement the correct interface: " . PluginConfigurationInterface::class);
-                    }
-                    call_user_func([$configClass, 'configurePlugin'], $configurator, $context);
-                });
+                $context->runWithCachedValueDataScope($data,
+                    function (string $configClass) use ($context, $configurator, $pluginName) {
+                        if (! in_array(PluginConfigurationInterface::class, class_implements($configClass))) {
+                            throw new ExtConfigException("Invalid configuration class: $configClass for plugin: $pluginName. It has to implement the correct interface: "
+                                                         . PluginConfigurationInterface::class);
+                        }
+                        call_user_func([$configClass, 'configurePlugin'], $configurator, $context);
+                    });
                 
                 // Build the parts
                 $tmp->typoScript[] = $this->makeTemplateDefinition($configurator->getType(), $configurator);
@@ -78,30 +81,31 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
                     $tmp->cTypeEntries[] = $this->makeRegisterCTypeElement($configurator, $context);
                 }
                 $tmp->configurePluginArgs[] = $this->makeConfigurePluginArgs($configurator, $context);
-                $tmp->addPiFlexFormArgs[] = $this->makeAddPiFlexFormArgs($configurator, $tmp);
-                $tmp->iconDefinitionArgs[] = $this->makeIconDefinitionArgs($configurator, $context);
-                $tmp->tsConfig[] = $this->makeTsConfig($configurator, $context);
+                $tmp->addPiFlexFormArgs[]   = $this->makeAddPiFlexFormArgs($configurator, $tmp);
+                $tmp->iconDefinitionArgs[]  = $this->makeIconDefinitionArgs($configurator, $context);
+                $tmp->tsConfig[]            = $this->makeTsConfig($configurator, $context);
                 if ($configurator->renderBackendPreview()) {
                     $tmp->backendPreviewRenderers[] = $this->makeRegisterBackendPreviewRendererArgs($configurator);
                 }
                 $tmp->backendListLabelRenderers[] = $this->makeRegisterBackendLabelListRendererArgs($configurator);
-                $tmp->dataHandlerActionHandlers = Arrays::attach($tmp->dataHandlerActionHandlers, $configurator->__getDataHandlerActionHandlers());
+                $tmp->dataHandlerActionHandlers   = Arrays::attach($tmp->dataHandlerActionHandlers,
+                    $configurator->__getDataHandlerActionHandlers());
             });
         }
         
         // Create a new config object
-        $config = $context->getInstanceOf(ElementConfig::class);
-        $config->typoScript = implode(PHP_EOL . PHP_EOL, $tmp->typoScript);
-        $config->tsConfig = implode(PHP_EOL . PHP_EOL, $tmp->tsConfig);
-        $config->addPiFlexFormArgs = array_filter($tmp->addPiFlexFormArgs);
-        $config->flexFormPlugins = array_filter($tmp->flexFormPlugins);
-        $config->registerPluginArgs = $tmp->registerPluginArgs;
-        $config->configurePluginArgs = $tmp->configurePluginArgs;
-        $config->iconDefinitionArgs = $tmp->iconDefinitionArgs;
-        $config->backendPreviewRenderers = array_filter($tmp->backendPreviewRenderers);
+        $config                            = $context->getInstanceOf(ElementConfig::class);
+        $config->typoScript                = implode(PHP_EOL . PHP_EOL, $tmp->typoScript);
+        $config->tsConfig                  = implode(PHP_EOL . PHP_EOL, $tmp->tsConfig);
+        $config->addPiFlexFormArgs         = array_filter($tmp->addPiFlexFormArgs);
+        $config->flexFormPlugins           = array_filter($tmp->flexFormPlugins);
+        $config->registerPluginArgs        = $tmp->registerPluginArgs;
+        $config->configurePluginArgs       = $tmp->configurePluginArgs;
+        $config->iconDefinitionArgs        = $tmp->iconDefinitionArgs;
+        $config->backendPreviewRenderers   = array_filter($tmp->backendPreviewRenderers);
         $config->backendListLabelRenderers = array_filter($tmp->backendListLabelRenderers);
-        $config->backendActionHandlers = $tmp->dataHandlerActionHandlers;
-        $config->cTypeEntries = $tmp->cTypeEntries;
+        $config->backendActionHandlers     = $tmp->dataHandlerActionHandlers;
+        $config->cTypeEntries              = $tmp->cTypeEntries;
         unset($tmp);
         
         // Done
@@ -112,8 +116,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
      * Returns the arguments that have to be passed to ExtensionUtility::registerPlugin() to
      * register a plugin in the extbase context
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      * @see  ExtensionUtility::registerPlugin()
@@ -131,8 +135,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * Is used instead of makeRegisterPluginArgs() when a content element should be registered instead of a plugin
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      */
@@ -142,6 +146,7 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
         if (empty($sectionLabel)) {
             $sectionLabel = Inflector::toHuman($context->getExtKey());
         }
+        
         return [
             $sectionLabel,
             $configurator->getTitle(),
@@ -153,8 +158,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * Returns the arguments that have to be passed to ExtensionUtility::configurePlugin()
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      * @see ExtensionUtility::configurePlugin()
@@ -176,15 +181,15 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
      *
      * If null is returned the plugin does not require a flex form
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param object                                                                          $tmp
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   object                                                                           $tmp
      *
      * @return array|null
      * @see \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue()
      */
     protected function makeAddPiFlexFormArgs(PluginConfigurator $configurator, object $tmp): ?array
     {
-        if (!$configurator->hasFlexFormConfig()) {
+        if (! $configurator->hasFlexFormConfig()) {
             return null;
         }
         
@@ -206,8 +211,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * Returns the arguments that have to be used to register the plugin's icon in the icon registry
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      * @see IconRegistry::registerIcon();
@@ -215,6 +220,7 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     protected function makeIconDefinitionArgs(PluginConfigurator $configurator, ExtConfigContext $context): array
     {
         $iconExtension = strtolower(pathinfo($configurator->getIcon(), PATHINFO_EXTENSION));
+        
         return array_values([
             'identifier'            => $this->makeIconIdentifier($configurator, $context),
             'iconProviderClassName' => $iconExtension === 'svg' ? SvgIconProvider::class : BitmapIconProvider::class,
@@ -225,8 +231,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * Builds the ts config script that is required to register a new content element wizard icon for this plugin
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return string
      */
@@ -236,7 +242,7 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
             return '';
         }
         
-        $header = !empty($configurator->getWizardTabLabel()) ? 'header = ' . $configurator->getWizardTabLabel() : '';
+        $header = ! empty($configurator->getWizardTabLabel()) ? 'header = ' . $configurator->getWizardTabLabel() : '';
         
         // Select the default field values based on the type we should add
         if ($configurator->getType() === 'plugin') {
@@ -245,6 +251,7 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
         } else {
             $defaultValues = "CType = {$configurator->getSignature()}";
         }
+        
         return "
 		mod.wizards.newContentElement.wizardItems.{$configurator->getWizardTab()} {
 			$header
@@ -267,7 +274,7 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
      * Builds the arguments that have to be passed to BackendPreviewService::registerBackendPreviewRenderer to register
      * the backend preview renderer for this plugin. Null is returned if there is no preview renderer registered
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
      *
      * @return array|null
      */
@@ -294,7 +301,7 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
      * Builds the arguments that have to be passed to BackendPreviewService::registerBackendListLabelRenderer to
      * register the backend list label renderer for this plugin. Null is returned if there is no renderer registered
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
      *
      * @return array|null
      */
@@ -320,8 +327,8 @@ class PluginConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * Internal helper to create the icon identifier for this plugin
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator $configurator
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return string
      */

@@ -32,6 +32,7 @@ class TcaPalette extends AbstractFormContainer
     {
         // Make sure the label get's printed when the showItem string is build
         $this->layoutMeta[0] = $label;
+        
         return parent::setLabel($label);
     }
 }

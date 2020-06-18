@@ -33,6 +33,7 @@ class CustomElementNode extends AbstractFormElement
     
     /**
      * Holds the current context to be able to update our local data if required
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
      */
     protected $context;
@@ -56,11 +57,14 @@ class CustomElementNode extends AbstractFormElement
         
         // Validate if the class exists
         $customElementClass = $this->context->getElementClass();
-        if (!class_exists($customElementClass)) {
-            throw new BackendFormException('Could not render your field: ' . $this->context->getFieldName() . " to use the custom element with class: $customElementClass. Because the class does not exist!");
+        if (! class_exists($customElementClass)) {
+            throw new BackendFormException('Could not render your field: ' . $this->context->getFieldName()
+                                           . " to use the custom element with class: $customElementClass. Because the class does not exist!");
         }
-        if (!in_array(CustomElementInterface::class, class_implements($customElementClass))) {
-            throw new BackendFormException('Could not render your field: ' . $this->context->getFieldName() . " to use the custom element with class: $customElementClass. Because the class does not implement the required " . CustomElementInterface::class . ' interface!');
+        if (! in_array(CustomElementInterface::class, class_implements($customElementClass))) {
+            throw new BackendFormException('Could not render your field: ' . $this->context->getFieldName()
+                                           . " to use the custom element with class: $customElementClass. Because the class does not implement the required "
+                                           . CustomElementInterface::class . ' interface!');
         }
         
         // Create the instance to render
@@ -71,7 +75,7 @@ class CustomElementNode extends AbstractFormElement
         }
         
         // Initialize the result
-        $result = $this->initializeResultArray();
+        $result         = $this->initializeResultArray();
         $result['html'] = $i->render($this->context);
         
         // Update the data of this node
@@ -81,7 +85,7 @@ class CustomElementNode extends AbstractFormElement
         $fieldWizardResult = ['html' => ''];
         if (method_exists($this, 'renderFieldWizard')) {
             $fieldWizardResult = $this->renderFieldWizard();
-            $result = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
+            $result            = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
         }
         
         // Check if we should apply the outer wrap
@@ -90,11 +94,12 @@ class CustomElementNode extends AbstractFormElement
             $config = Arrays::getPath($this->context->getConfig(), ['config'], []);
             
             // Calculate field size
-            $size = Arrays::getPath($config, ['size'], $this->context->getDefaultInputWidth());
-            $size = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(), $this->context->getMaxInputWidth());
-            $width = (int)$this->context->getRootNode()->__callMethod('formMaxWidth', [$size]);
-            $html = $result['html'];
-            $wizardHtml = $fieldWizardResult['html'];
+            $size           = Arrays::getPath($config, ['size'], $this->context->getDefaultInputWidth());
+            $size           = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(),
+                $this->context->getMaxInputWidth());
+            $width          = (int)$this->context->getRootNode()->__callMethod('formMaxWidth', [$size]);
+            $html           = $result['html'];
+            $wizardHtml     = $fieldWizardResult['html'];
             $result['html'] = <<<HTML
 				<div class="form-control-wrap" style="max-width: $width px;">
 					<div class="form-wizards-wrap">
@@ -113,15 +118,17 @@ HTML;
         $result = $i->filterResultArray($result);
         
         // Allow the outside world to filter the result
-        TypoEventBus::getInstance()->dispatch(($e = new BackendFormCustomElementPostProcessorEvent($this->context, $result)));
+        TypoEventBus::getInstance()->dispatch(($e = new BackendFormCustomElementPostProcessorEvent($this->context,
+            $result)));
+        
         return $e->getResult();
     }
     
     /**
      * Internal helper to allow the external world access to all protected methods of this object
      *
-     * @param string $method
-     * @param array  $args
+     * @param   string  $method
+     * @param   array   $args
      *
      * @return mixed
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -129,11 +136,12 @@ HTML;
     public function __callMethod(string $method, array $args = [])
     {
         // Check if the method exists
-        if (!method_exists($this, $method)) {
+        if (! method_exists($this, $method)) {
             throw new BackendFormException("It is not allowed to call method: $method on the root node, because the method does not exist!");
         }
         // Make sure our data is up to data
         $this->__refreshData();
+        
         // Call the method
         return call_user_func_array([$this, $method], $args);
     }
@@ -141,7 +149,7 @@ HTML;
     /**
      * The companion to __callMethod. Checks if a certain, protected method exists or not
      *
-     * @param string $method
+     * @param   string  $method
      *
      * @return bool
      */

@@ -33,36 +33,42 @@ class ClassOverrideContentFilterEvent
     
     /**
      * The current class in the stack that should be overwritten
+     *
      * @var string
      */
     protected $classNameToOverride;
     
     /**
      * The name of the generated copy of the class
+     *
      * @var string
      */
     protected $copyClassName;
     
     /**
      * The first name in the stack that is overwritten
+     *
      * @var string
      */
     protected $initialClassName;
     
     /**
      * The last name in the stack that is overwritten
+     *
      * @var string
      */
     protected $finalClassName;
     
     /**
      * The content of the current copy that is created
+     *
      * @var string
      */
     protected $cloneContent;
     
     /**
      * The content of the class alias that is created to link the new class with the actual class name
+     *
      * @var string
      */
     protected $aliasContent;
@@ -70,12 +76,12 @@ class ClassOverrideContentFilterEvent
     /**
      * ClassOverrideContentFilterEvent constructor.
      *
-     * @param string $classNameToOverride
-     * @param string $copyClassName
-     * @param string $initialClassName
-     * @param string $finalClassName
-     * @param string $cloneContent
-     * @param string $aliasContent
+     * @param   string  $classNameToOverride
+     * @param   string  $copyClassName
+     * @param   string  $initialClassName
+     * @param   string  $finalClassName
+     * @param   string  $cloneContent
+     * @param   string  $aliasContent
      */
     public function __construct(
         string $classNameToOverride,
@@ -84,14 +90,13 @@ class ClassOverrideContentFilterEvent
         string $finalClassName,
         string $cloneContent,
         string $aliasContent
-    )
-    {
+    ) {
         $this->classNameToOverride = $classNameToOverride;
-        $this->copyClassName = $copyClassName;
-        $this->initialClassName = $initialClassName;
-        $this->finalClassName = $finalClassName;
-        $this->cloneContent = $cloneContent;
-        $this->aliasContent = $aliasContent;
+        $this->copyClassName       = $copyClassName;
+        $this->initialClassName    = $initialClassName;
+        $this->finalClassName      = $finalClassName;
+        $this->cloneContent        = $cloneContent;
+        $this->aliasContent        = $aliasContent;
     }
     
     /**
@@ -103,13 +108,14 @@ class ClassOverrideContentFilterEvent
     }
     
     /**
-     * @param string $cloneContent
+     * @param   string  $cloneContent
      *
      * @return ClassOverrideContentFilterEvent
      */
     public function setCloneContent(string $cloneContent): ClassOverrideContentFilterEvent
     {
         $this->cloneContent = $cloneContent;
+        
         return $this;
     }
     
@@ -122,13 +128,14 @@ class ClassOverrideContentFilterEvent
     }
     
     /**
-     * @param string $aliasContent
+     * @param   string  $aliasContent
      *
      * @return ClassOverrideContentFilterEvent
      */
     public function setAliasContent(string $aliasContent): ClassOverrideContentFilterEvent
     {
         $this->aliasContent = $aliasContent;
+        
         return $this;
     }
     

@@ -38,7 +38,7 @@ class ExtendedUriBuilder extends UriBuilder
     
     public function hasContentObject(): bool
     {
-        return !empty($this->contentObject);
+        return ! empty($this->contentObject);
     }
     
     public function getContentObject(): ContentObjectRenderer

@@ -29,8 +29,8 @@ trait ResizedImageOptionsTrait
      * Applies the option definition to create resized/manipulated images.
      * Encapsulated for other extension to use as global image processing format
      *
-     * @param array $options              The raw options input to validate
-     * @param array $additionalDefinition Additional definition to merge into the default
+     * @param   array  $options               The raw options input to validate
+     * @param   array  $additionalDefinition  Additional definition to merge into the default
      *
      * @return array The prepared option array
      *
@@ -39,13 +39,14 @@ trait ResizedImageOptionsTrait
     protected function applyResizedImageOptions(array $options, array $additionalDefinition = []): array
     {
         // Prepare image processing options
-        $def = [
+        $def           = [
             'type'    => ['number', 'null', 'string'],
             'default' => null,
             'filter'  => function ($v) {
-                if (!is_null($v)) {
+                if (! is_null($v)) {
                     return (string)$v;
                 }
+                
                 return null;
             },
         ];
@@ -56,12 +57,14 @@ trait ResizedImageOptionsTrait
                 if (is_numeric($v)) {
                     return floatval($v);
                 }
+                
                 return $v;
             },
             'filter'    => function ($v) {
-                if (!is_null($v)) {
+                if (! is_null($v)) {
                     return (string)$v;
                 }
+                
                 return null;
             },
         ];
@@ -80,6 +83,7 @@ trait ResizedImageOptionsTrait
                 'filter'  => function ($v) {
                     if (is_array($v)) {
                         $def = ['type' => 'number', 'default' => 0];
+                        
                         return Options::make($v, [
                             'x'      => $def,
                             'y'      => $def,
@@ -87,9 +91,10 @@ trait ResizedImageOptionsTrait
                             'height' => $def,
                         ]);
                     }
-                    if (!$v) {
+                    if (! $v) {
                         return null;
                     }
+                    
                     return $v;
                 },
             ],
@@ -101,13 +106,13 @@ trait ResizedImageOptionsTrait
         
         // Apply the options
         $definition = Arrays::merge($defaultDefinition, $additionalDefinition);
-        $options = Options::make($options, $definition);
-        $options = array_filter($options, function ($v) {
-            return !is_null($v);
+        $options    = Options::make($options, $definition);
+        $options    = array_filter($options, function ($v) {
+            return ! is_null($v);
         });
         
         // Build additional parameters
-        if (!empty($options['params'])) {
+        if (! empty($options['params'])) {
             $options['additionalParameters'] = $options['params'];
         }
         unset($options['params']);

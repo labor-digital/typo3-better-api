@@ -28,12 +28,14 @@ class TcaField extends AbstractFormField
     
     /**
      * Holds the flexForm configuration if there is one
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaFieldFlexForm
      */
     protected $flexForm;
     
     /**
      * Returns the database table name for the current field
+     *
      * @return string
      */
     public function getTableName(): string
@@ -43,6 +45,7 @@ class TcaField extends AbstractFormField
     
     /**
      * Returns the database name of the current field
+     *
      * @return string
      */
     public function getColumnName(): string
@@ -56,7 +59,7 @@ class TcaField extends AbstractFormField
      * The $definition should look like "varchar(512) DEFAULT ''  NOT NULL", or "tinyint(4)"
      * The $definition should NOT contain the table or the column name!
      *
-     * @param string $definition The column definition to set for this column
+     * @param   string  $definition  The column definition to set for this column
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField
      */
@@ -67,6 +70,7 @@ class TcaField extends AbstractFormField
             $this->getId(),
             $definition
         );
+        
         return $this;
     }
     
@@ -83,11 +87,13 @@ class TcaField extends AbstractFormField
     /**
      * Removes this field from the sql table.
      * You should only use this if you have a display-only field that should not store any data for itself
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField
      */
     public function useWithoutSqlField(): TcaField
     {
         $this->context->SqlGenerator->removeDefinitionFor($this->getTableName(), $this->getId());
+        
         return $this;
     }
     
@@ -112,7 +118,8 @@ class TcaField extends AbstractFormField
         $this->setSqlDefinition('mediumtext');
         
         // Create new flex form config
-        return $this->flexForm = $this->context->getInstanceOf(TcaFieldFlexForm::class, [$this, $this->config, $this->context]);
+        return $this->flexForm = $this->context->getInstanceOf(TcaFieldFlexForm::class,
+            [$this, $this->config, $this->context]);
     }
     
     /**
@@ -154,7 +161,7 @@ class TcaField extends AbstractFormField
         unset($this->config['@sql']);
         
         // Load flex form configuration
-        if ($this->config['config']['type'] === 'flex' && !empty($this->flexForm)) {
+        if ($this->config['config']['type'] === 'flex' && ! empty($this->flexForm)) {
             $dsNew = json_encode(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'));
             // Reset the flex configuration
             if ($dsNew !== $dsOld) {
@@ -181,10 +188,9 @@ class TcaField extends AbstractFormField
      */
     public function getRaw(): array
     {
-        
         // Check if we have to build the flex form configuration
-        if ($this->config['config']['type'] === 'flex' && !empty($this->flexForm)) {
-            $config = $this->flexForm->__build();
+        if ($this->config['config']['type'] === 'flex' && ! empty($this->flexForm)) {
+            $config       = $this->flexForm->__build();
             $this->config = Arrays::merge($this->config, $config);
         }
         

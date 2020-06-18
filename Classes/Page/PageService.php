@@ -40,14 +40,14 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class PageService implements SingletonInterface
 {
     use CommonServiceLocatorTrait;
-
+    
     /**
      * Holds the list of cached root lines by their cache key
      *
      * @var array
      */
     protected $rootLineCache = [];
-
+    
     /**
      * Creates a new, empty page below the given $parentPid with the given title and returns the new
      * page's pid for further processing
@@ -84,31 +84,30 @@ class PageService implements SingletonInterface
                 'default' => [],
             ],
         ]);
-
+        
         // Handle the creation
         return $this->forceWrapper(function () use ($parentPid, $options) {
-
             // Create the new row
             $row = Arrays::merge([
                 'title' => $options['title'],
                 'pid'   => $parentPid,
             ], $options['pageRow']);
-
+            
             // Create a new page, programmatically
             $dataHandler = $this->DataHandler;
             $dataHandler->start(['pages' => ['NEW_1' => $row]], []);
             $dataHandler->process_datamap();
-
+            
             // Handle errors
             if (! empty($dataHandler->errorLog)) {
                 throw new PageServiceException(reset($dataHandler->errorLog));
             }
-
+            
             // Return the new page's id
             return reset($dataHandler->substNEWwithIDs);
         }, $options['force']);
     }
-
+    
     /**
      * Creates a copy of a certain page. If the $targetPageId is empty, the copy will be created right below the
      * current page Otherwise it will be copied as a child of said target id.
@@ -140,7 +139,7 @@ class PageService implements SingletonInterface
                 'default' => false,
             ],
         ]);
-
+        
         return $this->forceWrapper(function () use ($pageId, $options) {
             // Copy the page
             $dataHandler           = $this->DataHandler;
@@ -153,17 +152,17 @@ class PageService implements SingletonInterface
                 ],
             ]);
             $dataHandler->process_cmdmap();
-
+            
             // Handle errors
             if (! empty($dataHandler->errorLog)) {
                 throw new PageServiceException(reset($dataHandler->errorLog));
             }
-
+            
             // Return the page id of the copied page
             return $dataHandler->copyMappingArray['pages'][$pageId];
         }, $options['force']);
     }
-
+    
     /**
      * Moves a page with the given page id to another page
      *
@@ -187,14 +186,14 @@ class PageService implements SingletonInterface
                 ],
             ]);
             $dataHandler->process_cmdmap();
-
+            
             // Handle errors
             if (! empty($dataHandler->errorLog)) {
                 throw new PageServiceException(reset($dataHandler->errorLog));
             }
         }, $force);
     }
-
+    
     /**
      * Marks this page as "deleted". It still can be restored using the "restorePage" method.
      *
@@ -215,14 +214,14 @@ class PageService implements SingletonInterface
                 ],
             ]);
             $dataHandler->process_cmdmap();
-
+            
             // Handle errors
             if (! empty($dataHandler->errorLog)) {
                 throw new PageServiceException(reset($dataHandler->errorLog));
             }
         }, $force);
     }
-
+    
     /**
      * Restores a page by removing the marker that defines it as "deleted".
      *
@@ -243,14 +242,14 @@ class PageService implements SingletonInterface
                 ],
             ]);
             $dataHandler->process_cmdmap();
-
+            
             // Handle errors
             if (! empty($dataHandler->errorLog)) {
                 throw new PageServiceException(reset($dataHandler->errorLog));
             }
         }, $force);
     }
-
+    
     /**
      * Returns true if a page exists, false if not.
      *
@@ -267,10 +266,10 @@ class PageService implements SingletonInterface
         if ($includeDeleted) {
             return $this->Db->getQuery('pages', true)->withWhere(['uid' => $pageId])->getCount() > 0;
         }
-
+        
         return ! empty($this->getPageRepository()->getPage($pageId));
     }
-
+    
     /**
      * This method can be used to render the contents of a given page id as html.
      *
@@ -294,7 +293,6 @@ class PageService implements SingletonInterface
      */
     public function renderPageContents(int $pageId, array $options = [])
     {
-
         // Prepare options
         $options = Options::make($options, [
             'language'              => [
@@ -314,7 +312,7 @@ class PageService implements SingletonInterface
                 'default' => false,
             ],
         ]);
-
+        
         return $this->Simulator->runWithEnvironment([
             'pid'                   => $pageId,
             'language'              => $options['language'],
@@ -322,7 +320,6 @@ class PageService implements SingletonInterface
             'includeHiddenContent'  => $options['includeHiddenContent'],
             'includeDeletedRecords' => $options['includeDeletedRecords'],
         ], function () use ($pageId, $options) {
-
             // Render the page
             return $this->TypoScript->renderContentObject('CONTENT', [
                 'table'   => 'tt_content',
@@ -335,7 +332,7 @@ class PageService implements SingletonInterface
             ]);
         });
     }
-
+    
     /**
      * Can be used to return the list of all content elements of a given page.
      * The contents will be sorted into their matching layout columns in order of their "sorting".
@@ -389,7 +386,7 @@ class PageService implements SingletonInterface
                 'default' => false,
             ],
         ]);
-
+        
         // Collect the records
         $records = $this->Simulator->runWithEnvironment([
             'language'              => $options['language'],
@@ -408,7 +405,7 @@ class PageService implements SingletonInterface
         if ($options['returnRaw']) {
             return $records;
         }
-
+        
         // Default configuration for extensions that provide custom grids
         $customGrids = [
             [
@@ -416,12 +413,12 @@ class PageService implements SingletonInterface
                 'parentColField' => 'tx_gridelements_columns',
             ],
         ];
-
+        
         // Let the outside world add it's own grids or filter the records if required...
         $this->EventBus->dispatch(($e = new PageContentsGridConfigFilterEvent($pageId, $records, $customGrids)));
         $records     = $e->getRecords();
         $customGrids = $e->getCustomGrids();
-
+        
         // Loop 1: Map the records into an element list
         $elements = [];
         foreach ($records as $record) {
@@ -436,13 +433,13 @@ class PageService implements SingletonInterface
             ];
             $elements[$uid] = $row;
         }
-
+        
         // Loop 2: Map potential stacked grids to their parents
         foreach ($elements as &$element) {
             $parent = null;
             $record = $element['record'];
             $colPos = $record['colPos'];
-
+            
             foreach ($customGrids as $customGridConfig) {
                 // Ignore if the custom grid has no parent field -> misconfiguration
                 if (! isset($customGridConfig['parentField'])) {
@@ -462,24 +459,24 @@ class PageService implements SingletonInterface
                 }
                 break;
             }
-
+            
             // Check if we can map the record as a child
             if (empty($parent)) {
                 continue;
             }
-
+            
             // Strip out element's that define a parent which is not in our element list -> broken relation?
             if (! isset($elements[$parent])) {
                 $element['parent'] = false;
                 continue;
             }
-
+            
             // Map the element into a tree
             $element['parent']                                       = $parent;
             $element['colPos']                                       = $colPos;
             $elements[$parent]['children'][$colPos][$element['uid']] = &$element;
         }
-
+        
         // Loop 3: Sort the children and clean up the output
         $output = [];
         foreach ($elements as &$element) {
@@ -489,22 +486,22 @@ class PageService implements SingletonInterface
                     $childCol = Arrays::sortBy($childCol, 'sorting');
                 }
             }
-
+            
             // Build the output
             if ($element['parent'] === null) {
                 $output[$element['colPos']][$element['uid']] = $element;
             }
         }
-
+        
         // Sort the elements inside the cols
         foreach ($output as &$col) {
             $col = Arrays::sortBy($col, 'sorting');
         }
-
+        
         // Done (make sure we break the references)
         return json_decode(json_encode($output), true);
     }
-
+    
     /**
      * Returns an array with fields of the pages from here ($uid) and back to the root
      *
@@ -524,20 +521,19 @@ class PageService implements SingletonInterface
      */
     public function getRootLine(int $pageId, bool $ignorePermissions = false)
     {
-
         // Try to load the root line from our cache
         $cacheKey = $pageId . '' . $ignorePermissions;
         if (isset($this->rootLineCache[$cacheKey])) {
             return $this->rootLineCache[$cacheKey];
         }
-
+        
         // Prepare the repository
         $repo             = $this->getPageRepository();
         $backupPermission = $repo->where_groupAccess;
         if ($ignorePermissions) {
             $repo->where_groupAccess = '';
         }
-
+        
         // Get the root line
         try {
             $rootLineUtility = $this->getInstanceOf(RootlineUtility::class, [$pageId]);
@@ -546,14 +542,14 @@ class PageService implements SingletonInterface
             $rootLine = [];
         }
         $this->rootLineCache[$cacheKey] = $rootLine;
-
+        
         // Restore the repository
         $repo->where_groupAccess = $backupPermission;
-
+        
         // Done
         return $rootLine;
     }
-
+    
     /**
      * Can be used to retrieve the database record for a certain page based on the given page id.
      * The translation is done according to the current frontend language.
@@ -568,10 +564,10 @@ class PageService implements SingletonInterface
         if (! is_array($row)) {
             return null;
         }
-
+        
         return $row;
     }
-
+    
     /**
      * Returns the instance of the page repository.
      * Either of the frontend or a new instance if the frontend did not help us...
@@ -584,11 +580,11 @@ class PageService implements SingletonInterface
         if ($this->Tsfe->hasTsfe()) {
             return clone $this->Tsfe->getTsfe()->sys_page;
         }
-
+        
         // Fallback to creating a new instance when the frontend did not serve us
         return $this->getInstanceOf(PageRepository::class);
     }
-
+    
     /**
      * Internal helper to run the given callback either as forced user or as the current user
      *
@@ -602,10 +598,10 @@ class PageService implements SingletonInterface
         if (! $force) {
             return call_user_func($callback);
         }
-
+        
         return $this->Simulator->runAsAdmin($callback);
     }
-
+    
     /**
      * Internal helper to check the "content_from_pid" field of the given page id.
      * If it has another pid as a reference we will rewrite the page id to retrieve the contents from
@@ -620,7 +616,7 @@ class PageService implements SingletonInterface
         if (isset($pageInfo['content_from_pid']) && ! empty($pageInfo['content_from_pid'])) {
             $pageId = reset(Arrays::makeFromStringList($pageInfo['content_from_pid']));
         }
-
+        
         return $pageId;
     }
 }

@@ -30,9 +30,9 @@ interface CoreHookEventAdapterInterface
     /**
      * Provides some dependencies that are likely to be required in the event adapter implementation
      *
-     * @param \Neunerlei\EventBus\EventBusInterface                         $bus
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $context
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \Neunerlei\EventBus\EventBusInterface                          $bus
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $context
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      *
      * @return void
      */

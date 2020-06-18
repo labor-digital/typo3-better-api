@@ -34,31 +34,35 @@ class SignalSlotEvent
     
     /**
      * The name of the class to emit the signal for
+     *
      * @var string
      */
     protected $className;
     
     /**
      * The signal to emit for the given class
+     *
      * @var string
      */
     protected $signalName;
     
     /**
      * The arguments to pass to the callbacks
+     *
      * @var array
      */
     protected $args;
     
     public function __construct(string $className, string $signalName, array $args = [])
     {
-        $this->className = $className;
+        $this->className  = $className;
         $this->signalName = $signalName;
-        $this->args = $args;
+        $this->args       = $args;
     }
     
     /**
      * Returns the name of the class for the signal
+     *
      * @return string
      */
     public function getClassName(): string
@@ -68,6 +72,7 @@ class SignalSlotEvent
     
     /**
      * Returns the name of the signal
+     *
      * @return string
      */
     public function getSignalName(): string
@@ -78,6 +83,7 @@ class SignalSlotEvent
     
     /**
      * Returns the list of arguments that should be passed to the callbacks
+     *
      * @return array
      */
     public function getArgs(): array
@@ -88,13 +94,14 @@ class SignalSlotEvent
     /**
      * Updates the arguments transferred by the event object
      *
-     * @param array $args
+     * @param   array  $args
      *
      * @return SignalSlotEvent
      */
     public function setArgs(array $args): SignalSlotEvent
     {
         $this->args = $args;
+        
         return $this;
     }
 }

@@ -24,7 +24,7 @@ interface SessionInterface
     /**
      * Returns true if the given path exists in the current session
      *
-     * @param string $path An Arrays::getPath() compatible selector path
+     * @param   string  $path  An Arrays::getPath() compatible selector path
      *
      * @return bool
      */
@@ -34,8 +34,8 @@ interface SessionInterface
      * Returns either the value for the given path or null, if it does not exist
      * Will return the whole session data if null is given as path
      *
-     * @param string|null $path    An Arrays::getPath() compatible selector path
-     * @param null|mixed  $default An optional default value to be returned if the value does not exist
+     * @param   string|null  $path     An Arrays::getPath() compatible selector path
+     * @param   null|mixed   $default  An optional default value to be returned if the value does not exist
      *
      * @return mixed|null
      */
@@ -44,8 +44,8 @@ interface SessionInterface
     /**
      * Sets the given value for the path
      *
-     * @param string $path  An Arrays::getPath() compatible selector path
-     * @param mixed  $value The value to set for the path
+     * @param   string  $path   An Arrays::getPath() compatible selector path
+     * @param   mixed   $value  The value to set for the path
      *
      * @return $this
      */
@@ -54,7 +54,7 @@ interface SessionInterface
     /**
      * Removes a given path from the session.
      *
-     * @param string $path An Arrays::getPath() compatible selector path
+     * @param   string  $path  An Arrays::getPath() compatible selector path
      *
      * @return $this
      */

@@ -33,27 +33,27 @@ class LogConfigOption extends AbstractExtConfigOption
      * Registers a new logfile writer in the system. It utilizes our internal
      * better file writer that has built-in log rotation capabilities.
      *
-     * @param string $name    A speaking name for your log -> used only for the file name generation
-     * @param array  $options Additional log configuration options
-     *                        - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
-     *                        It defines the minimal viable severity that should be logged, all levels with a higher
-     *                        number that the given level will be be ignored
-     *                        - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
-     *                        This can be either a class name or a part of a php namespace. If an empty
-     *                        string is given the configuration is applied globally
-     *                        - writer array: the writer configuration array for the configured loglevel
-     *                        - processor array: the processor configuration array for the configured loglevel
-     *                        - logRotation bool (TRUE): By default the log files will be rotated once a day.
-     *                        If you want to disable the log rotation set this option to false.
-     *                        - filesToKeep int (5): If logRotation is enabled, this defines how many
-     *                        files will be kept before they are deleted
+     * @param   string  $name     A speaking name for your log -> used only for the file name generation
+     * @param   array   $options  Additional log configuration options
+     *                            - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
+     *                            It defines the minimal viable severity that should be logged, all levels with a higher
+     *                            number that the given level will be be ignored
+     *                            - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                            This can be either a class name or a part of a php namespace. If an empty
+     *                            string is given the configuration is applied globally
+     *                            - writer array: the writer configuration array for the configured loglevel
+     *                            - processor array: the processor configuration array for the configured loglevel
+     *                            - logRotation bool (TRUE): By default the log files will be rotated once a day.
+     *                            If you want to disable the log rotation set this option to false.
+     *                            - filesToKeep int (5): If logRotation is enabled, this defines how many
+     *                            files will be kept before they are deleted
      *
      * @see \TYPO3\CMS\Core\Log\LogLevel
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
      */
     public function registerFileLog(string $name, array $options = [])
     {
-        $options = $this->prepareLogOptions($options, [
+        $options           = $this->prepareLogOptions($options, [
             'logRotation' => [
                 'type'    => 'bool',
                 'default' => true,
@@ -76,15 +76,15 @@ class LogConfigOption extends AbstractExtConfigOption
     /**
      * Registers any kind of log configuration based on your input.
      *
-     * @param array $options  The options for your log configuration
-     *                        - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
-     *                        It defines the minimal viable severity that should be logged, all levels with a higher
-     *                        number that the given level will be be ignored
-     *                        - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
-     *                        This can be either a class name or a part of a php namespace. If an empty
-     *                        string is given the configuration is applied globally
-     *                        - writer array: the writer configuration array for the configured loglevel
-     *                        - processor array: the processor configuration array for the configured loglevel
+     * @param   array  $options  The options for your log configuration
+     *                           - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
+     *                           It defines the minimal viable severity that should be logged, all levels with a higher
+     *                           number that the given level will be be ignored
+     *                           - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                           This can be either a class name or a part of a php namespace. If an empty
+     *                           string is given the configuration is applied globally
+     *                           - writer array: the writer configuration array for the configured loglevel
+     *                           - processor array: the processor configuration array for the configured loglevel
      *
      * @see \TYPO3\CMS\Core\Log\LogLevel
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
@@ -99,8 +99,8 @@ class LogConfigOption extends AbstractExtConfigOption
      * Internal helper to build the options array based on the given input.
      * Allows to add additional config definitions to be used for different log type
      *
-     * @param array $options
-     * @param array $additionalDefinition
+     * @param   array  $options
+     * @param   array  $additionalDefinition
      *
      * @return array
      */
@@ -111,7 +111,14 @@ class LogConfigOption extends AbstractExtConfigOption
                 'type'    => ['string', 'int'],
                 'default' => $this->context->TypoContext->getEnvAspect()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
                 'values'  => [
-                    LogLevel::EMERGENCY, LogLevel::ERROR, LogLevel::CRITICAL, LogLevel::WARNING, LogLevel::NOTICE, LogLevel::INFO, LogLevel::DEBUG, LogLevel::ALERT,
+                    LogLevel::EMERGENCY,
+                    LogLevel::ERROR,
+                    LogLevel::CRITICAL,
+                    LogLevel::WARNING,
+                    LogLevel::NOTICE,
+                    LogLevel::INFO,
+                    LogLevel::DEBUG,
+                    LogLevel::ALERT,
                 ],
             ],
             'namespace' => [
@@ -119,8 +126,9 @@ class LogConfigOption extends AbstractExtConfigOption
                 'default' => function () {
                     return implode(
                         '\\',
-                        array_filter([Inflector::toCamelCase($this->context->getVendor()),
-                                      Inflector::toCamelCase($this->context->getExtKey()),
+                        array_filter([
+                            Inflector::toCamelCase($this->context->getVendor()),
+                            Inflector::toCamelCase($this->context->getExtKey()),
                         ])
                     );
                 },
@@ -142,11 +150,11 @@ class LogConfigOption extends AbstractExtConfigOption
     /**
      * Injects the options into the globals super array
      *
-     * @param array $options
+     * @param   array  $options
      */
     protected function applyLogConfiguration(array $options): void
     {
-        $config = [
+        $config                     = [
             'writerConfiguration'    => [
                 $options['logLevel'] => $options['writer'],
             ],

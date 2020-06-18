@@ -43,7 +43,7 @@ class FieldDefaultAndPlaceholderTranslationApplier implements LazyEventSubscribe
     /**
      * FieldDefaultValueTranslationApplier constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Translation\TranslationService $translationService
+     * @param   \LaborDigital\Typo3BetterApi\Translation\TranslationService  $translationService
      */
     public function __construct(TranslationService $translationService)
     {
@@ -53,7 +53,7 @@ class FieldDefaultAndPlaceholderTranslationApplier implements LazyEventSubscribe
     /**
      * This applier is used to translate the "default" value of form elements.
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodeFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodeFilterEvent  $event
      */
     public function __onNodeDataFilter(BackendFormNodeFilterEvent $event)
     {
@@ -62,13 +62,15 @@ class FieldDefaultAndPlaceholderTranslationApplier implements LazyEventSubscribe
         // Translate the default value
         $default = Arrays::getPath($data, ['parameterArray', 'fieldConf', 'config', 'default']);
         if (is_string($default) && Arrays::getPath($data, 'parameterArray.itemFormElValue') === $default) {
-            $data = Arrays::setPath($data, 'parameterArray.itemFormElValue', $this->translationService->translateMaybe($default));
+            $data = Arrays::setPath($data, 'parameterArray.itemFormElValue',
+                $this->translationService->translateMaybe($default));
         }
         
         // Translate the placeholder
         $placeholder = Arrays::getPath($data, ['parameterArray', 'fieldConf', 'config', 'placeholder']);
         if (is_string($placeholder)) {
-            $data = Arrays::setPath($data, 'parameterArray.fieldConf.config.placeholder', $this->translationService->translateMaybe($placeholder));
+            $data = Arrays::setPath($data, 'parameterArray.fieldConf.config.placeholder',
+                $this->translationService->translateMaybe($placeholder));
         }
         
         // Update the default value in the configuration

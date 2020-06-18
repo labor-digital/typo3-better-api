@@ -34,7 +34,8 @@ class DataHandlerSaveFilterEventAdapter extends AbstractCoreHookEventAdapter
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][static::class] = static::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][static::class]
+            = static::class;
     }
     
     public function processDatamap_preProcessFieldArray(array &$fieldArray, $table, &$id, DataHandler $pObj)
@@ -53,11 +54,12 @@ class DataHandlerSaveFilterEventAdapter extends AbstractCoreHookEventAdapter
                 $pObj
             )));
             $fieldArray = $e->getRow();
-            $id = $e->getId();
+            $id         = $e->getId();
         } catch (Exception $e) {
             // Handle error messages if required
             if ($pObj->enableLogging) {
-                $pObj->log('', 0, 0, 0, 1, static::$container->get(TranslationService::class)->translateMaybe($e->getMessage()));
+                $pObj->log('', 0, 0, 0, 1,
+                    static::$container->get(TranslationService::class)->translateMaybe($e->getMessage()));
             }
             
             $fieldArray = [];
@@ -85,7 +87,8 @@ class DataHandlerSaveFilterEventAdapter extends AbstractCoreHookEventAdapter
         } catch (Exception $e) {
             // Handle error messages if required
             if ($pObj->enableLogging) {
-                $pObj->log('', 0, 0, 0, 1, static::$container->get(TranslationService::class)->translateMaybe($e->getMessage()));
+                $pObj->log('', 0, 0, 0, 1,
+                    static::$container->get(TranslationService::class)->translateMaybe($e->getMessage()));
             }
             
             $fieldArray = [];

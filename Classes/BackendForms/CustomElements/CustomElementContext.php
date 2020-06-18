@@ -24,6 +24,7 @@ use Neunerlei\Arrays\Arrays;
 
 /**
  * Class CustomElementContext
+ *
  * @package LaborDigital\Typo3BetterApi\BackendForms\CustomElements
  *
  * @property \TYPO3\CMS\Core\Imaging\IconFactory $IconFactory
@@ -34,12 +35,14 @@ class CustomElementContext
     
     /**
      * The raw data, stored on the root node element
+     *
      * @var array
      */
     protected $rawData;
     
     /**
      * The real node in the form engine, that serves as a wrapper for our easier interface to form elements
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementNode
      */
     protected $rootNode;
@@ -68,6 +71,7 @@ class CustomElementContext
     /**
      * If this is set to false, the outer html elements around the form element,
      * including the field wizards will not be added to the result string!
+     *
      * @var bool
      */
     protected $applyOuterWrap = true;
@@ -75,7 +79,7 @@ class CustomElementContext
     /**
      * CustomFormElementContext constructor.
      *
-     * @param array $injection The list of properties that are injected into the context
+     * @param   array  $injection  The list of properties that are injected into the context
      */
     public function __construct(array $injection)
     {
@@ -91,6 +95,7 @@ class CustomElementContext
     
     /**
      * Returns the raw data received by the root node
+     *
      * @return array
      */
     public function getRawData(): array
@@ -101,13 +106,14 @@ class CustomElementContext
     /**
      * Can be used to update the raw data of the rendering root node
      *
-     * @param array $rawData
+     * @param   array  $rawData
      *
      * @return CustomElementContext
      */
     public function setRawData(array $rawData): CustomElementContext
     {
         $this->rawData = $rawData;
+        
         return $this;
     }
     
@@ -123,6 +129,7 @@ class CustomElementContext
     
     /**
      * Returns the default width value for a couple of elements like text
+     *
      * @return int
      */
     public function getDefaultInputWidth(): int
@@ -132,6 +139,7 @@ class CustomElementContext
     
     /**
      * Returns the minimum width value for a couple of elements like text
+     *
      * @return int
      */
     public function getMinInputWidth(): int
@@ -141,6 +149,7 @@ class CustomElementContext
     
     /**
      * Returns the maximum width value for a couple of elements like text
+     *
      * @return int
      */
     public function getMaxInputWidth(): int
@@ -150,6 +159,7 @@ class CustomElementContext
     
     /**
      * Returns the UID of the record this field is part of
+     *
      * @return int
      */
     public function getRecordUid(): int
@@ -159,6 +169,7 @@ class CustomElementContext
     
     /**
      * Returns the page id of the record this field is part of
+     *
      * @return int
      */
     public function getRecordPid(): int
@@ -168,6 +179,7 @@ class CustomElementContext
     
     /**
      * Returns the currently set value for this field
+     *
      * @return array|mixed|null
      */
     public function getValue()
@@ -177,6 +189,7 @@ class CustomElementContext
     
     /**
      * Returns the complete database record this field is part of
+     *
      * @return array
      */
     public function getRow(): array
@@ -186,6 +199,7 @@ class CustomElementContext
     
     /**
      * Returns the name of the database table this field is part of
+     *
      * @return string
      */
     public function getTableName(): string
@@ -195,6 +209,7 @@ class CustomElementContext
     
     /**
      * Returns the name of the database field in the record
+     *
      * @return string
      */
     public function getFieldName(): string
@@ -205,6 +220,7 @@ class CustomElementContext
     /**
      * Returns the field name that should be put as "name" attribute of the HTML tag,
      * representing this field
+     *
      * @return string
      */
     public function getRenderName(): string
@@ -214,6 +230,7 @@ class CustomElementContext
     
     /**
      * The HTML ID that should be set for this field
+     *
      * @return string
      */
     public function getRenderId(): string
@@ -223,6 +240,7 @@ class CustomElementContext
     
     /**
      * Returns the prepared TCA configuration for this field
+     *
      * @return array
      */
     public function getConfig(): array
@@ -244,9 +262,9 @@ class CustomElementContext
     /**
      * Can be used to return a single option, or returns the default value
      *
-     * @param array|string $path    The key, or the path to look up
-     * @param null         $default An optional default value to return if the key/path was not found in the options
-     *                              array
+     * @param   array|string  $path     The key, or the path to look up
+     * @param   null          $default  An optional default value to return if the key/path was not found in the options
+     *                                  array
      *
      * @return array|mixed|null
      */
@@ -258,6 +276,7 @@ class CustomElementContext
     /**
      * Returns the registered class of the registered custom-element for this field.
      * If this returns an empty string, the space-time-continuum will explode in around 30 seconds...
+     *
      * @return string
      */
     public function getElementClass(): string
@@ -267,6 +286,7 @@ class CustomElementContext
     
     /**
      * Returns true if the outer html wrap around your form field will be rendered, false if not
+     *
      * @return bool
      */
     public function isApplyOuterWrap(): bool
@@ -277,13 +297,14 @@ class CustomElementContext
     /**
      * Sets if the outer html wrap around your form field will be rendered or not
      *
-     * @param bool $applyOuterWrap
+     * @param   bool  $applyOuterWrap
      *
      * @return CustomElementContext
      */
     public function setApplyOuterWrap(bool $applyOuterWrap): CustomElementContext
     {
         $this->applyOuterWrap = $applyOuterWrap;
+        
         return $this;
     }
     
@@ -295,6 +316,7 @@ class CustomElementContext
     public function disableOuterWrap(): CustomElementContext
     {
         $this->applyOuterWrap = false;
+        
         return $this;
     }
 }

@@ -27,6 +27,7 @@ class FacetAspect implements AspectInterface
     
     /**
      * The linked facet
+     *
      * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface
      */
     protected $facet;
@@ -34,7 +35,7 @@ class FacetAspect implements AspectInterface
     /**
      * FacetAspect constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface $facet
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\Facet\FacetInterface  $facet
      */
     public function __construct(FacetInterface $facet)
     {

@@ -36,18 +36,21 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * The visible name of the plugin. Should be translation! If not set, the humanized extension key and plugin name
      * are used.
+     *
      * @var string
      */
     protected $title = '';
     
     /**
      * The visible description of this plugin in the new content element wizard
+     *
      * @var string
      */
     protected $description = '';
     
     /**
      * Defines if this plugin is registered as plugin or as content element in extbase
+     *
      * @var string
      */
     protected $type = ExtensionUtility::PLUGIN_TYPE_PLUGIN;
@@ -55,6 +58,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * The id of the new content element wizard tab. "plugins" by default.
      * Setting this value to FALSE (bool) will disable the creation of a wizard entry for this element
+     *
      * @var string|bool
      */
     protected $wizardTab = 'plugins';
@@ -62,6 +66,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * Can be used to define the label of a certain wizard tab.
      * This can be used if you create a new wizard tab by using the $wizardTab option
+     *
      * @var string|null
      */
     protected $wizardTabLabel;
@@ -69,6 +74,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * Defines which actions (they have to be previously defined in "actions") should be handled without caching them.
      * Follows the same definition syntax as $actions.
+     *
      * @var array
      */
     protected $noCacheActions = [];
@@ -76,12 +82,14 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * Holds the flex form instance we use to configure the flex form for this plugin
      * If this is empty we don't have a flex form for this plugin
+     *
      * @var FlexForm|null
      */
     protected $flexForm;
     
     /**
      * The class that is responsible for rendering the backend preview for this plugin
+     *
      * @var string|null
      */
     protected $backendPreviewRenderer;
@@ -89,12 +97,14 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * True when the backend preview renderer was set -> meaning we should keep the value, even if the controller
      * changes...
+     *
      * @var bool
      */
     protected $backendPreviewRendererWasSet = false;
     
     /**
      * The class that is responsible for rendering the backend list label for this plugin
+     *
      * @var string|null
      */
     protected $backendListLabelRenderer;
@@ -102,6 +112,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * True when the backend list label renderer was set -> meaning we should keep the value, even if the controller
      * changes...
+     *
      * @var bool
      */
     protected $backendListLabelRendererWasSet = false;
@@ -109,18 +120,21 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * Holds additional typoscript configuration for this plugin.
      * Note: This is raw typo script, meaning you have to do plugin.tx_... {} yourselves!
+     *
      * @var string
      */
     protected $additionalTypoScript = '';
     
     /**
      * True if we should render a backend preview for this content element
+     *
      * @var bool
      */
     protected $backendPreview = true;
     
     /**
      * The section label of this element when it is rendered in the cType select box
+     *
      * @var string
      */
     protected $cTypeSection;
@@ -136,23 +150,25 @@ class PluginConfigurator extends AbstractElementConfigurator
     
     /**
      * Returns true if this plugin has a flex form configuration
+     *
      * @return bool
      */
     public function hasFlexFormConfig(): bool
     {
-        return !empty($this->flexForm);
+        return ! empty($this->flexForm);
     }
     
     /**
      * Returns the flex form configuration object for this plugin.
      * You have to call this method at least once to register a flex form file for an element
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
      */
     public function getFlexFormConfig(): FlexForm
     {
         // Return existing instance
-        if (!empty($this->flexForm)) {
+        if (! empty($this->flexForm)) {
             return $this->flexForm;
         }
         
@@ -176,6 +192,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     
     /**
      * Returns the visible name of the plugin.
+     *
      * @return string
      */
     public function getTitle(): string
@@ -187,18 +204,20 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Sets the visible name of the plugin. Should be translation! If not set,
      * the humanized extension key and plugin name  are used.
      *
-     * @param string $title
+     * @param   string  $title
      *
      * @return PluginConfigurator
      */
     public function setTitle(string $title): PluginConfigurator
     {
         $this->title = $title;
+        
         return $this;
     }
     
     /**
      * Returns the visible description of this plugin in the new content element wizard
+     *
      * @return string
      */
     public function getDescription(): string
@@ -209,18 +228,20 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * Sets the visible description of this plugin in the new content element wizard
      *
-     * @param string $description
+     * @param   string  $description
      *
      * @return PluginConfigurator
      */
     public function setDescription(string $description): PluginConfigurator
     {
         $this->description = $description;
+        
         return $this;
     }
     
     /**
      * Returns either "plugin" or "contentElement" defining how this plugin will be registered in ext base
+     *
      * @return string
      */
     public function getType(): string
@@ -230,6 +251,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     
     /**
      * Returns the type but prepared for the extension utility
+     *
      * @return string
      */
     public function getExtensionUtilityType(): string
@@ -240,19 +262,22 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * Can be used to define how this plugin is added to ext base.
      *
-     * @param string $type Can be set either to "plugin" or to "contentElement".
+     * @param   string  $type  Can be set either to "plugin" or to "contentElement".
      *
      * @return PluginConfigurator
      */
     public function setType(string $type): PluginConfigurator
     {
-        $this->type = strtolower($type) === 'plugin' ? ExtensionUtility::PLUGIN_TYPE_PLUGIN : ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT;
+        $this->type = strtolower($type) === 'plugin' ? ExtensionUtility::PLUGIN_TYPE_PLUGIN
+            : ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT;
+        
         return $this;
     }
     
     /**
      * Returns the currently set section label of this element when it is rendered in the cType select box.
      * This of course only works if you set the type to "contentElement".
+     *
      * @return string
      */
     public function getCTypeSection(): string
@@ -265,18 +290,20 @@ class PluginConfigurator extends AbstractElementConfigurator
      * If this is not defined, a label is automatically generated using the extension key
      * This of course only works if you set the type to "contentElement".
      *
-     * @param string $cTypeSection
+     * @param   string  $cTypeSection
      *
      * @return PluginConfigurator
      */
     public function setCTypeSection(string $cTypeSection): PluginConfigurator
     {
         $this->cTypeSection = $cTypeSection;
+        
         return $this;
     }
     
     /**
      * Returns the list of actions that should not be cached
+     *
      * @return array
      */
     public function getNoCacheActions(): array
@@ -284,6 +311,7 @@ class PluginConfigurator extends AbstractElementConfigurator
         if (empty($this->noCacheActions)) {
             return [];
         }
+        
         return $this->actionsProcessor($this->noCacheActions);
     }
     
@@ -291,19 +319,21 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Sets the list of actions (they have to be previously defined in "actions") which should be handled without
      * caching them. Follows the same definition syntax as setActions.
      *
-     * @param array $noCacheActions
+     * @param   array  $noCacheActions
      *
      * @return PluginConfigurator
      */
     public function setNoCacheActions(array $noCacheActions): PluginConfigurator
     {
         $this->noCacheActions = $noCacheActions;
+        
         return $this;
     }
     
     /**
      * Returns the id of the new content element wizard tab. "plugins" by default.
      * If false is returned the wizard tab should not be created
+     *
      * @return bool|string
      */
     public function getWizardTab()
@@ -315,18 +345,20 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Used to set the id of the new content element wizard tab. "plugins" by default.
      * Setting this value to FALSE (bool) will disable the creation of a wizard entry for this element
      *
-     * @param bool|string $wizardTab
+     * @param   bool|string  $wizardTab
      *
      * @return PluginConfigurator
      */
     public function setWizardTab($wizardTab)
     {
         $this->wizardTab = $wizardTab;
+        
         return $this;
     }
     
     /**
      * Returns the currently set label for this wizard tab or null
+     *
      * @return string|null
      */
     public function getWizardTabLabel(): ?string
@@ -338,18 +370,20 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Can be used to define the label of a certain wizard tab.
      * This can be used if you create a new wizard tab by using the $wizardTab option
      *
-     * @param string|null $wizardTabLabel
+     * @param   string|null  $wizardTabLabel
      *
      * @return PluginConfigurator
      */
     public function setWizardTabLabel(?string $wizardTabLabel): PluginConfigurator
     {
         $this->wizardTabLabel = $wizardTabLabel;
+        
         return $this;
     }
     
     /**
      * Returns true if this controller should render a backend preview, false if not
+     *
      * @return bool
      */
     public function renderBackendPreview(): bool
@@ -360,18 +394,20 @@ class PluginConfigurator extends AbstractElementConfigurator
     /**
      * If this is set to false, the content element will not render a backend preview
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator
      */
     public function setBackendPreview(bool $state): PluginConfigurator
     {
         $this->backendPreview = $state;
+        
         return $this;
     }
     
     /**
      * Returns either the configured backend preview renderer class or null, if there is none
+     *
      * @return string|null
      */
     public function getBackendPreviewRenderer(): ?string
@@ -387,7 +423,7 @@ class PluginConfigurator extends AbstractElementConfigurator
      * NOTE: If either your controller class implements the BackendPreviewRendererInterface
      * it is automatically selected as backend preview renderer.
      *
-     * @param string|null $backendPreviewRenderer
+     * @param   string|null  $backendPreviewRenderer
      *
      * @return PluginConfigurator
      * @see \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererInterface
@@ -395,13 +431,15 @@ class PluginConfigurator extends AbstractElementConfigurator
     public function setBackendPreviewRenderer(?string $backendPreviewRenderer): PluginConfigurator
     {
         $this->backendPreviewRendererWasSet = true;
-        $this->backendPreviewRenderer = $backendPreviewRenderer;
+        $this->backendPreviewRenderer       = $backendPreviewRenderer;
+        
         return $this;
     }
     
     /**
      * Returns either the configured backend list label renderer class, a list of fields that should be rendered or
      * null if there is nothing configured
+     *
      * @return string|array|null
      */
     public function getBackendListLabelRenderer()
@@ -418,7 +456,7 @@ class PluginConfigurator extends AbstractElementConfigurator
      * NOTE: If either your controller class implements the BackendListLabelRendererInterface
      * it is automatically selected as backend preview renderer.
      *
-     * @param string|array|null $backendListLabelRenderer
+     * @param   string|array|null  $backendListLabelRenderer
      *
      * @return PluginConfigurator
      * @see \LaborDigital\Typo3BetterApi\BackendPreview\BackendListLabelRendererInterface
@@ -426,7 +464,8 @@ class PluginConfigurator extends AbstractElementConfigurator
     public function setBackendListLabelRenderer($backendListLabelRenderer): PluginConfigurator
     {
         $this->backendListLabelRendererWasSet = true;
-        $this->backendListLabelRenderer = $backendListLabelRenderer;
+        $this->backendListLabelRenderer       = $backendListLabelRenderer;
+        
         return $this;
     }
     
@@ -434,13 +473,14 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Sets additional typoscript configuration for this plugin.
      * Note: This is raw typo script, meaning you have to do plugin.tx_... {} yourselves!
      *
-     * @param string $setup
+     * @param   string  $setup
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator
      */
     public function setAdditionalTypoScript(string $setup): PluginConfigurator
     {
         $this->additionalTypoScript = $setup;
+        
         return $this;
     }
     
@@ -448,7 +488,7 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Similar to setAdditionalTypoScript() but keeps the existing typoScript setup and
      * just appends the given value to it.
      *
-     * @param string $setup
+     * @param   string  $setup
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurator
      * @see setAdditionalTypoScript()
@@ -458,11 +498,13 @@ class PluginConfigurator extends AbstractElementConfigurator
         $this->additionalTypoScript .= PHP_EOL . '[GLOBAL]' . PHP_EOL;
         $this->additionalTypoScript .= $setup;
         $this->additionalTypoScript .= PHP_EOL . '[GLOBAL]' . PHP_EOL;
+        
         return $this;
     }
     
     /**
      * Returns the additional typoscript configuration for this plugin.
+     *
      * @return string
      */
     public function getAdditionalTypoScript(): string
@@ -476,13 +518,15 @@ class PluginConfigurator extends AbstractElementConfigurator
     protected function setControllerClass(string $controllerClass)
     {
         // Update the backend preview renderer if required
-        if (!$this->backendPreviewRendererWasSet) {
-            if (class_exists($controllerClass) && in_array(BackendPreviewRendererInterface::class, class_implements($controllerClass))) {
+        if (! $this->backendPreviewRendererWasSet) {
+            if (class_exists($controllerClass)
+                && in_array(BackendPreviewRendererInterface::class, class_implements($controllerClass))) {
                 $this->backendPreviewRenderer = $controllerClass;
             }
         }
-        if (!$this->backendListLabelRendererWasSet) {
-            if (class_exists($controllerClass) && in_array(BackendListLabelRendererInterface::class, class_implements($controllerClass))) {
+        if (! $this->backendListLabelRendererWasSet) {
+            if (class_exists($controllerClass)
+                && in_array(BackendListLabelRendererInterface::class, class_implements($controllerClass))) {
                 $this->backendListLabelRenderer = $controllerClass;
             }
         }
@@ -507,6 +551,7 @@ class PluginConfigurator extends AbstractElementConfigurator
         if ($this->getType() !== 'plugin') {
             return ['CType' => $this->getSignature()];
         }
+        
         return ['CType' => 'list', 'list_type' => $this->getSignature()];
     }
 }

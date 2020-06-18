@@ -32,14 +32,15 @@ class ExtendedReflectionService extends BetterApiClassOverrideCopy__ReflectionSe
         $schema = parent::getClassSchema($classNameOrObject);
         
         // Avoid infinite recursion
-        if ($classNameOrObject === LazyConstructorInjectionHook::class ||
-            $classNameOrObject instanceof LazyConstructorInjectionHook) {
+        if ($classNameOrObject === LazyConstructorInjectionHook::class
+            || $classNameOrObject instanceof LazyConstructorInjectionHook) {
             return $schema;
         }
         
         // Allow filtering
         $e = new ClassSchemaFilterEvent($schema, $classNameOrObject);
         TypoEventBus::getInstance()->dispatch($e);
+        
         return $e->getSchema();
     }
 }

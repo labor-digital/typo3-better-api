@@ -31,37 +31,39 @@ class RepositoryWrapper extends BetterRepository
     
     public function __initialize(Repository $repository)
     {
-        $this->repository = $repository;
+        $this->repository    = $repository;
         $this->selfReference = $repository;
     }
     
     public function __get($name)
     {
-        if (!property_exists($this->repository, $name)) {
+        if (! property_exists($this->repository, $name)) {
             return null;
         }
+        
         return $this->repository->$name;
     }
     
     public function __set($name, $value)
     {
-        if (!property_exists($this->repository, $name)) {
+        if (! property_exists($this->repository, $name)) {
             return;
         }
         $this->repository->$name = $value;
     }
     
     /**
-     * @param string $methodName
-     * @param array  $arguments
+     * @param   string  $methodName
+     * @param   array   $arguments
      *
      * @return mixed|null
      */
     public function __call($methodName, $arguments)
     {
-        if (!method_exists($this->repository, $methodName)) {
+        if (! method_exists($this->repository, $methodName)) {
             return null;
         }
+        
         return call_user_func_array([$this->repository, $methodName], $arguments);
     }
     

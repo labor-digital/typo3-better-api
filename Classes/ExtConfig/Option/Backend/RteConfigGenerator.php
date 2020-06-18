@@ -35,7 +35,7 @@ class RteConfigGenerator implements CachedValueGeneratorInterface
     {
         $presetList = [];
         $context->runWithCachedValueDataScope($data, function ($row) use ($context, &$presetList) {
-            $config = $row['config'];
+            $config  = $row['config'];
             $options = Options::make($row['options'], [
                 'preset'            => [
                     'type'    => 'string',
@@ -52,16 +52,16 @@ class RteConfigGenerator implements CachedValueGeneratorInterface
             ]);
             
             // Merge the config into a single preset
-            $options = $context->replaceMarkers($options);
+            $options   = $context->replaceMarkers($options);
             $presetKey = $options['preset'];
-            if (!isset($presetList[$presetKey])) {
+            if (! isset($presetList[$presetKey])) {
                 $presetList[$presetKey] = ['config' => [], 'imports' => [], 'defaultImports' => true];
             }
-            $presetList[$presetKey]['config'] = Arrays::merge($presetList[$presetKey]['config'], $config);
+            $presetList[$presetKey]['config']  = Arrays::merge($presetList[$presetKey]['config'], $config);
             $presetList[$presetKey]['imports'] = Arrays::merge($presetList[$presetKey]['imports'], $options['imports']);
             if ($presetList[$presetKey]['defaultImports']) {
-                $presetList[$presetKey]['defaultImports'] =
-                $options['useDefaultImports'] === true;
+                $presetList[$presetKey]['defaultImports']
+                    = $options['useDefaultImports'] === true;
             }
         });
         
@@ -78,9 +78,9 @@ class RteConfigGenerator implements CachedValueGeneratorInterface
      * Internal helper to generate a single rte config preset file.
      * The method will dump the content into the tempFs and return the relative path to the file
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
-     * @param string                                                  $key
-     * @param array                                                   $config
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
+     * @param   string                                                   $key
+     * @param   array                                                    $config
      *
      * @return string
      */
@@ -121,6 +121,7 @@ class RteConfigGenerator implements CachedValueGeneratorInterface
         // Dump the preset
         $fileName = 'rteConfig/' . $key . '.yaml';
         $context->Fs->setFileContent($fileName, Yaml::dump($output));
+        
         return $context->Fs->getFile($fileName)->getPathname();
     }
 }

@@ -38,6 +38,7 @@ class SqlDefinitionFilterEventAdapter extends AbstractCoreHookEventAdapter
             'tablesDefinitionIsBeingBuilt',
             function ($definitions) {
                 static::$bus->dispatch(($e = new SqlDefinitionFilterEvent($definitions)));
+                
                 return [$e->getDefinitions()];
             }
         );

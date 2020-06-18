@@ -35,12 +35,14 @@ class DataHandlerActionFilterEventAdapter extends AbstractCoreHookEventAdapter
     public static function bind(): void
     {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass']
-        [static::class] = static::class;
+        [static::class]
+            = static::class;
     }
     
     public function processCmdmap_preProcess(&$command, &$table, &$id, &$value, $parent, &$pasteUpdate)
     {
-        static::$bus->dispatch(($e = new DataHandlerActionFilterEvent($command, $table, $id, $value, $pasteUpdate, $parent)));
+        static::$bus->dispatch(($e = new DataHandlerActionFilterEvent($command, $table, $id, $value, $pasteUpdate,
+            $parent)));
         $command = $e->getCommand();
         $table = $e->getTableName();
         $id = $e->getId();
@@ -48,8 +50,15 @@ class DataHandlerActionFilterEventAdapter extends AbstractCoreHookEventAdapter
         $pasteUpdate = $e->getPasteSpecialData();
     }
     
-    public function processCmdmap_postProcess($command, $table, $id, $value, DataHandler $parent, &$pasteUpdate, &$pasteDataMap)
-    {
+    public function processCmdmap_postProcess(
+        $command,
+        $table,
+        $id,
+        $value,
+        DataHandler $parent,
+        &$pasteUpdate,
+        &$pasteDataMap
+    ) {
         // Make sure to extract the new uid when a record was copied
         $newElementId = -1;
         if ($command === 'copy') {
@@ -68,6 +77,6 @@ class DataHandlerActionFilterEventAdapter extends AbstractCoreHookEventAdapter
             $parent
         )));
         $pasteDataMap = $e->getPasteDataMap();
-        $pasteUpdate = $e->getPasteSpecialData();
+        $pasteUpdate  = $e->getPasteSpecialData();
     }
 }

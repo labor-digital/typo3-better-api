@@ -46,8 +46,11 @@ abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInter
     /**
      * @inheritDoc
      */
-    public static function prepare(EventBusInterface $bus, TypoContext $context, TypoContainerInterface $container): void
-    {
+    public static function prepare(
+        EventBusInterface $bus,
+        TypoContext $context,
+        TypoContainerInterface $container
+    ): void {
         static::$bus = $bus;
         static::$container = $container;
         static::$context = $context;

@@ -30,6 +30,7 @@ class ExtBaseAfterPersistObjectEvent implements CoreHookEventInterface
     
     /**
      * The domain object that was persisted
+     *
      * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
     protected $object;
@@ -45,7 +46,7 @@ class ExtBaseAfterPersistObjectEvent implements CoreHookEventInterface
     /**
      * ExtBaseAfterPersistObjectEvent constructor.
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $object
+     * @param   \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface  $object
      */
     public function __construct(DomainObjectInterface $object)
     {
@@ -54,6 +55,7 @@ class ExtBaseAfterPersistObjectEvent implements CoreHookEventInterface
     
     /**
      * Returns the domain object that was persisted
+     *
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
     public function getObject(): DomainObjectInterface
@@ -64,13 +66,14 @@ class ExtBaseAfterPersistObjectEvent implements CoreHookEventInterface
     /**
      * Updates the domain object that was persisted
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $object
+     * @param   \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface  $object
      *
      * @return ExtBaseAfterPersistObjectEvent
      */
     public function setObject(DomainObjectInterface $object): ExtBaseAfterPersistObjectEvent
     {
         $this->object = $object;
+        
         return $this;
     }
 }

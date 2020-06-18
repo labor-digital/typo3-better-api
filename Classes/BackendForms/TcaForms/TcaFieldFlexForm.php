@@ -43,6 +43,7 @@ class TcaFieldFlexForm
     
     /**
      * The list of flex forms by their structure key
+     *
      * @var FlexForm[]
      */
     protected $structures = [];
@@ -50,14 +51,14 @@ class TcaFieldFlexForm
     /**
      * TcaFieldFlexForm constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField $field
-     * @param array                                                       $config
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext     $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField  $field
+     * @param   array                                                        $config
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext      $context
      */
     public function __construct(TcaField $field, array $config, ExtConfigContext $context)
     {
-        $this->field = $field;
-        $this->config = $config;
+        $this->field   = $field;
+        $this->config  = $config;
         $this->context = $context;
     }
     
@@ -85,7 +86,7 @@ class TcaFieldFlexForm
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Flex.html#ds-pointerfield
      *
      *
-     * @param string|null $field
+     * @param   string|null  $field
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaFieldFlexForm
      */
@@ -95,6 +96,7 @@ class TcaFieldFlexForm
             unset($this->config['ds_pointerField']);
         }
         $this->config['config']['ds_pointerField'] = $field;
+        
         return $this;
     }
     
@@ -107,7 +109,7 @@ class TcaFieldFlexForm
      *
      * If the requested structure does not exist, it will automatically created for you.
      *
-     * @param string $structure Optional identifier for a flex form structure to get the form representation for
+     * @param   string  $structure  Optional identifier for a flex form structure to get the form representation for
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
      */
@@ -119,19 +121,20 @@ class TcaFieldFlexForm
         }
         
         // Check if we have the structure for this form
-        $this->config['config']['ds'][$structure] = $definition =
-            Arrays::hasPath($this->config, ['config', 'ds', $structure]) ?
-                $this->config['config']['ds'][$structure] : '<T3DataStructure><sheets type=\'array\'></sheets></T3DataStructure>';
+        $this->config['config']['ds'][$structure] = $definition
+            = Arrays::hasPath($this->config, ['config', 'ds', $structure]) ?
+            $this->config['config']['ds'][$structure]
+            : '<T3DataStructure><sheets type=\'array\'></sheets></T3DataStructure>';
         
         // Generate a new flex form instance
-        return $this->structures[$structure] =
-            FlexForm::makeInstance($definition, $this->context, $this->field);
+        return $this->structures[$structure]
+            = FlexForm::makeInstance($definition, $this->context, $this->field);
     }
     
     /**
      * Returns true if this field has a flex form configuration for the given structure
      *
-     * @param string $structure
+     * @param   string  $structure
      *
      * @return bool
      */
@@ -142,6 +145,7 @@ class TcaFieldFlexForm
     
     /**
      * Returns the keys of all flex form structures that are registered on this field.
+     *
      * @return array
      */
     public function getFormStructures(): array
@@ -152,7 +156,7 @@ class TcaFieldFlexForm
     /**
      * Removes a given structure definition from the current flex form configuration.
      *
-     * @param string $structure
+     * @param   string  $structure
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaFieldFlexForm
      */
@@ -160,6 +164,7 @@ class TcaFieldFlexForm
     {
         unset($this->structures[$structure]);
         Arrays::removePath($this->config, ['config', 'ds', $structure]);
+        
         return $this;
     }
     
@@ -174,7 +179,7 @@ class TcaFieldFlexForm
         // Update the ds list
         foreach ($this->structures as $structure => $config) {
             // Make sure we supply a relative path...
-            $filename = $config->__build()->getFileName();
+            $filename                                 = $config->__build()->getFileName();
             $this->config['config']['ds'][$structure] = 'FILE:' . $filename;
         }
         

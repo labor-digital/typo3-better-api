@@ -26,6 +26,7 @@ interface CoreHookEventInterface
     
     /**
      * Returns the name of the used adapter class for this event
+     *
      * @return string
      */
     public static function getAdapterClass(): string;

@@ -29,30 +29,35 @@ class BackendPreviewRendererContext
     
     /**
      * The row of data that was given to this element
+     *
      * @var array
      */
     protected $row;
     
     /**
      * An additional header that will be placed above the rendered body
+     *
      * @var string
      */
     protected $header = '';
     
     /**
      * Holds the rendered body of this element's backend preview
+     *
      * @var string
      */
     protected $body = '';
     
     /**
      * The page layout view that requested this rendering
+     *
      * @var \TYPO3\CMS\Backend\View\PageLayoutView
      */
     protected $pageLayoutView;
     
     /**
      * The raw typo event instance
+     *
      * @var \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent
      */
     protected $event;
@@ -61,6 +66,7 @@ class BackendPreviewRendererContext
      * By default the preview content will be wrapped in a link tag.
      * The link will lead the editor directly to the editing mode of the clicked element.
      * If you set this to false, the link will not be generated.
+     *
      * @var bool
      */
     protected $linkPreview = true;
@@ -68,19 +74,20 @@ class BackendPreviewRendererContext
     /**
      * BackendPreviewRendererContext constructor.
      *
-     * @param \TYPO3\CMS\Backend\View\PageLayoutView                                 $pageLayoutView
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent $event
-     * @param array                                                                  $row
+     * @param   \TYPO3\CMS\Backend\View\PageLayoutView                                  $pageLayoutView
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent  $event
+     * @param   array                                                                   $row
      */
     public function __construct(PageLayoutView $pageLayoutView, BackendPreviewRenderingEvent $event, array $row)
     {
         $this->pageLayoutView = $pageLayoutView;
-        $this->event = $event;
-        $this->row = $row;
+        $this->event          = $event;
+        $this->row            = $row;
     }
     
     /**
      * Returns the row of data that was given to this element
+     *
      * @return array
      */
     public function getRow(): array
@@ -90,6 +97,7 @@ class BackendPreviewRendererContext
     
     /**
      * Returns the page layout view that requested this rendering
+     *
      * @return \TYPO3\CMS\Backend\View\PageLayoutView
      */
     public function getPageLayoutView(): PageLayoutView
@@ -99,6 +107,7 @@ class BackendPreviewRendererContext
     
     /**
      * Returns the raw typo event instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent
      */
     public function getEvent(): BackendPreviewRenderingEvent
@@ -108,6 +117,7 @@ class BackendPreviewRendererContext
     
     /**
      * Returns either the given header or an empty string
+     *
      * @return string
      */
     public function getHeader(): string
@@ -118,18 +128,20 @@ class BackendPreviewRendererContext
     /**
      * Can be used to set an additional header that will be placed above the rendered body
      *
-     * @param string $header
+     * @param   string  $header
      *
      * @return BackendPreviewRendererContext
      */
     public function setHeader(string $header): BackendPreviewRendererContext
     {
         $this->header = $header;
+        
         return $this;
     }
     
     /**
      * Returns either the set body or an empty string
+     *
      * @return string
      */
     public function getBody(): string
@@ -140,18 +152,20 @@ class BackendPreviewRendererContext
     /**
      * Sets the rendered body of this element's backend preview
      *
-     * @param string $body
+     * @param   string  $body
      *
      * @return BackendPreviewRendererContext
      */
     public function setBody(string $body): BackendPreviewRendererContext
     {
         $this->body = $body;
+        
         return $this;
     }
     
     /**
      * Returns true if the preview content should be wrapped in a link tag, false if not
+     *
      * @return bool
      */
     public function isLinkPreview(): bool
@@ -164,7 +178,7 @@ class BackendPreviewRendererContext
      * The link will lead the editor directly to the editing mode of the clicked element.
      * If you set this to false, the link will not be generated.
      *
-     * @param bool $linkPreview
+     * @param   bool  $linkPreview
      */
     public function setLinkPreview(bool $linkPreview): void
     {

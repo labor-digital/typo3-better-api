@@ -32,6 +32,7 @@ class CommandRegistrationEvent
 {
     /**
      * The list of commands that were gathered using this event
+     *
      * @var array
      */
     protected $commands = [];
@@ -39,9 +40,9 @@ class CommandRegistrationEvent
     /**
      * Adds a new command to the list of registered commands
      *
-     * @param string $commandClass
-     * @param string $commandName
-     * @param bool   $isSchedulable
+     * @param   string  $commandClass
+     * @param   string  $commandName
+     * @param   bool    $isSchedulable
      */
     public function addCommand(string $commandClass, string $commandName, bool $isSchedulable): void
     {
@@ -53,6 +54,7 @@ class CommandRegistrationEvent
     
     /**
      * Returns the list of commands that were gathered using this event
+     *
      * @return array
      */
     public function getCommands(): array
@@ -63,13 +65,14 @@ class CommandRegistrationEvent
     /**
      * Updates the list of commands that were gathered using this event
      *
-     * @param array $commands
+     * @param   array  $commands
      *
      * @return CommandRegistrationEvent
      */
     public function setCommands(array $commands): CommandRegistrationEvent
     {
         $this->commands = $commands;
+        
         return $this;
     }
 }

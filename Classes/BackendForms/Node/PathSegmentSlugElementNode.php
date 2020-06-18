@@ -27,6 +27,7 @@ use TYPO3\CMS\Core\Site\Entity\SiteInterface;
  * This node is a small fix for the backend rendering of the slug element
  * if it is used as a path-segment only. It adds a more obvious "dummy" path to the base
  * url to show the editor that his final url will look different than what he sees in the field
+ *
  * @package LaborDigital\Typo3BetterApi\BackendForms\Node
  */
 class PathSegmentSlugElementNode extends InputSlugElement
@@ -36,11 +37,12 @@ class PathSegmentSlugElementNode extends InputSlugElement
      */
     protected function getPrefix(SiteInterface $site, int $requestLanguageId = 0): string
     {
-        $prefix = parent::getPrefix($site, $requestLanguageId);
+        $prefix   = parent::getPrefix($site, $requestLanguageId);
         $lastChar = substr(trim(strrev($prefix)), 0, 1);
         if ($lastChar !== '/') {
             return $prefix . '/slug/of/the/page/';
         }
+        
         return $prefix;
     }
 }

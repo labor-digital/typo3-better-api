@@ -32,12 +32,14 @@ class SqlTableDefinitionFilterEvent
 {
     /**
      * The name of the table the definition is generated for
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The definition that should be filtered
+     *
      * @var array
      */
     protected $definition;
@@ -45,17 +47,18 @@ class SqlTableDefinitionFilterEvent
     /**
      * SqlTableDefinitionFilterEvent constructor.
      *
-     * @param string $tableName
-     * @param array  $definition
+     * @param   string  $tableName
+     * @param   array   $definition
      */
     public function __construct(string $tableName, array $definition)
     {
-        $this->tableName = $tableName;
+        $this->tableName  = $tableName;
         $this->definition = $definition;
     }
     
     /**
      * Returns the name of the table the definition is generated for
+     *
      * @return string
      */
     public function getTableName(): string
@@ -65,6 +68,7 @@ class SqlTableDefinitionFilterEvent
     
     /**
      * Returns the definition that should be filtered
+     *
      * @return array
      */
     public function getDefinition(): array
@@ -75,13 +79,14 @@ class SqlTableDefinitionFilterEvent
     /**
      * Updates the definition that should be filtered
      *
-     * @param array $definition
+     * @param   array  $definition
      *
      * @return SqlTableDefinitionFilterEvent
      */
     public function setDefinition(array $definition): SqlTableDefinitionFilterEvent
     {
         $this->definition = $definition;
+        
         return $this;
     }
 }

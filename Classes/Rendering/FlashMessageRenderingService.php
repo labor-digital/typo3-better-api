@@ -48,32 +48,31 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * FlashMessageRenderingService constructor.
      *
-     * @param \TYPO3\CMS\Core\Messaging\FlashMessageService                 $flashMessageService
-     * @param \TYPO3\CMS\Core\Messaging\FlashMessageRendererResolver        $rendererResolver
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \TYPO3\CMS\Core\Messaging\FlashMessageService                  $flashMessageService
+     * @param   \TYPO3\CMS\Core\Messaging\FlashMessageRendererResolver         $rendererResolver
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function __construct(
         FlashMessageService $flashMessageService,
         FlashMessageRendererResolver $rendererResolver,
         TypoContainerInterface $container
-    )
-    {
+    ) {
         $this->flashMessageService = $flashMessageService;
-        $this->rendererResolver = $rendererResolver;
-        $this->container = $container;
+        $this->rendererResolver    = $rendererResolver;
+        $this->container           = $container;
     }
     
     /**
      * Adds a new flash message of type "NOTICE" to the stack
      *
-     * @param string $message The message to be shown
-     * @param string $header  The header of the message
-     * @param array  $options Additional options when creating your message
-     *                        - queueId string (core.template.flashMessages) the stack identifier to
-     *                        add this message to.
-     *                        - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                        instead of the local context. If the message is stored in the session it survives page
-     *                        changes and redirects.
+     * @param   string  $message  The message to be shown
+     * @param   string  $header   The header of the message
+     * @param   array   $options  Additional options when creating your message
+     *                            - queueId string (core.template.flashMessages) the stack identifier to
+     *                            add this message to.
+     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
+     *                            instead of the local context. If the message is stored in the session it survives page
+     *                            changes and redirects.
      *
      * @return \LaborDigital\Typo3BetterApi\Rendering\FlashMessageRenderingService
      */
@@ -85,14 +84,14 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "WARNING" to the stack
      *
-     * @param string $message The message to be shown
-     * @param string $header  The header of the message
-     * @param array  $options Additional options when creating your message
-     *                        - queueId string (core.template.flashMessages) the stack identifier to
-     *                        add this message to.
-     *                        - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                        instead of the local context. If the message is stored in the session it survives page
-     *                        changes and redirects.
+     * @param   string  $message  The message to be shown
+     * @param   string  $header   The header of the message
+     * @param   array   $options  Additional options when creating your message
+     *                            - queueId string (core.template.flashMessages) the stack identifier to
+     *                            add this message to.
+     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
+     *                            instead of the local context. If the message is stored in the session it survives page
+     *                            changes and redirects.
      *
      * @return \LaborDigital\Typo3BetterApi\Rendering\FlashMessageRenderingService
      */
@@ -104,14 +103,14 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "OK" to the stack
      *
-     * @param string $message The message to be shown
-     * @param string $header  The header of the message
-     * @param array  $options Additional options when creating your message
-     *                        - queueId string (core.template.flashMessages) the stack identifier to
-     *                        add this message to.
-     *                        - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                        instead of the local context. If the message is stored in the session it survives page
-     *                        changes and redirects.
+     * @param   string  $message  The message to be shown
+     * @param   string  $header   The header of the message
+     * @param   array   $options  Additional options when creating your message
+     *                            - queueId string (core.template.flashMessages) the stack identifier to
+     *                            add this message to.
+     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
+     *                            instead of the local context. If the message is stored in the session it survives page
+     *                            changes and redirects.
      *
      * @return \LaborDigital\Typo3BetterApi\Rendering\FlashMessageRenderingService
      */
@@ -123,14 +122,14 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "INFO" to the stack
      *
-     * @param string $message The message to be shown
-     * @param string $header  The header of the message
-     * @param array  $options Additional options when creating your message
-     *                        - queueId string (core.template.flashMessages) the stack identifier to
-     *                        add this message to.
-     *                        - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                        instead of the local context. If the message is stored in the session it survives page
-     *                        changes and redirects.
+     * @param   string  $message  The message to be shown
+     * @param   string  $header   The header of the message
+     * @param   array   $options  Additional options when creating your message
+     *                            - queueId string (core.template.flashMessages) the stack identifier to
+     *                            add this message to.
+     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
+     *                            instead of the local context. If the message is stored in the session it survives page
+     *                            changes and redirects.
      *
      * @return \LaborDigital\Typo3BetterApi\Rendering\FlashMessageRenderingService
      */
@@ -142,14 +141,14 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "ERROR" to the stack
      *
-     * @param string $message The message to be shown
-     * @param string $header  The header of the message
-     * @param array  $options Additional options when creating your message
-     *                        - queueId string (core.template.flashMessages) the stack identifier to
-     *                        add this message to.
-     *                        - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                        instead of the local context. If the message is stored in the session it survives page
-     *                        changes and redirects.
+     * @param   string  $message  The message to be shown
+     * @param   string  $header   The header of the message
+     * @param   array   $options  Additional options when creating your message
+     *                            - queueId string (core.template.flashMessages) the stack identifier to
+     *                            add this message to.
+     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
+     *                            instead of the local context. If the message is stored in the session it survives page
+     *                            changes and redirects.
      *
      * @return \LaborDigital\Typo3BetterApi\Rendering\FlashMessageRenderingService
      */
@@ -162,15 +161,15 @@ class FlashMessageRenderingService implements SingletonInterface
      * Can be used to render the stack of flash messages to a variable.
      * NOTE: This is supported from Typo3 v8 and up!
      *
-     * @param string $queueId The query id of messages to render to the variable
+     * @param   string  $queueId  The query id of messages to render to the variable
      *
      * @return string
      */
     public function renderMessages(string $queueId = 'core.template.flashMessages'): string
     {
-        
         // Get the stack
         $stack = $this->flashMessageService->getMessageQueueByIdentifier($queueId);
+        
         return $this->rendererResolver->resolve()->render($stack->getAllMessagesAndFlush());
     }
     
@@ -178,10 +177,10 @@ class FlashMessageRenderingService implements SingletonInterface
      * Internal helper which is used to validate the given options and to create the message instance on a certain
      * stack.
      *
-     * @param int    $type
-     * @param string $message
-     * @param string $header
-     * @param array  $options
+     * @param   int     $type
+     * @param   string  $message
+     * @param   string  $header
+     * @param   array   $options
      *
      * @return $this
      */

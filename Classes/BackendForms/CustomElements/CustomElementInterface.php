@@ -30,11 +30,11 @@ interface CustomElementInterface
      * It will receive the array of options as well as the field instance. You can use this method to apply additional
      * TCA configuration to the field, before it is cached for later usage.
      *
-     * @param AbstractFormField $field   The instance of the field to apply this form element to
-     *                                   The instance will already be preconfigured to be rendered as a custom node in
-     *                                   the form framework
-     * @param array             $options The additional options that were given in the applyPreset method
-     * @param ExtConfigContext  $context The context of the extension, that is currently applying this element
+     * @param   AbstractFormField  $field    The instance of the field to apply this form element to
+     *                                       The instance will already be preconfigured to be rendered as a custom node
+     *                                       in the form framework
+     * @param   array              $options  The additional options that were given in the applyPreset method
+     * @param   ExtConfigContext   $context  The context of the extension, that is currently applying this element
      *
      * @return mixed
      */
@@ -44,7 +44,7 @@ interface CustomElementInterface
      * This method receives the prepared form element context and should render the html that will be displayed in the
      * backend.
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext  $context
      *
      * @return string
      */
@@ -56,7 +56,7 @@ interface CustomElementInterface
      *
      * You can use this method as a filter for the given array and return the modified array back
      *
-     * @param array $result
+     * @param   array  $result
      *
      * @return array
      */
@@ -72,7 +72,7 @@ interface CustomElementInterface
      *
      * To filter the value, just return it by the method.
      *
-     * @param CustomElementFormActionContext $context        The context object, containing all relevant
+     * @param   CustomElementFormActionContext  $context     The context object, containing all relevant
      *                                                       information about the current save process
      *
      * @return mixed
@@ -87,7 +87,7 @@ interface CustomElementInterface
      * The filter is executed once per field, so if there are e.g. 3 instances of the same field in your form, it will
      * be called 3 times, not just once!
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementFormActionContext $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementFormActionContext  $context
      *
      * @return mixed
      */
@@ -100,7 +100,7 @@ interface CustomElementInterface
      * The filter is executed once per field, so if there are e.g. 3 instances of the same field in your form, it will
      * be called 3 times, not just once!
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementFormActionContext $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementFormActionContext  $context
      *
      * @return mixed
      */

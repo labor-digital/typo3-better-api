@@ -33,12 +33,14 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler implements Exce
     
     /**
      * The name of the registered exception handler
+     *
      * @var string
      */
     protected static $defaultExceptionHandler;
     
     /**
      * The instance of the registered default exception handler
+     *
      * @var ExceptionHandlerInterface
      */
     protected $defaultExceptionHandlerInstance;
@@ -49,7 +51,8 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler implements Exce
     public function __construct()
     {
         if (empty(static::$defaultExceptionHandler)) {
-            throw new BetterApiException('Could not create instance of: ' . get_called_class() . ' because no default exception handler was registered!');
+            throw new BetterApiException('Could not create instance of: ' . get_called_class()
+                                         . ' because no default exception handler was registered!');
         }
         $this->defaultExceptionHandlerInstance = $this->getInstanceOf(static::$defaultExceptionHandler);
         
@@ -69,6 +72,7 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler implements Exce
         if ($e->getResult() !== null) {
             return $e->getResult();
         }
+        
         return $this->defaultExceptionHandlerInstance->handleException($exception);
     }
     
@@ -91,7 +95,7 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler implements Exce
     /**
      * Internal helper to inject the default exception handler class
      *
-     * @param string $defaultExceptionHandler
+     * @param   string  $defaultExceptionHandler
      */
     public static function __setDefaultExceptionHandler(string $defaultExceptionHandler): void
     {

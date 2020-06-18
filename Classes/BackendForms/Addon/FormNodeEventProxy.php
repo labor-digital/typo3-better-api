@@ -31,6 +31,7 @@ use TYPO3\CMS\Backend\Form\NodeFactory;
  * Class FormNodeEventProxy
  * This proxy is wrapped around every form node that is created by our extended node factory.
  * It is used to allow filtering of the form node before it is rendered.
+ *
  * @package LaborDigital\Typo3BetterApi\BackendForms\Addons
  */
 class FormNodeEventProxy extends AbstractNode
@@ -39,6 +40,7 @@ class FormNodeEventProxy extends AbstractNode
     
     /**
      * The instance of the real node
+     *
      * @var AbstractNode
      */
     protected $node;
@@ -66,22 +68,25 @@ class FormNodeEventProxy extends AbstractNode
         }
         
         // Allow late filtering
-        TypoEventBus::getInstance()->dispatch(($e = new BackendFormNodePostProcessorEvent($this, $this->node, $result)));
+        TypoEventBus::getInstance()->dispatch(($e = new BackendFormNodePostProcessorEvent($this, $this->node,
+            $result)));
+        
         return $e->getResult();
     }
     
     /**
      * Creates a new node proxy instance
      *
-     * @param \TYPO3\CMS\Backend\Form\AbstractNode $node
+     * @param   \TYPO3\CMS\Backend\Form\AbstractNode  $node
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\Addon\FormNodeEventProxy
      */
     public static function makeInstance(AbstractNode $node): FormNodeEventProxy
     {
-        $i = TypoContainer::getInstance()->get(static::class, ['args' => [null, null]]);
+        $i       = TypoContainer::getInstance()->get(static::class, ['args' => [null, null]]);
         $i->node = $node;
         $i->data = &$node->data;
+        
         return $i;
     }
     

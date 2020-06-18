@@ -41,7 +41,7 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * ExtBaseModuleConfigGenerator constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Translation\TranslationService $translationService
+     * @param   \LaborDigital\Typo3BetterApi\Translation\TranslationService  $translationService
      */
     public function __construct(TranslationService $translationService)
     {
@@ -54,7 +54,8 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
     public function generate(array $stack, ExtConfigContext $context, array $additionalData, $option)
     {
         // Prepare temporary storage
-        $tmp = new class {
+        $tmp = new class
+        {
             public $typoScript         = [];
             public $registerModuleArgs = [];
         };
@@ -66,24 +67,26 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
                 $configurator = $context->getInstanceOf(ModuleConfigurator::class, [$pluginName, $context]);
                 
                 // Loop through the stack
-                $context->runWithCachedValueDataScope($data, function (string $configClass) use ($context, $configurator, $pluginName) {
-                    if (!in_array(ModuleConfigurationInterface::class, class_implements($configClass))) {
-                        throw new ExtConfigException("Invalid configuration class: $configClass for module: $pluginName. It has to implement the correct interface: " . ModuleConfigurationInterface::class);
-                    }
-                    call_user_func([$configClass, 'configureModule'], $configurator, $context);
-                });
+                $context->runWithCachedValueDataScope($data,
+                    function (string $configClass) use ($context, $configurator, $pluginName) {
+                        if (! in_array(ModuleConfigurationInterface::class, class_implements($configClass))) {
+                            throw new ExtConfigException("Invalid configuration class: $configClass for module: $pluginName. It has to implement the correct interface: "
+                                                         . ModuleConfigurationInterface::class);
+                        }
+                        call_user_func([$configClass, 'configureModule'], $configurator, $context);
+                    });
                 
                 // Build the parts
                 $this->makeTranslationFileIfRequired($configurator, $context);
                 $tmp->registerModuleArgs[] = $this->makeRegisterModuleArgs($configurator, $context);
-                $tmp->typoScript[] = $this->makeTemplateDefinition('module', $configurator);
+                $tmp->typoScript[]         = $this->makeTemplateDefinition('module', $configurator);
             });
         }
         
         // Create a new config object
-        $config = $context->getInstanceOf(ElementConfig::class);
+        $config                     = $context->getInstanceOf(ElementConfig::class);
         $config->registerModuleArgs = $tmp->registerModuleArgs;
-        $config->typoScript = implode(PHP_EOL . PHP_EOL, $tmp->typoScript);
+        $config->typoScript         = implode(PHP_EOL . PHP_EOL, $tmp->typoScript);
         unset($tmp);
         
         // Done
@@ -93,14 +96,14 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
     /**
      * Makes sure the module translation file exists or creates a new one
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module\ModuleConfigurator $configurator
-     * @param ExtConfigContext                                                                $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module\ModuleConfigurator  $configurator
+     * @param   ExtConfigContext                                                                 $context
      */
     protected function makeTranslationFileIfRequired(ModuleConfigurator $configurator, ExtConfigContext $context)
     {
-        
         // Check if the file exists
-        $translationFile = $context->TypoContext->getPathAspect()->typoPathToRealPath($configurator->getTranslationFile());
+        $translationFile = $context->TypoContext->getPathAspect()
+                                                ->typoPathToRealPath($configurator->getTranslationFile());
         if (file_exists($translationFile)) {
             return;
         }
@@ -109,6 +112,7 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
         if ($this->translationService->hasContext($configurator->getTranslationFile())) {
             $translationFile = $this->translationService->getContextFile($configurator->getTranslationFile(), true);
             $configurator->setTranslationFile($translationFile);
+            
             return;
         }
         
@@ -127,14 +131,16 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
                     [
                         'tag'     => 'header',
                         'content' => '',
-                    ], [
+                    ],
+                    [
                         'tag' => 'body',
                         [
                             'tag' => 'trans-unit',
                             '@id' => 'mlang_tabs_tab',
                             [
                                 'tag'     => 'source',
-                                'content' => Inflector::toHuman($context->getExtKey()) . ': ' . Inflector::toHuman($configurator->getPluginName()),
+                                'content' => Inflector::toHuman($context->getExtKey()) . ': '
+                                             . Inflector::toHuman($configurator->getPluginName()),
                             ],
                         ],
                         [
@@ -164,9 +170,9 @@ class ModuleConfigGenerator extends AbstractConfigGenerator implements CachedSta
      * Builds and returns the arguments that have to be passed to the "registerModule" method to add our module to the
      * backend.
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module\ModuleConfigurator $configurator
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module\ModuleConfigurator  $configurator
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      * @see \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule()

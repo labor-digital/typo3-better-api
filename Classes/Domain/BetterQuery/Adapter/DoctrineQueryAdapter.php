@@ -38,9 +38,9 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     /**
      * DoctrineQueryAdapter constructor.
      *
-     * @param string                                                        $tableName
-     * @param \TYPO3\CMS\Core\Database\Query\QueryBuilder                   $queryBuilder
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $settings
+     * @param   string                                                         $tableName
+     * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
+     * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
      */
     public function __construct(string $tableName, QueryBuilder $queryBuilder, QuerySettingsInterface $settings)
     {
@@ -144,8 +144,10 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
         switch ($operator) {
             case 'like':
                 if ($negated) {
-                    return $this->queryBuilder->expr()->notLike($key, $this->queryBuilder->createNamedParameter($value));
+                    return $this->queryBuilder->expr()
+                                              ->notLike($key, $this->queryBuilder->createNamedParameter($value));
                 }
+                
                 return $this->queryBuilder->expr()->like($key, $this->queryBuilder->createNamedParameter($value));
             case 'in':
                 if ($negated) {
@@ -157,6 +159,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                         )
                     );
                 }
+                
                 return $this->queryBuilder->expr()->in(
                     $key,
                     $this->queryBuilder->createNamedParameter(
@@ -168,26 +171,31 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                 if ($negated) {
                     return $this->queryBuilder->expr()->lte($key, $this->queryBuilder->createNamedParameter($value));
                 }
+                
                 return $this->queryBuilder->expr()->gt($key, $this->queryBuilder->createNamedParameter($value));
             case '>=':
                 if ($negated) {
                     return $this->queryBuilder->expr()->lt($key, $this->queryBuilder->createNamedParameter($value));
                 }
+                
                 return $this->queryBuilder->expr()->gte($key, $this->queryBuilder->createNamedParameter($value));
             case '<':
                 if ($negated) {
                     return $this->queryBuilder->expr()->gte($key, $this->queryBuilder->createNamedParameter($value));
                 }
+                
                 return $this->queryBuilder->expr()->lt($key, $this->queryBuilder->createNamedParameter($value));
             case '<=':
                 if ($negated) {
                     return $this->queryBuilder->expr()->gt($key, $this->queryBuilder->createNamedParameter($value));
                 }
+                
                 return $this->queryBuilder->expr()->lte($key, $this->queryBuilder->createNamedParameter($value));
             default:
                 if ($negated) {
                     return $this->queryBuilder->expr()->neq($key, $this->queryBuilder->createNamedParameter($value));
                 }
+                
                 return $this->queryBuilder->expr()->eq($key, $this->queryBuilder->createNamedParameter($value));
         }
     }

@@ -27,7 +27,7 @@ trait CodeGenerationHelperTrait
      * Helper which is used to build the parameter string of a given reflection method,
      * to be dumped back into the source code.
      *
-     * @param \ReflectionMethod $method
+     * @param   \ReflectionMethod  $method
      *
      * @return string
      */
@@ -88,7 +88,7 @@ trait CodeGenerationHelperTrait
     /**
      * Helper which is used to build a method signature out of the given method reflection
      *
-     * @param \ReflectionMethod $method
+     * @param   \ReflectionMethod  $method
      *
      * @return string
      */
@@ -98,7 +98,7 @@ trait CodeGenerationHelperTrait
         
         // Build prefixes
         $prefixes = [];
-        if ($method->isAbstract() && !$method->getDeclaringClass()->isInterface()) {
+        if ($method->isAbstract() && ! $method->getDeclaringClass()->isInterface()) {
             $prefixes[] = 'abstract';
         }
         if ($method->isFinal()) {
@@ -121,9 +121,9 @@ trait CodeGenerationHelperTrait
         // Build return type
         $returnType = '';
         if ($method->hasReturnType()) {
-            $type = $method->getReturnType();
+            $type                = $method->getReturnType();
             $isObjectOrInterface = class_exists($type) || interface_exists($type);
-            $returnType = ':' . ($isObjectOrInterface ? '\\' : '') . $type->getName();
+            $returnType          = ':' . ($isObjectOrInterface ? '\\' : '') . $type->getName();
         }
         
         // Build signature
@@ -133,13 +133,13 @@ trait CodeGenerationHelperTrait
     /**
      * Internal helper to parse a method's php doc block and to convert it into a usable description for our function
      *
-     * @param string $desc
+     * @param   string  $desc
      *
      * @return string
      */
     protected function sanitizeDesc(string $desc): string
     {
-        $lines = preg_split("/\r?\n/", $desc);
+        $lines         = preg_split("/\r?\n/", $desc);
         $linesFiltered = [];
         foreach ($lines as $line) {
             if (stripos($line, '@package') !== false) {
@@ -153,6 +153,7 @@ trait CodeGenerationHelperTrait
             }
             $linesFiltered[] = preg_replace('/\\s*[\\/*]+\\s?/', '', $line);
         }
+        
         return implode(PHP_EOL . '	 * ', array_filter($linesFiltered));
     }
 }

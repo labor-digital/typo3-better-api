@@ -29,19 +29,19 @@ interface SimpleTypoCacheInterface extends CacheInterface
      * Is a helper to generate a cache key based on the given arguments.
      * If no arguments are given, a cache key will be automatically calculated from the current state of the controller
      *
-     * @param array ...$args
+     * @param   array  ...$args
      *
      * @return string
      */
     public function makeCacheKey(...$args): string;
     
     /**
-     * @param string                 $key   The key of the item to store.
-     * @param mixed                  $value The value of the item to store, must be serializable.
-     * @param array                  $tags  A list of tags that should be linked to this entry
-     * @param null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
-     *                                      the driver supports TTL then the library may set a default value
-     *                                      for it or let the driver take care of that.
+     * @param   string                  $key    The key of the item to store.
+     * @param   mixed                   $value  The value of the item to store, must be serializable.
+     * @param   array                   $tags   A list of tags that should be linked to this entry
+     * @param   null|int|\DateInterval  $ttl    Optional. The TTL value of this item. If no value is sent and
+     *                                          the driver supports TTL then the library may set a default value
+     *                                          for it or let the driver take care of that.
      *
      * @return mixed
      */
@@ -59,7 +59,7 @@ interface SimpleTypoCacheInterface extends CacheInterface
     /**
      * Wipes clean the entire cache's keys, that are linked to one or multiple tags.
      *
-     * @param array $tags
+     * @param   array  $tags
      *
      * @return bool True on success and false on failure.
      */

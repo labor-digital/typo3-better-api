@@ -38,30 +38,35 @@ class BackendPreviewRenderingEvent implements CoreHookEventInterface
 {
     /**
      * The row of the tt_content record that should be rendered as backend preview
+     *
      * @var array
      */
     protected $row;
     
     /**
      * The header set for the backend preview
+     *
      * @var string
      */
     protected $header;
     
     /**
      * The rendered content for the record
+     *
      * @var string
      */
     protected $content;
     
     /**
      * True as long as the record was not manually rendered
+     *
      * @var bool
      */
     protected $drawItem;
     
     /**
      * The layout view to render the element for
+     *
      * @var \TYPO3\CMS\Backend\View\PageLayoutView
      */
     protected $view;
@@ -77,28 +82,29 @@ class BackendPreviewRenderingEvent implements CoreHookEventInterface
     /**
      * BackendPreviewRenderingEvent constructor.
      *
-     * @param array                                  $row
-     * @param string                                 $header
-     * @param string                                 $content
-     * @param bool                                   $drawItem
-     * @param \TYPO3\CMS\Backend\View\PageLayoutView $view
+     * @param   array                                   $row
+     * @param   string                                  $header
+     * @param   string                                  $content
+     * @param   bool                                    $drawItem
+     * @param   \TYPO3\CMS\Backend\View\PageLayoutView  $view
      */
     public function __construct(array $row, string $header, string $content, bool $drawItem, PageLayoutView $view)
     {
-        $this->row = $row;
-        $this->header = $header;
-        $this->content = $content;
+        $this->row      = $row;
+        $this->header   = $header;
+        $this->content  = $content;
         $this->drawItem = $drawItem;
-        $this->view = $view;
+        $this->view     = $view;
     }
     
     /**
      * Returns true if the element was rendered, false if it is not yet rendered
+     *
      * @return bool
      */
     public function isRendered(): bool
     {
-        return !$this->drawItem;
+        return ! $this->drawItem;
     }
     
     /**
@@ -111,6 +117,7 @@ class BackendPreviewRenderingEvent implements CoreHookEventInterface
     
     /**
      * Returns the row of the tt_content record that should be rendered as backend preview
+     *
      * @return array
      */
     public function getRow(): array
@@ -121,6 +128,7 @@ class BackendPreviewRenderingEvent implements CoreHookEventInterface
     
     /**
      * Returns the header set for the backend preview
+     *
      * @return string
      */
     public function getHeader(): string
@@ -131,18 +139,20 @@ class BackendPreviewRenderingEvent implements CoreHookEventInterface
     /**
      * Updates the header set for the backend preview
      *
-     * @param string $header
+     * @param   string  $header
      *
      * @return BackendPreviewRenderingEvent
      */
     public function setHeader(string $header): BackendPreviewRenderingEvent
     {
         $this->header = $header;
+        
         return $this;
     }
     
     /**
      * Returns the rendered content for the record
+     *
      * @return string
      */
     public function getContent(): string
@@ -153,18 +163,20 @@ class BackendPreviewRenderingEvent implements CoreHookEventInterface
     /**
      * Updates the rendered content for the record
      *
-     * @param string $content
+     * @param   string  $content
      *
      * @return BackendPreviewRenderingEvent
      */
     public function setContent(string $content): BackendPreviewRenderingEvent
     {
         $this->content = $content;
+        
         return $this;
     }
     
     /**
      * Returns the layout view to render the element for
+     *
      * @return \TYPO3\CMS\Backend\View\PageLayoutView
      */
     public function getView(): PageLayoutView

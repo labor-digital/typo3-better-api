@@ -39,6 +39,7 @@ class LinkService
     
     /**
      * Holds the host name and protocol, once it was generated
+     *
      * @var string|null
      */
     protected $host;
@@ -46,7 +47,7 @@ class LinkService
     /**
      * LinkService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Link\LinkContext $context
+     * @param   \LaborDigital\Typo3BetterApi\Link\LinkContext  $context
      */
     public function __construct(LinkContext $context)
     {
@@ -59,13 +60,13 @@ class LinkService
      * or somewhere in a hook you can always create links. For that we forcefully instantiate
      * the typo3 frontend if required.
      *
-     * @param string|null   $linkSet      Defines the link set which was previously defined in typoscript,
-     *                                    or using the LinkSetRepository in your php code. The set will
-     *                                    automatically be applied to the new link instance
-     * @param iterable|null $args         If you have a linkSet specified you can use this parameter to supply
-     *                                    additional arguments to the created link instance directly
-     * @param iterable|null $fragmentArgs If you have a linkSet specified you can use this parameter to supply
-     *                                    arguments to your fragment of the created link instance directly
+     * @param   string|null    $linkSet       Defines the link set which was previously defined in typoscript,
+     *                                        or using the LinkSetRepository in your php code. The set will
+     *                                        automatically be applied to the new link instance
+     * @param   iterable|null  $args          If you have a linkSet specified you can use this parameter to supply
+     *                                        additional arguments to the created link instance directly
+     * @param   iterable|null  $fragmentArgs  If you have a linkSet specified you can use this parameter to supply
+     *                                        arguments to your fragment of the created link instance directly
      *
      * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
      */
@@ -75,15 +76,15 @@ class LinkService
         $link = new TypoLink($this->context, $this->controllerRequest);
         
         // Inject link set and args if given
-        if (!empty($linkSet)) {
+        if (! empty($linkSet)) {
             $link = $link->withSetApplied($linkSet);
         }
-        if (!empty($args)) {
+        if (! empty($args)) {
             foreach ($args as $k => $v) {
                 $link = $link->withAddedToArgs($k, $v);
             }
         }
-        if (!empty($fragmentArgs)) {
+        if (! empty($fragmentArgs)) {
             foreach ($fragmentArgs as $k => $v) {
                 $link = $link->withAddedToFragment($k, $v);
             }
@@ -97,8 +98,8 @@ class LinkService
      * This helper can be used to render typo3's text urls which look like t3://page?uid=26
      * into a real, url using the typoscript cObject of the frontend
      *
-     * @param string|array $typoLink Can by either a textual representation, like t3://page?uid=26
-     *                               or a full blown typoscript config array which will be rendered.
+     * @param   string|array  $typoLink  Can by either a textual representation, like t3://page?uid=26
+     *                                   or a full blown typoscript config array which will be rendered.
      *
      * @return string
      */
@@ -112,8 +113,8 @@ class LinkService
     /**
      * Returns the target frame for a typo link definition object.
      *
-     * @param string|array $typoLink Can by either a textual representation, like t3://page?uid=26
-     *                               or a full blown typoscript config array which will be rendered.
+     * @param   string|array  $typoLink  Can by either a textual representation, like t3://page?uid=26
+     *                                   or a full blown typoscript config array which will be rendered.
      *
      * @return string
      */
@@ -121,6 +122,7 @@ class LinkService
     {
         $cObj = $this->context->getContentObject();
         $this->getTypoLink($typoLink);
+        
         return empty($cObj->lastTypoLinkTarget) ? '_self' : $cObj->lastTypoLinkTarget;
     }
     
@@ -134,19 +136,19 @@ class LinkService
      * if so it will generate the url for that route. If it does not match the url of a route
      * it will automatically generate the url for the respective module instead.
      *
-     * @param string $target  Either the route or the module identifier to build the url for
-     * @param array  $options Additional config options
-     *                        - mode string (auto): By default the type of link to create is selected
-     *                        automatically (routes get priority over modules). If you want to specify
-     *                        which type of link we should generate, you may set this to either "module" or "route".
-     *                        - args array: Additional parameter that should be passed on by the link
+     * @param   string  $target   Either the route or the module identifier to build the url for
+     * @param   array   $options  Additional config options
+     *                            - mode string (auto): By default the type of link to create is selected
+     *                            automatically (routes get priority over modules). If you want to specify
+     *                            which type of link we should generate, you may set this to either "module" or "route".
+     *                            - args array: Additional parameter that should be passed on by the link
      *
      * @return string
      */
     public function getBackendLink(string $target, array $options = []): string
     {
         // Skip if we are not in the backend
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return '';
         }
         
@@ -188,12 +190,13 @@ class LinkService
     
     /**
      * Returns the list of all registered backend routes
+     *
      * @return array
      */
     public function getBackendRoutes(): array
     {
         // Skip if we are not in the backend
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return [];
         }
         
@@ -206,25 +209,25 @@ class LinkService
      *
      * Note to self: This will probably make issues if there is a multi-domain setup in typo3...
      *
-     * @param bool $withProtocol
+     * @param   bool  $withProtocol
      *
      * @return string
      */
     public function getHost(bool $withProtocol = true): string
     {
-        if (!empty($this->host)) {
+        if (! empty($this->host)) {
             return $this->host;
         }
-        $pid = $this->context->TypoContext->getPidAspect()->getCurrentPid();
+        $pid      = $this->context->TypoContext->getPidAspect()->getCurrentPid();
         $rootLine = $this->context->Page->getRootLine($pid, true);
-        $rootUid = reset($rootLine);
+        $rootUid  = reset($rootLine);
         
         // Make sure we have a request object
-        if (!is_null($this->context->TypoContext->getRequestAspect()->getRootRequest())) {
-            $domain = $this->getUriBuilder()->reset()->setTargetPageUid(!empty($rootUid) ? $rootUid['uid'] : 0)
-                ->setAddQueryString(false)
-                ->setCreateAbsoluteUri(true)
-                ->buildFrontendUri();
+        if (! is_null($this->context->TypoContext->getRequestAspect()->getRootRequest())) {
+            $domain = $this->getUriBuilder()->reset()->setTargetPageUid(! empty($rootUid) ? $rootUid['uid'] : 0)
+                           ->setAddQueryString(false)
+                           ->setCreateAbsoluteUri(true)
+                           ->buildFrontendUri();
         }
         if (empty($domain)) {
             if ($this->context->TypoContext->getSiteAspect()->hasSite()) {
@@ -235,6 +238,7 @@ class LinkService
             $domain = $uri->getScheme() . '://' . $uri->getHost();
         }
         $domain = parse_url($domain);
+        
         return $this->host = ($withProtocol ? ($domain['scheme'] . '://') : '') . $domain['host'];
     }
     
@@ -264,7 +268,7 @@ class LinkService
      * Internal helper which is called in the BetterActionController to automatically
      * inject the controller's request object into the TypoLink instance when it is created
      *
-     * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface $request
+     * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface  $request
      *
      * @internal
      *

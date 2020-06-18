@@ -40,6 +40,7 @@ class ExtendedDataMapper extends BetterApiClassOverrideCopy__DataMapper
             $fieldValue,
             $this->getType(get_class($parentObject), $propertyName)
         )));
+        
         return $e->getQuery();
     }
 }

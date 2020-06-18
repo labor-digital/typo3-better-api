@@ -34,7 +34,8 @@ use Neunerlei\EventBus\EventBusInterface;
  *
  * An extension for the LazyServiceDependencyTrait to provide shortcuts to frequently used service classes.
  *
- * This is designed for abstract controllers or entities and should not be used in other circumstances -> Keep your code free from hidden dependencies
+ * This is designed for abstract controllers or entities and should not be used in other circumstances -> Keep your
+ * code free from hidden dependencies
  *
  * @package LaborDigital\Typo3BetterApi\Container
  */
@@ -44,6 +45,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the typo context instance
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
     protected function TypoContext(): TypoContext
@@ -53,6 +55,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the db service instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface
      */
     protected function Db(): DbServiceInterface
@@ -62,6 +65,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the link service instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Link\LinkService
      */
     protected function Links(): LinkService
@@ -71,6 +75,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the TSFE service instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Tsfe\TsfeService
      */
     protected function Tsfe(): TsfeService
@@ -80,6 +85,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the page service instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Page\PageService
      */
     protected function Page(): PageService
@@ -89,6 +95,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the fal file service instance
+     *
      * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService
      */
     protected function FalFiles(): FalFileService
@@ -98,6 +105,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the event bus instance
+     *
      * @return \Neunerlei\EventBus\EventBusInterface
      */
     protected function EventBus(): EventBusInterface
@@ -107,6 +115,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the translation service instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
      */
     protected function Translation(): TranslationService
@@ -116,6 +125,7 @@ trait CommonServiceDependencyTrait
     
     /**
      * Returns the environment simulator instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator
      */
     protected function Simulator(): EnvironmentSimulator

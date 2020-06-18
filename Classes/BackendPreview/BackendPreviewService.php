@@ -47,6 +47,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     
     /**
      * The registered list label renderer classes and their respective constraints.
+     *
      * @var array
      */
     protected $backendListLabelRenderers = [];
@@ -74,22 +75,21 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     /**
      * BackendPreviewService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-     * @param \LaborDigital\Typo3BetterApi\Translation\TranslationService   $translationService
-     * @param \TYPO3\CMS\Core\Service\FlexFormService                       $flexFormService
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $context
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
+     * @param   \LaborDigital\Typo3BetterApi\Translation\TranslationService    $translationService
+     * @param   \TYPO3\CMS\Core\Service\FlexFormService                        $flexFormService
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $context
      */
     public function __construct(
         TypoContainerInterface $container,
         TranslationService $translationService,
         FlexFormService $flexFormService,
         TypoContext $context
-    )
-    {
-        $this->container = $container;
+    ) {
+        $this->container          = $container;
         $this->translationService = $translationService;
-        $this->flexFormService = $flexFormService;
-        $this->context = $context;
+        $this->flexFormService    = $flexFormService;
+        $this->context            = $context;
     }
     
     /**
@@ -104,18 +104,23 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     /**
      * @inheritDoc
      */
-    public function registerBackendPreviewRenderer(string $rendererClass, array $fieldConstraints, bool $override = false): BackendPreviewService
-    {
+    public function registerBackendPreviewRenderer(
+        string $rendererClass,
+        array $fieldConstraints,
+        bool $override = false
+    ): BackendPreviewService {
         $this->backendPreviewRenderers[md5(json_encode($fieldConstraints))] = [
             'constraints' => $fieldConstraints,
             'class'       => $rendererClass,
             'override'    => $override,
         ];
+        
         return $this;
     }
     
     /**
      * Returns the list of all registered backend preview renderers
+     *
      * @return array
      */
     public function getBackendPreviewRenderers(): array
@@ -126,20 +131,24 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     /**
      * @inheritDoc
      */
-    public function registerBackendListLabelRenderer($rendererClassOrColumns, array $fieldConstraints): BackendPreviewService
-    {
-        if (!is_string($rendererClassOrColumns) && !is_array($rendererClassOrColumns)) {
+    public function registerBackendListLabelRenderer(
+        $rendererClassOrColumns,
+        array $fieldConstraints
+    ): BackendPreviewService {
+        if (! is_string($rendererClassOrColumns) && ! is_array($rendererClassOrColumns)) {
             throw new BackendPreviewException('The backend list label render can only be defined as class name or as array of field names');
         }
         $this->backendListLabelRenderers[md5(json_encode($fieldConstraints))] = [
             'constraints'    => $fieldConstraints,
             'classOrColumns' => $rendererClassOrColumns,
         ];
+        
         return $this;
     }
     
     /**
      * Returns the list of all registered backend list label renderers
+     *
      * @return array
      */
     public function getBackendListLabelRenderer(): array
@@ -150,7 +159,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     /**
      * Internal event handler that is called when the backend wants to draw a tt_content' preview in the page module
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent  $event
      */
     public function __onBackendPreviewRendering(BackendPreviewRenderingEvent $event)
     {
@@ -158,14 +167,15 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
         $isRendered = $event->isRendered();
         foreach ($this->backendPreviewRenderers as $renderer) {
             // Check if this is an override
-            if ($isRendered && !$renderer['override']) {
+            if ($isRendered && ! $renderer['override']) {
                 continue;
             }
             // Check if we match the constraints
             if (empty($renderer['constraints'])) {
                 continue;
             }
-            if (count(array_intersect_assoc($renderer['constraints'], $event->getRow())) !== count($renderer['constraints'])) {
+            if (count(array_intersect_assoc($renderer['constraints'], $event->getRow()))
+                !== count($renderer['constraints'])) {
                 continue;
             }
             $this->callBackendPreviewRenderer($renderer['class'], $event);
@@ -176,18 +186,19 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     /**
      * Internal event handler that is called when the backend renders a tt_content' list label
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendListLabelFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendListLabelFilterEvent  $event
      */
     public function __onBackendContentListLabelRendering(BackendListLabelFilterEvent $event)
     {
         // Try to find a matching renderer
-        $title = $this->findDefaultHeader($event->getRow());
-        $foundLabel = false;
+        $title       = $this->findDefaultHeader($event->getRow());
+        $foundLabel  = false;
         $fieldSlicer = function ($v) {
             $v = strip_tags($v);
             if (strlen($v) > 100) {
                 return trim(substr($v, 0, 100)) . '...';
             }
+            
             return $v;
         };
         foreach ($this->backendListLabelRenderers as $renderer) {
@@ -204,7 +215,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
             if (is_array($renderer['classOrColumns'])) {
                 $values = array_intersect_key($event->getRow(), array_fill_keys($renderer['classOrColumns'], true));
                 $values = array_map($fieldSlicer, $values);
-                $title .= ' | ' . implode(' | ', $values);
+                $title  .= ' | ' . implode(' | ', $values);
             } else {
                 // Try to call the renderer class
                 $title .= ' | ' . $this->callBackendListLabelRenderer($renderer['classOrColumns'], $event);
@@ -214,9 +225,9 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
         }
         
         // Check for fallback fields if we did not find a renderer for this label
-        if (!$foundLabel) {
+        if (! $foundLabel) {
             foreach (['headline', 'title', 'header', 'bodytext', 'content', 'description', 'desc'] as $field) {
-                if (empty($row[$field]) || !is_string($row[$field]) || is_numeric($row[$field])) {
+                if (empty($row[$field]) || ! is_string($row[$field]) || is_numeric($row[$field])) {
                     continue;
                 }
                 if (empty(trim(strip_tags($row[$field])))) {
@@ -234,26 +245,27 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
      * Main handler that receives the rendering class, executes the renderer and updates the event arguments.
      * It has also limited error handling capabilities that catch exceptions and render them as pretty message.
      *
-     * @param string                                                                 $rendererClass
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent $event
+     * @param   string                                                                  $rendererClass
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendPreviewRenderingEvent  $event
      *
      * @throws \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewException
      */
     protected function callBackendPreviewRenderer(string $rendererClass, BackendPreviewRenderingEvent $event)
     {
         // Check if the renderer class is valid
-        if (!class_exists($rendererClass)) {
+        if (! class_exists($rendererClass)) {
             throw new BackendPreviewException("The given renderer class: $rendererClass does not exist!");
         }
         $renderer = $this->container->get($rendererClass);
-        if (!$renderer instanceof BackendPreviewRendererInterface) {
-            throw new BackendPreviewException("The given renderer class: $rendererClass has to implement the correct interface: " . BackendPreviewRendererInterface::class);
+        if (! $renderer instanceof BackendPreviewRendererInterface) {
+            throw new BackendPreviewException("The given renderer class: $rendererClass has to implement the correct interface: "
+                                              . BackendPreviewRendererInterface::class);
         }
         
         // Prepare the row
-        $row = $event->getRow();
+        $row             = $event->getRow();
         $row['settings'] = [];
-        if (!empty($row['pi_flexform'])) {
+        if (! empty($row['pi_flexform'])) {
             $row = array_merge($row, $this->flexFormService->convertFlexFormContentToArray($row['pi_flexform']));
         }
         
@@ -285,20 +297,21 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
                     if (is_string($result)) {
                         $context->setBody($result);
                     }
-                
+                    
                     // Check if we have to link the content
                     $content = $context->getBody();
                     if ($context->isLinkPreview()) {
                         $content = $event->getView()->linkEditContent($content, $row);
                     }
-                
+                    
                     // Update event
                     $event->setAsRendered();
                     $event->setContent($content);
                     $event->setHeader($context->getHeader());
                 } catch (Exception $e) {
                     $event->setAsRendered();
-                    $event->setContent($this->renderErrorMessage($e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ')'));
+                    $event->setContent($this->renderErrorMessage($e->getMessage() . ' (' . $e->getFile() . ':'
+                                                                 . $e->getLine() . ')'));
                 }
             }
         );
@@ -308,8 +321,8 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
      * Internal helper to call the backend list renderer class for the given row.
      * It will return the rendered label string that we should append to the title.
      *
-     * @param string                                                                $rendererClass
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendListLabelFilterEvent $event
+     * @param   string                                                                 $rendererClass
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendListLabelFilterEvent  $event
      *
      * @return string
      */
@@ -317,12 +330,13 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
     {
         try {
             // Check if the renderer class is valid
-            if (!class_exists($rendererClass)) {
+            if (! class_exists($rendererClass)) {
                 throw new BackendPreviewException("The given renderer class: $rendererClass does not exist!");
             }
             $renderer = $this->container->get($rendererClass);
-            if (!$renderer instanceof BackendListLabelRendererInterface) {
-                throw new BackendPreviewException("The given renderer class: $rendererClass has to implement the correct interface: " . BackendListLabelRendererInterface::class);
+            if (! $renderer instanceof BackendListLabelRendererInterface) {
+                throw new BackendPreviewException("The given renderer class: $rendererClass has to implement the correct interface: "
+                                                  . BackendListLabelRendererInterface::class);
             }
             
             // Call the renderer
@@ -336,7 +350,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
      * Internal helper that is used to resolve the default header based on the given database row.
      * If no header was found an empty string is returned
      *
-     * @param array $row
+     * @param   array  $row
      *
      * @return string
      */
@@ -349,8 +363,10 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
                 if ($listTypeItem[1] !== $signature) {
                     continue;
                 }
+                
                 return $this->translationService->translateMaybe($listTypeItem[0]);
             }
+            
             return '';
         }
         
@@ -360,20 +376,23 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
             if ($listTypeItem[1] !== $signature) {
                 continue;
             }
+            
             return $this->translationService->translateMaybe($listTypeItem[0]);
         }
+        
         return '';
     }
     
     /**
      * Internal helper to render a "pretty" error message
      *
-     * @param string $error
+     * @param   string  $error
      *
      * @return string
      */
     protected function renderErrorMessage(string $error): string
     {
-        return '<div style="background-color:red; padding: 10px; font-family: sans-serif; color: #fff">' . htmlentities($error) . '</div>';
+        return '<div style="background-color:red; padding: 10px; font-family: sans-serif; color: #fff">'
+               . htmlentities($error) . '</div>';
     }
 }

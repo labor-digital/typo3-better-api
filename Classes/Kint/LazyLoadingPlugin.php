@@ -56,22 +56,23 @@ class LazyLoadingPlugin extends Plugin
             $object = InstanceObject::blank($o->name);
             $object->transplant($o);
             $object->classname = get_class($realVar);
-            $object->depth = $o->depth + 1;
+            $object->depth     = $o->depth + 1;
             
             $object2 = InstanceObject::blank($o->name);
             $object2 = $this->parser->parse(Arrays::makeFromObject($realVar), $object2);
             $object->addRepresentation(reset($object2->getRepresentations()));
-            $o = $object;
-            $o->type = 'object';
-            $o->size = $realVar->count();
+            $o                           = $object;
+            $o->type                     = 'object';
+            $o->size                     = $realVar->count();
             IteratorPlugin::$blacklist[] = $object->classname;
         } elseif ($variable instanceof LazyLoadingProxy) {
             $realVar = $this->getLazyLoading()->getRealValue($variable);
-            $object = BasicObject::blank($o->name);
+            $object  = BasicObject::blank($o->name);
             $object->transplant($o);
             $object->depth = $o->depth;
-            $o = $this->parser->parse($realVar, $object);
+            $o             = $this->parser->parse($realVar, $object);
         }
+        
         return;
     }
     

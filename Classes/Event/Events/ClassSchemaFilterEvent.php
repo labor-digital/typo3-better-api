@@ -35,12 +35,14 @@ class ClassSchemaFilterEvent
 {
     /**
      * The instance of the class schema to be filtered
+     *
      * @var ClassSchema
      */
     protected $schema;
     
     /**
      * Either the class name or the object to create a schema for
+     *
      * @var mixed
      */
     protected $classNameOrObject;
@@ -48,17 +50,18 @@ class ClassSchemaFilterEvent
     /**
      * ClassSchemaFilterEvent constructor.
      *
-     * @param \TYPO3\CMS\Extbase\Reflection\ClassSchema $schema
-     * @param                                           $classNameOrObject
+     * @param   \TYPO3\CMS\Extbase\Reflection\ClassSchema  $schema
+     * @param                                              $classNameOrObject
      */
     public function __construct(ClassSchema $schema, $classNameOrObject)
     {
-        $this->schema = $schema;
+        $this->schema            = $schema;
         $this->classNameOrObject = $classNameOrObject;
     }
     
     /**
      * Returns the instance of the class schema to be filtered
+     *
      * @return \TYPO3\CMS\Extbase\Reflection\ClassSchema
      */
     public function getSchema(): ClassSchema
@@ -69,18 +72,20 @@ class ClassSchemaFilterEvent
     /**
      * Sets the instance of the class schema to be filtered
      *
-     * @param \TYPO3\CMS\Extbase\Reflection\ClassSchema $schema
+     * @param   \TYPO3\CMS\Extbase\Reflection\ClassSchema  $schema
      *
      * @return ClassSchemaFilterEvent
      */
     public function setSchema(ClassSchema $schema): ClassSchemaFilterEvent
     {
         $this->schema = $schema;
+        
         return $this;
     }
     
     /**
      * Returns either the class name or the object to create a schema for
+     *
      * @return mixed
      */
     public function getClassNameOrObject()
@@ -90,6 +95,7 @@ class ClassSchemaFilterEvent
     
     /**
      * Always returns the class name of the class to create a schema for
+     *
      * @return string
      */
     public function getClassName(): string
@@ -97,6 +103,7 @@ class ClassSchemaFilterEvent
         if (is_string($this->classNameOrObject)) {
             return $this->classNameOrObject;
         }
+        
         return get_class($this->classNameOrObject);
     }
 }

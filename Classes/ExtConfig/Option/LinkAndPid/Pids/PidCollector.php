@@ -28,6 +28,7 @@ class PidCollector
     
     /**
      * The list of configured pids
+     *
      * @var array
      */
     protected $pids = [];
@@ -40,7 +41,7 @@ class PidCollector
     /**
      * PidCollector constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      */
     public function __construct(ExtConfigContext $context)
     {
@@ -50,10 +51,10 @@ class PidCollector
     /**
      * Adds a new pid mapping to the pid service.
      *
-     * @param string $key      A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
-     * @param int    $pid      The numeric page id which should be returned when the given pid is required
-     * @param bool   $override By default we will not override pid's set by typoscript. If you want to do so set this
-     *                         to true.
+     * @param   string  $key       A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
+     * @param   int     $pid       The numeric page id which should be returned when the given pid is required
+     * @param   bool    $override  By default we will not override pid's set by typoscript. If you want to do so set
+     *                             this to true.
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids\PidCollector
      */
@@ -61,19 +62,20 @@ class PidCollector
     {
         // Set the pid, or ignore it if it exists and we should not override it
         $key = $this->context->replaceMarkers($key);
-        if (isset($this->pids[$key]) && !$override) {
+        if (isset($this->pids[$key]) && ! $override) {
             return $this;
         }
         $this->pids[$key] = $pid;
+        
         return $this;
     }
     
     /**
      * The same as registerPid() but registers multiple pids at once
      *
-     * @param array $pids      A list of pids as $path => $pid or as multidimensional array
-     * @param bool  $override  By default we will not override pids set by typoscript. If you want to do so set this
-     *                         to true.
+     * @param   array  $pids      A list of pids as $path => $pid or as multidimensional array
+     * @param   bool   $override  By default we will not override pids set by typoscript. If you want to do so set this
+     *                            to true.
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids\PidCollector
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -81,19 +83,22 @@ class PidCollector
     public function setMultiple(array $pids, bool $override = false): PidCollector
     {
         foreach (Arrays::flatten($pids) as $k => $pid) {
-            if (!is_string($k)) {
+            if (! is_string($k)) {
                 throw new ExtConfigException('The given key for pid: ' . $pid . ' has to be a string!');
             }
-            if (!is_numeric($pid)) {
-                throw new ExtConfigException('The given value for pid: ' . $k . ' has to be numeric! Given value: ' . $pid);
+            if (! is_numeric($pid)) {
+                throw new ExtConfigException('The given value for pid: ' . $k . ' has to be numeric! Given value: '
+                                             . $pid);
             }
             $this->set($k, (int)$pid, $override);
         }
+        
         return $this;
     }
     
     /**
      * Returns all registered pid's in this collector instance
+     *
      * @return array
      */
     public function getAll(): array

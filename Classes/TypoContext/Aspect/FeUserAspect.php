@@ -27,6 +27,7 @@ class FeUserAspect extends AbstractBetterUserAspect
     
     /**
      * Returns the frontend user authentication object
+     *
      * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
      * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
      */
@@ -36,6 +37,7 @@ class FeUserAspect extends AbstractBetterUserAspect
         if (empty($user)) {
             throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
         }
+        
         return $user;
     }
     

@@ -23,6 +23,7 @@ class DebugExceptionHandler extends ExceptionHandlerAdapter
 {
     /**
      * The name of the registered exception handler
+     *
      * @var string
      */
     protected static $defaultExceptionHandler;

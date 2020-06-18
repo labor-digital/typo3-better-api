@@ -33,6 +33,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
     
     /**
      * The list of registered data handler handlers by their action stack name
+     *
      * @var array
      */
     protected $handlers = [];
@@ -45,7 +46,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
     /**
      * DataHandlerActionService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionHandlerInterface $lazyActionHandler
+     * @param   \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionHandlerInterface  $lazyActionHandler
      */
     public function __construct(DataHandlerActionHandlerInterface $lazyActionHandler)
     {
@@ -66,12 +67,12 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
     /**
      * Registers a new action handler on a certain table and action combination.
      *
-     * @param string $tableName        The table name to register the handler for
-     * @param string $action           The action to register the handler for. "save", "form" or "default"
-     * @param string $handlerClass     The class name of the handler to call when the action is triggered
-     * @param string $handlerMethod    The method name of the handler class to call when the action is triggered
-     * @param array  $fieldConstraints These constraints are an array of field keys and values that have to
-     *                                 match in a table row in order for this service to call the renderer class.
+     * @param   string  $tableName         The table name to register the handler for
+     * @param   string  $action            The action to register the handler for. "save", "form" or "default"
+     * @param   string  $handlerClass      The class name of the handler to call when the action is triggered
+     * @param   string  $handlerMethod     The method name of the handler class to call when the action is triggered
+     * @param   array   $fieldConstraints  These constraints are an array of field keys and values that have to
+     *                                     match in a table row in order for this service to call the renderer class.
      *
      *                                 As an example: If you have a plugin with a signature "mxext_myplugin" and you
      *                                 are listening for actions on the tt_content table your constraints should look
@@ -82,71 +83,85 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
      *
      * @return $this
      */
-    public function registerActionHandler(string $tableName, string $action, string $handlerClass, string $handlerMethod, array $fieldConstraints = [])
-    {
-        $action = $this->unifyAction($action);
-        $handler = $this->makeHandler($id, $handlerClass, $handlerMethod);
+    public function registerActionHandler(
+        string $tableName,
+        string $action,
+        string $handlerClass,
+        string $handlerMethod,
+        array $fieldConstraints = []
+    ) {
+        $action                                   = $this->unifyAction($action);
+        $handler                                  = $this->makeHandler($id, $handlerClass, $handlerMethod);
         $this->handlers[$tableName][$action][$id] = [
             'handler'     => $handler,
             'constraints' => $fieldConstraints,
         ];
+        
         return $this;
     }
     
     /**
      * Removes a previously registered action handler from the stack.
      *
-     * @param string $tableName     The table name to remove the handler from
-     * @param string $action        The action to remove the handler from. "save", "form" or "default"
-     * @param string $handlerClass  The name of the handler class to remove
-     * @param string $handlerMethod The name of the action handler method to remove
+     * @param   string  $tableName      The table name to remove the handler from
+     * @param   string  $action         The action to remove the handler from. "save", "form" or "default"
+     * @param   string  $handlerClass   The name of the handler class to remove
+     * @param   string  $handlerMethod  The name of the action handler method to remove
      *
      * @return $this
      */
     public function removeActionHandler(string $tableName, string $action, string $handlerClass, string $handlerMethod)
     {
-        $action = $this->unifyAction($action);
+        $action   = $this->unifyAction($action);
         $handlers = $this->getHandlersFor($tableName, $action);
         if (empty($handlers)) {
             return $this;
         }
         $this->makeHandler($id, $handlerClass, $handlerMethod);
         unset($this->handlers[$tableName][$action][$id]);
+        
         return $this;
     }
     
     /**
      * Returns true if a given handler is registered on a certain table and action combination
      *
-     * @param string $tableName     The table name to check the handlers for
-     * @param string $action        The action name to check the handlers for "save", "saveLate", "form" or "default"
-     * @param string $handlerClass  The handler class name to check for
-     * @param string $handlerMethod The handler method to check for
+     * @param   string  $tableName      The table name to check the handlers for
+     * @param   string  $action         The action name to check the handlers for "save", "saveLate", "form" or
+     *                                  "default"
+     * @param   string  $handlerClass   The handler class name to check for
+     * @param   string  $handlerMethod  The handler method to check for
      *
      * @return bool
      */
-    public function hasActionHandler(string $tableName, string $action, string $handlerClass, string $handlerMethod): bool
-    {
+    public function hasActionHandler(
+        string $tableName,
+        string $action,
+        string $handlerClass,
+        string $handlerMethod
+    ): bool {
         $action = $this->unifyAction($action);
         $this->makeHandler($id, $handlerClass, $handlerMethod);
         $handlers = $this->getHandlersFor($tableName, $action);
         if (empty($handlers)) {
             return false;
         }
+        
         return isset($handlers[$id]);
     }
     
     /**
      * Returns all registered action handlers of a certain table and action.
      *
-     * @param string $tableName The table name to find the handlers for
-     * @param string $action    The action name to find the handlers for "save", "form" or "default"
+     * @param   string  $tableName  The table name to find the handlers for
+     * @param   string  $action     The action name to find the handlers for "save", "form" or "default"
      *
      * @return array
      */
     public function getHandlersFor(string $tableName, string $action): array
     {
         $action = $this->unifyAction($action);
+        
         return Arrays::getPath($this->handlers, [$tableName, $action], []);
     }
     
@@ -154,7 +169,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
      * This method is responsible for running all backend save filters that are registered somewhere
      * in the TCA of the currently saved record.
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerSaveFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerSaveFilterEvent  $event
      */
     public function __runDataHandlerSaveFilters(DataHandlerSaveFilterEvent $event)
     {
@@ -167,7 +182,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
             $row,
             $isDirty
         );
-        if (!$isDirty) {
+        if (! $isDirty) {
             return;
         }
         $event->setRow($row);
@@ -177,7 +192,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
      * This method is responsible for running all backend late save filters (Before the database action but all TCA
      * rules were applied) that are registered somewhere in the TCA of the currently saved record.
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerSavePostProcessorEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerSavePostProcessorEvent  $event
      */
     public function __runDataHandlerSaveLateFilters(DataHandlerSavePostProcessorEvent $event)
     {
@@ -190,7 +205,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
             $row,
             $isDirty
         );
-        if (!$isDirty) {
+        if (! $isDirty) {
             return;
         }
         $event->setRow($row);
@@ -201,12 +216,12 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
      * This method is responsible for running all backend form filters that are registered somewhere
      * in the TCA of the record which's form is currently rendered by the form engine
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterEvent  $event
      */
     public function __runBackendFormFilters(BackendFormFilterEvent $event)
     {
         $data = $event->getData();
-        $row = $data['databaseRow'];
+        $row  = $data['databaseRow'];
         $this->lazyActionHandler->runActionStack(
             'form',
             $data['tableName'],
@@ -215,10 +230,10 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
             $row,
             $isDirty
         );
-        if (!$isDirty) {
+        if (! $isDirty) {
             return;
         }
-        $data = $event->getData();
+        $data                = $event->getData();
         $data['databaseRow'] = $row;
         $event->setData($data);
     }
@@ -227,14 +242,14 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
      * This method is responsible for running all backend action handlers when the data handler executes
      * a command, like copying a page. It will scan the target tca for registered handlers and then call them.
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerActionPostProcessorEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\DataHandlerActionPostProcessorEvent  $event
      */
     public function __runDataHandlerActionHandlers(DataHandlerActionPostProcessorEvent $event)
     {
         // Skip if there is something clearly wrong
         // This may happen if the copy of an entry failed...
         $uid = ($event->getNewId() >= 0) ? $event->getNewId() : $event->getId();
-        if (!is_numeric($uid) || $uid < 0) {
+        if (! is_numeric($uid) || $uid < 0) {
             return;
         }
         
@@ -244,13 +259,13 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
         
         // This is tricky... We will inject our changed row into the "pastDataMap" which then will be processed
         // by the copy TCE data handler after this command finished running.
-        if (!$isDirty || empty($row)) {
+        if (! $isDirty || empty($row)) {
             return;
         }
         
         // Update the past data map
         $dataMap = $event->getPasteDataMap();
-        $old = Arrays::getPath($dataMap, [$event->getTableName()], []);
+        $old     = Arrays::getPath($dataMap, [$event->getTableName()], []);
         unset($row['uid']);
         $dataMap[$event->getTableName()] = Arrays::merge($old, [$uid => $row]);
         $event->setPasteDataMap($dataMap);
@@ -259,7 +274,7 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
     /**
      * Internal helper to allow only allowed actions to pass...
      *
-     * @param string $action
+     * @param   string  $action
      *
      * @return string
      */
@@ -269,21 +284,23 @@ class DataHandlerActionService implements SingletonInterface, LazyEventSubscribe
         if ($action === 'save' || $action === 'form') {
             return $action;
         }
+        
         return 'default';
     }
     
     /**
      * Internal helper to create the helper class name and array representation
      *
-     * @param        $id
-     * @param string $handlerClass
-     * @param string $handlerMethod
+     * @param           $id
+     * @param   string  $handlerClass
+     * @param   string  $handlerMethod
      *
      * @return array
      */
     protected function makeHandler(&$id, string $handlerClass, string $handlerMethod): array
     {
         $id = $handlerClass . '->' . $handlerMethod;
+        
         return [$handlerClass, $handlerMethod];
     }
 }

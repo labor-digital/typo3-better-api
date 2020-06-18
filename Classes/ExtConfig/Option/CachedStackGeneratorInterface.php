@@ -29,12 +29,13 @@ interface CachedStackGeneratorInterface
      *
      * The result of this method MUST be serializable!
      *
-     * @param array                   $stack               The collected registration/override stack to iterate over
-     * @param ExtConfigContext        $context             The current ext config context object
-     * @param array                   $additionalArguments Additional arguments that may have been passed by the
-     *                                                     outside world when the cached value was requested
-     * @param AbstractExtConfigOption $option              The ext config option object that required this generator to
-     *                                                     run
+     * @param   array                    $stack                The collected registration/override stack to iterate
+     *                                                         over
+     * @param   ExtConfigContext         $context              The current ext config context object
+     * @param   array                    $additionalArguments  Additional arguments that may have been passed by the
+     *                                                         outside world when the cached value was requested
+     * @param   AbstractExtConfigOption  $option               The ext config option object that required this
+     *                                                         generator to run
      *
      * @return mixed
      */

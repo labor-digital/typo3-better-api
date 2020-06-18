@@ -40,8 +40,8 @@ class FluidConfigOption extends AbstractExtConfigOption implements SingletonInte
      *
      * You can also specify namespaces for other viewhelpers
      *
-     * @param string|NULL $key       The key to use as prefix for the namespaced viewhelpers
-     * @param string|NULL $namespace The namespace of the viewhelpers
+     * @param   string|NULL  $key        The key to use as prefix for the namespaced viewhelpers
+     * @param   string|NULL  $namespace  The namespace of the viewhelpers
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption
      */
@@ -52,14 +52,15 @@ class FluidConfigOption extends AbstractExtConfigOption implements SingletonInte
         }
         if (empty($namespace)) {
             $namespace = '';
-            if (!empty($this->context->getVendor())) {
+            if (! empty($this->context->getVendor())) {
                 $namespace = Inflector::toCamelCase($this->context->getVendor()) . '\\';
             }
             $namespace .= Inflector::toCamelCase($this->context->getExtKey());
             $namespace .= '\\ViewHelpers';
         }
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces'][$this->replaceMarkers($key)] =
-            [$this->replaceMarkers($namespace)];
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces'][$this->replaceMarkers($key)]
+            = [$this->replaceMarkers($namespace)];
+        
         return $this;
     }
 }

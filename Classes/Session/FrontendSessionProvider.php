@@ -44,6 +44,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if ($path === null) {
             return $values;
         }
+        
         return Arrays::getPath($values, $path, $default);
     }
     
@@ -59,6 +60,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         $values = $this->getSessionValues();
         $values = Arrays::setPath($values, $path, $value);
         $feUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
+        
         return $this;
     }
     
@@ -74,11 +76,13 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         $values = $this->getSessionValues();
         $values = Arrays::removePath($values, $path);
         $feUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
+        
         return $this;
     }
     
     /**
      * Helper to retrieve the session values from typo3
+     *
      * @return array
      */
     protected function getSessionValues(): array
@@ -88,21 +92,24 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
             return [];
         }
         $value = $feUser->getKey('ses', 'LaborTypo3BetterApi');
+        
         return is_array($value) ? $value : [];
     }
     
     /**
      * Helper to get the instance of the typo3 frontend user
+     *
      * @return FrontendUserAuthentication|null
      */
     protected function getFeUser()
     {
-        if (empty($GLOBALS['TSFE']) || !$GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
+        if (empty($GLOBALS['TSFE']) || ! $GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
             return null;
         }
-        if (empty($GLOBALS['TSFE']->fe_user) || !$GLOBALS['TSFE']->fe_user instanceof FrontendUserAuthentication) {
+        if (empty($GLOBALS['TSFE']->fe_user) || ! $GLOBALS['TSFE']->fe_user instanceof FrontendUserAuthentication) {
             return null;
         }
+        
         return $GLOBALS['TSFE']->fe_user;
     }
 }

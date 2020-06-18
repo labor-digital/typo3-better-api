@@ -24,24 +24,28 @@ class TableConfig
     
     /**
      * The list of tables that are allowed on standard pages
+     *
      * @var array
      */
     public $tablesOnStandardPages = [];
     
     /**
      * The typoscript configuration for the tables
+     *
      * @var string
      */
     public $typoScript = '';
     
     /**
      * The sql definition for the tables
+     *
      * @var string
      */
     public $sql = '';
     
     /**
      * Stores the list of the table positions when showing the list view
+     *
      * @var array
      */
     public $tableListPositions = [];

@@ -30,6 +30,7 @@ use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
  *
  * This filter is used when the backend renders a list of database entries.
  * It can be used to append additional where clauses to the current request in the BackendRenderingService class
+ *
  * @see     \LaborDigital\Typo3BetterApi\Rendering\BackendRenderingService
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
@@ -38,30 +39,35 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
 {
     /**
      * The name of the table to query the records from
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The current page id to query the records from
+     *
      * @var int
      */
     protected $pid;
     
     /**
      * An additional where clause to narrow down the selected rows
+     *
      * @var string
      */
     protected $additionalWhereClause;
     
     /**
      * The list of all database fields that should be queried for the table
+     *
      * @var string
      */
     protected $selectedFieldList;
     
     /**
      * The list that is currently rendered
+     *
      * @var \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList
      */
     protected $listRenderer;
@@ -77,11 +83,11 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
     /**
      * BackendDbListQueryFilterEvent constructor.
      *
-     * @param string $tableName
-     * @param int    $pid
-     * @param string $additionalWhereClause
-     * @param string $selectedFieldList
-     * @param        $listRenderer
+     * @param   string  $tableName
+     * @param   int     $pid
+     * @param   string  $additionalWhereClause
+     * @param   string  $selectedFieldList
+     * @param           $listRenderer
      */
     public function __construct(
         string $tableName,
@@ -89,17 +95,17 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
         string $additionalWhereClause,
         string $selectedFieldList,
         DatabaseRecordList $listRenderer
-    )
-    {
-        $this->tableName = $tableName;
-        $this->pid = $pid;
+    ) {
+        $this->tableName             = $tableName;
+        $this->pid                   = $pid;
         $this->additionalWhereClause = $additionalWhereClause;
-        $this->selectedFieldList = $selectedFieldList;
-        $this->listRenderer = $listRenderer;
+        $this->selectedFieldList     = $selectedFieldList;
+        $this->listRenderer          = $listRenderer;
     }
     
     /**
      * Returns the name of the table to query the records from
+     *
      * @return string
      */
     public function getTableName(): string
@@ -109,6 +115,7 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
     
     /**
      * Returns the current page id to query the records from
+     *
      * @return int
      */
     public function getPid(): int
@@ -118,6 +125,7 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
     
     /**
      * Returns tn additional where clause to narrow down the selected rows
+     *
      * @return string
      */
     public function getAdditionalWhereClause(): string
@@ -128,18 +136,20 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
     /**
      * Updates tn additional where clause to narrow down the selected rows
      *
-     * @param string $additionalWhereClause
+     * @param   string  $additionalWhereClause
      *
      * @return BackendDbListQueryFilterEvent
      */
     public function setAdditionalWhereClause(string $additionalWhereClause): BackendDbListQueryFilterEvent
     {
         $this->additionalWhereClause = $additionalWhereClause;
+        
         return $this;
     }
     
     /**
      * Returns the list of all database fields that should be queried for the table
+     *
      * @return string
      */
     public function getSelectedFieldList(): string
@@ -150,18 +160,20 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
     /**
      * Updates the list of all database fields that should be queried for the table
      *
-     * @param string $selectedFieldList
+     * @param   string  $selectedFieldList
      *
      * @return BackendDbListQueryFilterEvent
      */
     public function setSelectedFieldList(string $selectedFieldList): BackendDbListQueryFilterEvent
     {
         $this->selectedFieldList = $selectedFieldList;
+        
         return $this;
     }
     
     /**
      * Returns the list that is currently rendered
+     *
      * @return \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList
      */
     public function getListRenderer(): DatabaseRecordList
@@ -172,13 +184,14 @@ class BackendDbListQueryFilterEvent implements CoreHookEventInterface
     /**
      * Updates the list that is currently rendered
      *
-     * @param \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList $listRenderer
+     * @param   \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList  $listRenderer
      *
      * @return BackendDbListQueryFilterEvent
      */
     public function setListRenderer(DatabaseRecordList $listRenderer): BackendDbListQueryFilterEvent
     {
         $this->listRenderer = $listRenderer;
+        
         return $this;
     }
 }

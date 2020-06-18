@@ -32,13 +32,15 @@ abstract class AbstractForm extends AbstractFormContainer
      * Defines the default configuration array for a new field,
      * that is not yet known in the configuration array
      */
-    public const DEFAULT_FIELD_CONFIG = [
-        'exclude' => 1,
-        'config'  => [],
-    ];
+    public const DEFAULT_FIELD_CONFIG
+        = [
+            'exclude' => 1,
+            'config'  => [],
+        ];
     
     /**
      * Generic form config
+     *
      * @var array
      */
     protected $config = [];
@@ -52,7 +54,7 @@ abstract class AbstractForm extends AbstractFormContainer
             $this->parent = $this;
         }
         parent::__construct($id, $context);
-        $this->form = $this;
+        $this->form   = $this;
         $this->parent = $this;
         $this->ensureInitialTab();
     }
@@ -71,8 +73,8 @@ abstract class AbstractForm extends AbstractFormContainer
      * If top/bottom are used in combination with a field (and not a container element) it will be translated to before
      * or after respectively.
      *
-     * @param string $id
-     * @param string $position
+     * @param   string  $id
+     * @param   string  $position
      *
      * @return bool
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -81,6 +83,7 @@ abstract class AbstractForm extends AbstractFormContainer
     {
         try {
             $el = $this->getElementInternal($id);
+            
             return $this->moveElementInstance($el, $position);
         } catch (BackendFormException $exception) {
             return false;
@@ -90,8 +93,8 @@ abstract class AbstractForm extends AbstractFormContainer
     /**
      * The same as moveElement() but receives the element instance instead of an id to move
      *
-     * @param AbstractFormElement $el
-     * @param string              $position
+     * @param   AbstractFormElement  $el
+     * @param   string               $position
      *
      * @return bool
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -102,7 +105,7 @@ abstract class AbstractForm extends AbstractFormContainer
     public function moveElementInstance(AbstractFormElement $el, string $position): bool
     {
         // Ignore if there is no position given
-        if (empty($position) && !is_numeric($position)) {
+        if (empty($position) && ! is_numeric($position)) {
             return false;
         }
         
@@ -122,7 +125,7 @@ abstract class AbstractForm extends AbstractFormContainer
             }
         }
         $modifier = strtolower(trim($posParts[0]));
-        if (!in_array($modifier, ['auto', 'top', 'bottom', 'before', 'after'])) {
+        if (! in_array($modifier, ['auto', 'top', 'bottom', 'before', 'after'])) {
             throw new BackendFormException("Invalid position given, only the values \"top\", \"bottom\", \"before\" and \"after\" are allowed! (given position: $position)");
         }
         
@@ -136,10 +139,10 @@ abstract class AbstractForm extends AbstractFormContainer
         }
         
         // Detect the element types
-        $elIsTab = $this->elIsTab($el);
-        $elIsContainer = !$elIsTab && $this->elIsContainer($el);
-        $targetIsTab = $this->elIsTab($targetEl);
-        $targetIsContainer = !$targetIsTab && $this->elIsContainer($targetEl);
+        $elIsTab           = $this->elIsTab($el);
+        $elIsContainer     = ! $elIsTab && $this->elIsContainer($el);
+        $targetIsTab       = $this->elIsTab($targetEl);
+        $targetIsContainer = ! $targetIsTab && $this->elIsContainer($targetEl);
         
         // Prepare internal keys
         $targetElId = ($targetIsContainer ? '_' : '') . $targetEl->getId();
@@ -151,10 +154,10 @@ abstract class AbstractForm extends AbstractFormContainer
         
         if ($elIsTab) {
             // Element is a tab
-            if (!$targetIsTab) {
+            if (! $targetIsTab) {
                 // Find the tab of the element
                 $targetEl = $targetEl->getParent(); // Tab or container
-                if (!$this->elIsTab($targetEl)) {
+                if (! $this->elIsTab($targetEl)) {
                     $targetEl = $targetEl->getParent();
                 } // Tab for sure
                 $targetElId = $targetEl->getId();
@@ -208,7 +211,7 @@ abstract class AbstractForm extends AbstractFormContainer
     /**
      * Can be used to remove any given element from the list
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return bool
      */
@@ -216,6 +219,7 @@ abstract class AbstractForm extends AbstractFormContainer
     {
         $result = $this->removeElementInternal($id);
         $this->ensureInitialTab();
+        
         return $result;
     }
     
@@ -229,11 +233,12 @@ abstract class AbstractForm extends AbstractFormContainer
         $result = true;
         foreach ($this->elements as $element) {
             $r = $this->removeElementInternal($element->getId());
-            if (!$r && $result) {
+            if (! $r && $result) {
                 $result = false;
             }
         }
         $this->ensureInitialTab();
+        
         return $result;
     }
     
@@ -260,7 +265,7 @@ abstract class AbstractForm extends AbstractFormContainer
     /**
      * Returns true if a given tab exists, false if not
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return bool
      */
@@ -292,7 +297,7 @@ abstract class AbstractForm extends AbstractFormContainer
     /**
      * Returns true if a field with the given id is registered in this form
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return bool
      */
@@ -305,8 +310,8 @@ abstract class AbstractForm extends AbstractFormContainer
      * Can be used to set raw config values, that are not implemented in this facade.
      * Set either key => value pairs, or an Array of key => value pairs
      *
-     * @param array|string|int $key   Either a key to set the given $value for, or an array of $key => $value pairs
-     * @param null             $value The value to set for the given $key (if $key is not an array)
+     * @param   array|string|int  $key    Either a key to set the given $value for, or an array of $key => $value pairs
+     * @param   null              $value  The value to set for the given $key (if $key is not an array)
      *
      * @return $this
      */
@@ -317,11 +322,13 @@ abstract class AbstractForm extends AbstractFormContainer
         } else {
             $this->config[$key] = $value;
         }
+        
         return $this;
     }
     
     /**
      * Returns the raw configuration array for this object
+     *
      * @return array
      */
     public function getRaw(): array
@@ -341,7 +348,7 @@ abstract class AbstractForm extends AbstractFormContainer
      * Internal helper to make sure that top will get before and bottom gets after
      * for non container elements
      *
-     * @param string $modifier
+     * @param   string  $modifier
      *
      * @return string
      */
@@ -353,13 +360,14 @@ abstract class AbstractForm extends AbstractFormContainer
         if ($modifier === 'bottom') {
             return 'after';
         }
+        
         return $modifier;
     }
     
     /**
      * Internal helper which can be used to generate a list of elements contained in this form.
      *
-     * @param int $type The type of the list to generate. Use the TYPE_... constants to specify the type
+     * @param   int  $type  The type of the list to generate. Use the TYPE_... constants to specify the type
      *
      * @return array
      */
@@ -380,6 +388,7 @@ abstract class AbstractForm extends AbstractFormContainer
                     return Arrays::attach(...array_values($finds));
             }
         }
+        
         return $finds;
     }
     
@@ -408,6 +417,7 @@ abstract class AbstractForm extends AbstractFormContainer
                 }
             }
         }
+        
         return $layout;
     }
 }

@@ -47,17 +47,18 @@ class InitInstanceFilterEvent
     /**
      * InitInstanceFilterEvent constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\BetterApiInit $init
-     * @param \Neunerlei\EventBus\EventBusInterface      $eventBus
+     * @param   \LaborDigital\Typo3BetterApi\BetterApiInit  $init
+     * @param   \Neunerlei\EventBus\EventBusInterface       $eventBus
      */
     public function __construct(BetterApiInit $init, EventBusInterface $eventBus)
     {
-        $this->init = $init;
+        $this->init     = $init;
         $this->eventBus = $eventBus;
     }
     
     /**
      * Returns the instance of the event bus
+     *
      * @return \Neunerlei\EventBus\EventBusInterface
      */
     public function getEventBus(): EventBusInterface
@@ -67,6 +68,7 @@ class InitInstanceFilterEvent
     
     /**
      * Returns the init instance
+     *
      * @return \LaborDigital\Typo3BetterApi\BetterApiInit|object
      */
     public function getInitInstance()
@@ -77,7 +79,7 @@ class InitInstanceFilterEvent
     /**
      * Can be used to overwrite the init instance
      *
-     * @param object $init
+     * @param   object  $init
      */
     public function setInitInstance(object $init): void
     {

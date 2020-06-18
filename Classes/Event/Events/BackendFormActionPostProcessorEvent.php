@@ -36,18 +36,21 @@ class BackendFormActionPostProcessorEvent
     
     /**
      * The instance of the context that was used by the applied callbacks
+     *
      * @var object
      */
     protected $context;
     
     /**
      * The instance of the backend action handler class that was applied
+     *
      * @var object
      */
     protected $handler;
     
     /**
      * The type of stack we should find the handlers for
+     *
      * @var string
      */
     protected $stackType;
@@ -55,19 +58,20 @@ class BackendFormActionPostProcessorEvent
     /**
      * BackendFormActionPostProcessorEvent constructor.
      *
-     * @param object $context
-     * @param object $handler
-     * @param string $stackType
+     * @param   object  $context
+     * @param   object  $handler
+     * @param   string  $stackType
      */
     public function __construct(object $context, object $handler, string $stackType)
     {
-        $this->context = $context;
-        $this->handler = $handler;
+        $this->context   = $context;
+        $this->handler   = $handler;
         $this->stackType = $stackType;
     }
     
     /**
      * Returns the instance of the context that was used by the applied callbacks
+     *
      * @return object
      */
     public function getContext(): object
@@ -77,6 +81,7 @@ class BackendFormActionPostProcessorEvent
     
     /**
      * Returns the instance of the backend action handler class that was applied
+     *
      * @return BackendActionHandlerInterfaceAlias
      */
     public function getHandler(): object
@@ -86,6 +91,7 @@ class BackendFormActionPostProcessorEvent
     
     /**
      * Returns the type of stack we should find the handlers for
+     *
      * @return string
      */
     public function getStackType(): string

@@ -40,12 +40,14 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
         $collector = $context->getInstanceOf(LinkSetCollector::class);
         
         // Loop through the stack
-        $context->runWithCachedValueDataScope($stack['main'], function (string $configClass) use ($collector, $context) {
-            if (!in_array(LinkSetConfigurationInterface::class, class_implements($configClass))) {
-                throw new ExtConfigException("Invalid link set config class $configClass given. It has to implement the correct interface: " . LinkSetConfigurationInterface::class);
-            }
-            call_user_func([$configClass, 'configureLinkSets'], $collector, $context);
-        });
+        $context->runWithCachedValueDataScope($stack['main'],
+            function (string $configClass) use ($collector, $context) {
+                if (! in_array(LinkSetConfigurationInterface::class, class_implements($configClass))) {
+                    throw new ExtConfigException("Invalid link set config class $configClass given. It has to implement the correct interface: "
+                                                 . LinkSetConfigurationInterface::class);
+                }
+                call_user_func([$configClass, 'configureLinkSets'], $collector, $context);
+            });
         
         // Done
         return $collector->__getDefinitions();

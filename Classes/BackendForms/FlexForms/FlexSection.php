@@ -29,18 +29,21 @@ class FlexSection extends AbstractFormContainer
     
     /**
      * Holds the id of the section's inner container element
+     *
      * @var string
      */
     protected $containerItemId = 'item';
     
     /**
      * Holds the section's inner container element's label
+     *
      * @var string
      */
     protected $containerItemLabel;
     
     /**
      * Returns the id of the section's inner container element
+     *
      * @return string
      */
     public function getContainerItemId(): string
@@ -51,35 +54,39 @@ class FlexSection extends AbstractFormContainer
     /**
      * Sets the id of the section's inner container element
      *
-     * @param string $containerItemId
+     * @param   string  $containerItemId
      *
      * @return FlexSection
      */
     public function setContainerItemId(string $containerItemId): FlexSection
     {
         $this->containerItemId = $containerItemId;
+        
         return $this;
     }
     
     /**
      * Returns the section's inner container element's label
+     *
      * @return string
      */
     public function getContainerItemLabel(): string
     {
-        return empty($this->containerItemLabel) ? Inflector::toHuman($this->getContainerItemId()) : $this->containerItemLabel;
+        return empty($this->containerItemLabel) ? Inflector::toHuman($this->getContainerItemId())
+            : $this->containerItemLabel;
     }
     
     /**
      * Sets the section's inner container element's label
      *
-     * @param string $containerItemLabel
+     * @param   string  $containerItemLabel
      *
      * @return FlexSection
      */
     public function setContainerItemLabel(string $containerItemLabel): FlexSection
     {
         $this->containerItemLabel = $containerItemLabel;
+        
         return $this;
     }
 }

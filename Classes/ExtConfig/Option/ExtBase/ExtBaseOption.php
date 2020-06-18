@@ -56,7 +56,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     /**
      * ExtBaseOptions constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewServiceInterface $lazyBackendPreviewService
+     * @param   \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewServiceInterface  $lazyBackendPreviewService
      */
     public function __construct(BackendPreviewServiceInterface $lazyBackendPreviewService)
     {
@@ -76,11 +76,11 @@ class ExtBaseOption extends AbstractExtConfigOption
     /**
      * Registers a new module to the typo3 backend
      *
-     * @param string      $configuratorClass The name of the configuration class.
-     *                                       The class has to implement the ModuleConfigurationInterface
-     * @param string|null $pluginName        The unique plugin name to use for this backend module. The unique name of
-     *                                       the plugin that should be registered. If left empty the name is
-     *                                       automatically build based on the class name
+     * @param   string       $configuratorClass  The name of the configuration class.
+     *                                           The class has to implement the ModuleConfigurationInterface
+     * @param   string|null  $pluginName         The unique plugin name to use for this backend module. The unique name
+     *                                           of the plugin that should be registered. If left empty the name is
+     *                                           automatically build based on the class name
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption
      * @see \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module\ModuleConfigurationInterface
@@ -90,6 +90,7 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
+        
         return $this->addRegistrationToCachedStack('modules', $pluginName, $configuratorClass);
     }
     
@@ -98,10 +99,10 @@ class ExtBaseOption extends AbstractExtConfigOption
      *
      * Please note: You can only modify modules that have been registered using registerBackendModule()!
      *
-     * @param string      $configuratorClass The name of the override class.
-     *                                       The class has to implement the ModuleConfigurationInterface
-     * @param string|null $pluginName        The unique plugin name of backend module to modify. If left empty the
-     *                                       name is automatically build based on the class name
+     * @param   string       $configuratorClass  The name of the override class.
+     *                                           The class has to implement the ModuleConfigurationInterface
+     * @param   string|null  $pluginName         The unique plugin name of backend module to modify. If left empty the
+     *                                           name is automatically build based on the class name
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption
      * @see \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module\ModuleConfigurationInterface
@@ -111,16 +112,17 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
+        
         return $this->addOverrideToCachedStack('modules', $pluginName, $configuratorClass);
     }
     
     /**
      * Registers a new ext base plugin / content element configuration
      *
-     * @param string      $configuratorClass The name of the configuration class. Has to implement the
-     *                                       PluginConfigurationInterface.
-     * @param string|null $pluginName        The unique name of the plugin that should be registered. If left empty the
-     *                                       name is automatically build based on the class name
+     * @param   string       $configuratorClass  The name of the configuration class. Has to implement the
+     *                                           PluginConfigurationInterface.
+     * @param   string|null  $pluginName         The unique name of the plugin that should be registered. If left empty
+     *                                           the name is automatically build based on the class name
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption
      * @see \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin\PluginConfigurationInterface
@@ -130,13 +132,14 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
+        
         return $this->addRegistrationToCachedStack('plugins', $pluginName, $configuratorClass);
     }
     
     /**
      * Similar to registerPlugin() but registers all plugin definitions in a directory at once.
      *
-     * @param string $directory The path to the directory to add. Either as absolute path or as EXT:... path
+     * @param   string  $directory  The path to the directory to add. Either as absolute path or as EXT:... path
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption
      */
@@ -153,10 +156,10 @@ class ExtBaseOption extends AbstractExtConfigOption
     /**
      * Registers an override for an ext base plugin / content element configuration
      *
-     * @param string      $configuratorClass    The name of the configuration class. Has to implement the
-     *                                          PluginConfigurationInterface.
-     * @param string|null $pluginName           The unique name of the plugin that should be registered. If left empty
-     *                                          the name is automatically build based on the class name
+     * @param   string       $configuratorClass  The name of the configuration class. Has to implement the
+     *                                           PluginConfigurationInterface.
+     * @param   string|null  $pluginName         The unique name of the plugin that should be registered. If left empty
+     *                                           the name is automatically build based on the class name
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption
      */
@@ -165,6 +168,7 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
+        
         return $this->addOverrideToCachedStack('plugins', $pluginName, $configuratorClass);
     }
     
@@ -261,8 +265,8 @@ class ExtBaseOption extends AbstractExtConfigOption
         // Register flex forms
         foreach ($pluginConfig->flexFormPlugins as $plugin) {
             $flexFormPath = ['TCA', 'tt_content', 'types', 'list', 'subtypes_addlist', $plugin];
-            $val = Arrays::getPath($GLOBALS, $flexFormPath, '');
-            if (!empty($val)) {
+            $val          = Arrays::getPath($GLOBALS, $flexFormPath, '');
+            if (! empty($val)) {
                 if (is_string($val) && stripos($val, 'pi_flexform') === false) {
                     $val = rtrim($val, ', ') . ',pi_flexform';
                 }
@@ -275,6 +279,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     
     /**
      * Returns the module configuration object
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Generic\ElementConfig
      */
     protected function getModuleConfig(): ElementConfig
@@ -284,6 +289,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     
     /**
      * Returns the module configuration object
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Generic\ElementConfig
      */
     protected function getPluginConfig(): ElementConfig
@@ -298,7 +304,7 @@ class ExtBaseOption extends AbstractExtConfigOption
      * We will automatically strip suffixes like module, plugin, ext, config, configuration, controller and override(s)
      * from the base name before we convert it into a plugin name
      *
-     * @param string $configClass
+     * @param   string  $configClass
      *
      * @return string
      */
@@ -306,6 +312,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         $baseName = Path::classBasename($configClass);
         $baseName = preg_replace('~(controller)?(overrides?)?$~si', '', $baseName);
+        
         return Inflector::toCamelCase($baseName);
     }
 }

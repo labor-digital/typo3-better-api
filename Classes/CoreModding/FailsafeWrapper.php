@@ -36,8 +36,8 @@ class FailsafeWrapper
     /**
      * Executes the code, catches all exceptions and returns null if the executed code failed.
      *
-     * @param callable $handler
-     * @param array    $args
+     * @param   callable  $handler
+     * @param   array     $args
      *
      * @return mixed|null
      */
@@ -50,6 +50,7 @@ class FailsafeWrapper
                 return null;
             }
         }
+        
         return call_user_func_array($handler, $args);
     }
 }

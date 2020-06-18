@@ -28,9 +28,9 @@ trait ExtBasePersistenceMapperTrait
      * This helper receives a list of model classes and a table name they should map to.
      * It will generate the typoscript code to configure extbase accordingly.
      *
-     * @param array  $modelList The list of model classes to map to the table name
-     * @param string $tableName The table to map the given classes to
-     * @param array  $columns   The list of mapped columns as array of $col => $property
+     * @param   array   $modelList  The list of model classes to map to the table name
+     * @param   string  $tableName  The table to map the given classes to
+     * @param   array   $columns    The list of mapped columns as array of $col => $property
      *
      * @return string
      */
@@ -39,7 +39,7 @@ trait ExtBasePersistenceMapperTrait
         $mapping = [];
         foreach ($modelList as $model) {
             // Map the columns of this model
-            $cols = Arrays::getPath($columns, [$model], []);
+            $cols   = Arrays::getPath($columns, [$model], []);
             $colMap = '';
             foreach ($cols as $col => $property) {
                 $colMap .= "						$col.mapOnProperty = $property" . PHP_EOL;
@@ -60,6 +60,7 @@ $colMap
             return '';
         }
         $mapping = implode(PHP_EOL, $mapping);
+        
         return "
 		config.tx_extbase.persistence.classes{
 			$mapping

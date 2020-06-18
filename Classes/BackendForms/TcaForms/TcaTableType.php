@@ -28,12 +28,14 @@ class TcaTableType extends AbstractTcaTable
 {
     /**
      * The list of fields that were loaded using the getField method
+     *
      * @var array
      */
     protected $loadedFields = [];
     
     /**
      * The list of palettes that have been loaded using the getPalette() method
+     *
      * @var array
      */
     protected $loadedPalettes = [];
@@ -55,14 +57,15 @@ class TcaTableType extends AbstractTcaTable
     public function getField(string $id): TcaField
     {
         // Load the field definition from the linked table
-        if (!isset($this->loadedFields[$id])) {
+        if (! isset($this->loadedFields[$id])) {
             $this->loadedFields[$id] = true;
-            $localConfig = $this->config['columns'][$id];
+            $localConfig             = $this->config['columns'][$id];
             if (empty($localConfig)) {
                 $localConfig = [];
             }
             $this->config['columns'][$id] = Arrays::merge(call_user_func($this->fieldTcaResolver, $id), $localConfig);
         }
+        
         return parent::getField($id);
     }
     
@@ -70,7 +73,7 @@ class TcaTableType extends AbstractTcaTable
      * You may use this method if you want to resync the configuration of a given field
      * with the default type. Note: The initially set columnOverrides will be applied again!
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField
      */
@@ -80,6 +83,7 @@ class TcaTableType extends AbstractTcaTable
         unset($this->loadedFields[$id]);
         $field = $this->getElementInternal($id, static::TYPE_ELEMENT);
         $field->setRaw($this->config['columns'][$id]);
+        
         return $field;
     }
     
@@ -89,8 +93,8 @@ class TcaTableType extends AbstractTcaTable
     public function getPalette(string $id): TcaPalette
     {
         $localPalette = parent::getPalette($id);
-        $id = ($id[0] !== '_' ? '_' : '') . $id;
-        if (!isset($this->loadedPalettes[$id])) {
+        $id           = ($id[0] !== '_' ? '_' : '') . $id;
+        if (! isset($this->loadedPalettes[$id])) {
             $this->loadedPalettes[$id] = true;
             if (in_array($id, $this->getPalettes())) {
                 return $localPalette;
@@ -110,6 +114,7 @@ class TcaTableType extends AbstractTcaTable
                 }
             }
         }
+        
         return $localPalette;
     }
     
@@ -118,16 +123,15 @@ class TcaTableType extends AbstractTcaTable
      * This method can be used to copy the content of a whole tab from the base type to a child type.
      * This is quite useful if you want to copy tabs like "access" or "language"
      *
-     * @param string $id The same id you would use to select the tab on the default type.
+     * @param   string  $id  The same id you would use to select the tab on the default type.
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTab
      */
     public function copyTab(string $id): TcaTab
     {
-        
         // Prepare the cloning
         /** @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $parent */
-        $parent = $this->getParent();
+        $parent    = $this->getParent();
         $nextTabId = 0;
         foreach ($this->getTabs() as $tab) {
             if (is_numeric($tab->getId())) {
@@ -139,21 +143,21 @@ class TcaTableType extends AbstractTcaTable
         
         // Create a new tab on this type
         $parentTab = $parent->getTab($id);
-        $tab = $this->getTab($nextTabId);
+        $tab       = $this->getTab($nextTabId);
         $tab->setLabel($parentTab->getLabel());
         foreach ($parentTab->getChildren() as $k => $child) {
             /** @var \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormElement $clone */
-            $clone = clone $child;
+            $clone         = clone $child;
             $clone->parent = $tab;
-            $clone->form = $this;
+            $clone->form   = $this;
             
             // Handle container elements
             if ($clone instanceof AbstractFormContainer) {
                 $clonedElements = [];
                 foreach ($clone->getChildren() as $_k => $_child) {
-                    $_clone = clone $_child;
-                    $_clone->parent = $clone;
-                    $_clone->form = $this;
+                    $_clone              = clone $_child;
+                    $_clone->parent      = $clone;
+                    $_clone->form        = $this;
                     $clonedElements[$_k] = $_clone;
                 }
                 $clone->elements = $clonedElements;
@@ -170,7 +174,7 @@ class TcaTableType extends AbstractTcaTable
     /**
      * Internal helper to inject the tca field resolver
      *
-     * @param \Closure $closure
+     * @param   \Closure  $closure
      *
      * @internal
      */
@@ -182,7 +186,7 @@ class TcaTableType extends AbstractTcaTable
     /**
      * Remove the internal load-state references when an element is removed
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormElement $el
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormElement  $el
      */
     protected function __elRemovalHook(AbstractFormElement $el): void
     {

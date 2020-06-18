@@ -35,7 +35,7 @@ class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter impleme
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class] = [
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class]  = [
             'depends' => [DatabaseRowInitializeNew::class],
             'before'  => [TcaGroup::class, TcaColumnsRemoveUnused::class],
         ];
@@ -50,10 +50,11 @@ class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter impleme
      */
     public function addData(array $result)
     {
-        if (!isset($result['tableName'])) {
+        if (! isset($result['tableName'])) {
             return $result;
         }
         static::$bus->dispatch(($e = new BackendFormFilterEvent($result['tableName'], $result)));
+        
         return $e->getData();
     }
 }

@@ -29,12 +29,14 @@ class ExtendedRelationService implements SingletonInterface
     
     /**
      * True if our internal event handler was registered
+     *
      * @var bool
      */
     protected $handlerRegistered = false;
     
     /**
      * The query filter we are currently applying
+     *
      * @var callable|null
      */
     protected $filter;
@@ -46,6 +48,7 @@ class ExtendedRelationService implements SingletonInterface
     
     /**
      * The cached enabled state to avoid a lot of repetitive work
+     *
      * @var array
      */
     protected $enabledStateCache = [];
@@ -53,7 +56,7 @@ class ExtendedRelationService implements SingletonInterface
     /**
      * ExtendedRelationService constructor.
      *
-     * @param \Neunerlei\EventBus\EventBusInterface $eventBus
+     * @param   \Neunerlei\EventBus\EventBusInterface  $eventBus
      */
     public function __construct(EventBusInterface $eventBus)
     {
@@ -63,27 +66,27 @@ class ExtendedRelationService implements SingletonInterface
     /**
      * Runs the given callback with the extended settings applied
      *
-     * @param array    $settings   The settings to apply while executing the given callback
-     *                             - hidden (bool|string|array) FALSE:
-     *                             * TRUE: Include all hidden children in all entities
-     *                             * FALSE: Go back to the default behaviour
-     *                             * \Entity\Class\Name: Allow hidden children for all properties of a given entity
-     *                             class
-     *                             * [\Entity\Class\Name, \Entity\Class\AnotherName]: Allow hidden children for all
-     *                             properties of multiple entity classes
-     *                             * [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property",
-     *                             "foo"]: Allow hidden children for either a single property or a list of properties
-     *                             - deleted (bool|string|array) FALSE:
-     *                             * TRUE: Include all deleted children in all entities
-     *                             * FALSE: Go back to the default behaviour
-     *                             * \Entity\Class\Name: Allow deleted children for all properties of a given entity
-     *                             class
-     *                             * [\Entity\Class\Name, \Entity\Class\AnotherName]: Allow deleted children for all
-     *                             properties of multiple entity classes
-     *                             * [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property",
-     *                             "foo"]: Allow deleted children for either a single property or a list of properties
+     * @param   array     $settings  The settings to apply while executing the given callback
+     *                               - hidden (bool|string|array) FALSE:
+     *                               * TRUE: Include all hidden children in all entities
+     *                               * FALSE: Go back to the default behaviour
+     *                               * \Entity\Class\Name: Allow hidden children for all properties of a given entity
+     *                               class
+     *                               * [\Entity\Class\Name, \Entity\Class\AnotherName]: Allow hidden children for all
+     *                               properties of multiple entity classes
+     *                               * [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property",
+     *                               "foo"]: Allow hidden children for either a single property or a list of properties
+     *                               - deleted (bool|string|array) FALSE:
+     *                               * TRUE: Include all deleted children in all entities
+     *                               * FALSE: Go back to the default behaviour
+     *                               * \Entity\Class\Name: Allow deleted children for all properties of a given entity
+     *                               class
+     *                               * [\Entity\Class\Name, \Entity\Class\AnotherName]: Allow deleted children for all
+     *                               properties of multiple entity classes
+     *                               * [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property",
+     *                               "foo"]: Allow deleted children for either a single property or a list of properties
      *
-     * @param callable $function
+     * @param   callable  $function
      *
      * @return mixed
      */
@@ -113,14 +116,14 @@ class ExtendedRelationService implements SingletonInterface
         }
         
         // Store the current filter to allow nesting
-        $filterBackup = $this->filter;
-        $cacheBackup = $this->enabledStateCache;
+        $filterBackup            = $this->filter;
+        $cacheBackup             = $this->enabledStateCache;
         $this->enabledStateCache = [];
         
         // Build the main query modifier with the given settings
         $this->filter = function (DataMapperQueryFilterEvent $event) use ($settings) {
-            $model = $event->getParentObject();
-            $property = $event->getPropertyName();
+            $model         = $event->getParentObject();
+            $property      = $event->getPropertyName();
             $querySettings = $event->getQuery()->getQuerySettings();
             
             // HIDDEN
@@ -139,7 +142,7 @@ class ExtendedRelationService implements SingletonInterface
         };
         
         // Bind our event if required
-        if (!$this->handlerRegistered) {
+        if (! $this->handlerRegistered) {
             $this->handlerRegistered = true;
             $this->eventBus->addListener(DataMapperQueryFilterEvent::class, [$this, '__dataMapperQueryFilter']);
         }
@@ -148,7 +151,7 @@ class ExtendedRelationService implements SingletonInterface
         try {
             return $function();
         } finally {
-            $this->filter = $filterBackup;
+            $this->filter            = $filterBackup;
             $this->enabledStateCache = $cacheBackup;
         }
     }
@@ -156,7 +159,7 @@ class ExtendedRelationService implements SingletonInterface
     /**
      * Event listener to inject or special configuration into the generated query object
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent  $event
      */
     public function __dataMapperQueryFilter(DataMapperQueryFilterEvent $event)
     {
@@ -171,10 +174,10 @@ class ExtendedRelationService implements SingletonInterface
      * Internal helper that validates the given settings for the deleted and hidden relations
      * It will return true if the adjustments for the given $key have to be applied to the query settings
      *
-     * @param string $key
-     * @param array  $settings
-     * @param string $model
-     * @param string $property
+     * @param   string  $key
+     * @param   array   $settings
+     * @param   string  $model
+     * @param   string  $property
      *
      * @return bool
      */
@@ -184,7 +187,7 @@ class ExtendedRelationService implements SingletonInterface
         if (isset($this->enabledStateCache[$cacheKey])) {
             return $this->enabledStateCache[$cacheKey];
         }
-        $state = $settings[$key];
+        $state  = $settings[$key];
         $result = (function () use ($state, $model, $property) {
             // Simple state
             if ($state === true) {
@@ -203,28 +206,31 @@ class ExtendedRelationService implements SingletonInterface
             }
             
             // Check if a specific property is allowed
-            if (isset($state[$model]) && ($state[$model] === $property ||
-                    is_array($state[$model]) && in_array($property, $state[$model]))) {
+            if (isset($state[$model])
+                && ($state[$model] === $property
+                    || is_array($state[$model]) && in_array($property, $state[$model]))) {
                 return true;
             }
             
             // Check if a class parent is allowed
             $parents = class_parents($model);
             foreach ($parents as $parent) {
-                
                 // Check if a class name is given -> Allow all properties
                 if (in_array($parent, $state)) {
                     return true;
                 }
                 
                 // Check if a specific property is allowed
-                if (isset($state[$model]) && ($state[$model] === $property ||
-                        is_array($state[$model]) && in_array($property, $state[$model]))) {
+                if (isset($state[$model])
+                    && ($state[$model] === $property
+                        || is_array($state[$model]) && in_array($property, $state[$model]))) {
                     return true;
                 }
             }
+            
             return false;
         })();
+        
         return $this->enabledStateCache[$cacheKey] = $result;
     }
 }

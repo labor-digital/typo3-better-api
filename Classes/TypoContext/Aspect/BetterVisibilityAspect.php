@@ -35,7 +35,7 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     /**
      * Inject the typo context instance
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
     public function injectContext(TypoContext $context)
     {
@@ -51,35 +51,38 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     }
     
     /**
-     * @param bool $includeHiddenPages
+     * @param   bool  $includeHiddenPages
      *
      * @return BetterVisibilityAspect
      */
     public function setIncludeHiddenPages(bool $includeHiddenPages): BetterVisibilityAspect
     {
         $this->getRootVisibilityAspect()->includeHiddenPages = $includeHiddenPages;
+        
         return $this;
     }
     
     /**
-     * @param bool $includeHiddenContent
+     * @param   bool  $includeHiddenContent
      *
      * @return BetterVisibilityAspect
      */
     public function setIncludeHiddenContent(bool $includeHiddenContent): BetterVisibilityAspect
     {
         $this->getRootVisibilityAspect()->includeHiddenContent = $includeHiddenContent;
+        
         return $this;
     }
     
     /**
-     * @param bool $includeDeletedRecords
+     * @param   bool  $includeDeletedRecords
      *
      * @return BetterVisibilityAspect
      */
     public function setIncludeDeletedRecords(bool $includeDeletedRecords): BetterVisibilityAspect
     {
         $this->getRootVisibilityAspect()->includeDeletedRecords = $includeDeletedRecords;
+        
         return $this;
     }
     
@@ -109,6 +112,7 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     
     /**
      * Returns the root context's visibility aspect
+     *
      * @return \TYPO3\CMS\Core\Context\VisibilityAspect|mixed
      */
     public function getRootVisibilityAspect(): VisibilityAspect

@@ -33,7 +33,8 @@ class TranslationSyncCommand extends Command
     protected function configure()
     {
         $this->setHelp('Synchronizes the translation files of a given extension');
-        $this->addArgument('extension', InputArgument::REQUIRED, 'The extension key to synchronize the translations for');
+        $this->addArgument('extension', InputArgument::REQUIRED,
+            'The extension key to synchronize the translations for');
     }
     
     /**

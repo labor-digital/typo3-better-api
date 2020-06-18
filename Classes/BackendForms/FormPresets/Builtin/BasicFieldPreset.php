@@ -40,11 +40,12 @@ class BasicFieldPreset extends AbstractFormPreset
     /**
      * Converts the field into a checkbox
      *
-     * @param array $options Additional options for this preset
-     *                       - default bool (FALSE): A default value for your input field
-     *                       - toggle bool (FALSE): If set to true, this field is rendered as toggle and not as checkbox
-     *                       - inverted bool (FALSE): If set to true checked / unchecked state are swapped in view:
-     *                       A checkbox is marked checked if the database bit is not set and vice versa.
+     * @param   array  $options  Additional options for this preset
+     *                           - default bool (FALSE): A default value for your input field
+     *                           - toggle bool (FALSE): If set to true, this field is rendered as toggle and not as
+     *                           checkbox
+     *                           - inverted bool (FALSE): If set to true checked / unchecked state are swapped in view:
+     *                           A checkbox is marked checked if the database bit is not set and vice versa.
      */
     public function checkbox(array $options = [])
     {
@@ -65,7 +66,7 @@ class BasicFieldPreset extends AbstractFormPreset
         ]);
         
         // Prepare the config
-        $config = ['type' => 'check'];
+        $config            = ['type' => 'check'];
         $config['default'] = (int)$options['default'];
         if ($options['toggle']) {
             $config['renderType'] = 'checkboxToggle';
@@ -84,18 +85,18 @@ class BasicFieldPreset extends AbstractFormPreset
     /**
      * Configures the current input element as a text area optionally with a rte configuration
      *
-     * @param array $options  Additional options
-     *                        - default string: An optional default value to set for this field
-     *                        - required, trim bool: Any of these values can be passed
-     *                        to define their matching "eval" rules
-     *                        - maxLength int (65000): The max length of a text (also affects the length of the db
-     *                        field)
-     *                        - minLength int (0): The min length of a input
-     *                        - cols int (50): The width of the rendered field in html cols
-     *                        - rows int (40): The height of the rendered field in html rows
-     *                        - rte bool (FALSE): If set to true this field will be rendered as RTE editor
-     *                        - rteConfig string: For TYPO3 > v7 Can be used to select which rte config is to apply to
-     *                        this field
+     * @param   array  $options  Additional options
+     *                           - default string: An optional default value to set for this field
+     *                           - required, trim bool: Any of these values can be passed
+     *                           to define their matching "eval" rules
+     *                           - maxLength int (65000): The max length of a text (also affects the length of the db
+     *                           field)
+     *                           - minLength int (0): The min length of a input
+     *                           - cols int (50): The width of the rendered field in html cols
+     *                           - rows int (40): The height of the rendered field in html rows
+     *                           - rte bool (FALSE): If set to true this field will be rendered as RTE editor
+     *                           - rteConfig string: For TYPO3 > v7 Can be used to select which rte config is to apply
+     *                           to this field
      */
     public function textArea(array $options = [])
     {
@@ -135,18 +136,18 @@ class BasicFieldPreset extends AbstractFormPreset
         $config = ['type' => 'text'];
         
         // Apply defaults
-        if (!empty($options['default'])) {
+        if (! empty($options['default'])) {
             $config['default'] = $options['default'];
         }
         $config['rows'] = $options['rows'];
         $config['cols'] = $options['cols'];
-        $config = $this->addEvalConfig($config, $options);
-        $config = $this->addMaxLengthConfig($config, $options, true);
+        $config         = $this->addEvalConfig($config, $options);
+        $config         = $this->addMaxLengthConfig($config, $options, true);
         
         // Add rte config
         if ($options['rte']) {
             $config['enableRichtext'] = true;
-            if (!empty($options['rteConfig'])) {
+            if (! empty($options['rteConfig'])) {
                 $config['richtextConfiguration'] = $options['rteConfig'];
             }
         }
@@ -158,16 +159,16 @@ class BasicFieldPreset extends AbstractFormPreset
     /**
      * Sets the current field as a simple select field.
      *
-     * @param array $items   The items you want to set for this select field, as an array
-     *                       with the "value" as key and the "label" as value
-     * @param array $options Additional options for this preset
-     *                       - minItems int (0): The minimum number of items required to be valid
-     *                       - maxItems int (1): The maximum number of items allowed in this field
-     *                       - required bool: If set this field will be required to be filled
-     *                       - default string|number: If given this is used as default value when a new record is
-     *                       created
-     *                       - userFunc string: Can be given like any select itemProcFunc in typo3 as:
-     *                       vendor\className->methodName and is used as a filter for the items in the select field
+     * @param   array  $items    The items you want to set for this select field, as an array
+     *                           with the "value" as key and the "label" as value
+     * @param   array  $options  Additional options for this preset
+     *                           - minItems int (0): The minimum number of items required to be valid
+     *                           - maxItems int (1): The maximum number of items allowed in this field
+     *                           - required bool: If set this field will be required to be filled
+     *                           - default string|number: If given this is used as default value when a new record is
+     *                           created
+     *                           - userFunc string: Can be given like any select itemProcFunc in typo3 as:
+     *                           vendor\className->methodName and is used as a filter for the items in the select field
      *
      */
     public function select(array $items, array $options = [])
@@ -178,15 +179,15 @@ class BasicFieldPreset extends AbstractFormPreset
             $this->addEvalOptions(
                 $this->addMinMaxItemOptions(
                     [
-                    'userFunc' => [
-                        'type'    => 'string',
-                        'default' => '',
+                        'userFunc' => [
+                            'type'    => 'string',
+                            'default' => '',
+                        ],
+                        'default'  => [
+                            'type'    => ['string', 'number', 'null'],
+                            'default' => null,
+                        ],
                     ],
-                    'default'  => [
-                        'type'    => ['string', 'number', 'null'],
-                        'default' => null,
-                    ],
-                ],
                     ['maxItems' => 1]
                 ),
                 ['required']
@@ -209,7 +210,7 @@ class BasicFieldPreset extends AbstractFormPreset
         ];
         
         // Add additional config
-        if (!is_null($options['default'])) {
+        if (! is_null($options['default'])) {
             $config['default'] = $options['default'];
         }
         $config = $this->addMinMaxItemConfig($config, $options);
@@ -230,7 +231,7 @@ class BasicFieldPreset extends AbstractFormPreset
      */
     public function imageAlignment()
     {
-        if (!$this->field->hasLabel()) {
+        if (! $this->field->hasLabel()) {
             $this->field->setLabel('tbbe.d.sys_file_reference.imageAlignment');
         }
         $this->select([
@@ -251,7 +252,7 @@ class BasicFieldPreset extends AbstractFormPreset
      * This can become quite handy if you want to configure multiple fields with the same configuration.
      * Use a closure to wrap your field configuration and apply it to each field in your TCA
      *
-     * @param callable $callable
+     * @param   callable  $callable
      */
     public function applyCallback(callable $callable)
     {

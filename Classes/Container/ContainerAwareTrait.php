@@ -32,6 +32,7 @@ trait ContainerAwareTrait
     
     /**
      * Holds the container instance if it was injected
+     *
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $__container;
@@ -39,7 +40,7 @@ trait ContainerAwareTrait
     /**
      * Injects the container instance if possible
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function injectContainer(TypoContainerInterface $container)
     {
@@ -53,7 +54,9 @@ trait ContainerAwareTrait
      */
     protected function Container(): TypoContainerInterface
     {
-        return isset($this->__container) ? $this->__container :
+        return isset($this->__container)
+            ? $this->__container
+            :
             $this->__container = TypoContainer::getInstance();
     }
     
@@ -65,8 +68,8 @@ trait ContainerAwareTrait
      * However: There are some good examples of where you might want to use it:
      * Inside Models, or callbacks that don't support dependency injection for example.
      *
-     * @param string $class The class or interface you want to retrieve the object for
-     * @param array  $args  Optional, additional constructor arguments
+     * @param   string  $class  The class or interface you want to retrieve the object for
+     * @param   array   $args   Optional, additional constructor arguments
      *
      * @return mixed
      */

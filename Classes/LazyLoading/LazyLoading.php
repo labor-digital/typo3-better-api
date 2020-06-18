@@ -34,7 +34,7 @@ class LazyLoading implements SingletonInterface
      * Helper that always returns the real value of a given object.
      * LazyLoadingProxies and LazyObjectStorage will be converted to their real instance if required.
      *
-     * @param LazyObjectStorage|LazyLoadingProxy|mixed $value The object to convert to the real value
+     * @param   LazyObjectStorage|LazyLoadingProxy|mixed  $value  The object to convert to the real value
      *
      * @return object|mixed|null The converted, real value of the given value
      */
@@ -52,9 +52,11 @@ class LazyLoading implements SingletonInterface
                 foreach ($value as $v) {
                     $res->attach($v);
                 }
+                
                 return $res;
             }
         }
+        
         return $value;
     }
     
@@ -72,14 +74,14 @@ class LazyLoading implements SingletonInterface
      */
     public function getObjectUid($object): int
     {
-        if (!is_object($object)) {
+        if (! is_object($object)) {
             throw new BetterApiException('getObjectUid() accepts only object instances!');
         }
         if ($object instanceof AbstractEntity || method_exists($object, 'getUid')) {
             return $object->getUid();
         }
         if ($object instanceof LazyLoadingProxy) {
-            $ref = new ReflectionObject($object);
+            $ref     = new ReflectionObject($object);
             $propRef = $ref->getProperty('fieldValue');
             $propRef->setAccessible('true');
             $value = $propRef->getValue($object);

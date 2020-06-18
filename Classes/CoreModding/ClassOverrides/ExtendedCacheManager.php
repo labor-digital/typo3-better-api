@@ -65,9 +65,9 @@ class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
     /**
      * Internal helper to emit the clear cache event
      *
-     * @param string      $caller
-     * @param string|null $group
-     * @param string|null $tag
+     * @param   string       $caller
+     * @param   string|null  $group
+     * @param   string|null  $tag
      */
     protected function __emitFlushEvent(string $caller, ?string $group = null, ?string $tag = null)
     {

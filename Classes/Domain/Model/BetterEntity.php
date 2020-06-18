@@ -35,7 +35,7 @@ abstract class BetterEntity extends AbstractEntity
     }
     
     /**
-     * @param int|string|null $pid
+     * @param   int|string|null  $pid
      */
     public function setPid($pid)
     {

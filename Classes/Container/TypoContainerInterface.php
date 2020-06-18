@@ -35,11 +35,11 @@ interface TypoContainerInterface extends ContainerInterface
      * extbase objectManager. Default is always the object manager, but you can change it by using $options["gu" =>
      * true]
      *
-     * @param string $id      Identifier of the entry to look for.
-     * @param array  $options Additional options
-     *                        - args (DEFAULT []) A list of constructor arguments
-     *                        - gu (DEFAULT FALSE) Set this to true to use the GeneralUtility::makeInstance() instead
-     *                        of the object manager to create the instance
+     * @param   string  $id       Identifier of the entry to look for.
+     * @param   array   $options  Additional options
+     *                            - args (DEFAULT []) A list of constructor arguments
+     *                            - gu (DEFAULT FALSE) Set this to true to use the GeneralUtility::makeInstance()
+     *                            instead of the object manager to create the instance
      *
      * @return mixed Entry.
      *
@@ -55,8 +55,8 @@ interface TypoContainerInterface extends ContainerInterface
      * Officially you should not use it, but it is really handy when you have to work with broken extensions.
      * So: use it with care and only if there is no other option!
      *
-     * @param string                             $class
-     * @param \TYPO3\CMS\Core\SingletonInterface $instance
+     * @param   string                              $class
+     * @param   \TYPO3\CMS\Core\SingletonInterface  $instance
      *
      * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
@@ -65,8 +65,8 @@ interface TypoContainerInterface extends ContainerInterface
     /**
      * Registers a given interface for a given classname. So If the interface is required, the class can be resolved.
      *
-     * @param string $interface The interface which should be linked to the given class
-     * @param string $class     The class to be resolved if the given interface is required
+     * @param   string  $interface  The interface which should be linked to the given class
+     * @param   string  $class      The class to be resolved if the given interface is required
      *
      * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
@@ -77,8 +77,8 @@ interface TypoContainerInterface extends ContainerInterface
      *
      * @see https://docs.typo3.org/typo3cms/CoreApiReference/ApiOverview/Xclasses/Index.html
      *
-     * @param string $classToOverride
-     * @param string $classToOverrideWith
+     * @param   string  $classToOverride
+     * @param   string  $classToOverrideWith
      *
      * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */

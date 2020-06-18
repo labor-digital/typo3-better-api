@@ -31,13 +31,16 @@ class AssetFilterEventAdapter extends AbstractCoreHookEventAdapter
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][static::class] = static::class . '->emit';
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][static::class]
+            = static::class . '->emit';
     }
     
     public function emit(&$arguments, $pageRenderer)
     {
-        $event = static::$context->getEnvAspect()->isBackend() ?
-            new BackendAssetFilterEvent($arguments, $pageRenderer) :
+        $event = static::$context->getEnvAspect()->isBackend()
+            ?
+            new BackendAssetFilterEvent($arguments, $pageRenderer)
+            :
             new FrontendAssetFilterEvent($arguments, $pageRenderer);
         static::$bus->dispatch($event);
         $arguments = $event->getAssets();

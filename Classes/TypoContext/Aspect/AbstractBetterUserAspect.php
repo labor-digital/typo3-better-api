@@ -40,7 +40,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     /**
      * Inject the typo context instance
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
     public function injectContext(TypoContext $context)
     {
@@ -57,6 +57,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     
     /**
      * Returns the root context's user aspect
+     *
      * @return \TYPO3\CMS\Core\Context\UserAspect|mixed
      */
     public function getRootUserAspect(): UserAspect
@@ -66,11 +67,12 @@ abstract class AbstractBetterUserAspect extends UserAspect
     
     /**
      * Returns true if there is a user object registered
+     *
      * @return bool
      */
     public function hasUser(): bool
     {
-        return !empty($this->getUserObject());
+        return ! empty($this->getUserObject());
     }
     
     /**
@@ -92,26 +94,29 @@ abstract class AbstractBetterUserAspect extends UserAspect
     
     /**
      * Returns the root aspect key
+     *
      * @return string
      */
     abstract protected function getRootAspectKey(): string;
     
     /**
      * Should try to return the user object, either from the parent aspect, or by using the globals array
+     *
      * @return \TYPO3\CMS\Core\Authentication\AbstractUserAuthentication|mixed
      */
     protected function getUserObject()
     {
-        if (!empty($this->resolvedUser)) {
+        if (! empty($this->resolvedUser)) {
             return $this->resolvedUser;
         }
-        if (!empty($this->user) && !$this->user instanceof stdClass && !is_array($this->user)) {
+        if (! empty($this->user) && ! $this->user instanceof stdClass && ! is_array($this->user)) {
             return $this->resolvedUser = $this->user;
         }
         $rootUser = $this->getRootUserAspect()->user;
-        if (!empty($rootUser) && !$rootUser instanceof stdClass && !is_array($rootUser)) {
+        if (! empty($rootUser) && ! $rootUser instanceof stdClass && ! is_array($rootUser)) {
             return $this->resolvedUser = $rootUser;
         }
+        
         return null;
     }
 }

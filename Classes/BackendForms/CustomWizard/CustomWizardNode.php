@@ -54,23 +54,27 @@ class CustomWizardNode extends AbstractFormElement
         $result = $i->render($context);
         
         // Build result
-        $resultArray = $this->initializeResultArray();
+        $resultArray         = $this->initializeResultArray();
         $resultArray['html'] = $result;
+        
         return $resultArray;
     }
     
     /**
      * Internal helper to extract the value either from the row, from the given flex form path.
      *
-     * @param array $config
+     * @param   array  $config
      *
      * @return array|mixed|null
      */
     protected function extractValueFromRow(array $config)
     {
         $field = $config['fieldName'];
-        $row = $config['databaseRow'];
-        return empty($config['flexFormPath']) ? $row[$field] :
+        $row   = $config['databaseRow'];
+        
+        return empty($config['flexFormPath'])
+            ? $row[$field]
+            :
             Arrays::getPath($row[$field], $config['flexFormPath'], null, '/');
     }
 }

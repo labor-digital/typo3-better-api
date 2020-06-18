@@ -43,6 +43,7 @@ class BackendConfigOption extends AbstractExtConfigOption
     
     /**
      * The list of backend assets to register
+     *
      * @var array
      */
     protected $assets = [];
@@ -63,14 +64,14 @@ class BackendConfigOption extends AbstractExtConfigOption
      *
      * use it like: web/typo3/cli_dispatch.phpsh extbase something:my
      *
-     * @param string $commandHandler Either the class name of an extBase or an symfony command handler
-     * @param array  $options        Additional options if a symfony command handler is given
-     *                               - commandName string: By default the command name is generated out of
-     *                               your extension key and the class name (The default for extBase command
-     *                               controllers)
-     *                               but if you set this you can define the command yourself
-     *                               - schedulable bool (TRUE): By default, the command can be used in the scheduler
-     *                               too. You can deactivate this by setting schedulable to false
+     * @param   string  $commandHandler  Either the class name of an extBase or an symfony command handler
+     * @param   array   $options         Additional options if a symfony command handler is given
+     *                                   - commandName string: By default the command name is generated out of
+     *                                   your extension key and the class name (The default for extBase command
+     *                                   controllers)
+     *                                   but if you set this you can define the command yourself
+     *                                   - schedulable bool (TRUE): By default, the command can be used in the scheduler
+     *                                   too. You can deactivate this by setting schedulable to false
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -83,7 +84,9 @@ class BackendConfigOption extends AbstractExtConfigOption
         
         // Check if this is a command controller
         if (in_array(CommandController::class, class_parents($commandHandler))) {
-            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][md5($commandHandler)] = $this->replaceMarkers($commandHandler);
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][md5($commandHandler)]
+                = $this->replaceMarkers($commandHandler);
+            
             return $this;
         }
         
@@ -97,63 +100,71 @@ class BackendConfigOption extends AbstractExtConfigOption
         
         // Invalid argument given
         throw new ExtConfigException('The given command handler: ' . $commandHandler . ' has to extend the ' .
-            CommandController::class . ' or the ' . Command::class . ' class');
+                                     CommandController::class . ' or the ' . Command::class . ' class');
     }
     
     /**
      * Registers a new css file to the backend renderer.
      *
-     * @param string $cssFile Use something like EXT:ext_key/Resources/Public/Styles/style.css
-     *                        You can use fully qualified url's as well.
+     * @param   string  $cssFile  Use something like EXT:ext_key/Resources/Public/Styles/style.css
+     *                            You can use fully qualified url's as well.
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption
      */
     public function registerCss(string $cssFile): BackendConfigOption
     {
         $this->assets['css'][md5($cssFile)] = $this->replaceMarkers($cssFile);
+        
         return $this;
     }
     
     /**
      * Registers a new js file to the backend renderer.
      *
-     * @param string $jsFile      Use something like EXT:ext_key/Resources/Public/Scripts/script.js
-     *                            You can use fully qualified url's as well.
-     * @param bool   $atTheFooter By default the script will be added to the page head. If you want to add it to the
-     *                            footer of the page, set this to true
+     * @param   string  $jsFile       Use something like EXT:ext_key/Resources/Public/Scripts/script.js
+     *                                You can use fully qualified url's as well.
+     * @param   bool    $atTheFooter  By default the script will be added to the page head. If you want to add it to the
+     *                                footer of the page, set this to true
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption
      */
     public function registerJs(string $jsFile, bool $atTheFooter = false): BackendConfigOption
     {
         $this->assets[$atTheFooter ? 'jsFooter' : 'js'][md5($jsFile)] = $this->replaceMarkers($jsFile);
+        
         return $this;
     }
     
     /**
      * Registers a scheduler task definition
      *
-     * @param string $title   A speaking title for the task
-     * @param string $class   The handler class for the registered task. Should extend the AbstractTask class
-     * @param string $desc    An optional description for your task
-     * @param array  $options Additional configuration options as you would define them in the typo3 array, normally.
+     * @param   string  $title    A speaking title for the task
+     * @param   string  $class    The handler class for the registered task. Should extend the AbstractTask class
+     * @param   string  $desc     An optional description for your task
+     * @param   array   $options  Additional configuration options as you would define them in the typo3 array,
+     *                            normally.
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption
      */
-    public function registerSchedulerTask(string $title, string $class, string $desc = '', array $options = []): BackendConfigOption
-    {
-        $options['extension'] = $this->context->getExtKeyWithVendor();
-        $options['title'] = $title;
-        $options['description'] = $desc;
+    public function registerSchedulerTask(
+        string $title,
+        string $class,
+        string $desc = '',
+        array $options = []
+    ): BackendConfigOption {
+        $options['extension']                                                   = $this->context->getExtKeyWithVendor();
+        $options['title']                                                       = $title;
+        $options['description']                                                 = $desc;
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][$class] = $options;
+        
         return $this;
     }
     
     /**
      * Registers a new module to the typo3 backend
      *
-     * @param string $configuratorClass
-     * @param string $pluginName
+     * @param   string  $configuratorClass
+     * @param   string  $pluginName
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption
      * @see \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption::registerBackendModule()
@@ -161,20 +172,21 @@ class BackendConfigOption extends AbstractExtConfigOption
     public function registerModule(string $configuratorClass, ?string $pluginName = null): BackendConfigOption
     {
         $this->context->OptionList->extBase()->registerBackendModule($configuratorClass, $pluginName);
+        
         return $this;
     }
     
     /**
      * Use this method to register your custom RTE configuration for the Typo3 backend.
      *
-     * @param array $config  The part you would normally write under default.editor.config
-     * @param array $options Additional options for the configuration
-     *                       - preset string (default): A speaking name/key for the preset you are configuring.
-     *                       By default all configuration will be done to the "default" preset
-     *                       - useDefaultImports bool (TRUE): By default the Processing.yaml, Base.yaml and
-     *                       Plugins.yaml will be auto-imported in your configuration. Set this to false to disable
-     *                       this feature
-     *                       - imports array: Additional imports that will be added to the generated preset file
+     * @param   array  $config   The part you would normally write under default.editor.config
+     * @param   array  $options  Additional options for the configuration
+     *                           - preset string (default): A speaking name/key for the preset you are configuring.
+     *                           By default all configuration will be done to the "default" preset
+     *                           - useDefaultImports bool (TRUE): By default the Processing.yaml, Base.yaml and
+     *                           Plugins.yaml will be auto-imported in your configuration. Set this to false to disable
+     *                           this feature
+     *                           - imports array: Additional imports that will be added to the generated preset file
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption
      * @see https://docs.typo3.org/c/typo3/cms-rte-ckeditor/master/en-us/Configuration/Examples.html
@@ -192,9 +204,8 @@ class BackendConfigOption extends AbstractExtConfigOption
      */
     public function __applyExtLocalConf()
     {
-        
         // Ignore if not in backend mode
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return;
         }
         
@@ -207,54 +218,59 @@ class BackendConfigOption extends AbstractExtConfigOption
         
         // Register the css / js files in the backend
         // ===========================================================
-        $this->context->EventBus->addListener(BackendAssetFilterEvent::class, function (BackendAssetFilterEvent $event) {
-            // Helper to resolve urls
-            $urlResolver = function ($url) {
-                if (filter_var($url, FILTER_VALIDATE_URL)) {
-                    return $url;
+        $this->context->EventBus->addListener(BackendAssetFilterEvent::class,
+            function (BackendAssetFilterEvent $event) {
+                // Helper to resolve urls
+                $urlResolver = function ($url) {
+                    if (filter_var($url, FILTER_VALIDATE_URL)) {
+                        return $url;
+                    }
+                    $path = $this->context->TypoContext->getPathAspect()->typoPathToRealPath($url);
+                    $path = Path::makeRelative($path, Path::unifyPath(PATH_site));
+                    if (stripos($path, './') === 0) {
+                        $path = '.' . $path;
+                    }
+                    
+                    return $path;
+                };
+                
+                // Register files
+                if (! empty($this->assets['js'])) {
+                    foreach ($this->assets['js'] as $file) {
+                        $event->getPageRenderer()
+                              ->addJsFile($urlResolver($file), 'text/javascript', false, false, '', true);
+                    }
                 }
-                $path = $this->context->TypoContext->getPathAspect()->typoPathToRealPath($url);
-                $path = Path::makeRelative($path, Path::unifyPath(PATH_site));
-                if (stripos($path, './') === 0) {
-                    $path = '.' . $path;
+                if (! empty($this->assets['jsFooter'])) {
+                    foreach ($this->assets['jsFooter'] as $file) {
+                        $event->getPageRenderer()
+                              ->addJsFooterFile($urlResolver($file), 'text/javascript', false, false, '', true);
+                    }
                 }
-                return $path;
-            };
-            
-            // Register files
-            if (!empty($this->assets['js'])) {
-                foreach ($this->assets['js'] as $file) {
-                    $event->getPageRenderer()->addJsFile($urlResolver($file), 'text/javascript', false, false, '', true);
+                if (! empty($this->assets['css'])) {
+                    foreach ($this->assets['css'] as $file) {
+                        $event->getPageRenderer()->addCssFile($urlResolver($file), 'stylesheet', 'all', '', false);
+                    }
                 }
-            }
-            if (!empty($this->assets['jsFooter'])) {
-                foreach ($this->assets['jsFooter'] as $file) {
-                    $event->getPageRenderer()->addJsFooterFile($urlResolver($file), 'text/javascript', false, false, '', true);
-                }
-            }
-            if (!empty($this->assets['css'])) {
-                foreach ($this->assets['css'] as $file) {
-                    $event->getPageRenderer()->addCssFile($urlResolver($file), 'stylesheet', 'all', '', false);
-                }
-            }
-        });
+            });
     }
     
     /**
      * Event handler to inject the registered CLI commands for the symfony console
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\CommandRegistrationEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\CommandRegistrationEvent  $event
      */
     public function __applyCommands(CommandRegistrationEvent $event)
     {
         foreach ($this->getCachedValueConfig('commands') as $command) {
-            $extKey = $command['extKey'];
-            $class = $command['value']['class'];
+            $extKey  = $command['extKey'];
+            $class   = $command['value']['class'];
             $options = Options::make($command['value']['options'], [
                 'commandName' => [
                     'type'    => 'string',
                     'default' => function () use ($extKey, $class) {
-                        return Inflector::toCamelBack($extKey) . ':' . Inflector::toCamelBack(Path::classBasename($class));
+                        return Inflector::toCamelBack($extKey) . ':'
+                               . Inflector::toCamelBack(Path::classBasename($class));
                     },
                 ],
                 'schedulable' => [

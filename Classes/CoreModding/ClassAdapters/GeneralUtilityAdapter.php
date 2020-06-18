@@ -27,9 +27,9 @@ class GeneralUtilityAdapter extends GeneralUtility
     /**
      * Use the xml2array method without the need for a database connection...
      *
-     * @param        $string
-     * @param string $NSprefix
-     * @param bool   $reportDocTag
+     * @param           $string
+     * @param   string  $NSprefix
+     * @param   bool    $reportDocTag
      *
      * @return mixed
      * @see GeneralUtility::xml2array()

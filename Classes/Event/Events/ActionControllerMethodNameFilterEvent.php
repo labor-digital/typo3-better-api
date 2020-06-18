@@ -37,24 +37,28 @@ class ActionControllerMethodNameFilterEvent
 {
     /**
      * The name of the action to filter
+     *
      * @var string
      */
     protected $actionName;
     
     /**
      * The extbase request object to handle
+     *
      * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
      */
     protected $request;
     
     /**
      * The ext base response object to dump the contents into
+     *
      * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
     protected $response;
     
     /**
      * The controller to handle the request
+     *
      * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     protected $controller;
@@ -62,21 +66,26 @@ class ActionControllerMethodNameFilterEvent
     /**
      * ActionControllerMethodNameFilterEvent constructor.
      *
-     * @param string                                             $actionName
-     * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface            $request
-     * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface           $response
-     * @param \TYPO3\CMS\Extbase\Mvc\Controller\ActionController $controller
+     * @param   string                                              $actionName
+     * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface             $request
+     * @param   \TYPO3\CMS\Extbase\Mvc\ResponseInterface            $response
+     * @param   \TYPO3\CMS\Extbase\Mvc\Controller\ActionController  $controller
      */
-    public function __construct(string $actionName, RequestInterface $request, ResponseInterface $response, ActionController $controller)
-    {
+    public function __construct(
+        string $actionName,
+        RequestInterface $request,
+        ResponseInterface $response,
+        ActionController $controller
+    ) {
         $this->actionName = $actionName;
-        $this->request = $request;
-        $this->response = $response;
+        $this->request    = $request;
+        $this->response   = $response;
         $this->controller = $controller;
     }
     
     /**
      * Returns the name of the action to filter
+     *
      * @return string
      */
     public function getActionMethodName(): string
@@ -87,18 +96,20 @@ class ActionControllerMethodNameFilterEvent
     /**
      * Updates the name of the action to invoke
      *
-     * @param string $actionName
+     * @param   string  $actionName
      *
      * @return ActionControllerMethodNameFilterEvent
      */
     public function setActionMethodName(string $actionName): ActionControllerMethodNameFilterEvent
     {
         $this->actionName = $actionName;
+        
         return $this;
     }
     
     /**
      * Returns the extbase request object to handle
+     *
      * @return \TYPO3\CMS\Extbase\Mvc\RequestInterface
      */
     public function getRequest(): RequestInterface
@@ -108,6 +119,7 @@ class ActionControllerMethodNameFilterEvent
     
     /**
      * Returns the ext base response object to dump the contents into
+     *
      * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
     public function getResponse(): ResponseInterface
@@ -117,6 +129,7 @@ class ActionControllerMethodNameFilterEvent
     
     /**
      * Returns the controller to handle the request
+     *
      * @return \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function getController(): ActionController

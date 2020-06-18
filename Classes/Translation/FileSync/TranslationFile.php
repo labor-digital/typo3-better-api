@@ -24,36 +24,42 @@ class TranslationFile
     
     /**
      * The full filename of this translation file
+     *
      * @var string
      */
     public $filename;
     
     /**
      * The source language of this translation file
+     *
      * @var string
      */
     public $sourceLang = 'en';
     
     /**
      * The target language (on lang files) or null if this is the origin file
+     *
      * @var string|null
      */
     public $targetLang;
     
     /**
      * The product name to set for this translation file
+     *
      * @var string
      */
     public $productName;
     
     /**
      * The list of translation pairs inside of this translation file
+     *
      * @var \LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationFileUnit[]
      */
     public $messages = [];
     
     /**
      * Additional xml attributes for the xliff tag
+     *
      * @var array
      */
     public $params = [];

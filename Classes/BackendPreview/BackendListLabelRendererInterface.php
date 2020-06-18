@@ -25,8 +25,8 @@ interface BackendListLabelRendererInterface
      * Should use the given row to render the backend list label.
      * It should return a string, that will be used as list label and appended after the default list label.
      *
-     * @param array $row     The database row to render the list label from
-     * @param array $options Additional options that may have been passed by the TCA
+     * @param   array  $row      The database row to render the list label from
+     * @param   array  $options  Additional options that may have been passed by the TCA
      *
      * @return string
      */

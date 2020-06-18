@@ -25,6 +25,7 @@ class PageBasedCache extends AbstractCache
     
     /**
      * Contains the current page id after it was once acquired
+     *
      * @var int|null
      */
     protected $pageId;
@@ -40,7 +41,7 @@ class PageBasedCache extends AbstractCache
     /**
      * Removes all cache entries for a given page
      *
-     * @param int $pid
+     * @param   int  $pid
      *
      * @throws \TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException
      */
@@ -70,11 +71,13 @@ class PageBasedCache extends AbstractCache
         // Build combined key
         $key = parent::prepareKey(is_string($key) ? $key : md5(serialize($key)));
         $key = $prefix . '-' . $key;
+        
         return $key;
     }
     
     /**
      * Returns either the current page id or 0 if no page id was found
+     *
      * @return int
      * @throws \Exception
      */

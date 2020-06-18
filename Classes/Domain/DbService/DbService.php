@@ -48,12 +48,12 @@ class DbService implements DbServiceInterface
     /**
      * DbService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-     * @param \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface    $lazyPersistenceManager
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
+     * @param   \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface     $lazyPersistenceManager
      */
     public function __construct(TypoContainerInterface $container, PersistenceManagerInterface $lazyPersistenceManager)
     {
-        $this->container = $container;
+        $this->container              = $container;
         $this->lazyPersistenceManager = $lazyPersistenceManager;
     }
     
@@ -70,15 +70,16 @@ class DbService implements DbServiceInterface
      */
     public function getQueryBuilder(?string $tableName = null, ?string $connectionName = null): QueryBuilder
     {
-        if (!empty($tableName)) {
+        if (! empty($tableName)) {
             $connection = $this->container->get(ConnectionPool::class)->getConnectionForTable($tableName);
         } else {
             $connection = $this->getConnection($connectionName);
         }
         $qb = $connection->createQueryBuilder();
-        if (!empty($tableName)) {
+        if (! empty($tableName)) {
             $qb->from($tableName);
         }
+        
         return $qb;
     }
     
@@ -88,10 +89,11 @@ class DbService implements DbServiceInterface
     public function getQuery(string $tableName, bool $disableDefaultConstraints = false): StandaloneBetterQuery
     {
         $queryBuilder = $this->getQueryBuilder($tableName);
-        $query = $this->container->get(StandaloneBetterQuery::class, ['args' => [$tableName, $queryBuilder]]);
+        $query        = $this->container->get(StandaloneBetterQuery::class, ['args' => [$tableName, $queryBuilder]]);
         if ($disableDefaultConstraints) {
             $query = $query->withIncludeHidden()->withIncludeDeleted()->withLanguage(false);
         }
+        
         return $query;
     }
     
@@ -108,6 +110,7 @@ class DbService implements DbServiceInterface
         if ($statement->columnCount() > 0) {
             return $statement->fetchAll();
         }
+        
         return true;
     }
     
@@ -118,13 +121,13 @@ class DbService implements DbServiceInterface
     public function multiQuery(iterable $queries, array $args = [])
     {
         $connection = $this->getConnection();
-        $result = [];
-        $c = 0;
+        $result     = [];
+        $c          = 0;
         try {
             $connection->beginTransaction();
             foreach ($queries as $key => $query) {
                 $a = $c++ === 0 ? current($args) : next($args);
-                if (!is_string($query)) {
+                if (! is_string($query)) {
                     continue;
                 }
                 if (empty($a)) {
@@ -139,6 +142,7 @@ class DbService implements DbServiceInterface
             }
             throw $e;
         }
+        
         return $result;
     }
     
@@ -149,7 +153,9 @@ class DbService implements DbServiceInterface
     {
         /** @var ConnectionPool $pool */
         $pool = $this->container->get(ConnectionPool::class);
-        return $pool->getConnectionByName(empty($connectionName) ? ConnectionPool::DEFAULT_CONNECTION_NAME : $connectionName);
+        
+        return $pool->getConnectionByName(empty($connectionName) ? ConnectionPool::DEFAULT_CONNECTION_NAME
+            : $connectionName);
     }
     
     /**
@@ -158,18 +164,18 @@ class DbService implements DbServiceInterface
     public function getRecords(string $table, $uid, $fields = '*', $where = '', $orderBy = '', $limit = ''): array
     {
         $uid = Arrays::makeFromStringList($uid);
-        if (!empty($uid)) {
+        if (! empty($uid)) {
             $where = 'uid IN (' . implode(',', $uid) . ') ' . $where;
         }
         // Get connection
         $connection = $this->getConnection();
-        $builder = $connection->createQueryBuilder();
+        $builder    = $connection->createQueryBuilder();
         $builder->select(...Arrays::makeFromStringList($fields));
         $builder->from($table);
         $builder->where($where);
         
         // Prepare order by
-        if (!empty($orderBy)) {
+        if (! empty($orderBy)) {
             $orderByParts = explode(',', $orderBy);
             foreach ($orderByParts as $part) {
                 $parts = array_filter(array_map('trim', explode(' ', $part)));
@@ -178,13 +184,14 @@ class DbService implements DbServiceInterface
         }
         
         // Add Limit
-        if (!empty($limit)) {
+        if (! empty($limit)) {
             $builder->setMaxResults((int)$limit);
         }
         
         // Execute query
         $result = $builder->execute()->fetchAll();
-        return !is_array($result) ? [] : $result;
+        
+        return ! is_array($result) ? [] : $result;
     }
     
     /**
@@ -192,7 +199,7 @@ class DbService implements DbServiceInterface
      */
     public function debugQuery($query)
     {
-        $result = $exception = $count = null;
+        $result       = $exception = $count = null;
         $isStandalone = false;
         if ($query instanceof BetterQuery) {
             $query = $query->getQuery();
@@ -200,19 +207,19 @@ class DbService implements DbServiceInterface
         if ($query instanceof QueryResult) {
             $query = $query->getQuery();
         }
-        if (!$query instanceof QueryInterface) {
-            if (!$query instanceof StandaloneBetterQuery) {
+        if (! $query instanceof QueryInterface) {
+            if (! $query instanceof StandaloneBetterQuery) {
                 throw new DbServiceException('The given query object can not be used!');
             }
-            $dQuery = $query->getQueryBuilder();
+            $dQuery       = $query->getQueryBuilder();
             $isStandalone = true;
         } else {
             $parser = $this->container->get(Typo3DbQueryParser::class);
             $dQuery = $parser->convertQueryToDoctrineQueryBuilder($query);
-            if (!empty($query->getLimit())) {
+            if (! empty($query->getLimit())) {
                 $dQuery->setMaxResults($query->getLimit());
             }
-            if (!empty($query->getOffset())) {
+            if (! empty($query->getOffset())) {
                 $dQuery->setFirstResult($query->getOffset());
             }
         }
@@ -223,7 +230,7 @@ class DbService implements DbServiceInterface
         // Prepare query with parameters
         $in = $out = [];
         foreach ($dQuery->getParameters() as $k => $v) {
-            $in[] = ':' . $k;
+            $in[]  = ':' . $k;
             $out[] = '"' . addslashes($v) . '"';
         }
         $queryString = str_replace($in, $out, $queryString);
@@ -231,10 +238,10 @@ class DbService implements DbServiceInterface
         // Try to execute the message
         try {
             if ($isStandalone) {
-                $first = $dQuery->getFirstResult();
+                $first  = $dQuery->getFirstResult();
                 $result = $dQuery->execute();
             } else {
-                $first = $query->execute()->getFirst();
+                $first  = $query->execute()->getFirst();
                 $result = $query->execute(true);
             }
         } catch (Exception $e) {
@@ -250,13 +257,13 @@ class DbService implements DbServiceInterface
         }
         
         try {
-            if (!empty($exception)) {
+            if (! empty($exception)) {
                 echo '<h5>Db Errors</h5>';
                 DebuggerUtility::var_dump($exception);
             }
             echo '<h5>Query Object</h5>';
             DebuggerUtility::var_dump($query);
-            if (isset($first) && !empty($first)) {
+            if (isset($first) && ! empty($first)) {
                 echo '<h5>First result entity</h5>';
                 DebuggerUtility::var_dump($first);
             }

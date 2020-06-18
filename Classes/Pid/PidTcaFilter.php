@@ -37,7 +37,7 @@ class PidTcaFilter implements LazyEventSubscriberInterface
     /**
      * PidTcaFilter constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
@@ -65,11 +65,11 @@ class PidTcaFilter implements LazyEventSubscriberInterface
             $placeholders['@pid.' . $k] = $v;
         }
         $placeholders = Arrays::sortByKeyStrLen($placeholders);
-        $find = array_keys($placeholders);
-        $replace = array_values($placeholders);
+        $find         = array_keys($placeholders);
+        $replace      = array_values($placeholders);
         
         // Skip if there is no tca
-        if (!is_array($GLOBALS['TCA'])) {
+        if (! is_array($GLOBALS['TCA'])) {
             return;
         }
         

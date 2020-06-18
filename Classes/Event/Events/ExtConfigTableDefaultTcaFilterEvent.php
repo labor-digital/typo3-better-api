@@ -28,6 +28,7 @@ use LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable;
  *
  * Dispatched when the defaults are applied to a tca table instance.
  * Can be used to modify the defaults on a global or per table scope
+ *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
 class ExtConfigTableDefaultTcaFilterEvent
@@ -35,12 +36,14 @@ class ExtConfigTableDefaultTcaFilterEvent
     
     /**
      * The default TCA array to apply to the table
+     *
      * @var array
      */
     protected $defaultTca;
     
     /**
      * The table instance the default should be applied to
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     protected $table;
@@ -48,17 +51,18 @@ class ExtConfigTableDefaultTcaFilterEvent
     /**
      * ExtConfigTableDefaultTcaFilterEvent constructor.
      *
-     * @param array                                                       $defaultTca
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $table
+     * @param   array                                                        $defaultTca
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable  $table
      */
     public function __construct(array $defaultTca, TcaTable $table)
     {
         $this->defaultTca = $defaultTca;
-        $this->table = $table;
+        $this->table      = $table;
     }
     
     /**
      * Returns the table instance the default should be applied to
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function getTable(): TcaTable
@@ -68,6 +72,7 @@ class ExtConfigTableDefaultTcaFilterEvent
     
     /**
      * Returns the default TCA array to apply to the table
+     *
      * @return array
      */
     public function getDefaultTca(): array
@@ -78,13 +83,14 @@ class ExtConfigTableDefaultTcaFilterEvent
     /**
      * Updates the default TCA array to apply to the table
      *
-     * @param array $defaultTca
+     * @param   array  $defaultTca
      *
      * @return ExtConfigTableDefaultTcaFilterEvent
      */
     public function setDefaultTca(array $defaultTca): ExtConfigTableDefaultTcaFilterEvent
     {
         $this->defaultTca = $defaultTca;
+        
         return $this;
     }
 }

@@ -27,7 +27,7 @@ interface BackendPreviewRendererInterface
      * The body of the preview can either be set into the $context or returned directly as a string.
      * If you set the body AND return a string, the returned value has priority and overrides the set value of the body.
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext  $context
      *
      * @return string|void
      */

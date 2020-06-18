@@ -29,10 +29,10 @@ interface CustomWizardInterface
      * It will receive the array of options as well as the field instance. You can use this method to apply additional
      * TCA configuration to the field, before it is cached for later usage.
      *
-     * @param AbstractFormField $field   The instance of the field to apply this form wizard to
-     *                                   The instance will already have the wizard configuration set
-     * @param array             $options The additional options that were given in the applyPreset method
-     * @param ExtConfigContext  $context The context of the extension, that is currently applying this wizard
+     * @param   AbstractFormField  $field    The instance of the field to apply this form wizard to
+     *                                       The instance will already have the wizard configuration set
+     * @param   array              $options  The additional options that were given in the applyPreset method
+     * @param   ExtConfigContext   $context  The context of the extension, that is currently applying this wizard
      *
      * @return mixed
      */
@@ -42,7 +42,7 @@ interface CustomWizardInterface
      * Receives the custom wizard context, containing the wizard configuration, should render the
      * html of the wizard and return it as a string.
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardContext $context
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardContext  $context
      *
      * @return string
      */

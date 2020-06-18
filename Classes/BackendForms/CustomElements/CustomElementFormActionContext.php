@@ -39,9 +39,9 @@ class CustomElementFormActionContext extends DataHandlerActionContext
     /**
      * Can be used to return a single option, or returns the default value
      *
-     * @param array|string $path    The key, or the path to look up
-     * @param null         $default An optional default value to return if the key/path was not found in the options
-     *                              array
+     * @param   array|string  $path     The key, or the path to look up
+     * @param   null          $default  An optional default value to return if the key/path was not found in the options
+     *                                  array
      *
      * @return array|mixed|null
      */
@@ -53,6 +53,7 @@ class CustomElementFormActionContext extends DataHandlerActionContext
     /**
      * Returns the registered class of the registered custom-element for this field.
      * If this returns an empty string, the space-time-continuum will explode in around 30 seconds...
+     *
      * @return string
      */
     public function getElementClass(): string
@@ -62,6 +63,7 @@ class CustomElementFormActionContext extends DataHandlerActionContext
     
     /**
      * Alias of getKey() to make sure we use the same naming in both contexts
+     *
      * @return string
      */
     public function getFieldName(): string

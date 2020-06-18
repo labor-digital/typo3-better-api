@@ -5,7 +5,7 @@ interface ExtendedSimpleFileBackendInterface
     /**
      * Returns the filename for a cache key stored in this cache's directory
      *
-     * @param string $key The key to look up
+     * @param   string  $key  The key to look up
      *
      * @return mixed Either the filepath or false if no file was found for this key
      */

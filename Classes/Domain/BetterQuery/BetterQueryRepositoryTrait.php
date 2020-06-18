@@ -48,13 +48,14 @@ trait BetterQueryRepositoryTrait
      */
     public function getQuery(): BetterQuery
     {
-        if (!$this instanceof Repository) {
+        if (! $this instanceof Repository) {
             throw new BetterApiException('You can use the BetterQueryRepositoryTrait only on extbase repositories!');
         }
-        if (!isset($this->__repositoryWrapper)) {
+        if (! isset($this->__repositoryWrapper)) {
             /** @noinspection PhpParamsInspection */
             $this->__repositoryWrapper = BetterRepository::getWrapper($this);
         }
+        
         return $this->__repositoryWrapper->getQuery();
     }
 }

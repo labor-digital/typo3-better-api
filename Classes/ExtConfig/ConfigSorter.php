@@ -42,7 +42,7 @@ class ConfigSorter
      * use "after" => "last" and "before" => "first" which will be sorted with higher priority than "before" => "last"
      * and "after" => "first".
      *
-     * @param array $list
+     * @param   array  $list
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
@@ -60,7 +60,7 @@ class ConfigSorter
             if (empty($v)) {
                 continue;
             }
-            if (!is_array($v)) {
+            if (! is_array($v)) {
                 throw new BetterApiException("The given list contains an element at key: $k which is not an array!");
             }
             
@@ -70,14 +70,14 @@ class ConfigSorter
                     'default' => [],
                     'type'    => ['string', 'array'],
                     'filter'  => function ($v) {
-                        return !is_array($v) ? [$v] : $v;
+                        return ! is_array($v) ? [$v] : $v;
                     },
                 ],
                 'after'  => [
                     'default' => [],
                     'type'    => ['string', 'array'],
                     'filter'  => function ($v) {
-                        return !is_array($v) ? [$v] : $v;
+                        return ! is_array($v) ? [$v] : $v;
                     },
                 ],
             ], ['allowUnknown' => true]);
@@ -87,7 +87,8 @@ class ConfigSorter
         }
         
         // Sort the list
-        $listSorted = TypoContainer::getInstance()->get(DependencyOrderingService::class)->orderByDependencies($listClean);
+        $listSorted = TypoContainer::getInstance()->get(DependencyOrderingService::class)
+                                   ->orderByDependencies($listClean);
         
         // Clean the list
         unset($listSorted['first']);

@@ -24,12 +24,14 @@ trait LayoutMetaTrait
     
     /**
      * Stores additional information, that were parsed out of the showitem string
+     *
      * @var array
      */
     protected $layoutMeta = [];
     
     /**
      * Returns additional information, that were parsed out of the showitem string
+     *
      * @return array
      */
     public function getLayoutMeta(): array
@@ -40,13 +42,14 @@ trait LayoutMetaTrait
     /**
      * Sets additional information, that were parsed out of the showitem string
      *
-     * @param array $meta
+     * @param   array  $meta
      *
      * @return $this
      */
     public function setLayoutMeta(array $meta)
     {
         $this->layoutMeta = $meta;
+        
         return $this;
     }
 }

@@ -32,7 +32,6 @@ class RequestCollectorMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        
         // Store fallback request
         $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
         

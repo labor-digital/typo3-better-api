@@ -25,6 +25,7 @@ use TYPO3\CMS\Core\Core\ApplicationContext;
 
 /**
  * Class EnvironmentAspect
+ *
  * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
  * @deprecated will be removed in v10 -> Use EnvFacet instead
  */
@@ -40,7 +41,7 @@ class EnvironmentAspect implements AspectInterface
     /**
      * EnvironmentAspect constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\EnvFacet $facet
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\Facet\EnvFacet  $facet
      */
     public function __construct(EnvFacet $facet)
     {
@@ -56,11 +57,13 @@ class EnvironmentAspect implements AspectInterface
         if ($name === 'FACET') {
             return $this->facet;
         }
+        
         return $this->handleGet($name);
     }
     
     /**
      * Returns typo3's application context object
+     *
      * @return \TYPO3\CMS\Core\Core\ApplicationContext
      * @deprecated will be removed in v10 -> Use EnvFacet instead
      */
@@ -94,12 +97,12 @@ class EnvironmentAspect implements AspectInterface
     /**
      * Can be used to compare a given version with the current typo3 version
      *
-     * @param string|double|int $version  The version to check for.
-     *                                    If just a single number, like 7, 8 or 9 is given, this method will fuzzy
-     *                                    compare the Typo3 major-version with the given number.
-     * @param string            $operator The operator to use when checking the version.
-     *                                    The operator can be one of: =, !=, <, >, <= or >=
-     *                                    The final statement will be read as: $typo3Version $operator $yourVersion
+     * @param   string|double|int  $version   The version to check for.
+     *                                        If just a single number, like 7, 8 or 9 is given, this method will fuzzy
+     *                                        compare the Typo3 major-version with the given number.
+     * @param   string             $operator  The operator to use when checking the version.
+     *                                        The operator can be one of: =, !=, <, >, <= or >=
+     *                                        The final statement will be read as: $typo3Version $operator $yourVersion
      *
      * @return bool
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
@@ -113,7 +116,7 @@ class EnvironmentAspect implements AspectInterface
     /**
      * Returns the current typo3 version as a semver string.
      *
-     * @param bool $exact If this is set to true the version may contain suffixes like "-dev" "-rc..." or similar.
+     * @param   bool  $exact  If this is set to true the version may contain suffixes like "-dev" "-rc..." or similar.
      *
      * @return string
      * @deprecated will be removed in v10 -> Use EnvFacet instead
@@ -158,6 +161,7 @@ class EnvironmentAspect implements AspectInterface
     
     /**
      * Returns true if the current call was performed in the typo3 install tool
+     *
      * @return bool
      * @deprecated will be removed in v10 -> Use EnvFacet instead
      */
@@ -180,8 +184,8 @@ class EnvironmentAspect implements AspectInterface
     /**
      * Returns true if the current instance is running in production OR staging context
      *
-     * @param bool $includeStaging If this is set to false the method will not check for a staging version,
-     *                             instead it only returns true IF the context is set to production
+     * @param   bool  $includeStaging  If this is set to false the method will not check for a staging version,
+     *                                 instead it only returns true IF the context is set to production
      *
      * @return bool
      * @deprecated will be removed in v10 -> Use EnvFacet instead

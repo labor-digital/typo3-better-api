@@ -36,18 +36,21 @@ class ExtConfigTableAfterBuildEvent
     
     /**
      * The generated tca array for the table
+     *
      * @var array
      */
     protected $tca;
     
     /**
      * The name of the database table that is currently being build
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The instance of the table that is being build
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     protected $table;
@@ -55,19 +58,20 @@ class ExtConfigTableAfterBuildEvent
     /**
      * ExtConfigTableAfterBuildEvent constructor.
      *
-     * @param array                                                       $tca
-     * @param string                                                      $tableName
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $table
+     * @param   array                                                        $tca
+     * @param   string                                                       $tableName
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable  $table
      */
     public function __construct(array $tca, string $tableName, TcaTable $table)
     {
-        $this->tca = $tca;
+        $this->tca       = $tca;
         $this->tableName = $tableName;
-        $this->table = $table;
+        $this->table     = $table;
     }
     
     /**
      * Returns the generated tca array for the table
+     *
      * @return array
      */
     public function getTca(): array
@@ -78,18 +82,20 @@ class ExtConfigTableAfterBuildEvent
     /**
      * Updates the generated tca array for the table
      *
-     * @param array $tca
+     * @param   array  $tca
      *
      * @return ExtConfigTableAfterBuildEvent
      */
     public function setTca(array $tca): ExtConfigTableAfterBuildEvent
     {
         $this->tca = $tca;
+        
         return $this;
     }
     
     /**
      * Returns the name of the database table that is currently being build
+     *
      * @return string
      */
     public function getTableName(): string
@@ -99,6 +105,7 @@ class ExtConfigTableAfterBuildEvent
     
     /**
      * Return the instance of the table that is being build
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function getTable(): TcaTable

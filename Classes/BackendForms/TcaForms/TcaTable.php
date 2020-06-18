@@ -33,205 +33,212 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 class TcaTable extends AbstractTcaTable
 {
-    protected const DEFAULT_TCA = [
-        'ctrl' => [
-            'label'                    => 'uid',
-            'hideAtCopy'               => true,
-            'tstamp'                   => 'tstamp',
-            'crdate'                   => 'crdate',
-            'cruser_id'                => 'cruser_id',
-            'versioningWS'             => true,
-            'origUid'                  => 't3_origuid',
-            'editlock'                 => 'editlock',
-            'prepentAtCopy'            => '',
-            'transOrigPointerField'    => 'l10n_parent',
-            'translationSource'        => 'l10n_source',
-            'transOrigDiffSourceField' => 'l10n_diffsource',
-            'languageField'            => 'sys_language_uid',
-            'enablecolumns'            => [
-                'disabled'  => 'hidden',
-                'starttime' => 'starttime',
-                'endtime'   => 'endtime',
-                'fe_group'  => 'fe_group',
+    protected const DEFAULT_TCA
+        = [
+            'ctrl' => [
+                'label'                    => 'uid',
+                'hideAtCopy'               => true,
+                'tstamp'                   => 'tstamp',
+                'crdate'                   => 'crdate',
+                'cruser_id'                => 'cruser_id',
+                'versioningWS'             => true,
+                'origUid'                  => 't3_origuid',
+                'editlock'                 => 'editlock',
+                'prepentAtCopy'            => '',
+                'transOrigPointerField'    => 'l10n_parent',
+                'translationSource'        => 'l10n_source',
+                'transOrigDiffSourceField' => 'l10n_diffsource',
+                'languageField'            => 'sys_language_uid',
+                'enablecolumns'            => [
+                    'disabled'  => 'hidden',
+                    'starttime' => 'starttime',
+                    'endtime'   => 'endtime',
+                    'fe_group'  => 'fe_group',
+                ],
+                'delete'                   => 'deleted',
             ],
-            'delete'                   => 'deleted',
-        ],
-        
-        'columns'  => [
-            'sys_language_uid' => [
-                'exclude' => true,
-                'label'   => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel',
-                'config'  => [
-                    'type'                => 'select',
-                    'renderType'          => 'selectSingle',
-                    'foreign_table'       => 'sys_language',
-                    'foreign_table_where' => 'ORDER BY sys_language.title',
-                    'items'               => [
-                        ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages', -1],
-                        ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.default_value', 0],
-                    ],
-                    'default'             => 0,
-                    'fieldWizard'         => [
-                        'selectIcons' => [
-                            'disabled' => false,
+            
+            'columns'  => [
+                'sys_language_uid' => [
+                    'exclude' => true,
+                    'label'   => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel',
+                    'config'  => [
+                        'type'                => 'select',
+                        'renderType'          => 'selectSingle',
+                        'foreign_table'       => 'sys_language',
+                        'foreign_table_where' => 'ORDER BY sys_language.title',
+                        'items'               => [
+                            ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages', -1],
+                            ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.default_value', 0],
+                        ],
+                        'default'             => 0,
+                        'fieldWizard'         => [
+                            'selectIcons' => [
+                                'disabled' => false,
+                            ],
                         ],
                     ],
                 ],
-            ],
-            'l10n_parent'      => [
-                'displayCond' => 'FIELD:sys_language_uid:>:0',
-                'exclude'     => true,
-                'label'       => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
-                'config'      => [
-                    'type'                => 'select',
-                    'renderType'          => 'selectSingle',
-                    'items'               => [['', 0]],
-                    'foreign_table'       => '{{table}}',
-                    'foreign_table_where' => 'AND {{table}}.uid=###REC_FIELD_l10n_parent### AND {{table}}.sys_language_uid IN (-1,0)',
-                    'default'             => 0,
+                'l10n_parent'      => [
+                    'displayCond' => 'FIELD:sys_language_uid:>:0',
+                    'exclude'     => true,
+                    'label'       => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+                    'config'      => [
+                        'type'                => 'select',
+                        'renderType'          => 'selectSingle',
+                        'items'               => [['', 0]],
+                        'foreign_table'       => '{{table}}',
+                        'foreign_table_where' => 'AND {{table}}.uid=###REC_FIELD_l10n_parent### AND {{table}}.sys_language_uid IN (-1,0)',
+                        'default'             => 0,
+                    ],
                 ],
-            ],
-            'l10n_diffsource'  => [
-                'config' => [
-                    'type'    => 'passthrough',
-                    'default' => '',
+                'l10n_diffsource'  => [
+                    'config' => [
+                        'type'    => 'passthrough',
+                        'default' => '',
+                    ],
                 ],
-            ],
-            'l10n_source'      => [
-                'config' => [
-                    'type' => 'passthrough',
+                'l10n_source'      => [
+                    'config' => [
+                        'type' => 'passthrough',
+                    ],
                 ],
-            ],
-            'hidden'           => [
-                'exclude' => true,
-                'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.visible',
-                'config'  => [
-                    'type'       => 'check',
-                    'renderType' => 'checkboxToggle',
-                    'items'      => [
-                        [
-                            0                    => '',
-                            1                    => '',
-                            'invertStateDisplay' => true,
+                'hidden'           => [
+                    'exclude' => true,
+                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.visible',
+                    'config'  => [
+                        'type'       => 'check',
+                        'renderType' => 'checkboxToggle',
+                        'items'      => [
+                            [
+                                0                    => '',
+                                1                    => '',
+                                'invertStateDisplay' => true,
+                            ],
                         ],
                     ],
                 ],
-            ],
-            'cruser_id'        => [
-                'label'  => 'cruser_id',
-                'config' => ['type' => 'passthrough'],
-            ],
-            'pid'              => [
-                'label'  => 'pid',
-                'config' => ['type' => 'passthrough'],
-            ],
-            'crdate'           => [
-                'label'  => 'crdate',
-                'config' => ['type' => 'passthrough'],
-            ],
-            'tstamp'           => [
-                'label'  => 'tstamp',
-                'config' => ['type' => 'passthrough'],
-            ],
-            'sorting'          => [
-                'label'  => 'sorting',
-                'config' => ['type' => 'passthrough'],
-            ],
-            'starttime'        => [
-                'exclude' => true,
-                'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
-                'config'  => [
-                    'type'       => 'input',
-                    'renderType' => 'inputDateTime',
-                    'eval'       => 'datetime,int',
-                    'default'    => 0,
-                    'behaviour'  => [
-                        'allowLanguageSynchronization' => true,
-                    ],
+                'cruser_id'        => [
+                    'label'  => 'cruser_id',
+                    'config' => ['type' => 'passthrough'],
                 ],
-            ],
-            'endtime'          => [
-                'exclude' => true,
-                'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
-                'config'  => [
-                    'type'       => 'input',
-                    'renderType' => 'inputDateTime',
-                    'eval'       => 'datetime,int',
-                    'default'    => 0,
-                    'range'      => [
-                        'upper' => 2208988800,
-                    ],
-                    'behaviour'  => [
-                        'allowLanguageSynchronization' => true,
-                    ],
+                'pid'              => [
+                    'label'  => 'pid',
+                    'config' => ['type' => 'passthrough'],
                 ],
-            ],
-            'fe_group'         => [
-                'exclude' => true,
-                'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
-                'config'  => [
-                    'type'                             => 'select',
-                    'renderType'                       => 'selectMultipleSideBySide',
-                    'size'                             => 5,
-                    'maxitems'                         => 20,
-                    'items'                            =>
-                        [
-                            ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login', -1],
-                            ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.any_login', -2],
-                            ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.usergroups', '--div--'],
+                'crdate'           => [
+                    'label'  => 'crdate',
+                    'config' => ['type' => 'passthrough'],
+                ],
+                'tstamp'           => [
+                    'label'  => 'tstamp',
+                    'config' => ['type' => 'passthrough'],
+                ],
+                'sorting'          => [
+                    'label'  => 'sorting',
+                    'config' => ['type' => 'passthrough'],
+                ],
+                'starttime'        => [
+                    'exclude' => true,
+                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
+                    'config'  => [
+                        'type'       => 'input',
+                        'renderType' => 'inputDateTime',
+                        'eval'       => 'datetime,int',
+                        'default'    => 0,
+                        'behaviour'  => [
+                            'allowLanguageSynchronization' => true,
                         ],
-                    'exclusiveKeys'                    => '-1,-2',
-                    'foreign_table'                    => 'fe_groups',
-                    'foreign_table_where'              => 'ORDER BY fe_groups.title',
-                    'enableMultiSelectFilterTextfield' => true,
+                    ],
+                ],
+                'endtime'          => [
+                    'exclude' => true,
+                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
+                    'config'  => [
+                        'type'       => 'input',
+                        'renderType' => 'inputDateTime',
+                        'eval'       => 'datetime,int',
+                        'default'    => 0,
+                        'range'      => [
+                            'upper' => 2208988800,
+                        ],
+                        'behaviour'  => [
+                            'allowLanguageSynchronization' => true,
+                        ],
+                    ],
+                ],
+                'fe_group'         => [
+                    'exclude' => true,
+                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
+                    'config'  => [
+                        'type'                             => 'select',
+                        'renderType'                       => 'selectMultipleSideBySide',
+                        'size'                             => 5,
+                        'maxitems'                         => 20,
+                        'items'                            =>
+                            [
+                                ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login', -1],
+                                ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.any_login', -2],
+                                [
+                                    'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.usergroups',
+                                    '--div--',
+                                ],
+                            ],
+                        'exclusiveKeys'                    => '-1,-2',
+                        'foreign_table'                    => 'fe_groups',
+                        'foreign_table_where'              => 'ORDER BY fe_groups.title',
+                        'enableMultiSelectFilterTextfield' => true,
+                    ],
+                ],
+                't3_origuid'       => [
+                    'config' => [
+                        'default' => 0,
+                        'type'    => 'passthrough',
+                    ],
+                ],
+                't3ver_label'      => [
+                    'label'  => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
+                    'config' => [
+                        'max'  => 255,
+                        'size' => 30,
+                        'type' => 'input',
+                    ],
                 ],
             ],
-            't3_origuid'       => [
-                'config' => [
-                    'default' => 0,
-                    'type'    => 'passthrough',
-                ],
-            ],
-            't3ver_label'      => [
-                'label'  => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
-                'config' => [
-                    'max'  => 255,
-                    'size' => 30,
-                    'type' => 'input',
-                ],
-            ],
-        ],
-        'types'    => [
-            '0' => [
-                'showitem' => '
+            'types'    => [
+                '0' => [
+                    'showitem' => '
 					--div--;betterApi.tab.general,
 					--div--;betterApi.tab.access,
 					--palette--;;hidden,
 					--palette--;;access,
 					--div--;betterApi.tab.language,
 					--palette--;;language',
+                ],
             ],
-        ],
-        'palettes' => [
-            'hidden'   => [
-                'showitem' => 'hidden',
+            'palettes' => [
+                'hidden'   => [
+                    'showitem' => 'hidden',
+                ],
+                'language' => [
+                    'showitem' => 'sys_language_uid,l10n_parent',
+                ],
+                'access'   => [
+                    'showitem' => 'starttime,endtime,--linebreak--,fe_group',
+                ],
             ],
-            'language' => [
-                'showitem' => 'sys_language_uid,l10n_parent',
-            ],
-            'access'   => [
-                'showitem' => 'starttime,endtime,--linebreak--,fe_group',
-            ],
-        ],
-    ];
+        ];
     
     /**
      * Defines a list of additional properties that are not included
      * in a normal TCA array. We will automatically dump and reimport them into the "additionalConfig" node
      */
-    protected const ADDITIONAL_TCA_CONFIG_LIST = [
-        'allowOnStandardPages', 'modelList', 'listPosition',
-    ];
+    protected const ADDITIONAL_TCA_CONFIG_LIST
+        = [
+            'allowOnStandardPages',
+            'modelList',
+            'listPosition',
+        ];
     
     /**
      * Contains the list of all instantiated tca types of this table
@@ -244,6 +251,7 @@ class TcaTable extends AbstractTcaTable
     
     /**
      * The control configuration for this table
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     protected $ctrl;
@@ -257,12 +265,14 @@ class TcaTable extends AbstractTcaTable
     
     /**
      * An array of model classes that should be mapped to this table
+     *
      * @var array
      */
     protected $modelList = [];
     
     /**
      * Stores the position of this table when shown on the list mode
+     *
      * @var array
      */
     protected $listPosition = [];
@@ -270,13 +280,14 @@ class TcaTable extends AbstractTcaTable
     /**
      * This allows you to set a class of the model which then will be mapped to this table
      *
-     * @param string $className
+     * @param   string  $className
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function addModelClass(string $className): TcaTable
     {
         $this->modelList[] = $className;
+        
         return $this;
     }
     
@@ -284,20 +295,23 @@ class TcaTable extends AbstractTcaTable
      * Can be used to configure the order of tables when they are rendered in the "list" mode in the backend.
      * This table will be sorted either before or after the table with $otherTableName
      *
-     * @param string $otherTableName The table to relatively position this one to
-     * @param bool   $before         True by default, if set to false the table will be shown after the $otherTableName
+     * @param   string  $otherTableName  The table to relatively position this one to
+     * @param   bool    $before          True by default, if set to false the table will be shown after the
+     *                                   $otherTableName
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function setListPosition(string $otherTableName, bool $before = true): TcaTable
     {
-        $this->listPosition[$before ? 'before' : 'after'][] =
-            $this->context->OptionList->table()->getRealTableName($otherTableName);
+        $this->listPosition[$before ? 'before' : 'after'][] = $this->context->OptionList->table()
+                                                                                        ->getRealTableName($otherTableName);
+        
         return $this;
     }
     
     /**
      * Returns the list of currently configured model classes for this table
+     *
      * @return array
      */
     public function getModelClasses(): array
@@ -318,13 +332,14 @@ class TcaTable extends AbstractTcaTable
     /**
      * Sets the system title / label for this table in the backend
      *
-     * @param string $title
+     * @param   string  $title
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function setTitle(string $title): TcaTable
     {
         $this->ctrl->setTitle($title);
+        
         return $this;
     }
     
@@ -361,7 +376,7 @@ class TcaTable extends AbstractTcaTable
      */
     public function hasLabel(): bool
     {
-        return !empty($this->getTitle());
+        return ! empty($this->getTitle());
     }
     
     /**
@@ -369,7 +384,7 @@ class TcaTable extends AbstractTcaTable
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
      *
-     * @param string|int $id
+     * @param   string|int  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableType
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
@@ -390,6 +405,7 @@ class TcaTable extends AbstractTcaTable
     {
         $types = array_keys(Arrays::getPath($this->config, ['types'], []));
         $types = Arrays::attach($types, array_keys($this->types));
+        
         return array_unique($types);
     }
     
@@ -398,7 +414,7 @@ class TcaTable extends AbstractTcaTable
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return bool
      */
@@ -420,13 +436,14 @@ class TcaTable extends AbstractTcaTable
     /**
      * Use this if you want to allow this table to have records on standard pages and not only in folder items
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function setAllowOnStandardPages(bool $state = true): TcaTable
     {
         $this->allowOnStandardPages = $state;
+        
         return $this;
     }
     
@@ -440,9 +457,10 @@ class TcaTable extends AbstractTcaTable
      *
      * Note: It is not recommended to use this method on existing tables. Only use it in freshly initialized tables
      *
-     * @param array $options Additional options for advanced configuration
-     *                       - sortable bool (FALSE): If set to true the "sortby" field will automatically set to the
-     *                       "sorting" column.
+     * @param   array  $options  Additional options for advanced configuration
+     *                           - sortable bool (FALSE): If set to true the "sortby" field will automatically set to
+     *                           the
+     *                           "sorting" column.
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
@@ -457,12 +475,15 @@ class TcaTable extends AbstractTcaTable
         ]);
         
         // Prepare the default tca
-        $default = static::DEFAULT_TCA;
-        $default['ctrl']['title'] = Inflector::toHuman(preg_replace('/^(.*?_domain_model_)/', '', $this->getTableName()));
-        $default['ctrl']['iconfile'] = 'EXT:' . $this->context->getExtKey() . '/ext_icon.gif';
-        $default['columns']['l10n_parent']['config']['foreign_table'] = $this->getTableName();
-        $default['columns']['l10n_parent']['config']['foreign_table_where'] =
-            str_replace('{{table}}', $this->getTableName(), $default['columns']['l10n_parent']['config']['foreign_table_where']);
+        $default                                                            = static::DEFAULT_TCA;
+        $default['ctrl']['title']
+                                                                            = Inflector::toHuman(preg_replace('/^(.*?_domain_model_)/',
+            '', $this->getTableName()));
+        $default['ctrl']['iconfile']                                        = 'EXT:' . $this->context->getExtKey()
+                                                                              . '/ext_icon.gif';
+        $default['columns']['l10n_parent']['config']['foreign_table']       = $this->getTableName();
+        $default['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace('{{table}}',
+            $this->getTableName(), $default['columns']['l10n_parent']['config']['foreign_table_where']);
         if ($options['sortable']) {
             $default['ctrl']['sortby'] = 'sorting';
         }
@@ -490,6 +511,7 @@ class TcaTable extends AbstractTcaTable
     public function removeElement(string $id): bool
     {
         $this->context->SqlGenerator->removeDefinitionFor($this->getTableName(), $id);
+        
         return parent::removeElement($id);
     }
     
@@ -510,7 +532,7 @@ class TcaTable extends AbstractTcaTable
         
         // Inherit all missing columns from the existing tca
         foreach (Arrays::getPath($this->config, ['columns'], []) as $k => $v) {
-            if (!isset($tca['columns'][$k])) {
+            if (! isset($tca['columns'][$k])) {
                 $tca['columns'][$k] = $v;
             }
         }
@@ -531,7 +553,7 @@ class TcaTable extends AbstractTcaTable
             
             // Calculate columns overrides
             $overrides = $this->buildColumnOverrides($tca['columns'], $typeTca['columns']);
-            if (!empty($overrides)) {
+            if (! empty($overrides)) {
                 $tca['types'][$key]['columnsOverrides'] = $overrides;
             }
             
@@ -566,6 +588,7 @@ class TcaTable extends AbstractTcaTable
             $this->tableName,
             $this
         )));
+        
         return $e->getTca();
     }
     
@@ -573,14 +596,13 @@ class TcaTable extends AbstractTcaTable
      * Internal helper which calculates the diff between the main table's columns and
      * the columns in a type. It will then result in a columnsOverrides array for this type
      *
-     * @param array $columns
-     * @param array $typeColumns
+     * @param   array  $columns
+     * @param   array  $typeColumns
      *
      * @return array
      */
     protected function buildColumnOverrides(array &$columns, array $typeColumns): array
     {
-        
         // No changes -> skip this
         if ($columns == $typeColumns) {
             return [];
@@ -592,16 +614,16 @@ class TcaTable extends AbstractTcaTable
         $walker = function (array $a, array $b, $walker): array {
             $diff = [];
             foreach ($b as $k => $v) {
-                if (!isset($a[$k])) {
+                if (! isset($a[$k])) {
                     $diff[$k] = $v;
                 } elseif ($a[$k] === $v || is_numeric($a[$k]) && is_numeric($v) && $a[$k] == $v) {
                     continue;
                 } elseif (is_array($v)) {
-                    if (!is_array($a[$k])) {
+                    if (! is_array($a[$k])) {
                         $diff[$k] = $v;
                     } else {
                         $_diff = $walker($a[$k], $v, $walker);
-                        if (!empty($_diff)) {
+                        if (! empty($_diff)) {
                             $diff[$k] = $_diff;
                         }
                     }
@@ -609,17 +631,18 @@ class TcaTable extends AbstractTcaTable
                     $diff[$k] = $v;
                 }
             }
+            
             return $diff;
         };
         
         // Loop over all type columns and generate the diff to the main definition
         foreach ($typeColumns as $id => $col) {
             // Column does not exist in parent
-            if (!isset($columns[$id])) {
+            if (! isset($columns[$id])) {
                 // Make sure dummy columns (like editlock and co don't get added to the main tca)
                 // They are not in the columns array because we don't configure them by default
                 // but they are "theoretically" there. So check if we have a field for the id first
-                if (!$this->hasField($id)) {
+                if (! $this->hasField($id)) {
                     $columns[$id] = $col;
                 } else {
                     // Add col completely as override
@@ -648,13 +671,17 @@ class TcaTable extends AbstractTcaTable
      * This internal helper is used to merge the type's palettes into the parent's palettes.
      * If it detects a mismatch it will create a new, separate palette for the type to avoid global pollution
      *
-     * @param string $type
-     * @param string $typeShowitem
-     * @param array  $palettes
-     * @param array  $typePalettes
+     * @param   string  $type
+     * @param   string  $typeShowitem
+     * @param   array   $palettes
+     * @param   array   $typePalettes
      */
-    protected function buildMergedPalettes(string $type, string &$typeShowitem, array &$palettes, array $typePalettes): void
-    {
+    protected function buildMergedPalettes(
+        string $type,
+        string &$typeShowitem,
+        array &$palettes,
+        array $typePalettes
+    ): void {
         // Ignore if the palettes are identical
         if ($palettes == $typePalettes) {
             return;
@@ -665,7 +692,7 @@ class TcaTable extends AbstractTcaTable
             $showitem = $p['showitem'];
             
             // Add new palette
-            if (!isset($palettes[$k])) {
+            if (! isset($palettes[$k])) {
                 $palettes[$k]['showitem'] = $showitem;
                 continue;
             }
@@ -684,19 +711,20 @@ class TcaTable extends AbstractTcaTable
             }
             
             // Create a new version of this palette for the type
-            $newK = $type . '-' . $k;
+            $newK                        = $type . '-' . $k;
             $palettes[$newK]['showitem'] = $showitem;
             
             // Update type's show item...
             // Yay for string manipulation \o/...
-            $typeShowitem = preg_replace('/(--palette--;[^;,]*;)' . preg_quote($k) . '(,|$)/si', "\${1}$newK,", $typeShowitem);
+            $typeShowitem = preg_replace('/(--palette--;[^;,]*;)' . preg_quote($k) . '(,|$)/si', "\${1}$newK,",
+                $typeShowitem);
         }
     }
     
     /**
      * Internal helper to create retrieve or create a instance of a tca type representation
      *
-     * @param string|int $id
+     * @param   string|int  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableType
      */
@@ -709,7 +737,7 @@ class TcaTable extends AbstractTcaTable
         
         // Merge columns overrides into the main tca
         $typeConfig = Arrays::getPath($this->config, ['types', $id], []);
-        if (!isset($typeConfig['showitem'])) {
+        if (! isset($typeConfig['showitem'])) {
             $typeConfig['showitem'] = '';
         }
         
@@ -718,7 +746,7 @@ class TcaTable extends AbstractTcaTable
             'palettes' => Arrays::getPath($this->config, ['palettes'], []),
             'columns'  => [],
         ];
-        if (!is_array($typeTca['palettes'])) {
+        if (! is_array($typeTca['palettes'])) {
             $typeTca['palettes'] = [];
         }
         $columnsOverrides = Arrays::getPath($typeConfig, ['columnsOverrides'], []);
@@ -748,7 +776,7 @@ class TcaTable extends AbstractTcaTable
             
             // Check if there is a registered override
             $overrides = Arrays::getPath($columnsOverrides, $field, []);
-            if (!empty($overrides)) {
+            if (! empty($overrides)) {
                 ArrayUtility::mergeRecursiveWithOverrule($tca, $overrides);
             }
             
@@ -766,8 +794,8 @@ class TcaTable extends AbstractTcaTable
     /**
      * Internal helper to create a new instance of a tca table, based on the global tca array
      *
-     * @param string           $tableName
-     * @param ExtConfigContext $context
+     * @param   string            $tableName
+     * @param   ExtConfigContext  $context
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
@@ -797,14 +825,14 @@ class TcaTable extends AbstractTcaTable
         $this->context->SqlGenerator->__setByTcaDefinition($this->getTableName(), $this->config);
         
         // Create control object
-        $ctrl = Arrays::getPath($this->config, 'ctrl', []);
+        $ctrl       = Arrays::getPath($this->config, 'ctrl', []);
         $this->ctrl = TypoContainer::getInstance()->get(TcaTableCtrl::class, [
             'args' => [$ctrl, $this],
         ]);
         
         // Import additional config
         foreach (static::ADDITIONAL_TCA_CONFIG_LIST as $property) {
-            if (!empty($this->config[$property])) {
+            if (! empty($this->config[$property])) {
                 $this->$property = $this->config[$property];
             }
         }

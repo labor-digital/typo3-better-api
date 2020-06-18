@@ -41,13 +41,14 @@ abstract class AbstractFormField extends AbstractFormElement
         if (empty($label)) {
             return Inflector::toHuman($this->getId());
         }
+        
         return $label;
     }
     
     /**
      * Set this to true, the form will reload itself after the value of this column was updated
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Columns/Index.html#onchange
@@ -55,6 +56,7 @@ abstract class AbstractFormField extends AbstractFormElement
     public function setReloadOnChange(bool $state = true)
     {
         $this->config['onChange'] = $state ? 'reload' : '';
+        
         return $this;
     }
     
@@ -74,7 +76,7 @@ abstract class AbstractFormField extends AbstractFormElement
      * If set, all backend users are prevented from editing the field unless they are members of a backend user group
      * with this field added as an “Allowed Excludefield” (or “admin” user).
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Columns/Index.html#exclude
@@ -82,6 +84,7 @@ abstract class AbstractFormField extends AbstractFormElement
     public function setExclude(bool $state)
     {
         $this->config['exclude'] = $state;
+        
         return $this;
     }
     
@@ -102,7 +105,7 @@ abstract class AbstractFormField extends AbstractFormElement
      * Sets if a field is read only or not
      * This property affects only the display. It is still possible to write to those fields when using the DataHandler
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Check.html#readonly
@@ -114,11 +117,13 @@ abstract class AbstractFormField extends AbstractFormElement
         } else {
             unset($this->config['config']['readOnly']);
         }
+        
         return $this;
     }
     
     /**
      * Returns true if the field is configured to be read only, false if not
+     *
      * @return bool
      */
     public function isReadOnly(): bool
@@ -130,7 +135,7 @@ abstract class AbstractFormField extends AbstractFormElement
      * Can be used to set a field description text between the label and the input field.
      * Can contain html
      *
-     * @param string $info
+     * @param   string  $info
      *
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/FormEngine/Rendering/Index.html#formengine-rendering-nodeexpansion
@@ -138,11 +143,13 @@ abstract class AbstractFormField extends AbstractFormElement
     public function setDescription(string $info)
     {
         $this->config['description'] = $info;
+        
         return $this;
     }
     
     /**
      * Returns the currently set field information, or an empty string if there is none
+     *
      * @return string
      */
     public function getDescription(): string
@@ -159,6 +166,7 @@ abstract class AbstractFormField extends AbstractFormElement
     {
         $applier = $this->context->getInstanceOf(FieldPresetApplier::class);
         $applier->__setField($this, $this->context);
+        
         return $applier;
     }
     
@@ -183,7 +191,7 @@ abstract class AbstractFormField extends AbstractFormElement
         
         // Add the data handler actions
         $handlers = $this->__getDataHandlerActionHandlers();
-        if (!empty($handlers)) {
+        if (! empty($handlers)) {
             $raw['dataHandlerActions'] = $handlers['@table'];
         }
         
@@ -197,7 +205,7 @@ abstract class AbstractFormField extends AbstractFormElement
      *
      * This method supports TYPO3's syntax of removing values from the current config if __UNSET is set as key
      *
-     * @param array $rawInput
+     * @param   array  $rawInput
      *
      * @return $this
      */
@@ -206,6 +214,7 @@ abstract class AbstractFormField extends AbstractFormElement
         $raw = $this->config;
         ArrayUtility::mergeRecursiveWithOverrule($raw, $rawInput);
         $this->setRaw($raw);
+        
         return $this;
     }
     
@@ -215,27 +224,28 @@ abstract class AbstractFormField extends AbstractFormElement
      *
      * This method supports TYPO3's syntax of removing values from the current config if __UNSET is set as key
      *
-     * @param string|array $key   Either a key for the value to set, or a list of key => value pairs
-     * @param mixed        $value If $key is an array, this is ignored. Otherwise this will be set as value for $key
+     * @param   string|array  $key    Either a key for the value to set, or a list of key => value pairs
+     * @param   mixed         $value  If $key is an array, this is ignored. Otherwise this will be set as value for $key
      *
      * @return $this
      */
     public function addConfig($key, $value = null)
     {
-        if (!is_array($key)) {
+        if (! is_array($key)) {
             $key = [$key => $value];
         }
         $this->mergeRaw(['config' => $key]);
+        
         return $this;
     }
     
     /**
      * Internal helper to load a given cta configuration into a new field instance
      *
-     * @param string                $id
-     * @param array                 $tca
-     * @param ExtConfigContext      $context
-     * @param AbstractFormContainer $parent
+     * @param   string                 $id
+     * @param   array                  $tca
+     * @param   ExtConfigContext       $context
+     * @param   AbstractFormContainer  $parent
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormField|mixed
      */
@@ -246,6 +256,7 @@ abstract class AbstractFormField extends AbstractFormElement
         $i->__setForm($parent->getForm());
         $i->__setParent($parent);
         $i->setRaw($tca);
+        
         return $i;
     }
     

@@ -28,6 +28,7 @@ use TYPO3\CMS\Fluid\View\Exception\InvalidTemplateResourceException;
  * Class SimpleDefaultActionController
  *
  * Can be used to handle extremely simple extbase plugins that don't require a real controller for themselves.
+ *
  * @package LaborDigital\Typo3BetterApi\BetterControllers
  */
 abstract class SimpleDefaultActionController extends BetterActionController implements BackendPreviewRendererInterface
@@ -47,7 +48,8 @@ abstract class SimpleDefaultActionController extends BetterActionController impl
             if (empty($this->data[$field])) {
                 continue;
             }
-            $this->view->assign($field, $this->FalFiles()->getFile($this->data['uid'], 'tt_content', $field, $field !== 'media'));
+            $this->view->assign($field,
+                $this->FalFiles()->getFile($this->data['uid'], 'tt_content', $field, $field !== 'media'));
         }
     }
     

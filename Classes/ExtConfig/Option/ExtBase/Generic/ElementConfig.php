@@ -24,12 +24,14 @@ class ElementConfig
     
     /**
      * The typoScript configuration required for the registered elements
+     *
      * @var string
      */
     public $typoScript = '';
     
     /**
      * The ts config string required for the registered elements
+     *
      * @var string
      */
     public $tsConfig = '';
@@ -37,60 +39,70 @@ class ElementConfig
     /**
      * The list of arguments that have to be applied on the "ExtensionUtility::registerModule" method
      * to register our backend modules
+     *
      * @var array
      */
     public $registerModuleArgs = [];
     
     /**
      * The list of arguments that have to be applied to the ExtensionUtility::registerPlugin method
+     *
      * @var array
      */
     public $registerPluginArgs = [];
     
     /**
      * The list of arguments that have to be passed to the "ExtensionUtility::configurePlugin" method
+     *
      * @var array
      */
     public $configurePluginArgs = [];
     
     /**
      * The arguments to apply to ExtensionManagementUtility::addPiFlexFormValue()
+     *
      * @var array
      */
     public $addPiFlexFormArgs = [];
     
     /**
      * The list of icon definitions to register
+     *
      * @var array
      */
     public $iconDefinitionArgs = [];
     
     /**
      * The list of plugins that have a flex form field in them
+     *
      * @var array
      */
     public $flexFormPlugins = [];
     
     /**
      * The list of backend preview renderer registration arguments
+     *
      * @var array
      */
     public $backendPreviewRenderers = [];
     
     /**
      * The list of backend list label renderer registration arguments
+     *
      * @var array
      */
     public $backendListLabelRenderers = [];
     
     /**
      * The configured backend action handlers to register in the backend action service
+     *
      * @var array
      */
     public $dataHandlerActionHandlers = [];
     
     /**
      * The list of cType entries that we should inject for our extBase content elements
+     *
      * @var array
      */
     public $cTypeEntries = [];

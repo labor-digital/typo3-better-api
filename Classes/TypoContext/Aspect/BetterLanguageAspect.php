@@ -36,7 +36,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     /**
      * Inject the typo context instance
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
     public function injectContext(TypoContext $context)
     {
@@ -63,6 +63,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     
     /**
      * Returns the list of all languages the frontend may display
+     *
      * @return SiteLanguage[]
      */
     public function getAllFrontendLanguages(): array
@@ -72,18 +73,20 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     
     /**
      * Returns the two char ISO code that defines the backend language
+     *
      * @return string
      */
     public function getCurrentBackendLanguage(): string
     {
-        if ($this->context->getBeUserAspect()->hasUser() &&
-            isset($this->context->getBeUserAspect()->getUser()->uc['lang'])) {
+        if ($this->context->getBeUserAspect()->hasUser()
+            && isset($this->context->getBeUserAspect()->getUser()->uc['lang'])) {
             // Read language (empty means "en")
             $isoCode = $this->context->getBeUserAspect()->getUser()->uc['lang'];
             $isoCode = empty($isoCode) ? 'en' : $isoCode;
         } else {
             $isoCode = 'en';
         }
+        
         return $isoCode;
     }
     

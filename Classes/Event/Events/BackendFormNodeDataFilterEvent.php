@@ -36,6 +36,7 @@ class BackendFormNodeDataFilterEvent
 {
     /**
      * The configuration data for the filtered form node
+     *
      * @var array
      */
     protected $data;
@@ -43,7 +44,7 @@ class BackendFormNodeDataFilterEvent
     /**
      * BackendFormNodeDataFilterEvent constructor.
      *
-     * @param array $data
+     * @param   array  $data
      */
     public function __construct(array $data)
     {
@@ -52,6 +53,7 @@ class BackendFormNodeDataFilterEvent
     
     /**
      * Returns the configuration data for the filtered form node
+     *
      * @return array
      */
     public function getData(): array
@@ -62,18 +64,20 @@ class BackendFormNodeDataFilterEvent
     /**
      * Sets the configuration data for the filtered form node
      *
-     * @param array $data
+     * @param   array  $data
      *
      * @return BackendFormNodeDataFilterEvent
      */
     public function setData(array $data): BackendFormNodeDataFilterEvent
     {
         $this->data = $data;
+        
         return $this;
     }
     
     /**
      * Returns the name of the node type we should filter
+     *
      * @return string|null
      */
     public function getType(): ?string
@@ -83,6 +87,7 @@ class BackendFormNodeDataFilterEvent
     
     /**
      * Returns the render type of the node we should filter
+     *
      * @return string|null
      */
     public function getRenderType(): ?string

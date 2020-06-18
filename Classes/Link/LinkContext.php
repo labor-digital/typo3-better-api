@@ -31,6 +31,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class LinkContext
+ *
  * @package LaborDigital\Typo3BetterApi\Links
  *
  * @property Router                                $Router
@@ -44,6 +45,7 @@ class LinkContext implements SingletonInterface
     
     /**
      * True when we initialized both the request and are sure the typoScript frontend is initialized correctly
+     *
      * @var bool
      */
     protected $initialized = false;
@@ -85,6 +87,7 @@ class LinkContext implements SingletonInterface
     public function getRequest(): Request
     {
         $this->initializeIfRequired();
+        
         return $this->request;
     }
     
@@ -95,10 +98,11 @@ class LinkContext implements SingletonInterface
      */
     public function getContentObject(): ContentObjectRenderer
     {
-        if (!empty($this->contentObject)) {
+        if (! empty($this->contentObject)) {
             return $this->contentObject;
         }
         $this->initializeIfRequired();
+        
         return $this->contentObject = $this->Tsfe->getContentObjectRenderer();
     }
     
@@ -111,7 +115,7 @@ class LinkContext implements SingletonInterface
      */
     public function getUriBuilder(): UriBuilder
     {
-        if (!empty($this->uriBuilder)) {
+        if (! empty($this->uriBuilder)) {
             return $this->uriBuilder;
         }
         $this->initializeIfRequired();
@@ -120,7 +124,7 @@ class LinkContext implements SingletonInterface
         $this->uriBuilder = $this->getInstanceOf(ExtendedUriBuilder::class);
         
         // Make sure we have a content object
-        if (!$this->uriBuilder->hasContentObject()) {
+        if (! $this->uriBuilder->hasContentObject()) {
             $this->uriBuilder->setContentObject($this->getContentObject());
         } else {
             $this->contentObject = $this->uriBuilder->getContentObject();
@@ -152,9 +156,8 @@ class LinkContext implements SingletonInterface
         
         // Inject the base url if we are in cli context
         if ($this->TypoContext->getEnvAspect()->isCli()) {
-            
             // Fix for external cli tools
-            $_SERVER['SCRIPT_NAME'] = '/index.php';
+            $_SERVER['SCRIPT_NAME']     = '/index.php';
             $_SERVER['SCRIPT_FILENAME'] = '/index.php';
             
             // Update typo3 internal caches

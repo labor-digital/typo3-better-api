@@ -27,6 +27,7 @@ class BeUserAspect extends AbstractBetterUserAspect
     
     /**
      * Returns the frontend user authentication object
+     *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
      * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
      */
@@ -36,6 +37,7 @@ class BeUserAspect extends AbstractBetterUserAspect
         if (empty($user)) {
             throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
         }
+        
         return $user;
     }
     
@@ -52,16 +54,17 @@ class BeUserAspect extends AbstractBetterUserAspect
      */
     protected function getUserObject()
     {
-        if (!empty($this->resolvedUser)) {
+        if (! empty($this->resolvedUser)) {
             return $this->resolvedUser;
         }
         $user = parent::getUserObject();
-        if (!empty($user)) {
+        if (! empty($user)) {
             return $user;
         }
-        if (!empty($GLOBALS['BE_USER'])) {
+        if (! empty($GLOBALS['BE_USER'])) {
             return $this->resolvedUser = $GLOBALS['BE_USER'];
         }
+        
         return $user;
     }
 }

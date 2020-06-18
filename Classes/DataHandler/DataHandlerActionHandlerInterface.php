@@ -40,18 +40,25 @@ interface DataHandlerActionHandlerInterface
      * registered handlers. All handler's can make changes to the linked value, based on the context (either the field,
      * or the table) they are bound to.
      *
-     * @param string     $stackType The type of stack we should find the handlers for
-     * @param string     $tableName The name of the table, which TCA we should traverse for handlers.
-     * @param string|int $uid       The uid of the record we are executing the handlers for.
-     * @param object     $event     The typo3 event that lead to the call of this method.
-     *                              If you would ever want to create your own stack you should be able to pass
-     *                              a manually instantiated object here, as it is merely passed to the context object
-     *                              to provide additional information to the handlers
-     * @param array      $row       A database row, or a fraction of it, that corresponds with the given $uid.
-     *                              If this is empty, the method will try to request a fresh row from the database
-     *                              based on the given $uid. If any changes where made this reference will reflect all
-     *                              changes.
-     * @param bool       $isDirty   This reference is true if there were any changes made on the given $row
+     * @param   string  $stackType      The type of stack we should find the handlers for
+     * @param   string  $tableName      The name of the table, which TCA we should traverse for handlers.
+     * @param   string|int  $uid        The uid of the record we are executing the handlers for.
+     * @param   object  $event          The typo3 event that lead to the call of this method.
+     *                                  If you would ever want to create your own stack you should be able to pass
+     *                                  a manually instantiated object here, as it is merely passed to the context
+     *                                  object to provide additional information to the handlers
+     * @param   array  $row             A database row, or a fraction of it, that corresponds with the given $uid.
+     *                                  If this is empty, the method will try to request a fresh row from the database
+     *                                  based on the given $uid. If any changes where made this reference will reflect
+     *                                  all changes.
+     * @param   bool  $isDirty          This reference is true if there were any changes made on the given $row
      */
-    public function runActionStack(string $stackType, string $tableName, $uid, object $event, array &$row, &$isDirty = false);
+    public function runActionStack(
+        string $stackType,
+        string $tableName,
+        $uid,
+        object $event,
+        array &$row,
+        &$isDirty = false
+    );
 }

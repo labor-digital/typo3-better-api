@@ -30,14 +30,14 @@ class InputFieldPreset extends AbstractFormPreset
     /**
      * Configures the current field as a simple input element
      *
-     * @param array $options Additional options for this preset
-     *                       - default string: A default value for your input field
-     *                       - required, trim, lower, int, email, password, unique, null bool: Any of these values can
-     *                       be passed to define their matching "eval" rules
-     *                       - maxLength int (2048): The max length of a input (also affects the length of the db
-     *                       field)
-     *                       - minLength int (0): The min length of a input
-     *                       - readOnly bool (FALSE): True to make this field read only
+     * @param   array  $options  Additional options for this preset
+     *                           - default string: A default value for your input field
+     *                           - required, trim, lower, int, email, password, unique, null bool: Any of these values
+     *                           can be passed to define their matching "eval" rules
+     *                           - maxLength int (2048): The max length of a input (also affects the length of the db
+     *                           field)
+     *                           - minLength int (0): The min length of a input
+     *                           - readOnly bool (FALSE): True to make this field read only
      *
      */
     public function input(array $options = [])
@@ -65,7 +65,7 @@ class InputFieldPreset extends AbstractFormPreset
         $config = ['type' => 'input'];
         
         // Apply defaults
-        if (!empty($options['default'])) {
+        if (! empty($options['default'])) {
             $config['default'] = $options['default'];
         }
         $config = $this->addReadOnlyConfig($config, $options);
@@ -81,18 +81,19 @@ class InputFieldPreset extends AbstractFormPreset
      * Configures this field as either a date or a datetime field.
      * Date fields have their own datepicker.
      *
-     * @param array $options Additional options for this preset
-     *                       - default string|number|DateTime: A default value for your input field
-     *                       - withTime bool (FALSE): If set to true this field can also have the time set, not only
-     *                       the date
-     *                       - asInt bool (FALSE): By default the database value will be written as "datetime" type. If
-     *                       you however want the database to store the date as integer you can set this to true
-     *                       - required, trim bool: Any of these values can be passed
-     *                       to define their matching "eval" rules
+     * @param   array  $options  Additional options for this preset
+     *                           - default string|number|DateTime: A default value for your input field
+     *                           - withTime bool (FALSE): If set to true this field can also have the time set, not
+     *                           only
+     *                           the date
+     *                           - asInt bool (FALSE): By default the database value will be written as "datetime"
+     *                           type. If you however want the database to store the date as integer you can set this
+     *                           to true
+     *                           - required, trim bool: Any of these values can be passed
+     *                           to define their matching "eval" rules
      */
     public function date(array $options = [])
     {
-        
         // Prepare options
         $options = Options::make(
             $options,
@@ -114,20 +115,22 @@ class InputFieldPreset extends AbstractFormPreset
         
         // Set sql statement
         $this->setSqlDefinitionForTcaField(
-            $options['asInt'] ?
-                'int(11) DEFAULT \'0\'' :
+            $options['asInt']
+                ?
+                'int(11) DEFAULT \'0\''
+                :
                 'datetime DEFAULT \'CURRENT_TIMESTAMP\''
         );
         
         // Prepare the config
         $config = ['type' => 'input'];
         if ($options['default'] !== null) {
-            $date = new DateTimy($options['default']);
+            $date              = new DateTimy($options['default']);
             $config['default'] = $options['asInt'] ? $date->getTimestamp() : $date->formatSql();
         }
         $options[$options['withTime'] ? 'datetime' : 'date'] = true;
-        $config = $this->addEvalConfig($config, $options);
-        if (!$options['asInt']) {
+        $config                                              = $this->addEvalConfig($config, $options);
+        if (! $options['asInt']) {
             $config['dbType'] = 'datetime';
         }
         
@@ -138,19 +141,20 @@ class InputFieldPreset extends AbstractFormPreset
     /**
      * Configures the current field as a link selection.
      *
-     * @param array $options Additional config options for this preset
-     *                       - allowFiles bool (FALSE): True to allow file links
-     *                       - allowExternal bool (TRUE): True to allow external URL links
-     *                       - allowPages bool (TRUE): True to allow links to pages
-     *                       - allowMail bool (FALSE): True to allow links to mails
-     *                       - allowFolder bool (FALSE): True to allow links to storage folders
-     *                       - default string: A default value for your input field
-     *                       - maxLength int (2048): The max length of a link (also affects the length of the db field)
-     *                       - minLength int (0): The min length of a input
-     *                       - hideClutter bool: By default we hide clutter fields like class or params in the link
-     *                       browser. If you want those fields to be set, set this to false.
-     *                       - required, trim bool: Any of these values can be passed
-     *                       to define their matching "eval" rules
+     * @param   array  $options  Additional config options for this preset
+     *                           - allowFiles bool (FALSE): True to allow file links
+     *                           - allowExternal bool (TRUE): True to allow external URL links
+     *                           - allowPages bool (TRUE): True to allow links to pages
+     *                           - allowMail bool (FALSE): True to allow links to mails
+     *                           - allowFolder bool (FALSE): True to allow links to storage folders
+     *                           - default string: A default value for your input field
+     *                           - maxLength int (2048): The max length of a link (also affects the length of the db
+     *                           field)
+     *                           - minLength int (0): The min length of a input
+     *                           - hideClutter bool: By default we hide clutter fields like class or params in the link
+     *                           browser. If you want those fields to be set, set this to false.
+     *                           - required, trim bool: Any of these values can be passed
+     *                           to define their matching "eval" rules
      */
     public function link(array $options = [])
     {
@@ -198,19 +202,19 @@ class InputFieldPreset extends AbstractFormPreset
         
         // Prepare blinded url types
         $blindFields = [];
-        if (!$options['allowFiles']) {
+        if (! $options['allowFiles']) {
             $blindFields[] = 'file';
         }
-        if (!$options['allowExternal']) {
+        if (! $options['allowExternal']) {
             $blindFields[] = 'url';
         }
-        if (!$options['allowPages']) {
+        if (! $options['allowPages']) {
             $blindFields[] = 'page';
         }
-        if (!$options['allowMail']) {
+        if (! $options['allowMail']) {
             $blindFields[] = 'mail';
         }
-        if (!$options['allowFolder']) {
+        if (! $options['allowFolder']) {
             $blindFields[] = 'folder';
         }
         $blindFields = implode(',', $blindFields);
@@ -231,7 +235,7 @@ class InputFieldPreset extends AbstractFormPreset
         ];
         
         // Apply defaults
-        if (!empty($options['default'])) {
+        if (! empty($options['default'])) {
             $config['default'] = $options['default'];
         }
         $config = $this->addEvalConfig($config, $options);
@@ -247,18 +251,18 @@ class InputFieldPreset extends AbstractFormPreset
      * to make sure your slug's don't look like "www.your-domain.deyour-slug". If you want the default
      * behaviour set the "useNativeElement" flag to true.
      *
-     * @param array $fields  The list of fields from which the slug should be generated.
-     *                       Multiple fields will be concatenated like described in the TCA configuration.
-     * @param array $options Additional configuration options
-     *                       - replacements array (["/" => "-"]): A list of characters that should be replaced
-     *                       with another character when the slug is generated. By default we remove all slashes
-     *                       and turn them into dashes.
-     *                       - default string: A default value for your input field
-     *                       - useNativeElement bool (FALSE): As stated above, we auto-apply a small
-     *                       visual fix to the slug element to make it more speaking for the editor.
-     *                       If you don't want that fix, set this flag to true.
-     *                       - required, uniqueInSite bool: Any of these values can be passed
-     *                       to define their matching "eval" rules
+     * @param   array  $fields   The list of fields from which the slug should be generated.
+     *                           Multiple fields will be concatenated like described in the TCA configuration.
+     * @param   array  $options  Additional configuration options
+     *                           - replacements array (["/" => "-"]): A list of characters that should be replaced
+     *                           with another character when the slug is generated. By default we remove all slashes
+     *                           and turn them into dashes.
+     *                           - default string: A default value for your input field
+     *                           - useNativeElement bool (FALSE): As stated above, we auto-apply a small
+     *                           visual fix to the slug element to make it more speaking for the editor.
+     *                           If you don't want that fix, set this flag to true.
+     *                           - required, uniqueInSite bool: Any of these values can be passed
+     *                           to define their matching "eval" rules
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Slug.html
      */
@@ -297,7 +301,7 @@ class InputFieldPreset extends AbstractFormPreset
             'default'           => $options['default'],
             'size'              => 50,
         ];
-        if (!$options['useNativeElement']) {
+        if (! $options['useNativeElement']) {
             $config['renderType'] = 'betterApiPathSegmentSlug';
         }
         $config = $this->addEvalConfig($config, $options);

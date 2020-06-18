@@ -29,8 +29,8 @@ interface ExtConfigExtensionInterface
     /**
      * This method is used to extend the functionality of ExtConfig by adding your own extenders and configuration
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry $extender
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                     $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry  $extender
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                      $context
      *
      * @return void
      */

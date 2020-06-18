@@ -30,6 +30,7 @@ class LazyConstructorInjectionHook implements LazyEventSubscriberInterface, Sing
     
     /**
      * The list of schemata we already processed
+     *
      * @var array
      */
     protected $knownSchemata = [];
@@ -46,7 +47,7 @@ class LazyConstructorInjectionHook implements LazyEventSubscriberInterface, Sing
      * Event hook that scans all class schemata to make sure to inject lazy loading proxy objects instead of the real
      * object when an interface is given and the argument starts with "lazy"
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\ClassSchemaFilterEvent $e
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\ClassSchemaFilterEvent  $e
      */
     public function __filterClassSchema(ClassSchemaFilterEvent $e)
     {
@@ -58,7 +59,7 @@ class LazyConstructorInjectionHook implements LazyEventSubscriberInterface, Sing
         }
         
         // Ignore if we don't have a constructor
-        if (!$schema->hasMethod('__construct')) {
+        if (! $schema->hasMethod('__construct')) {
             return;
         }
         
@@ -73,19 +74,19 @@ class LazyConstructorInjectionHook implements LazyEventSubscriberInterface, Sing
                 continue;
             }
             $className = $conf['dependency'];
-            if (!empty($conf['lazyInjectionTarget'])) {
+            if (! empty($conf['lazyInjectionTarget'])) {
                 $className = $conf['lazyInjectionTarget'];
             }
-            if (!interface_exists($className)) {
+            if (! interface_exists($className)) {
                 continue;
             }
             
             // Build the proxy class and provide it in the autoloader
-            $proxyClassName = LazyObjectProxyGenerator::getInstance()
-                ->provideProxyForClassSchemaParameter($className);
-            $constructor['params'][$k]['dependency'] = $proxyClassName;
-            $constructor['params'][$k]['type'] = $proxyClassName;
-            $constructor['params'][$k]['class'] = $proxyClassName;
+            $proxyClassName                                   = LazyObjectProxyGenerator::getInstance()
+                                                                                        ->provideProxyForClassSchemaParameter($className);
+            $constructor['params'][$k]['dependency']          = $proxyClassName;
+            $constructor['params'][$k]['type']                = $proxyClassName;
+            $constructor['params'][$k]['class']               = $proxyClassName;
             $constructor['params'][$k]['lazyInjectionTarget'] = $className;
             
             // Don't update already modified objects
@@ -94,11 +95,11 @@ class LazyConstructorInjectionHook implements LazyEventSubscriberInterface, Sing
         
         // Update the schema if required
         if ($updateRequired) {
-            $methods = $schema->getMethods();
+            $methods                = $schema->getMethods();
             $methods['__construct'] = $constructor;
             
             // Force the schema to get our overwritten value
-            $ref = new ReflectionObject($schema);
+            $ref  = new ReflectionObject($schema);
             $prop = $ref->getProperty('methods');
             $prop->setAccessible(true);
             $prop->setValue($schema, $methods);

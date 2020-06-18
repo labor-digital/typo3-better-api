@@ -26,6 +26,7 @@ use TYPO3\CMS\Extbase\Object\Container\Container;
  * Class ObjectContainerAdapter
  *
  * ATTENTION: THIS CLASS WILL NOT STAY, IT IS TEMPORARY FOR v9
+ *
  * @package LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters
  */
 class ObjectContainerAdapter extends Container
@@ -35,12 +36,12 @@ class ObjectContainerAdapter extends Container
      * This is a temporary workaround to remove singletons in typo3 v9
      * This will be removed in the v10 implementation
      *
-     * @param \TYPO3\CMS\Extbase\Object\Container\Container $container
-     * @param string                                        $className
+     * @param   \TYPO3\CMS\Extbase\Object\Container\Container  $container
+     * @param   string                                         $className
      */
     public static function removeSingleton(Container $container, string $className)
     {
-        $ref = new ReflectionObject($container);
+        $ref  = new ReflectionObject($container);
         $prop = $ref->getProperty('singletonInstances');
         $prop->setAccessible(true);
         $instanceList = $prop->getValue($container);

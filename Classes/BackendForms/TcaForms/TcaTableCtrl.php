@@ -44,14 +44,14 @@ class TcaTableCtrl
     /**
      * TcaTableCtrl constructor.
      *
-     * @param array                                                       $ctrl
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $table
-     * @param \LaborDigital\Typo3BetterApi\Translation\TranslationService $translationService
+     * @param   array                                                        $ctrl
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable  $table
+     * @param   \LaborDigital\Typo3BetterApi\Translation\TranslationService  $translationService
      */
     public function __construct(array $ctrl, TcaTable $table, TranslationService $translationService)
     {
-        $this->ctrl = $ctrl;
-        $this->table = $table;
+        $this->ctrl               = $ctrl;
+        $this->table              = $table;
         $this->translationService = $translationService;
     }
     
@@ -72,13 +72,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#adminonly
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setAdminOnly(bool $state): TcaTableCtrl
     {
         $this->ctrl['adminOnly'] = $state;
+        
         return $this;
     }
     
@@ -98,15 +99,17 @@ class TcaTableCtrl
     /**
      * Field name, which is automatically set to the current timestamp when the record is created. Is never modified
      * again. Typically the name “crdate” is used for that field. See tstamp example.
+     *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#crdate
      *
-     * @param string $column The name of the database column to use
+     * @param   string  $column  The name of the database column to use
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setCreatedAtColumn(string $column): TcaTableCtrl
     {
         $this->ctrl['crdate'] = $column;
+        
         return $this;
     }
     
@@ -129,13 +132,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#cruser-id
      *
-     * @param string $column The name of the database column to use
+     * @param   string  $column  The name of the database column to use
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setCreateUserColumn(string $column): TcaTableCtrl
     {
         $this->ctrl['cruser_id'] = $column;
+        
         return $this;
     }
     
@@ -165,13 +169,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#delete
      *
-     * @param string $column The name of the database column to use
+     * @param   string  $column  The name of the database column to use
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setDeletedColumn(string $column): TcaTableCtrl
     {
         $this->ctrl['delete'] = $column;
+        
         return $this;
     }
     
@@ -200,13 +205,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#descriptioncolumn
      *
-     * @param string $column The name of the database column to use
+     * @param   string  $column  The name of the database column to use
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setDescriptionColumn(string $column): TcaTableCtrl
     {
         $this->ctrl['descriptionColumn'] = $column;
+        
         return $this;
     }
     
@@ -236,13 +242,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#editlock
      *
-     * @param string $column The name of the database column to use
+     * @param   string  $column  The name of the database column to use
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setEditLockColumn(?string $column): TcaTableCtrl
     {
         $this->ctrl['editlock'] = $column;
+        
         return $this;
     }
     
@@ -254,7 +261,7 @@ class TcaTableCtrl
      * columns. Alternatively you may define the direction by setting it as value of a key value pair ["name" => "asc",
      * "foo" => "desc"]
      *
-     * @param array|null $columns
+     * @param   array|null  $columns
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#default-sortby
@@ -265,12 +272,13 @@ class TcaTableCtrl
             $list = [];
             foreach ($columns as $k => $v) {
                 $column = is_numeric($k) ? $v : $k;
-                $order = is_numeric($k) ? 'ASC' : strtoupper($v);
+                $order  = is_numeric($k) ? 'ASC' : strtoupper($v);
                 $list[] = $column . ' ' . $order;
             }
             $columns = implode(', ', $list);
         }
         $this->ctrl['default_sortby'] = $columns;
+        
         return $this;
     }
     
@@ -281,19 +289,20 @@ class TcaTableCtrl
      */
     public function getBackendSortColumns(): ?array
     {
-        if (!is_string($this->ctrl['default_sortby'])) {
+        if (! is_string($this->ctrl['default_sortby'])) {
             return null;
         }
         $columns = [];
         foreach (Arrays::makeFromStringList($this->ctrl['default_sortby']) as $pair) {
-            $pair = Arrays::makeFromStringList($pair, ' ');
-            $key = array_shift($pair);
+            $pair  = Arrays::makeFromStringList($pair, ' ');
+            $key   = array_shift($pair);
             $order = strtolower(array_shift($pair));
-            if (!in_array($order, ['desc', 'asc'])) {
+            if (! in_array($order, ['desc', 'asc'])) {
                 $order = 'asc';
             }
             $columns[$key] = $order;
         }
+        
         return $columns;
     }
     
@@ -309,7 +318,7 @@ class TcaTableCtrl
      * pages or the content elements in the order expected by the editors. Extensions are expected to respect this
      * field.
      *
-     * @param string|null $column
+     * @param   string|null  $column
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#sortby
@@ -317,6 +326,7 @@ class TcaTableCtrl
     public function setSortColumn(?string $column): TcaTableCtrl
     {
         $this->ctrl['sortby'] = $column;
+        
         return $this;
     }
     
@@ -348,13 +358,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#label
      *
-     * @param string $column
+     * @param   string  $column
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setLabelColumn(?string $column): TcaTableCtrl
     {
         $this->ctrl['label'] = $column;
+        
         return $this;
     }
     
@@ -379,9 +390,9 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#label-alt
      *
-     * @param array|string $columns Either an array of field 1 of field names
-     * @param bool|NULL    $force   Optional: If set to true, the label_alt_force flag is set to true, which means the
-     *                              alternative labels will always be rendered
+     * @param   array|string  $columns  Either an array of field 1 of field names
+     * @param   bool|NULL     $force    Optional: If set to true, the label_alt_force flag is set to true, which means
+     *                                  the alternative labels will always be rendered
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
@@ -394,6 +405,7 @@ class TcaTableCtrl
         if (is_bool($force)) {
             $this->setForceLabelAlternative($force);
         }
+        
         return $this;
     }
     
@@ -401,6 +413,7 @@ class TcaTableCtrl
      * Returns the name of the column that is used to determine the "type" of the current table.
      * Note: This may contain a colon when the column of an external table should be used. See the documentation for
      * that!
+     *
      * @return string
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#type
      */
@@ -417,7 +430,7 @@ class TcaTableCtrl
      * The most widely known usage of this feature is the case of Content Elements where the “Type:” selector is
      * defined as the “type” field and when you change that selector you will also get another rendering of the form:
      *
-     * @param string|null $typeColumn
+     * @param   string|null  $typeColumn
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#type
@@ -425,6 +438,7 @@ class TcaTableCtrl
     public function setTypeColumn(?string $typeColumn): TcaTableCtrl
     {
         $this->ctrl['type'] = $typeColumn;
+        
         return $this;
     }
     
@@ -442,13 +456,14 @@ class TcaTableCtrl
     /**
      * If set, then the label_alt fields are always shown in the title separated by comma.
      *
-     * @param bool $state
+     * @param   bool  $state
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setForceLabelAlternative(bool $state): TcaTableCtrl
     {
         $this->ctrl['label_alt_force'] = $state;
+        
         return $this;
     }
     
@@ -474,6 +489,7 @@ class TcaTableCtrl
         if (empty($title)) {
             return Inflector::toHuman(preg_replace('/^(.*?_domain_model_)/', '', $this->table->getTableName()));
         }
+        
         return $title;
     }
     
@@ -489,13 +505,14 @@ class TcaTableCtrl
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#title
      *
-     * @param string $title
+     * @param   string  $title
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     public function setTitle(string $title): TcaTableCtrl
     {
         $this->ctrl['title'] = $title;
+        
         return $this;
     }
     
@@ -503,7 +520,7 @@ class TcaTableCtrl
      * Sets the list of fields from the table that will be included when searching for records in the TYPO3
      * backend. No record from a table will ever be found if that table does not have “searchFields” defined.
      *
-     * @param array $columns
+     * @param   array  $columns
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      *
@@ -511,8 +528,9 @@ class TcaTableCtrl
      */
     public function setSearchColumns(array $columns): TcaTableCtrl
     {
-        $searchFields = array_unique($columns);
+        $searchFields               = array_unique($columns);
         $this->ctrl['searchFields'] = implode(',', $searchFields);
+        
         return $this;
     }
     
@@ -520,7 +538,7 @@ class TcaTableCtrl
      * Adds some fields to the list of fields from the table that will be included when searching for records in the
      * TYPO3 backend. The existing fields will be kept.
      *
-     * @param array $columns
+     * @param   array  $columns
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      *
@@ -534,6 +552,7 @@ class TcaTableCtrl
     /**
      * Returns the currently configured the of fields from the table that will be included when searching for records
      * in the TYPO3 backend.
+     *
      * @return array
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#searchfields
@@ -541,6 +560,7 @@ class TcaTableCtrl
     public function getSearchColumns(): array
     {
         $fields = Arrays::getPath($this->ctrl, 'searchFields', '');
+        
         return Arrays::makeFromStringList($fields);
     }
     
@@ -549,7 +569,7 @@ class TcaTableCtrl
      * Pointing to the icon file to use for the table. Icons should be square SVGs. In case you cannot supply a SVG you
      * can still use a PNG file of 64x64 pixels in dimension.
      *
-     * @param string $filename
+     * @param   string  $filename
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      *
@@ -558,11 +578,13 @@ class TcaTableCtrl
     public function setIconFile(string $filename): TcaTableCtrl
     {
         $this->ctrl['iconfile'] = $filename;
+        
         return $this;
     }
     
     /**
      * Returns the currently set path to the icon file or null.
+     *
      * @return string|null
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#iconfile
@@ -576,8 +598,8 @@ class TcaTableCtrl
      * Can be used to set raw config values, that are not implemented in this facade.
      * Set either key => value pairs, or an Array of key => value pairs
      *
-     * @param array|string|int $key   Either a key to set the given $value for, or an array of $key => $value pairs
-     * @param null             $value The value to set for the given $key (if $key is not an array)
+     * @param   array|string|int  $key    Either a key to set the given $value for, or an array of $key => $value pairs
+     * @param   null              $value  The value to set for the given $key (if $key is not an array)
      *
      * @return $this
      */
@@ -588,11 +610,13 @@ class TcaTableCtrl
         } else {
             $this->ctrl[$key] = $value;
         }
+        
         return $this;
     }
     
     /**
      * Returns the raw configuration array for this object
+     *
      * @return array
      */
     public function getRaw(): array

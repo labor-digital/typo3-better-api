@@ -38,6 +38,7 @@ class BetterActionController extends ActionController
     
     /**
      * The list of the raw content object data
+     *
      * @var array
      */
     protected $data = [];
@@ -48,8 +49,8 @@ class BetterActionController extends ActionController
      *
      * @see https://forum.typo3.org/index.php?t=msg&goto=740402&
      *
-     * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface  $request
-     * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response
+     * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface   $request
+     * @param   \TYPO3\CMS\Extbase\Mvc\ResponseInterface  $response
      *
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
@@ -57,7 +58,6 @@ class BetterActionController extends ActionController
      */
     public function processRequest(RequestInterface $request, ResponseInterface $response)
     {
-        
         // Load the data from the content object
         if (empty($this->data)) {
             $this->data = $this->configurationManager->getContentObject()->data;
@@ -97,6 +97,7 @@ class BetterActionController extends ActionController
             $this->response,
             $this
         )));
+        
         return $e->getActionMethodName();
     }
 }

@@ -41,12 +41,14 @@ class ExtConfigOptionList
     
     /**
      * The list of instantiated options in the list
+     *
      * @var array
      */
     protected $options = [];
     
     /**
      * The instance of the trait generator -> always use getExtensionHandler()!
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator|null
      */
     protected $extensionHandler;
@@ -54,13 +56,13 @@ class ExtConfigOptionList
     /**
      * ExtConfigOptionList constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext       $context
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext        $context
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
     public function __construct(ExtConfigContext $context, TypoContainerInterface $container)
     {
         $this->container = $container;
-        $this->context = $context;
+        $this->context   = $context;
     }
     
     /**
@@ -76,14 +78,14 @@ class ExtConfigOptionList
      * Returns true if a certain option exists, false if not.
      * This is useful for checking if a certain extension is installed.
      *
-     * @param string $optionName
+     * @param   string  $optionName
      *
      * @return bool
      */
     public function hasOption(string $optionName): bool
     {
-        return method_exists($this, $optionName) ||
-            !empty($this->getExtensionHandler()->getClassNameForOption($optionName));
+        return method_exists($this, $optionName)
+               || ! empty($this->getExtensionHandler()->getClassNameForOption($optionName));
     }
     
     /**
@@ -99,7 +101,7 @@ class ExtConfigOptionList
     {
         // Try to find a not-yet compiled option -> When an extension is activated
         $class = $this->getExtensionHandler()->getClassNameForOption($name);
-        if (!empty($class)) {
+        if (! empty($class)) {
             return $this->getOrCreateOptionInstance($class);
         }
         
@@ -110,22 +112,24 @@ class ExtConfigOptionList
     /**
      * Returns the instance of the extension handler
      * This is used to check if a new option has been added (e.g. when the extension is activated)
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator
      */
     protected function getExtensionHandler(): ExtConfigOptionTraitGenerator
     {
-        if (!empty($this->extensionHandler)) {
+        if (! empty($this->extensionHandler)) {
             return $this->extensionHandler;
         }
+        
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->extensionHandler =
-            $this->context->ExtensionRegistry->getExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY);
+        return $this->extensionHandler
+            = $this->context->ExtensionRegistry->getExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY);
     }
     
     /**
      * Internal helper to create and instantiate a new option object
      *
-     * @param string $className
+     * @param   string  $className
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtConfigOptionInterface
      */
@@ -138,6 +142,7 @@ class ExtConfigOptionList
         $i = $this->container->get($className);
         $i->setContext($this->context);
         $this->context->EventBus->addSubscriber($i);
+        
         return $this->options[$className] = $i;
     }
 }

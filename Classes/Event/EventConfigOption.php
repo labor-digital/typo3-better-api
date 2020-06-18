@@ -36,9 +36,9 @@ class EventConfigOption extends AbstractExtConfigOption implements SingletonInte
     /**
      * Binds a handler to a single, or multiple events
      *
-     * @param array|string $events      Either an event as a string, or a list of events as array of string
-     * @param callable     $handler     A callback which is executed when the matching event is emitted
-     * @param array        $options     Additional options
+     * @param   array|string  $events   Either an event as a string, or a list of events as array of string
+     * @param   callable      $handler  A callback which is executed when the matching event is emitted
+     * @param   array         $options  Additional options
      *                                  - priority: int (0) Can be used to define the order of handlers when bound on
      *                                  the same event. 0 is the default the "+ range" is a higher priority (earlier)
      *                                  the "- range" is a lower priority (later)
@@ -60,13 +60,14 @@ class EventConfigOption extends AbstractExtConfigOption implements SingletonInte
     public function registerListener($events, callable $handler, array $options = []): EventConfigOption
     {
         $this->context->EventBus->addListener($events, $handler, $options);
+        
         return $this;
     }
     
     /**
      * Adds the handlers registered in an event subscriber to the event bus
      *
-     * @param \Neunerlei\EventBus\Subscription\EventSubscriberInterface $subscriber
+     * @param   \Neunerlei\EventBus\Subscription\EventSubscriberInterface  $subscriber
      *
      * @return \LaborDigital\Typo3BetterApi\Event\EventConfigOption
      * @see \Neunerlei\EventBus\EventBusInterface::registerSubscriber()
@@ -74,14 +75,15 @@ class EventConfigOption extends AbstractExtConfigOption implements SingletonInte
     public function registerSubscriber(EventSubscriberInterface $subscriber): EventConfigOption
     {
         $this->context->EventBus->addSubscriber($subscriber);
+        
         return $this;
     }
     
     /**
      * Adds the handlers registered in an event subscriber to the event bus
      *
-     * @param string        $lazySubscriberClass
-     * @param callable|null $factory
+     * @param   string         $lazySubscriberClass
+     * @param   callable|null  $factory
      *
      * @return \LaborDigital\Typo3BetterApi\Event\EventConfigOption
      * @see \Neunerlei\EventBus\EventBusInterface::addLazySubscriber()
@@ -89,6 +91,7 @@ class EventConfigOption extends AbstractExtConfigOption implements SingletonInte
     public function registerLazySubscriber(string $lazySubscriberClass, ?callable $factory = null): EventConfigOption
     {
         $this->context->EventBus->addLazySubscriber($lazySubscriberClass, $factory);
+        
         return $this;
     }
 }

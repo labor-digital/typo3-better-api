@@ -30,18 +30,21 @@ class BetterFileWriter extends FileWriter
     
     /**
      * The base name of the internal directory / log file we want to rotate
+     *
      * @var string
      */
     protected $baseFileName;
     
     /**
      * True if log rotation is enabled
+     *
      * @var bool
      */
     protected $useRotation = false;
     
     /**
      * The number of files we should keep when performing a rotation
+     *
      * @var int
      */
     protected $filesToKeep = 5;
@@ -51,12 +54,12 @@ class BetterFileWriter extends FileWriter
      */
     public function __construct(array $options = [])
     {
-        $this->useRotation = $options['logRotation'] === true;
-        $this->filesToKeep = max(1, (int)$options['filesToKeep']);
+        $this->useRotation  = $options['logRotation'] === true;
+        $this->filesToKeep  = max(1, (int)$options['filesToKeep']);
         $this->baseFileName = Inflector::toFile($options['name']);
         parent::__construct([
             'logFile' => $this->getLogDirectory() .
-                $this->baseFileName . '-' . date('Y-m-d') . '.log',
+                         $this->baseFileName . '-' . date('Y-m-d') . '.log',
         ]);
     }
     
@@ -65,7 +68,6 @@ class BetterFileWriter extends FileWriter
      */
     protected function openLogFile()
     {
-        
         // Perform log ration if required
         $this->doLogRotation();
         
@@ -76,11 +78,13 @@ class BetterFileWriter extends FileWriter
     
     /**
      * Generates the log file directory we are working with
+     *
      * @return string
      */
     protected function getLogDirectory(): string
     {
-        return Environment::getVarPath() . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . $this->baseFileName . DIRECTORY_SEPARATOR;
+        return Environment::getVarPath() . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . $this->baseFileName
+               . DIRECTORY_SEPARATOR;
     }
     
     /**
@@ -89,14 +93,14 @@ class BetterFileWriter extends FileWriter
     protected function doLogRotation()
     {
         // Check if log rotation is enabled
-        if (!$this->useRotation) {
+        if (! $this->useRotation) {
             return;
         }
         if (isset(self::$logFileHandlesCount[$this->logFile])) {
             return;
         }
         $logDir = $this->getLogDirectory();
-        if (!file_exists($logDir) || !is_dir($logDir) || !is_writable($logDir)) {
+        if (! file_exists($logDir) || ! is_dir($logDir) || ! is_writable($logDir)) {
             return;
         }
         

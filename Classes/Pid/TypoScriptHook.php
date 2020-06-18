@@ -32,20 +32,20 @@ class TypoScriptHook implements SingletonInterface
      * This hook is called when the TSFE parses the typoScript setup.
      * It is used to extract the changed pid mapping and injects the changes back into the pid service.
      *
-     * @param array $config
+     * @param   array  $config
      *
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
      */
     public function updatePidService(array $config)
     {
-        $pidConfig = Arrays::getPath($config, ['config', 'betterApi.', 'pid.'], []);
-        $pidConfig = $this->TypoScript->removeDots($pidConfig);
-        $pidConfig = Arrays::flatten($pidConfig);
-        $pidAspect = $this->TypoContext->getPidAspect();
-        $pids = Arrays::flatten($pidAspect->getAllPids());
+        $pidConfig   = Arrays::getPath($config, ['config', 'betterApi.', 'pid.'], []);
+        $pidConfig   = $this->TypoScript->removeDots($pidConfig);
+        $pidConfig   = Arrays::flatten($pidConfig);
+        $pidAspect   = $this->TypoContext->getPidAspect();
+        $pids        = Arrays::flatten($pidAspect->getAllPids());
         $pidsChanged = array_diff_assoc($pidConfig, $pids);
         foreach ($pidsChanged as $k => $v) {
-            if (!is_numeric($v)) {
+            if (! is_numeric($v)) {
                 throw new BetterApiException("Failed to read the pid configuration from TypoScript! The value of key: \"$k\" but: \"$v\"!");
             }
             $pidAspect->setPid($k, (int)$v);

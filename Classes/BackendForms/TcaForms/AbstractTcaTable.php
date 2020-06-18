@@ -33,9 +33,10 @@ abstract class AbstractTcaTable extends AbstractForm
      * Defines the default tca array for a new field,
      * that is not yet known in the configuration array
      */
-    public const DEFAULT_FIELD_TCA_CONFIG = [
-        '@sql' => 'text',
-    ];
+    public const DEFAULT_FIELD_TCA_CONFIG
+        = [
+            '@sql' => 'text',
+        ];
     
     /**
      * @var string
@@ -44,6 +45,7 @@ abstract class AbstractTcaTable extends AbstractForm
     
     /**
      * Holds the type key this instance represents
+     *
      * @var string|int
      */
     protected $typeKey;
@@ -59,6 +61,7 @@ abstract class AbstractTcaTable extends AbstractForm
     
     /**
      * Returns the name of the linked database table
+     *
      * @return string
      */
     public function getTableName(): string
@@ -70,7 +73,7 @@ abstract class AbstractTcaTable extends AbstractForm
      * Returns the instance of a certain tab.
      * Note: If the tab not exists, a new one will be created at the end of the form
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTab
      */
@@ -85,7 +88,7 @@ abstract class AbstractTcaTable extends AbstractForm
      * Returns a single palette instance
      * Note: If the palette not exists, a new one will be created at the end of the form
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaPalette
      */
@@ -99,7 +102,7 @@ abstract class AbstractTcaTable extends AbstractForm
     /**
      * Returns true if the layout has a palette with that id already registered
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return bool
      */
@@ -121,17 +124,18 @@ abstract class AbstractTcaTable extends AbstractForm
     /**
      * Adds a new line break to palettes
      *
-     * @param string $position The position where to add the tab. See moveElement() for details
+     * @param   string  $position  The position where to add the tab. See moveElement() for details
      *
      * @return string
      */
     public function addLineBreak(string $position = ''): string
     {
-        $id = 'lb-' . md5(microtime(true));
+        $id        = 'lb-' . md5(microtime(true));
         $lineBreak = $this->context->getInstanceOf(TcaPaletteLineBreak::class, [$id, $this->context]);
         $lineBreak->__setParent($this);
         $lineBreak->__setForm($this->getForm());
         $this->addElement($lineBreak, $position);
+        
         return $id;
     }
     
@@ -139,7 +143,7 @@ abstract class AbstractTcaTable extends AbstractForm
      * Returns the instance of a certain field inside your current layout
      * Note: If the field not exists, a new one will be created at the end of the form
      *
-     * @param string $id
+     * @param   string  $id
      *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField
      */
@@ -151,6 +155,7 @@ abstract class AbstractTcaTable extends AbstractForm
             } else {
                 $tca = array_merge(static::DEFAULT_FIELD_CONFIG, static::DEFAULT_FIELD_TCA_CONFIG);
             }
+            
             return TcaField::makeFromTcaConfig($id, $tca, $this->context, $this);
         });
     }
@@ -161,7 +166,7 @@ abstract class AbstractTcaTable extends AbstractForm
     public function getFields(): array
     {
         return array_filter(parent::getFields(), function ($f) {
-            return !$f instanceof TcaPaletteLineBreak;
+            return ! $f instanceof TcaPaletteLineBreak;
         });
     }
     
@@ -176,6 +181,7 @@ abstract class AbstractTcaTable extends AbstractForm
         if (empty($this->typeKey) && $this instanceof TcaTable) {
             $this->typeKey = reset($this->getTypes());
         }
+        
         return $this->typeKey;
     }
     
@@ -187,9 +193,9 @@ abstract class AbstractTcaTable extends AbstractForm
     public function __build(): array
     {
         // Begin a blank slate tca config
-        $tca = json_decode(json_encode($this->config), true);
+        $tca            = json_decode(json_encode($this->config), true);
         $tca['columns'] = [];
-        $tca['ctrl'] = [];
+        $tca['ctrl']    = [];
         
         // Build field configuration
         $fields = $this->getFields();
@@ -204,7 +210,7 @@ abstract class AbstractTcaTable extends AbstractForm
         }
         
         // Build the show item string for this type
-        $showItem = $this->dumpShowItem();
+        $showItem                                                             = $this->dumpShowItem();
         $tca['types'][empty($this->typeKey) ? 0 : $this->typeKey]['showitem'] = $showItem['showitem'];
         
         // Build the show item string for the palettes
@@ -214,7 +220,7 @@ abstract class AbstractTcaTable extends AbstractForm
         
         // Add the data handler actions
         $handlers = $this->__getDataHandlerActionHandlers();
-        if (!empty($handlers)) {
+        if (! empty($handlers)) {
             $tca['dataHandlerActions'] = $handlers['@table'];
         }
         
@@ -227,7 +233,7 @@ abstract class AbstractTcaTable extends AbstractForm
      */
     protected function ensureInitialTab()
     {
-        if (!empty($this->elements)) {
+        if (! empty($this->elements)) {
             return;
         }
         $this->getTab('0')->setLabel('betterApi.tab.general');
@@ -239,9 +245,9 @@ abstract class AbstractTcaTable extends AbstractForm
     protected function initializeInstance(): void
     {
         // Populate the logical tree
-        $palettes = Arrays::getPath($this->config, 'palettes.*.showitem', []);
-        $types = Arrays::getPath($this->config, 'types.*.showitem', []);
-        $layout = reset($types);
+        $palettes      = Arrays::getPath($this->config, 'palettes.*.showitem', []);
+        $types         = Arrays::getPath($this->config, 'types.*.showitem', []);
+        $layout        = reset($types);
         $this->typeKey = key($types);
         $this->populateByTcaLayout($layout, $palettes);
     }
@@ -249,8 +255,8 @@ abstract class AbstractTcaTable extends AbstractForm
     /**
      * Internal helper which is used to initialize the logical layout tree based on a given layout string
      *
-     * @param string $layout
-     * @param array  $palettes
+     * @param   string  $layout
+     * @param   array   $palettes
      *
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
      */
@@ -269,8 +275,8 @@ abstract class AbstractTcaTable extends AbstractForm
         $tabId = null;
         foreach ($this->parseShowItemString($layout) as $item) {
             $layoutMeta = $item;
-            $firstKey = reset($item);
-            $position = empty($tabId) ? '' : 'bottom:' . $tabId;
+            $firstKey   = reset($item);
+            $position   = empty($tabId) ? '' : 'bottom:' . $tabId;
             
             // Check for modifiers
             if (substr($firstKey, 0, 2) === '--') {
@@ -278,9 +284,9 @@ abstract class AbstractTcaTable extends AbstractForm
                 switch (strtolower(substr($firstKey, 2, -2))) {
                     case 'div':
                         $tabId = count($this->getChildren());
-                        $tab = $this->getTab($tabId);
+                        $tab   = $this->getTab($tabId);
                         $tab->setLayoutMeta($layoutMeta);
-                        if (!empty($item[1])) {
+                        if (! empty($item[1])) {
                             $tab->setLabel($item[1]);
                         }
                         break;
@@ -288,7 +294,7 @@ abstract class AbstractTcaTable extends AbstractForm
                         $paletteId = end($item);
                         
                         // Ignore missing palettes
-                        if (!isset($palettes[$paletteId])) {
+                        if (! isset($palettes[$paletteId])) {
                             continue 2;
                         }
                         
@@ -301,16 +307,16 @@ abstract class AbstractTcaTable extends AbstractForm
                         $palette = $this->getPalette($paletteId);
                         $palette->moveTo($position);
                         $palette->setLayoutMeta($layoutMeta);
-                        if (!empty($item[1])) {
+                        if (! empty($item[1])) {
                             $palette->setLabel($item[1]);
                         }
                         foreach ($this->parseShowItemString($palettes[$paletteId]) as $field) {
                             $layoutMeta = $field;
-                            $id = array_shift($field);
-                            $label = array_shift($field);
+                            $id         = array_shift($field);
+                            $label      = array_shift($field);
                             
                             // Check if we don't have this field
-                            if (!Arrays::hasPath($this->config, ['columns', $id])) {
+                            if (! Arrays::hasPath($this->config, ['columns', $id])) {
                                 // Handle line breaks
                                 if (strtolower($id) === '--linebreak--') {
                                     $this->addLineBreak('bottom:_' . $paletteId);
@@ -323,7 +329,7 @@ abstract class AbstractTcaTable extends AbstractForm
                             $field = $this->getField($id);
                             $field->moveTo('bottom:_' . $paletteId);
                             $field->setLayoutMeta($layoutMeta);
-                            if (!empty($label)) {
+                            if (! empty($label)) {
                                 $field->setLabel($label);
                             }
                         }
@@ -332,21 +338,22 @@ abstract class AbstractTcaTable extends AbstractForm
                         $this->addLineBreak($position);
                         break;
                     default:
-                        throw new BackendFormException('Invalid special element was given: ' . $item . ' is not allowed!');
+                        throw new BackendFormException('Invalid special element was given: ' . $item
+                                                       . ' is not allowed!');
                         break;
                 }
             } else {
                 // Add a field
-                $id = array_shift($item);
+                $id    = array_shift($item);
                 $label = array_shift($item);
                 
                 // Ignore if we don't have this field
-                if (!Arrays::hasPath($this->config, ['columns', $id])) {
+                if (! Arrays::hasPath($this->config, ['columns', $id])) {
                     // Check if we are inside a type
                     if (isset($this->fieldTcaResolver)) {
                         // Check if the parent knows this column
                         $parentConfig = $this->getParent()->getRaw();
-                        if (!Arrays::hasPath($parentConfig, ['columns', $id])) {
+                        if (! Arrays::hasPath($parentConfig, ['columns', $id])) {
                             continue;
                         }
                     } else {
@@ -358,7 +365,7 @@ abstract class AbstractTcaTable extends AbstractForm
                 $field = $this->getField($id);
                 $field->moveTo($position);
                 $field->setLayoutMeta($layoutMeta);
-                if (!empty($label)) {
+                if (! empty($label)) {
                     $field->setLabel($label);
                 }
             }
@@ -369,7 +376,7 @@ abstract class AbstractTcaTable extends AbstractForm
     /**
      * Breaks up a show item string and returns a machine readable array of parts
      *
-     * @param string $layout
+     * @param   string  $layout
      *
      * @return array
      */
@@ -383,17 +390,19 @@ abstract class AbstractTcaTable extends AbstractForm
                 $parts[$k] = [$part];
             }
         }
+        
         return $parts;
     }
     
     /**
      * Traverses the layout structure and generates a typo3 conform layout string out of the hierarchy
      * Will also dump all linked palettes
+     *
      * @return array
      */
     protected function dumpShowItem(): array
     {
-        $showItem = [];
+        $showItem        = [];
         $paletteShowItem = [];
         foreach ($this->getLayoutArray() as $tab) {
             foreach ($tab as $k => $element) {
@@ -401,8 +410,8 @@ abstract class AbstractTcaTable extends AbstractForm
                 // Handle node
                 if ($k === '@node') {
                     /** @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTab $element */
-                    $meta = $element->getLayoutMeta();
-                    $meta[0] = $element->getLabel();
+                    $meta       = $element->getLayoutMeta();
+                    $meta[0]    = $element->getLabel();
                     $showItem[] = '--div--;' . implode(';', $meta);
                 } else {
                     // Check if we got a field or a container
@@ -414,14 +423,14 @@ abstract class AbstractTcaTable extends AbstractForm
                             if ($_k === '@node') {
                                 /** @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaPalette $_element */
                                 $meta = $_element->getLayoutMeta();
-                                if (!empty($meta[0])) {
+                                if (! empty($meta[0])) {
                                     $meta[0] = $_element->getLabel();
                                 }
-                                if (!isset($meta[0])) {
+                                if (! isset($meta[0])) {
                                     $meta[0] = '';
                                 }
-                                $meta[1] = $_element->getId();
-                                $showItem[] = '--palette--;' . implode(';', $meta);
+                                $meta[1]                                     = $_element->getId();
+                                $showItem[]                                  = '--palette--;' . implode(';', $meta);
                                 $paletteShowItem[$element['@node']->getId()] = [];
                             } else {
                                 // Handle line break
@@ -430,9 +439,9 @@ abstract class AbstractTcaTable extends AbstractForm
                                 } else {
                                     // Got a field
                                     /** @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField $_element */
-                                    $meta = $_element->getLayoutMeta();
+                                    $meta    = $_element->getLayoutMeta();
                                     $meta[0] = $_element->getId();
-                                    if (!empty($meta[1])) {
+                                    if (! empty($meta[1])) {
                                         $meta[1] = $_element->getLabel();
                                     }
                                     $paletteShowItem[$element['@node']->getId()][] = implode(';', $meta);
@@ -442,12 +451,12 @@ abstract class AbstractTcaTable extends AbstractForm
                     } else {
                         // Got a field
                         // Check if we got a valid field
-                        if (!$element instanceof TcaField) {
+                        if (! $element instanceof TcaField) {
                             continue;
                         }
-                        $meta = $element->getLayoutMeta();
+                        $meta    = $element->getLayoutMeta();
                         $meta[0] = $element->getId();
-                        if (!empty($meta[1])) {
+                        if (! empty($meta[1])) {
                             $meta[1] = $element->getLabel();
                         }
                         $showItem[] = implode(';', $meta);
@@ -468,7 +477,7 @@ abstract class AbstractTcaTable extends AbstractForm
     /**
      * Helper to inject the table name into a type
      *
-     * @param string $tableName
+     * @param   string  $tableName
      */
     protected function setTableName(string $tableName)
     {

@@ -25,6 +25,7 @@ use TYPO3\CMS\Core\Context\AspectInterface;
 
 /**
  * Class RequestAspect
+ *
  * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
  *
  * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -41,7 +42,7 @@ class RequestAspect implements AspectInterface
     /**
      * RequestAspect constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\RequestFacet $facet
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\Facet\RequestFacet  $facet
      */
     public function __construct(RequestFacet $facet)
     {
@@ -51,6 +52,7 @@ class RequestAspect implements AspectInterface
     /**
      * Returns the http request object that was passed through the middleware stack.
      * Note that this method returns null if there was no request object found, like in CLI context.
+     *
      * @return \Psr\Http\Message\ServerRequestInterface|null
      * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
@@ -62,7 +64,7 @@ class RequestAspect implements AspectInterface
     /**
      * Allows you to update the root typo3 server request for the current execution context
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param   \Psr\Http\Message\ServerRequestInterface  $request
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\RequestAspect
      * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -70,6 +72,7 @@ class RequestAspect implements AspectInterface
     public function setRootRequest(ServerRequestInterface $request): RequestAspect
     {
         $this->facet->setRootRequest($request);
+        
         return $this;
     }
     
@@ -81,14 +84,15 @@ class RequestAspect implements AspectInterface
         if ($name === 'FACET') {
             return $this->facet;
         }
+        
         return $this->handleGet($name);
     }
     
     /**
      * Returns the get value based on the given path of typo's "GeneralUtility::_GET()" method
      *
-     * @param string|array|null $path    The path to the value to retrieve
-     * @param mixed             $default The value to be returned if the searched value was not found.
+     * @param   string|array|null  $path     The path to the value to retrieve
+     * @param   mixed              $default  The value to be returned if the searched value was not found.
      *
      * @return mixed|null The requested value or null
      * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -101,8 +105,8 @@ class RequestAspect implements AspectInterface
     /**
      * Returns the post value based on the given path of typo's "GeneralUtility::_POST()" method
      *
-     * @param string|array|null $path    The path to the value to retrieve
-     * @param mixed             $default The value to be returned if the searched value was not found.
+     * @param   string|array|null  $path     The path to the value to retrieve
+     * @param   mixed              $default  The value to be returned if the searched value was not found.
      *
      * @return mixed|null The requested value or null
      * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -115,7 +119,7 @@ class RequestAspect implements AspectInterface
     /**
      * Returns true if typo's "GeneralUtility::_POST()" method returns a value for $path
      *
-     * @param string|array $path The array path to check for
+     * @param   string|array  $path  The array path to check for
      *
      * @return bool
      * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -128,7 +132,7 @@ class RequestAspect implements AspectInterface
     /**
      * Returns true if typo's "GeneralUtility::_GET()" method returns a value for $path
      *
-     * @param string|array $path The array path to check for
+     * @param   string|array  $path  The array path to check for
      *
      * @return bool
      * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -141,7 +145,7 @@ class RequestAspect implements AspectInterface
     /**
      * Returns the currently defined hostname
      *
-     * @param bool $withProtocol If set to true the protocol (http(s)://) will be added to the host
+     * @param   bool  $withProtocol  If set to true the protocol (http(s)://) will be added to the host
      *
      * @return string
      * @deprecated will be removed in v10 -> Use RequestFacet instead
@@ -153,6 +157,7 @@ class RequestAspect implements AspectInterface
     
     /**
      * Returns the given referrer/origin of the executed request
+     *
      * @return string
      * @deprecated will be removed in v10 -> Use RequestFacet instead
      */

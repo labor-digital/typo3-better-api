@@ -29,18 +29,21 @@ class CustomWizardContext
     
     /**
      * The raw data, given to the user func handler
+     *
      * @var array
      */
     protected $rawData;
     
     /**
      * The form element this wizard is attached to.
+     *
      * @var \TYPO3\CMS\Backend\Form\Element\AbstractFormElement
      */
     protected $formElement;
     
     /**
      * The value of the form field
+     *
      * @var mixed
      */
     protected $value;
@@ -48,7 +51,7 @@ class CustomWizardContext
     /**
      * CustomWizardContext constructor.
      *
-     * @param array $injection
+     * @param   array  $injection
      */
     public function __construct(array $injection)
     {
@@ -61,6 +64,7 @@ class CustomWizardContext
     
     /**
      * Returns the raw data received by the form element node
+     *
      * @return array
      */
     public function getRawData(): array
@@ -70,6 +74,7 @@ class CustomWizardContext
     
     /**
      * Returns the instance of the form element that has this wizard attached
+     *
      * @return \TYPO3\CMS\Backend\Form\NodeInterface
      */
     public function getFormElement(): NodeInterface
@@ -79,6 +84,7 @@ class CustomWizardContext
     
     /**
      * Returns the UID of the record this field is part of
+     *
      * @return int
      */
     public function getRecordUid(): int
@@ -88,6 +94,7 @@ class CustomWizardContext
     
     /**
      * Returns the page id of the record this field is part of
+     *
      * @return int
      */
     public function getRecordPid(): int
@@ -97,6 +104,7 @@ class CustomWizardContext
     
     /**
      * Returns the currently set value for this field
+     *
      * @return array|mixed|null
      */
     public function getValue()
@@ -106,6 +114,7 @@ class CustomWizardContext
     
     /**
      * Returns the complete database record this field is part of
+     *
      * @return array
      */
     public function getRow(): array
@@ -115,6 +124,7 @@ class CustomWizardContext
     
     /**
      * Returns the name of the database table this field is part of
+     *
      * @return string
      */
     public function getTableName(): string
@@ -124,6 +134,7 @@ class CustomWizardContext
     
     /**
      * Returns the name of the database field in the record
+     *
      * @return string
      */
     public function getFieldName(): string
@@ -140,18 +151,19 @@ class CustomWizardContext
     public function getOptions(): array
     {
         $options = Arrays::getPath($this->rawData, ['renderData', 'fieldWizardOptions'], []);
-        if (!is_array($options)) {
+        if (! is_array($options)) {
             return [];
         }
+        
         return $options;
     }
     
     /**
      * Can be used to return a single option, or returns the default value
      *
-     * @param array|string $path    The key, or the path to look up
-     * @param null         $default An optional default value to return if the key/path was not found in the options
-     *                              array
+     * @param   array|string  $path     The key, or the path to look up
+     * @param   null          $default  An optional default value to return if the key/path was not found in the options
+     *                                  array
      *
      * @return array|mixed|null
      */
@@ -163,6 +175,7 @@ class CustomWizardContext
     /**
      * Returns the field name that should be put as "name" attribute of the HTML tag,
      * representing this field
+     *
      * @return string
      */
     public function getRenderName(): string
@@ -172,6 +185,7 @@ class CustomWizardContext
     
     /**
      * The HTML ID that should be set for this field
+     *
      * @return string
      */
     public function getRenderId(): string
@@ -181,6 +195,7 @@ class CustomWizardContext
     
     /**
      * Returns the prepared TCA configuration for this field
+     *
      * @return array
      */
     public function getConfig(): array

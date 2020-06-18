@@ -29,6 +29,7 @@ class PidFacet implements FacetInterface
 {
     /**
      * The pid storage list
+     *
      * @var array
      */
     protected $pids = [];
@@ -41,7 +42,7 @@ class PidFacet implements FacetInterface
     /**
      * PidFacet constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
@@ -51,7 +52,7 @@ class PidFacet implements FacetInterface
     /**
      * Returns true if the pid with the given key exists
      *
-     * @param string $key A key like "myKey" or "storage.myKey" for hierarchical data
+     * @param   string  $key  A key like "myKey" or "storage.myKey" for hierarchical data
      *
      * @return bool
      */
@@ -64,26 +65,27 @@ class PidFacet implements FacetInterface
      * Sets the given pid for the defined key for the current runtime.
      * Note: The mapping will not be persisted!
      *
-     * @param string $key A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
-     * @param int    $pid The numeric page id which should be returned when the given pid is required
+     * @param   string  $key  A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
+     * @param   int     $pid  The numeric page id which should be returned when the given pid is required
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\PidFacet
      */
     public function set(string $key, int $pid): PidFacet
     {
         $this->pids = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
+        
         return $this;
     }
     
     /**
      * Returns the pid for the given key
      *
-     * @param string $key      A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
-     *                         If a key is numeric and can be parsed as integer it will be returned if no
-     *                         pid could be found
-     * @param int    $fallback An optional fallback which will be returned, if the required pid was not found
-     *                         NOTE: If no fallback is defined (-1) the method will throw an exception if the
-     *                         pid was not found in the registry
+     * @param   string  $key       A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
+     *                             If a key is numeric and can be parsed as integer it will be returned if no
+     *                             pid could be found
+     * @param   int     $fallback  An optional fallback which will be returned, if the required pid was not found
+     *                             NOTE: If no fallback is defined (-1) the method will throw an exception if the
+     *                             pid was not found in the registry
      *
      * @return int
      * @throws \LaborDigital\Typo3BetterApi\Pid\InvalidPidException
@@ -91,7 +93,7 @@ class PidFacet implements FacetInterface
     public function get(string $key, int $fallback = -1): int
     {
         $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
-        if (!is_numeric($pid) || $pid === -9999) {
+        if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
                 return $fallback;
             }
@@ -100,11 +102,13 @@ class PidFacet implements FacetInterface
             }
             throw new InvalidPidException('There is no registered pid for key: ' . $key);
         }
+        
         return $pid;
     }
     
     /**
      * Returns the whole list of all registered pid's by their keys
+     *
      * @return array
      */
     public function getAll(): array
@@ -162,6 +166,7 @@ class PidFacet implements FacetInterface
         if ($this->context->Site()->exists()) {
             return $this->context->Site()->get()->getRootPageId();
         }
+        
         return 0;
     }
     
@@ -169,7 +174,7 @@ class PidFacet implements FacetInterface
      * Internal helper to completely replace the pid array.
      * If you use this, use it with care!
      *
-     * @param array $pids
+     * @param   array  $pids
      */
     public function __setAll(array $pids): void
     {
@@ -179,17 +184,18 @@ class PidFacet implements FacetInterface
     /**
      * Internal helper to make sure there is no $pid, (at)pid (stupid annotation parsing...) prefix in the given keys
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return string
      */
     protected function stripPrefix(string $key): string
     {
-        $key = trim($key);
+        $key    = trim($key);
         $prefix = substr($key, 0, 5);
         if ($prefix === '$pid.' || $prefix === '@pid.') {
             return substr($key, 5);
         }
+        
         return $key;
     }
 }

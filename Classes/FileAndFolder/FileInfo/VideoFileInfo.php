@@ -24,6 +24,7 @@ class VideoFileInfo
     
     /**
      * The file info object that represents this video file
+     *
      * @var \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo
      */
     protected $parent;
@@ -31,7 +32,7 @@ class VideoFileInfo
     /**
      * VideoFileInfo constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo $parent
+     * @param   \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo  $parent
      */
     public function __construct(FileInfo $parent)
     {
@@ -50,6 +51,7 @@ class VideoFileInfo
     
     /**
      * Returns the description text to this file or an empty string
+     *
      * @return string
      */
     public function getDescription(): string
@@ -59,15 +61,18 @@ class VideoFileInfo
     
     /**
      * Returns true if this video has an auto-play or not
+     *
      * @return bool
      */
     public function isAutoPlay(): bool
     {
-        return $this->parent->isFileReference() ? (bool)$this->parent->getFileReference()->getReferenceProperty('autoplay') : false;
+        return $this->parent->isFileReference() ? (bool)$this->parent->getFileReference()
+                                                                     ->getReferenceProperty('autoplay') : false;
     }
     
     /**
      * Returns true if this is a youTube video, false if not
+     *
      * @return bool
      */
     public function isYouTube(): bool
@@ -77,6 +82,7 @@ class VideoFileInfo
     
     /**
      * Returns true if this is a vimeo video, false if not
+     *
      * @return bool
      */
     public function isVimeo(): bool
@@ -86,6 +92,7 @@ class VideoFileInfo
     
     /**
      * Returns the video id on youtube or on vimeo or the url if the video is locally hosted
+     *
      * @return string
      */
     public function getVideoId(): string
@@ -93,6 +100,7 @@ class VideoFileInfo
         if ($this->isVimeo() || $this->isYouTube()) {
             return $this->parent->getFile()->getContents();
         }
+        
         return $this->parent->getUrl();
     }
 }

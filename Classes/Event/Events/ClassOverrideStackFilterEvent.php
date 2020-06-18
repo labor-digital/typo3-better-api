@@ -38,7 +38,7 @@ class ClassOverrideStackFilterEvent
     /**
      * ClassOverrideStackFilterEvent constructor.
      *
-     * @param array $stack
+     * @param   array  $stack
      */
     public function __construct(array $stack)
     {
@@ -48,6 +48,7 @@ class ClassOverrideStackFilterEvent
     /**
      * Returns the list of steps that are required to resolve a class through
      * all it's overrides.
+     *
      * @return array
      */
     public function getStack(): array
@@ -59,13 +60,14 @@ class ClassOverrideStackFilterEvent
      * Can be used to set the list of steps that are required to resolve a class through
      * all it's overrides.
      *
-     * @param array $stack
+     * @param   array  $stack
      *
      * @return ClassOverrideStackFilterEvent
      */
     public function setStack(array $stack): ClassOverrideStackFilterEvent
     {
         $this->stack = $stack;
+        
         return $this;
     }
 }

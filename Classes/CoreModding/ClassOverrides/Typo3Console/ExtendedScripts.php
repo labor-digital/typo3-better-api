@@ -34,6 +34,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This class is an adapter for helhum's Typo3 Console package.
  * It creates a lot of the framework manually and does not rely on the bootstrap class we normally
  * extend for our means. So we use this additional override to provide support for our required events
+ *
  * @package LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console
  */
 class ExtendedScripts extends BetterApiClassOverrideCopy__Scripts

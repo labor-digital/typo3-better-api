@@ -27,13 +27,14 @@ class Naming
     /**
      * Receives the class of a plugin / module controller and returns the matching plugin name
      *
-     * @param string $controllerClass
+     * @param   string  $controllerClass
      *
      * @return string
      */
     public static function pluginNameFromControllerClass(string $controllerClass): string
     {
         $pluginName = Path::classBasename($controllerClass);
+        
         return preg_replace('/Controller$/si', '', $pluginName);
     }
     
@@ -42,8 +43,8 @@ class Naming
      * "myextension_mypluginname" Note: Vendors are not allowed in the extkey when defining plugin signatures, so we
      * will automatically strip potential vendors from the extkey.
      *
-     * @param string $pluginName
-     * @param string $extkey
+     * @param   string  $pluginName
+     * @param   string  $extkey
      *
      * @return string
      */
@@ -58,16 +59,17 @@ class Naming
      * we want to keep the vendor to flatten to sometik like: "vendormyextension" for which the $keepVendor option is
      * present.
      *
-     * @param string $extkey
-     * @param bool   $keepVendor True keepy the vendor in your extkey
+     * @param   string  $extkey
+     * @param   bool    $keepVendor  True keepy the vendor in your extkey
      *
      * @return string
      */
     public static function flattenExtKey(string $extkey, bool $keepVendor = false): string
     {
-        if (!$keepVendor) {
+        if (! $keepVendor) {
             $extkey = static::extkeyWithoutVendor($extkey);
         }
+        
         return strtolower(str_replace(['_', ' ', '.'], '', trim($extkey)));
     }
     
@@ -76,7 +78,7 @@ class Naming
      * which results in "my_extension". It also accepts a plain extkey like "my_extension" which will
      * be passed trough without poroblem.
      *
-     * @param string $extkey
+     * @param   string  $extkey
      *
      * @return string
      */
@@ -85,6 +87,7 @@ class Naming
         if (strpos($extkey, '.') === false) {
             return $extkey;
         }
+        
         return substr($extkey, strpos($extkey, '.') + 1);
     }
     
@@ -92,7 +95,7 @@ class Naming
      * Receives the ext key, which may include a vendor like "vendor.my_extension". If it contains a vendor, "vendor"
      * will be returned. If an extkey like "my_extension" is passed, an empty string is returned instead.
      *
-     * @param string $extkey
+     * @param   string  $extkey
      *
      * @return string
      */
@@ -101,6 +104,7 @@ class Naming
         if (strpos($extkey, '.') === false) {
             return '';
         }
+        
         return substr($extkey, 0, strpos($extkey, '.'));
     }
     
@@ -108,7 +112,7 @@ class Naming
      * Recieves a typo callback like namespace\\class->method
      * and converts it into an array of ["class"=>"namespace\\class", "method" => "method"]
      *
-     * @param string $callback The callback to be parsed
+     * @param   string  $callback  The callback to be parsed
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\NamingConvention\NamingConventionException
@@ -128,6 +132,7 @@ class Naming
                 'Invalid TypoCallback given: "' . $callback . '". It has to be something like: namespace\\class->method'
             );
         }
+        
         return [
             'class'  => trim(str_replace('/', '\\', $callbackParts[0]), '\\ '),
             'method' => trim($callbackParts[1], ' \\/()'),

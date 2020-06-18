@@ -29,6 +29,7 @@ class FrontendCache extends AbstractCache
     protected function prepareKey($key): string
     {
         $key = parent::prepareKey($key);
+        
         return $key . 'fe-' . $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId();
     }
 }

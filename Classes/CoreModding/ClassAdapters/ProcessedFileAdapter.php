@@ -27,9 +27,9 @@ class ProcessedFileAdapter extends ProcessedFile
     /**
      * Internal helper to inject additional properties into processed files
      *
-     * @param \TYPO3\CMS\Core\Resource\ProcessedFile $file
-     * @param string                                 $key
-     * @param                                        $value
+     * @param   \TYPO3\CMS\Core\Resource\ProcessedFile  $file
+     * @param   string                                  $key
+     * @param                                           $value
      */
     public static function injectProperty(ProcessedFile $file, string $key, $value)
     {
@@ -39,8 +39,8 @@ class ProcessedFileAdapter extends ProcessedFile
     /**
      * Extracts a single property from a processed file ignoring the original file completely
      *
-     * @param \TYPO3\CMS\Core\Resource\ProcessedFile $file
-     * @param string                                 $key
+     * @param   \TYPO3\CMS\Core\Resource\ProcessedFile  $file
+     * @param   string                                  $key
      *
      * @return mixed
      */

@@ -41,7 +41,7 @@ class RegisterRuntimePackagesEvent
     /**
      * RegisterRuntimePackagesEvent constructor.
      *
-     * @param \TYPO3\CMS\Core\Package\PackageManager $packageManager
+     * @param   \TYPO3\CMS\Core\Package\PackageManager  $packageManager
      */
     public function __construct(PackageManager $packageManager)
     {
@@ -50,6 +50,7 @@ class RegisterRuntimePackagesEvent
     
     /**
      * Returns the package manager instance
+     *
      * @return \TYPO3\CMS\Core\Package\PackageManager
      */
     public function getPackageManager(): PackageManager

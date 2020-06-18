@@ -37,54 +37,63 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * The result of the executed generator
+     *
      * @var mixed
      */
     protected $result;
     
     /**
      * The cache key to store the result with
+     *
      * @var string|null
      */
     protected $cacheKey;
     
     /**
      * The unique key of the cached value
+     *
      * @var string
      */
     protected $key;
     
     /**
      * The generator callback that was executed
+     *
      * @var callable
      */
     protected $generator;
     
     /**
      * Additional data that may have been passed to the generator
+     *
      * @var array
      */
     protected $additionalData;
     
     /**
      * The context object that was used to generate the result
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     protected $context;
     
     /**
      * The option the cached value is been generated for
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
      */
     protected $option;
     
     /**
      * The current list of elements that are registered for the cached value generator of a certain $key
+     *
      * @var array
      */
     protected $config;
     
     /**
      * True if the generated value should be cached, false if not
+     *
      * @var bool
      */
     protected $useCache;
@@ -92,15 +101,15 @@ class ExtConfigCachedValueFilterEvent
     /**
      * ExtConfigCachedValueFilterEvent constructor.
      *
-     * @param mixed                                                                 $result
-     * @param string|null                                                           $cacheKey
-     * @param string                                                                $key
-     * @param callable                                                              $generator
-     * @param array                                                                 $additionalData
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext               $context
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption $option
-     * @param array                                                                 $config
-     * @param bool                                                                  $useCache
+     * @param   mixed                                                                  $result
+     * @param   string|null                                                            $cacheKey
+     * @param   string                                                                 $key
+     * @param   callable                                                               $generator
+     * @param   array                                                                  $additionalData
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext                $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption  $option
+     * @param   array                                                                  $config
+     * @param   bool                                                                   $useCache
      */
     public function __construct(
         $result,
@@ -112,21 +121,21 @@ class ExtConfigCachedValueFilterEvent
         AbstractExtConfigOption $option,
         array $config,
         bool $useCache
-    )
-    {
-        $this->result = $result;
-        $this->cacheKey = $cacheKey;
-        $this->key = $key;
-        $this->generator = $generator;
+    ) {
+        $this->result         = $result;
+        $this->cacheKey       = $cacheKey;
+        $this->key            = $key;
+        $this->generator      = $generator;
         $this->additionalData = $additionalData;
-        $this->context = $context;
-        $this->option = $option;
-        $this->config = $config;
-        $this->useCache = $useCache;
+        $this->context        = $context;
+        $this->option         = $option;
+        $this->config         = $config;
+        $this->useCache       = $useCache;
     }
     
     /**
      * Returns the result of the executed generator
+     *
      * @return mixed
      */
     public function getResult()
@@ -137,18 +146,20 @@ class ExtConfigCachedValueFilterEvent
     /**
      * Updates the result of the executed generator
      *
-     * @param mixed $result
+     * @param   mixed  $result
      *
      * @return ExtConfigCachedValueFilterEvent
      */
     public function setResult($result)
     {
         $this->result = $result;
+        
         return $this;
     }
     
     /**
      * Returns true if the generated value should be cached, false if not
+     *
      * @return bool
      */
     public function isUseCache(): bool
@@ -159,18 +170,20 @@ class ExtConfigCachedValueFilterEvent
     /**
      * Updates the state if the generated value should be cached or not
      *
-     * @param bool $useCache
+     * @param   bool  $useCache
      *
      * @return ExtConfigCachedValueFilterEvent
      */
     public function setUseCache(bool $useCache): ExtConfigCachedValueFilterEvent
     {
         $this->useCache = $useCache;
+        
         return $this;
     }
     
     /**
      * Returns the cache key to store the result with
+     *
      * @return string|null
      */
     public function getCacheKey(): ?string
@@ -180,6 +193,7 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * Returns the unique key of the cached value
+     *
      * @return string
      */
     public function getKey(): string
@@ -189,6 +203,7 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * Returns the generator callback that was executed
+     *
      * @return callable
      */
     public function getGenerator(): callable
@@ -198,6 +213,7 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * Returns additional data that may have been passed to the generator
+     *
      * @return array
      */
     public function getAdditionalData(): array
@@ -207,6 +223,7 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * Returns the context object that was used to generate the result
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     public function getContext(): ExtConfigContext
@@ -216,6 +233,7 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * Returns the option the cached value is been generated for
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption
      */
     public function getOption(): AbstractExtConfigOption
@@ -225,6 +243,7 @@ class ExtConfigCachedValueFilterEvent
     
     /**
      * Returns the current list of elements that are registered for the cached value generator of a certain $key
+     *
      * @return array
      */
     public function getConfig(): array

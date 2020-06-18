@@ -33,18 +33,21 @@ class RelatedRecordRow
     
     /**
      * The unique id of the record in this row
+     *
      * @var int
      */
     protected $uid;
     
     /**
      * The name of the table this row comes from
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The raw database row that was fetched
+     *
      * @var array
      */
     protected $row;
@@ -52,19 +55,20 @@ class RelatedRecordRow
     /**
      * RelatedRecordRow constructor.
      *
-     * @param int    $uid
-     * @param string $tableName
-     * @param array  $row
+     * @param   int     $uid
+     * @param   string  $tableName
+     * @param   array   $row
      */
     public function __construct(int $uid, string $tableName, array $row)
     {
-        $this->uid = $uid;
+        $this->uid       = $uid;
         $this->tableName = $tableName;
-        $this->row = $row;
+        $this->row       = $row;
     }
     
     /**
      * Returns the unique id of the record in this row
+     *
      * @return int
      */
     public function getUid(): int
@@ -74,6 +78,7 @@ class RelatedRecordRow
     
     /**
      * Returns the name of the table this row comes from
+     *
      * @return string
      */
     public function getTableName(): string
@@ -83,6 +88,7 @@ class RelatedRecordRow
     
     /**
      * Returns the raw database row that was fetched
+     *
      * @return array
      */
     public function getRow(): array

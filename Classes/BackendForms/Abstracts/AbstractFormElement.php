@@ -28,36 +28,42 @@ abstract class AbstractFormElement
     
     /**
      * The context in which the tab was generated
+     *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     protected $context;
     
     /**
      * Contains the label for the tab
+     *
      * @var string
      */
     protected $label;
     
     /**
      * A id for this element
+     *
      * @var string
      */
     protected $id = 0;
     
     /**
      * The parent element of this element (either the form, or a container element)
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormContainer
      */
     protected $parent;
     
     /**
      * The parent form / table definition of this element
+     *
      * @var AbstractForm|TcaTable|FlexForm
      */
     protected $form;
     
     /**
      * The configuration of this element
+     *
      * @var array
      */
     protected $config = [];
@@ -65,12 +71,12 @@ abstract class AbstractFormElement
     /**
      * AbstractFormElement constructor.
      *
-     * @param string           $id
-     * @param ExtConfigContext $context
+     * @param   string            $id
+     * @param   ExtConfigContext  $context
      */
     public function __construct(string $id, ExtConfigContext $context)
     {
-        $this->id = $id;
+        $this->id      = $id;
         $this->context = $context;
     }
     
@@ -85,14 +91,15 @@ abstract class AbstractFormElement
      *    - top:container positions the element as first element of a container/tab
      *    - bottom:container positions the element as last element of a container/tab
      *
-     * @param string $position Either the position to move the field to, or the field will be added to the end of the
-     *                         FIRST possible tab
+     * @param   string  $position  Either the position to move the field to, or the field will be added to the end of
+     *                             the FIRST possible tab
      *
      * @return $this
      */
     public function moveTo(string $position = '0')
     {
         $this->getForm()->moveElementInstance($this, $position);
+        
         return $this;
     }
     
@@ -110,7 +117,7 @@ abstract class AbstractFormElement
     /**
      * Internal helper which is used to inject the parent element of this element
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormContainer $parent
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormContainer  $parent
      */
     public function __setParent(AbstractFormContainer $parent)
     {
@@ -119,6 +126,7 @@ abstract class AbstractFormElement
     
     /**
      * Returns the instance of the parent form / parent table
+     *
      * @return AbstractForm|TcaTable|FlexForm
      */
     public function getForm()
@@ -129,7 +137,7 @@ abstract class AbstractFormElement
     /**
      * Internal helper which is used to inject the reference of the parent form of this element
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractForm $form
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractForm  $form
      */
     public function __setForm(AbstractForm $form)
     {
@@ -138,6 +146,7 @@ abstract class AbstractFormElement
     
     /**
      * Returns the current id for this element
+     *
      * @return string
      */
     public function getId(): string
@@ -147,6 +156,7 @@ abstract class AbstractFormElement
     
     /**
      * Returns the currently set label for this tab
+     *
      * @return string
      */
     public function getLabel(): string
@@ -157,31 +167,33 @@ abstract class AbstractFormElement
     /**
      * Can be used to set the label for this tab
      *
-     * @param string|null $label
+     * @param   string|null  $label
      *
      * @return $this
      */
     public function setLabel(?string $label)
     {
         $this->label = $label;
+        
         return $this;
     }
     
     /**
      * Returns true if the element has a defined label, false if not
+     *
      * @return bool
      */
     public function hasLabel(): bool
     {
-        return !is_null($this->label);
+        return ! is_null($this->label);
     }
     
     /**
      * Can be used to set raw config values, that are not implemented in this facade.
      * Set either key => value pairs, or an Array of key => value pairs
      *
-     * @param array|string|int $key   Either a key to set the given $value for, or an array of $key => $value pairs
-     * @param null             $value The value to set for the given $key (if $key is not an array)
+     * @param   array|string|int  $key    Either a key to set the given $value for, or an array of $key => $value pairs
+     * @param   null              $value  The value to set for the given $key (if $key is not an array)
      *
      * @return $this
      */
@@ -198,11 +210,13 @@ abstract class AbstractFormElement
             $this->label = $this->config['label'];
         }
         unset($this->config['label']);
+        
         return $this;
     }
     
     /**
      * Returns the raw configuration array for this object
+     *
      * @return array
      */
     public function getRaw(): array
@@ -215,8 +229,8 @@ abstract class AbstractFormElement
      */
     public function remove(): void
     {
-        $id = ($this instanceof AbstractFormContainer &&
-            !$this instanceof AbstractFormTab ? '_' : '') . $this->getId();
+        $id = ($this instanceof AbstractFormContainer
+               && ! $this instanceof AbstractFormTab ? '_' : '') . $this->getId();
         $this->getParent()->removeElement($id);
     }
 }

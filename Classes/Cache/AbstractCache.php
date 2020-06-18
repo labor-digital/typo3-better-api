@@ -57,6 +57,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     /**
      * Global holder for the cache frontend
      * Always use getTypoCache() instead of this property!
+     *
      * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
      */
     private $cache;
@@ -64,6 +65,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     /**
      * Contains either true or false once it was determined if the cache was enabled or not.
      * -> This can also be used for the logic in isCachedEnabled() like HTTP_CACHE_CONTROL and similar rules.
+     *
      * @var bool|null
      */
     protected $cacheEnabled;
@@ -86,7 +88,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     /**
      * Typo3 dependency injector
      *
-     * @param \TYPO3\CMS\Core\Cache\CacheManager $cacheManager
+     * @param   \TYPO3\CMS\Core\Cache\CacheManager  $cacheManager
      */
     public function injectCacheManager(CacheManager $cacheManager)
     {
@@ -96,7 +98,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     /**
      * Typo3 dependency injector
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $typoContext
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $typoContext
      */
     public function injectTypoContext(TypoContext $typoContext)
     {
@@ -106,7 +108,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     /**
      * Typo3 dependency injector
      *
-     * @param \LaborDigital\Typo3BetterApi\Tsfe\TsfeService $tsfe
+     * @param   \LaborDigital\Typo3BetterApi\Tsfe\TsfeService  $tsfe
      */
     public function injectTsfe(TsfeService $tsfe)
     {
@@ -123,14 +125,15 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     public function clear()
     {
         $this->getTypoCache()->flush();
+        
         return true;
     }
     
     /**
      * Obtains multiple cache items by their unique keys.
      *
-     * @param iterable $keys    A list of keys that can obtained in a single operation.
-     * @param mixed    $default Default value to return for keys that do not exist.
+     * @param   iterable  $keys     A list of keys that can obtained in a single operation.
+     * @param   mixed     $default  Default value to return for keys that do not exist.
      *
      * @return iterable A list of key => value pairs. Cache keys that do not exist or are stale will have $default as
      *                  value.
@@ -145,14 +148,15 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         foreach ($keys as $key) {
             $result->add($key, $this->get($key, $default));
         }
+        
         return $result;
     }
     
     /**
      * Fetches a value from the cache.
      *
-     * @param string $key     The unique key of this item in the cache.
-     * @param mixed  $default Default value to return if the key does not exist.
+     * @param   string  $key      The unique key of this item in the cache.
+     * @param   mixed   $default  Default value to return if the key does not exist.
      *
      * @return mixed The value of the item from the cache, or $default in case of cache miss.
      * @throws \LaborDigital\Typo3BetterApi\Tsfe\TsfeNotLoadedException
@@ -164,9 +168,9 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         // Prepare key
         $key = $this->prepareKey($key);
         // Check if the cache is disabled
-        if (!$this->isCacheEnabled()) {
+        if (! $this->isCacheEnabled()) {
             // Check if the key is allowed even without cache
-            if (!Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
+            if (! Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
                 return $default;
             }
         }
@@ -183,10 +187,10 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
-     * @param iterable               $values A list of key => value pairs for a multiple-set operation.
-     * @param null|int|\DateInterval $ttl    Optional. The TTL value of this item. If no value is sent and
-     *                                       the driver supports TTL then the library may set a default value
-     *                                       for it or let the driver take care of that.
+     * @param   iterable                $values  A list of key => value pairs for a multiple-set operation.
+     * @param   null|int|\DateInterval  $ttl     Optional. The TTL value of this item. If no value is sent and
+     *                                           the driver supports TTL then the library may set a default value
+     *                                           for it or let the driver take care of that.
      *
      * @return bool True on success and false on failure.
      * @throws NoSuchCacheException
@@ -198,17 +202,18 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         foreach ($values as $k => $v) {
             $result = $this->setInternal($k, $v, $ttl) && $result;
         }
+        
         return $result;
     }
     
     /**
      * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
      *
-     * @param string                 $key   The key of the item to store.
-     * @param mixed                  $value The value of the item to store, must be serializable.
-     * @param null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
-     *                                      the driver supports TTL then the library may set a default value
-     *                                      for it or let the driver take care of that.
+     * @param   string                  $key    The key of the item to store.
+     * @param   mixed                   $value  The value of the item to store, must be serializable.
+     * @param   null|int|\DateInterval  $ttl    Optional. The TTL value of this item. If no value is sent and
+     *                                          the driver supports TTL then the library may set a default value
+     *                                          for it or let the driver take care of that.
      *
      * @return bool True on success and false on failure.
      * @throws NoSuchCacheException
@@ -233,13 +238,14 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     public function clearTags(array $tags)
     {
         $this->getTypoCache()->flushByTags($tags);
+        
         return true;
     }
     
     /**
      * Deletes multiple cache items in a single operation.
      *
-     * @param iterable $keys A list of string-based keys to be deleted.
+     * @param   iterable  $keys  A list of string-based keys to be deleted.
      *
      * @return bool True if the items were successfully removed. False if there was an error.
      *
@@ -252,13 +258,14 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         foreach ($keys as $key) {
             $result = $this->delete($key) && $result;
         }
+        
         return $result;
     }
     
     /**
      * Delete an item from the cache by its unique key.
      *
-     * @param string $key The unique cache key of the item to delete.
+     * @param   string  $key  The unique cache key of the item to delete.
      *
      * @return bool True if the item was successfully removed. False if there was an error.
      *
@@ -268,6 +275,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     public function delete($key)
     {
         $this->getTypoCache()->remove($this->prepareKey($key));
+        
         return true;
     }
     
@@ -279,7 +287,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
      * is subject to a race condition where your has() will return true and immediately after,
      * another script can remove it making the state of your app out of date.
      *
-     * @param string $key The cache item key.
+     * @param   string  $key  The cache item key.
      *
      * @return bool
      *
@@ -293,9 +301,9 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         $key = $this->prepareKey($key);
         
         // Check if the cache is disabled
-        if (!$this->isCacheEnabled()) {
+        if (! $this->isCacheEnabled()) {
             // Check if the key is allowed even without cache
-            if (!Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
+            if (! Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
                 return false;
             }
         }
@@ -310,7 +318,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     public function makeCacheKey(...$args): string
     {
         // Prepare caller based cache prefix
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $trace  = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $prefix = '';
         if (isset($trace[1])) {
             $action = isset($trace[1]['function']) ? $trace[1]['function'] : 'unknown';
@@ -345,6 +353,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
                 $props[] = json_encode($list);
             }
             sort($props);
+            
             return hash('sha512', implode('-', $props));
         };
         
@@ -368,17 +377,19 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         }
         
         // Validate that we have a key
-        if (!is_string($this->cacheConfigKey) || empty($this->cacheConfigKey)) {
-            throw new CacheException('The cache implementation: ' . get_called_class() . ' does not specify the required cacheConfigKey property!');
+        if (! is_string($this->cacheConfigKey) || empty($this->cacheConfigKey)) {
+            throw new CacheException('The cache implementation: ' . get_called_class()
+                                     . ' does not specify the required cacheConfigKey property!');
         }
         
         // Check if the cache exists (otherwise we are maybe to early?)
-        if (!$this->cacheManager->hasCache($this->cacheConfigKey)) {
+        if (! $this->cacheManager->hasCache($this->cacheConfigKey)) {
             // Check if we can register the cache manually
-            $config = Arrays::getPath($GLOBALS, Arrays::mergePaths('TYPO3_CONF_VARS.SYS.caching.cacheConfigurations', [$this->cacheConfigKey]));
+            $config = Arrays::getPath($GLOBALS,
+                Arrays::mergePaths('TYPO3_CONF_VARS.SYS.caching.cacheConfigurations', [$this->cacheConfigKey]));
             
             // Check if we found cache configurations
-            if (!empty($config)) {
+            if (! empty($config)) {
                 if (method_exists($this->cacheManager, '__injectRawCacheConfig')) {
                     $this->cacheManager->__injectRawCacheConfig($this->cacheConfigKey, $config);
                 } else {
@@ -394,7 +405,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         
         // Check if the cache class has its own definition
         $config = $this->defineCacheConfiguration();
-        if (!empty($config)) {
+        if (! empty($config)) {
             if (method_exists($this->cacheManager, '__injectRawCacheConfig')) {
                 $this->cacheManager->__injectRawCacheConfig($this->cacheConfigKey, $config);
             } else {
@@ -411,6 +422,7 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
     
     /**
      * Returns true if the cache should be used, or false if we should work without the cache
+     *
      * @return bool
      * @throws \LaborDigital\Typo3BetterApi\Tsfe\TsfeNotLoadedException
      * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
@@ -423,22 +435,24 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         }
         
         // Check if the cache is disabled
-        $isFrontend = $this->typoContext->getEnvAspect()->isFrontend();
-        $hasFrontend = $isFrontend && $this->tsfe->hasTsfe();
-        $hasBeUser = isset($GLOBALS['BE_USER']);
-        $userCanClearCache = $hasBeUser && $GLOBALS['BE_USER']->isAdmin();
-        $disabledByFrontend = $userCanClearCache && $hasFrontend && (bool)$this->tsfe->getTsfe()->no_cache;
-        $disabledByCacheControl = $userCanClearCache && isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] == 'no-cache';
-        $disabledByCachePragma = $userCanClearCache && isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] == 'no-cache';
+        $isFrontend             = $this->typoContext->getEnvAspect()->isFrontend();
+        $hasFrontend            = $isFrontend && $this->tsfe->hasTsfe();
+        $hasBeUser              = isset($GLOBALS['BE_USER']);
+        $userCanClearCache      = $hasBeUser && $GLOBALS['BE_USER']->isAdmin();
+        $disabledByFrontend     = $userCanClearCache && $hasFrontend && (bool)$this->tsfe->getTsfe()->no_cache;
+        $disabledByCacheControl = $userCanClearCache && isset($_SERVER['HTTP_CACHE_CONTROL'])
+                                  && $_SERVER['HTTP_CACHE_CONTROL'] == 'no-cache';
+        $disabledByCachePragma  = $userCanClearCache && isset($_SERVER['HTTP_PRAGMA'])
+                                  && $_SERVER['HTTP_PRAGMA'] == 'no-cache';
         
         // Check if cache is active
-        return !$disabledByFrontend && !$disabledByCachePragma && !$disabledByCacheControl;
+        return ! $disabledByFrontend && ! $disabledByCachePragma && ! $disabledByCacheControl;
     }
     
     /**
      * Unifies any given key into a filesave format
      *
-     * @param mixed $key
+     * @param   mixed  $key
      *
      * @return string
      */
@@ -452,23 +466,24 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         // Encode key
         $key = Inflector::toFile(serialize($key));
         $key = substr($key, 0, 100) . '-' . md5($key);
+        
         return 'sc-' . $key;
     }
     
     /**
      * Internal set wrapper to allow the setting of tags without conflicting with the interface
      *
-     * @param       $key
-     * @param       $value
-     * @param null  $ttl
-     * @param array $tags
+     * @param          $key
+     * @param          $value
+     * @param   null   $ttl
+     * @param   array  $tags
      *
      * @return bool
      * @throws \TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException
      */
     protected function setInternal($key, $value, $ttl = null, $tags = [])
     {
-        $key = $this->prepareKey($key);
+        $key                                                   = $this->prepareKey($key);
         static::$allowedCacheKeys[$this->cacheConfigKey][$key] = true;
         
         // Make sure we unpack lazy objects
@@ -482,13 +497,14 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
         }
         
         $this->getTypoCache()->set($key, $value, $tags, $this->prepareTtl($ttl));
+        
         return true;
     }
     
     /**
      * Converts any given interval to a number of seconds for the typo3 backends
      *
-     * @param int|\DateInterval|null $ttl
+     * @param   int|\DateInterval|null  $ttl
      *
      * @return int|null
      */
@@ -498,15 +514,17 @@ abstract class AbstractCache implements SingletonInterface, SimpleTypoCacheInter
             $ttl = (($ttl->d * 24 * 60) + ($ttl->h * 60) + $ttl->i) * 60 + $ttl->s;
         } elseif (is_numeric($ttl)) {
             $ttl = (int)$ttl;
-        } elseif (!is_null($ttl)) {
+        } elseif (! is_null($ttl)) {
             $ttl = 0;
         }
+        
         // Done
         return $ttl;
     }
     
     /**
      * Only used to define a hardcoded cache configuration
+     *
      * @return array
      * @internal
      */

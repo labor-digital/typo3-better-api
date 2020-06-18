@@ -27,8 +27,8 @@ interface LinkSetConfigurationInterface
     /**
      * Is used to collect the link sets this configuration provides
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector $collector
-     * @param ExtConfigContext                                                         $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector  $collector
+     * @param   ExtConfigContext                                                                 $context
      *
      * @return mixed
      */

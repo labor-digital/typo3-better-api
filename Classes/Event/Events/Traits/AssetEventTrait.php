@@ -27,12 +27,14 @@ trait AssetEventTrait
 {
     /**
      * The list of all assets to be filtered
+     *
      * @var array
      */
     protected $assets;
     
     /**
      * The instance of the page renderer object
+     *
      * @var \TYPO3\CMS\Core\Page\PageRenderer
      */
     protected $pageRenderer;
@@ -40,17 +42,18 @@ trait AssetEventTrait
     /**
      * AssetFilterTrait constructor.
      *
-     * @param array                             $assets
-     * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer
+     * @param   array                              $assets
+     * @param   \TYPO3\CMS\Core\Page\PageRenderer  $pageRenderer
      */
     public function __construct(array $assets, PageRenderer $pageRenderer)
     {
-        $this->assets = $assets;
+        $this->assets       = $assets;
         $this->pageRenderer = $pageRenderer;
     }
     
     /**
      * Returns the list of all assets to be filtered
+     *
      * @return array
      */
     public function getAssets(): array
@@ -61,18 +64,20 @@ trait AssetEventTrait
     /**
      * Updates the list of all assets to be filtered
      *
-     * @param array $assets
+     * @param   array  $assets
      *
      * @return AssetEventTrait
      */
     public function setAssets(array $assets): AssetEventTrait
     {
         $this->assets = $assets;
+        
         return $this;
     }
     
     /**
      * Returns the instance of the page renderer object
+     *
      * @return \TYPO3\CMS\Core\Page\PageRenderer
      */
     public function getPageRenderer(): PageRenderer

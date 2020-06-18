@@ -42,6 +42,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
     /**
      * The list of all option classes by their option name
      * The value is populated by the generate() method
+     *
      * @var array
      */
     protected $options;
@@ -58,7 +59,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
      * Returns either the class name for an option name or null
      * if none was registered
      *
-     * @param string $optionName The name of the option to check for
+     * @param   string  $optionName  The name of the option to check for
      *
      * @return string|null
      */
@@ -77,7 +78,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
         
         // Get or generate the options
         $fileName = "OptionListOptions-$hash.php";
-        if (!$this->context->Fs->hasFile($fileName)) {
+        if (! $this->context->Fs->hasFile($fileName)) {
             $this->options = $this->generateOptionClassList($extensions);
             $this->context->Fs->setFileContent($fileName, $this->options);
         } else {
@@ -86,7 +87,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
         
         // Compile if the trait does not exist
         $fileName = "OptionListTrait-$hash.php";
-        if (!$this->context->Fs->hasFile($fileName)) {
+        if (! $this->context->Fs->hasFile($fileName)) {
             $methods = [];
             foreach ($this->options as $name => $class) {
                 $methods[] = $this->makeOptionSrc($name, $class);
@@ -95,7 +96,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
         }
         
         // Include the trait if it does not exist yet
-        if (!trait_exists(static::TRAIT_NAME)) {
+        if (! trait_exists(static::TRAIT_NAME)) {
             $this->context->Fs->includeFile($fileName);
         }
     }
@@ -103,7 +104,7 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
     /**
      * Returns the list of the generated options based on the given extensions
      *
-     * @param array $extensions
+     * @param   array  $extensions
      *
      * @return array
      */
@@ -121,14 +122,15 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
             }
             $options[$optionName] = $extension['class'];
         }
+        
         return $options;
     }
     
     /**
      * Builds the method source code for a single option
      *
-     * @param string $optionName
-     * @param string $className
+     * @param   string  $optionName
+     * @param   string  $className
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
@@ -136,16 +138,20 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
     protected function makeOptionSrc(string $optionName, string $className): string
     {
         // Validate class
-        if (!class_exists($className)) {
-            throw new ExtConfigException('Failed to build body for option: ' . $optionName . ' because the registered class: ' . $className . ' does not exist!');
+        if (! class_exists($className)) {
+            throw new ExtConfigException('Failed to build body for option: ' . $optionName
+                                         . ' because the registered class: ' . $className . ' does not exist!');
         }
-        if (!in_array(ExtConfigOptionInterface::class, class_implements($className))) {
-            throw new ExtConfigException('Failed to build body for option: ' . $optionName . ' because the registered class: ' . $className . ' does not implement the ' . ExtConfigOptionInterface::class . ' interface!');
+        if (! in_array(ExtConfigOptionInterface::class, class_implements($className))) {
+            throw new ExtConfigException('Failed to build body for option: ' . $optionName
+                                         . ' because the registered class: ' . $className . ' does not implement the '
+                                         . ExtConfigOptionInterface::class . ' interface!');
         }
         
         // Get description from the class
-        $ref = new ReflectionClass($className);
+        $ref  = new ReflectionClass($className);
         $desc = $this->sanitizeDesc($ref->getDocComment());
+        
         return "
 	/**
 	 * $desc
@@ -160,15 +166,16 @@ class ExtConfigOptionTraitGenerator implements ExtConfigExtensionHandlerInterfac
     /**
      * Creates the outer body of the generated trait
      *
-     * @param array $methods
+     * @param   array  $methods
      *
      * @return string
      */
     protected function makeTraitSrc(array $methods): string
     {
-        $body = implode(PHP_EOL . PHP_EOL, $methods);
+        $body      = implode(PHP_EOL . PHP_EOL, $methods);
         $namespace = Path::classNamespace(static::TRAIT_NAME);
         $className = Path::classBasename(static::TRAIT_NAME);
+        
         return "<?php
 namespace $namespace;
 

@@ -32,14 +32,15 @@ class CustomElementContextFilter implements LazyEventSubscriberInterface
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription)
     {
-        $subscription->subscribe(BackendFormActionContextFilterEvent::class, '__filterFormActionHandlerContextForCustomElements');
+        $subscription->subscribe(BackendFormActionContextFilterEvent::class,
+            '__filterFormActionHandlerContextForCustomElements');
     }
     
     /**
      * This is an internal event which hooks into the BackendActionHandler and updates the
      * used context class for custom elements
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormActionContextFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormActionContextFilterEvent  $event
      */
     public function __filterFormActionHandlerContextForCustomElements(BackendFormActionContextFilterEvent $event)
     {

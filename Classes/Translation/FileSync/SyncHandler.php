@@ -39,7 +39,7 @@ class SyncHandler implements SingletonInterface
     /**
      * SyncHandler constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainer $container
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainer  $container
      */
     public function __construct(TypoContainer $container)
     {
@@ -49,29 +49,28 @@ class SyncHandler implements SingletonInterface
     /**
      * Receives the directory iterator of the target directory, containing only .xlf files to sync
      *
-     * @param \Iterator $iterator The directory iterator
-     * @param array     $options  Options inherited from TranslationFileSync::syncFilesInDir()
+     * @param   \Iterator  $iterator  The directory iterator
+     * @param   array      $options   Options inherited from TranslationFileSync::syncFilesInDir()
      */
     public function sync(Iterator $iterator, array $options)
     {
-        
         // Load the filesets
-        $fileSets = [];
+        $fileSets  = [];
         $languages = [];
         foreach ($iterator as $k => $v) {
-            if (!$v instanceof SplFileInfo) {
+            if (! $v instanceof SplFileInfo) {
                 continue;
             }
             $basename = $v->getBasename('.xlf');
-            $langKey = '';
+            $langKey  = '';
             if (stripos($basename, '.') === 2) {
-                $langKey = substr($basename, 0, 2);
+                $langKey             = substr($basename, 0, 2);
                 $languages[$langKey] = $langKey;
-                $basename = substr($basename, 3);
+                $basename            = substr($basename, 3);
             }
             
             // Make sure we have a fileset
-            if (!isset($fileSets[$basename])) {
+            if (! isset($fileSets[$basename])) {
                 $fileSets[$basename] = [
                     'baseFile'  => '',
                     'langFiles' => [],
@@ -95,25 +94,25 @@ class SyncHandler implements SingletonInterface
     /**
      * Handles the synchronization of a single file set, or namespace if you will.
      *
-     * @param array $fileSet   The definition of the set to synchronize
-     * @param array $languages The language keys of all languages (over all fileSets)
-     * @param array $options   Options inherited from TranslationFileSync::syncFilesInDir()
+     * @param   array  $fileSet    The definition of the set to synchronize
+     * @param   array  $languages  The language keys of all languages (over all fileSets)
+     * @param   array  $options    Options inherited from TranslationFileSync::syncFilesInDir()
      */
     protected function syncFileSet(array $fileSet, array $languages, array $options)
     {
         // Make sure we have a base file
         if (empty($fileSet['baseFile'])) {
-            
             // Load the first file
             $fallbackFile = $this->loadFile(reset($fileSet['langFiles']));
             
             // Update the file name
             $fallbackFile->filename = dirname($fallbackFile->filename) . DIRECTORY_SEPARATOR .
-                substr(basename($fallbackFile->filename), stripos(basename($fallbackFile->filename), '.') + 1);
+                                      substr(basename($fallbackFile->filename),
+                                          stripos(basename($fallbackFile->filename), '.') + 1);
             
             // Reset it to english
-            $fallbackFile->targetLang = null;
-            $fallbackFile->sourceLang = $options['baseFallbackLang'];
+            $fallbackFile->targetLang  = null;
+            $fallbackFile->sourceLang  = $options['baseFallbackLang'];
             $fallbackFile->productName = $options['productName'];
             
             // Clear target for all messages
@@ -125,7 +124,8 @@ class SyncHandler implements SingletonInterface
             $baseFile = $fallbackFile;
         } else {
             // Load the base file
-            $baseFile = $this->loadFile($fileSet['baseFile'], null, $options['baseFallbackLang'], $options['productName']);
+            $baseFile = $this->loadFile($fileSet['baseFile'], null, $options['baseFallbackLang'],
+                $options['productName']);
         }
         
         // Make sure we have language files for each registered language
@@ -134,8 +134,9 @@ class SyncHandler implements SingletonInterface
                 if (isset($fileSet['langFiles'][$language])) {
                     continue;
                 }
-                $fileSet['langFiles'][$language] =
-                    dirname($fileSet['baseFile']) . DIRECTORY_SEPARATOR . $language . '.' . basename($fileSet['baseFile']);
+                $fileSet['langFiles'][$language]
+                    = dirname($fileSet['baseFile']) . DIRECTORY_SEPARATOR . $language . '.'
+                      . basename($fileSet['baseFile']);
                 touch($fileSet['langFiles'][$language]);
             }
         }
@@ -163,10 +164,11 @@ class SyncHandler implements SingletonInterface
     /**
      * Loads a single translation .xlf file into the TranslationFile object representation
      *
-     * @param string      $filename         The filename of the file to load
-     * @param string|null $languageFallback Optional language key to use as target-language attribute if it is missing
-     * @param string|null $baseLanguage     Optional language key to use as source-language if it is missing
-     * @param string|null $productName      Optional product name to set if it is missing
+     * @param   string       $filename          The filename of the file to load
+     * @param   string|null  $languageFallback  Optional language key to use as target-language attribute if it is
+     *                                          missing
+     * @param   string|null  $baseLanguage      Optional language key to use as source-language if it is missing
+     * @param   string|null  $productName       Optional product name to set if it is missing
      *
      * @return \LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationFile
      */
@@ -175,26 +177,25 @@ class SyncHandler implements SingletonInterface
         ?string $languageFallback = null,
         ?string $baseLanguage = null,
         ?string $productName = null
-    ): TranslationFile
-    {
-        $content = Fs::readFile($filename);
+    ): TranslationFile {
+        $content     = Fs::readFile($filename);
         $contentList = Arrays::makeFromXml($content);
         
         // Read the file metadata
-        $file = $this->container->get(TranslationFile::class);
+        $file           = $this->container->get(TranslationFile::class);
         $file->filename = $filename;
         foreach (Arrays::getPath($contentList, '0.0.*', []) as $k => $row) {
             if (is_string($k) && $k[0] === '@') {
                 $file->params[$k] = $row;
             }
         }
-        $file->sourceLang = Arrays::getPath($contentList, '0.0.@source-language', $baseLanguage);
+        $file->sourceLang  = Arrays::getPath($contentList, '0.0.@source-language', $baseLanguage);
         $file->productName = Arrays::getPath($contentList, '0.0.@product-name', $productName);
-        $file->targetLang = Arrays::getPath($contentList, '0.0.@target-language', $languageFallback);
+        $file->targetLang  = Arrays::getPath($contentList, '0.0.@target-language', $languageFallback);
         
         // Read the messages
         foreach (Arrays::getPath($contentList, '0.0.*', []) as $entry) {
-            if (!isset($entry['tag']) || $entry['tag'] !== 'body') {
+            if (! isset($entry['tag']) || $entry['tag'] !== 'body') {
                 continue;
             }
             foreach ($entry as $k => $row) {
@@ -207,12 +208,12 @@ class SyncHandler implements SingletonInterface
                     continue;
                 }
                 // Ignore invalid elements
-                if (!isset($row['@id'])) {
+                if (! isset($row['@id'])) {
                     continue;
                 }
                 
                 // Create a new item/unit
-                $item = $this->container->get(TranslationFileUnit::class);
+                $item     = $this->container->get(TranslationFileUnit::class);
                 $item->id = $row['@id'];
                 $hasError = false;
                 
@@ -229,13 +230,14 @@ class SyncHandler implements SingletonInterface
                 } // Save translation units
                 elseif ($row['tag'] === 'trans-unit') {
                     foreach ($row as $_k => $child) {
-                        if (is_string($_k) || !is_array($child)) {
+                        if (is_string($_k) || ! is_array($child)) {
                             continue;
                         }
                         
                         // Unify line breaks
                         $child['content'] = str_replace(["\t", "\r\n", PHP_EOL], PHP_EOL, $child['content']);
-                        $child['content'] = implode(' ', array_filter(array_map('trim', explode(PHP_EOL, $child['content']))));
+                        $child['content'] = implode(' ',
+                            array_filter(array_map('trim', explode(PHP_EOL, $child['content']))));
                         
                         // Load the content
                         switch (Arrays::getPath($child, 'tag')) {
@@ -267,14 +269,13 @@ class SyncHandler implements SingletonInterface
     /**
      * Dumps a object representation of TranslationFile into the xml .xlf file format
      *
-     * @param \LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationFile $file       The object to dump to a
-     *                                                                                      file
-     * @param bool                                                              $isBaseFile True if this is the
-     *                                                                                      base/origin file
+     * @param   \LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationFile  $file        The object to dump to a
+     *                                                                                          file
+     * @param   bool                                                               $isBaseFile  True if this is the
+     *                                                                                          base/origin file
      */
     protected function dumpFile(TranslationFile $file, bool $isBaseFile)
     {
-        
         // Build a list of children
         $children = [
             'tag' => 'body',
@@ -287,9 +288,9 @@ class SyncHandler implements SingletonInterface
                     'content' => PHP_EOL . $message->note . PHP_EOL,
                 ];
             } else {
-                $children[] =
-                    Arrays::attach(
-                        [
+                $children[]
+                    = Arrays::attach(
+                    [
                         'tag' => 'trans-unit',
                         '@id' => $message->id,
                         [
@@ -297,12 +298,15 @@ class SyncHandler implements SingletonInterface
                             'content' => $message->source,
                         ],
                     ],
-                        $isBaseFile ? [] : [1 => [
-                        'tag'     => 'target',
-                        'content' => $message->target,
-                    ],
+                    $isBaseFile
+                        ? []
+                        : [
+                        1 => [
+                            'tag'     => 'target',
+                            'content' => $message->target,
+                        ],
                     ]
-                    );
+                );
             }
         }
         

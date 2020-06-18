@@ -28,8 +28,8 @@ interface DbServiceInterface
     /**
      * Helper to execute a raw sql query to the default connection.
      *
-     * @param string $query The mysql query to execute. Can have "?" or named parameters (typo >=8)
-     * @param array  $args  The parameters to be used in the query
+     * @param   string  $query  The mysql query to execute. Can have "?" or named parameters (typo >=8)
+     * @param   array   $args   The parameters to be used in the query
      *
      * @return array|string
      * @throws \Doctrine\DBAL\DBALException
@@ -40,9 +40,9 @@ interface DbServiceInterface
      * Helper to execute multiple queries inside a transaction.
      * The rollback will be automatically handled if one of the queries failed
      *
-     * @param iterable $queries A list of mysql queries you would supply to query()
-     * @param array    $args    A list of arguments for each query. Supply null when you have queries with and without
-     *                          args
+     * @param   iterable  $queries  A list of mysql queries you would supply to query()
+     * @param   array     $args     A list of arguments for each query. Supply null when you have queries with and
+     *                              without args
      *
      * @return mixed
      */
@@ -52,7 +52,7 @@ interface DbServiceInterface
      * Returns the instance of the database connection
      * BE CAREFUL WITH THIS!
      *
-     * @param string|null $connectionName
+     * @param   string|null  $connectionName
      *
      * @return \TYPO3\CMS\Core\Database\Connection
      */
@@ -67,13 +67,13 @@ interface DbServiceInterface
     /**
      * Simple link to typo3's select query.
      *
-     * @param string            $table   A table to select from
-     * @param string|array|null $uid     Either a single uid, or an array of uids to select
-     *                                   If null is given the uid field will be ignored
-     * @param string            $fields  A list of fields to select or '*' for all
-     * @param string            $where   An additional where clause
-     * @param string            $orderBy The order by string to add to the query
-     * @param string            $limit   A limit of how many rows to return
+     * @param   string             $table    A table to select from
+     * @param   string|array|null  $uid      Either a single uid, or an array of uids to select
+     *                                       If null is given the uid field will be ignored
+     * @param   string             $fields   A list of fields to select or '*' for all
+     * @param   string             $where    An additional where clause
+     * @param   string             $orderBy  The order by string to add to the query
+     * @param   string             $limit    A limit of how many rows to return
      *
      * @return array
      * @throws \Doctrine\DBAL\DBALException
@@ -86,7 +86,7 @@ interface DbServiceInterface
     /**
      * Helper to debug a typo3 query. Will render the sql statement, the result, and exceptions to the screen to see.
      *
-     * @param QueryInterface $query The query to debug
+     * @param   QueryInterface  $query  The query to debug
      *
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -96,9 +96,9 @@ interface DbServiceInterface
      * Creates a new query builder instance either for a table or a connection name.
      * If the table name is given the connection name will be ignored.
      *
-     * @param string|null $tableName      The name of the table you want a query builder for, null if you want to
-     *                                    specify a connection name
-     * @param string|null $connectionName The name of the connection to create the query builder for
+     * @param   string|null  $tableName       The name of the table you want a query builder for, null if you want to
+     *                                        specify a connection name
+     * @param   string|null  $connectionName  The name of the connection to create the query builder for
      *
      * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
@@ -112,9 +112,9 @@ interface DbServiceInterface
      * The main use case is to create select queries but you can also use the better query object to prepare
      * other sql actions by preparing the query builder
      *
-     * @param string $tableName                 The name of the table you want to
-     * @param bool   $disableDefaultConstraints If this is set to true all constraints will be disabled
-     *                                          by default and you have to enable them explicitly
+     * @param   string  $tableName                  The name of the table you want to
+     * @param   bool    $disableDefaultConstraints  If this is set to true all constraints will be disabled
+     *                                              by default and you have to enable them explicitly
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\StandaloneBetterQuery
      */

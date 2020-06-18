@@ -24,7 +24,8 @@ namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 use LaborDigital\Typo3BetterApi\Event\Events\BackendDbListQueryFilterEvent;
 use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
 
-class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter implements RecordListGetTableHookInterface
+class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
+    implements RecordListGetTableHookInterface
 {
     
     /**
@@ -33,12 +34,13 @@ class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter 
     public static function bind(): void
     {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable']
-        [static::class] = static::class;
+        [static::class]
+            = static::class;
     }
     
     public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject)
     {
-        if (!static::$context->getEnvAspect()->isBackend()) {
+        if (! static::$context->getEnvAspect()->isBackend()) {
             return;
         }
         static::$bus->dispatch(($e = new BackendDbListQueryFilterEvent(
@@ -49,7 +51,7 @@ class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter 
             $parentObject
         )));
         $additionalWhereClause = $e->getAdditionalWhereClause();
-        $selectedFieldsList = $e->getSelectedFieldList();
-        $parentObject = $e->getListRenderer();
+        $selectedFieldsList    = $e->getSelectedFieldList();
+        $parentObject          = $e->getListRenderer();
     }
 }

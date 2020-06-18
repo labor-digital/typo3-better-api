@@ -40,21 +40,21 @@ class FixSectionToggleStateApplier implements LazyEventSubscriberInterface
      * For some reason they don't get their OPEN/CLOSED states applied, even if they are stored correctly
      * in the database.
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodeFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodeFilterEvent  $event
      *
      * @todo Keep track, if this is fixed for a TYPO3 version > 9
      */
     public function __onNodeDataFilter(BackendFormNodeFilterEvent $event)
     {
         $data = $event->getProxy()->getProperty('data');
-        if (!isset($data['parameterArray']) || $data['renderType'] !== 'flexFormSectionContainer' ||
-            !is_array($data['flexFormRowData'])) {
+        if (! isset($data['parameterArray']) || $data['renderType'] !== 'flexFormSectionContainer'
+            || ! is_array($data['flexFormRowData'])) {
             return;
         }
         
         // Update the data for this section
         foreach ($data['flexFormRowData'] as $k => $v) {
-            if (!isset($v['_TOGGLE']) || !is_array($v) || key($v) === '_TOGGLE') {
+            if (! isset($v['_TOGGLE']) || ! is_array($v) || key($v) === '_TOGGLE') {
                 continue;
             }
             $data['flexFormRowData'][$k] = Arrays::setPath($v, key($v) . '.el._TOGGLE', $v['_TOGGLE']);

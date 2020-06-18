@@ -27,10 +27,16 @@ class ExtendedLocalizationUtility extends BetterApiClassOverrideCopy__Localizati
     /**
      * @inheritDoc
      */
-    public static function translate($key, $extensionName = null, $arguments = null, string $languageKey = null, array $alternativeLanguageKeys = null)
-    {
-        return TranslationLabelProvider::provideLabelFor($key, function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
-            return parent::translate($input, $extensionName, $arguments, $languageKey, $alternativeLanguageKeys);
-        });
+    public static function translate(
+        $key,
+        $extensionName = null,
+        $arguments = null,
+        string $languageKey = null,
+        array $alternativeLanguageKeys = null
+    ) {
+        return TranslationLabelProvider::provideLabelFor($key,
+            function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
+                return parent::translate($input, $extensionName, $arguments, $languageKey, $alternativeLanguageKeys);
+            });
     }
 }

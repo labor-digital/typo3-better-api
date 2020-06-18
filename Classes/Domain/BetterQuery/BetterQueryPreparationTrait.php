@@ -29,6 +29,7 @@ trait BetterQueryPreparationTrait
     
     /**
      * Should return a new better query instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
     abstract public function getQuery(): BetterQuery;
@@ -36,9 +37,9 @@ trait BetterQueryPreparationTrait
     /**
      * Receives the query object after the initial preparation was done and should apply additional constraints to it.
      *
-     * @param BetterQuery $query
-     * @param array       $settings
-     * @param array       $row
+     * @param   BetterQuery  $query
+     * @param   array        $settings
+     * @param   array        $row
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
@@ -49,8 +50,8 @@ trait BetterQueryPreparationTrait
      * but it does not simply return an empty query object, no it can also take ext base plugin settings and a database
      * row to read additional information from to preconfigure your query with.
      *
-     * @param array $settings The ext base $this->settings value of a controller class
-     * @param array $row      The row of a tt_content record containing the ext base plugin configuration.
+     * @param   array  $settings  The ext base $this->settings value of a controller class
+     * @param   array  $row       The row of a tt_content record containing the ext base plugin configuration.
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
@@ -59,9 +60,9 @@ trait BetterQueryPreparationTrait
         $query = $this->getQuery();
         
         // Fill default values
-        if (!empty($settings['storagePid'])) {
+        if (! empty($settings['storagePid'])) {
             $query = $query->withPids(Arrays::makeFromStringList($settings['storagePid']));
-        } elseif (!empty($row['pages'])) {
+        } elseif (! empty($row['pages'])) {
             if (is_string($row['pages'])) {
                 $query = $query->withPids(Arrays::makeFromStringList($row['pages']));
             } elseif (is_array($row['pages'])) {
@@ -91,14 +92,14 @@ trait BetterQueryPreparationTrait
      * Configures the given better query object to a date range constraint.
      * It is optional if you work on a single field or with startDate and endDate fields.
      *
-     * @param BetterQuery $query                The query object to configure
-     * @param array       $queryDateRangeConfig Expects an array containing four parameters
-     *                                          "startDateField": The database field name that holds the start dates
-     *                                          "endDateField": The database field name that holds the end dates (is
-     *                                          equal to "startDateField" if no the min and the max date should be
-     *                                          determined only by a single field)
-     *                                          "min": The minimum date value in the start date field
-     *                                          "max": The maximum date value in the end date field
+     * @param   BetterQuery  $query                 The query object to configure
+     * @param   array        $queryDateRangeConfig  Expects an array containing four parameters
+     *                                              "startDateField": The database field name that holds the start dates
+     *                                              "endDateField": The database field name that holds the end dates (is
+     *                                              equal to "startDateField" if no the min and the max date should be
+     *                                              determined only by a single field)
+     *                                              "min": The minimum date value in the start date field
+     *                                              "max": The maximum date value in the end date field
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
@@ -122,12 +123,12 @@ trait BetterQueryPreparationTrait
      * You can either get the range over two columns (one for the start- and one for the end date)
      * Or you can get the date range in a single column (just keep the third argument null)
      *
-     * @param BetterQuery $query             The preconfigured query object to request the values with
-     * @param string      $startDateProperty The ext base property name that holds the start dates of an entity.
-     *                                       Or the property name of the column that just holds the dates (just start;
-     *                                       no end dates)
-     * @param string|null $endDateProperty   Optionally the ext base property name of the column that defines the end
-     *                                       dates of an entity.
+     * @param   BetterQuery  $query              The preconfigured query object to request the values with
+     * @param   string       $startDateProperty  The ext base property name that holds the start dates of an entity.
+     *                                           Or the property name of the column that just holds the dates (just
+     *                                           start; no end dates)
+     * @param   string|null  $endDateProperty    Optionally the ext base property name of the column that defines the
+     *                                           end dates of an entity.
      *
      * @return array The result is an array containing four values:
      *               "startDateField": The database field name that holds the start dates
@@ -143,11 +144,11 @@ trait BetterQueryPreparationTrait
         // Get the date constraints
         // Start date
         $startDateField = $startDateProperty;
-        $minDate = $query->withLimit(1)->withOrder($startDateProperty, 'asc')->getFirst(true);
-        if (!empty($minDate) && !isset($minDate[$startDateField])) {
+        $minDate        = $query->withLimit(1)->withOrder($startDateProperty, 'asc')->getFirst(true);
+        if (! empty($minDate) && ! isset($minDate[$startDateField])) {
             $startDateField = Inflector::toDatabase($startDateField);
         }
-        $minDate = new DateTimy(empty($minDate) || !isset($minDate[$startDateField]) ?
+        $minDate = new DateTimy(empty($minDate) || ! isset($minDate[$startDateField]) ?
             0 : $minDate[$startDateField]);
         $minDate->setTime(0, 0, 0);
         
@@ -157,10 +158,10 @@ trait BetterQueryPreparationTrait
             $endDateField = $startDateProperty;
         }
         $maxDate = $query->withLimit(1)->withOrder($endDateField, 'desc')->getFirst(true);
-        if (!empty($maxDate) && !isset($maxDate[$endDateField])) {
+        if (! empty($maxDate) && ! isset($maxDate[$endDateField])) {
             $endDateField = Inflector::toDatabase($endDateField);
         }
-        $maxDate = new DateTimy(empty($maxDate) || !isset($maxDate[$endDateField]) ?
+        $maxDate = new DateTimy(empty($maxDate) || ! isset($maxDate[$endDateField]) ?
             0 : $maxDate[$endDateField]);
         $maxDate->setTime(23, 59, 59);
         

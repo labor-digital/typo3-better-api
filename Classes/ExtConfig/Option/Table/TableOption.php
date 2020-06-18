@@ -45,18 +45,21 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     
     /**
      * Contains the list of registered model classes and their mapped tables
+     *
      * @var array
      */
     protected $tableModels = [];
     
     /**
      * Holds a list of tables that are allowed on standard pages
+     *
      * @var array
      */
     protected $tablesOnStandardPages = [];
     
     /**
      * Stores the list of the table positions when showing the list view
+     *
      * @var array
      */
     protected $tableListPositions = [];
@@ -78,12 +81,12 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      *
      * This is executed after typo3 loaded the base tca files.
      *
-     * @param string $configClass The name of the class which is responsible for configuring your table.
-     *                            The given class should implement the TableConfigurationInterface
-     * @param string $tableName   The name of the table you want to create.
-     *                            You may write the name like ...table name to automatically expand it to
-     *                            tx_extkey_domain_model_table. If left empty the table name is automatically build
-     *                            based on the class name
+     * @param   string  $configClass  The name of the class which is responsible for configuring your table.
+     *                                The given class should implement the TableConfigurationInterface
+     * @param   string  $tableName    The name of the table you want to create.
+     *                                You may write the name like ...table name to automatically expand it to
+     *                                tx_extkey_domain_model_table. If left empty the table name is automatically build
+     *                                based on the class name
      *
      * @return $this
      */
@@ -92,13 +95,14 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (empty($tableName)) {
             $tableName = $this->getTableNameFromConfigClass($configClass);
         }
+        
         return $this->addRegistrationToCachedStack('tables', $this->getRealTableName($tableName), $configClass);
     }
     
     /**
      * Similar to registerNewTable() but registers all table definitions in a directory at once.
      *
-     * @param string $directory The path to the directory to add. Either as absolute path or as EXT:... path
+     * @param   string  $directory  The path to the directory to add. Either as absolute path or as EXT:... path
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\TableOption
      */
@@ -118,12 +122,12 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      *
      * This is executed after typo3 loaded the tca.overrides files.
      *
-     * @param string $configClass The name of the class which is responsible for configuring your table.
-     *                            The given class should implement the TableConfigurationInterface
-     * @param string $tableName   The name of the table you want to modify.
-     *                            You may write the name like ...table name to automatically expand it to
-     *                            tx_extkey_domain_model_table. If left empty the table name is automatically build
-     *                            based on the class name
+     * @param   string  $configClass  The name of the class which is responsible for configuring your table.
+     *                                The given class should implement the TableConfigurationInterface
+     * @param   string  $tableName    The name of the table you want to modify.
+     *                                You may write the name like ...table name to automatically expand it to
+     *                                tx_extkey_domain_model_table. If left empty the table name is automatically build
+     *                                based on the class name
      *
      * @return $this
      */
@@ -132,6 +136,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (empty($tableName)) {
             $tableName = $this->getTableNameFromConfigClass($configClass);
         }
+        
         return $this->addOverrideToCachedStack('tables', $this->getRealTableName($tableName), $configClass);
     }
     
@@ -139,21 +144,25 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * Use this method if you want to remove a specific table configuration. This works both for new tables as well as
      * overrides.
      *
-     * @param string $configClass        The name of the class which should no longer be responsible for configuring
+     * @param   string  $configClass     The name of the class which should no longer be responsible for configuring
      *                                   your table.
-     * @param string $tableName          The name of the table you want to remove the config for.
+     * @param   string  $tableName       The name of the table you want to remove the config for.
      *                                   You may write the name like ...table name to automatically expand it to
      *                                   tx_extkey_domain_model_table.
-     * @param bool   $overrides          If this is true the $configClass will be removed from the overrides instead of
+     * @param   bool    $overrides       If this is true the $configClass will be removed from the overrides instead of
      *                                   the registrations
      *
      * @return $this
      */
-    public function removeTableConfig(string $configClass, ?string $tableName = null, bool $overrides = false): TableOption
-    {
+    public function removeTableConfig(
+        string $configClass,
+        ?string $tableName = null,
+        bool $overrides = false
+    ): TableOption {
         if (empty($tableName)) {
             $tableName = $this->getTableNameFromConfigClass($configClass);
         }
+        
         return $this->removeFromCachedStack('tables', $this->getRealTableName($tableName), $configClass, $overrides);
     }
     
@@ -165,37 +174,44 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * ATTENTION: Make sure you add the Table-Model Mapping static typoscript to your setup!
      * Otherwise the mapping will not be performed!
      *
-     * @param string $tableName   The name of the table you want to map the model to
-     *                            You may write the name like ...table name to automatically expand it to
-     *                            tx_extkey_domain_model_table
-     * @param string $modelClass  The name of the model-class you want to map to the given table
+     * @param   string  $tableName   The name of the table you want to map the model to
+     *                               You may write the name like ...table name to automatically expand it to
+     *                               tx_extkey_domain_model_table
+     * @param   string  $modelClass  The name of the model-class you want to map to the given table
      *
      * @return $this
      */
     public function registerModelForTable(string $tableName, string $modelClass): TableOption
     {
         $this->tableModels[$this->getRealTableName($tableName)][] = $modelClass;
+        
         return $this;
     }
     
     /**
      * The registered filter called every time the typo3 backend saves data for $tableName using the backend forms.
      *
-     * @param string $tableName        The name of the table to register the filter for
-     * @param string $filterClass      The full name of the class containing the filter
-     * @param string $filterMethod     The method of the $filterClass to call when the filter is executed
-     * @param array  $fieldConstraints These constraints are an array of field keys and values that have to
-     *                                 match in a table row in order for this service to call the renderer class.
+     * @param   string  $tableName         The name of the table to register the filter for
+     * @param   string  $filterClass       The full name of the class containing the filter
+     * @param   string  $filterMethod      The method of the $filterClass to call when the filter is executed
+     * @param   array   $fieldConstraints  These constraints are an array of field keys and values that have to
+     *                                     match in a table row in order for this service to call the renderer class.
      *
      * @return $this
      * @see \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService::registerActionHandler()
      */
-    public function registerBackendSaveFilter(string $tableName, string $filterClass, string $filterMethod = 'filter', array $fieldConstraints = [])
-    {
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+    public function registerBackendSaveFilter(
+        string $tableName,
+        string $filterClass,
+        string $filterMethod = 'filter',
+        array $fieldConstraints = []
+    ) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return $this;
         }
-        $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'save', $filterClass, $filterMethod, $fieldConstraints);
+        $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'save',
+            $filterClass, $filterMethod, $fieldConstraints);
+        
         return $this;
     }
     
@@ -205,19 +221,21 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * Note: This method also removes filters even if the filter is registered after calling this method.
      * The filter than is blacklisted!
      *
-     * @param string $tableName    The name of the table to remove the filter from
-     * @param string $filterClass  The full name of the class containing the filter
-     * @param string $filterMethod The method of the $filterClass which should no longer be called when the filter is
-     *                             executed
+     * @param   string  $tableName     The name of the table to remove the filter from
+     * @param   string  $filterClass   The full name of the class containing the filter
+     * @param   string  $filterMethod  The method of the $filterClass which should no longer be called when the filter
+     *                                 is executed
      *
      * @return $this
      */
     public function removeBackendSaveFilter(string $tableName, string $filterClass, string $filterMethod = 'filter')
     {
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return $this;
         }
-        $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'save', $filterClass, $filterMethod);
+        $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'save',
+            $filterClass, $filterMethod);
+        
         return $this;
     }
     
@@ -228,40 +246,48 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * using the form engine. The event contains all the data that are passed to objects that implement the
      * FormDataProviderInterface interface.
      *
-     * @param string $tableName        The name of the table to register the filter for
-     * @param string $filterClass      The full name of the class containing the filter
-     * @param string $filterMethod     The method of the $filterClass to call when the filter is executed
-     * @param array  $fieldConstraints These constraints are an array of field keys and values that have to
-     *                                 match in a table row in order for this service to call the renderer class.
+     * @param   string  $tableName         The name of the table to register the filter for
+     * @param   string  $filterClass       The full name of the class containing the filter
+     * @param   string  $filterMethod      The method of the $filterClass to call when the filter is executed
+     * @param   array   $fieldConstraints  These constraints are an array of field keys and values that have to
+     *                                     match in a table row in order for this service to call the renderer class.
      *
      * @return $this
      * @see \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService::registerActionHandler()
      */
-    public function registerBackendFormFilter(string $tableName, string $filterClass, string $filterMethod = 'filter', array $fieldConstraints = [])
-    {
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+    public function registerBackendFormFilter(
+        string $tableName,
+        string $filterClass,
+        string $filterMethod = 'filter',
+        array $fieldConstraints = []
+    ) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return $this;
         }
-        $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'form', $filterClass, $filterMethod, $fieldConstraints);
+        $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'form',
+            $filterClass, $filterMethod, $fieldConstraints);
+        
         return $this;
     }
     
     /**
      * Can be used to remove a previously registered form filter from a table.
      *
-     * @param string $tableName    The name of the table to remove the filter from
-     * @param string $filterClass  The full name of the class containing the filter
-     * @param string $filterMethod The method of the $filterClass which should no longer be called when the filter is
-     *                             executed
+     * @param   string  $tableName     The name of the table to remove the filter from
+     * @param   string  $filterClass   The full name of the class containing the filter
+     * @param   string  $filterMethod  The method of the $filterClass which should no longer be called when the filter
+     *                                 is executed
      *
      * @return $this
      */
     public function removeBackendFormFilter(string $tableName, string $filterClass, string $filterMethod = 'filter')
     {
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return $this;
         }
-        $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'form', $filterClass, $filterMethod);
+        $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'form',
+            $filterClass, $filterMethod);
+        
         return $this;
     }
     
@@ -269,40 +295,51 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * The registered method is called every time the backend performs an action. Actions are deletion,
      * translation, copy or moving of a record and many others.
      *
-     * @param string $tableName        The name of the table to register the handler for
-     * @param string $handlerClass     The full name of the class containing the handler
-     * @param string $handlerMethod    The method of the $filterClass to call when the filter is executed
-     * @param array  $fieldConstraints These constraints are an array of field keys and values that have to
-     *                                 match in a table row in order for this service to call the renderer class.
+     * @param   string  $tableName         The name of the table to register the handler for
+     * @param   string  $handlerClass      The full name of the class containing the handler
+     * @param   string  $handlerMethod     The method of the $filterClass to call when the filter is executed
+     * @param   array   $fieldConstraints  These constraints are an array of field keys and values that have to
+     *                                     match in a table row in order for this service to call the renderer class.
      *
      * @return $this
      * @see \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService::registerActionHandler()
      */
-    public function registerBackendActionHandler(string $tableName, string $handlerClass, string $handlerMethod = 'handle', array $fieldConstraints = [])
-    {
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+    public function registerBackendActionHandler(
+        string $tableName,
+        string $handlerClass,
+        string $handlerMethod = 'handle',
+        array $fieldConstraints = []
+    ) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return $this;
         }
-        $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'default', $handlerClass, $handlerMethod, $fieldConstraints);
+        $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'default',
+            $handlerClass, $handlerMethod, $fieldConstraints);
+        
         return $this;
     }
     
     /**
      * Removes a previously registered backend action handler from the table.
      *
-     * @param string $tableName     The name of the table to remove the filter from
-     * @param string $handlerClass  The full name of the class containing the handler
-     * @param string $handlerMethod The method of the $handlerClass which should no longer be called when the handler
-     *                              stack is executed
+     * @param   string  $tableName      The name of the table to remove the filter from
+     * @param   string  $handlerClass   The full name of the class containing the handler
+     * @param   string  $handlerMethod  The method of the $handlerClass which should no longer be called when the
+     *                                  handler stack is executed
      *
      * @return $this
      */
-    public function removeBackendActionHandler(string $tableName, string $handlerClass, string $handlerMethod = 'handle')
-    {
-        if (!$this->context->TypoContext->getEnvAspect()->isBackend()) {
+    public function removeBackendActionHandler(
+        string $tableName,
+        string $handlerClass,
+        string $handlerMethod = 'handle'
+    ) {
+        if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return $this;
         }
-        $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'default', $handlerClass, $handlerMethod);
+        $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'default',
+            $handlerClass, $handlerMethod);
+        
         return $this;
     }
     
@@ -310,13 +347,14 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * By default tables are only allowed in "folder" elements. If you want to allow a table on
      * default "pages" as well supply the name of the table and we handle the rest...
      *
-     * @param string $tableName
+     * @param   string  $tableName
      *
      * @return $this
      */
     public function allowTableOnStandardPages(string $tableName): TableOption
     {
         $this->tablesOnStandardPages[] = $this->getRealTableName($tableName);
+        
         return $this;
     }
     
@@ -324,15 +362,20 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * Can be used to configure the order of tables when they are rendered in the "list" mode in the backend.
      * The table with $tableName will be sorted either before or after the table with $otherTableName
      *
-     * @param string $tableName      The table name to be configured
-     * @param string $otherTableName The table to relatively position this one to
-     * @param bool   $before         True by default, if set to false the table will be shown after the $otherTableName
+     * @param   string  $tableName       The table name to be configured
+     * @param   string  $otherTableName  The table to relatively position this one to
+     * @param   bool    $before          True by default, if set to false the table will be shown after the
+     *                                   $otherTableName
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\TableOption
      */
-    public function registerTableListPosition(string $tableName, string $otherTableName, bool $before = true): TableOption
-    {
+    public function registerTableListPosition(
+        string $tableName,
+        string $otherTableName,
+        bool $before = true
+    ): TableOption {
         $this->tableListPositions[$tableName][$before ? 'before' : 'after'][] = $otherTableName;
+        
         return $this;
     }
     
@@ -402,7 +445,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * Internal event handler which is called in the install tool when the sql schema is validated
      * It injects our compiled sql code for typo3 to use
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\SqlDefinitionFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\SqlDefinitionFilterEvent  $event
      */
     public function __applySqlExtension(SqlDefinitionFilterEvent $event)
     {
@@ -412,7 +455,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     /**
      * Internal helper which is used to unfold the "..." prefixed table names to a ext base, default table name
      *
-     * @param string $tableName
+     * @param   string  $tableName
      *
      * @return string
      */
@@ -422,8 +465,13 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (substr($tableName, 0, 3) !== '...') {
             return $tableName;
         }
-        return implode('_', array_filter(['tx', Naming::flattenExtKey($this->context->getExtKey()),
-                                          'domain', 'model', strtolower(Inflector::toCamelBack(substr($tableName, 3))),
+        
+        return implode('_', array_filter([
+            'tx',
+            Naming::flattenExtKey($this->context->getExtKey()),
+            'domain',
+            'model',
+            strtolower(Inflector::toCamelBack(substr($tableName, 3))),
         ]));
     }
     
@@ -435,7 +483,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * We will automatically strip suffixes like table, ext, config, configuration, controller and override(s)
      * from the base name before we convert it into a plugin name
      *
-     * @param string $configClass
+     * @param   string  $configClass
      *
      * @return string
      */
@@ -443,6 +491,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         $baseName = Path::classBasename($configClass);
         $baseName = preg_replace('~(Tables?)?(Ext)?(Config|Configuration)?(Overrides?)?$~', '', $baseName);
+        
         return '...' . $baseName;
     }
     
@@ -450,12 +499,13 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      * Internal helper that executes the stack of table configurations and applies the resulting TCA modifications to
      * the TCA array. This method runs twice. Once for the normal TCA files and once for the TCA.overrides files.
      *
-     * @param bool $overrides Should be true if the stack for the overrides is executed
+     * @param   bool  $overrides  Should be true if the stack for the overrides is executed
      */
     protected function applyTableTca(bool $overrides)
     {
-        $generator = $this->context->getInstanceOf(TableConfigGenerator::class);
-        $tableTcaList = $generator->generateTableTcaList($this->getCachedStackDefinitions('tables', $overrides), $this->context, $overrides);
+        $generator    = $this->context->getInstanceOf(TableConfigGenerator::class);
+        $tableTcaList = $generator->generateTableTcaList($this->getCachedStackDefinitions('tables', $overrides),
+            $this->context, $overrides);
         
         foreach ($tableTcaList as $table => $tca) {
             $GLOBALS['TCA'][$table] = $tca;
@@ -465,6 +515,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     /**
      * Returns the instance of the table configuration.
      * The object may be cached for better performance.
+     *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\TableConfig
      */
     protected function getTableConfig(): TableConfig
@@ -476,29 +527,31 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     
     /**
      * Is used to build the ts config string that is required to define the order of tables in the backend's list view
+     *
      * @return string
      */
     protected function getTableListOrderTsConfig(): string
     {
         return $this->getCachedValueOrRun('tableListOrder', function () {
-            $ts = [];
+            $ts     = [];
             $config = Arrays::merge($this->tableListPositions, $this->getTableConfig()->tableListPositions);
             foreach ($config as $table => $c) {
-                $c = Arrays::merge(['before' => [], 'after' => []], $c);
+                $c           = Arrays::merge(['before' => [], 'after' => []], $c);
                 $c['before'] = array_unique($c['before']);
-                $c['after'] = array_unique($c['after']);
+                $c['after']  = array_unique($c['after']);
                 
-                $tsLocal = [];
+                $tsLocal   = [];
                 $tsLocal[] = 'mod.web_list.tableDisplayOrder.' . $table . ' {';
-                if (!empty($c['before'])) {
+                if (! empty($c['before'])) {
                     $tsLocal[] = 'before = ' . implode(', ', $c['before']);
                 }
-                if (!empty($c['after'])) {
+                if (! empty($c['after'])) {
                     $tsLocal[] = 'after = ' . implode(', ', $c['after']);
                 }
                 $tsLocal[] = '}';
-                $ts[] = implode(PHP_EOL, $tsLocal);
+                $ts[]      = implode(PHP_EOL, $tsLocal);
             }
+            
             return implode(PHP_EOL, $ts);
         });
     }

@@ -58,7 +58,6 @@ class TypoDispatcher implements EventDispatcherInterface
     public function dispatch(object $event)
     {
         return FailsafeWrapper::handle(function () use ($event) {
-            
             // Check if we got a signal slot event
             if ($event instanceof SignalSlotEvent) {
                 // Fail if we don't have the dispatcher yet
@@ -69,10 +68,10 @@ class TypoDispatcher implements EventDispatcherInterface
                 // Emit the event using the dispatcher
                 $args
                     = $this->signalSlotDispatcher->dispatch(
-                        $event->getClassName(),
-                        $event->getSignalName(),
-                        $event->getArgs()
-                    );
+                    $event->getClassName(),
+                    $event->getSignalName(),
+                    $event->getArgs()
+                );
                 $event->setArgs($args);
                 
                 return $event;

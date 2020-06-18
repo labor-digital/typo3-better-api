@@ -28,9 +28,11 @@ interface BackendPreviewServiceInterface
      * There can only be a single renderer per $fieldConstraints. If you define different renderers with the
      * same $fieldConstraints the first one will be overwritten by the second one.
      *
-     * @param string $rendererClass    The renderer class that has to implement the BackendPreviewRendererInterface.
-     * @param array  $fieldConstraints These constraints are an array of field keys and values that have to
-     *                                 match in a tt_content row in order for this service to call the renderer class.
+     * @param   string  $rendererClass     The renderer class that has to implement the
+     *                                     BackendPreviewRendererInterface.
+     * @param   array   $fieldConstraints  These constraints are an array of field keys and values that have to
+     *                                     match in a tt_content row in order for this service to call the renderer
+     *                                     class.
      *
      *                                 As an example: If you have a plugin with a signature "mxext_myplugin"
      *                                 your constraints should look like: ["CType" => "list", "list_type" =>
@@ -38,13 +40,17 @@ interface BackendPreviewServiceInterface
      *                                 CType ["CType" => "mxext_myplugin"]. If you want to watch for any other value or
      *                                 combination of values... feel free to be creative... All given fields and values
      *                                 are seen as "AND" constraints
-     * @param bool   $override         If you set this to true the preview will renderer will be executed even if the
-     *                                 preview was already rendered by other means.
+     * @param   bool    $override          If you set this to true the preview will renderer will be executed even if
+     *                                     the preview was already rendered by other means.
      *
      * @return \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewService
      * @see \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererInterface
      */
-    public function registerBackendPreviewRenderer(string $rendererClass, array $fieldConstraints, bool $override = false): BackendPreviewService;
+    public function registerBackendPreviewRenderer(
+        string $rendererClass,
+        array $fieldConstraints,
+        bool $override = false
+    ): BackendPreviewService;
     
     /**
      * Can be used to register a backend list label renderer for any kind of tt_content element in the list module.
@@ -52,10 +58,10 @@ interface BackendPreviewServiceInterface
      * There can only be a single renderer per $fieldConstraints. If you define different renderers with the
      * same $fieldConstraints the first one will be overwritten by the second one.
      *
-     * @param string|array $rendererClassOrColumns      Either the renderer class that implements
+     * @param   string|array  $rendererClassOrColumns   Either the renderer class that implements
      *                                                  BackendListLabelRendererInterface or an array of field names
      *                                                  that should be used to automatically generate the list label
-     * @param array        $fieldConstraints            These constraints are an array of field keys and values that
+     * @param   array         $fieldConstraints         These constraints are an array of field keys and values that
      *                                                  have to match in a tt_content row in order for this service to
      *                                                  call the renderer class. See registerBackendPreviewRenderer()
      *                                                  for further details
@@ -64,5 +70,8 @@ interface BackendPreviewServiceInterface
      * @throws \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewException
      * @see \LaborDigital\Typo3BetterApi\BackendPreview\BackendListLabelRendererInterface
      */
-    public function registerBackendListLabelRenderer($rendererClassOrColumns, array $fieldConstraints): BackendPreviewService;
+    public function registerBackendListLabelRenderer(
+        $rendererClassOrColumns,
+        array $fieldConstraints
+    ): BackendPreviewService;
 }

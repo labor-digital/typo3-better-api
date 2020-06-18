@@ -26,20 +26,20 @@ abstract class AbstractConfigGenerator
     /**
      * Internal helper to build the typoscript, template definition for a extbase plugin/module
      *
-     * @param string                      $type
-     * @param AbstractElementConfigurator $configurator
+     * @param   string                       $type
+     * @param   AbstractElementConfigurator  $configurator
      *
      * @return string
      */
     protected function makeTemplateDefinition(string $type, AbstractElementConfigurator $configurator): string
     {
-        
         // Template path helper
         $pathHelper = function (Iterator $stack): string {
             $paths = [];
             foreach ($stack as $k => $path) {
                 $paths[$path] = (((int)$k) * 10 + 10) . ' = ' . $path;
             }
+            
             return implode(PHP_EOL . '					', array_reverse($paths));
         };
         

@@ -28,9 +28,9 @@ trait CTypeRegistrationTrait
     /**
      * A mostly internal helper that is used to inject a given list of elements as cTypes in the tt_content TCA array
      *
-     * @param array $tca      the TCA array
-     * @param array $elements A list of arrays that hold four values each.
-     *                        The values are [$sectionLabel, $title, $signature, $icon]
+     * @param   array  $tca       the TCA array
+     * @param   array  $elements  A list of arrays that hold four values each.
+     *                            The values are [$sectionLabel, $title, $signature, $icon]
      */
     protected function registerCTypesForElements(array &$tca, array $elements): void
     {
@@ -39,15 +39,15 @@ trait CTypeRegistrationTrait
         
         // Build the section list from all entries
         $sectionList = [];
-        $options = [];
+        $options     = [];
         foreach (array_reverse($itemList) as $k => $item) {
             if ($item[1] === '--div--') {
-                $sectionId = Inflector::toUuid($item[0]);
+                $sectionId               = Inflector::toUuid($item[0]);
                 $sectionList[$sectionId] = [
                     'item'    => $item,
                     'options' => array_reverse($options),
                 ];
-                $options = [];
+                $options                 = [];
                 continue;
             }
             $options[] = $item;
@@ -63,7 +63,7 @@ trait CTypeRegistrationTrait
             $sectionId = Inflector::toUuid($sectionLabel);
             
             // Create a new section if it does not exist
-            if (!isset($sectionList[$sectionId])) {
+            if (! isset($sectionList[$sectionId])) {
                 $sectionList[$sectionId] = [
                     'item'    => [
                         $sectionLabel,

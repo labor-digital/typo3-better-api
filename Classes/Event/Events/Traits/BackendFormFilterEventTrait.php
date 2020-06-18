@@ -26,12 +26,14 @@ trait BackendFormFilterEventTrait
     
     /**
      * The name of the table that the current form applies to
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The data to be filtered
+     *
      * @var array
      */
     protected $data;
@@ -40,17 +42,18 @@ trait BackendFormFilterEventTrait
     /**
      * BackendFormFilterEvent constructor.
      *
-     * @param string $tableName
-     * @param array  $data
+     * @param   string  $tableName
+     * @param   array   $data
      */
     public function __construct(string $tableName, array $data)
     {
         $this->tableName = $tableName;
-        $this->data = $data;
+        $this->data      = $data;
     }
     
     /**
      * Returns the name of the table that the current form applies to
+     *
      * @return string
      */
     public function getTableName(): string
@@ -61,6 +64,7 @@ trait BackendFormFilterEventTrait
     
     /**
      * Returns the data to be filtered
+     *
      * @return array
      */
     public function getData(): array
@@ -71,13 +75,14 @@ trait BackendFormFilterEventTrait
     /**
      * Updates the data to be filtered
      *
-     * @param array $data
+     * @param   array  $data
      *
      * @return object
      */
     public function setData(array $data)
     {
         $this->data = $data;
+        
         return $this;
     }
 }

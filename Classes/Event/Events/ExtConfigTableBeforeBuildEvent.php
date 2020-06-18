@@ -35,12 +35,14 @@ class ExtConfigTableBeforeBuildEvent
     
     /**
      * The name of the database table that is currently being build
+     *
      * @var string
      */
     protected $tableName;
     
     /**
      * The instance of the table that is being build
+     *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     protected $table;
@@ -48,17 +50,18 @@ class ExtConfigTableBeforeBuildEvent
     /**
      * ExtConfigTableBeforeBuildEvent constructor.
      *
-     * @param string                                                      $tableName
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable $table
+     * @param   string                                                       $tableName
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable  $table
      */
     public function __construct(string $tableName, TcaTable $table)
     {
         $this->tableName = $tableName;
-        $this->table = $table;
+        $this->table     = $table;
     }
     
     /**
      * Returns the name of the database table that is currently being build
+     *
      * @return string
      */
     public function getTableName(): string
@@ -68,6 +71,7 @@ class ExtConfigTableBeforeBuildEvent
     
     /**
      * Return the instance of the table that is being build
+     *
      * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
      */
     public function getTable(): TcaTable

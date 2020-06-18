@@ -36,18 +36,21 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
     
     /**
      * The instance of this container as a singleton
+     *
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected static $instance;
     
     /**
      * Holds the instance of the typo3 extbase object manager
+     *
      * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
      */
     protected $objectManager;
     
     /**
      * A list of id's and their states to prevent multiple requests
+     *
      * @var array
      */
     protected $hasStates = [];
@@ -90,14 +93,17 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
                 ],
             ]);
             array_unshift($options['args'], $id);
-            return $options['gu'] === true ? GeneralUtility::makeInstance(...$options['args']) :
+            
+            return $options['gu'] === true
+                ? GeneralUtility::makeInstance(...$options['args'])
+                :
                 $this->getObjectManager()->get(...$options['args']);
         } catch (Exception | Error $e) {
             // This is probably something that broke in the cached class schema -> Flush the cache
             $this->getObjectManager()
-                ->get(CacheManager::class)
-                ->getCache(ReflectionService::CACHE_IDENTIFIER)
-                ->flush();
+                 ->get(CacheManager::class)
+                 ->getCache(ReflectionService::CACHE_IDENTIFIER)
+                 ->flush();
             
             // Throw an exception
             throw new TypoContainerException(
@@ -114,6 +120,7 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
     public function set(string $class, SingletonInterface $instance): TypoContainerInterface
     {
         GeneralUtility::setSingletonInstance($class, $instance);
+        
         return $this;
     }
     
@@ -123,6 +130,7 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
     public function setClassFor(string $interface, string $class): TypoContainerInterface
     {
         $this->get(Container::class, ['gu'])->registerImplementation($interface, $class);
+        
         return $this;
     }
     
@@ -134,6 +142,7 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][$classToOverride] = [
             'className' => $classToOverrideWith,
         ];
+        
         return $this;
     }
     
@@ -145,6 +154,7 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
         if (isset($this->objectManager)) {
             return $this->objectManager;
         }
+        
         return $this->objectManager = $this->get(ObjectManager::class, ['gu' => true]);
     }
     

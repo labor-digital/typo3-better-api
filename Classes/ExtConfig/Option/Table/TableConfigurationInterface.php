@@ -28,10 +28,10 @@ interface TableConfigurationInterface
     /**
      * Use this to modify the given $table object, to configure the matching tca
      *
-     * @param TcaTable         $table      The object representing the table you want to modify
-     * @param ExtConfigContext $context    The context you are currently working in
-     * @param bool             $isOverride True if this is called as table override. False if this is called as new
-     *                                     table registration
+     * @param   TcaTable          $table       The object representing the table you want to modify
+     * @param   ExtConfigContext  $context     The context you are currently working in
+     * @param   bool              $isOverride  True if this is called as table override. False if this is called as new
+     *                                         table registration
      *
      * @return void
      */

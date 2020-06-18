@@ -34,18 +34,21 @@ class PageContentsGridConfigFilterEvent
     
     /**
      * The currently requested page id
+     *
      * @var int
      */
     protected $pid;
     
     /**
      * The list of records that were resolved for this page
+     *
      * @var array
      */
     protected $records;
     
     /**
      * The list of custom grid configurations that can be mapped
+     *
      * @var array
      */
     protected $customGrids;
@@ -53,19 +56,20 @@ class PageContentsGridConfigFilterEvent
     /**
      * PageContentsGridConfigFilterEvent constructor.
      *
-     * @param int   $pid
-     * @param array $records
-     * @param array $customGrids
+     * @param   int    $pid
+     * @param   array  $records
+     * @param   array  $customGrids
      */
     public function __construct(int $pid, array $records, array $customGrids)
     {
-        $this->pid = $pid;
-        $this->records = $records;
+        $this->pid         = $pid;
+        $this->records     = $records;
         $this->customGrids = $customGrids;
     }
     
     /**
      * Returns the currently requested page id
+     *
      * @return int
      */
     public function getPid(): int
@@ -75,6 +79,7 @@ class PageContentsGridConfigFilterEvent
     
     /**
      * Returns the list of records that were resolved for this page
+     *
      * @return array
      */
     public function getRecords(): array
@@ -85,18 +90,20 @@ class PageContentsGridConfigFilterEvent
     /**
      * Used to update the list of records that were resolved for this page
      *
-     * @param array $records
+     * @param   array  $records
      *
      * @return PageContentsGridConfigFilterEvent
      */
     public function setRecords(array $records): PageContentsGridConfigFilterEvent
     {
         $this->records = $records;
+        
         return $this;
     }
     
     /**
      * Returns the list of custom grid configurations that can be mapped
+     *
      * @return array
      */
     public function getCustomGrids(): array
@@ -107,13 +114,14 @@ class PageContentsGridConfigFilterEvent
     /**
      * Used to update the list of custom grid configurations that can be mapped
      *
-     * @param array $customGrids
+     * @param   array  $customGrids
      *
      * @return PageContentsGridConfigFilterEvent
      */
     public function setCustomGrids(array $customGrids): PageContentsGridConfigFilterEvent
     {
         $this->customGrids = $customGrids;
+        
         return $this;
     }
 }

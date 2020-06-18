@@ -39,20 +39,20 @@ class DbBaseIdApplier implements LazyEventSubscriberInterface
     /**
      * This element adds the basePid and limitToBasePid constraints to the javascript of the element browser
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent  $event
      */
     public function __onPostProcess(BackendFormNodePostProcessorEvent $event)
     {
-        
         /** @var \LaborDigital\Typo3BetterApi\BackendForms\Addon\FormNodeEventProxy $renderer */
-        $config = Arrays::getPath($event->getProxy()->getProperty('data'), ['parameterArray', 'fieldConf', 'config'], []);
+        $config = Arrays::getPath($event->getProxy()->getProperty('data'), ['parameterArray', 'fieldConf', 'config'],
+            []);
         $result = $event->getResult();
         
         // Translate legacy config
-        if (!isset($config['basePid'])) {
+        if (! isset($config['basePid'])) {
             $config['basePid'] = $config['rootPage'];
         }
-        if (!isset($config['limitToBasePid'])) {
+        if (! isset($config['limitToBasePid'])) {
             $config['limitToBasePid'] = $config['limitToRootPage'];
         }
         
@@ -75,7 +75,8 @@ class DbBaseIdApplier implements LazyEventSubscriberInterface
         if (stripos($result['html'], $url) !== false) {
             return;
         }
-        $result['html'] = (string)preg_replace("~(setFormValueOpenBrowser\('db'[^\"]*?)('\);\s?return false;)~si", "$1$url$2", $result['html']);
+        $result['html'] = (string)preg_replace("~(setFormValueOpenBrowser\('db'[^\"]*?)('\);\s?return false;)~si",
+            "$1$url$2", $result['html']);
         $event->setResult($result);
     }
 }

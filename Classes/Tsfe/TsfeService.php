@@ -43,22 +43,24 @@ class TsfeService implements SingletonInterface
     /**
      * TsfeService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $context
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $context
      */
     public function __construct(TypoContainerInterface $container, TypoContext $context)
     {
         $this->container = $container;
-        $this->context = $context;
+        $this->context   = $context;
     }
     
     /**
      * Returns true if the system has a typoScript frontend controller instance
+     *
      * @return bool
      */
     public function hasTsfe(): bool
     {
-        return isset($GLOBALS['TSFE']) && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController && $GLOBALS['TSFE']->cObj !== '';
+        return isset($GLOBALS['TSFE']) && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
+               && $GLOBALS['TSFE']->cObj !== '';
     }
     
     /**
@@ -81,6 +83,7 @@ class TsfeService implements SingletonInterface
      * Returns a prepared content object renderer instance.
      * If this method is used in the backend / in cli context
      * the frontend object might not be fully initialized.
+     *
      * @return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
      */
     public function getContentObjectRenderer(): ContentObjectRenderer
@@ -93,13 +96,13 @@ class TsfeService implements SingletonInterface
         }
         
         // Get the content object renderer from the config manager
-        if (!$cObj instanceof ContentObjectRenderer && $this->context->getEnvAspect()->isFrontend()) {
+        if (! $cObj instanceof ContentObjectRenderer && $this->context->getEnvAspect()->isFrontend()) {
             $cm = $this->container->get(ConfigurationManager::class);
             $cObj = $cm->getContentObject();
         }
         
         // Create it ourselves
-        if (!$cObj instanceof ContentObjectRenderer) {
+        if (! $cObj instanceof ContentObjectRenderer) {
             return $this->container->get(EnvironmentSimulator::class)->runWithEnvironment([], function () {
                 return $this->getTsfe()->cObj;
             });

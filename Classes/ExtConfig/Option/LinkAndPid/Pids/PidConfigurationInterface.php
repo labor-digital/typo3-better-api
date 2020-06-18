@@ -26,8 +26,8 @@ interface PidConfigurationInterface
     /**
      * Is used to collect the pids this configuration provides
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids\PidCollector $collector
-     * @param ExtConfigContext                                                    $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids\PidCollector  $collector
+     * @param   ExtConfigContext                                                            $context
      *
      * @return mixed
      */

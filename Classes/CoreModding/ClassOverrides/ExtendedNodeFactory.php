@@ -33,6 +33,7 @@ class ExtendedNodeFactory extends BetterApiClassOverrideCopy__NodeFactory
     public function create(array $data)
     {
         TypoEventBus::getInstance()->dispatch(($e = new BackendFormNodeDataFilterEvent($data)));
+        
         return FormNodeEventProxy::makeInstance(parent::create($e->getData()));
     }
 }

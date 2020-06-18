@@ -14,7 +14,8 @@
  * limitations under the License.
  *
  * Last modified: 2020.03.19 at 01:35
- */ /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+ */
+/** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
 /** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 namespace LaborDigital\Typo3BetterApi\Rendering;
@@ -34,6 +35,7 @@ class TemplateRenderingService implements SingletonInterface
     
     /**
      * The list of mustache renderers
+     *
      * @var \Closure[]
      */
     protected static $renderers = [];
@@ -56,14 +58,14 @@ class TemplateRenderingService implements SingletonInterface
     /**
      * TemplateRenderingService constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface $container
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext          $context
+     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $context
      */
     public function __construct(TypoContainerInterface $container, TypoContext $context)
     {
         $this->container = $container;
-        $this->context = $context;
-        $this->fs = TempFs::makeInstance('templateRendering');
+        $this->context   = $context;
+        $this->fs        = TempFs::makeInstance('templateRendering');
     }
     
     /**
@@ -71,9 +73,9 @@ class TemplateRenderingService implements SingletonInterface
      * As engine we use LightnCandy internally, but we use typo3's caching framework to store the compiled templates,
      * for a faster execution of the same templates.
      *
-     * @param string $template Either a mustache template as string, or a path like FILE:EXT:...
-     * @param array  $data     The view data to use for the renderer object
-     * @param array  $options  $options LightnCandy compile time- and run time options
+     * @param   string  $template  Either a mustache template as string, or a path like FILE:EXT:...
+     * @param   array   $data      The view data to use for the renderer object
+     * @param   array   $options   $options LightnCandy compile time- and run time options
      *
      * @return string
      * @see https://packagist.org/packages/zordius/lightncandy
@@ -81,11 +83,10 @@ class TemplateRenderingService implements SingletonInterface
      */
     public function renderMustache(string $template, array $data = [], array $options = []): string
     {
-        
         // Check if we have to load a template file
         if (substr(strtolower($template), 0, 5) === 'file:') {
             $templateFile = $this->context->getPathAspect()->typoPathToRealPath($template);
-            $template = Fs::readFile($templateFile);
+            $template     = Fs::readFile($templateFile);
         }
         
         // Check if we already know the renderer
@@ -94,9 +95,10 @@ class TemplateRenderingService implements SingletonInterface
             $renderer = static::$renderers[$templateFile];
         } else {
             // Check if we have to compile the template
-            if (!$this->fs->hasFile($templateFile)) {
-                if (!isset($options['flags'])) {
-                    $options['flags'] = LightnCandy::FLAG_BESTPERFORMANCE ^ LightnCandy::FLAG_ERROR_EXCEPTION ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL;
+            if (! $this->fs->hasFile($templateFile)) {
+                if (! isset($options['flags'])) {
+                    $options['flags'] = LightnCandy::FLAG_BESTPERFORMANCE ^ LightnCandy::FLAG_ERROR_EXCEPTION
+                                        ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL;
                 }
                 $php = LightnCandy::compile($template, $this->injectMustacheViewHelpers($options));
                 if (substr(trim($php), 0, 5) !== '<?php') {
@@ -116,14 +118,16 @@ class TemplateRenderingService implements SingletonInterface
     /**
      * Returns a fluid template view instance.
      *
-     * @param string $templateName Either a full template file name or a file path as EXT:.../template.html, or a file
-     *                             that is relative to the given "templateRootPaths"
-     * @param array  $options      Additional configuration options
-     *                             - templateRootPaths array: If no full template path is given as template name this
-     *                             should be an array of template root path's to look for your template
-     *                             - partialRootPaths: array: Can be used to set the partial root paths of the template
-     *                             - layoutRootPaths: array: Can be used to set the layout root paths of the template
-     *                             - format string (html): Defines the file type of the template to handle.
+     * @param   string  $templateName  Either a full template file name or a file path as EXT:.../template.html, or a
+     *                                 file that is relative to the given "templateRootPaths"
+     * @param   array   $options       Additional configuration options
+     *                                 - templateRootPaths array: If no full template path is given as template name
+     *                                 this should be an array of template root path's to look for your template
+     *                                 - partialRootPaths: array: Can be used to set the partial root paths of the
+     *                                 template
+     *                                 - layoutRootPaths: array: Can be used to set the layout root paths of the
+     *                                 template
+     *                                 - format string (html): Defines the file type of the template to handle.
      *
      * @return \TYPO3\CMS\Fluid\View\StandaloneView
      */
@@ -158,16 +162,17 @@ class TemplateRenderingService implements SingletonInterface
         // Build the instance
         $instance = $this->container->get(StandaloneView::class);
         $instance->setFormat($options['format']);
-        if (!empty($options['templateRootPaths'])) {
+        if (! empty($options['templateRootPaths'])) {
             $instance->setTemplateRootPaths($options['templateRootPaths']);
         }
-        if (!empty($options['partialRootPaths'])) {
+        if (! empty($options['partialRootPaths'])) {
             $instance->setPartialRootPaths($options['partialRootPaths']);
         }
-        if (!empty($options['layoutRootPaths'])) {
+        if (! empty($options['layoutRootPaths'])) {
             $instance->setLayoutRootPaths($options['layoutRootPaths']);
         }
-        empty($options['templateRootPaths']) ? $instance->setTemplatePathAndFilename($filename) : $instance->setTemplate($templateName);
+        empty($options['templateRootPaths']) ? $instance->setTemplatePathAndFilename($filename)
+            : $instance->setTemplate($templateName);
         
         // Done
         return $instance;
@@ -176,7 +181,7 @@ class TemplateRenderingService implements SingletonInterface
     /**
      * Internal helper to inject some quite useful viewhelpers into the mustache landscape...
      *
-     * @param array $options
+     * @param   array  $options
      *
      * @return array
      */
@@ -186,11 +191,13 @@ class TemplateRenderingService implements SingletonInterface
         return Arrays::merge([
             'helpers' => [
                 'translate' => function ($selector) {
-                    if (!is_string($selector)) {
+                    if (! is_string($selector)) {
                         return '';
                     }
+                    
                     return \LaborDigital\Typo3BetterApi\Container\TypoContainer::getInstance()
-                        ->get(\LaborDigital\Typo3BetterApi\Translation\TranslationService::class)->translateMaybe($selector);
+                                                                               ->get(\LaborDigital\Typo3BetterApi\Translation\TranslationService::class)
+                                                                               ->translateMaybe($selector);
                 },
             ],
         ], $options);

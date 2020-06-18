@@ -34,18 +34,21 @@ class BackendFormActionContextFilterEvent
 {
     /**
      * The name of the class that is used as a context in the filter callbacks
+     *
      * @var string
      */
     protected $contextClass;
     
     /**
      * The context configuration options as array
+     *
      * @var array
      */
     protected $config;
     
     /**
      * The type of stack we should find the handlers for
+     *
      * @var string
      */
     protected $stackType;
@@ -53,19 +56,20 @@ class BackendFormActionContextFilterEvent
     /**
      * BackendFormActionContextFilterEvent constructor.
      *
-     * @param string $contextClass
-     * @param array  $config
-     * @param string $stackType
+     * @param   string  $contextClass
+     * @param   array   $config
+     * @param   string  $stackType
      */
     public function __construct(string $contextClass, array $config, string $stackType)
     {
         $this->contextClass = $contextClass;
-        $this->config = $config;
-        $this->stackType = $stackType;
+        $this->config       = $config;
+        $this->stackType    = $stackType;
     }
     
     /**
      * Returns the name of the class that is used as a context in the filter callbacks
+     *
      * @return string
      */
     public function getContextClass(): string
@@ -76,18 +80,20 @@ class BackendFormActionContextFilterEvent
     /**
      * Can be used to update the name of the class that is used as a context in the filter callbacks
      *
-     * @param string $contextClass
+     * @param   string  $contextClass
      *
      * @return BackendFormActionContextFilterEvent
      */
     public function setContextClass(string $contextClass): BackendFormActionContextFilterEvent
     {
         $this->contextClass = $contextClass;
+        
         return $this;
     }
     
     /**
      * Returns the context configuration options as array
+     *
      * @return array
      */
     public function getConfig(): array
@@ -97,6 +103,7 @@ class BackendFormActionContextFilterEvent
     
     /**
      * Returns the type of stack we should find the handlers for
+     *
      * @return string
      */
     public function getStackType(): string

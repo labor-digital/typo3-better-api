@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Context\AspectInterface;
 
 /**
  * Class PathAspect
+ *
  * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
  * @deprecated will be removed in v10 -> Use PathFacet instead
  */
@@ -39,7 +40,7 @@ class PathAspect implements AspectInterface
     /**
      * PathAspect constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\Facet\PathFacet $facet
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\Facet\PathFacet  $facet
      */
     public function __construct(PathFacet $facet)
     {
@@ -55,12 +56,14 @@ class PathAspect implements AspectInterface
         if ($name === 'FACET') {
             return $this->facet;
         }
+        
         return $this->handleGet($name);
     }
     
     /**
      * Returns the absolute filepath of the "vendor" directory of typo3 was installed using composer.
      * Will return an empty string if the composer classloader is not yet loaded / not installed
+     *
      * @return string
      * @throws \ReflectionException
      * @deprecated will be removed in v10 -> Use PathFacet instead
@@ -73,8 +76,8 @@ class PathAspect implements AspectInterface
     /**
      * Helper to retrieve the filepath of an extension.
      *
-     * @param string $extensionKey The extension key
-     * @param string $script       Will be appended to the created path
+     * @param   string  $extensionKey  The extension key
+     * @param   string  $script        Will be appended to the created path
      *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead
@@ -120,8 +123,8 @@ class PathAspect implements AspectInterface
      * The returned path is a typo3 path, beginning with EXT: use typoPathToRealPath() to convert it to a
      * real filesystem path
      *
-     * @param string      $extKey     The extkey for the extension to find the path for
-     * @param string|null $pluginName Optional plugin name to append to the built path
+     * @param   string       $extKey      The extkey for the extension to find the path for
+     * @param   string|null  $pluginName  Optional plugin name to append to the built path
      *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead
@@ -136,8 +139,8 @@ class PathAspect implements AspectInterface
      * The returned path is a typo3 path, beginning with EXT: use typoPathToRealPath() to convert it to a
      * real filesystem path
      *
-     * @param string      $extKey     The extkey for the extension to find the path for
-     * @param string|null $pluginName Optional plugin name to append to the built path
+     * @param   string       $extKey      The extkey for the extension to find the path for
+     * @param   string|null  $pluginName  Optional plugin name to append to the built path
      *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead
@@ -152,8 +155,8 @@ class PathAspect implements AspectInterface
      * The returned path is a typo3 path, beginning with EXT: use typoPathToRealPath() to convert it to a
      * real filesystem path
      *
-     * @param string      $extKey     The extkey for the extension to find the path for
-     * @param string|null $pluginName Optional plugin name to append to the built path
+     * @param   string       $extKey      The extkey for the extension to find the path for
+     * @param   string|null  $pluginName  Optional plugin name to append to the built path
      *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead
@@ -165,6 +168,7 @@ class PathAspect implements AspectInterface
     
     /**
      * Returns the path to the directory where dynamic data may be stored
+     *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead
      */
@@ -178,7 +182,7 @@ class PathAspect implements AspectInterface
      * And converts it into an absolute path. Of course you may use paths that
      * start only like EXT:ext_key without the language selector
      *
-     * @param string $typoPath The path to parse
+     * @param   string  $typoPath  The path to parse
      *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead
@@ -194,7 +198,7 @@ class PathAspect implements AspectInterface
      *
      * Note: Your path should be inside a loaded extension's root directory. Otherwise the method will fail.
      *
-     * @param string $path
+     * @param   string  $path
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
@@ -221,10 +225,10 @@ class PathAspect implements AspectInterface
      * The given array should hold a mapping of all fields that are referenced in your slug's TCA generator
      * configuration. The resulting string will match the rules you specified in the TCA
      *
-     * @param string|int|array $recordOrUid Either the uid of an existing record or a mapping of fields that are used
-     *                                      to generate a slug when the record is not yet in the database
-     * @param string           $table       The full name of the database table that holds the slug field
-     * @param string           $field       The name of the slug field to read the configuration from
+     * @param   string|int|array  $recordOrUid  Either the uid of an existing record or a mapping of fields that are
+     *                                          used to generate a slug when the record is not yet in the database
+     * @param   string            $table        The full name of the database table that holds the slug field
+     * @param   string            $field        The name of the slug field to read the configuration from
      *
      * @return string
      * @deprecated will be removed in v10 -> Use PathFacet instead

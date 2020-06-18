@@ -31,13 +31,16 @@ class AssetPostProcessorEventAdapter extends AbstractCoreHookEventAdapter
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess'][static::class] = static::class . '->emit';
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess'][static::class]
+            = static::class . '->emit';
     }
     
     public function emit(&$arguments, $pageRenderer)
     {
-        $event = static::$context->getEnvAspect()->isBackend() ?
-            new BackendAssetPostProcessorEvent($arguments, $pageRenderer) :
+        $event = static::$context->getEnvAspect()->isBackend()
+            ?
+            new BackendAssetPostProcessorEvent($arguments, $pageRenderer)
+            :
             new FrontendAssetPostProcessorEvent($arguments, $pageRenderer);
         static::$bus->dispatch($event);
         $arguments = $event->getAssets();

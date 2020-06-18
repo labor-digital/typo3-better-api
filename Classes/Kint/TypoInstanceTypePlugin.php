@@ -49,9 +49,8 @@ class TypoInstanceTypePlugin extends Plugin
     
     public function parse(&$variable, BasicObject &$o, $trigger)
     {
-        
         // Show the iterator first
-        if (!empty($o->getRepresentation('iterator'))) {
+        if (! empty($o->getRepresentation('iterator'))) {
             $r = $o->getRepresentation('iterator');
             $o->removeRepresentation('iterator');
             $o->addRepresentation($r, 0);
@@ -71,11 +70,13 @@ class TypoInstanceTypePlugin extends Plugin
         if ($variable instanceof LazyLoadingProxy) {
             $realVal = $this->getLazyLoading()->getRealValue($variable);
             $o->classname = $o->classname .= ' - ' . get_class($realVal) .
-                ($realVal instanceof AbstractEntity ? ' - UID: ' . $realVal->getUid() : '');
+                                             ($realVal instanceof AbstractEntity ? ' - UID: ' . $realVal->getUid()
+                                                 : '');
         }
         
         // Update size for countable objects
-        if ($variable instanceof LazyObjectStorage || $variable instanceof ObjectStorage || $variable instanceof QueryResultInterface) {
+        if ($variable instanceof LazyObjectStorage || $variable instanceof ObjectStorage
+            || $variable instanceof QueryResultInterface) {
             $o->size = $variable->count();
         }
     }

@@ -52,12 +52,14 @@ class TranslationService implements SingletonInterface
     
     /**
      * The list of registered contexts
+     *
      * @var array
      */
     protected $contexts = [];
     
     /**
      * A list of labels and their overrides
+     *
      * @var array
      */
     protected $overrides = [];
@@ -65,14 +67,14 @@ class TranslationService implements SingletonInterface
     /**
      * TranslationService constructor.
      *
-     * @param \Neunerlei\EventBus\EventBusInterface                $eventBus
-     * @param \LaborDigital\Typo3BetterApi\Tsfe\TsfeService        $tsfe
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $typoContext
+     * @param   \Neunerlei\EventBus\EventBusInterface                 $eventBus
+     * @param   \LaborDigital\Typo3BetterApi\Tsfe\TsfeService         $tsfe
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $typoContext
      */
     public function __construct(EventBusInterface $eventBus, TsfeService $tsfe, TypoContext $typoContext)
     {
-        $this->eventBus = $eventBus;
-        $this->tsfe = $tsfe;
+        $this->eventBus    = $eventBus;
+        $this->tsfe        = $tsfe;
         $this->typoContext = $typoContext;
     }
     
@@ -83,14 +85,13 @@ class TranslationService implements SingletonInterface
      * Use this to convert your LLL:EXT:my_ext/Resources/Private/Language/locallang.xlf to a simple: my_ext, myExt or
      * whatever you like.
      *
-     * @param string $context  The shortname you want to use
-     * @param string $filename The full filename which should begin with EXT:ext_key/....
+     * @param   string  $context   The shortname you want to use
+     * @param   string  $filename  The full filename which should begin with EXT:ext_key/....
      *
      * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
      */
     public function addContext(string $context, string $filename): TranslationService
     {
-        
         // Prepare filename
         $filename = trim($filename);
         if (stripos($filename, 'lll:') === 0) {
@@ -107,6 +108,7 @@ class TranslationService implements SingletonInterface
     
     /**
      * Returns the list of registered contexts as key (context) -> value (filename) pairs
+     *
      * @return array
      */
     public function getContexts(): array
@@ -117,7 +119,7 @@ class TranslationService implements SingletonInterface
     /**
      * Sets a list of contexts which should be specified as key (context) -> value (filename) pairs
      *
-     * @param array $contexts
+     * @param   array  $contexts
      *
      * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
      */
@@ -127,13 +129,14 @@ class TranslationService implements SingletonInterface
         foreach ($contexts as $k => $v) {
             $this->addContext($k, $v);
         }
+        
         return $this;
     }
     
     /**
      * Returns true if the given context was registered, false if not
      *
-     * @param string $context
+     * @param   string  $context
      *
      * @return bool
      */
@@ -145,8 +148,8 @@ class TranslationService implements SingletonInterface
     /**
      * Returns the filename of a given context
      *
-     * @param string $context           The key of the context to retrieve the file from
-     * @param bool   $withTripleLPrefix True to add LLL: before the filename
+     * @param   string  $context            The key of the context to retrieve the file from
+     * @param   bool    $withTripleLPrefix  True to add LLL: before the filename
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\Translation\TranslationException
@@ -155,6 +158,7 @@ class TranslationService implements SingletonInterface
     {
         $this->requireContext($context);
         $result = $this->contexts[$context];
+        
         return $withTripleLPrefix ? 'LLL:' . $result : $result;
     }
     
@@ -162,7 +166,7 @@ class TranslationService implements SingletonInterface
      * Creates the typo3 translation key (LLL:filename.xlf:key) from a given
      * translation selector
      *
-     * @param string $selector The selector to translate to a real translation key
+     * @param   string  $selector  The selector to translate to a real translation key
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\Translation\TranslationException
@@ -176,6 +180,7 @@ class TranslationService implements SingletonInterface
         if ($pr === static::PARSE_RESULT_NOT_TRANSLATABLE) {
             $this->requireContext($context, $selector);
         }
+        
         return $this->resolveOverride($this->getContextFile($context, true) . ':' . $selector);
     }
     
@@ -183,7 +188,7 @@ class TranslationService implements SingletonInterface
      * Creates the typo3 translation key (LLL:filename.xlf:key) from a given
      * translation selector, but returns the given $selector if the selector seems not to be translatable.
      *
-     * @param string $selector
+     * @param   string  $selector
      *
      * @return string
      */
@@ -200,7 +205,7 @@ class TranslationService implements SingletonInterface
      * Checks if a given selector is translatable by any means.
      * Checks if it starts with LLL: or if the part before the first . is a valid context
      *
-     * @param string $selector The value to check for the ability to be translated
+     * @param   string  $selector  The value to check for the ability to be translated
      *
      * @return bool True if value is translatable, false if not.
      */
@@ -217,8 +222,8 @@ class TranslationService implements SingletonInterface
      * which will be replaced via vsprintf, or you can pass an array of values as
      * the second param of this function to replace them in your output string.
      *
-     * @param string $selector The selector to translate into
-     * @param mixed  $args     Arguments to replace with placeholders
+     * @param   string  $selector  The selector to translate into
+     * @param   mixed   $args      Arguments to replace with placeholders
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\Translation\TranslationException
@@ -231,20 +236,21 @@ class TranslationService implements SingletonInterface
         } else {
             $result = $this->getTypoLanguageService()->sl($key);
         }
-        if (!is_string($result)) {
+        if (! is_string($result)) {
             $result = '';
         }
-        if (!empty($args)) {
+        if (! empty($args)) {
             $result = vsprintf($result, $args);
         }
+        
         return $result;
     }
     
     /**
      * The same as translate() but will return the $selector, if it does not look like it is translatable
      *
-     * @param string $selector The selector to translate into
-     * @param mixed  $args     Arguments to replace with placeholders
+     * @param   string  $selector  The selector to translate into
+     * @param   mixed   $args      Arguments to replace with placeholders
      *
      * @return string
      */
@@ -258,17 +264,19 @@ class TranslationService implements SingletonInterface
         if (empty($result) && $this->isTranslatable($selector)) {
             return '';
         }
+        
         return $result;
     }
     
     /**
      * This method is used to register a complete language file override.
      * Should be used in your ext_localconf.php
+     *
      * @see https://docs.typo3.org/typo3cms/CoreApiReference/7.6/Internationalization/Translation/Index.html#custom-translations
      *
-     * @param string $original The path to the original file you want to override
-     * @param string $override The path to the file you want to override the original with
-     * @param string $lang     The language to override the file in
+     * @param   string  $original  The path to the original file you want to override
+     * @param   string  $override  The path to the file you want to override the original with
+     * @param   string  $lang      The language to override the file in
      *
      * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
      */
@@ -278,6 +286,7 @@ class TranslationService implements SingletonInterface
             // Hook into the base "api"
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['locallangXMLOverride'][$lang][$original][md5($override)] = $override;
         });
+        
         return $this;
     }
     
@@ -286,17 +295,18 @@ class TranslationService implements SingletonInterface
      * Both labels should either be something like: EXT:ext/Resources/Private/Language/locallang_db.xlf:key
      * or if you are using translation contexts something like context.key
      *
-     * @param string $original The label to override
-     * @param string $override The label to override $original with
+     * @param   string  $original  The label to override
+     * @param   string  $override  The label to override $original with
      *
      * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
      * @throws \LaborDigital\Typo3BetterApi\Translation\TranslationException
      */
     public function registerOverride(string $original, string $override): TranslationService
     {
-        $original = $this->getTranslationKey($original);
-        $override = $this->getTranslationKeyMaybe($override);
+        $original                   = $this->getTranslationKey($original);
+        $override                   = $this->getTranslationKeyMaybe($override);
         $this->overrides[$original] = $override;
+        
         return $this;
     }
     
@@ -312,18 +322,20 @@ class TranslationService implements SingletonInterface
             return TsfeAdapter::getLanguageService($this->tsfe->getTsfe());
         }
         
-        if (!is_object($GLOBALS['LANG'])) {
+        if (! is_object($GLOBALS['LANG'])) {
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
-            $lang = $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getTwoLetterIsoCode();
+            $lang            = $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()
+                                                 ->getTwoLetterIsoCode();
             $GLOBALS['LANG']->init($lang === 'en' ? 'default' : $lang);
         }
+        
         return $GLOBALS['LANG'];
     }
     
     /**
      * Returns all available labels in a given translation file.
      *
-     * @param string $filename Either the LLL:EXT:...xlf filename to the file or a registered context
+     * @param   string  $filename  Either the LLL:EXT:...xlf filename to the file or a registered context
      *
      * @return array
      */
@@ -332,16 +344,17 @@ class TranslationService implements SingletonInterface
         if ($this->hasContext($filename)) {
             $filename = $this->getContextFile($filename);
         }
-        $languageService = $this->getTypoLanguageService();
-        $backupLang = $languageService->lang;
+        $languageService       = $this->getTypoLanguageService();
+        $backupLang            = $languageService->lang;
         $languageService->lang = 'default';
-        $labels = $languageService->includeLLFile($filename, false);
-        $labels = array_keys(Arrays::getPath($labels, ['default'], []));
-        $labels = array_combine($labels, $labels);
-        $labels = array_map(function ($v) use ($filename) {
+        $labels                = $languageService->includeLLFile($filename, false);
+        $labels                = array_keys(Arrays::getPath($labels, ['default'], []));
+        $labels                = array_combine($labels, $labels);
+        $labels                = array_map(function ($v) use ($filename) {
             return $filename . ':' . $v;
         }, $labels);
         $languageService->lang = $backupLang;
+        
         return $labels;
     }
     
@@ -349,8 +362,8 @@ class TranslationService implements SingletonInterface
      * Parses the given selector into it's real selector (aka. lookup path) and the context.
      * Will return one of the PARSE_RESULT constants to signalize what to do with the result
      *
-     * @param string $selector
-     * @param null   $context
+     * @param   string  $selector
+     * @param   null    $context
      *
      * @return int
      */
@@ -362,6 +375,7 @@ class TranslationService implements SingletonInterface
         if (stripos($selectorTrimmed, 'lll:') !== 0) {
             if (stripos($selectorTrimmed, 'ext:') === 0) {
                 $selector = 'LLL:' . $selectorTrimmed;
+                
                 return self::PARSE_RESULT_ALREADY_TRANSKEY;
             }
         } else {
@@ -370,20 +384,21 @@ class TranslationService implements SingletonInterface
         
         // Get context from selector
         $separatorPos = (int)stripos($selectorTrimmed, '.');
-        $context = substr($selectorTrimmed, 0, $separatorPos);
+        $context      = substr($selectorTrimmed, 0, $separatorPos);
         
         // Check if we have the context
-        if (!$this->hasContext($context)) {
+        if (! $this->hasContext($context)) {
             return static::PARSE_RESULT_NOT_TRANSLATABLE;
         }
         $selector = substr($selectorTrimmed, $separatorPos + 1);
+        
         return static::PARSE_RESULT_OK;
     }
     
     /**
      * Internal helper which is used to resolve overridden selectors
      *
-     * @param string $selector The selector to resolve
+     * @param   string  $selector  The selector to resolve
      *
      * @return string
      * @throws \LaborDigital\Typo3BetterApi\Translation\TranslationException
@@ -399,8 +414,10 @@ class TranslationService implements SingletonInterface
             $selector = 'LLL:' . $selector;
         }
         if (stripos($selector, 'lll:ext:') !== 0) {
-            $parts = explode(':', $selector);
-            $selector = array_shift($parts) . $this->typoContext->getPathAspect()->realPathToTypoExt(array_shift($parts)) . ':' . implode(':', $parts);
+            $parts    = explode(':', $selector);
+            $selector = array_shift($parts) . $this->typoContext->getPathAspect()
+                                                                ->realPathToTypoExt(array_shift($parts)) . ':'
+                        . implode(':', $parts);
         }
         
         // Resolve the overrides
@@ -420,15 +437,15 @@ class TranslationService implements SingletonInterface
      * Internal helper to FORCE that a given context exists.
      * If context does NOT EXIST the script will throw an exception
      *
-     * @param string      $context  The key of the context to check for
-     * @param string|null $selector Optional value to render the failing selector in the message
+     * @param   string       $context   The key of the context to check for
+     * @param   string|null  $selector  Optional value to render the failing selector in the message
      *
      * @throws \LaborDigital\Typo3BetterApi\Translation\TranslationException
      */
     protected function requireContext(string $context, ?string $selector = null)
     {
-        if (!$this->hasContext($context)) {
-            $selector = !empty($selector) ? ' for selector: "' . $selector . '"' : '';
+        if (! $this->hasContext($context)) {
+            $selector = ! empty($selector) ? ' for selector: "' . $selector . '"' : '';
             throw new TranslationException(
                 'Your translation requires a missing context: "' . $context . '"' . $selector
             );

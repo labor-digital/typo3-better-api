@@ -29,8 +29,8 @@ abstract class AbstractFileBasedCache extends AbstractCache
     /**
      * Returns the name of a given cache file inside the file cache directory
      *
-     * @param string $key      The key to get the filename for
-     * @param bool   $absolute True to return the absolute path for the file
+     * @param   string  $key       The key to get the filename for
+     * @param   bool    $absolute  True to return the absolute path for the file
      *
      * @return string|bool
      * @throws \LaborDigital\Typo3BetterApi\Cache\InvalidFileBasedCacheException
@@ -41,9 +41,9 @@ abstract class AbstractFileBasedCache extends AbstractCache
         $key = $this->prepareKey($key);
         
         // Check if the cache is disabled
-        if (!$this->isCacheEnabled()) {
+        if (! $this->isCacheEnabled()) {
             // Check if the key is allowed even without cache
-            if (!Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
+            if (! Arrays::hasPath(static::$allowedCacheKeys, [$this->cacheConfigKey, $key])) {
                 return false;
             }
         }
@@ -52,21 +52,22 @@ abstract class AbstractFileBasedCache extends AbstractCache
         $cache = $this->getTypoCache();
         
         // Check if the backend exists
-        if (!method_exists($cache, 'getBackend')) {
+        if (! method_exists($cache, 'getBackend')) {
             throw new InvalidFileBasedCacheException('The current cache does not have a getBackend() method!');
         }
         
         // Check if the backend implements our interface
         $backend = $cache->getBackend();
-        if (!$backend instanceof ExtendedSimpleFileBackendInterface) {
+        if (! $backend instanceof ExtendedSimpleFileBackendInterface) {
             if ($backend instanceof NullBackend) {
                 return '';
             }
-            throw new InvalidFileBasedCacheException('The given cache backend does not implement the required interface: ' .
-                ExtendedSimpleFileBackendInterface::class . '!');
+            throw new InvalidFileBasedCacheException('The given cache backend does not implement the required interface: '
+                                                     .
+                                                     ExtendedSimpleFileBackendInterface::class . '!');
         }
         
         // Resolve the file
-        return !$absolute ? basename($backend->getFilenameForKey($key)) : $backend->getFilenameForKey($key);
+        return ! $absolute ? basename($backend->getFilenameForKey($key)) : $backend->getFilenameForKey($key);
     }
 }

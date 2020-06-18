@@ -28,7 +28,7 @@ trait LazyLoadingTrait
     protected $lazyLoading;
     
     /**
-     * @param \LaborDigital\Typo3BetterApi\LazyLoading\LazyLoading $lazyLoading
+     * @param   \LaborDigital\Typo3BetterApi\LazyLoading\LazyLoading  $lazyLoading
      */
     public function injectLazyLoading(LazyLoading $lazyLoading)
     {

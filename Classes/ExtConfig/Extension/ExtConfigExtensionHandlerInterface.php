@@ -29,7 +29,7 @@ interface ExtConfigExtensionHandlerInterface
     /**
      * ExtConfigExtensionHandlerInterface constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      */
     public function __construct(ExtConfigContext $context);
     
@@ -37,7 +37,7 @@ interface ExtConfigExtensionHandlerInterface
      * Applied after the ext config service gathered all extensions.
      * Should be used to perform all required actions to apply the extensions.
      *
-     * @param array $extensions
+     * @param   array  $extensions
      */
     public function generate(array $extensions): void;
 }

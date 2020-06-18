@@ -28,8 +28,8 @@ interface PluginConfigurationInterface
      * This method is used to configure a single ext base plugin / content element using the
      * given configurator and context object
      *
-     * @param PluginConfigurator $configurator
-     * @param ExtConfigContext   $context
+     * @param   PluginConfigurator  $configurator
+     * @param   ExtConfigContext    $context
      *
      * @return mixed
      */

@@ -36,6 +36,7 @@ class SqlDefinitionFilterEvent implements CoreHookEventInterface
     
     /**
      * The list of sql definitions that have been gathered
+     *
      * @var array
      */
     protected $definitions;
@@ -51,7 +52,7 @@ class SqlDefinitionFilterEvent implements CoreHookEventInterface
     /**
      * SqlDefinitionFilterEvent constructor.
      *
-     * @param array $definitions
+     * @param   array  $definitions
      */
     public function __construct(array $definitions)
     {
@@ -60,6 +61,7 @@ class SqlDefinitionFilterEvent implements CoreHookEventInterface
     
     /**
      * Returns the list of sql definitions that have been gathered
+     *
      * @return array
      */
     public function getDefinitions(): array
@@ -70,26 +72,28 @@ class SqlDefinitionFilterEvent implements CoreHookEventInterface
     /**
      * Updates the list of sql definitions that have been gathered
      *
-     * @param array $definitions
+     * @param   array  $definitions
      *
      * @return SqlDefinitionFilterEvent
      */
     public function setDefinitions(array $definitions): SqlDefinitionFilterEvent
     {
         $this->definitions = $definitions;
+        
         return $this;
     }
     
     /**
      * Adds a new definition to the list of sql definitions that have been gathered
      *
-     * @param string $definition
+     * @param   string  $definition
      *
      * @return \LaborDigital\Typo3BetterApi\Event\Events\SqlDefinitionFilterEvent
      */
     public function addNewDefinition(string $definition): SqlDefinitionFilterEvent
     {
         $this->definitions[] = $definition;
+        
         return $this;
     }
 }

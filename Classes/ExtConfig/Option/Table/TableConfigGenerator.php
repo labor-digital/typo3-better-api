@@ -31,6 +31,7 @@ class TableConfigGenerator implements SingletonInterface
     /**
      * Holds the additional config data for all tables we generated the config for.
      * This is used to hold the data until it is injected into table config object
+     *
      * @var array
      */
     protected $additionalConfig = [];
@@ -38,9 +39,9 @@ class TableConfigGenerator implements SingletonInterface
     /**
      * Generates the TCA list for the given stack of Table configuration classes
      *
-     * @param array            $stack      The configuration class list to iterate over
-     * @param ExtConfigContext $context    The ext config context instance
-     * @param bool             $isOverride True if the given stack represents the table override configurations
+     * @param   array             $stack       The configuration class list to iterate over
+     * @param   ExtConfigContext  $context     The ext config context instance
+     * @param   bool              $isOverride  True if the given stack represents the table override configurations
      *
      * @return array
      */
@@ -51,29 +52,35 @@ class TableConfigGenerator implements SingletonInterface
         
         // Run through the stack
         foreach ($stack as $tableName => $data) {
-            $context->runWithFirstCachedValueDataScope($data, function () use ($data, $tableName, $context, $isOverride, &$tcaList) {
-                
-                // Create the table instance
-                $table = TcaTable::makeInstance($tableName, $context);
-                
-                // Run through table stack
-                $context->runWithCachedValueDataScope($data, function (string $configClass) use ($tableName, $context, $table, $isOverride) {
-                    // Validate configuration
-                    if (!class_exists($configClass)) {
-                        throw new ExtConfigException('Could not load table configuration for table: ' . $tableName . ' because class: ' . $configClass . ' does not exist!');
-                    }
-                    if (!in_array(TableConfigurationInterface::class, class_implements($configClass))) {
-                        throw new ExtConfigException('Could not load table configuration for table: ' . $tableName . ' because class: ' . $configClass . ' does not implement the required interface: ' . TableConfigurationInterface::class . '!');
-                    }
+            $context->runWithFirstCachedValueDataScope($data,
+                function () use ($data, $tableName, $context, $isOverride, &$tcaList) {
+                    // Create the table instance
+                    $table = TcaTable::makeInstance($tableName, $context);
                     
-                    // Run the configuration class
-                    call_user_func([$configClass, 'configureTable'], $table, $context, $isOverride);
+                    // Run through table stack
+                    $context->runWithCachedValueDataScope($data,
+                        function (string $configClass) use ($tableName, $context, $table, $isOverride) {
+                            // Validate configuration
+                            if (! class_exists($configClass)) {
+                                throw new ExtConfigException('Could not load table configuration for table: '
+                                                             . $tableName . ' because class: ' . $configClass
+                                                             . ' does not exist!');
+                            }
+                            if (! in_array(TableConfigurationInterface::class, class_implements($configClass))) {
+                                throw new ExtConfigException('Could not load table configuration for table: '
+                                                             . $tableName . ' because class: ' . $configClass
+                                                             . ' does not implement the required interface: '
+                                                             . TableConfigurationInterface::class . '!');
+                            }
+                            
+                            // Run the configuration class
+                            call_user_func([$configClass, 'configureTable'], $table, $context, $isOverride);
+                        });
+                    
+                    // Build the tca for this table
+                    $tcaList[$tableName]                = $tca = $table->__build();
+                    $this->additionalConfig[$tableName] = $tca['additionalConfig'];
                 });
-                
-                // Build the tca for this table
-                $tcaList[$tableName] = $tca = $table->__build();
-                $this->additionalConfig[$tableName] = $tca['additionalConfig'];
-            });
         }
         
         // Done
@@ -84,7 +91,7 @@ class TableConfigGenerator implements SingletonInterface
      * Should be called after both the default TCA and the TCA override stack ran.
      * This will build the cachable table configuration object and return it.
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
      * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\TableConfig
      */
@@ -108,13 +115,13 @@ class TableConfigGenerator implements SingletonInterface
             }
             
             // Add list position definitions
-            if (!empty($additionalConfig['listPosition'])) {
+            if (! empty($additionalConfig['listPosition'])) {
                 $tableListPositions[$tableName] = $additionalConfig['listPosition'];
             }
         }
         
         // Combine the config
-        $config->typoScript = implode(PHP_EOL, array_filter($typoScript));
+        $config->typoScript         = implode(PHP_EOL, array_filter($typoScript));
         $config->tableListPositions = $tableListPositions;
         
         // Done

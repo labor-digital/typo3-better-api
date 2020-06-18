@@ -29,18 +29,18 @@ trait ChangeFunctionBuilderTrait
      * javascript counterpart. It can be used to extend all elements which don't support the onChange
      * configuration natively or any new element you want to enhance with that behaviour.
      *
-     * @param string $ElementHtml        The rendered html of the element mostly $result['html'] (when extending
-     *                                   exiting elements)
-     * @param array  $fieldChangeFunc    The array of field change javascript functions
-     * @param array  $options            An array of advanced configuration options:
-     *                                   - prependElementHtml bool (true) True to prepend the element html to the
-     *                                   output
-     *                                   - pregPattern string This is optional to replace the internal preg pattern to
-     *                                   extract the element's id from the source.
-     *                                   - eventToListenFor string (DOMAttrModified propertychange paste)
-     *                                   Can be used to override the js event to listen for when waiting for a change
-     *                                   - onlyForNewSections bool (FALSE): If this is set to true the event will only
-     *                                   listen for elements in new flex form sections
+     * @param   string  $ElementHtml      The rendered html of the element mostly $result['html'] (when extending
+     *                                    exiting elements)
+     * @param   array   $fieldChangeFunc  The array of field change javascript functions
+     * @param   array   $options          An array of advanced configuration options:
+     *                                    - prependElementHtml bool (true) True to prepend the element html to the
+     *                                    output
+     *                                    - pregPattern string This is optional to replace the internal preg pattern to
+     *                                    extract the element's id from the source.
+     *                                    - eventToListenFor string (DOMAttrModified propertychange paste)
+     *                                    Can be used to override the js event to listen for when waiting for a change
+     *                                    - onlyForNewSections bool (FALSE): If this is set to true the event will only
+     *                                    listen for elements in new flex form sections
      *
      * @return string The elementHtml with the attached javascript code / if $prependElementHtml is false only the js
      *                source is returned

@@ -26,6 +26,7 @@ class TranslationLabelProvider
     
     /**
      * Stores all requested labels to speed up subsequent requests
+     *
      * @var array
      */
     protected static $labelCache = [];
@@ -39,16 +40,15 @@ class TranslationLabelProvider
     /**
      * Bridge for the translation service, used in the core modding classes
      *
-     * @param          $input
-     * @param callable $translationProvider
+     * @param             $input
+     * @param   callable  $translationProvider
      *
      * @return mixed
      */
     public static function provideLabelFor($input, callable $translationProvider)
     {
-        
         // Ignore if the input is not a string
-        if (!is_string($input)) {
+        if (! is_string($input)) {
             return $translationProvider($input);
         }
         $input = trim($input);
@@ -60,8 +60,8 @@ class TranslationLabelProvider
         }
         
         // Resolve our label
-        $inputRaw = $input;
-        $input = static::getTranslator()->getTranslationKeyMaybe($input);
+        $inputRaw                   = $input;
+        $input                      = static::getTranslator()->getTranslationKeyMaybe($input);
         static::$labelCache[$input] = $inputRaw === $input ? true : $input;
         
         // Do the translation
@@ -70,13 +70,15 @@ class TranslationLabelProvider
     
     /**
      * Returns the translator instance
+     *
      * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
      */
     protected static function getTranslator(): TranslationService
     {
-        if (!empty(static::$translator)) {
+        if (! empty(static::$translator)) {
             return static::$translator;
         }
+        
         return static::$translator = TypoContainer::getInstance()->get(TranslationService::class);
     }
 }

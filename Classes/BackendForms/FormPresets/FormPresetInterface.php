@@ -28,7 +28,7 @@ interface FormPresetInterface
     /**
      * This is used to inject the form field the next preset method should refer to
      *
-     * @param \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormField $field
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\Abstracts\AbstractFormField  $field
      *
      * @return void
      */
@@ -37,7 +37,7 @@ interface FormPresetInterface
     /**
      * This is used to inject the extConfig context object for the field that will be configured next
      *
-     * @param \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext $context
+     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
      * @return mixed
      */

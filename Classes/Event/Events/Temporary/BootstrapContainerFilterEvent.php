@@ -28,12 +28,14 @@ class BootstrapContainerFilterEvent
     
     /**
      * The Better Api TypoContainer wrapper
+     *
      * @var \Psr\Container\ContainerInterface
      */
     protected $container;
     
     /**
      * True if the app is running in failsafe mode, false if not
+     *
      * @var bool
      */
     protected $failsafe;
@@ -41,17 +43,18 @@ class BootstrapContainerFilterEvent
     /**
      * BootstrapContainerFilterEvent constructor.
      *
-     * @param \Psr\Container\ContainerInterface $container
-     * @param bool                              $failsafe
+     * @param   \Psr\Container\ContainerInterface  $container
+     * @param   bool                               $failsafe
      */
     public function __construct(ContainerInterface $container, bool $failsafe)
     {
         $this->container = $container;
-        $this->failsafe = $failsafe;
+        $this->failsafe  = $failsafe;
     }
     
     /**
      * Returns the typo3 core container instance
+     *
      * @return \Psr\Container\ContainerInterface
      */
     public function getContainer(): ContainerInterface
@@ -62,18 +65,20 @@ class BootstrapContainerFilterEvent
     /**
      * Can be used to modify the typo3 core container instance
      *
-     * @param \Psr\Container\ContainerInterface $container
+     * @param   \Psr\Container\ContainerInterface  $container
      *
      * @return BootstrapContainerFilterEvent
      */
     public function setContainer(ContainerInterface $container): BootstrapContainerFilterEvent
     {
         $this->container = $container;
+        
         return $this;
     }
     
     /**
      * Returns true if the app is running in failsafe mode, false if not
+     *
      * @return bool
      */
     public function isFailsafe(): bool

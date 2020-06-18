@@ -35,7 +35,7 @@ class FixFlexFormSectionDefinitionApplier implements LazyEventSubscriberInterfac
     /**
      * FixFlexFormSectionDefinitionApplier constructor.
      *
-     * @param \LaborDigital\Typo3BetterApi\TypoContext\TypoContext $context
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
@@ -58,7 +58,7 @@ class FixFlexFormSectionDefinitionApplier implements LazyEventSubscriberInterfac
      * This method will forcefully add the data structure identifier column to the list of processed columns
      * which stop's typo3 from removing it in the processed tca array
      *
-     * @param \LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterEvent $event
+     * @param   \LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterEvent  $event
      */
     public function __apply(BackendFormFilterEvent $event)
     {
