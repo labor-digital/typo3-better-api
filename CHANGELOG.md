@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.15.0](https://github.com/labor-digital/typo3-better-api/compare/v9.14.0...v9.15.0) (2020-06-22)
+
+
+### Features
+
+* **Http:** add support for storage pid aware persisted alias mapping ([69475dc](https://github.com/labor-digital/typo3-better-api/commit/69475dc102c425ee8bd38536d42631a55141fc56))
+
 ## [9.14.0](https://github.com/labor-digital/typo3-better-api/compare/v9.13.0...v9.14.0) (2020-06-18)
 
 
