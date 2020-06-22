@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.14.0](https://github.com/labor-digital/typo3-better-api/compare/v9.13.0...v9.14.0) (2020-06-18)
+
+
+### Features
+
+* **TypoLink:** implement option to disable cHash for certain link args ([db7d0d5](https://github.com/labor-digital/typo3-better-api/commit/db7d0d54fde0b24e2f9bda09e825ee4a502d806f))
+* make code psr-2 compliant ([5b2883b](https://github.com/labor-digital/typo3-better-api/commit/5b2883b77934fe9f10ffb117a5df61c82248ee36))
+
+
+### Bug Fixes
+
+* **RouteEnhancer:** make sure that requirements for route enhancers are registered correctly ([0924f49](https://github.com/labor-digital/typo3-better-api/commit/0924f490c2a71e70a3921f447cfb6d27a602c04a))
+
 ## [9.13.0](https://github.com/labor-digital/typo3-better-api/compare/v9.12.2...v9.13.0) (2020-05-28)
 
 
