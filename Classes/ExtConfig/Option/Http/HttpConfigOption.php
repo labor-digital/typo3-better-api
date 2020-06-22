@@ -107,6 +107,8 @@ class HttpConfigOption extends AbstractExtConfigOption
      *                              - site string: Defines the siteKey when you are running a multi-site setup
      *                              - raw array: Can be used to define additional, raw route enhancer configuration
      *                              options that will be merged with the generated options.
+     *                              - rawOverride array: Similar to "raw" but will be merged into the
+     *                              config and OVERRIDE the generated values
      *                              - defaults array: By default all segments are required for a route to be matched
      *                              however you can define default values as an key => value array to make segments
      *                              optional
@@ -117,8 +119,10 @@ class HttpConfigOption extends AbstractExtConfigOption
      *                              will automatically be set to the pattern above.
      *                              - dbArgs array: This is a simplified configuration for the "PersistedAliasMapper".
      *                              You can define segments that should be gathered from the database by defining them
-     *                              as key => [$tableName, $fieldName] array. Your $tableName can use the short table
-     *                              syntax also used in the table config option.
+     *                              as key => [$tableName, $fieldName, ($pidConstraint)] array. Your $tableName can use
+     *                              the short table syntax also used in the table config option.
+     *                              -- If the third parameter is either a PID, or a list of PIDs,
+     *                              the used records are constrained to the storage PIDs given.
      *                              - localeArgs array: A simplified configuration of the "LocaleModifier".
      *                              You can define segments and their language specific variants as an array
      *                              like key => [$defaultValue, "de_DE.*" => $germanValue, ...]. As you see,
@@ -219,6 +223,21 @@ class HttpConfigOption extends AbstractExtConfigOption
             'classOrIdentifier' => $middlewareClassOrIdentifier,
             'target'            => $target,
         ]);
+    }
+    
+    /**
+     * Registers a new route aspect handler
+     *
+     * @param   string  $key        The short name / type for this aspect to be registered with
+     * @param   string  $className  The name of the handler class to use as handler
+     *
+     * @return $this
+     */
+    public function registerRouteAspectHandler(string $key, string $className): self
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects'][$key] = $className;
+        
+        return $this;
     }
     
     /**

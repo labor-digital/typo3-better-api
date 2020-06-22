@@ -48,7 +48,10 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
                 }
                 
                 // Build the configuration
-                $config               = call_user_func([$this, $method], $options, $context, $key, $additionalData);
+                $config = $this->$method($options, $context, $key, $additionalData);
+                if (is_array($options['rawOverride'])) {
+                    $config = Arrays::merge($config, $options['rawOverride']);
+                }
                 $routeEnhancers[$key] = $config;
             });
         
@@ -124,7 +127,7 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
         array $additionalDefinition = []
     ): array {
         $definition = Arrays::merge([
-            'pids'      => [
+            'pids'        => [
                 'type'    => 'array',
                 'default' => [],
                 'filter'  => function (array $pids) use ($context): array {
@@ -138,15 +141,19 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
                     return $pids;
                 },
             ],
-            'raw'       => [
+            'raw'         => [
                 'type'    => 'array',
                 'default' => [],
             ],
-            'site'      => [
+            'rawOverride' => [
+                'type'    => 'array',
+                'default' => [],
+            ],
+            'site'        => [
                 'type'    => 'string',
                 'default' => '',
             ],
-            'routeType' => '',
+            'routeType'   => '',
         ], $additionalDefinition);
         
         return Options::make($options, $definition);
@@ -258,9 +265,9 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
             }
             $baseError = "Invalid configuration for the dbArgs \"$field\" in the configuration of route: "
                          . $options['routePath'] . '!';
-            if (! is_array($fieldConfig) || count($fieldConfig) !== 2) {
+            if (! is_array($fieldConfig) || ! in_array(count($fieldConfig), [2, 3], true)) {
                 throw new ExtConfigException($baseError
-                                             . ' The field configuration has to be an array with exactly two elements!');
+                                             . ' The field configuration has to be an array with two or three elements!');
             }
             if (! is_string($fieldConfig[0]) || ! is_string($fieldConfig[1])) {
                 throw new ExtConfigException($baseError . ' Both elements have to be strings!');
@@ -270,11 +277,30 @@ class RouteEnhancerConfigGenerator implements CachedValueGeneratorInterface
             $table      = $context->OptionList->table()->getRealTableName($fieldConfig[0]);
             $tableField = $fieldConfig[1];
             
+            // Build pid list
+            $storagePids = null;
+            if (isset($fieldConfig[2])) {
+                $storagePids = $fieldConfig[2];
+                if (! is_array($storagePids)) {
+                    $storagePids = [$storagePids];
+                }
+                foreach ($storagePids as $k => $pid) {
+                    if (! is_numeric($pid)) {
+                        $storagePids[$k] = $context->TypoContext->Pid()->get($pid);
+                    } else {
+                        $storagePids[$k] = (int)$pid;
+                    }
+                }
+                $storagePids = array_unique($storagePids);
+            }
+            
             // Build the aspect
             $config['aspects'][$field] = [
-                'type'           => 'PersistedAliasMapper',
+                'type'           => $storagePids === null ?
+                    'PersistedAliasMapper' : 'BetterApiStoragePidAwarePersistedAliasMapper',
                 'tableName'      => $table,
                 'routeFieldName' => $tableField,
+                'storagePids'    => $storagePids,
             ];
         }
         

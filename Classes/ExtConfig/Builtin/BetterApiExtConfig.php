@@ -32,6 +32,7 @@ use LaborDigital\Typo3BetterApi\ExtConfig\Option\Backend\BackendConfigOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\Core\CoreConfigOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\ExtBaseOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption;
+use LaborDigital\Typo3BetterApi\ExtConfig\Option\Http\Aspect\StoragePidAwarePersistedAliasMapper;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\Http\HttpConfigOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\LinkAndPidOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\Log\LogConfigOption;
@@ -57,6 +58,11 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
         
         // Register commands
         $configurator->backend()->registerCommand(TranslationSyncCommand::class);
+        
+        // Register route aspects
+        $configurator->http()
+                     ->registerRouteAspectHandler(
+                         'BetterApiStoragePidAwarePersistedAliasMapper', StoragePidAwarePersistedAliasMapper::class);
         
         // Register middlewares
         $configurator->http()
