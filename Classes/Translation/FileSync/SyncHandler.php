@@ -154,6 +154,7 @@ class SyncHandler implements SingletonInterface
         // Synchronize the languages
         $map->synchronize();
         
+        
         // Write files again
         $this->dumpFile($baseFile, true);
         foreach ($map->getTranslationFiles() as $file) {
@@ -276,11 +277,38 @@ class SyncHandler implements SingletonInterface
      */
     protected function dumpFile(TranslationFile $file, bool $isBaseFile)
     {
+        // Prepare map to sort namespaced and global elements correctly
+        $messages     = $file->messages;
+        $mapIdMapping = [];
+        $temporaryMap = [];
+        foreach ($messages as $k => $v) {
+            if (strpos($k, '.') === false) {
+                $_k                = '_globalKeys.' . $k;
+                $mapIdMapping[$_k] = $k;
+                $k                 = $_k;
+            }
+            $temporaryMap[$k] = $v;
+        }
+        
+        // Sort the messages by their id
+        ksort($temporaryMap);
+        
+        // Revert the keys
+        $sortedMap = [];
+        foreach ($temporaryMap as $k => $v) {
+            if (isset($mapIdMapping[$k])) {
+                $k = $mapIdMapping[$k];
+            }
+            $sortedMap[$k] = $v;
+        }
+        $messages = $sortedMap;
+        unset($temporaryMap, $mapIdMapping, $sortedMap);
+        
         // Build a list of children
         $children = [
             'tag' => 'body',
         ];
-        foreach ($file->messages as $message) {
+        foreach ($messages as $message) {
             if ($message->isNote) {
                 $children[] = [
                     'tag'     => 'note',
