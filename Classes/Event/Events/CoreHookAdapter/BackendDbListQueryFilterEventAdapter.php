@@ -53,5 +53,6 @@ class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
         $additionalWhereClause = $e->getAdditionalWhereClause();
         $selectedFieldsList    = $e->getSelectedFieldList();
         $parentObject          = $e->getListRenderer();
+        
     }
 }

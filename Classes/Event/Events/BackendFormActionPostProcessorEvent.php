@@ -29,7 +29,8 @@ use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionHandlerInterface as
  * Triggered in the backend action handler.
  * Can be used to modify the given context object of every record that is saved using the data handler
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package    LaborDigital\Typo3BetterApi\Event\Events
+ * @deprecated will be renamed to DataHandlerActionPostProcessorEvent in v10
  */
 class BackendFormActionPostProcessorEvent
 {

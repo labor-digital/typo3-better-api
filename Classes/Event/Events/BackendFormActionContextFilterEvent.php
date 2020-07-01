@@ -28,7 +28,8 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  * It allows other scripts to change the context class that will be transferred to the
  * backend action handlers
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package    LaborDigital\Typo3BetterApi\Event\Events
+ * @deprecated will be renamed to DataHandlerActionContextFilterEvent in v10
  */
 class BackendFormActionContextFilterEvent
 {
