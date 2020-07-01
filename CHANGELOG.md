@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.16.0](https://github.com/labor-digital/typo3-better-api/compare/v9.15.1...v9.16.0) (2020-07-01)
+
+
+### Features
+
+* **CommonServiceDependencyTrait:** add session providers for lookup ([686da8d](https://github.com/labor-digital/typo3-better-api/commit/686da8d52fc2fca6f8a5b38ed63f89d026278636))
+* **RteConfig:** make sure the RTE config can be given without restructuring ([45a327e](https://github.com/labor-digital/typo3-better-api/commit/45a327ef9f7971fcc5a396db4a6166c132c95ac5))
+* **StandaloneBetterQuery:** allow select field definition on "getAll" and "getFirst" ([7fbf3c3](https://github.com/labor-digital/typo3-better-api/commit/7fbf3c31b0348727b73be5fb987bfd278d4f4a41))
+
+
+### Bug Fixes
+
+* **CustomElements:** make handler compatible with new dataHandlerActionHandler naming ([739e0f0](https://github.com/labor-digital/typo3-better-api/commit/739e0f06d3429735dfd2f0c65701fed0d789f7f8))
+* **DataHandlerActionHandler:** fix addContextsForStack() arguments to prevent wrong config in action context ([97e1137](https://github.com/labor-digital/typo3-better-api/commit/97e1137ea0abaf6d85523a8738aed387bb1d8931))
+* **PageService:** make sure pageExists() returns the correct value if the doktype is bigger than 200 ([0f81d91](https://github.com/labor-digital/typo3-better-api/commit/0f81d919be2d0b9553a286822176c8be872033f8))
+* **PidFacet:** return correct page id when reading it from the returnUrl ([3df94af](https://github.com/labor-digital/typo3-better-api/commit/3df94af9875dce937466877015be4e42eb682178))
+
 ### [9.15.1](https://github.com/labor-digital/typo3-better-api/compare/v9.15.0...v9.15.1) (2020-06-25)
 
 
