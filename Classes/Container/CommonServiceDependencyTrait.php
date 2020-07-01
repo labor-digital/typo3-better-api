@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -23,6 +24,9 @@ use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface;
 use LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService;
 use LaborDigital\Typo3BetterApi\Link\LinkService;
 use LaborDigital\Typo3BetterApi\Page\PageService;
+use LaborDigital\Typo3BetterApi\Session\BackendSessionProvider;
+use LaborDigital\Typo3BetterApi\Session\FrontendSessionProvider;
+use LaborDigital\Typo3BetterApi\Session\SessionService;
 use LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator;
 use LaborDigital\Typo3BetterApi\Translation\TranslationService;
 use LaborDigital\Typo3BetterApi\Tsfe\TsfeService;
@@ -131,5 +135,25 @@ trait CommonServiceDependencyTrait
     protected function Simulator(): EnvironmentSimulator
     {
         return $this->getInstanceOf(EnvironmentSimulator::class);
+    }
+    
+    /**
+     * Returns the Frontend session provider instance
+     *
+     * @return \LaborDigital\Typo3BetterApi\Session\FrontendSessionProvider
+     */
+    protected function FrontendSession(): FrontendSessionProvider
+    {
+        return $this->getService(SessionService::class)->getFrontendSession();
+    }
+    
+    /**
+     * Returns the Backend session provider instance
+     *
+     * @return \LaborDigital\Typo3BetterApi\Session\BackendSessionProvider
+     */
+    protected function BackendSession(): BackendSessionProvider
+    {
+        return $this->getService(SessionService::class)->getBackendSession();
     }
 }
