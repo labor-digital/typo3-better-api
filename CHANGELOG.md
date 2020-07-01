@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.16.1](https://github.com/labor-digital/typo3-better-api/compare/v9.16.0...v9.16.1) (2020-07-01)
+
+
+### Bug Fixes
+
+* **TranslationFileSync:** make sure to use our recommended XML format ([e3ef292](https://github.com/labor-digital/typo3-better-api/commit/e3ef29284b05068872fee997a27828987decfa8b))
+
 ## [9.16.0](https://github.com/labor-digital/typo3-better-api/compare/v9.15.1...v9.16.0) (2020-07-01)
 
 
