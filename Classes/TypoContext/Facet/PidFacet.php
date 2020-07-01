@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -147,7 +148,7 @@ class PidFacet implements FacetInterface
                 $query = Path::makeUri('http://www.foo.bar' . $requestFacet->getGet('returnUrl'))->getQuery();
                 $query = parse_query($query);
                 if (isset($query['id'])) {
-                    return isset($query['id']);
+                    return (int)$query['id'];
                 }
             }
         } else {
