@@ -254,17 +254,19 @@ class PageService implements SingletonInterface
      * Returns true if a page exists, false if not.
      *
      * @param   int   $pageId
-     * @param   bool  $includeDeleted  If true, deleted pages will also be checked for
+     * @param   bool  $includeAllNotDeleted  If set to true, the method will check for
+     *                                       all pages no matter of their access restrictions or doktype
      *
      * @return bool
      */
-    public function pageExists(int $pageId, bool $includeDeleted = false): bool
+    public function pageExists(int $pageId, bool $includeAllNotDeleted = false): bool
     {
         if ($pageId <= 0) {
             return false;
         }
-        if ($includeDeleted) {
-            return $this->Db->getQuery('pages', true)->withWhere(['uid' => $pageId])->getCount() > 0;
+        
+        if ($includeAllNotDeleted) {
+            return ! empty($this->getPageRepository()->getPage_noCheck($pageId));
         }
         
         return ! empty($this->getPageRepository()->getPage($pageId));
