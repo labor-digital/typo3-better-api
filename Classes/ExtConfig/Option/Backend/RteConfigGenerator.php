@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -55,10 +56,41 @@ class RteConfigGenerator implements CachedValueGeneratorInterface
             $options   = $context->replaceMarkers($options);
             $presetKey = $options['preset'];
             if (! isset($presetList[$presetKey])) {
-                $presetList[$presetKey] = ['config' => [], 'imports' => [], 'defaultImports' => true];
+                $presetList[$presetKey] = [
+                    'imports'        => [],
+                    'editor'         => [
+                        'config' => [
+                            'stylesSet' => [],
+                        ],
+                    ],
+                    'defaultImports' => true,
+                ];
             }
-            $presetList[$presetKey]['config']  = Arrays::merge($presetList[$presetKey]['config'], $config);
-            $presetList[$presetKey]['imports'] = Arrays::merge($presetList[$presetKey]['imports'], $options['imports']);
+            $presetList[$presetKey]['imports']
+                = Arrays::merge(
+                $presetList[$presetKey]['imports'],
+                $options['imports']
+            );
+            
+            // Build the hierarchical data based on the given input
+            if (isset($config['config']) && ! isset($config['editor']['config'])) {
+                // Convert "config" key to "editor.config" key
+                $config['editor']['config'] = $config['config'];
+                unset($config['config']);
+            }
+            if (isset($config['editor']) || isset($config['processing'])) {
+                // Merge given configuration into the raw preset list
+                $presetList[$presetKey] = Arrays::merge($presetList[$presetKey], $config);
+            } else {
+                // Merge the config into the "editor.config" key
+                $presetList[$presetKey] = Arrays::merge($presetList[$presetKey], [
+                    'editor' => [
+                        'config' => $config,
+                    ],
+                ]);
+            }
+            
+            // Activate default imports if required
             if ($presetList[$presetKey]['defaultImports']) {
                 $presetList[$presetKey]['defaultImports']
                     = $options['useDefaultImports'] === true;
@@ -110,17 +142,12 @@ class RteConfigGenerator implements CachedValueGeneratorInterface
             }
         }
         
-        // Build real config
-        $output = [
-            'imports' => $config['imports'],
-            'editor'  => [
-                'config' => Arrays::merge(['stylesSet' => []], $config['config']),
-            ],
-        ];
+        // Remove temporary/internal keys
+        unset($config['defaultImports']);
         
         // Dump the preset
         $fileName = 'rteConfig/' . $key . '.yaml';
-        $context->Fs->setFileContent($fileName, Yaml::dump($output));
+        $context->Fs->setFileContent($fileName, Yaml::dump($config));
         
         return $context->Fs->getFile($fileName)->getPathname();
     }

@@ -180,6 +180,13 @@ class BackendConfigOption extends AbstractExtConfigOption
      * Use this method to register your custom RTE configuration for the Typo3 backend.
      *
      * @param   array  $config   The part you would normally write under default.editor.config
+     *                           Alternatively: If you provide a "config" key in your array,
+     *                           it will automatically be moved to editor.config, all other
+     *                           options will be moved to the root preset. This is useful for
+     *                           defining "processing" information or similar cases.
+     *                           If you don't want a "magic" restructuring of your configuration
+     *                           and keep it as you defined it start with an 'editor' => ['config' => []]
+     *                           array, which will disable all of our internal restructuring.
      * @param   array  $options  Additional options for the configuration
      *                           - preset string (default): A speaking name/key for the preset you are configuring.
      *                           By default all configuration will be done to the "default" preset
