@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -163,11 +164,11 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         object $event,
         array &$row,
         &$isDirty = false
-    ) {
+    ): void {
         $isDirty = false;
         
         // Backup the original row
-        $givenRow = array_map(function ($v) {
+        $givenRow = array_map(static function ($v) {
             return $v;
         }, $row);
         
@@ -182,7 +183,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         }
         
         // Backup the original row
-        $rawRow = array_map(function ($v) {
+        $rawRow = array_map(static function ($v) {
             return $v;
         }, $row);
         
@@ -228,8 +229,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         // Be done if there are no contexts
         if (! empty($contextList)) {
             // Create the new context object
-            $contextClass = isset(static::$stackTypeContextMap[$stackType]) ?
-                static::$stackTypeContextMap[$stackType] : static::$stackTypeContextMap['default'];
+            $contextClass = static::$stackTypeContextMap[$stackType] ?? static::$stackTypeContextMap['default'];
             
             // Prepare the action key
             $action = method_exists($event, 'getCommand') ? $event->getCommand() : $stackType;
@@ -265,7 +265,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 
                 // Call the registered method
                 $i = $this->container->get($contextConfig['class']);
-                call_user_func([$i, $contextConfig['method']], $contextObject);
+                $i->{$contextConfig['method']}($contextObject);
                 
                 // Allow the outside world to interfere...
                 $this->eventBus->dispatch(new BackendFormActionPostProcessorEvent($contextObject, $i, $stackType));
@@ -301,6 +301,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         // Make sure to only update the changed values
         $rowChanged = $givenRow;
         foreach ($row as $k => $v) {
+            /** @noinspection TypeUnsafeComparisonInspection */
             if ($v != $rawRow[$k]) {
                 $rowChanged[$k] = $v;
             }
@@ -361,7 +362,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         
         // Check if the tca has any registered handlers
         if (is_array($tca['dataHandlerActions'])) {
-            $contexts = $this->addContextsForStack($stackType, $tca['dataHandlerActions'], $contexts);
+            $contexts = $this->addContextsForStack($stackType, $tca, $contexts);
         }
         
         // Run through all columns in the given row
@@ -379,7 +380,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
             
             // Check if there is a config field in the field tca
             if (is_array($tcaField['dataHandlerActions'])) {
-                $contexts = $this->addContextsForStack($stackType, $tcaField['dataHandlerActions'], $contexts, [$key],
+                $contexts = $this->addContextsForStack($stackType, $tcaField, $contexts, [$key],
                     $key, $value);
             }
             
@@ -405,7 +406,12 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
             
             // Register the handlers as context
             if (! empty($matchedHandlers)) {
-                $contexts = $this->addContextsForStack('inject', ['inject' => $matchedHandlers], $contexts);
+                $contexts = $this->addContextsForStack('inject', [
+                    'config'             => [],
+                    'dataHandlerActions' => [
+                        'inject' => $matchedHandlers,
+                    ],
+                ], $contexts);
             }
         }
         
@@ -503,7 +509,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 
                 // Check for an "el" => This means we are inside a section
                 if (is_array($pointer) && is_array($pointer['el'])) {
-                    foreach ($pointer['el'] as $k => $el) {
+                    foreach ($pointer['el'] as $_k => $el) {
                         // Ignore broken structures
                         if (! is_array($el)) {
                             continue;
@@ -511,13 +517,13 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                         
                         // Loop over items
                         $valuePath[] = 'el';
-                        $valuePath[] = $k;
-                        foreach ($el as $_k => $item) {
+                        $valuePath[] = $_k;
+                        foreach ($el as $__k => $item) {
                             // Ignore broken structures
                             if (! is_array($item) || ! isset($item['el'])) {
                                 continue;
                             }
-                            $valuePath[] = $_k;
+                            $valuePath[] = $__k;
                             $valuePath[] = 'el';
                             
                             // Loop over the remaining path
@@ -525,7 +531,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                             $requiredField = reset($remainingPath);
                             
                             // Store the value
-                            $fieldPath = ['el', $k, $_k, 'el', $requiredField, 'vDEF'];
+                            $fieldPath = ['el', $k, $__k, 'el', $requiredField, 'vDEF'];
                             if (Arrays::hasPath($pointer, $fieldPath)) {
                                 $fullValuePath = Arrays::attach([$key], $valuePath, [$requiredField, 'vDEF']);
                                 $contexts      = $this->addContextsForStack($configKey, $config, $contexts,
@@ -583,12 +589,13 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         $value = null
     ): array {
         // Ignore if the config does not have the required config key
-        if (! is_array($config[$configKey])) {
+        $handlerConfig = Arrays::getPath($config, ['dataHandlerActions', $configKey], []);
+        if (empty($handlerConfig)) {
             return $contexts;
         }
         
         // Loop over the stack of objects
-        foreach ($config[$configKey] as $handler) {
+        foreach ($handlerConfig as $handler) {
             // Prepare the handler
             $handler = is_string($handler) ? array_values(Naming::typoCallbackToArray($handler)) : $handler;
             if (! is_array($handler) || count($handler) < 2) {
