@@ -361,7 +361,41 @@ class SyncHandler implements SingletonInterface
         
         // Dump the file
         $xml = Arrays::dumpToXml($out, true);
+        $xml = $this->postProcessXmlStyle($xml);
         Fs::writeFile($file->filename, $xml);
         Permissions::setFilePermissions($file->filename);
+    }
+    
+    /**
+     * Make sure we format the xml correctly to match the recommended format
+     *
+     * @param   string  $xml
+     *
+     * @return string
+     */
+    protected function postProcessXmlStyle(string $xml): string
+    {
+        $xml = preg_replace_callback('~^(\s\s)+<~m', static function ($m) {
+            return str_replace('  ', '    ', $m[0]);
+        }, $xml);
+        $xml = preg_replace_callback('~\n(([^<]*?)<(trans-unit|source|target|note)\s[^>]*?>)(.*?)(</\3>)~msi',
+            static function ($m) {
+                $openTag  = $m[1];
+                $closeTag = trim($m[5]);
+                $space    = str_replace(PHP_EOL, '', $m[2]);
+                $lines    = explode(PHP_EOL, $m[4]);
+                $lines    = array_filter(array_map(static function ($v) use ($space) {
+                    $v = trim($v);
+                    if ($v === '') {
+                        return null;
+                    }
+                    
+                    return $space . '    ' . $v;
+                }, $lines));
+                
+                return PHP_EOL . $openTag . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . $space . $closeTag;
+            }, $xml);
+        
+        return $xml;
     }
 }
