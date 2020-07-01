@@ -76,8 +76,26 @@ interface CustomElementInterface
      *                                                       information about the current save process
      *
      * @return mixed
+     * @deprecated removed in v10 use dataHandlerSaveFilter instead
      */
     public function backendSaveFilter(CustomElementFormActionContext $context);
+    
+    /**
+     * This method can be used to filter the incoming data for this field when the data handler saves the data to the
+     * database. You can also validate the value and throw an exception with an error message from this method, that
+     * will then be rendered to the client as a flash message.
+     *
+     * The filter is executed once per field, so if there are e.g. 3 instances of the same field in your form, it will
+     * be called 3 times, not just once!
+     *
+     * To filter the value, just return it by the method.
+     *
+     * @param   CustomElementFormActionContext  $context     The context object, containing all relevant
+     *                                                       information about the current save process
+     *
+     * @return mixed
+     */
+    public function dataHandlerSaveFilter(CustomElementFormActionContext $context);
     
     /**
      * This method can be used to prepare the form field before the form engine begins the rendering of the form it is
@@ -103,6 +121,20 @@ interface CustomElementInterface
      * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementFormActionContext  $context
      *
      * @return mixed
+     * @deprecated removed in v10 use dataHandlerActionHandler instead
      */
     public function backendActionHandler(CustomElementFormActionContext $context);
+    
+    /**
+     * This method is executed when any kind of data handler action occurs that is NOT a save event.
+     * Actions are move, copy, translation, deletion...
+     *
+     * The filter is executed once per field, so if there are e.g. 3 instances of the same field in your form, it will
+     * be called 3 times, not just once!
+     *
+     * @param   \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementFormActionContext  $context
+     *
+     * @return mixed
+     */
+    public function dataHandlerActionHandler(CustomElementFormActionContext $context);
 }

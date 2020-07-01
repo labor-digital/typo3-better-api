@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -87,9 +88,11 @@ trait CustomElementPresetTrait
         // Register backend handlers if required
         $ref     = new ReflectionClass($customElementClass);
         $methods = [
-            'backendSaveFilter'    => 'registerBackendSaveFilter',
-            'backendFormFilter'    => 'registerBackendFormFilter',
-            'backendActionHandler' => 'registerBackendActionHandler',
+            'backendSaveFilter'        => 'registerDataHandlerSaveFilter',
+            'dataHandlerSaveFilter'    => 'registerDataHandlerSaveFilter',
+            'backendFormFilter'        => 'registerBackendFormFilter',
+            'backendActionHandler'     => 'registerDataHandlerActionHandler',
+            'dataHandlerActionHandler' => 'registerDataHandlerActionHandler',
         ];
         foreach ($methods as $methodName => $setterMethodName) {
             $method = $ref->getMethod($methodName);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -46,7 +47,23 @@ abstract class AbstractCustomElement implements CustomElementInterface
     /**
      * @inheritDoc
      */
+    public function dataHandlerSaveFilter(CustomElementFormActionContext $context)
+    {
+        // Silence
+    }
+    
+    /**
+     * @inheritDoc
+     */
     public function backendActionHandler(CustomElementFormActionContext $context)
+    {
+        // Silence
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function dataHandlerActionHandler(CustomElementFormActionContext $context)
     {
         // Silence
     }
@@ -96,7 +113,7 @@ abstract class AbstractCustomElement implements CustomElementInterface
                 'field'    => $this->context->getRenderName(),
                 'evalList' => $evalList,
                 'is_in'    => $isIn,
-            ]),
+            ], JSON_THROW_ON_ERROR),
             'data-formengine-input-name'       => $this->context->getRenderName(),
         ];
         
