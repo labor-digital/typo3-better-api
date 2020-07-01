@@ -75,7 +75,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      *
      * @return $this
      */
-    public function withVersionOverlay(bool $state)
+    public function withVersionOverlay(bool $state): self
     {
         $this->versionOverlay = $state;
         
@@ -113,15 +113,24 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     /**
      * Executes the currently configured query and returns the results
      *
+     * @param   array|null  $fieldList  Optional list of fields that should be selected from the database
+     *
      * @return array
      */
-    public function getAll()
+    public function getAll(?array $fieldList = null): array
     {
+        $qb = $this->getQueryBuilder();
+        
+        // Only select a sparse field list
+        if ($fieldList !== null) {
+            $qb->select(...$fieldList);
+        }
+        
         return array_map(function (array $row) {
             $tableName = $this->adapter->getTableName();
             
             return $this->handleTranslationAndVersionOverlay($tableName, $row);
-        }, $this->getQueryBuilder()->execute()->fetchAll());
+        }, $qb->execute()->fetchAll());
     }
     
     /**
@@ -137,11 +146,20 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     /**
      * Returns the first element from the queries result set that matches your criteria
      *
+     * @param   array|null  $fieldList  Optional list of fields that should be selected from the database
+     *
      * @return mixed
      */
-    public function getFirst()
+    public function getFirst(?array $fieldList = null)
     {
-        $result = $this->getQueryBuilder()->execute()->fetch();
+        $qb = $this->getQueryBuilder();
+        
+        // Only select a sparse field list
+        if ($fieldList !== null) {
+            $qb->select(...$fieldList);
+        }
+        
+        $result = $qb->execute()->fetch();
         if (is_array($result)) {
             $result = $this->handleTranslationAndVersionOverlay($this->adapter->getTableName(), $result);
         }
@@ -238,10 +256,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         $additionalWhereCache = [];
         foreach ($tcaConfig as $currentField => $config) {
             // Get the table definition for the tca type
-            $mmTable   = isset($config['MM']) ? $config['MM'] : '';
+            $mmTable   = $config['MM'] ?? '';
             $tableList = '';
             if (isset($config['type']) && $config['type'] === 'group') {
-                $tableList = isset($config['allowed']) ? $config['allowed'] : '';
+                $tableList = $config['allowed'] ?? '';
             } elseif (isset($config['foreign_table'])) {
                 $tableList = $config['foreign_table'];
             }
@@ -266,15 +284,15 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                 // Generate additional constraints for every table
                 // This is done so we can apply the frontend constraints to the backend utility we use
                 foreach ($relationHandler->tableArray as $localTable => $items) {
-                    $additionalWhere                               = isset($additionalWhereCache[$localTable])
-                        ?
-                        $additionalWhereCache[$localTable]
-                        :
-                        $additionalWhereCache[$localTable] = $dbService->getQuery($localTable)
-                                                                       ->withLanguage(false)
-                                                                       ->withIncludeHidden($includeHiddenChildren)
-                                                                       ->getQueryBuilder()->getSQL();
-                    $additionalWhere                               = ' AND ' . end(explode('WHERE', $additionalWhere));
+                    // Build additional where or load it from cache
+                    $additionalWhere = $additionalWhereCache[$localTable] ??
+                                       $dbService->getQuery($localTable)
+                                                 ->withLanguage(false)
+                                                 ->withIncludeHidden($includeHiddenChildren)
+                                                 ->getQueryBuilder()->getSQL();
+                    // Only extract the "where" part from the query
+                    $additionalWhereParts                          = explode('WHERE', $additionalWhere);
+                    $additionalWhere                               = ' AND ' . end($additionalWhereParts);
                     $relationHandler->additionalWhere[$localTable] = $additionalWhere;
                 }
                 
@@ -291,7 +309,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                 // Generate objects that are in order by their sorting
                 $relationList = [];
                 foreach ($relationHandler->itemArray as $item) {
-                    if (! isset($relations[$item['table']]) || ! isset($relations[$item['table']][$item['id']])) {
+                    if (! isset($relations[$item['table']][$item['id']])) {
                         continue;
                     }
                     $relationList[] = new RelatedRecordRow(
@@ -308,7 +326,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         
         // Check if we got a single field request
         if ($isSingleField) {
-            return isset($resultsByField[reset($field)]) ? $resultsByField[reset($field)] : [];
+            return $resultsByField[reset($field)] ?? [];
         }
         
         // Done
