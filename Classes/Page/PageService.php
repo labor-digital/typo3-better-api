@@ -517,14 +517,15 @@ class PageService implements SingletonInterface
      * by listing them in $GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']
      *
      * @param   int   $pageId
-     * @param   bool  $ignorePermissions  If set to true this will generate the rootline without caring for permissions
+     * @param   bool  $includeAllNotDeleted  If set to true this will generate the rootline without caring for
+     *                                       permissions
      *
      * @return array|mixed
      */
-    public function getRootLine(int $pageId, bool $ignorePermissions = false)
+    public function getRootLine(int $pageId, bool $includeAllNotDeleted = false)
     {
         // Try to load the root line from our cache
-        $cacheKey = $pageId . '' . $ignorePermissions;
+        $cacheKey = $pageId . '' . $includeAllNotDeleted;
         if (isset($this->rootLineCache[$cacheKey])) {
             return $this->rootLineCache[$cacheKey];
         }
@@ -532,7 +533,7 @@ class PageService implements SingletonInterface
         // Prepare the repository
         $repo             = $this->getPageRepository();
         $backupPermission = $repo->where_groupAccess;
-        if ($ignorePermissions) {
+        if ($includeAllNotDeleted) {
             $repo->where_groupAccess = '';
         }
         
@@ -556,13 +557,19 @@ class PageService implements SingletonInterface
      * Can be used to retrieve the database record for a certain page based on the given page id.
      * The translation is done according to the current frontend language.
      *
-     * @param   int  $pageId
+     * @param   int   $pageId                The id of the page to find the information for
+     * @param   bool  $includeAllNotDeleted  Set to true to include hidden pages or doktypes > 200
      *
      * @return null|array
      */
-    public function getPageInfo(int $pageId): ?array
+    public function getPageInfo(int $pageId, bool $includeAllNotDeleted = false): ?array
     {
-        $row = $this->getPageRepository()->getPage($pageId, true);
+        if ($includeAllNotDeleted) {
+            $row = $this->getPageRepository()->getPage_noCheck($pageId);
+        } else {
+            $row = $this->getPageRepository()->getPage($pageId, true);
+        }
+        
         if (! is_array($row)) {
             return null;
         }
@@ -616,7 +623,8 @@ class PageService implements SingletonInterface
     {
         $pageInfo = $this->getPageInfo($pageId);
         if (isset($pageInfo['content_from_pid']) && ! empty($pageInfo['content_from_pid'])) {
-            $pageId = reset(Arrays::makeFromStringList($pageInfo['content_from_pid']));
+            $pidList = Arrays::makeFromStringList($pageInfo['content_from_pid']);
+            $pageId  = reset($pidList);
         }
         
         return $pageId;
