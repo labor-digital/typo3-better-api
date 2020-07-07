@@ -241,8 +241,15 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             );
         }
         
+        // Fix issues with virtual columns
+        $cols          = $qb->getConnection()->getSchemaManager()->listTableColumns($table);
+        $findAllFields = count(array_filter($field, static function ($fieldName) use ($cols) {
+                return isset($cols[$fieldName]);
+            })) !== count($field);
+        $selectFields  = $findAllFields ? ['*'] : $field;
+        
         // Query the results from the database
-        $records = (clone $qb)->select('uid', ...$field)->execute()->fetchAll();
+        $records = (clone $qb)->select('uid', ...$selectFields)->execute()->fetchAll();
         if (empty($records)) {
             return [];
         }
