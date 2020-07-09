@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.16.2](https://github.com/labor-digital/typo3-better-api/compare/v9.16.1...v9.16.2) (2020-07-09)
+
+
+### Bug Fixes
+
+* **PageService:** add $includeAllNotDeleted to getPageInfo() ([38c49e9](https://github.com/labor-digital/typo3-better-api/commit/38c49e9647dac4e52045c5158186a7aae08585ed))
+* **StandaloneBetterQuery:** fix issues with virtual columns when using "getRelations" ([8b5cdbc](https://github.com/labor-digital/typo3-better-api/commit/8b5cdbc6e6f9735872ea1cbb8429bafa4d6fae34))
+
 ### [9.16.1](https://github.com/labor-digital/typo3-better-api/compare/v9.16.0...v9.16.1) (2020-07-01)
 
 
