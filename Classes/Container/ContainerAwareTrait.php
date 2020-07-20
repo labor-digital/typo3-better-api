@@ -53,9 +53,9 @@ trait ContainerAwareTrait
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance should be returned for.
      * @param   object  $instance              The instance to register for the given class / interface name
      *
-     * @return $this
+     * @return $this|mixed
      */
-    public function setLocalSingleton(string $classOrInterfaceName, $instance): self
+    public function setLocalSingleton(string $classOrInterfaceName, $instance)
     {
         $this->__containerAwareTraitSingletons[$classOrInterfaceName] = $instance;
         
