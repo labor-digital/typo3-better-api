@@ -19,7 +19,7 @@
 
 namespace LaborDigital\Typo3BetterApi\BetterController;
 
-use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
+use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\Event\Events\ActionControllerMethodNameFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ActionControllerRequestFilterEvent;
@@ -31,9 +31,9 @@ use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
 class BetterActionController extends ActionController
 {
     use CommonServiceLocatorTrait;
-    use CommonServiceDependencyTrait {
-        CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
-        CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
+    use CommonDependencyTrait {
+        CommonDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+        CommonDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
     }
     
     /**
