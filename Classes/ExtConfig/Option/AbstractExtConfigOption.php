@@ -28,6 +28,7 @@ use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
+use ReflectionClass;
 
 abstract class AbstractExtConfigOption implements ExtConfigOptionInterface
 {
@@ -293,7 +294,7 @@ abstract class AbstractExtConfigOption implements ExtConfigOptionInterface
         bool $asOverrides = false
     ) {
         // Get list of classes in the directory
-        $directoryPath    = $this->replaceMarkers($directoryPath);
+        $directoryPath    = (string)$this->replaceMarkers($directoryPath);
         $elementClassList = $this->getCachedValueOrRun(
             'directory' . $stackKey . $directoryPath . ($asOverrides ? '.override' : ''),
             function () use ($directoryPath, $elementFilter, $elementKeyProvider) {
@@ -303,12 +304,15 @@ abstract class AbstractExtConfigOption implements ExtConfigOptionInterface
                 // Loop through the class map
                 $elementClassList = [];
                 foreach ($classMap as $class => $filename) {
-                    if (empty(call_user_func($elementFilter, $class, $filename, $directoryPath))) {
+                    if (empty($elementFilter($class, $filename, $directoryPath))) {
                         continue;
                     }
-                    $elementKey = call_user_func($elementKeyProvider, $class, $filename, $directoryPath);
+                    $elementKey = $elementKeyProvider($class, $filename, $directoryPath);
                     if (empty($elementKey)) {
-                        throw new ExtConfigException("Failed to generate an element key for class: $class");
+                        throw new ExtConfigException('Failed to generate an element key for class: $class');
+                    }
+                    if (! (new ReflectionClass($class))->isInstantiable()) {
+                        continue;
                     }
                     $elementClassList[] = [$elementKey, $class];
                 }
@@ -475,7 +479,7 @@ abstract class AbstractExtConfigOption implements ExtConfigOptionInterface
         // Make and validate the generator instance
         $generator = $this->context->getInstanceOf($cachedStackGeneratorClass);
         if (! $generator instanceof CachedStackGeneratorInterface) {
-            throw new ExtConfigException("Invalid generator class $cachedStackGeneratorClass given! It does not implement the required interface: "
+            throw new ExtConfigException('Invalid generator class $cachedStackGeneratorClass given! It does not implement the required interface: '
                                          . CachedStackGeneratorInterface::class . '!');
         }
         
