@@ -25,6 +25,13 @@ use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use ReflectionObject;
 use TYPO3\CMS\Core\SingletonInterface;
 
+/**
+ * Class LazyConstructorInjectionHook
+ *
+ * @package    LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection
+ *
+ * @deprecated will be removed in v10
+ */
 class LazyConstructorInjectionHook implements LazyEventSubscriberInterface, SingletonInterface
 {
     

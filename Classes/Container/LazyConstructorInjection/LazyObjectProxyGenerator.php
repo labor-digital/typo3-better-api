@@ -26,6 +26,12 @@ use Neunerlei\PathUtil\Path;
 use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * Class LazyObjectProxyGenerator
+ *
+ * @package    LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection
+ * @deprecated will be removed in v10
+ */
 class LazyObjectProxyGenerator
 {
     use CodeGenerationHelperTrait;
