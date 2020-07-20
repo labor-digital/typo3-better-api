@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
 
+use InvalidArgumentException;
 use LaborDigital\Typo3BetterApi\Pid\InvalidPidException;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
@@ -81,24 +82,31 @@ class PidFacet implements FacetInterface
     /**
      * Returns the pid for the given key
      *
-     * @param   string  $key       A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
-     *                             If a key is numeric and can be parsed as integer it will be returned if no
-     *                             pid could be found
-     * @param   int     $fallback  An optional fallback which will be returned, if the required pid was not found
-     *                             NOTE: If no fallback is defined (-1) the method will throw an exception if the
-     *                             pid was not found in the registry
+     * @param   string|integer  $key       A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical
+     *                                     data If a key is numeric and can be parsed as integer it will be returned if
+     *                                     no pid could be found
+     * @param   int             $fallback  An optional fallback which will be returned, if the required pid was not
+     *                                     found NOTE: If no fallback is defined (-1) the method will throw an
+     *                                     exception if the pid was not found in the registry
      *
      * @return int
      * @throws \LaborDigital\Typo3BetterApi\Pid\InvalidPidException
      */
-    public function get(string $key, int $fallback = -1): int
+    public function get($key, int $fallback = -1): int
     {
+        if (is_int($key)) {
+            return $key;
+        }
+        if (! is_string($key)) {
+            throw new InvalidArgumentException(
+                'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
+        }
         $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
         if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
                 return $fallback;
             }
-            if (is_numeric($key) && (int)$key == $key) {
+            if (is_numeric($key)) {
                 return (int)$key;
             }
             throw new InvalidPidException('There is no registered pid for key: ' . $key);
@@ -164,8 +172,8 @@ class PidFacet implements FacetInterface
         }
         
         // Fallback to the root pid of the site
-        if ($this->context->Site()->exists()) {
-            return $this->context->Site()->get()->getRootPageId();
+        if ($this->context->Site()->hasCurrent()) {
+            return $this->context->Site()->getCurrent()->getRootPageId();
         }
         
         return 0;
@@ -176,6 +184,8 @@ class PidFacet implements FacetInterface
      * If you use this, use it with care!
      *
      * @param   array  $pids
+     *
+     * @deprecated will be renamed in v10
      */
     public function __setAll(array $pids): void
     {
