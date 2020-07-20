@@ -204,58 +204,60 @@ class FalFileService implements SingletonInterface
         string $table = 'tt_content'
     ): FileReference {
         // Ignore the access checks
-        $referenceUid = $this->Simulator->runAsAdmin(function () use ($file, $uid, $field, $table) {
-            // Get the record from the database
-            $record = $this->Db->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
-            if (empty($record)) {
-                throw new FalFileServiceException('Invalid table: ' . $table . ' or uid: ' . $uid
-                                                  . ' to create a file reference for');
-            }
-            
-            // Create the data to be added for the reference
-            $data = [
-                'sys_file_reference' => [
-                    'NEW1' => [
-                        'table_local' => 'sys_file',
-                        'uid_local'   => $file->getProperty('uid'),
-                        'tablenames'  => $table,
-                        'uid_foreign' => $uid,
-                        'fieldname'   => $field,
-                        'pid'         => $record['pid'],
+        $referenceUid = $this->Simulator->runWithEnvironment(['asAdmin'],
+            function () use ($file, $uid, $field, $table) {
+                // Get the record from the database
+                $record = $this->Db->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
+                if (empty($record)) {
+                    throw new FalFileServiceException('Invalid table: ' . $table . ' or uid: ' . $uid
+                                                      . ' to create a file reference for');
+                }
+                
+                // Create the data to be added for the reference
+                $data = [
+                    'sys_file_reference' => [
+                        'NEW1' => [
+                            'table_local' => 'sys_file',
+                            'uid_local'   => $file->getProperty('uid'),
+                            'tablenames'  => $table,
+                            'uid_foreign' => $uid,
+                            'fieldname'   => $field,
+                            'pid'         => $record['pid'],
+                        ],
                     ],
-                ],
-                $table               => [
-                    $uid => [
-                        'pid'  => $record['pid'],
-                        $field => 'NEW1',
+                    $table               => [
+                        $uid => [
+                            'pid'  => $record['pid'],
+                            $field => 'NEW1',
+                        ],
                     ],
-                ],
-            ];
-            
-            // Make sure we can add sys_file_references everywhere
-            $allowedTablesBackup = $GLOBALS['PAGES_TYPES']['default']['allowedTables'];
-            ExtensionManagementUtility::allowTableOnStandardPages('sys_file_reference');
-            
-            // Execute the data handler
-            $dataHandler = $this->DataHandler;
-            $dataHandler->start($data, []);
-            $dataHandler->process_datamap();
-            
-            // Restore the backup
-            $GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
-            
-            // Check for errors
-            if (count($dataHandler->errorLog) !== 0) {
-                throw new FalFileServiceException(
-                    'Error while creating file reference in table: ' . $table . ' with uid: ' . $uid . ' Errors were: '
-                    .
-                    implode(PHP_EOL, $dataHandler->errorLog)
-                );
-            }
-            
-            // Get the new id
-            return reset($dataHandler->newRelatedIDs['sys_file_reference']);
-        });
+                ];
+                
+                // Make sure we can add sys_file_references everywhere
+                $allowedTablesBackup = $GLOBALS['PAGES_TYPES']['default']['allowedTables'];
+                ExtensionManagementUtility::allowTableOnStandardPages('sys_file_reference');
+                
+                // Execute the data handler
+                $dataHandler = $this->DataHandler;
+                $dataHandler->start($data, []);
+                $dataHandler->process_datamap();
+                
+                // Restore the backup
+                $GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
+                
+                // Check for errors
+                if (count($dataHandler->errorLog) !== 0) {
+                    throw new FalFileServiceException(
+                        'Error while creating file reference in table: ' . $table . ' with uid: ' . $uid
+                        . ' Errors were: '
+                        .
+                        implode(PHP_EOL, $dataHandler->errorLog)
+                    );
+                }
+                
+                // Get the new id
+                return reset($dataHandler->newRelatedIDs['sys_file_reference']);
+            });
         
         // Done
         return $this->getFileReference($referenceUid);

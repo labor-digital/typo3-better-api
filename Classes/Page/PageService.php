@@ -608,7 +608,7 @@ class PageService implements SingletonInterface
             return call_user_func($callback);
         }
         
-        return $this->Simulator->runAsAdmin($callback);
+        return $this->Simulator->runWithEnvironment(['asAdmin'], $callback);
     }
     
     /**
