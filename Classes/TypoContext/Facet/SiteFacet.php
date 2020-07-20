@@ -54,12 +54,18 @@ class SiteFacet implements FacetInterface
     protected $siteMatcher;
     
     /**
+     * Locally resolved current site first level cache, to avoid a lot of overhead
+     *
+     * @var \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite
+     */
+    protected $currentSite;
+    
+    /**
      * True while the site is being found to avoid infinite loops
      *
      * @var bool
      */
     protected $simulateNoSite = false;
-    
     
     /**
      * SiteAspect constructor.
@@ -81,12 +87,22 @@ class SiteFacet implements FacetInterface
      * @return \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite
      * @throws \TYPO3\CMS\Core\Exception\SiteNotFoundException
      */
-    public function get()
+    public function getCurrent()
     {
         // Check if we can fetch a better site
         $site = $this->context->Config()->getRequestAttribute('site');
         if (! empty($site)) {
+            // Make sure to reset the current site if we suddenly get a site
+            $this->currentSite = null;
+            
             return $site;
+        }
+        
+        /**
+         * Check if we have a current site cached
+         */
+        if (! empty($this->currentSite)) {
+            return $this->currentSite;
         }
         
         // Try to find the site via pid
@@ -95,19 +111,15 @@ class SiteFacet implements FacetInterface
         $this->simulateNoSite = false;
         if (! empty($pid)) {
             $site = $this->siteFinder->getSiteByPageId($pid);
-            if (! empty($site)) {
-                $this->set($site);
-                
-                return $site;
+            if ($site !== null) {
+                return $this->currentSite = $site;
             }
         }
         
         // Use the single site we have
         $sites = $this->siteFinder->getAllSites();
         if (count($sites) === 1) {
-            $this->set(reset($sites));
-            
-            return reset($sites);
+            return $this->currentSite = reset($sites);
         }
         
         // Try to match the site with the current host
@@ -115,35 +127,105 @@ class SiteFacet implements FacetInterface
         if (! is_null($request)) {
             try {
                 $result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(true)));
-                $site   = $result->getSite();
-                $this->set($site);
                 
-                return $site;
+                return $this->currentSite = $result->getSite();
             } catch (Throwable $exception) {
             }
         }
         
         // Nothing found...
-        throw new SiteNotFoundException('There is currently no site defined! To use the SiteAspect set a site first!');
+        throw new SiteNotFoundException('There is currently no site defined!');
+    }
+    
+    /**
+     * Returns true if we currently have a site set in the context, false if not
+     *
+     * @return bool
+     */
+    public function hasCurrent(): bool
+    {
+        if ($this->simulateNoSite) {
+            return false;
+        }
+        try {
+            $this->getCurrent();
+            
+            return true;
+        } catch (Throwable $e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns all sites that are registered in the system
+     *
+     * @param   bool  $useCache  False to disable all caching of the sites
+     *
+     * @return array
+     */
+    public function getAll(bool $useCache = true): array
+    {
+        return $this->siteFinder->getAllSites($useCache);
+    }
+    
+    /**
+     * Returns the instance of a specific site based on the given identifier
+     *
+     * ATTENTION in v10 the $identifier will no longer be an optional parameter!
+     *
+     * @param   string|null  $identifier  The identifier for the site to find
+     *
+     * @return \TYPO3\CMS\Core\Site\Entity\Site|NullSite|PseudoSite
+     */
+    public function get(?string $identifier = null)
+    {
+        // @todo remove this in v10
+        if ($identifier === null) {
+            return $this->getCurrent();
+        }
+        
+        return $this->siteFinder->getSiteByIdentifier($identifier);
+    }
+    
+    /**
+     * Returns the instance of a specific site based on the given page id
+     *
+     * @param   string|int  $pid  The page id to find the site for
+     *
+     * @return \TYPO3\CMS\Core\Site\Entity\Site
+     */
+    public function getForPid($pid): Site
+    {
+        return $this->siteFinder->getSiteByPageId($this->context->Pid()->get($pid));
+    }
+    
+    /**
+     * Returns true if the site with the given identifier exists, false if not
+     *
+     * @param   string  $identifier  The identifier for the site to find
+     *
+     * @return bool
+     */
+    public function has(string $identifier): bool
+    {
+        try {
+            $this->siteFinder->getSiteByIdentifier($identifier);
+            
+            return true;
+        } catch (SiteNotFoundException $exception) {
+            return false;
+        }
     }
     
     /**
      * Returns true if the site has been set
      *
      * @return bool
+     * @deprecated will be removed in v10 use has() or hasCurrent() instead!
      */
     public function exists(): bool
     {
-        if ($this->simulateNoSite) {
-            return false;
-        }
-        try {
-            $this->get();
-            
-            return true;
-        } catch (Throwable $e) {
-            return false;
-        }
+        return $this->hasCurrent();
     }
     
     /**
@@ -153,6 +235,7 @@ class SiteFacet implements FacetInterface
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
      * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+     * @deprecated will be removed in v10 use the EnvironmentSimulator class instead!
      */
     public function set($site): SiteFacet
     {
@@ -173,6 +256,7 @@ class SiteFacet implements FacetInterface
      * @param   string  $identifier
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
+     * @deprecated will be removed in v10 use the EnvironmentSimulator class instead!
      */
     public function setTo(string $identifier): SiteFacet
     {
@@ -188,6 +272,7 @@ class SiteFacet implements FacetInterface
      * @param   array|null  $rootLine  An optional rootLine to traverse
      *
      * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\SiteFacet
+     * @deprecated will be removed in v10 use the EnvironmentSimulator class instead!
      */
     public function setToPid($pid, ?array $rootLine = null): SiteFacet
     {
