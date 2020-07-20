@@ -27,6 +27,7 @@ use LaborDigital\Typo3BetterApi\Domain\DbService\DbService;
 use LaborDigital\Typo3BetterApi\Page\PageService;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
+use Throwable;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\RelationHandler;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -132,6 +133,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             return $this->handleTranslationAndVersionOverlay($tableName, $row);
         }, $qb->execute()->fetchAll());
     }
+    
     
     /**
      * Returns the total number of items in the result set, matching the given query parameters
@@ -338,6 +340,33 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         
         // Done
         return $resultsByField;
+    }
+    
+    /**
+     * Runs the given callable inside a transaction scope connection of this query object.
+     * All actions will be commited after your callback was executed, and automatically rolled
+     * back if the callable has thrown an exception.
+     *
+     * @param   callable  $callable  The callback to execute inside the transaction context.
+     *                               Receives this query instance as only parameter
+     *
+     * @throws \Throwable
+     */
+    public function runInTransaction(callable $callable): void
+    {
+        $connection       = $this->adapter->getQueryBuilder()->getConnection();
+        $autoCommitBackup = $connection->isAutoCommit();
+        try {
+            $connection->beginTransaction();
+            $connection->setAutoCommit(false);
+            $callable($this);
+            $connection->commit();
+        } catch (Throwable $exception) {
+            $connection->rollBack();
+            throw $exception;
+        } finally {
+            $connection->setAutoCommit($autoCommitBackup);
+        }
     }
     
     /**
