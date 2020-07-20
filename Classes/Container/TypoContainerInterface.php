@@ -36,10 +36,10 @@ interface TypoContainerInterface extends ContainerInterface
      * true]
      *
      * @param   string  $id       Identifier of the entry to look for.
-     * @param   array   $options  Additional options
+     * @param   array   $options  [deprecated: will be removed in v10] Additional options
      *                            - args (DEFAULT []) A list of constructor arguments
-     *                            - gu (DEFAULT FALSE) Set this to true to use the GeneralUtility::makeInstance()
-     *                            instead of the object manager to create the instance
+     *                            - gu (DEFAULT FALSE) Set this to true to use the
+     *                            GeneralUtility::makeInstance() instead of the object manager to create the instance
      *
      * @return mixed Entry.
      *
@@ -47,6 +47,19 @@ interface TypoContainerInterface extends ContainerInterface
      * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
      */
     public function get($id, array $options = []);
+    
+    /**
+     * Allows you to create a new object instance without dependency injection.
+     * This is currently only a wrapper around GeneralUtility::makeInstance()
+     *
+     * @param   string  $class                 The class to instantiate
+     * @param   array   $constructorArguments  The constructor arguments to pass
+     *
+     * @return mixed
+     *
+     * @see \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance()
+     */
+    public function getWithoutDi(string $class, array $constructorArguments = []);
     
     /**
      * Can be used to set a given instance for a class / interface name
@@ -69,18 +82,20 @@ interface TypoContainerInterface extends ContainerInterface
      * @param   string  $class      The class to be resolved if the given interface is required
      *
      * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     * @deprecated Use ExtConfig for that
      */
     public function setClassFor(string $interface, string $class): TypoContainerInterface;
     
     /**
      * Helper to register an xClass for another class
      *
-     * @see https://docs.typo3.org/typo3cms/CoreApiReference/ApiOverview/Xclasses/Index.html
+     * @see        https://docs.typo3.org/typo3cms/CoreApiReference/ApiOverview/Xclasses/Index.html
      *
      * @param   string  $classToOverride
      * @param   string  $classToOverrideWith
      *
      * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     * @deprecated Use ExtConfig for that
      */
     public function setXClassFor(string $classToOverride, string $classToOverrideWith): TypoContainerInterface;
     

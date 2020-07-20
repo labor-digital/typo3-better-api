@@ -19,7 +19,7 @@
 
 namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
 
-use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
+use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Registry;
 
 class ConfigFacet implements FacetInterface
 {
-    use LazyServiceDependencyTrait;
+    use ContainerAwareTrait;
     
     /**
      * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
@@ -68,7 +68,7 @@ class ConfigFacet implements FacetInterface
      */
     public function getRegistryValue(string $key, $defaultValue = null, string $namespace = 'user_betterApi_config')
     {
-        return $this->getService(Registry::class)->get($namespace, $key, $defaultValue);
+        return $this->getSingletonOf(Registry::class)->get($namespace, $key, $defaultValue);
     }
     
     /**
@@ -83,12 +83,12 @@ class ConfigFacet implements FacetInterface
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/SystemRegistry/Index.html
      * @see Registry::get()
      */
-    public function setRegistryValue(string $key, $value, string $namespace = 'user_betterApi_config')
+    public function setRegistryValue(string $key, $value, string $namespace = 'user_betterApi_config'): self
     {
-        if (is_null($value)) {
-            $this->getService(Registry::class)->remove($namespace, $key);
+        if ($value === null) {
+            $this->getSingletonOf(Registry::class)->remove($namespace, $key);
         } else {
-            $this->getService(Registry::class)->set($namespace, $key, $value);
+            $this->getSingletonOf(Registry::class)->set($namespace, $key, $value);
         }
         
         return $this;
@@ -114,9 +114,8 @@ class ConfigFacet implements FacetInterface
     public function getRequestAttribute(string $attributeName, $fallback = null)
     {
         $request    = $this->context->Request()->getRootRequest();
-        $localValue = isset($this->requestAttributeFallbackStorage[$attributeName]) ?
-            $this->requestAttributeFallbackStorage[$attributeName] : $fallback;
-        if (is_null($request)) {
+        $localValue = $this->requestAttributeFallbackStorage[$attributeName] ?? $fallback;
+        if ($request === null) {
             return $localValue;
         }
         
@@ -189,7 +188,7 @@ class ConfigFacet implements FacetInterface
     {
         $path = Arrays::parsePath($key);
         try {
-            return $this->getService(ExtensionConfiguration::class)->get($extensionName, implode('/', $path));
+            return $this->getSingletonOf(ExtensionConfiguration::class)->get($extensionName, implode('/', $path));
         } catch (ExtensionConfigurationExtensionNotConfiguredException $e) {
             return $default;
         } catch (ExtensionConfigurationPathDoesNotExistException $e) {
@@ -205,9 +204,9 @@ class ConfigFacet implements FacetInterface
      *
      * @return array
      */
-    public function getExtBaseConfig(?string $extensionName = null, ?string $pluginName = null)
+    public function getExtBaseConfig(?string $extensionName = null, ?string $pluginName = null): array
     {
-        return $this->getService(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
+        return $this->getSingletonOf(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
     }
     
     /**
@@ -238,6 +237,6 @@ class ConfigFacet implements FacetInterface
             $options['default'] = $default;
         }
         
-        return $this->getService(TypoScriptService::class)->get($path, $options);
+        return $this->getSingletonOf(TypoScriptService::class)->get($path, $options);
     }
 }

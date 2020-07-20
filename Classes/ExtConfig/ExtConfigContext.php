@@ -21,7 +21,6 @@ namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
 use LaborDigital\Typo3BetterApi\BackendForms\TableSqlGenerator;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService;
 use LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry;
 use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList;
@@ -69,10 +68,9 @@ class ExtConfigContext
      */
     public function __construct(TypoContext $context)
     {
-        $this->setServiceInstance(TempFs::class, TempFs::makeInstance('extConfig'));
-        $this->setServiceFactory(ExtConfigExtensionRegistry::class, function (TypoContainerInterface $container) {
-            return $container->get(ExtConfigExtensionRegistry::class, ['args' => [$this]]);
-        });
+        $this->setLocalSingleton(TempFs::class, TempFs::makeInstance('extConfig'));
+        $this->setLocalSingleton(ExtConfigExtensionRegistry::class,
+            $this->getInstanceOf(ExtConfigExtensionRegistry::class, [$this]));
         $this->addToServiceMap([
             'SqlGenerator'       => function () {
                 return $this->SqlGenerator();
@@ -81,7 +79,7 @@ class ExtConfigContext
                 return $this->DataHandlerActions();
             },
             'TypoContext'        => $context,
-            'Fs'                 => $this->getService(TempFs::class),
+            'Fs'                 => $this->getSingletonOf(TempFs::class),
             'ExtensionRegistry'  => function () {
                 return $this->ExtensionRegistry();
             },

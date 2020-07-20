@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -27,7 +28,8 @@ namespace LaborDigital\Typo3BetterApi\Container;
  * locally registered factories. Instances, once resolved are stored locally as as sudo-singleton for the current class
  * this makes sure that every service is only resolved once.
  *
- * @package LaborDigital\Typo3BetterApi\Container
+ * @package    LaborDigital\Typo3BetterApi\Container
+ * @deprecated Will be removed in v10 -> ContainerAwareTrait should do the trick on it's own now
  */
 trait LazyServiceDependencyTrait
 {
@@ -54,6 +56,7 @@ trait LazyServiceDependencyTrait
      * @param   object  $instance              The instance to register for the given class / interface name
      *
      * @return $this
+     * @deprecated Will be removed in v10 -> ContainerAwareTrait should do the trick on it's own now
      */
     public function setServiceInstance(string $classOrInterfaceName, $instance)
     {
@@ -73,6 +76,7 @@ trait LazyServiceDependencyTrait
      *                                           class to instantiate
      *
      * @return $this
+     * @deprecated Will be removed in v10 -> ContainerAwareTrait should do the trick on it's own now
      */
     public function setServiceFactory(string $classOrInterfaceName, callable $factory)
     {
@@ -95,6 +99,7 @@ trait LazyServiceDependencyTrait
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance should be returned for.
      *
      * @return mixed
+     * @deprecated Will be removed in v10 -> ContainerAwareTrait::getSingletonOf() should do the trick on it's own now
      */
     protected function getService(string $classOrInterfaceName)
     {

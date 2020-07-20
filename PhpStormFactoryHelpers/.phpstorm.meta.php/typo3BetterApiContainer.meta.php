@@ -18,32 +18,36 @@
  */
 
 namespace PHPSTORM_META {
-	
-	use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-	use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
-	use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
-	use LaborDigital\Typo3BetterApi\Container\TypoContainer;
-	use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
-	use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
-	use Psr\Container\ContainerInterface;
-	use TYPO3\CMS\Core\Utility\GeneralUtility;
-	use TYPO3\CMS\Extbase\Object\ObjectManager;
-	use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-	
-	// TYPO3 Core
-	override(GeneralUtility::makeInstance(0), type(0));
-	override(ObjectManager::get(0), type(0));
-	override(ObjectManagerInterface::get(0), type(0));
-	override(ContainerInterface::get(0), type(0));
-	
-	// Better API
-	override(TypoContainer::get(0), type(0));
-	override(TypoContainerInterface::get(0), type(0));
-	override(ExtConfigContext::getInstanceOf(0), type(0));
-	override(ContainerAwareTrait::getInstance(0), type(0));
-	override(LazyServiceDependencyTrait::getInstance(0), type(0));
-	override(LazyServiceDependencyTrait::getService(0), type(0));
-	
-	// Deprecated
-	override(CommonServiceLocatorTrait::getInstanceOf(0), type(0));
+    
+    use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+    use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
+    use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
+    use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
+    use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+    use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
+    use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
+    use Psr\Container\ContainerInterface;
+    use TYPO3\CMS\Extbase\Object\ObjectManager;
+    use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+    
+    // TYPO3 Core
+    override(ObjectManager::get(0), type(0));
+    override(ObjectManagerInterface::get(0), type(0));
+    override(ContainerInterface::get(0), type(0));
+    
+    // Better API
+    override(TypoContainer::get(0), type(0));
+    override(TypoContainer::getWithoutDi(0), type(0));
+    override(TypoContainerInterface::get(0), type(0));
+    override(TypoContainerInterface::getWithoutDi(0), type(0));
+    override(CommonDependencyTrait::getInstanceOf(0), type(0));
+    override(CommonDependencyTrait::getSingletonOf(0), type(0));
+    override(ContainerAwareTrait::getInstanceOf(0), type(0));
+    override(ContainerAwareTrait::getSingletonOf(0), type(0));
+    
+    // Deprecated
+    override(CommonServiceLocatorTrait::getInstanceOf(0), type(0));
+    override(LazyServiceDependencyTrait::getInstanceOf(0), type(0));
+    override(LazyServiceDependencyTrait::getService(0), type(0));
+    override(ExtConfigContext::getInstanceOf(0), type(0));
 }

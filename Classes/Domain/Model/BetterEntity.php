@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -19,7 +20,7 @@
 
 namespace LaborDigital\Typo3BetterApi\Domain\Model;
 
-use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
+use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\LazyLoading\LazyLoadingTrait;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
@@ -29,9 +30,9 @@ abstract class BetterEntity extends AbstractEntity
 {
     use CommonServiceLocatorTrait;
     use LazyLoadingTrait;
-    use CommonServiceDependencyTrait {
-        CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
-        CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
+    use CommonDependencyTrait {
+        CommonDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+        CommonDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
     }
     
     /**
@@ -40,7 +41,7 @@ abstract class BetterEntity extends AbstractEntity
     public function setPid($pid)
     {
         if (is_string($pid)) {
-            $pid = $this->getService(TypoContext::class)->Pid()->get($pid, (int)$pid);
+            $pid = $this->getSingletonOf(TypoContext::class)->Pid()->get($pid, (int)$pid);
         }
         parent::setPid($pid);
     }

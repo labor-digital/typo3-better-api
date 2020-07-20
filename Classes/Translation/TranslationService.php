@@ -324,8 +324,10 @@ class TranslationService implements SingletonInterface
         
         if (! is_object($GLOBALS['LANG'])) {
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
-            $lang            = $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()
-                                                 ->getTwoLetterIsoCode();
+            $lang            = $this->typoContext
+                ->Language()
+                ->getCurrentFrontendLanguage()
+                ->getTwoLetterIsoCode();
             $GLOBALS['LANG']->init($lang === 'en' ? 'default' : $lang);
         }
         

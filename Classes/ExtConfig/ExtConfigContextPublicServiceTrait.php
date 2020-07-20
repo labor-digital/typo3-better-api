@@ -21,14 +21,14 @@ declare(strict_types=1);
 namespace LaborDigital\Typo3BetterApi\ExtConfig;
 
 use LaborDigital\Typo3BetterApi\BackendForms\TableSqlGenerator;
-use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
+use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
 use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService;
 use LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry;
 use LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs;
 
 trait ExtConfigContextPublicServiceTrait
 {
-    use CommonServiceDependencyTrait {
+    use CommonDependencyTrait {
         TypoContext as public;
         Db as public;
         Links as public;
@@ -39,7 +39,6 @@ trait ExtConfigContextPublicServiceTrait
         Translation as public;
         Simulator as public;
         getInstanceOf as public;
-        getService as public;
     }
     
     /**
@@ -49,7 +48,7 @@ trait ExtConfigContextPublicServiceTrait
      */
     public function SqlGenerator(): TableSqlGenerator
     {
-        return $this->getService(TableSqlGenerator::class);
+        return $this->getSingletonOf(TableSqlGenerator::class);
     }
     
     /**
@@ -59,7 +58,7 @@ trait ExtConfigContextPublicServiceTrait
      */
     public function DataHandlerActions(): DataHandlerActionService
     {
-        return $this->getService(DataHandlerActionService::class);
+        return $this->getSingletonOf(DataHandlerActionService::class);
     }
     
     /**
@@ -69,7 +68,7 @@ trait ExtConfigContextPublicServiceTrait
      */
     public function Fs(): TempFs
     {
-        return $this->getService(TempFs::class);
+        return $this->getSingletonOf(TempFs::class);
     }
     
     /**
@@ -80,6 +79,6 @@ trait ExtConfigContextPublicServiceTrait
      */
     public function ExtensionRegistry(): ExtConfigExtensionRegistry
     {
-        return $this->getService(ExtConfigExtensionRegistry::class);
+        return $this->getSingletonOf(ExtConfigExtensionRegistry::class);
     }
 }

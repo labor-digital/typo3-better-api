@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -15,145 +14,22 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.12 at 18:01
+ * Last modified: 2020.07.17 at 15:49
  */
 
-namespace LaborDigital\Typo3BetterApi\Container;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface;
-use LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService;
-use LaborDigital\Typo3BetterApi\Link\LinkService;
-use LaborDigital\Typo3BetterApi\Page\PageService;
-use LaborDigital\Typo3BetterApi\Session\BackendSessionProvider;
-use LaborDigital\Typo3BetterApi\Session\FrontendSessionProvider;
-use LaborDigital\Typo3BetterApi\Session\SessionService;
-use LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator;
-use LaborDigital\Typo3BetterApi\Translation\TranslationService;
-use LaborDigital\Typo3BetterApi\Tsfe\TsfeService;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use Neunerlei\EventBus\EventBusInterface;
+
+namespace LaborDigital\Typo3BetterApi\Container;
 
 /**
  * Trait CommonServiceDependencyTrait
  *
- * An extension for the LazyServiceDependencyTrait to provide shortcuts to frequently used service classes.
- *
- * This is designed for abstract controllers or entities and should not be used in other circumstances -> Keep your
- * code free from hidden dependencies
- *
- * @package LaborDigital\Typo3BetterApi\Container
+ * @package    LaborDigital\Typo3BetterApi\Container
+ * @deprecated use CommonDependencyTrait instead!
  */
 trait CommonServiceDependencyTrait
 {
-    use LazyServiceDependencyTrait;
+    use CommonDependencyTrait;
     
-    /**
-     * Returns the typo context instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-     */
-    protected function TypoContext(): TypoContext
-    {
-        return $this->getService(TypoContext::class);
-    }
-    
-    /**
-     * Returns the db service instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface
-     */
-    protected function Db(): DbServiceInterface
-    {
-        return $this->getService(DbServiceInterface::class);
-    }
-    
-    /**
-     * Returns the link service instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Link\LinkService
-     */
-    protected function Links(): LinkService
-    {
-        return $this->getService(LinkService::class);
-    }
-    
-    /**
-     * Returns the TSFE service instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Tsfe\TsfeService
-     */
-    protected function Tsfe(): TsfeService
-    {
-        return $this->getService(TsfeService::class);
-    }
-    
-    /**
-     * Returns the page service instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Page\PageService
-     */
-    protected function Page(): PageService
-    {
-        return $this->getService(PageService::class);
-    }
-    
-    /**
-     * Returns the fal file service instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService
-     */
-    protected function FalFiles(): FalFileService
-    {
-        return $this->getService(FalFileService::class);
-    }
-    
-    /**
-     * Returns the event bus instance
-     *
-     * @return \Neunerlei\EventBus\EventBusInterface
-     */
-    protected function EventBus(): EventBusInterface
-    {
-        return $this->getService(EventBusInterface::class);
-    }
-    
-    /**
-     * Returns the translation service instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
-     */
-    protected function Translation(): TranslationService
-    {
-        return $this->getService(TranslationService::class);
-    }
-    
-    /**
-     * Returns the environment simulator instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator
-     */
-    protected function Simulator(): EnvironmentSimulator
-    {
-        return $this->getInstanceOf(EnvironmentSimulator::class);
-    }
-    
-    /**
-     * Returns the Frontend session provider instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Session\FrontendSessionProvider
-     */
-    protected function FrontendSession(): FrontendSessionProvider
-    {
-        return $this->getService(SessionService::class)->getFrontendSession();
-    }
-    
-    /**
-     * Returns the Backend session provider instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Session\BackendSessionProvider
-     */
-    protected function BackendSession(): BackendSessionProvider
-    {
-        return $this->getService(SessionService::class)->getBackendSession();
-    }
 }

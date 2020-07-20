@@ -193,11 +193,9 @@ trait CommonServiceLocatorDeprecationTrait
  * @mixin CommonServiceLocatorDeprecationTrait
  * @package    LaborDigital\Typo3BetterApi\Container
  *
- * @deprecated Will be removed in v10 - Use ContainerAwareTrait, CommonServiceDependencyTrait or LazySingletonTrait
- *             instead
+ * @deprecated Will be removed in v10 - Use ContainerAwareTrait or CommonDependencyTrait instead
  * @see        \LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait
- * @see        \LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait
- * @see        \LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait
+ * @see        \LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait
  */
 trait CommonServiceLocatorTrait
 {
@@ -235,7 +233,7 @@ trait CommonServiceLocatorTrait
      *
      * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
      */
-    public function injectContainer(TypoContainerInterface $container)
+    public function injectContainer(TypoContainerInterface $container): void
     {
         $this->__container = $container;
     }

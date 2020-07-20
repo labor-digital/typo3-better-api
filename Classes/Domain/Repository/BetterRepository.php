@@ -19,7 +19,7 @@
 
 namespace LaborDigital\Typo3BetterApi\Domain\Repository;
 
-use LaborDigital\Typo3BetterApi\Container\CommonServiceDependencyTrait;
+use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
@@ -35,9 +35,9 @@ abstract class BetterRepository extends Repository
 {
     use CommonServiceLocatorTrait;
     use BetterQueryPreparationTrait;
-    use CommonServiceDependencyTrait {
-        CommonServiceDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
-        CommonServiceDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
+    use CommonDependencyTrait {
+        CommonDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
+        CommonDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
     }
     
     /**

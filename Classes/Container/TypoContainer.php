@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -112,6 +113,14 @@ class TypoContainer implements TypoContainerInterface, SingletonInterface
                 $e
             );
         }
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getWithoutDi(string $class, array $constructorArguments = [])
+    {
+        return GeneralUtility::makeInstance($class, ...$constructorArguments);
     }
     
     /**

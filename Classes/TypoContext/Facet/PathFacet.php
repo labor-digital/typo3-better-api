@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -21,7 +22,8 @@ namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\Typo3BetterApi\BetterApiException;
-use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
+use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
+use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
@@ -41,7 +43,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
  */
 class PathFacet implements FacetInterface
 {
-    use LazyServiceDependencyTrait;
+    use ContainerAwareTrait;
     
     /**
      * This property stores the vendor path after it was resolved in getVendorPath
@@ -133,7 +135,7 @@ class PathFacet implements FacetInterface
      *
      * @return string
      */
-    public function getConfigPath()
+    public function getConfigPath(): string
     {
         return Path::unifyPath(Environment::getConfigPath());
     }
@@ -213,7 +215,7 @@ class PathFacet implements FacetInterface
         $file = Path::unifySlashes($typoPath);
         
         // Prepare input string
-        if (strtolower(substr($file, 0, 5)) === 'file:') {
+        if (stripos($file, 'file:') === 0) {
             $file = substr($file, 5);
         }
         $prefix     = substr($file, 0, 4);
@@ -247,7 +249,7 @@ class PathFacet implements FacetInterface
         $file   = substr($file, $pos + 1);
         
         // Resolve directory
-        $dir  = static::getExtensionPath($extKey);
+        $dir  = $this->getExtensionPath($extKey);
         $file = Path::unifyPath($dir) . $file;
         
         // Done
@@ -299,7 +301,7 @@ class PathFacet implements FacetInterface
                 // Check if the path has a composer file we can use to find the ext key
                 $composerJsonPath = implode(DIRECTORY_SEPARATOR, $stripPath) . DIRECTORY_SEPARATOR . 'composer.json';
                 if (file_exists($composerJsonPath)) {
-                    $compJson = json_decode(Fs::readFile($composerJsonPath), true);
+                    $compJson = json_decode(Fs::readFile($composerJsonPath), true, 512, JSON_THROW_ON_ERROR);
                     if (! isset($compJson['name'])) {
                         continue;
                     }
@@ -357,7 +359,7 @@ class PathFacet implements FacetInterface
         
         // Resolve the record
         if (is_numeric($recordOrUid)) {
-            $record = $this->getService(DbServiceInterface::class)->getRecords($table, $recordOrUid);
+            $record = $this->getSingletonOf(DbServiceInterface::class)->getRecords($table, $recordOrUid);
             $record = reset($record);
         } else {
             $record = $recordOrUid;

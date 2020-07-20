@@ -97,7 +97,7 @@ class TsfeService implements SingletonInterface
         
         // Get the content object renderer from the config manager
         if (! $cObj instanceof ContentObjectRenderer && $this->context->getEnvAspect()->isFrontend()) {
-            $cm = $this->container->get(ConfigurationManager::class);
+            $cm   = $this->container->get(ConfigurationManager::class);
             $cObj = $cm->getContentObject();
         }
         
