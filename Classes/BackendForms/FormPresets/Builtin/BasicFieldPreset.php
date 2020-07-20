@@ -72,7 +72,7 @@ class BasicFieldPreset extends AbstractFormPreset
             $config['renderType'] = 'checkboxToggle';
         }
         if ($options['inverted']) {
-            $config['items'] = [0 => '', 1 => '', 'invertStateDisplay' => true,];
+            $config['items'] = [[0 => '', 1 => '', 'invertStateDisplay' => true,]];
         }
         
         // Set sql config
