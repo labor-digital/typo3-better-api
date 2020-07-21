@@ -84,8 +84,9 @@ class EnvironmentSimulator implements SingletonInterface
      *                              If this is left empty the current page id is used
      *                              - language int|string|SiteLanguage: The language to set the environment to.
      *                              Either as sys_language_uid value, as iso code or as language object
-     *                              - fallbackLanguage int|string|SiteLanguage: The language which should be used when
-     *                              the $language was not found for this site.
+     *                              - fallbackLanguage int|string|SiteLanguage|true: The language which should be used
+     *                              when the $language was not found for this site. If TRUE is given, the TYPO3 default
+     *                              language for the current site is used as fallback
      *                              - site string: Can be set to a valid site identifier to simulate the request
      *                              on a specific TYPO3 site.
      *                              - bootTsfe bool (TRUE): By default the simulator will start a dummy version of

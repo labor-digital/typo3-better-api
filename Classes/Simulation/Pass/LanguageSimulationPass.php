@@ -36,6 +36,11 @@ class LanguageSimulationPass implements SimulatorPassInterface
     protected $langServiceBackup;
     protected $aspectBackup;
     
+    /**
+     * True if $GLOBALS['LANG'] is empty and we provide a fallback for it
+     *
+     * @var bool
+     */
     protected $provideLangFallback = false;
     
     /**
@@ -53,7 +58,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
             'default' => null,
         ];
         $options['fallbackLanguage'] = [
-            'type'    => ['int', 'string', 'null', SiteLanguage::class],
+            'type'    => ['int', 'string', 'null', SiteLanguage::class, 'true'],
             'default' => null,
         ];
         
@@ -147,7 +152,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
             }
         }
         if (! $language instanceof SiteLanguage) {
-            if (! is_null($fallbackLanguage)) {
+            if ($fallbackLanguage !== null) {
                 if ($fallbackLanguage === true) {
                     $fallbackLanguage = $this->TypoContext()->Site()->getCurrent()->getDefaultLanguage();
                 }
