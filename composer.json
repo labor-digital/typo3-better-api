@@ -76,7 +76,7 @@
             "LaborDigital\\T3BA\\ExtConfig\\Tests\\": "Module/ExtConfig/Tests"
         }
     },
-    "version": "9.16.2",
+    "version": "9.17.0",
     "extra": {
         "T3BA": {
             "isDev": true

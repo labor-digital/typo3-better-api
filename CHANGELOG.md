@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.17.0](https://github.com/labor-digital/typo3-better-api/compare/v9.16.2...v9.17.0) (2020-07-21)
+
+
+### Features
+
+* **BetterQuery:** Implement runInTransaction() to run a command stack inside a DB transaction ([12c97a4](https://github.com/labor-digital/typo3-better-api/commit/12c97a4782e5b6e8fb13e86ab3b506989b53a228))
+* **Container:** Deprecate LazyServiceDependencyTrait and replace CommonServiceDependencyTrait with CommonDependencyTrait. Also adds getSingletonOf() method to the ContainerAwareTrait ([a6c3727](https://github.com/labor-digital/typo3-better-api/commit/a6c3727ab12f05ade7f4776e75f3abee8bb77f70))
+* **Simulation:** complete rewrite of the environment simulator to clean up the code ([5c1014d](https://github.com/labor-digital/typo3-better-api/commit/5c1014d33d7a23dfaa681800cff40cd98e2594d5))
+* **SiteFacet:** rewrite siteFacet ([dab2b8a](https://github.com/labor-digital/typo3-better-api/commit/dab2b8aef805b4cdac7f2dda81b602cabc8174ef))
+
+
+### Bug Fixes
+
+* **checkbox:** add correct wrapper to checkbox -> inverted items ([24146bd](https://github.com/labor-digital/typo3-better-api/commit/24146bd15e564a73f6dc8dd950cfa836959ed167))
+* **Container:** Deprecate LazyServiceDependencyTrait ([aeeb087](https://github.com/labor-digital/typo3-better-api/commit/aeeb08719151ac185f99648a88b67a37b3a01b86))
+* **ContainerAwareTrait:** remove self annotation for setLocalSingleton() ([3c95628](https://github.com/labor-digital/typo3-better-api/commit/3c956281fa3796c8c7ef6e4c242132460e43cc03))
+* **ExtConfig:** make sure non-instantiable classes are ignored when classes in a directory are gathered ([7dc1ba9](https://github.com/labor-digital/typo3-better-api/commit/7dc1ba9e999073b7f340833fd81af42425b8b7f4))
+* fix doc dependencies ([02d3e90](https://github.com/labor-digital/typo3-better-api/commit/02d3e90c6a950b896dacd5748ec6ea9f47b7ab7d))
+* **PidFacet:** more reliably handle the pid resolution ([c99c723](https://github.com/labor-digital/typo3-better-api/commit/c99c723dcf69c6cb90a1f5ee91467510c15efc8a))
+
 ### [9.16.2](https://github.com/labor-digital/typo3-better-api/compare/v9.16.1...v9.16.2) (2020-07-09)
 
 
