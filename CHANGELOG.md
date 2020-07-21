@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.17.1](https://github.com/labor-digital/typo3-better-api/compare/v9.17.0...v9.17.1) (2020-07-21)
+
+
+### Bug Fixes
+
+* **Simulation:** allow true as a fallback language and add correct documentation for it ([849c99a](https://github.com/labor-digital/typo3-better-api/commit/849c99a602d0d4523697aebdb1864e6957469103))
+
 ## [9.17.0](https://github.com/labor-digital/typo3-better-api/compare/v9.16.2...v9.17.0) (2020-07-21)
 
 
