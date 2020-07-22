@@ -25,6 +25,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class TranslationSyncCommand
+ *
+ * @package    LaborDigital\Typo3BetterApi\Translation\FileSync
+ *
+ * @deprecated will be removed in v10
+ */
 class TranslationSyncCommand extends Command
 {
     /**

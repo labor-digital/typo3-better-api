@@ -19,6 +19,12 @@
 
 namespace LaborDigital\Typo3BetterApi\Translation\FileSync;
 
+/**
+ * Class TranslationMapping
+ *
+ * @package    LaborDigital\Typo3BetterApi\Translation\FileSync
+ * @deprecated will be removed in v10
+ */
 class TranslationMapping
 {
     

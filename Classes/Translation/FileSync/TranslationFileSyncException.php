@@ -21,6 +21,12 @@ namespace LaborDigital\Typo3BetterApi\Translation\FileSync;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 
+/**
+ * Class TranslationFileSyncException
+ *
+ * @package    LaborDigital\Typo3BetterApi\Translation\FileSync
+ * @deprecated will be removed in v10
+ */
 class TranslationFileSyncException extends BetterApiException
 {
 }

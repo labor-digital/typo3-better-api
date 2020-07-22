@@ -28,6 +28,12 @@ use Neunerlei\TinyTimy\DateTimy;
 use SplFileInfo;
 use TYPO3\CMS\Core\SingletonInterface;
 
+/**
+ * Class SyncHandler
+ *
+ * @package    LaborDigital\Typo3BetterApi\Translation\FileSync
+ * @deprecated will be removed in v10
+ */
 class SyncHandler implements SingletonInterface
 {
     

@@ -25,6 +25,12 @@ use Neunerlei\FileSystem\Fs;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
 
+/**
+ * Class TranslationFileSync
+ *
+ * @package    LaborDigital\Typo3BetterApi\Translation\FileSync
+ * @deprecated will be removed in v10
+ */
 class TranslationFileSync
 {
     
