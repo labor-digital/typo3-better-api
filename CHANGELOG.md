@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.18.0](https://github.com/labor-digital/typo3-better-api/compare/v9.17.1...v9.18.0) (2020-08-06)
+
+
+### Features
+
+* deprecate the Translation\Filesync namespace. ([cae55b4](https://github.com/labor-digital/typo3-better-api/commit/cae55b4697321af0a66ea14fb01b87455195c2bf))
+
 ### [9.17.1](https://github.com/labor-digital/typo3-better-api/compare/v9.17.0...v9.17.1) (2020-07-21)
 
 
