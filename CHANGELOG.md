@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.18.1](https://github.com/labor-digital/typo3-better-api/compare/v9.18.0...v9.18.1) (2020-08-07)
+
+
+### Bug Fixes
+
+* **BackendListLabelFilterEvent:** make row settable ([9e9cf2d](https://github.com/labor-digital/typo3-better-api/commit/9e9cf2d27a2485713d537b2682168dffd7bcd1c8))
+* **BackendPreview:** minor code style adjustments ([3d6c61e](https://github.com/labor-digital/typo3-better-api/commit/3d6c61eb56e0758a006b7cf068ee0a1019d7b46c))
+
 ## [9.18.0](https://github.com/labor-digital/typo3-better-api/compare/v9.17.1...v9.18.0) (2020-08-06)
 
 
