@@ -35,35 +35,35 @@ use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterf
  */
 class BackendListLabelFilterEvent implements CoreHookEventInterface
 {
-    
+
     /**
      * The name of the table that is currently rendered
      *
      * @var string
      */
     protected $tableName;
-    
+
     /**
      * The database row of the record to render the the label for
      *
      * @var array
      */
     protected $row;
-    
+
     /**
      * The title/label to be rendered for the record
      *
      * @var string
      */
     protected $title;
-    
+
     /**
      * Additional options for the label
      *
      * @var array
      */
     protected $options;
-    
+
     /**
      * @inheritDoc
      */
@@ -71,7 +71,7 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
     {
         return BackendListLabelFilterEventAdapter::class;
     }
-    
+
     /**
      * BackendListLabelFilterEvent constructor.
      *
@@ -87,7 +87,7 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
         $this->title     = $title;
         $this->options   = $options;
     }
-    
+
     /**
      * Returns the name of the table that is currently rendered
      *
@@ -97,7 +97,7 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
     {
         return $this->tableName;
     }
-    
+
     /**
      * Return the database row of the record to render the the label for
      *
@@ -107,7 +107,21 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
     {
         return $this->row;
     }
-    
+
+    /**
+     * Updates the database row of the record to render the the label for
+     *
+     * @param   array  $row
+     *
+     * @return $this
+     */
+    public function setRow(array $row): self
+    {
+        $this->row = $row;
+
+        return $this;
+    }
+
     /**
      * Returns additional options for the label
      *
@@ -117,7 +131,7 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
     {
         return $this->options;
     }
-    
+
     /**
      * Returns the title/label to be rendered for the record
      *
@@ -127,7 +141,7 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
     {
         return $this->title;
     }
-    
+
     /**
      * Sets the title/label to be rendered for the record
      *
@@ -138,7 +152,7 @@ class BackendListLabelFilterEvent implements CoreHookEventInterface
     public function setTitle(string $title): BackendListLabelFilterEvent
     {
         $this->title = $title;
-        
+
         return $this;
     }
 }
