@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -21,7 +22,7 @@ namespace LaborDigital\Typo3BetterApi\BackendPreview;
 
 interface BackendPreviewServiceInterface
 {
-    
+
     /**
      * Can be used to register a backend preview renderer for any kind of tt_content element in the page module.
      *
@@ -51,7 +52,7 @@ interface BackendPreviewServiceInterface
         array $fieldConstraints,
         bool $override = false
     ): BackendPreviewService;
-    
+
     /**
      * Can be used to register a backend list label renderer for any kind of tt_content element in the list module.
      *
