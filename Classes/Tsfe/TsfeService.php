@@ -21,6 +21,7 @@ namespace LaborDigital\Typo3BetterApi\Tsfe;
 
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator;
+use LaborDigital\Typo3BetterApi\Simulation\SimulatedTypoScriptFrontendController;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
@@ -29,17 +30,17 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class TsfeService implements SingletonInterface
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $container;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
     protected $context;
-    
+
     /**
      * TsfeService constructor.
      *
@@ -51,7 +52,18 @@ class TsfeService implements SingletonInterface
         $this->container = $container;
         $this->context   = $context;
     }
-    
+
+    /**
+     * Returns true if the frontend is being simulated
+     *
+     * @return bool
+     * @see EnvironmentSimulator::runWithEnvironment()
+     */
+    public function isSimulated(): bool
+    {
+        return $this->hasTsfe() && $this->getTsfe() instanceof SimulatedTypoScriptFrontendController;
+    }
+
     /**
      * Returns true if the system has a typoScript frontend controller instance
      *
@@ -62,7 +74,7 @@ class TsfeService implements SingletonInterface
         return isset($GLOBALS['TSFE']) && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
                && $GLOBALS['TSFE']->cObj !== '';
     }
-    
+
     /**
      * This method is used to ALWAYS return an instance of the typoScript frontend controller.
      * If we have to forcefully initialize it, we will do that.
@@ -78,7 +90,7 @@ class TsfeService implements SingletonInterface
         }
         throw new TsfeNotLoadedException('The TypoScript frontend controller is not loaded!');
     }
-    
+
     /**
      * Returns a prepared content object renderer instance.
      * If this method is used in the backend / in cli context
@@ -89,25 +101,25 @@ class TsfeService implements SingletonInterface
     public function getContentObjectRenderer(): ContentObjectRenderer
     {
         $cObj = null;
-        
+
         // Get the content object renderer from the frontend
         if ($this->hasTsfe()) {
             $cObj = $this->getTsfe()->cObj;
         }
-        
+
         // Get the content object renderer from the config manager
-        if (! $cObj instanceof ContentObjectRenderer && $this->context->getEnvAspect()->isFrontend()) {
+        if (! $cObj instanceof ContentObjectRenderer && $this->context->Env()->isFrontend()) {
             $cm   = $this->container->get(ConfigurationManager::class);
             $cObj = $cm->getContentObject();
         }
-        
+
         // Create it ourselves
         if (! $cObj instanceof ContentObjectRenderer) {
             return $this->container->get(EnvironmentSimulator::class)->runWithEnvironment([], function () {
                 return $this->getTsfe()->cObj;
             });
         }
-        
+
         // Done
         return $cObj;
     }

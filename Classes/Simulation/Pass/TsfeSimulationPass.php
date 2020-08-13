@@ -24,6 +24,7 @@ namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
 
 
 use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+use LaborDigital\Typo3BetterApi\Simulation\SimulatedTypoScriptFrontendController;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -33,15 +34,15 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class TsfeSimulationPass implements SimulatorPassInterface
 {
     use CommonDependencyTrait;
-    
+
     protected $tsfeBackup;
     protected $languageAspectBackup;
-    
+
     /**
      * @inheritDoc
      */
     public function __construct() { }
-    
+
     /**
      * @inheritDoc
      */
@@ -55,10 +56,10 @@ class TsfeSimulationPass implements SimulatorPassInterface
             'type'    => ['int', 'null'],
             'default' => null,
         ];
-        
+
         return $options;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -73,7 +74,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
                    )
                );
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -82,15 +83,15 @@ class TsfeSimulationPass implements SimulatorPassInterface
         // Backup the tsfe
         $this->tsfeBackup           = $GLOBALS['TSFE'];
         $this->languageAspectBackup = clone $this->TypoContext()->getRootContext()->getAspect('language');
-        
+
         // Store the language aspect temporarily
         $pid = $options['pid'] ?? $this->TypoContext()->Pid()->getCurrent();
-        $this->makeDummyTsfe($pid);
-        
+        $this->makeSimulatedTsfe($pid);
+
         // Make sure the language aspect stays the same way as we set it...
         $this->TypoContext()->getRootContext()->setAspect('language', $this->languageAspectBackup);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -99,8 +100,8 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $GLOBALS['TSFE'] = $this->tsfeBackup;
         $this->TypoContext()->getRootContext()->setAspect('language', $this->languageAspectBackup);
     }
-    
-    
+
+
     /**
      * Internal helper that is used to create a new tsfe instance
      *
@@ -111,9 +112,9 @@ class TsfeSimulationPass implements SimulatorPassInterface
      *
      * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
      */
-    protected function makeDummyTsfe(int $pid): TypoScriptFrontendController
+    protected function makeSimulatedTsfe(int $pid): TypoScriptFrontendController
     {
-        $controller           = $this->getInstanceOf(TypoScriptFrontendController::class, [null, $pid, 0,]);
+        $controller           = $this->getInstanceOf(SimulatedTypoScriptFrontendController::class, [null, $pid, 0,]);
         $GLOBALS['TSFE']      = $controller;
         $controller->sys_page = $this->getInstanceOf(PageRepository::class);
         $controller->rootLine = $this->getInstanceOf(RootlineUtility::class, [$pid])->get();
@@ -123,7 +124,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $controller->settingLocale();
         $controller->cObj    = $this->getInstanceOf(ContentObjectRenderer::class, [$controller]);
         $controller->fe_user = $this->getInstanceOf(FrontendUserAuthentication::class);
-        
+
         return $controller;
     }
 }
