@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.19.0](https://github.com/labor-digital/typo3-better-api/compare/v9.18.1...v9.19.0) (2020-08-14)
+
+
+### Features
+
+* **Simulation:** use SimulatedTypoScriptFrontendController instead of the normal TypoScriptFrontendController to determine if the frontend was simulated or not ([be4f557](https://github.com/labor-digital/typo3-better-api/commit/be4f557fea15757691c6ab72a5879bfa58c10d49))
+
+
+### Bug Fixes
+
+* **CodeGenerationHelperTrait:** fix deprecated function call ([e674593](https://github.com/labor-digital/typo3-better-api/commit/e67459334adc0c7f92cf172a7cd1727878e9a84b))
+
 ### [9.18.1](https://github.com/labor-digital/typo3-better-api/compare/v9.18.0...v9.18.1) (2020-08-07)
 
 
