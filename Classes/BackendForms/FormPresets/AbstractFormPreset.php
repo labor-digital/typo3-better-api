@@ -34,7 +34,7 @@ use Neunerlei\Inflection\Inflector;
 abstract class AbstractFormPreset implements FormPresetInterface
 {
     use CommonServiceLocatorTrait;
-    
+
     const EVAL_TYPES
         = [
             'required',
@@ -49,21 +49,21 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'uniqueInSite',
             'null',
         ];
-    
+
     /**
      * Holds the instance of the form field to configure
      *
      * @var AbstractFormField
      */
     protected $field;
-    
+
     /**
      * The context of the field
      *
      * @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext
      */
     protected $context;
-    
+
     /**
      * @inheritDoc
      */
@@ -71,7 +71,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
     {
         $this->field = $field;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -79,7 +79,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
     {
         $this->context = $context;
     }
-    
+
     /**
      * Internal helper to add the different eval options to the Options::make definition.
      * The default eval types are: "required", "trim", "datetime", "lower", "int", "email", "password"
@@ -103,10 +103,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
                 ];
             }
         }
-        
+
         return $optionDefinition;
     }
-    
+
     /**
      * Internal helper to add the different eval config options as a string to "config"->"eval"
      *
@@ -127,17 +127,17 @@ abstract class AbstractFormPreset implements FormPresetInterface
             }
         }
         $evalString = implode(',', $eval);
-        
+
         // Add eval only if we got it configured
         if (! empty($evalString)) {
             $config['eval'] = $evalString;
         } else {
             unset($config['eval']);
         }
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper which is used to add the "readOnly" option to the field configuration
      *
@@ -151,10 +151,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => false,
         ];
-        
+
         return $optionDefinition;
     }
-    
+
     /**
      * Internal helper to add the "read only" configuration to the config array if the matching option was set
      *
@@ -168,10 +168,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($options['readOnly'] === true) {
             $config['readOnly'] = true;
         }
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper which is used to add the "edit record" wizard option to the Options::make definition.
      *
@@ -185,10 +185,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => true,
         ];
-        
+
         return $optionDefinition;
     }
-    
+
     /**
      * Internal helper to apply the "edit record" wizard option to the config array
      *
@@ -202,17 +202,17 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if (! $options['allowEdit']) {
             return $config;
         }
-        
+
         $config['fieldControl']['editPopup'] = [
             'disabled' => false,
             'options'  => [
                 'title' => 'betterApi.formPreset.editRecord',
             ],
         ];
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper which is used to add the "new record" wizard option to the Options::make definition.
      *
@@ -226,10 +226,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'bool',
             'default' => false,
         ];
-        
+
         return $optionDefinition;
     }
-    
+
     /**
      * Internal helper to apply the "new record" wizard option to the config array
      *
@@ -243,7 +243,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if (! $options['allowNew']) {
             return $config;
         }
-        
+
         $config['fieldControl']['addRecord'] = [
             'disabled' => false,
             'options'  => [
@@ -252,10 +252,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
                 'pid'      => '###CURRENT_PID###',
             ],
         ];
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper to add a placeholder definition to the option array
      *
@@ -270,10 +270,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => ['string', 'null'],
             'default' => $defaultPlaceholder,
         ];
-        
+
         return $optionDefinition;
     }
-    
+
     /**
      * Adds the placeholder config option to the config array of the field
      *
@@ -288,34 +288,80 @@ abstract class AbstractFormPreset implements FormPresetInterface
             return $config;
         }
         $config['placeholder'] = $options['placeholder'];
-        
+
         return $config;
     }
-    
+
     /**
-     * Internal helper to apply the "basePid" and "limitToBasePid" config option to the Options::make definition.
+     * Internal helper to apply the "basePid" config option to the Options::make definition.
      * BasePid can be used to limit group or select fields to a certain page
      *
      * @param   array  $optionDefinition
+     * @param   bool   $withMapping  Allow the usage of "basePid" option to be an array of tableName -> basePids
      *
      * @return array
      */
-    protected function addBasePidOptions(array $optionDefinition): array
+    protected function addBasePidOptions(array $optionDefinition, bool $withMapping = false): array
     {
-        $optionDefinition['basePid']        = [
-            'type'    => ['int', 'null', 'string'],
+        // Helper to convert a pid string identifier into a number value
+        $pidValueConverter = function ($value) {
+            if ($this->context->TypoContext()->Pid()->has($value)) {
+                return $this->context->TypoContext()->Pid()->get($value);
+            }
+
+            return $value;
+        };
+
+        if ($withMapping) {
+            $optionDefinition['basePid'] = [
+                'type'    => ['int', 'null', 'string', 'array'],
+                'default' => null,
+                'filter'  => function ($v) use ($pidValueConverter) {
+                    if ($v === null) {
+                        return $v;
+                    }
+                    if (! is_array($v)) {
+                        return $pidValueConverter($v);
+                    }
+
+                    // Generate the table names for all keys
+                    $tableOption = $this->context->OptionList->table();
+                    $keys        = array_keys($v);
+                    foreach ($keys as $i => $table) {
+                        $keys[$i] = $tableOption->getRealTableName($table);
+                    }
+
+                    // Translate the values to pid numbers
+                    $values = array_values($v);
+                    $values = array_map($pidValueConverter, $values);
+
+                    return array_combine($keys, $values);
+                },
+            ];
+        } else {
+            $optionDefinition['basePid'] = [
+                'type'    => ['int', 'null', 'string'],
+                'default' => null,
+                'filter'  => static function ($v) use ($pidValueConverter) {
+                    if ($v === null) {
+                        return $v;
+                    }
+
+                    return $pidValueConverter($v);
+                },
+            ];
+        }
+
+        // @todo remove deprecated option
+        $optionDefinition['limitToBasePid'] = [
             'default' => null,
         ];
-        $optionDefinition['limitToBasePid'] = [
-            'type'    => 'bool',
-            'default' => false,
-        ];
-        
+
         return $optionDefinition;
     }
-    
+
     /**
-     * Internal helper to apply the "basePid" and "limitToBasePid" config options to the config array of the field
+     * Internal helper to apply the "basePid" config option to the config array of the field
      *
      * @param   array  $config
      * @param   array  $options
@@ -325,18 +371,12 @@ abstract class AbstractFormPreset implements FormPresetInterface
     protected function addBasePidConfig(array $config, array $options): array
     {
         if ($options['basePid'] !== null) {
-            $pid = $options['basePid'];
-            if (! is_numeric($pid) && $this->TypoContext->getPidAspect()->hasPid($pid)) {
-                $config['basePid'] = $this->TypoContext->getPidAspect()->getPid($pid);
-            }
+            $config['basePid'] = $options['basePid'];
         }
-        if ($options['limitToBasePid'] && isset($config['basePid'])) {
-            $config['limitToBasePid'] = true;
-        }
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper to configure an mm table for the current field.
      *
@@ -354,34 +394,34 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($this->isInFlexFormSection()) {
             return $config;
         }
-        
+
         // Build the field name and respect the flex form parent field
         $fieldId = Inflector::toUnderscore($this->field->getId());
         if ($this->isFlexForm()) {
             $fieldId = 'flex_' . Inflector::toUnderscore($this->getTcaField()->getId()) . '_' . $fieldId;
         }
-        
+
         // Check if we are inside a section
         if ($this->isInFlexFormSection()) {
             // MM Tables are not supported in sections
             unset($config['MM']);
-            
+
             return $config;
         }
-        
+
         // Add the mm table
         $mmTableName = $this->context->SqlGenerator->addMmTableDefinition($this->getTcaTable()->getTableName(),
             $fieldId, $options['mmTableName']);
         $this->setSqlDefinitionForTcaField('int(11) DEFAULT \'0\'');
-        
+
         // Create the mm table configuration
         $config['MM']            = $mmTableName;
         $config['prepend_tname'] = true;
-        
+
         // Done
         return $config;
     }
-    
+
     protected function addMinMaxItemOptions(array $optionDefinition, array $options = []): array
     {
         $optionDefinition['minItems'] = [
@@ -392,10 +432,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'int',
             'default' => is_numeric($options['maxItems']) ? (int)$options['maxItems'] : 999,
         ];
-        
+
         return $optionDefinition;
     }
-    
+
     protected function addMinMaxItemConfig(array $config, array $options): array
     {
         // If the field is required -> minItems is 1
@@ -404,10 +444,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
         }
         $config['minitems'] = $options['minItems'];
         $config['maxitems'] = $options['maxItems'];
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper to add the "maxLength" config option to the Options::make definition.
      * This makes only sense for "input" type fields
@@ -431,10 +471,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             'type'    => 'int',
             'default' => $defaultMin,
         ];
-        
+
         return $optionsDefinition;
     }
-    
+
     /**
      * Internal helper to apply the "maxLength" configuration to the config array of a input field
      *
@@ -452,17 +492,17 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if (! empty($options['minLength'])) {
             $config['min'] = $options['minLength'];
         }
-        
+
         if ($addSqlStatement) {
             // Make sure we don't create varChars that are too long...
             $sqlType = (int)$options['maxLength'] <= 4096 ? 'varchar(' . $options['maxLength'] . ') DEFAULT \'\''
                 : 'text';
             $this->setSqlDefinitionForTcaField($sqlType);
         }
-        
+
         return $config;
     }
-    
+
     /**
      * Internal helper which is used to generate a list of valid table names.
      * It will always return an array of table names. If a comma separated string is given, it will be broken up into
@@ -488,10 +528,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
             return $this->context->OptionList->table()->getRealTableName($table);
         }, $tableInput);
         $tables = array_unique($tables);
-        
+
         return $tables;
     }
-    
+
     /**
      * Returns true if the currently configured field is the child of a flex form
      *
@@ -501,7 +541,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
     {
         return $this->field->getForm() instanceof FlexForm;
     }
-    
+
     /**
      * Returns true if this field is in a repeatable flex form section.
      *
@@ -511,7 +551,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
     {
         return $this->isFlexForm() && $this->field->getParent() instanceof FlexSection;
     }
-    
+
     /**
      * Returns the instance of the tca table, even if this field is part of a flex form
      *
@@ -527,10 +567,10 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($form instanceof TcaTableType) {
             $form = $form->getParent();
         }
-        
+
         return $form;
     }
-    
+
     /**
      * Returns the tca field, even if the currently configured field is part of a flex form
      *
@@ -542,11 +582,11 @@ abstract class AbstractFormPreset implements FormPresetInterface
             /** @noinspection PhpIncompatibleReturnTypeInspection */
             return $this->field->getForm()->getContainingField();
         }
-        
+
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->field;
     }
-    
+
     /**
      * Internal helper to set the sql definition for a field. But only if said field is a tca field and not part of a
      * flex form
@@ -559,7 +599,7 @@ abstract class AbstractFormPreset implements FormPresetInterface
         if ($this->isFlexForm()) {
             return;
         }
-        
+
         // Get the tca field
         $this->getTcaField()->setSqlDefinition($definition);
     }

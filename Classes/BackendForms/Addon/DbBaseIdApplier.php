@@ -23,11 +23,12 @@ use LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodePostProcessorEvent;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
+use TYPO3\CMS\Backend\Form\NodeExpansion\FieldWizard;
 use function GuzzleHttp\Psr7\build_query;
 
 class DbBaseIdApplier implements LazyEventSubscriberInterface
 {
-    
+
     /**
      * @inheritDoc
      */
@@ -35,7 +36,7 @@ class DbBaseIdApplier implements LazyEventSubscriberInterface
     {
         $subscription->subscribe(BackendFormNodePostProcessorEvent::class, '__onPostProcess');
     }
-    
+
     /**
      * This element adds the basePid and limitToBasePid constraints to the javascript of the element browser
      *
@@ -43,40 +44,69 @@ class DbBaseIdApplier implements LazyEventSubscriberInterface
      */
     public function __onPostProcess(BackendFormNodePostProcessorEvent $event)
     {
-        /** @var \LaborDigital\Typo3BetterApi\BackendForms\Addon\FormNodeEventProxy $renderer */
-        $config = Arrays::getPath($event->getProxy()->getProperty('data'), ['parameterArray', 'fieldConf', 'config'],
-            []);
+        $data   = $event->getProxy()->getProperty('data');
+        $config = Arrays::getPath($data, ['parameterArray', 'fieldConf', 'config'], []);
         $result = $event->getResult();
-        
+
         // Translate legacy config
         if (! isset($config['basePid'])) {
             $config['basePid'] = $config['rootPage'];
         }
-        if (! isset($config['limitToBasePid'])) {
-            $config['limitToBasePid'] = $config['limitToRootPage'];
-        }
-        
+
         // Check if there is work for us to do
-        if (is_null($config['basePid']) && is_null($config['limitToBasePid']) || empty($result['html'])) {
+        if (empty($result) || empty($result['html'])) {
             return;
         }
-        
-        // Build the expanded js query so we can tell the js window about our configuration
-        $params = [];
-        if (is_numeric($config['basePid'])) {
-            $params['expandPage'] = (int)$config['basePid'];
-        }
-        if (isset($params['expandPage']) && $config['limitToBasePid']) {
-            $params['setTempDBmount'] = $params['expandPage'];
-        }
-        $url = '&' . build_query($params);
-        
-        // Update the open browser script
-        if (stripos($result['html'], $url) !== false) {
+
+        // We only apply this fix for the field wizard
+        if (! $event->getNode() instanceof FieldWizard) {
             return;
         }
-        $result['html'] = (string)preg_replace("~(setFormValueOpenBrowser\('db'[^\"]*?)('\);\s?return false;)~si",
-            "$1$url$2", $result['html']);
+
+        // Ignore if there is already a tempmount set
+        $html = $result['html'];
+        if (stripos($html, 'setTempDBmount') !== false || stripos($html, 'expandPage') !== false
+            || stripos($html, 'setFormValueOpenBrowser') === false) {
+            return;
+        }
+
+        // Inject the temp db mount based on the basePid
+        $pattern = '~(setFormValueOpenBrowser\(\'db\'[^"]*?\|\|\|(.*?))(\'\);\s?return false;)~i';
+        if (! empty($config['basePid'])) {
+            // Use the numeric pid as default pid
+            $pidMap = $config['basePid'];
+            if (! is_array($pidMap)) {
+                $pidMap = ['@default' => $config['basePid']];
+            }
+
+            // Rewrite the object html
+            $result['html'] = preg_replace_callback($pattern, function ($m) use ($pidMap) {
+                [$a, $prefix, $table, $suffix] = $m;
+                $pid = $pidMap[$table] ?? $pidMap['@default'] ?? 0;
+                $url = build_query([
+                    'expandPage'     => $pid,
+                    'setTempDBmount' => $pid,
+                ]);
+
+                return $prefix . '&' . $url . $suffix;
+            }, $html);
+
+            $event->setResult($result);
+
+            return;
+
+        }
+
+        // Make sure to reset the temp db mount if multiple fields are registered in a form
+        $result['html'] = preg_replace_callback($pattern, static function ($m) {
+            [$a, $prefix, $table, $suffix] = $m;
+            $url = build_query([
+                'setTempDBmount' => 0,
+            ]);
+
+            return $prefix . '&' . $url . $suffix;
+        }, $html);
         $event->setResult($result);
+
     }
 }
