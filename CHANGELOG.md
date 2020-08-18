@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.20.0](https://github.com/labor-digital/typo3-better-api/compare/v9.19.1...v9.20.0) (2020-08-18)
+
+
+### Features
+
+* **BackendForms:** better handling for basePid and mapping for group tca fields ([195a6f7](https://github.com/labor-digital/typo3-better-api/commit/195a6f79bb41acb12efff8ddd2fce4dd8c37394a))
+* **StandaloneBetterQuery:** add option to resolve domain model from relatedRecordRow ([5eb5b8d](https://github.com/labor-digital/typo3-better-api/commit/5eb5b8d67a05186982c0263934e58eb1341c0f94))
+
+
+### Bug Fixes
+
+* **StandaloneBetterQuery:** fix invalid sql generation in getRelated() ([2ce89d9](https://github.com/labor-digital/typo3-better-api/commit/2ce89d993200cb688e4d4cc20b96d03f9508d0da))
+* **StandaloneBetterQuery:** require a array field list instead of a single field for getRelated ([f479911](https://github.com/labor-digital/typo3-better-api/commit/f479911425f7891b34c98fdd34e14a169db5b9e7))
+
 ### [9.19.1](https://github.com/labor-digital/typo3-better-api/compare/v9.19.0...v9.19.1) (2020-08-14)
 
 ## [9.19.0](https://github.com/labor-digital/typo3-better-api/compare/v9.18.1...v9.19.0) (2020-08-14)
