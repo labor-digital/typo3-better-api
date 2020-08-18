@@ -35,21 +35,21 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 
 class StandaloneBetterQuery extends AbstractBetterQuery
 {
-    
+
     /**
      * The instance of the page repository after it was requested
      *
      * @var \TYPO3\CMS\Frontend\Page\PageRepository
      */
     protected $pageRepository;
-    
+
     /**
      * True if the version overlay should be applied for the query result
      *
      * @var bool
      */
     protected $versionOverlay = true;
-    
+
     /**
      * Creates a new query object
      *
@@ -68,7 +68,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     ) {
         parent::__construct(new DoctrineQueryAdapter($tableName, $queryBuilder, $settings), $typoContext, $session);
     }
-    
+
     /**
      * Sets the flag that determines if the version/workspace overlay should be applied or not; TRUE by default
      *
@@ -79,10 +79,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     public function withVersionOverlay(bool $state): self
     {
         $this->versionOverlay = $state;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns true if the version/workspace overlay is used, false if not
      *
@@ -92,7 +92,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     {
         return $this->versionOverlay;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -107,10 +107,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                 $this->adapter->getSettings()
             );
         }
-        
+
         return $qb;
     }
-    
+
     /**
      * Executes the currently configured query and returns the results
      *
@@ -121,20 +121,20 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     public function getAll(?array $fieldList = null): array
     {
         $qb = $this->getQueryBuilder();
-        
+
         // Only select a sparse field list
         if ($fieldList !== null) {
             $qb->select(...$fieldList);
         }
-        
+
         return array_map(function (array $row) {
             $tableName = $this->adapter->getTableName();
-            
+
             return $this->handleTranslationAndVersionOverlay($tableName, $row);
         }, $qb->execute()->fetchAll());
     }
-    
-    
+
+
     /**
      * Returns the total number of items in the result set, matching the given query parameters
      *
@@ -144,7 +144,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     {
         return $this->getQueryBuilder()->execute()->rowCount();
     }
-    
+
     /**
      * Returns the first element from the queries result set that matches your criteria
      *
@@ -155,20 +155,20 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     public function getFirst(?array $fieldList = null)
     {
         $qb = $this->getQueryBuilder();
-        
+
         // Only select a sparse field list
         if ($fieldList !== null) {
             $qb->select(...$fieldList);
         }
-        
+
         $result = $qb->execute()->fetch();
         if (is_array($result)) {
             $result = $this->handleTranslationAndVersionOverlay($this->adapter->getTableName(), $result);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Executes the query as delete statement
      *
@@ -178,7 +178,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     {
         return $this->getQueryBuilder()->delete($this->adapter->getTableName())->execute();
     }
-    
+
     /**
      * Executes the query as insert statement
      *
@@ -190,7 +190,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     {
         return $this->getQueryBuilder()->insert($this->adapter->getTableName())->values($values, true)->execute();
     }
-    
+
     /**
      * Executes the query as update statement
      *
@@ -204,10 +204,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         foreach ($values as $column => $value) {
             $queryBuilder->set($column, $value, true);
         }
-        
+
         return $queryBuilder->execute();
     }
-    
+
     /**
      * Finds related records for a field in the queried table.
      * The result is an array for all relations of the given field for every result of the query.
@@ -232,34 +232,35 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         if (! is_array($field)) {
             throw new BetterQueryException('Only strings and arrays are allowed as $field!');
         }
-        
+
         // Prepare the configuration
         $qb        = $this->getQueryBuilder();
         $table     = $this->adapter->getTableName();
         $tcaConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $field, 'config']);
         if (! is_array($tcaConfig)) {
             throw new BetterQueryException(
-                "The requested field: \"$field\" was not found in the TCA of table: \"$table\"!"
+                'The requested field: "' . $field . '" was not found in the TCA of table: "' . $table . '"!'
             );
         }
-        
+
         // Fix issues with virtual columns
+        /** @noinspection NullPointerExceptionInspection */
         $cols          = $qb->getConnection()->getSchemaManager()->listTableColumns($table);
         $findAllFields = count(array_filter($field, static function ($fieldName) use ($cols) {
                 return isset($cols[$fieldName]);
             })) !== count($field);
-        $selectFields  = $findAllFields ? ['*'] : $field;
-        
+        $selectFields  = $findAllFields ? ['*'] : array_unique(array_merge(['uid'], $field));
+
         // Query the results from the database
-        $records = (clone $qb)->select('uid', ...$selectFields)->execute()->fetchAll();
+        $records = (clone $qb)->select(...$selectFields)->execute()->fetchAll();
         if (empty($records)) {
             return [];
         }
-        
+
         // Lazy load additional dependencies
         $container = TypoContainer::getInstance();
         $dbService = $container->get(DbService::class);
-        
+
         // Iterate the configuration for the fields
         $resultsByField       = [];
         $additionalWhereCache = [];
@@ -275,7 +276,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             if (empty($tableList)) {
                 throw new BetterQueryException('Could not retrieve the foreign tables from the TCA!');
             }
-            
+
             // Resolve the relations for every element
             foreach ($records as $result) {
                 // Create the relation handler
@@ -289,7 +290,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                     $this->adapter->getTableName(),
                     $config
                 );
-                
+
                 // Generate additional constraints for every table
                 // This is done so we can apply the frontend constraints to the backend utility we use
                 foreach ($relationHandler->tableArray as $localTable => $items) {
@@ -304,17 +305,17 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                     $additionalWhere                               = ' AND ' . end($additionalWhereParts);
                     $relationHandler->additionalWhere[$localTable] = $additionalWhere;
                 }
-                
+
                 // Request the database using the backend relation handler
                 $relations = $relationHandler->getFromDB();
-                
+
                 // Handle Overlays
                 foreach ($relations as $localTable => $rows) {
                     foreach ($rows as $k => $row) {
                         $relations[$localTable][$k] = $this->handleTranslationAndVersionOverlay($localTable, $row);
                     }
                 }
-                
+
                 // Generate objects that are in order by their sorting
                 $relationList = [];
                 foreach ($relationHandler->itemArray as $item) {
@@ -327,21 +328,21 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                         $relations[$item['table']][$item['id']]
                     );
                 }
-                
+
                 // Store the relations
                 $resultsByField[$currentField][$result['uid']] = $relationList;
             }
         }
-        
+
         // Check if we got a single field request
         if ($isSingleField) {
             return $resultsByField[reset($field)] ?? [];
         }
-        
+
         // Done
         return $resultsByField;
     }
-    
+
     /**
      * Runs the given callable inside a transaction scope connection of this query object.
      * All actions will be commited after your callback was executed, and automatically rolled
@@ -368,7 +369,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             $connection->setAutoCommit($autoCommitBackup);
         }
     }
-    
+
     /**
      * Internal helper to handle translation and version overlays of a single row of a given database table
      *
@@ -383,12 +384,12 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         if (empty($this->pageRepository)) {
             $this->pageRepository = TypoContainer::getInstance()->get(PageService::class)->getPageRepository();
         }
-        
+
         // Apply the version overlay
         if ($this->versionOverlay) {
             $this->pageRepository->versionOL($tableName, $row, true);
         }
-        
+
         // Apply the translation overlay only if required
         if (! $this->adapter->getSettings()->getRespectSysLanguage()) {
             return $row;
@@ -397,7 +398,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         if ($languageUid < 0) {
             return $row;
         }
-        
+
         // This is basically a copy of the logic in PageRepository->getLanguageOverlay()
         if (! Arrays::hasPath($GLOBALS, ['TCA', $tableName, 'ctrl', 'languageField'])) {
             return $row;
@@ -405,7 +406,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         if ($tableName === 'pages') {
             return $this->pageRepository->getPageOverlay($row, $languageUid);
         }
-        
+
         return $this->pageRepository->getRecordOverlay(
             $tableName,
             $row,
