@@ -21,12 +21,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
 
+use Labor\Typo3BetterApi\Domain\DbService\DbServiceException;
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter\DoctrineQueryAdapter;
 use LaborDigital\Typo3BetterApi\Domain\DbService\DbService;
 use LaborDigital\Typo3BetterApi\Page\PageService;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
+use Neunerlei\Options\Options;
 use Throwable;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\RelationHandler;
@@ -214,42 +216,83 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      *
      * Translation overlays will be automatically applied.
      *
-     * @param   array|string  $field                  Either a single field you want to query the relations for or a
-     *                                                list of fields as an array.
-     * @param   bool          $includeHiddenChildren  Set this to true if you want to include hidden children into your
-     *                                                result
+     * @param   array|string  $field    Either a single field you want to query the relations for or a list of fields
+     *                                  as an array.
+     * @param   array|bool    $options  A list of additional options:
+     *                                  (LEGACY: can be set to true to set 'includeHiddenChildren' to true)
+     *                                  - includeHiddenChildren (bool) false: Set this to true if you
+     *                                  want to include hidden children into your result
+     *                                  - model (string|array): Only required if you want to use
+     *                                  getModel() on the result row. Either the class name of a model to
+     *                                  map all related rows, or an array of 'tableName' => 'modelClassName' if you
+     *                                  want to relate multiple tables using a "group" field
      *
      * @return array Returns either a list of entries per field name or a list of entries when only a single field is
      *               given. The list of entries is ordered by the name of the foreign table.
      * @throws \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQueryException
      * @see \LaborDigital\Typo3BetterApi\Domain\BetterQuery\RelatedRecordRow
      */
-    public function getRelated($field, bool $includeHiddenChildren = false): array
+    public function getRelated($field, $options = []): array
     {
-        if ($isSingleField = is_string($field)) {
-            $field = [$field];
+        $tableName = $this->adapter->getTableName();
+
+        // Validate options
+        // @todo remove deprecated option
+        if (is_bool($options)) {
+            $options = ['includeHiddenChildren' => $options];
         }
-        if (! is_array($field)) {
+        if (! is_array($options)) {
+            $options = [];
+        }
+        $options = Options::make($options, [
+            'includeHiddenChildren' => [
+                'type'    => 'bool',
+                'default' => false,
+            ],
+            'model'                 => [
+                'type'    => ['string', 'array', 'null'],
+                'default' => null,
+                'filter'  => static function ($v) use ($tableName) {
+                    if (is_string($v)) {
+                        return [$tableName => $v];
+                    }
+
+                    return $v;
+                },
+            ],
+        ]);
+
+        // Validate fields
+        if (empty($field)) {
+            throw new BetterQueryException('The given $field value is empty!');
+        }
+        if (is_string($field)) {
+            $fieldList = [$field];
+        } elseif (! is_array($field)) {
             throw new BetterQueryException('Only strings and arrays are allowed as $field!');
+        } else {
+            $fieldList = array_unique($field);
         }
+        $isSingleField = count($fieldList) === 1;
 
         // Prepare the configuration
         $qb        = $this->getQueryBuilder();
         $table     = $this->adapter->getTableName();
-        $tcaConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $field, 'config']);
+        $tcaConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $fieldList, 'config']);
         if (! is_array($tcaConfig)) {
             throw new BetterQueryException(
-                'The requested field: "' . $field . '" was not found in the TCA of table: "' . $table . '"!'
+                'One or more of the requested fields: "' . $fieldList . '" were not found in the TCA of table: "'
+                . $table . '"!'
             );
         }
 
         // Fix issues with virtual columns
         /** @noinspection NullPointerExceptionInspection */
         $cols          = $qb->getConnection()->getSchemaManager()->listTableColumns($table);
-        $findAllFields = count(array_filter($field, static function ($fieldName) use ($cols) {
+        $findAllFields = count(array_filter($fieldList, static function ($fieldName) use ($cols) {
                 return isset($cols[$fieldName]);
-            })) !== count($field);
-        $selectFields  = $findAllFields ? ['*'] : array_unique(array_merge(['uid'], $field));
+            })) !== count($fieldList);
+        $selectFields  = $findAllFields ? ['*'] : array_unique(array_merge(['uid'], $fieldList));
 
         // Query the results from the database
         $records = (clone $qb)->select(...$selectFields)->execute()->fetchAll();
@@ -298,8 +341,9 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                     $additionalWhere = $additionalWhereCache[$localTable] ??
                                        $dbService->getQuery($localTable)
                                                  ->withLanguage(false)
-                                                 ->withIncludeHidden($includeHiddenChildren)
+                                                 ->withIncludeHidden($options['includeHiddenChildren'])
                                                  ->getQueryBuilder()->getSQL();
+
                     // Only extract the "where" part from the query
                     $additionalWhereParts                          = explode('WHERE', $additionalWhere);
                     $additionalWhere                               = ' AND ' . end($additionalWhereParts);
@@ -325,7 +369,8 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                     $relationList[] = new RelatedRecordRow(
                         (int)$item['id'],
                         $item['table'],
-                        $relations[$item['table']][$item['id']]
+                        $relations[$item['table']][$item['id']],
+                        $options['model']
                     );
                 }
 
@@ -336,7 +381,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
 
         // Check if we got a single field request
         if ($isSingleField) {
-            return $resultsByField[reset($field)] ?? [];
+            return $resultsByField[reset($fieldList)] ?? [];
         }
 
         // Done

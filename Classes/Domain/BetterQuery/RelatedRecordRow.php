@@ -21,6 +21,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
 
+use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+
 /**
  * Class RelatedRecordRow
  *
@@ -30,28 +34,35 @@ namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
  */
 class RelatedRecordRow
 {
-    
+
     /**
      * The unique id of the record in this row
      *
      * @var int
      */
     protected $uid;
-    
+
     /**
      * The name of the table this row comes from
      *
      * @var string
      */
     protected $tableName;
-    
+
     /**
      * The raw database row that was fetched
      *
      * @var array
      */
     protected $row;
-    
+
+    /**
+     * A map of table names to the matching extbase models
+     *
+     * @var array|null
+     */
+    protected $modelMap;
+
     /**
      * RelatedRecordRow constructor.
      *
@@ -59,13 +70,14 @@ class RelatedRecordRow
      * @param   string  $tableName
      * @param   array   $row
      */
-    public function __construct(int $uid, string $tableName, array $row)
+    public function __construct(int $uid, string $tableName, array $row, ?array $modelMap)
     {
         $this->uid       = $uid;
         $this->tableName = $tableName;
         $this->row       = $row;
+        $this->modelMap  = $modelMap;
     }
-    
+
     /**
      * Returns the unique id of the record in this row
      *
@@ -75,7 +87,7 @@ class RelatedRecordRow
     {
         return $this->uid;
     }
-    
+
     /**
      * Returns the name of the table this row comes from
      *
@@ -85,7 +97,7 @@ class RelatedRecordRow
     {
         return $this->tableName;
     }
-    
+
     /**
      * Returns the raw database row that was fetched
      *
@@ -94,5 +106,27 @@ class RelatedRecordRow
     public function getRow(): array
     {
         return $this->row;
+    }
+
+    /**
+     * Returns the row as a mapped extbase object
+     *
+     * @return \TYPO3\CMS\Extbase\DomainObject\AbstractEntity|mixed
+     * @throws \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQueryException
+     */
+    public function getModel(): AbstractEntity
+    {
+        if (empty($this->modelMap)) {
+            throw new BetterQueryException('You can\'t require the relations as model, because you did not configure a model map while using getRelated()');
+        }
+        if (! isset($this->modelMap[$this->getTableName()])) {
+            throw new BetterQueryException('Could not hydrate a related row for table: ' . $this->getTableName()
+                                           . ' because it was not mapped to a model');
+        }
+        $objects = TypoContainer::getInstance()
+                                ->get(DataMapper::class)
+                                ->map($this->modelMap[$this->getTableName()], [$this->row]);
+
+        return reset($objects);
     }
 }
