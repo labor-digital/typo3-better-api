@@ -28,17 +28,17 @@ $EM_CONF[$_EXTKEY] = [
 	"conflicts"        => "",
 	"priority"         => "",
 	"module"           => "",
-	"state"            => "stable",
+	"state"            => "alpha",
 	"internal"         => "",
 	"uploadfolder"     => 0,
 	"createDirs"       => "",
 	"modify_tables"    => "",
 	"clearCacheOnLoad" => 1,
 	"lockType"         => "",
-	"version"          => "9.20.0",
+	"version"          => "10.0.0",
 	"constraints"      => [
 		"depends"   => [
-			"typo3" => "9.0.0-9.99.99",
+			"typo3" => "10.0.0-10.99.99",
 		],
 		"conflicts" => [
 		],

@@ -11,3 +11,7 @@ Tests/Coverage
 .idea/*
 !.idea/copyright/
 !.idea/copyright/*
+
+# Test Sources
+Tests/Build/*
+!Tests/Build/.keep

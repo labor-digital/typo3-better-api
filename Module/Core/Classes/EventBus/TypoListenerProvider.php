@@ -1,0 +1,130 @@
+<?php
+/*
+ * Copyright 2020 LABOR.digital
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Last modified: 2020.08.21 at 20:40
+ */
+
+declare(strict_types=1);
+
+namespace LaborDigital\T3BA\Core\EventBus;
+
+use LaborDigital\T3BA\Core\Event\CoreHookAdapter\CoreHookEventAdapterInterface;
+use LaborDigital\T3BA\Core\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use Neunerlei\EventBus\Dispatcher\EventBusListenerProvider;
+use Psr\Container\ContainerInterface;
+
+class TypoListenerProvider extends EventBusListenerProvider
+{
+
+    /**
+     * The list of core hook events that have been registered already
+     *
+     * @var array
+     */
+    protected $boundCoreHooks = [];
+
+    /**
+     * The container instance to create core hooks
+     *
+     * @var \Psr\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * Used to inject the PSR service container after it was created
+     *
+     * @param   \Psr\Container\ContainerInterface  $container
+     */
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function addListener(
+        string $eventClassName,
+        callable $listener,
+        array $options = []
+    ): string {
+        $this->registerCoreHookEventIfRequired($eventClassName);
+
+        return parent::addListener($eventClassName, $listener, $options);
+    }
+
+    /**
+     * Internal helper to call the bind method if the given $eventClass
+     * implements the core hook event interface
+     *
+     * @param   string  $eventClass
+     *
+     * @throws \LaborDigital\T3BA\Core\EventBus\EventException
+     * @see \LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterface
+     */
+    protected function registerCoreHookEventIfRequired(string $eventClass): void
+    {
+        // Check if we got a hook class
+        if (isset($this->boundCoreHooks[$eventClass])) {
+            return;
+        }
+        if (! class_exists($eventClass)) {
+            return;
+        }
+        if (! in_array(CoreHookEventInterface::class, class_implements($eventClass), true)) {
+            return;
+        }
+
+        // Check if we got the container
+        if (empty($this->container)) {
+            throw new EventException('You can\'t register core hook events before the container instance is loaded!');
+        }
+
+        // Validate the adapter class
+        $adapterClass = call_user_func([$eventClass, 'getAdapterClass']);
+        if (! class_exists($adapterClass)) {
+            throw new EventException(
+                'The class "' . $eventClass . '" returned "' . $adapterClass .
+                '" as its core hook adapter, but the class does not exist!');
+        }
+        if (! in_array(
+            CoreHookEventAdapterInterface::class,
+            class_implements($adapterClass),
+            true
+        )) {
+            throw new EventException(
+                'The class "' . $eventClass . '" returned "' . $adapterClass .
+                '" as its core hook adapter, but the adapter does not implement the required interface: "'
+                . CoreHookEventAdapterInterface::class . '"!');
+        }
+        if (isset($this->boundCoreHooks[$adapterClass])) {
+            return;
+        }
+
+        throw new NotImplementedException('');
+        // Bind the adapter
+        call_user_func(
+            [$adapterClass, 'prepare'],
+            TypoEventBus::getInstance(),
+            $this->container->get(TypoContext::class),
+            $this->container
+        );
+        call_user_func([$adapterClass, 'bind']);
+        $this->boundCoreHooks[$adapterClass] = true;
+        $this->boundCoreHooks[$eventClass]   = true;
+    }
+}

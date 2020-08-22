@@ -41,7 +41,7 @@
         }
     ],
     "require": {
-        "typo3/cms-core": "^9.5",
+        "typo3/cms-core": "^10.0",
         "psr/simple-cache": "^1.0",
         "psr/container": "^1.0",
         "neunerlei/event-bus": "^2.0",
@@ -53,7 +53,7 @@
         "neunerlei/filesystem": "^5.2",
         "whitecube/lingua": "^1.0",
         "zordius/lightncandy": "^1.2",
-        "labor-digital/typo3-better-api-composer-plugin": "^3.1"
+        "labor-digital/typo3-better-api-composer-plugin": "^4.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
@@ -72,11 +72,12 @@
     "autoload": {
         "psr-4": {
             "LaborDigital\\Typo3BetterApi\\": "Classes",
+            "LaborDigital\\T3BA\\Core\\": "Module/Core/Classes",
             "LaborDigital\\T3BA\\ExtConfig\\": "Module/ExtConfig/Classes",
             "LaborDigital\\T3BA\\ExtConfig\\Tests\\": "Module/ExtConfig/Tests"
         }
     },
-    "version": "9.20.0",
+    "version": "10.0.0",
     "extra": {
         "T3BA": {
             "isDev": true
