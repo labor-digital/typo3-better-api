@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -39,7 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Override\Typo3Console;
 
 use Helhum\Typo3Console\Core\Booting\BetterApiClassOverrideCopy__Scripts;
-use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
+use LaborDigital\Typo3BetterApi\Event\Events\PackageManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -81,7 +81,7 @@ class ExtendedScripts extends BetterApiClassOverrideCopy__Scripts
         parent::initializePackageManagement($bootstrap);
 
         // Trigger our event as we would in the bootstrap
-        TypoEventBus::getInstance()->dispatch(new RegisterRuntimePackagesEvent(
+        TypoEventBus::getInstance()->dispatch(new PackageManagerCreatedEvent(
             GeneralUtility::makeInstance(PackageManager::class)
         ));
     }

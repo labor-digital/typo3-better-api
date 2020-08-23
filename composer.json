@@ -88,7 +88,7 @@
                 "partOfFactoryDefault": true,
                 "partOfMinimalUsableSystem": true
             },
-            "extension-key": "typo3_better_api"
+            "extension-key": "T3BA"
         }
     }
 }

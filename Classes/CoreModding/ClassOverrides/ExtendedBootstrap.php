@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:47
+ * Last modified: 2020.08.22 at 21:56
  */
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\Typo3BetterApi\Event\Events\BootstrapFailsafeDefinitionEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
+use LaborDigital\Typo3BetterApi\Event\Events\PackageManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\BootstrapContainerFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
@@ -41,10 +41,10 @@ class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
         $container = parent::init($classLoader, $failsafe);
         $e         = new BootstrapContainerFilterEvent($container, $failsafe);
         TypoEventBus::getInstance()->dispatch($e);
-        
+
         return $e->getContainer();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -52,16 +52,16 @@ class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
     {
         $cacheManager = parent::createCacheManager($disableCaching);
         TypoEventBus::getInstance()->dispatch(new CacheManagerCreatedEvent($cacheManager, $disableCaching));
-        
+
         return $cacheManager;
     }
-    
+
     /**
      * @inheritDoc
      */
     protected static function initializeRuntimeActivatedPackagesFromConfiguration(PackageManager $packageManager)
     {
         parent::initializeRuntimeActivatedPackagesFromConfiguration($packageManager);
-        TypoEventBus::getInstance()->dispatch(new RegisterRuntimePackagesEvent($packageManager));
+        TypoEventBus::getInstance()->dispatch(new PackageManagerCreatedEvent($packageManager));
     }
 }

@@ -1,0 +1,19 @@
+{
+    "name": "labor-digital/typo3-better-api-hook-adapter",
+    "type": "typo3-cms-extension",
+    "description": "Internal hook extension you should normally never see",
+    "version": "1.0.0",
+    "extra": {
+        "T3BA": {
+            "isDev": true
+        },
+        "typo3/cms": {
+            "Package": {
+                "protected": true,
+                "partOfFactoryDefault": true,
+                "partOfMinimalUsableSystem": true
+            },
+            "extension-key": "T3BA_hook"
+        }
+    }
+}

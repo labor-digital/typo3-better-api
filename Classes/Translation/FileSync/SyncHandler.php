@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 01:23
+ * Last modified: 2020.08.22 at 21:56
  */
 
 namespace LaborDigital\Typo3BetterApi\Translation\FileSync;
 
 use Iterator;
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
-use LaborDigital\Typo3BetterApi\FileAndFolder\Permissions;
+use LaborDigital\Typo3BetterApi\FileAndFolder\FilePermissionUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\TinyTimy\DateTimy;
@@ -36,12 +36,12 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class SyncHandler implements SingletonInterface
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainer
      */
     protected $container;
-    
+
     /**
      * SyncHandler constructor.
      *
@@ -51,7 +51,7 @@ class SyncHandler implements SingletonInterface
     {
         $this->container = $container;
     }
-    
+
     /**
      * Receives the directory iterator of the target directory, containing only .xlf files to sync
      *
@@ -74,7 +74,7 @@ class SyncHandler implements SingletonInterface
                 $languages[$langKey] = $langKey;
                 $basename            = substr($basename, 3);
             }
-            
+
             // Make sure we have a fileset
             if (! isset($fileSets[$basename])) {
                 $fileSets[$basename] = [
@@ -82,7 +82,7 @@ class SyncHandler implements SingletonInterface
                     'langFiles' => [],
                 ];
             }
-            
+
             // Add file to list
             if (empty($langKey)) {
                 $fileSets[$basename]['baseFile'] = $v->getPathname();
@@ -90,13 +90,13 @@ class SyncHandler implements SingletonInterface
                 $fileSets[$basename]['langFiles'][$langKey] = $v->getPathname();
             }
         }
-        
+
         // Synchronize the sets separate from each other
         foreach ($fileSets as $fileSet) {
             $this->syncFileSet($fileSet, $languages, $options);
         }
     }
-    
+
     /**
      * Handles the synchronization of a single file set, or namespace if you will.
      *
@@ -110,22 +110,22 @@ class SyncHandler implements SingletonInterface
         if (empty($fileSet['baseFile'])) {
             // Load the first file
             $fallbackFile = $this->loadFile(reset($fileSet['langFiles']));
-            
+
             // Update the file name
             $fallbackFile->filename = dirname($fallbackFile->filename) . DIRECTORY_SEPARATOR .
                                       substr(basename($fallbackFile->filename),
                                           stripos(basename($fallbackFile->filename), '.') + 1);
-            
+
             // Reset it to english
             $fallbackFile->targetLang  = null;
             $fallbackFile->sourceLang  = $options['baseFallbackLang'];
             $fallbackFile->productName = $options['productName'];
-            
+
             // Clear target for all messages
             foreach ($fallbackFile->messages as $k => $message) {
                 $message->target = null;
             }
-            
+
             // Done
             $baseFile = $fallbackFile;
         } else {
@@ -133,7 +133,7 @@ class SyncHandler implements SingletonInterface
             $baseFile = $this->loadFile($fileSet['baseFile'], null, $options['baseFallbackLang'],
                 $options['productName']);
         }
-        
+
         // Make sure we have language files for each registered language
         if (count($languages) !== count($fileSet['langFiles'])) {
             foreach ($languages as $language => $foo) {
@@ -146,28 +146,28 @@ class SyncHandler implements SingletonInterface
                 touch($fileSet['langFiles'][$language]);
             }
         }
-        
+
         // Create mapping
         $map = $this->container->get(TranslationMapping::class);
         $map->setBaseFile($baseFile);
-        
+
         // Load all language files
         foreach ($fileSet['langFiles'] as $lang => $filename) {
             $langFile = $this->loadFile($filename, $lang, $baseFile->sourceLang, $baseFile->productName);
             $map->addTranslationFile($langFile);
         }
-        
+
         // Synchronize the languages
         $map->synchronize();
-        
-        
+
+
         // Write files again
         $this->dumpFile($baseFile, true);
         foreach ($map->getTranslationFiles() as $file) {
             $this->dumpFile($file, false);
         }
     }
-    
+
     /**
      * Loads a single translation .xlf file into the TranslationFile object representation
      *
@@ -187,7 +187,7 @@ class SyncHandler implements SingletonInterface
     ): TranslationFile {
         $content     = Fs::readFile($filename);
         $contentList = Arrays::makeFromXml($content);
-        
+
         // Read the file metadata
         $file           = $this->container->get(TranslationFile::class);
         $file->filename = $filename;
@@ -199,7 +199,7 @@ class SyncHandler implements SingletonInterface
         $file->sourceLang  = Arrays::getPath($contentList, '0.0.@source-language', $baseLanguage);
         $file->productName = Arrays::getPath($contentList, '0.0.@product-name', $productName);
         $file->targetLang  = Arrays::getPath($contentList, '0.0.@target-language', $languageFallback);
-        
+
         // Read the messages
         foreach (Arrays::getPath($contentList, '0.0.*', []) as $entry) {
             if (! isset($entry['tag']) || $entry['tag'] !== 'body') {
@@ -218,20 +218,20 @@ class SyncHandler implements SingletonInterface
                 if (! isset($row['@id'])) {
                     continue;
                 }
-                
+
                 // Create a new item/unit
                 $item     = $this->container->get(TranslationFileUnit::class);
                 $item->id = $row['@id'];
                 $hasError = false;
-                
-                
+
+
                 // Save notes
                 if ($row['tag'] === 'note') {
                     $item->isNote = true;
-                    
+
                     // Unify line breaks
                     $row['content'] = str_replace(["\t", "\r\n", PHP_EOL], PHP_EOL, $row['content']);
-                    
+
                     $item->note = isset($row['content']) ?
                         implode(PHP_EOL, array_filter(array_map('trim', explode(PHP_EOL, $row['content'])))) : '';
                 } // Save translation units
@@ -240,12 +240,12 @@ class SyncHandler implements SingletonInterface
                         if (is_string($_k) || ! is_array($child)) {
                             continue;
                         }
-                        
+
                         // Unify line breaks
                         $child['content'] = str_replace(["\t", "\r\n", PHP_EOL], PHP_EOL, $child['content']);
                         $child['content'] = implode(' ',
                             array_filter(array_map('trim', explode(PHP_EOL, $child['content']))));
-                        
+
                         // Load the content
                         switch (Arrays::getPath($child, 'tag')) {
                             case 'source':
@@ -260,7 +260,7 @@ class SyncHandler implements SingletonInterface
                         }
                     }
                 }
-                
+
                 // Ignore on error
                 if ($hasError) {
                     continue;
@@ -268,11 +268,11 @@ class SyncHandler implements SingletonInterface
                 $file->messages[$item->id] = $item;
             }
         }
-        
+
         // Done
         return $file;
     }
-    
+
     /**
      * Dumps a object representation of TranslationFile into the xml .xlf file format
      *
@@ -295,10 +295,10 @@ class SyncHandler implements SingletonInterface
             }
             $temporaryMap[$k] = $v;
         }
-        
+
         // Sort the messages by their id
         ksort($temporaryMap);
-        
+
         // Revert the keys
         $sortedMap = [];
         foreach ($temporaryMap as $k => $v) {
@@ -309,7 +309,7 @@ class SyncHandler implements SingletonInterface
         }
         $messages = $sortedMap;
         unset($temporaryMap, $mapIdMapping, $sortedMap);
-        
+
         // Build a list of children
         $children = [
             'tag' => 'body',
@@ -343,7 +343,7 @@ class SyncHandler implements SingletonInterface
                 );
             }
         }
-        
+
         // Create an array representation for this file
         $out = [
             [
@@ -364,14 +364,14 @@ class SyncHandler implements SingletonInterface
                 ], $isBaseFile ? [] : ['@target-language' => $file->targetLang,]),
             ],
         ];
-        
+
         // Dump the file
         $xml = Arrays::dumpToXml($out, true);
         $xml = $this->postProcessXmlStyle($xml);
         Fs::writeFile($file->filename, $xml);
-        Permissions::setFilePermissions($file->filename);
+        FilePermissionUtil::setFilePermissions($file->filename);
     }
-    
+
     /**
      * Make sure we format the xml correctly to match the recommended format
      *
@@ -395,13 +395,13 @@ class SyncHandler implements SingletonInterface
                     if ($v === '') {
                         return null;
                     }
-                    
+
                     return $space . '    ' . $v;
                 }, $lines));
-                
+
                 return PHP_EOL . $openTag . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . $space . $closeTag;
             }, $xml);
-        
+
         return $xml;
     }
 }

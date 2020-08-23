@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.22 at 21:21
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -24,11 +24,19 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 
 use LaborDigital\T3BA\Core\CodeGeneration\ClassOverrideGenerator;
+use LaborDigital\T3BA\Core\Event\KernelBootEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
+use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
+use TYPO3\CMS\Core\Core\Bootstrap;
 
 class ClassOverrideStage implements BootStageInterface
 {
+
+    public const OVERRIDE_MAP
+        = [
+            Bootstrap::class => ExtendedBootstrap::class,
+        ];
 
     /**
      * @inheritDoc
@@ -38,6 +46,15 @@ class ClassOverrideStage implements BootStageInterface
         // Register the override generator's auto-loader
         ClassOverrideGenerator::init($kernel->getClassLoader());
 
+        // Register overrides
+        $eventBus->addListener(KernelBootEvent::class, static function () {
+            foreach (static::OVERRIDE_MAP as $target => $override) {
+                if (ClassOverrideGenerator::hasClassOverride($override)) {
+                    continue;
+                }
+                ClassOverrideGenerator::registerOverride($target, $override);
+            }
+        });
 
 //        // Apply the required overrides
 //        ClassOverrideGenerator::registerOverride(\TYPO3\CMS\Core\Core\Bootstrap::class, ExtendedBootstrap::class);

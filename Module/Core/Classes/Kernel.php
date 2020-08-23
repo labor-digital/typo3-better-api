@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.22 at 20:31
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\Core;
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\BootStage\BootStageInterface;
 use LaborDigital\T3BA\Core\BootStage\ClassOverrideStage;
+use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
 use LaborDigital\T3BA\Core\Event\KernelBootEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
@@ -89,6 +90,7 @@ class Kernel
         // Create the default boot stages
         $defaultBootStages = [
             new ClassOverrideStage(),
+            new HookPackageRegistrationStage(),
         ];
 
         // Prepare the boot stages
@@ -97,7 +99,6 @@ class Kernel
             $bootStage->prepare($i->eventBus, $i);
         }
 
-        dbge($i);
         // Dispatch the boot event
         $i->eventBus->dispatch(new KernelBootEvent($i));
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -57,7 +57,7 @@ trait CodeGenerationHelperTrait
             $arg = [];
 
             // Add type definition
-            if (method_exists($param, 'hasType') && $param->hasType()) {
+            if ($param->hasType()) {
                 /** @noinspection NullPointerExceptionInspection */
                 $type = $param->getType()->getName();
 
@@ -67,7 +67,7 @@ trait CodeGenerationHelperTrait
                 }
 
                 // Check for a nullable type
-                if (method_exists($param, 'allowsNull') && $param->allowsNull()) {
+                if ($param->allowsNull()) {
                     $type = '?' . $type;
                 }
 

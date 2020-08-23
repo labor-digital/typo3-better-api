@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:47
+ * Last modified: 2020.08.22 at 21:56
  */
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console;
 
 use Helhum\Typo3Console\Core\Booting\BetterApiClassOverrideCopy__Scripts;
-use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
+use LaborDigital\Typo3BetterApi\Event\Events\PackageManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -39,30 +39,30 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ExtendedScripts extends BetterApiClassOverrideCopy__Scripts
 {
-    
+
     /**
      * @inheritDoc
      */
     protected static function initializeCachingFramework(Bootstrap $bootstrap, bool $disableCaching = false)
     {
         parent::initializeCachingFramework($bootstrap, $disableCaching);
-        
+
         // Trigger our event as we would in the bootstrap
         TypoEventBus::getInstance()->dispatch(new CacheManagerCreatedEvent(
             GeneralUtility::makeInstance(CacheManager::class),
             false
         ));
     }
-    
+
     /**
      * @inheritDoc
      */
     protected static function initializePackageManagement(Bootstrap $bootstrap)
     {
         parent::initializePackageManagement($bootstrap);
-        
+
         // Trigger our event as we would in the bootstrap
-        TypoEventBus::getInstance()->dispatch(new RegisterRuntimePackagesEvent(
+        TypoEventBus::getInstance()->dispatch(new PackageManagerCreatedEvent(
             GeneralUtility::makeInstance(PackageManager::class)
         ));
     }

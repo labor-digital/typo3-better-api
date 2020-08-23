@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -39,13 +39,11 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Override;
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\Typo3BetterApi\Event\Events\BootstrapFailsafeDefinitionEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\RegisterRuntimePackagesEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\Temporary\BootstrapContainerFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+use LaborDigital\T3BA\Core\Event\BootstrapFailsafeDefinitionEvent;
+use LaborDigital\T3BA\Core\Event\PackageManagerCreatedEvent;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use Psr\Container\ContainerInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Core\BetterApiClassOverrideCopy__Bootstrap;
 use TYPO3\CMS\Core\Package\PackageManager;
 
@@ -56,20 +54,23 @@ class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
      */
     public static function init(ClassLoader $classLoader, bool $failsafe = false): ContainerInterface
     {
-        TypoEventBus::getInstance()->dispatch(new BootstrapFailsafeDefinitionEvent($failsafe));
-        $container = parent::init($classLoader, $failsafe);
-        $e         = new BootstrapContainerFilterEvent($container, $failsafe);
-        TypoEventBus::getInstance()->dispatch($e);
+        TypoEventBus::getInstance()
+                    ->dispatch(new BootstrapFailsafeDefinitionEvent($failsafe));
 
-        return $e->getContainer();
+        return parent::init($classLoader, $failsafe);
     }
 
     /**
      * @inheritDoc
      */
-    protected static function initializeRuntimeActivatedPackagesFromConfiguration(PackageManager $packageManager): void
+    public static function createPackageManager($packageManagerClassName, FrontendInterface $coreCache): PackageManager
     {
-        parent::initializeRuntimeActivatedPackagesFromConfiguration($packageManager);
-        TypoEventBus::getInstance()->dispatch(new RegisterRuntimePackagesEvent($packageManager));
+        $packageManager = parent::createPackageManager($packageManagerClassName, $coreCache);
+
+        TypoEventBus::getInstance()
+                    ->dispatch(new PackageManagerCreatedEvent($packageManager));
+
+        return $packageManager;
     }
+
 }
