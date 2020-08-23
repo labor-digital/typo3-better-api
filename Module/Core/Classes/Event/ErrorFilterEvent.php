@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:46
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events;
+namespace LaborDigital\T3BA\Core\Event;
 
 use Throwable;
 
@@ -29,7 +29,7 @@ use Throwable;
  * Dispatched when the typo3 exception handler is executed.
  * Can be used to run additional logging actions
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class ErrorFilterEvent
 {
@@ -39,14 +39,14 @@ class ErrorFilterEvent
      * @var \Throwable
      */
     protected $error;
-    
+
     /**
      * Should contain something if you want to block the default exception handler
      *
      * @var mixed|null
      */
     protected $result;
-    
+
     /**
      * ErrorFilterEvent constructor.
      *
@@ -58,7 +58,7 @@ class ErrorFilterEvent
         $this->error  = $error;
         $this->result = $result;
     }
-    
+
     /**
      * Returns the error that lead to this event
      *
@@ -68,7 +68,7 @@ class ErrorFilterEvent
     {
         return $this->error;
     }
-    
+
     /**
      * Returns the result that will be returned by the exception handler
      *
@@ -78,7 +78,7 @@ class ErrorFilterEvent
     {
         return $this->result;
     }
-    
+
     /**
      * Sets the result that will be returned by the exception handler
      *
@@ -89,7 +89,7 @@ class ErrorFilterEvent
     public function setResult($result): ErrorFilterEvent
     {
         $this->result = $result;
-        
+
         return $this;
     }
 }

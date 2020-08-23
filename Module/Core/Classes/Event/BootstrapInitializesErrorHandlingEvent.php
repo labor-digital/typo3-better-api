@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 15:34
  */
 
-namespace LaborDigital\Typo3BetterApi\Error;
+declare(strict_types=1);
 
-class DebugExceptionHandler extends ExceptionHandlerAdapter
+
+namespace LaborDigital\T3BA\Core\Event;
+
+/**
+ * Class BootstrapInitializesErrorHandlingEvent
+ *
+ * Emitted when the TYPO3 bootstrap initializes the error handling
+ *
+ * @package LaborDigital\T3BA\Core\Event
+ */
+class BootstrapInitializesErrorHandlingEvent
 {
-    /**
-     * The name of the registered exception handler
-     *
-     * @var string
-     */
-    protected static $defaultExceptionHandler;
+
 }

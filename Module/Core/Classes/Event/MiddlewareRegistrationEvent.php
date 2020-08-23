@@ -29,7 +29,7 @@ namespace LaborDigital\T3BA\Core\Event;
  * Special priorities:
  * 500: INJECT_EXT_CONFIG_MIDDLEWARES
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class MiddlewareRegistrationEvent
 {

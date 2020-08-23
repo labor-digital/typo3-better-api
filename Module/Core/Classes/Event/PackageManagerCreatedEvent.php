@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\Package\PackageManager;
  *
  * This event is called at boot-time, right after the package manager was instantiated
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class PackageManagerCreatedEvent
 {

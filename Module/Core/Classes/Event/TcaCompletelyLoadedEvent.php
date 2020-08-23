@@ -34,7 +34,7 @@ namespace LaborDigital\T3BA\Core\Event;
  * 200: EXT_CONFIG_DYNAMIC_TYPO_SCRIPT
  * 100: PID_TCA_FILTER
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class TcaCompletelyLoadedEvent
 {

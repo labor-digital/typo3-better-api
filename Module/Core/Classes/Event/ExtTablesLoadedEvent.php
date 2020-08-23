@@ -29,7 +29,7 @@ namespace LaborDigital\T3BA\Core\Event;
  * Special priorities:
  * -200 Inject PAGE TS
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class ExtTablesLoadedEvent
 {

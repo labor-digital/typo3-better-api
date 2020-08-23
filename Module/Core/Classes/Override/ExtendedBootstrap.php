@@ -40,6 +40,7 @@ namespace LaborDigital\T3BA\Core\Override;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\Event\BootstrapFailsafeDefinitionEvent;
+use LaborDigital\T3BA\Core\Event\BootstrapInitializesErrorHandlingEvent;
 use LaborDigital\T3BA\Core\Event\PackageManagerCreatedEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use Psr\Container\ContainerInterface;
@@ -72,5 +73,17 @@ class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
 
         return $packageManager;
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected static function initializeErrorHandling()
+    {
+        TypoEventBus::getInstance()
+                    ->dispatch(new BootstrapInitializesErrorHandlingEvent());
+
+        parent::initializeErrorHandling();
+    }
+
 
 }

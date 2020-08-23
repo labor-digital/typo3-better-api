@@ -20,13 +20,8 @@
 namespace LaborDigital\Typo3BetterApi;
 
 use Composer\Autoload\ClassLoader;
-use Doctrine\DBAL\Driver\Mysqli\MysqliConnection;
-use Doctrine\DBAL\Driver\Mysqli\MysqliStatement;
-use Exception;
 use Helhum\Typo3Console\Core\Booting\Scripts;
 use Helhum\Typo3Console\Core\Kernel;
-use Kint\Kint;
-use Kint\Parser\BlacklistPlugin;
 use LaborDigital\Typo3BetterApi\BackendForms\Addon\DbBaseIdApplier;
 use LaborDigital\Typo3BetterApi\BackendForms\Addon\FalFileBaseDirApplier;
 use LaborDigital\Typo3BetterApi\BackendForms\Addon\FieldDefaultAndPlaceholderTranslationApplier;
@@ -55,7 +50,6 @@ use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedReflectionSer
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedSiteConfiguration;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console\ExtendedScripts;
 use LaborDigital\Typo3BetterApi\CoreModding\CodeGeneration\ClassOverrideGenerator;
-use LaborDigital\Typo3BetterApi\CoreModding\FailsafeWrapper;
 use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService;
 use LaborDigital\Typo3BetterApi\Domain\DbService\DbService;
 use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface;
@@ -68,17 +62,13 @@ use LaborDigital\Typo3BetterApi\Event\Events\ClassSchemaFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\InitEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\InitInstanceFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\LoadExtLocalConfIfTcaIsRequiredWithoutItEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\PackageManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\BootstrapContainerFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\Temporary\CacheManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\ListenerProvider\TypoListenerProvider;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use LaborDigital\Typo3BetterApi\ExtConfig\Builtin\BetterApiExtConfig;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigService;
 use LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs;
-use LaborDigital\Typo3BetterApi\Kint\LazyLoadingPlugin;
-use LaborDigital\Typo3BetterApi\Kint\TypoInstanceTypePlugin;
 use LaborDigital\Typo3BetterApi\Pid\PidTcaFilter;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptService;
@@ -93,22 +83,14 @@ use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Package\Package;
-use TYPO3\CMS\Core\Package\PackageInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
-use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use TYPO3\CMS\Extbase\Persistence\Generic\Qom\QueryObjectModelFactory;
-use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 use TYPO3\CMS\Extbase\Reflection\ClassSchema;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class BetterApiInit
 {
@@ -215,41 +197,6 @@ class BetterApiInit
             $self->applyHelhumConsoleCompatibility();
         }
 
-        // TYPO3 9
-        // When the Cache Manager is instantiated we create the extBase cache
-        // to prevent deprecation warnings...
-        $eventBus->addListener(
-            CacheManagerCreatedEvent::class,
-            static function (CacheManagerCreatedEvent $e) use ($self) {
-                $e->getCacheManager()
-                  ->setCacheConfigurations($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']);
-                $e->getCacheManager()->getCache('extbase_reflection');
-                $self->registerErrorHandlerAdapter();
-            }
-        );
-
-        // Handle the failsafe state
-        $eventBus->addListener(
-            BootstrapFailsafeDefinitionEvent::class,
-            static function (BootstrapFailsafeDefinitionEvent $e) {
-                FailsafeWrapper::$isFailsafe = $e->isFailsafe();
-            }
-        );
-
-        // Activate myself
-        $eventBus->addListener(
-            PackageManagerCreatedEvent::class,
-            static function (PackageManagerCreatedEvent $event) use ($self) {
-                $self->forceSelfActivation($event->getPackageManager());
-            }
-        );
-        $eventBus->addListener(
-            PackageManagerCreatedEvent::class,
-            static function (PackageManagerCreatedEvent $event) use ($self) {
-                $self->activateHookExtension($event->getPackageManager());
-            },
-            ['priority' => -500]
-        );
 
         // Do remaining bootstrap
         $eventBus->addListener(
@@ -284,19 +231,6 @@ class BetterApiInit
             }
         );
 
-        // Register a fallback that loads the ext localconf files if the install tool applies some TCA related checks
-        $eventBus->addListener(
-            LoadExtLocalConfIfTcaIsRequiredWithoutItEvent::class,
-            static function () {
-                // Ignore if the init is completed
-                if (BetterApiInit::isComplete()) {
-                    return;
-                }
-
-                // Load the ext local conf files
-                ExtensionManagementUtility::loadExtLocalconf(false);
-            }
-        );
     }
 
     /**
@@ -328,38 +262,6 @@ class BetterApiInit
         }
     }
 
-    /**
-     * Activates the hook extension that should be always the last in the list
-     * of extension. This is important because we want all other extensions to
-     * be able to do their stuff, before we do our stuff :)
-     *
-     * @param   \TYPO3\CMS\Core\Package\PackageManager  $packageManager
-     */
-    protected function activateHookExtension(PackageManager $packageManager): void
-    {
-        // Make sure the package was never enabled
-        $packageKey = 'typo3_better_api_hook';
-        if ($packageManager->isPackageActive($packageKey)) {
-            $packageManager->deactivatePackage($packageKey);
-        }
-
-        // Create the package and register the base path
-        $package = new Package($packageManager, $packageKey, __DIR__ . '/../HookExtension/' . $packageKey . '/');
-        $adapter = new class extends PackageManager {
-            public function registerHookPackage(
-                PackageManager $packageManager,
-                PackageInterface $package
-            ): void {
-                // Register a new base path
-                $packageManager->packagesBasePaths[$package->getPackageKey()]
-                    = $package->getPackagePath();
-
-                // Activate the package
-                $packageManager->activatePackageDuringRuntime($package->getPackageKey());
-            }
-        };
-        $adapter->registerHookPackage($packageManager, $package);
-    }
 
     /**
      * Registers some low level class overrides.
@@ -391,64 +293,6 @@ class BetterApiInit
         }
     }
 
-    /**
-     * Apply the configuration for the labor/dbg package
-     */
-    protected function applyDebuggerConfig(): void
-    {
-        if (function_exists('dbgConfig') && defined('_DBG_CONFIG_LOADED')) {
-            // Register our Plugins
-            Kint::$plugins[] = LazyLoadingPlugin::class;
-            Kint::$plugins[] = TypoInstanceTypePlugin::class;
-
-            // Register pre hook to fix broken typo3 iframe
-            $recursion = false;
-            dbgConfig('postHooks', static function () use (&$recursion) {
-                if ($recursion) {
-                    return;
-                }
-                $recursion = true;
-                try {
-                    if ((defined('TYPO3_MODE') && TYPO3_MODE === 'BE') && PHP_SAPI !== 'cli') {
-                        if (Kint::$mode_default !== Kint::MODE_RICH) {
-                            return;
-                        }
-                        flush();
-                        echo <<<HTML
-							<script type="text/javascript">
-							setTimeout(function () {
-								document.getElementsByTagName("html")[0].setAttribute("style", "height:100vh; overflow:auto");
-								document.getElementsByTagName("body")[0].setAttribute("style", "height:100vh; overflow:auto");
-								}, 50);
-							</script>
-HTML;
-                        flush();
-                    }
-                } catch (Exception $e) {
-                    // Ignore this...
-                }
-                $recursion = false;
-            });
-
-            // Register blacklisted objects to prevent kint from breaking apart ...
-            if (class_exists(BlacklistPlugin::class)) {
-                BlacklistPlugin::$shallow_blacklist[]
-                                                      = ReflectionService::class;
-                BlacklistPlugin::$shallow_blacklist[] = ObjectManager::class;
-                BlacklistPlugin::$shallow_blacklist[] = DataMapper::class;
-                BlacklistPlugin::$shallow_blacklist[]
-                                                      = PersistenceManager::class;
-                BlacklistPlugin::$shallow_blacklist[]
-                                                      = QueryObjectModelFactory::class;
-                BlacklistPlugin::$shallow_blacklist[]
-                                                      = ContentObjectRenderer::class;
-                BlacklistPlugin::$shallow_blacklist[] = TypoEventBus::class;
-                BlacklistPlugin::$shallow_blacklist[] = QueryResult::class;
-                BlacklistPlugin::$shallow_blacklist[] = MysqliConnection::class;
-                BlacklistPlugin::$shallow_blacklist[] = MysqliStatement::class;
-            }
-        }
-    }
 
     /**
      * Registers our custom exception handler that wraps the registered

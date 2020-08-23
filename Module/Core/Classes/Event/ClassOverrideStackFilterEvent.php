@@ -26,7 +26,7 @@ namespace LaborDigital\T3BA\Core\Event;
  * Can be used to filter the class override generator stack
  * right before the override is build
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class ClassOverrideStackFilterEvent
 {

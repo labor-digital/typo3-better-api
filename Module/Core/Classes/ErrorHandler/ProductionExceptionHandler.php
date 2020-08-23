@@ -19,18 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Event;
+namespace LaborDigital\T3BA\Core\ErrorHandler;
 
-/**
- * Class ExtLocalConfLoadedEvent
- *
- * Dispatched after all extLocalConf.php files of the extensions have been loaded
- *
- * Special priorities:
- * -500 Register error handler adapter
- *
- * @package LaborDigital\T3BA\Core\Event
- */
-class ExtLocalConfLoadedEvent
+class ProductionExceptionHandler extends ExceptionHandlerAdapter
 {
+    /**
+     * The name of the registered exception handler
+     *
+     * @var string
+     */
+    protected static $defaultExceptionHandler;
 }

@@ -26,7 +26,7 @@ namespace LaborDigital\T3BA\Core\Event;
  *
  * Is used to inject the registered commands into TYPO3's symfony command handler
  *
- * @package LaborDigital\Typo3BetterApi\ExtConfig\Event
+ * @package LaborDigital\T3BA\Core\Event
  */
 class CommandRegistrationEvent
 {

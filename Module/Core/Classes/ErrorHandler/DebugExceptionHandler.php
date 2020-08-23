@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.22 at 21:56
  */
 
-namespace LaborDigital\Typo3BetterApi\Error;
+namespace LaborDigital\T3BA\Core\ErrorHandler;
 
-class ProductionExceptionHandler extends ExceptionHandlerAdapter
+class DebugExceptionHandler extends ExceptionHandlerAdapter
 {
     /**
      * The name of the registered exception handler

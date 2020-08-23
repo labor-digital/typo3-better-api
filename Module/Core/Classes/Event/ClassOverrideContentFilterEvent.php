@@ -26,7 +26,7 @@ namespace LaborDigital\T3BA\Core\Event;
  *
  * Can be used to modify the content of both the class copy and the class alias before the files are dumped
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class ClassOverrideContentFilterEvent
 {

@@ -26,6 +26,9 @@ namespace LaborDigital\T3BA\Core;
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\BootStage\BootStageInterface;
 use LaborDigital\T3BA\Core\BootStage\ClassOverrideStage;
+use LaborDigital\T3BA\Core\BootStage\DbgConfigurationStage;
+use LaborDigital\T3BA\Core\BootStage\EnsureExtLocalConfOnTcaLoadStage;
+use LaborDigital\T3BA\Core\BootStage\FailsafeWrapperPreparationStage;
 use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
 use LaborDigital\T3BA\Core\Event\KernelBootEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
@@ -89,8 +92,11 @@ class Kernel
 
         // Create the default boot stages
         $defaultBootStages = [
+            new DbgConfigurationStage(),
             new ClassOverrideStage(),
+            new EnsureExtLocalConfOnTcaLoadStage(),
             new HookPackageRegistrationStage(),
+            new FailsafeWrapperPreparationStage(),
         ];
 
         // Prepare the boot stages

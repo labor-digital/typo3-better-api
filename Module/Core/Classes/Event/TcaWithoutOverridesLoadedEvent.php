@@ -30,7 +30,7 @@ namespace LaborDigital\T3BA\Core\Event;
  * 200 EXT_CONFIG_BEFORE_TCA
  * 100 EXT_CONFIG_TCA
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class TcaWithoutOverridesLoadedEvent
 {

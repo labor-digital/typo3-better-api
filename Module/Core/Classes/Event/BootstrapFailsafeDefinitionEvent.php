@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Core\Event;
  * This event informs all it's listeners about the failsafe state of the current
  * typo3 installation.
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Core\Event
  */
 class BootstrapFailsafeDefinitionEvent
 {
