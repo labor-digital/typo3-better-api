@@ -31,6 +31,8 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\Typo3BetterApi\Kint\LazyLoadingPlugin;
 use LaborDigital\Typo3BetterApi\Kint\TypoInstanceTypePlugin;
+use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 use Throwable;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
@@ -86,20 +88,18 @@ HTML;
 
         // Register blacklisted objects to prevent kint from breaking apart ...
         if (class_exists(BlacklistPlugin::class)) {
-            BlacklistPlugin::$shallow_blacklist[]
-                                                  = ReflectionService::class;
+            BlacklistPlugin::$shallow_blacklist[] = ReflectionService::class;
             BlacklistPlugin::$shallow_blacklist[] = ObjectManager::class;
             BlacklistPlugin::$shallow_blacklist[] = DataMapper::class;
-            BlacklistPlugin::$shallow_blacklist[]
-                                                  = PersistenceManager::class;
-            BlacklistPlugin::$shallow_blacklist[]
-                                                  = QueryObjectModelFactory::class;
-            BlacklistPlugin::$shallow_blacklist[]
-                                                  = ContentObjectRenderer::class;
+            BlacklistPlugin::$shallow_blacklist[] = PersistenceManager::class;
+            BlacklistPlugin::$shallow_blacklist[] = QueryObjectModelFactory::class;
+            BlacklistPlugin::$shallow_blacklist[] = ContentObjectRenderer::class;
             BlacklistPlugin::$shallow_blacklist[] = TypoEventBus::class;
             BlacklistPlugin::$shallow_blacklist[] = QueryResult::class;
             BlacklistPlugin::$shallow_blacklist[] = MysqliConnection::class;
             BlacklistPlugin::$shallow_blacklist[] = MysqliStatement::class;
+            BlacklistPlugin::$shallow_blacklist[] = ContainerInterface::class;
+            BlacklistPlugin::$shallow_blacklist[] = ListenerProviderInterface::class;
         }
     }
 

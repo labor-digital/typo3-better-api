@@ -27,7 +27,11 @@ use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\BootStage\BootStageInterface;
 use LaborDigital\T3BA\Core\BootStage\ClassOverrideStage;
 use LaborDigital\T3BA\Core\BootStage\DbgConfigurationStage;
+use LaborDigital\T3BA\Core\BootStage\DiConfigurationStage;
 use LaborDigital\T3BA\Core\BootStage\EnsureExtLocalConfOnTcaLoadStage;
+use LaborDigital\T3BA\Core\BootStage\ErrorHandlerAdapterRegistrationStage;
+use LaborDigital\T3BA\Core\BootStage\ErrorHandlerDevStage;
+use LaborDigital\T3BA\Core\BootStage\EventHandlerRegistrationStage;
 use LaborDigital\T3BA\Core\BootStage\FailsafeWrapperPreparationStage;
 use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
 use LaborDigital\T3BA\Core\Event\KernelBootEvent;
@@ -97,6 +101,10 @@ class Kernel
             new EnsureExtLocalConfOnTcaLoadStage(),
             new HookPackageRegistrationStage(),
             new FailsafeWrapperPreparationStage(),
+            new DiConfigurationStage(),
+            new ErrorHandlerAdapterRegistrationStage(),
+            new ErrorHandlerDevStage(),
+            new EventHandlerRegistrationStage(),
         ];
 
         // Prepare the boot stages
@@ -183,10 +191,18 @@ class Kernel
         }
 
         // Create the eventbus instance
-        $eventBus         = new TypoEventBus();
+        $eventBus = new TypoEventBus();
+        TypoEventBus::setInstance($eventBus);
         $listenerProvider = new TypoListenerProvider();
         $eventBus->setConcreteListenerProvider($listenerProvider);
-        TypoEventBus::setInstance($eventBus);
+        $eventBus->setProviderAdapter(TypoListenerProvider::class, static function (
+            TypoListenerProvider $provider,
+            string $event,
+            callable $listener,
+            array $options
+        ) {
+            $provider->addCallableListener($event, $listener, $options);
+        });
 
         // Register low level events
         foreach (static::$lowLevelListeners as $listener) {

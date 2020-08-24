@@ -28,14 +28,20 @@ use LaborDigital\T3BA\Core\Event\KernelBootEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
+use LaborDigital\T3BA\Core\Override\ExtendedCacheManager;
+use LaborDigital\T3BA\Core\Override\ExtendedContainerBuilder;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
 
 class ClassOverrideStage implements BootStageInterface
 {
 
     public const OVERRIDE_MAP
         = [
-            Bootstrap::class => ExtendedBootstrap::class,
+            Bootstrap::class        => ExtendedBootstrap::class,
+            ContainerBuilder::class => ExtendedContainerBuilder::class,
+            CacheManager::class     => ExtendedCacheManager::class,
         ];
 
     /**

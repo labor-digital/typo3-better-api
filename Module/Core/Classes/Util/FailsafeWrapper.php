@@ -54,4 +54,29 @@ class FailsafeWrapper
 
         return call_user_func_array($handler, $args);
     }
+
+    /**
+     * Tries to execute handlerA, but automatically executes handlerB if handlerA threw an exception
+     *
+     * @param   callable  $handlerA
+     * @param   callable  $handlerB
+     * @param   array     $argsA
+     * @param   array     $argsB
+     *
+     * @return mixed
+     */
+    public static function handleEither(callable $handlerA, callable $handlerB, array $argsA = [], array $argsB = [])
+    {
+        if (static::$isFailsafe) {
+            try {
+                return call_user_func_array($handlerA, $argsA);
+            } catch (Throwable $e) {
+                $argsB[] = $e;
+
+                return call_user_func_array($handlerB, $argsB);
+            }
+        }
+
+        return call_user_func_array($handlerA, $argsA);
+    }
 }

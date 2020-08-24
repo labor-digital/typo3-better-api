@@ -1,6 +1,5 @@
 <?php
-declare(strict_types=1);
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,64 +14,86 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.12 at 11:46
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\Container;
+declare(strict_types=1);
+
+namespace LaborDigital\T3BA\Core\DependencyInjection;
+
+use Psr\Container\ContainerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Trait ContainerAwareTrait
  *
  * Makes any class container aware even if your class was loaded without dependency injection
- * the getContainer() method will return the container instance!
+ * the Container() method will return the container instance!
+ *
+ * The same as ContainerAwareTrait, but for static classes
  *
  * @package LaborDigital\Typo3BetterApi\Container
  */
-trait ContainerAwareTrait
+trait StaticContainerAwareTrait
 {
     /**
      * Holds the list of resolved singleton instances
      *
      * @var array
      */
-    protected $__containerAwareTraitSingletons = [];
-    
+    protected static $__localSingletons = [];
+
     /**
      * Injects the container instance if possible
      *
-     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
+     * @param   \Psr\Container\ContainerInterface  $container
      */
-    public function injectContainer(TypoContainerInterface $container): void
+    public static function injectContainer(ContainerInterface $container): void
     {
-        $this->__containerAwareTraitSingletons['@container'] = $container;
+        static::$__localSingletons['@container'] = $container;
     }
-    
+
     /**
      * Allows you to manually inject a singleton instance either for manual instance creation or testing purposes
      *
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance should be returned for.
      * @param   object  $instance              The instance to register for the given class / interface name
      *
-     * @return $this|mixed
+     * @return void
      */
-    public function setLocalSingleton(string $classOrInterfaceName, $instance)
+    public static function setLocalSingletons(string $classOrInterfaceName, $instance): void
     {
-        $this->__containerAwareTraitSingletons[$classOrInterfaceName] = $instance;
-        
-        return $this;
+        static::$__localSingletons[$classOrInterfaceName] = $instance;
     }
-    
+
     /**
      * Returns the instance of the container
      *
-     * @return \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     * @return \Psr\Container\ContainerInterface
      */
-    protected function Container(): TypoContainerInterface
+    protected static function Container(): ContainerInterface
     {
-        return $this->__containerAwareTraitSingletons['@container'] ??
-               $this->__containerAwareTraitSingletons['@container'] = TypoContainer::getInstance();
+        return static::$__localSingletons['@container'] ??
+               static::$__localSingletons['@container']
+                   = GeneralUtility::getContainer();
     }
-    
+
+    /**
+     * Allows you to create a new object instance without dependency injection.
+     * This is currently only a wrapper around GeneralUtility::makeInstance()
+     *
+     * @param   string  $class                 The class to instantiate
+     * @param   array   $constructorArguments  The constructor arguments to pass
+     *
+     * @return mixed
+     *
+     * @see \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance()
+     */
+    protected static function getWithoutDi(string $class, array $constructorArguments = [])
+    {
+        return GeneralUtility::makeInstance($class, ...$constructorArguments);
+    }
+
     /**
      * You can use this method if you want to lazy load an object using the container instance.
      *
@@ -82,22 +103,20 @@ trait ContainerAwareTrait
      * Inside Models, or callbacks that don't support dependency injection for example.
      *
      * @param   string  $class  The class or interface you want to retrieve the object for
-     * @param   array   $args   [deprecated, will be removed in v10] Optional, additional constructor arguments
      *
      * @return mixed
      */
-    protected function getInstanceOf(string $class, $args = [])
+    protected static function getInstanceOf(string $class)
     {
         // Create the instance as singleton
-        if (isset($this->__containerAwareTraitSingletons[$class])) {
-            return $this->__containerAwareTraitSingletons[$class]
-                = $this->Container()->get($class, ['args' => $args]);
+        if (isset(static::$__localSingletons[$class])) {
+            return static::$__localSingletons[$class] = static::Container()->get($class);
         }
-        
+
         // Just create the instance
-        return $this->Container()->get($class, ['args' => $args]);
+        return static::Container()->get($class);
     }
-    
+
     /**
      * Similar to getInstanceOf() but stores all class instances as a local reference/singleton.
      * Meaning that you will always receive the same instance of the required class. It also means,
@@ -112,16 +131,11 @@ trait ContainerAwareTrait
      *
      * @return mixed
      */
-    protected function getSingletonOf(string $class)
+    protected static function getSingletonOf(string $class)
     {
         // Check if we have a singleton
-        if (isset($this->__containerAwareTraitSingletons[$class])) {
-            return $this->__containerAwareTraitSingletons[$class];
-        }
-        
-        // Request the instance from the container
-        return $this->__containerAwareTraitSingletons[$class]
-            = $this->Container()->get($class);
+        return static::$__localSingletons[$class] ??
+               static::$__localSingletons[$class] = static::Container()->get($class);
     }
-    
+
 }

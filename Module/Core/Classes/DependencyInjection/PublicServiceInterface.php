@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.24 at 08:13
  */
 
-namespace LaborDigital\Typo3BetterApi\Container;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
-use Psr\Container\ContainerExceptionInterface;
+namespace LaborDigital\T3BA\Core\DependencyInjection;
 
-class TypoContainerException extends BetterApiException implements ContainerExceptionInterface
+/**
+ * Interface PublicServiceInterface
+ *
+ * Automatically makes this class as public in the di container
+ *
+ * @package LaborDigital\T3BA\Core\ExtConfig
+ */
+interface PublicServiceInterface
 {
+
 }

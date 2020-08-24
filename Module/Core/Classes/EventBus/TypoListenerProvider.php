@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.21 at 20:40
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\EventBus;
 
+use LaborDigital\T3BA\Core\DependencyInjection\MiniContainer;
 use LaborDigital\T3BA\Core\Event\CoreHookAdapter\CoreHookEventAdapterInterface;
 use LaborDigital\T3BA\Core\Event\CoreHookAdapter\CoreHookEventInterface;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use Neunerlei\EventBus\Dispatcher\EventBusListenerProvider;
 use Psr\Container\ContainerInterface;
+use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 
-class TypoListenerProvider extends EventBusListenerProvider
+class TypoListenerProvider extends ListenerProvider
 {
 
     /**
@@ -38,11 +40,29 @@ class TypoListenerProvider extends EventBusListenerProvider
     protected $boundCoreHooks = [];
 
     /**
+     * The real listener provider we use under the hood
+     *
+     * @var \Neunerlei\EventBus\Dispatcher\EventBusListenerProvider
+     */
+    protected $concreteListenerProvider;
+
+    /**
      * The container instance to create core hooks
      *
      * @var \Psr\Container\ContainerInterface
      */
     protected $container;
+
+    /**
+     * TypoListenerProvider constructor.
+     *
+     * @param   \Psr\Container\ContainerInterface|null  $container
+     */
+    public function __construct(ContainerInterface $container = null)
+    {
+        parent::__construct(new MiniContainer());
+        $this->concreteListenerProvider = new EventBusListenerProvider();
+    }
 
     /**
      * Used to inject the PSR service container after it was created
@@ -57,14 +77,45 @@ class TypoListenerProvider extends EventBusListenerProvider
     /**
      * @inheritDoc
      */
-    public function addListener(
+    public function addListener(string $event, string $service, string $method = null, array $options = []): void
+    {
+        $this->listeners[$event][] = [
+            'service' => $service,
+            'method'  => $method,
+        ];
+
+        $this->concreteListenerProvider->addListener($event, function ($e) use ($service, $method) {
+            $this->getCallable($service, $method)($e);
+        }, $options);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getListenersForEvent(object $event): iterable
+    {
+        return $this->concreteListenerProvider->getListenersForEvent($event);
+    }
+
+    /**
+     * Registers a new listener for a certain event
+     *
+     * @param   string    $eventClassName  The name of the event class to bind this listener to
+     * @param   callable  $listener        The listener callable to represent
+     * @param   array     $options         The options to bind this listener with
+     *
+     * @return string A unique id for the registered listener
+     *
+     * @see \Neunerlei\EventBus\EventBusInterface::addListener() for details on the options
+     */
+    public function addCallableListener(
         string $eventClassName,
         callable $listener,
         array $options = []
     ): string {
         $this->registerCoreHookEventIfRequired($eventClassName);
 
-        return parent::addListener($eventClassName, $listener, $options);
+        return $this->concreteListenerProvider->addListener($eventClassName, $listener, $options);
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,26 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 15:55
+ * Last modified: 2020.08.24 at 13:40
  */
 
-if (php_sapi_name() !== 'cli') {
-    if ($_GET['pass'] !== 'labor') {
-        header('location: /');
-        exit();
-    }
-}
+declare(strict_types=1);
 
-// Clear apcu cache
-if (function_exists('apcu_clear_cache')) {
-    apcu_clear_cache();
-    echo 'Cleared APCU Cache' . PHP_EOL;
-}
 
-// Clear apc cache
-if (function_exists('apc_clear_cache')) {
-    apc_clear_cache();
-    apc_clear_cache('user');
-    apc_clear_cache('opcode');
-    echo 'Cleared APC Cache' . PHP_EOL;
+namespace LaborDigital\T3BA\Core\EventBus;
+
+
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
+
+class EventBusNotInitializedException extends BetterApiException
+{
+
 }

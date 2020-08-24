@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 13:05
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events;
+namespace LaborDigital\T3BA\Core\Event;
 
 use TYPO3\CMS\Core\Cache\CacheManager;
 
@@ -40,28 +40,28 @@ class CacheClearedEvent
      * @var string
      */
     protected $method;
-    
+
     /**
      * The group that should be flushed
      *
      * @var string|null
      */
     protected $group;
-    
+
     /**
      * The tag that should be flushed in the group
      *
      * @var string|null
      */
     protected $tag;
-    
+
     /**
      * The cache manager instance
      *
      * @var \TYPO3\CMS\Core\Cache\CacheManager
      */
     protected $cacheManager;
-    
+
     /**
      * CacheClearedEvent constructor.
      *
@@ -77,7 +77,7 @@ class CacheClearedEvent
         $this->tag          = $tag;
         $this->cacheManager = $cacheManager;
     }
-    
+
     /**
      * Returns the method that lead to the cache flushing
      *
@@ -87,7 +87,7 @@ class CacheClearedEvent
     {
         return $this->method;
     }
-    
+
     /**
      * Returns the group that should be flushed
      *
@@ -97,7 +97,7 @@ class CacheClearedEvent
     {
         return $this->group;
     }
-    
+
     /**
      * Returns the tag that should be flushed in the group
      *
@@ -107,7 +107,7 @@ class CacheClearedEvent
     {
         return $this->tag;
     }
-    
+
     /**
      * Returns the cache manager instance
      *

@@ -20,13 +20,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\TempFs;
 
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Core\TempFs\Exception\FileNotFoundException;
 use LaborDigital\T3BA\Core\TempFs\Exception\InvalidFilePathException;
 use LaborDigital\T3BA\Core\TempFs\Exception\InvalidRootPathException;
 use LaborDigital\T3BA\Core\Util\FilePermissionUtil;
-use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
-use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
 use SplFileInfo;
@@ -44,7 +41,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  *
  * @package LaborDigital\Typo3BetterApi\FileAndFolder
  */
-class TempFs implements LazyEventSubscriberInterface
+class TempFs
 {
 
     /**
@@ -92,15 +89,6 @@ class TempFs implements LazyEventSubscriberInterface
             throw new InvalidRootPathException(
                 'The resolved root directory path: "' . $this->rootPath . '" is not writable by the web-server!');
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
-    {
-        throw new NotImplementedException();
-        $subscription->subscribe(CacheClearedEvent::class, '__onCacheClear');
     }
 
     /**
@@ -235,26 +223,29 @@ class TempFs implements LazyEventSubscriberInterface
     }
 
     /**
+     * Removes a single file or directory from the file system
+     *
+     * @param   string  $filePath
+     *
+     * @return bool
+     */
+    public function delete(string $filePath): bool
+    {
+        if ($this->hasFile($filePath)) {
+            Fs::remove($this->resolvePath($filePath));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Completely removes the whole directory and all files in it
      */
     public function flush(): void
     {
         Fs::flushDirectory($this->rootPath);
-    }
-
-    /**
-     * Flushes the directory if the "all" Cache is cleared
-     *
-     * @param   \LaborDigital\Typo3BetterApi\Event\Events\CacheClearedEvent  $event
-     *
-     * @internal
-     */
-    public function onCacheClear(CacheClearedEvent $event): void
-    {
-        if ($event->getGroup() !== 'all') {
-            return;
-        }
-        $this->flush();
     }
 
     /**
@@ -300,6 +291,18 @@ class TempFs implements LazyEventSubscriberInterface
     public static function makeInstance(string $path): self
     {
         return new static($path);
+    }
+
+    /**
+     * Factory method to create a new low level file system cache instance
+     *
+     * @param   string  $key
+     *
+     * @return \LaborDigital\T3BA\Core\TempFs\TempFsCache
+     */
+    public static function makeCache(string $key): TempFsCache
+    {
+        return new TempFsCache(static::makeInstance('Cache/' . str_replace(['/', '\\'], '-', $key)));
     }
 }
 

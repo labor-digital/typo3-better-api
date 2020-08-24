@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.21 at 20:40
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\EventBus;
 
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use Neunerlei\EventBus\EventBus;
 use Neunerlei\EventBus\EventBusInterface;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -32,7 +33,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Event
  */
-class TypoEventBus extends EventBus implements SingletonInterface
+class TypoEventBus extends EventBus implements SingletonInterface, PublicServiceInterface
 {
     /**
      * @var EventBusInterface
@@ -43,9 +44,14 @@ class TypoEventBus extends EventBus implements SingletonInterface
      * Returns the event bus instance
      *
      * @return \Neunerlei\EventBus\EventBusInterface
+     * @throws \LaborDigital\T3BA\Core\EventBus\EventBusNotInitializedException
      */
     public static function getInstance(): EventBusInterface
     {
+        if (empty(static::$eventBus)) {
+            throw new EventBusNotInitializedException('The event bus instance was not injected using setInstance()');
+        }
+
         return static::$eventBus;
     }
 

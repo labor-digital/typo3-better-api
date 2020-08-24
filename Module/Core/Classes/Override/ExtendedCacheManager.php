@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -38,8 +38,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\Event\Events\CacheClearedEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+use LaborDigital\T3BA\Core\Event\CacheClearedEvent;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use TYPO3\CMS\Core\Cache\BetterApiClassOverrideCopy__CacheManager;
 
 class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
@@ -90,7 +90,6 @@ class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
      */
     protected function emitFlushEvent(string $caller, ?string $group = null, ?string $tag = null): void
     {
-        /** @noinspection PhpParamsInspection */
         TypoEventBus::getInstance()->dispatch(new CacheClearedEvent(
             $caller,
             empty($group) ? 'all' : $group,
