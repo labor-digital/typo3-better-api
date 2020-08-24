@@ -74,7 +74,9 @@
             "LaborDigital\\Typo3BetterApi\\": "Classes",
             "LaborDigital\\T3BA\\Core\\": "Module/Core/Classes",
             "LaborDigital\\T3BA\\ExtConfig\\": "Module/ExtConfig/Classes",
-            "LaborDigital\\T3BA\\ExtConfig\\Tests\\": "Module/ExtConfig/Tests"
+            "LaborDigital\\T3BA\\Tool\\": "Module/Tool/Classes",
+            "LaborDigital\\T3BA\\TcaForm\\": "Module/TcaForm/Classes",
+            "LaborDigital\\T3BA\\TcaForm\\Tests\\": "Module/TcaForm/Tests"
         }
     },
     "version": "10.0.0",

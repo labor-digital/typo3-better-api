@@ -23,12 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Override;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\FailsafeDelegateContainer;
-use LaborDigital\T3BA\Core\Event\DiContainerFilterEvent;
 use LaborDigital\T3BA\Core\Event\Internal\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\Core\Event\Internal\InternalDiContainerFilterEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Util\FailsafeWrapper;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\DependencyInjection\BetterApiClassOverrideCopy__ContainerBuilder;
@@ -64,36 +61,6 @@ class ExtendedContainerBuilder extends BetterApiClassOverrideCopy__ContainerBuil
         );
 
         return $e->getContainer();
-
-
-        return FailsafeWrapper::handleEither(function (
-            PackageManager $packageManager,
-            FrontendInterface $cache,
-            bool $failsafe = false
-        ) {
-            /** @var \Symfony\Component\DependencyInjection\Container $container */
-            $container = parent::createDependencyInjectionContainer($packageManager, $cache, false);
-            $eventBus  = TypoEventBus::getInstance();
-            $eventBus->dispatch(new InternalDiContainerFilterEvent($container));
-            $eventBus->dispatch(new DiContainerFilterEvent($container));
-
-            if ($failsafe) {
-                return new FailsafeDelegateContainer(
-                    parent::createDependencyInjectionContainer($packageManager, $cache, true),
-                    $container
-                );
-            }
-
-            return $container;
-        }, function (
-            PackageManager $packageManager,
-            FrontendInterface $cache
-        ) {
-            dbge('FOO', func_get_args());
-
-            return parent::createDependencyInjectionContainer($packageManager, $cache, true);
-
-        }, func_get_args(), func_get_args());
     }
 
 

@@ -23,9 +23,9 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 use LaborDigital\T3BA\Core\Event\Internal\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\Core\ExtConfigHandler\EventSubscriber\ConfigureEventSubscribersHandler;
 use LaborDigital\T3BA\Core\Kernel;
+use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 
 class EventHandlerRegistrationStage implements BootStageInterface
 {

@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\ExtConfigHandler\DependencyInjection;
 
 
-use LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -34,21 +34,15 @@ trait DefaultDependencyInjectionConfigurationTrait
      * Used in the config handler in order to apply the default symfony container configuration to set
      * up the auto-wiring and auto configuration
      *
-     * @param   \Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext                                $context
+     * @param   ContainerConfigurator  $configurator
+     * @param   ExtConfigContext       $context
      */
     public static function configureDefaults(
         ContainerConfigurator $configurator,
         ExtConfigContext $context
     ): void {
-        // Enable auto wiring
-        $services = $configurator
-            ->services()
-            ->defaults()
-            ->autowire()
-            ->autoconfigure();
-
-        // Register the services
+        // Configure auto wiring
+        $services     = $configurator->services()->defaults()->autowire()->autoconfigure();
         $namespaceMap = $context->getExtConfigService()->getExtKeyNamespaceMap();
         foreach ($namespaceMap[$context->getExtKey()] ?? [] as $namespace => $dir) {
             try {

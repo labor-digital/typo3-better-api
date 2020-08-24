@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Event\Internal;
 
 
+use Closure;
 use LaborDigital\T3BA\Core\DependencyInjection\FailsafeDelegateContainer;
 use LaborDigital\T3BA\Core\Util\FailsafeWrapper;
 use Psr\Container\ContainerInterface;
@@ -71,7 +72,7 @@ class InternalCreateDependencyInjectionContainerEvent
      * @param   array     $args
      * @param   \Closure  $generator
      */
-    public function __construct(bool $isFailSafe, array $args, \Closure $generator)
+    public function __construct(bool $isFailSafe, array $args, Closure $generator)
     {
         $this->isFailsafe = $isFailSafe;
         $this->args       = $args;
@@ -153,7 +154,9 @@ class InternalCreateDependencyInjectionContainerEvent
             if ($this->isFailsafe) {
                 return FailsafeWrapper::handleEither(function () {
                     return $this->makeFailsafeDelegateContainer();
-                }, function () {
+                }, function ($d) {
+                    dbge($d);
+
                     return $this->makeFailsafeContainer();
                 });
             }

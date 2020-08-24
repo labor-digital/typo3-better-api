@@ -21,6 +21,7 @@
 namespace LaborDigital\T3BA\Core\ExtConfigHandler\DependencyInjection;
 
 
+use Closure;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
@@ -56,7 +57,7 @@ class ExtConfigLoader extends PhpFileLoader
      */
     public function supports($resource, string $type = null)
     {
-        return $resource instanceof \Closure;
+        return $resource instanceof Closure;
     }
 
 }

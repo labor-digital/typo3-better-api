@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\ExtConfigHandler\DependencyInjection;
 
-use LaborDigital\T3BA\Core\ExtConfig\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\AbstractExtConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Container;

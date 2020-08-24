@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.23 at 18:35
+ * Last modified: 2020.08.24 at 19:57
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig;
 
 
 use Neunerlei\Configuration\Loader\ConfigContext;
@@ -136,6 +136,11 @@ class ExtConfigContext extends ConfigContext
         return $this->runWithNamespace($namespace, $callback);
     }
 
+    /**
+     * Returns the instance of the TYPO3 package configuration for the currently configured extension
+     *
+     * @return \TYPO3\CMS\Core\Package\Package
+     */
     public function getPackage(): Package
     {
         return $this->getLoaderContext()

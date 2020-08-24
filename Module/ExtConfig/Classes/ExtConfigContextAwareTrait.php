@@ -19,9 +19,7 @@
 
 declare(strict_types=1);
 
-
-namespace LaborDigital\T3BA\Core\ExtConfig;
-
+namespace LaborDigital\T3BA\ExtConfig;
 
 use Neunerlei\Configuration\Util\ConfigContextAwareTrait;
 
@@ -32,7 +30,7 @@ trait ExtConfigContextAwareTrait
     /**
      * The config context
      *
-     * @var \LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $context;
 

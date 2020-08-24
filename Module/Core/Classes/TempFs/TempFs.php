@@ -26,6 +26,7 @@ use LaborDigital\T3BA\Core\TempFs\Exception\InvalidRootPathException;
 use LaborDigital\T3BA\Core\Util\FilePermissionUtil;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
+use Psr\SimpleCache\CacheInterface;
 use SplFileInfo;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -63,6 +64,13 @@ class TempFs
      * @var string
      */
     protected $rootPath;
+
+    /**
+     * Contains the cache interface instance after it was instantiated
+     *
+     * @var CacheInterface
+     */
+    protected $cache;
 
     /**
      * TempFs constructor.
@@ -249,6 +257,20 @@ class TempFs
     }
 
     /**
+     * Returns a cache implementation which stores it's values inside this filesystem
+     *
+     * @return \Psr\SimpleCache\CacheInterface
+     */
+    public function getCache(): CacheInterface
+    {
+        if (isset($this->cache)) {
+            return $this->cache;
+        }
+
+        return $this->cache = new TempFsCache($this);
+    }
+
+    /**
      * Internal helper to resolve relative path's inside the base directory
      *
      * @param   string  $path
@@ -291,18 +313,6 @@ class TempFs
     public static function makeInstance(string $path): self
     {
         return new static($path);
-    }
-
-    /**
-     * Factory method to create a new low level file system cache instance
-     *
-     * @param   string  $key
-     *
-     * @return \LaborDigital\T3BA\Core\TempFs\TempFsCache
-     */
-    public static function makeCache(string $key): TempFsCache
-    {
-        return new TempFsCache(static::makeInstance('Cache/' . str_replace(['/', '\\'], '-', $key)));
     }
 }
 

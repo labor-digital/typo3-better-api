@@ -27,8 +27,8 @@ use LaborDigital\T3BA\Core\DependencyInjection\CompilerPass\EventBusListenerProv
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
-use LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Core\ExtConfigHandler\DependencyInjection\ConfigureDependencyInjectionInterface;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use Neunerlei\EventBus\EventBusInterface;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
@@ -40,25 +40,23 @@ use TYPO3\CMS\Core\DependencyInjection\PublicServicePass;
 
 class DiContainerConfig implements ConfigureDependencyInjectionInterface
 {
-
+    /**
+     * @inheritDoc
+     */
     public static function configure(
         ContainerConfigurator $configurator,
         ContainerBuilder $containerBuilder,
         ExtConfigContext $context
     ): void {
         // Enable auto wiring
-        $services = $configurator
-            ->services()
-            ->defaults()
-            ->autowire()
-            ->autoconfigure();
+        $services = $configurator->services()->defaults()->autowire()->autoconfigure();
 
         // Resolve the classes for the auto wiring
         $basePath = 'Module/Core/Classes/';
         $services
-            ->load('LaborDigital\\T3BA\\Core\\', 'Module/Core/Classes/*')
+            ->load('LaborDigital\\T3BA\\Core\\', $basePath . '*')
             ->exclude([
-                $basePath . '{Adapter,BootStage,CodeGeneration,DependencyInjection,Override,TempFs,ExtConfig}',
+                $basePath . '{Adapter,BootStage,CodeGeneration,DependencyInjection,Override,TempFs}',
             ]);
 
         // LISTENER PROVIDER

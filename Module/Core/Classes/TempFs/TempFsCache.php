@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\TempFs;
 
 
+use DateInterval;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\TinyTimy\DateTimy;
 use Psr\SimpleCache\CacheInterface;
@@ -65,7 +66,7 @@ class TempFsCache implements CacheInterface
         $this->fs->setFileContent($file, $value);
 
         if ($ttl !== null) {
-            if ($ttl instanceof \DateInterval) {
+            if ($ttl instanceof DateInterval) {
                 $endTime = new DateTimy();
                 $endTime->add($ttl);
                 $ttl = ($endTime)->getTimestamp() - (new DateTimy('now'))->getTimestamp();
@@ -175,6 +176,6 @@ class TempFsCache implements CacheInterface
         $hash         = md5((string)$key);
         $sanitizedKey = substr(Inflector::toFile($key), 0, 50) . '-' . $hash;
 
-        return $hash[0] . '/' . $hash[1] . '/' . $hash[2] . '/' . $sanitizedKey;
+        return 'Cache/' . $hash[0] . '/' . $hash[1] . '/' . $hash[2] . '/' . $sanitizedKey;
     }
 }

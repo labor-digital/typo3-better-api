@@ -71,6 +71,7 @@ class FailsafeWrapper
             try {
                 return call_user_func_array($handlerA, $argsA);
             } catch (Throwable $e) {
+                // Add the exception to the args of the second handler
                 $argsB[] = $e;
 
                 return call_user_func_array($handlerB, $argsB);

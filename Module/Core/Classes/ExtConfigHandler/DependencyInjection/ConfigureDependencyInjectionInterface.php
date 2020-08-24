@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\ExtConfigHandler\DependencyInjection;
 
 
-use LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -52,8 +52,8 @@ interface ConfigureDependencyInjectionInterface
      * This method is executed every time when TYPO3 boots, and allows you to inject
      * dynamic/synthetic services into the container if required
      *
-     * @param   \Symfony\Component\DependencyInjection\Container    $container
-     * @param   \LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext  $context
+     * @param   \Symfony\Component\DependencyInjection\Container  $container
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext     $context
      */
     public static function configureRuntime(Container $container, ExtConfigContext $context): void;
 

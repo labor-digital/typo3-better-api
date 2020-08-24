@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.23 at 19:05
+ * Last modified: 2020.08.24 at 08:59
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig;
 
 
 use Neunerlei\Configuration\Handler\AbstractConfigHandler;
@@ -31,7 +31,7 @@ abstract class AbstractExtConfigHandler extends AbstractConfigHandler
     /**
      * The configuration context we are working with
      *
-     * @var \LaborDigital\T3BA\Core\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $context;
 

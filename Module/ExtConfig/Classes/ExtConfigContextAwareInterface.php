@@ -14,17 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 11:22
+ * Last modified: 2020.08.24 at 11:23
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig;
 
 
 use Neunerlei\Configuration\Util\ConfigContextAwareInterface;
 
+/**
+ * Interface ExtConfigContextAwareInterface
+ *
+ * Use this interface to make your configuration class context aware
+ *
+ * @package LaborDigital\T3BA\ExtConfig
+ * @see     \LaborDigital\T3BA\ExtConfig\ExtConfigContextAwareTrait
+ */
 interface ExtConfigContextAwareInterface extends ConfigContextAwareInterface
 {
 
