@@ -23,8 +23,30 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use Neunerlei\Configuration\State\ConfigState;
+
 abstract class AbstractExtConfigConfigurator implements
     ExtConfigContextAwareInterface, ExtConfigConfiguratorInterface
 {
     use ExtConfigContextAwareTrait;
+
+    /**
+     * Helper to automatically inject all configurator properties into the given state object
+     *
+     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     */
+    protected function autoFinish(ConfigState $state): void
+    {
+        $vars = get_object_vars($this);
+        unset($vars['context']);
+        $state->setMultiple($vars);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function finish(ConfigState $state): void
+    {
+        $this->autoFinish($state);
+    }
 }

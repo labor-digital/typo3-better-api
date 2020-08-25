@@ -34,7 +34,7 @@ class TypoScriptConfig implements ConfigureTypoScriptInterface
      */
     public static function configure(TypoScriptConfigurator $configurator, ExtConfigContext $context): void
     {
-        $configurator->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'T3BA - Generic TypoScript');
+        $configurator->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'Generic TypoScript');
     }
 
 }

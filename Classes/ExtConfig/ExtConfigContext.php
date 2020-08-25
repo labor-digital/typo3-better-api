@@ -95,9 +95,9 @@ class ExtConfigContext extends ConfigContext
      * This helper can be used to replace {{extKey}}, {{extKeyWithVendor}} and {{vendor}}
      * inside of keys and values with the proper value for the current context
      *
-     * @param   array|mixed  $raw  The value which should be traversed for markers
+     * @param   mixed  $raw  The value which should be traversed for markers
      *
-     * @return array|mixed
+     * @return mixed
      */
     public function replaceMarkers($raw)
     {

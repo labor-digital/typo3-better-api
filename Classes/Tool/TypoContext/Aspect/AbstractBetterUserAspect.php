@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,36 +18,36 @@
  * Last modified: 2020.03.19 at 13:04
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use stdClass;
 use TYPO3\CMS\Core\Context\UserAspect;
 
 abstract class AbstractBetterUserAspect extends UserAspect
 {
     use AutomaticAspectGetTrait;
-    
+
     /**
      * @var TypoContext
      */
     protected $context;
-    
+
     /**
      * @var \TYPO3\CMS\Core\Authentication\AbstractUserAuthentication
      */
     protected $resolvedUser;
-    
+
     /**
      * Inject the typo context instance
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
      */
-    public function injectContext(TypoContext $context)
+    public function injectContext(TypoContext $context): void
     {
         $this->context = $context;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -54,7 +55,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->handleGet($name);
     }
-    
+
     /**
      * Returns the root context's user aspect
      *
@@ -64,7 +65,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->context->getRootContext()->getAspect($this->getRootAspectKey());
     }
-    
+
     /**
      * Returns true if there is a user object registered
      *
@@ -74,7 +75,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return ! empty($this->getUserObject());
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -82,7 +83,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->getRootUserAspect()->isLoggedIn();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -90,15 +91,14 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->getRootUserAspect()->isAdmin();
     }
-    
-    
+
     /**
      * Returns the root aspect key
      *
      * @return string
      */
     abstract protected function getRootAspectKey(): string;
-    
+
     /**
      * Should try to return the user object, either from the parent aspect, or by using the globals array
      *
@@ -116,7 +116,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
         if (! empty($rootUser) && ! $rootUser instanceof stdClass && ! is_array($rootUser)) {
             return $this->resolvedUser = $rootUser;
         }
-        
+
         return null;
     }
 }

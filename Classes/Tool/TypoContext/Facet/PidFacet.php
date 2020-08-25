@@ -18,11 +18,11 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 12:58
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
+namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 use InvalidArgumentException;
-use LaborDigital\Typo3BetterApi\Pid\InvalidPidException;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\PathUtil\Path;
 use function GuzzleHttp\Psr7\parse_query;
@@ -35,22 +35,22 @@ class PidFacet implements FacetInterface
      * @var array
      */
     protected $pids = [];
-    
+
     /**
-     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
+     * @var TypoContext
      */
     protected $context;
-    
+
     /**
      * PidFacet constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
+     * @param   TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
     }
-    
+
     /**
      * Returns true if the pid with the given key exists
      *
@@ -62,7 +62,7 @@ class PidFacet implements FacetInterface
     {
         return Arrays::hasPath($this->pids, $this->stripPrefix($key));
     }
-    
+
     /**
      * Sets the given pid for the defined key for the current runtime.
      * Note: The mapping will not be persisted!
@@ -70,15 +70,15 @@ class PidFacet implements FacetInterface
      * @param   string  $key  A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
      * @param   int     $pid  The numeric page id which should be returned when the given pid is required
      *
-     * @return \LaborDigital\Typo3BetterApi\TypoContext\Facet\PidFacet
+     * @return PidFacet
      */
-    public function set(string $key, int $pid): PidFacet
+    public function set(string $key, int $pid): self
     {
         $this->pids = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the pid for the given key
      *
@@ -94,6 +94,8 @@ class PidFacet implements FacetInterface
      */
     public function get($key, int $fallback = -1): int
     {
+        throw new NotImplementedException();
+
         if (is_int($key)) {
             return $key;
         }
@@ -111,10 +113,10 @@ class PidFacet implements FacetInterface
             }
             throw new InvalidPidException('There is no registered pid for key: ' . $key);
         }
-        
+
         return $pid;
     }
-    
+
     /**
      * Returns the whole list of all registered pid's by their keys
      *
@@ -124,7 +126,7 @@ class PidFacet implements FacetInterface
     {
         return $this->pids;
     }
-    
+
     /**
      * Returns the current page's pid
      *
@@ -142,7 +144,7 @@ class PidFacet implements FacetInterface
             // BACKEND
             // ============
             // Read current ID when in backend
-            if (isset($GLOBALS['TSFE']) && isset($GLOBALS['TSFE']->id)) {
+            if (isset($GLOBALS['TSFE']->id)) {
                 return (int)$GLOBALS['TSFE']->id;
             }
             if ($requestFacet->hasGet('id')) {
@@ -153,8 +155,11 @@ class PidFacet implements FacetInterface
             }
             // Try to parse return url
             if ($requestFacet->hasGet('returnUrl')) {
-                $query = Path::makeUri('http://www.foo.bar' . $requestFacet->getGet('returnUrl'))->getQuery();
-                $query = parse_query($query);
+                $query = parse_query(
+                    Path::makeUri(
+                        'http://www.foo.bar' . $requestFacet->getGet('returnUrl')
+                    )->getQuery()
+                );
                 if (isset($query['id'])) {
                     return (int)$query['id'];
                 }
@@ -170,28 +175,28 @@ class PidFacet implements FacetInterface
                 return (int)$requestFacet->getGet('id');
             }
         }
-        
+
         // Fallback to the root pid of the site
         if ($this->context->Site()->hasCurrent()) {
             return $this->context->Site()->getCurrent()->getRootPageId();
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Internal helper to completely replace the pid array.
      * If you use this, use it with care!
      *
      * @param   array  $pids
      *
-     * @deprecated will be renamed in v10
+     * @internal
      */
-    public function __setAll(array $pids): void
+    public function setInternalPids(array $pids): void
     {
         $this->pids = $pids;
     }
-    
+
     /**
      * Internal helper to make sure there is no $pid, (at)pid (stupid annotation parsing...) prefix in the given keys
      *
@@ -206,7 +211,7 @@ class PidFacet implements FacetInterface
         if ($prefix === '$pid.' || $prefix === '@pid.') {
             return substr($key, 5);
         }
-        
+
         return $key;
     }
 }

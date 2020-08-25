@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,35 +18,54 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContextException;
-use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextException;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
-class FeUserAspect extends AbstractBetterUserAspect
+class BeUserAspect extends AbstractBetterUserAspect
 {
-    
+
     /**
      * Returns the frontend user authentication object
      *
-     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
-     * @throws \LaborDigital\Typo3BetterApi\TypoContext\TypoContextException
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     * @throws \LaborDigital\T3BA\Tool\TypoContext\TypoContextException
      */
-    public function getUser(): FrontendUserAuthentication
+    public function getUser(): BackendUserAuthentication
     {
         $user = $this->getUserObject();
         if (empty($user)) {
             throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
         }
-        
+
         return $user;
     }
-    
+
     /**
      * @inheritDoc
      */
     protected function getRootAspectKey(): string
     {
-        return 'frontend.user';
+        return 'backend.user';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getUserObject()
+    {
+        if (! empty($this->resolvedUser)) {
+            return $this->resolvedUser;
+        }
+        $user = parent::getUserObject();
+        if (! empty($user)) {
+            return $user;
+        }
+        if (! empty($GLOBALS['BE_USER'])) {
+            return $this->resolvedUser = $GLOBALS['BE_USER'];
+        }
+
+        return $user;
     }
 }

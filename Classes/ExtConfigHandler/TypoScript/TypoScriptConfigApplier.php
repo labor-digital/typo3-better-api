@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\Event\ExtTablesLoadedEvent;
+use LaborDigital\T3BA\Event\ExtLocalConfLoadedEvent;
 use LaborDigital\T3BA\Event\TcaCompletelyLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
@@ -38,22 +38,45 @@ class TypoScriptConfigApplier extends AbstractExtConfigApplier
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription)
     {
-        $subscription->subscribe(ExtTablesLoadedEvent::class, 'onExtTablesLoaded');
+        $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaCompletelyLoaded');
-        // TODO: Implement subscribeToEvents() method.
     }
 
-    public function onExtTablesLoaded(): void
+    public function onExtLocalConfLoaded(): void
     {
-//        dbge($this->state->get('typo.typoScript'));
+        $this->applyUserTsConfig();
     }
 
-    /**
-     * Executed when the tca is completely loaded
-     */
     public function onTcaCompletelyLoaded(): void
     {
         $this->applyStaticDirectoryRegistration();
+        $this->applyTcaPageTsConfig();
+    }
+
+    /**
+     * Registers the user ts configuration
+     */
+    protected function applyUserTsConfig(): void
+    {
+        ExtensionManagementUtility::addUserTSConfig($this->state->get('typo.typoScript.userTsConfig', ''));
+    }
+
+    /**
+     * Registers the static page ts configuration
+     */
+    protected function applyStaticPageTsConfig(): void
+    {
+        ExtensionManagementUtility::addPageTSConfig($this->state->get('typo.typoScript.userTsConfig', ''));
+    }
+
+    /**
+     * Registers the registered, selectable page ts files
+     */
+    protected function applyTcaPageTsConfig(): void
+    {
+        foreach ($this->state->get('typo.typoScript.selectablePageTsFiles', []) as $file) {
+            ExtensionManagementUtility::registerPageTSConfigFile(...$file);
+        }
     }
 
     /**

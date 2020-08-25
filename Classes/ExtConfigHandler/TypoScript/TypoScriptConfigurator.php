@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
-use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\Inflection\Inflector;
 
 class TypoScriptConfigurator extends AbstractExtConfigConfigurator
 {
@@ -51,14 +51,28 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     protected $userTsConfig = '';
 
     /**
+     * The collected page ts config
+     *
+     * @var string
+     */
+    protected $pageTsConfig = '';
+
+    /**
+     * The list of ts config files that should be selectable in a page TCA
+     *
+     * @var array
+     */
+    protected $selectablePageTsFiles = [];
+
+    /**
      * Adds the static extension typoScript to the selection list.
      *
-     * Note: this method expects a directory path where a "setup.txt" and/or "constants.txt" is found!
-     * It will not work if you specify a absolute file path! Use register registerFileInSetup for that!
+     * NOTE: this method expects a directory path, where a "setup.txt" and/or "constants.txt" is found!
+     * It will not work if you specify a absolute file path! Use registerImport() for that!
      *
-     * @param   string  $path   default('Configuration/TypoScript/') The default typoScript configuration. But can be
-     *                          any path inside the given extension
-     * @param   string  $title  An optional title to be displayed in the backend
+     * @param   string  $path        The typoScript configuration directory. But can
+     *                               be any path inside the given extension. The path is relative to EXT:$_EXTKEY/
+     * @param   string  $title       An optional title to be displayed in the backend
      *
      * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
@@ -66,7 +80,6 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
         string $path = 'Configuration/TypoScript/',
         string $title = ''
     ): self {
-        // Fix incorrect path's that start with EXT:something...
         if (stripos($path, 'ext:') === 0) {
             $path = preg_replace('~(ext):/?.*?/~si', '', $path);
         }
@@ -161,8 +174,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      */
     public function registerImport(string $path): self
     {
-        return $this->registerDynamicContent(
-            'generic.setup', '@import "' . $this->context->replaceMarkers($path) . '"');
+        return $this->registerDynamicContent('generic.setup', '@import "' . $path . '"');
     }
 
     /**
@@ -194,7 +206,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $path  The path of the file to include.
      *                         The path should start with EXT:$_EXTKEY/...
      *
-     * @return \LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigOption
+     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
      */
     public function registerUserTsConfigImport(string $path): self
@@ -203,13 +215,65 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     }
 
     /**
-     * Internal helper to store the configuration on the config state
+     * Shortcut, reminder and bridge to ExtensionManagementUtility::addPageTSConfig.
+     * Let's you add pageTsConfig to the configuration tree
      *
-     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     * @param   string  $config  The page ts config to append
+     *
+     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
-    public function finish(ConfigState $state): void
+    public function registerPageTsConfig(string $config): self
     {
-        $state->set('staticDirectories', $this->staticDirectories);
-        $state->set('dynamic', $this->dynamicTypoScript);
+        $this->pageTsConfig .= '
+[GLOBAL]
+#############################################
+# DYNAMIC TS CONFIG OF: ' . $this->context->getExtKey() . '
+#############################################
+' . $this->context->replaceMarkers($config) . '
+#############################################
+[GLOBAL]
+';
+
+        return $this;
+    }
+
+    /**
+     * Registers a static file as page ts config
+     *
+     * @param   string  $path  The path of the file to include.
+     *                         The path should start with EXT:$_EXTKEY/...
+     *
+     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
+     */
+    public function registerPageTsConfigImport(string $path): self
+    {
+        return $this->registerPageTsConfig('@import "' . $path . '"');
+    }
+
+    /**
+     * Registers a file which can be selected in the "TyposScript Configuration" section of page records in the page
+     * backend. A registered file is not globally included but only on the pages it was selected.
+     *
+     * @param   string       $path   The path of the file to include.
+     *                               The path is relative to EXT:$_EXTKEY/
+     * @param   string|null  $title  Can be used to define a visible label for the file in the backend.
+     *                               If omitted one is auto-generated for you
+     *
+     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     */
+    public function registerSelectablePageTsConfigFile(string $path, ?string $title = null): self
+    {
+        if (stripos($path, 'ext:') === 0) {
+            $path = preg_replace('~(ext):/?.*?/~si', '', $path);
+        }
+
+        $this->selectablePageTsFiles[$path] = [
+            $this->context->getExtKey(),
+            trim($path, '\\/'),
+            $title ?? (Inflector::toHuman($this->context->getExtKey()) . ' - ' . Inflector::toHuman(basename($path))),
+        ];
+
+        return $this;
     }
 }

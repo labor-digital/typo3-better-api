@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,11 +18,12 @@
  * Last modified: 2020.05.12 at 12:51
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
 
-use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptService;
+namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
+
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -32,29 +34,29 @@ use TYPO3\CMS\Core\Registry;
 class ConfigFacet implements FacetInterface
 {
     use ContainerAwareTrait;
-    
+
     /**
-     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
+     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $context;
-    
+
     /**
      * ConfigFacet constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
     }
-    
+
     /**
      * Holds the request attributes for all actions where we don't have a HTTP request
      *
      * @var array
      */
     protected $requestAttributeFallbackStorage = [];
-    
+
     /**
      * Shortcut to TYPO3's system registry lookup method
      *
@@ -70,7 +72,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getSingletonOf(Registry::class)->get($namespace, $key, $defaultValue);
     }
-    
+
     /**
      * Shortcut to add or remove a value to/from TYPO3's system registry.
      * NOTE: Setting $value to NULL will remove the entry from the registry
@@ -90,10 +92,10 @@ class ConfigFacet implements FacetInterface
         } else {
             $this->getSingletonOf(Registry::class)->set($namespace, $key, $value);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Retrieve a single derived ServerRequest attribute.
      *
@@ -109,7 +111,7 @@ class ConfigFacet implements FacetInterface
      *
      * @return mixed|null
      * @see \Psr\Http\Message\ServerRequestInterface
-     * @see \LaborDigital\Typo3BetterApi\TypoContext\Aspect\RequestAspect
+     * @see \LaborDigital\T3BA\Tool\TypoContext\Facet\RequestFacet
      */
     public function getRequestAttribute(string $attributeName, $fallback = null)
     {
@@ -118,10 +120,10 @@ class ConfigFacet implements FacetInterface
         if ($request === null) {
             return $localValue;
         }
-        
+
         return $request->getAttribute($attributeName, $localValue);
     }
-    
+
     /**
      * Updates the global server request object with an additional attribute.
      * As the request is immutable we create a new copy of the request and reset the global
@@ -134,7 +136,7 @@ class ConfigFacet implements FacetInterface
      *
      * @return ServerRequestInterface|null
      * @see \Psr\Http\Message\ServerRequestInterface
-     * @see \LaborDigital\Typo3BetterApi\TypoContext\Aspect\RequestAspect
+     * @see \LaborDigital\T3BA\Tool\TypoContext\Facet\RequestFacet
      */
     public function setRequestAttribute(string $attributeName, $value): ?ServerRequestInterface
     {
@@ -148,10 +150,10 @@ class ConfigFacet implements FacetInterface
             $request = $request->withAttribute($attributeName, $value);
             $requestFacet->setRootRequest($request);
         }
-        
+
         return $request;
     }
-    
+
     /**
      * Returns the values of a certain environment variable or returns the $fallback if the
      * variable was not defined.
@@ -166,10 +168,10 @@ class ConfigFacet implements FacetInterface
         if (getenv($varName) === false) {
             return $fallback;
         }
-        
+
         return getenv($varName);
     }
-    
+
     /**
      * Returns information based on the Extension Configuration (defined in the ext_conf_template.txt)
      *
@@ -195,7 +197,7 @@ class ConfigFacet implements FacetInterface
             return $default;
         }
     }
-    
+
     /**
      * Returns the plugin / extension configuration for ext base extensions
      *
@@ -208,7 +210,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getSingletonOf(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
     }
-    
+
     /**
      * Shortcut to find a TypoScript configuration value using the TypoScriptService
      *
@@ -236,7 +238,7 @@ class ConfigFacet implements FacetInterface
         if (! is_null($default)) {
             $options['default'] = $default;
         }
-        
+
         return $this->getSingletonOf(TypoScriptService::class)->get($path, $options);
     }
 }

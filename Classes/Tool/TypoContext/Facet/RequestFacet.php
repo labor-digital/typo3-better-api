@@ -1,4 +1,6 @@
 <?php
+/** @noinspection TypoSafeNamingInspection */
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,77 +19,55 @@
  * Last modified: 2020.03.19 at 01:19
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
-use LaborDigital\Typo3BetterApi\TypoContext\Facet\RequestFacet;
+use Neunerlei\Arrays\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Context\AspectInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class RequestAspect
+ * Class RequestFacet
  *
- * @package    LaborDigital\Typo3BetterApi\TypoContext\Aspect
- *
- * @deprecated will be removed in v10 -> Use RequestFacet instead
+ * @package LaborDigital\Typo3BetterApi\TypoContext\Facet
  */
-class RequestAspect implements AspectInterface
+class RequestFacet implements FacetInterface
 {
-    use AutomaticAspectGetTrait;
-    
-    /**
-     * @var \LaborDigital\Typo3BetterApi\TypoContext\Facet\RequestFacet
-     */
-    protected $facet;
-    
-    /**
-     * RequestAspect constructor.
-     *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\Facet\RequestFacet  $facet
-     */
-    public function __construct(RequestFacet $facet)
-    {
-        $this->facet = $facet;
-    }
-    
+
     /**
      * Returns the http request object that was passed through the middleware stack.
      * Note that this method returns null if there was no request object found, like in CLI context.
      *
      * @return \Psr\Http\Message\ServerRequestInterface|null
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
     public function getRootRequest(): ?ServerRequestInterface
     {
-        return $this->facet->getRootRequest();
+        // Try to fetch the request from the globals
+        if (! empty($GLOBALS['TYPO3_REQUEST']) && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface) {
+            return $GLOBALS['TYPO3_REQUEST'];
+        }
+        if (! empty($GLOBALS['TYPO3_REQUEST_FALLBACK'])
+            && $GLOBALS['TYPO3_REQUEST_FALLBACK'] instanceof ServerRequestInterface) {
+            return $GLOBALS['TYPO3_REQUEST_FALLBACK'];
+        }
+
+        return null;
     }
-    
+
     /**
      * Allows you to update the root typo3 server request for the current execution context
      *
      * @param   \Psr\Http\Message\ServerRequestInterface  $request
      *
-     * @return \LaborDigital\Typo3BetterApi\TypoContext\Aspect\RequestAspect
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
+     * @return RequestFacet
      */
-    public function setRootRequest(ServerRequestInterface $request): RequestAspect
+    public function setRootRequest(ServerRequestInterface $request): RequestFacet
     {
-        $this->facet->setRootRequest($request);
-        
+        $GLOBALS['TYPO3_REQUEST']          = $request;
+        $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
+
         return $this;
     }
-    
-    /**
-     * @inheritDoc
-     */
-    public function get(string $name)
-    {
-        if ($name === 'FACET') {
-            return $this->facet;
-        }
-        
-        return $this->handleGet($name);
-    }
-    
+
     /**
      * Returns the get value based on the given path of typo's "GeneralUtility::_GET()" method
      *
@@ -95,13 +75,18 @@ class RequestAspect implements AspectInterface
      * @param   mixed              $default  The value to be returned if the searched value was not found.
      *
      * @return mixed|null The requested value or null
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
     public function getGet($path = null, $default = null)
     {
-        return $this->facet->getGet($path, $default);
+        $params  = $_GET;
+        $request = $this->getRootRequest();
+        if ($request !== null) {
+            $params = $request->getQueryParams();
+        }
+
+        return is_null($path) ? $params : Arrays::getPath($params, $path, $default);
     }
-    
+
     /**
      * Returns the post value based on the given path of typo's "GeneralUtility::_POST()" method
      *
@@ -109,60 +94,93 @@ class RequestAspect implements AspectInterface
      * @param   mixed              $default  The value to be returned if the searched value was not found.
      *
      * @return mixed|null The requested value or null
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
     public function getPost($path = null, $default = null)
     {
-        return $this->facet->getPost($path, $default);
+        $params  = $_POST;
+        $request = $this->getRootRequest();
+        if ($request !== null) {
+            $params = $request->getParsedBody();
+        }
+        if (! is_array($params)) {
+            $params = [];
+        }
+
+        return is_null($path) ? $params : Arrays::getPath($params, $path, $default);
     }
-    
+
     /**
      * Returns true if typo's "GeneralUtility::_POST()" method returns a value for $path
      *
      * @param   string|array  $path  The array path to check for
      *
      * @return bool
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
     public function hasPost($path): bool
     {
-        return $this->facet->hasPost($path);
+        $params  = $_POST;
+        $request = $this->getRootRequest();
+        if (! is_array($params)) {
+            $params = [];
+        }
+        if ($request !== null) {
+            $params = $request->getParsedBody();
+        }
+
+        return Arrays::hasPath($params, $path);
     }
-    
+
     /**
      * Returns true if typo's "GeneralUtility::_GET()" method returns a value for $path
      *
      * @param   string|array  $path  The array path to check for
      *
      * @return bool
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
     public function hasGet($path): bool
     {
-        return $this->facet->hasGet($path);
+        $params  = $_GET;
+        $request = $this->getRootRequest();
+        if ($request !== null) {
+            $params = $request->getQueryParams();
+        }
+
+        return Arrays::hasPath($params, $path);
     }
-    
+
     /**
      * Returns the currently defined hostname
      *
      * @param   bool  $withProtocol  If set to true the protocol (http(s)://) will be added to the host
      *
      * @return string
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
     public function getHost(bool $withProtocol = true): string
     {
-        return $this->facet->getHost($withProtocol);
+        if ($withProtocol) {
+            return GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+        }
+
+        return GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY');
     }
-    
+
     /**
-     * Returns the given referrer/origin of the executed request
+     * Returns the given referer/origin of the executed request
      *
      * @return string
-     * @deprecated will be removed in v10 -> Use RequestFacet instead
      */
-    public function getReferrer(): string
+    public function getReferer(): string
     {
-        return $this->facet->getReferrer();
+        $referer = $_SERVER['HTTP_REFERER'] ?? null;
+
+        $request = $this->getRootRequest();
+        if ($request !== null) {
+            $referer = $request->getHeaderLine('referer');
+            if (empty($referer)) {
+                $referer = $request->getHeaderLine('origin');
+            }
+        }
+
+        return $referer;
     }
 }

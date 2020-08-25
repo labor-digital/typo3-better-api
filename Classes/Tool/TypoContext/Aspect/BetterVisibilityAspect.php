@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,31 +18,30 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use TYPO3\CMS\Core\Context\AspectInterface;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\VisibilityAspect;
 
-class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
+class BetterVisibilityAspect extends VisibilityAspect
 {
     use AutomaticAspectGetTrait;
-    
+
     /**
      * @var TypoContext
      */
     protected $context;
-    
+
     /**
      * Inject the typo context instance
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
      */
-    public function injectContext(TypoContext $context)
+    public function injectContext(TypoContext $context): void
     {
         $this->context = $context;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -49,7 +49,7 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     {
         return $this->handleGet($name);
     }
-    
+
     /**
      * @param   bool  $includeHiddenPages
      *
@@ -58,10 +58,10 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     public function setIncludeHiddenPages(bool $includeHiddenPages): BetterVisibilityAspect
     {
         $this->getRootVisibilityAspect()->includeHiddenPages = $includeHiddenPages;
-        
+
         return $this;
     }
-    
+
     /**
      * @param   bool  $includeHiddenContent
      *
@@ -70,10 +70,10 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     public function setIncludeHiddenContent(bool $includeHiddenContent): BetterVisibilityAspect
     {
         $this->getRootVisibilityAspect()->includeHiddenContent = $includeHiddenContent;
-        
+
         return $this;
     }
-    
+
     /**
      * @param   bool  $includeDeletedRecords
      *
@@ -82,34 +82,25 @@ class BetterVisibilityAspect extends VisibilityAspect implements AspectInterface
     public function setIncludeDeletedRecords(bool $includeDeletedRecords): BetterVisibilityAspect
     {
         $this->getRootVisibilityAspect()->includeDeletedRecords = $includeDeletedRecords;
-        
+
         return $this;
     }
-    
-    /**
-     * @inheritDoc
-     */
+
     public function includeHiddenPages(): bool
     {
         return $this->getRootVisibilityAspect()->includeHiddenPages();
     }
-    
-    /**
-     * @inheritDoc
-     */
+
     public function includeHiddenContent(): bool
     {
         return $this->getRootVisibilityAspect()->includeHiddenContent();
     }
-    
-    /**
-     * @inheritDoc
-     */
+
     public function includeDeletedRecords(): bool
     {
         return $this->getRootVisibilityAspect()->includeDeletedRecords();
     }
-    
+
     /**
      * Returns the root context's visibility aspect
      *

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,7 +18,7 @@
  * Last modified: 2020.03.19 at 13:04
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
 use Neunerlei\Inflection\Inflector;
 use ReflectionMethod;
@@ -26,7 +27,7 @@ use TYPO3\CMS\Core\Context\Exception\AspectPropertyNotFoundException;
 
 trait AutomaticAspectGetTrait
 {
-    
+
     /**
      * The internal storage of possible properties to retrieve from this aspect.
      * This storage is automatically generated based on the method names
@@ -34,7 +35,7 @@ trait AutomaticAspectGetTrait
      * @var array|null
      */
     protected $properties;
-    
+
     /**
      * Can be used inside the aspect's "get" method to automatically find the properties based on the public methods.
      *
@@ -47,11 +48,11 @@ trait AutomaticAspectGetTrait
     {
         $properties = $this->findPropertyList();
         if (isset($properties[$name])) {
-            return call_user_func([$this, $properties[$name]]);
+            return $this->{$properties[$name]}();
         }
         throw new AspectPropertyNotFoundException("There is no property called $name in this aspect.");
     }
-    
+
     /**
      * Internal helper to find the the list of possible properties by the public method names of the aspect class
      *
@@ -63,13 +64,12 @@ trait AutomaticAspectGetTrait
             return $this->properties;
         }
         $properties = [];
-        $ref        = new ReflectionObject($this);
-        foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+        foreach ((new ReflectionObject($this))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if ($methodName === 'get') {
                 continue;
             }
-            if (! preg_match('~^(is|has|get)~si', $methodName)) {
+            if (! preg_match('~^(is|has|get|does)~i', $methodName)) {
                 continue;
             }
             foreach ($method->getParameters() as $param) {
@@ -84,7 +84,7 @@ trait AutomaticAspectGetTrait
             $properties[$propertyName] = $methodName;
         }
         $this->properties = $properties;
-        
+
         return $properties;
     }
 }

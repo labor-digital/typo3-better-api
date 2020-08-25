@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,7 +18,7 @@
  * Last modified: 2020.05.12 at 12:46
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Facet;
+namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 /**
  * Class FacetInterface

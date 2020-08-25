@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,32 +18,31 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\TypoContext\Aspect;
+namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use TYPO3\CMS\Core\Context\AspectInterface;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\LanguageAspect;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
-class BetterLanguageAspect extends LanguageAspect implements AspectInterface
+class BetterLanguageAspect extends LanguageAspect
 {
     use AutomaticAspectGetTrait;
-    
+
     /**
      * @var TypoContext
      */
     protected $context;
-    
+
     /**
      * Inject the typo context instance
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
      */
-    public function injectContext(TypoContext $context)
+    public function injectContext(TypoContext $context): void
     {
         $this->context = $context;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -50,7 +50,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->handleGet($name);
     }
-    
+
     /**
      * Returns the instance of the current frontend object
      *
@@ -58,9 +58,9 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
      */
     public function getCurrentFrontendLanguage(): SiteLanguage
     {
-        return $this->context->getSiteAspect()->getSite()->getLanguageById($this->getRootLanguageAspect()->getId());
+        return $this->context->Site()->getCurrent()->getLanguageById($this->getRootLanguageAspect()->getId());
     }
-    
+
     /**
      * Returns the list of all languages the frontend may display
      *
@@ -68,9 +68,9 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
      */
     public function getAllFrontendLanguages(): array
     {
-        return $this->context->getSiteAspect()->getSite()->getLanguages();
+        return $this->context->Site()->getCurrent()->getLanguages();
     }
-    
+
     /**
      * Returns the two char ISO code that defines the backend language
      *
@@ -78,18 +78,18 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
      */
     public function getCurrentBackendLanguage(): string
     {
-        if ($this->context->getBeUserAspect()->hasUser()
-            && isset($this->context->getBeUserAspect()->getUser()->uc['lang'])) {
+        if ($this->context->BeUser()->hasUser()
+            && isset($this->context->BeUser()->getUser()->uc['lang'])) {
             // Read language (empty means "en")
-            $isoCode = $this->context->getBeUserAspect()->getUser()->uc['lang'];
+            $isoCode = $this->context->BeUser()->getUser()->uc['lang'];
             $isoCode = empty($isoCode) ? 'en' : $isoCode;
         } else {
             $isoCode = 'en';
         }
-        
+
         return $isoCode;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -97,7 +97,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->getRootLanguageAspect()->getOverlayType();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -105,7 +105,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->getRootLanguageAspect()->getId();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -113,15 +113,13 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->getRootLanguageAspect()->getContentId();
     }
-    
-    /**
-     * @inheritDoc
-     */
+
+
     public function getFallbackChain(): array
     {
         return $this->getRootLanguageAspect()->getFallbackChain();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -129,7 +127,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->getRootLanguageAspect()->doOverlays();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -137,7 +135,7 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->getRootLanguageAspect()->getLegacyLanguageMode();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -145,7 +143,8 @@ class BetterLanguageAspect extends LanguageAspect implements AspectInterface
     {
         return $this->getRootLanguageAspect()->getLegacyOverlayType();
     }
-    
+
+
     /**
      * Returns the root context's language aspect
      *

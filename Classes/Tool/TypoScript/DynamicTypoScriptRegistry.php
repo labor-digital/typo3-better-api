@@ -52,14 +52,23 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     public function __construct(ConfigState $configState)
     {
         $this->fs       = TempFs::makeInstance('DynamicTypoScript');
-        $this->contents = (array)$configState->get('typo.typoScript.dynamic', []);
+        $this->contents = (array)$configState->get('typo.typoScript.dynamicTypoScript', []);
     }
 
     /**
-     * Adds
+     * Adds a new snippet of dynamic typo script to the registry.
+     * Dynamic typoScript can be included into virtually any typoScript or tsConfig file using
+     * the @import statement.
      *
-     * @param   string  $key
-     * @param   string  $content
+     * For example: You add a snippet with key: "myKey" and the content "config.test = 123"
+     *
+     * In your real typo script file you can now include the dynamic content with @import "dynamic:myKey"
+     * and with that your configuration will be loaded from the dynamic storage instead.
+     *
+     * NOTE: If a key already exists your content will be appended to it.
+     *
+     * @param   string  $key      A unique definition key to add the dynamic content with
+     * @param   string  $content  The typoScript configuration to add for the key
      *
      * @return $this
      */
