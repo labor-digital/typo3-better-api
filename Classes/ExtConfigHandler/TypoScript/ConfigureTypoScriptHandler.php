@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 21:18
+ * Last modified: 2020.08.25 at 10:07
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Core;
+namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractSimpleExtConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
+class ConfigureTypoScriptHandler extends AbstractSimpleExtConfigHandler
 {
+    /**
+     * @var \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     */
+    protected $configurator;
+
     /**
      * @inheritDoc
      */
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->registerInterface(ConfigureTypoCoreInterface::class);
+        $configurator->registerInterface(ConfigureTypoScriptInterface::class);
     }
 
     /**
@@ -42,7 +47,7 @@ class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
      */
     protected function getConfiguratorClass(): string
     {
-        return TypoCoreConfigurator::class;
+        return TypoScriptConfigurator::class;
     }
 
     /**
@@ -50,7 +55,6 @@ class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
      */
     protected function getStateNamespace(): string
     {
-        return 'typo.core';
+        return 'typo.typoScript';
     }
-
 }

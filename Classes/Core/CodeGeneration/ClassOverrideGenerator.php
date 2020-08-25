@@ -414,6 +414,14 @@ if(!class_exists('\\$classToOverride', false)) {
                 return $before . 'protected' . $after;
             }, $source);
 
+        // Replace all "self::" references with "static::" to allow external overrides
+        $source = preg_replace_callback('~(^|\\s|\\t)self::([$\w])~i',
+            static function ($m) {
+                [$foo, $before, $after] = $m;
+
+                return $before . 'static::' . $after;
+            }, $source);
+
         // Combine source
         return $source;
     }

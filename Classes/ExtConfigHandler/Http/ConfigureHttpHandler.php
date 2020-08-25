@@ -23,10 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Http;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class ConfigureHttpHandler extends AbstractExtConfigHandler
+class ConfigureHttpHandler
 {
     /**
      * @inheritDoc

@@ -29,10 +29,12 @@ use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
 use LaborDigital\T3BA\Core\Override\ExtendedCacheManager;
 use LaborDigital\T3BA\Core\Override\ExtendedContainerBuilder;
+use LaborDigital\T3BA\Core\Override\ExtendedTypoScriptParser;
 use LaborDigital\T3BA\Event\KernelBootEvent;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 
 class ClassOverrideStage implements BootStageInterface
 {
@@ -42,6 +44,7 @@ class ClassOverrideStage implements BootStageInterface
             Bootstrap::class        => ExtendedBootstrap::class,
             ContainerBuilder::class => ExtendedContainerBuilder::class,
             CacheManager::class     => ExtendedCacheManager::class,
+            TypoScriptParser::class => ExtendedTypoScriptParser::class,
         ];
 
     /**

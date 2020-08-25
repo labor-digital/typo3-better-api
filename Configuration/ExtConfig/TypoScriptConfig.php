@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 22:00
+ * Last modified: 2020.08.25 at 12:56
  */
 
 declare(strict_types=1);
@@ -27,19 +27,14 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\TypoScript\ConfigureTypoScriptInterface;
 use LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 
-class TestConfig implements ConfigureTypoScriptInterface
+class TypoScriptConfig implements ConfigureTypoScriptInterface
 {
     /**
      * @inheritDoc
      */
     public static function configure(TypoScriptConfigurator $configurator, ExtConfigContext $context): void
     {
-        $configurator->registerDynamicContent('myTest', 'config.test = 123');
-
-        $configurator->registerImport('dynamic:myTest');
-
-        $configurator->registerConstants('myExt.constant = 3');
-        $configurator->registerSetup('config.setup = {$myExt.constant}');
+        $configurator->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'T3BA - Generic TypoScript');
     }
 
 }

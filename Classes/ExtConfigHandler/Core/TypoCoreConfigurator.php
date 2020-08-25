@@ -23,14 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContextAwareInterface;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContextAwareTrait;
+use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
 
-class TypoCoreConfigurator implements ExtConfigContextAwareInterface
+class TypoCoreConfigurator extends AbstractExtConfigConfigurator
 {
-    use ExtConfigContextAwareTrait;
 
     /**
      * The list of registered x classes
