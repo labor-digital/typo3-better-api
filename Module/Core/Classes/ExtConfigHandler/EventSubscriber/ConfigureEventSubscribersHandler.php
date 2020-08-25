@@ -25,12 +25,13 @@ namespace LaborDigital\T3BA\Core\ExtConfigHandler\EventSubscriber;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ConfigureEventSubscribersHandler extends AbstractExtConfigHandler
+class ConfigureEventSubscribersHandler extends AbstractExtConfigHandler implements StandAloneHandlerInterface
 {
     /**
      * @var \LaborDigital\T3BA\Core\ExtConfigHandler\EventSubscriber\CompiledEventSubscription
@@ -65,6 +66,7 @@ class ConfigureEventSubscribersHandler extends AbstractExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $configurator->registerLocation('Classes/EventHandler');
+        $configurator->registerLocation('Classes/ExtConfigHandler/**');
         $configurator->registerInterface(LazyEventSubscriberInterface::class);
         $configurator->registerInterface(EventSubscriberInterface::class);
     }

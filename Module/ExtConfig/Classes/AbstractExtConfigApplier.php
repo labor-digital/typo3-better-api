@@ -1,5 +1,5 @@
-<?php /** @noinspection PhpMissingStrictTypesDeclarationInspection */
-/**
+<?php
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 11:25
+ * Last modified: 2020.08.24 at 21:41
  */
 
-(function () {
-    $bus = \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance();
-    $bus->dispatch(new \LaborDigital\T3BA\Core\Event\ExtConfigLoadedEvent());
-    $bus->dispatch(new \LaborDigital\T3BA\Core\Event\ExtLocalConfLoadedEvent());
-})();
+declare(strict_types=1);
 
+
+namespace LaborDigital\T3BA\ExtConfig;
+
+
+use Neunerlei\Configuration\State\ConfigState;
+
+abstract class AbstractExtConfigApplier implements ExtConfigApplierInterface
+{
+
+    /**
+     * @var ConfigState
+     */
+    protected $state;
+
+    /**
+     * @inheritDoc
+     */
+    public function injectState(ConfigState $state): void
+    {
+        $this->state = $state;
+    }
+
+}

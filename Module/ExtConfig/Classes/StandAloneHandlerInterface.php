@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.25 at 23:52
+ * Last modified: 2020.08.24 at 20:53
  */
 
 declare(strict_types=1);
@@ -22,8 +22,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfig;
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext as LegacyExtConfigContext;
-
-class ExtConfigContext extends LegacyExtConfigContext
+/**
+ * Interface StandAloneHandlerInterface
+ *
+ * Implement this interface to all handlers you don't want to trigger on the ExtLocalConf configuration point
+ *
+ * @package LaborDigital\T3BA\ExtConfig
+ */
+interface StandAloneHandlerInterface
 {
+
 }

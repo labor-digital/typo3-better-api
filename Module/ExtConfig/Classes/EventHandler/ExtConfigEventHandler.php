@@ -23,24 +23,61 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig\EventHandler;
 
 
-use LaborDigital\T3BA\Core\Event\ExtLocalConfLoadedEvent;
+use LaborDigital\T3BA\Core\Event\ExtConfigLoadedEvent;
+use LaborDigital\T3BA\ExtConfig\ExtConfigService;
+use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
+use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
+use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
+use Psr\Container\ContainerInterface;
 
 class ExtConfigEventHandler implements LazyEventSubscriberInterface
 {
+
+    /**
+     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
+     */
+    protected $configService;
+
+    /**
+     * @var \Psr\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * ExtConfigEventHandler constructor.
+     *
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigService  $configService
+     * @param   \Psr\Container\ContainerInterface              $container
+     */
+    public function __construct(ExtConfigService $configService, ContainerInterface $container)
+    {
+        $this->configService = $configService;
+        $this->container     = $container;
+    }
 
     /**
      * @inheritDoc
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
-        $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
+        $subscription->subscribe(ExtConfigLoadedEvent::class, 'onExtConfigLoaded', ['priority' => 100]);
     }
 
-    public function onExtLocalConfLoaded(ExtLocalConfLoadedEvent $event): void
+    /**
+     * Executes the ext config loader and provides the config state to the container
+     */
+    public function onExtConfigLoaded(): void
     {
-        dbge($event);
+        $loader = $this->configService->makeLoader('extLocalConf');
+        $loader->setHandlerFinder(new FilteredHandlerFinder([StandAloneHandlerInterface::class], []));
+        $loader->setContainer($this->container);
+        $loader->setCache(null); // @todo remove this
+        $state = $loader->load();
+
+        // Inject the state into the container
+        $this->container->set(ConfigState::class, $state);
     }
 
 }

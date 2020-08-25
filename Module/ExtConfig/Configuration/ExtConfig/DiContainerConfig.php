@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\ExtConfig\Configuration\ExtConfig;
 use LaborDigital\T3BA\Core\ExtConfigHandler\DependencyInjection\ConfigureDependencyInjectionInterface;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
+use Neunerlei\Configuration\State\ConfigState;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -51,10 +52,10 @@ class DiContainerConfig implements ConfigureDependencyInjectionInterface
 
         // Services
         $containerBuilder->findDefinition(ExtConfigContext::class)->setPublic(true)->setSynthetic(true);
-        $containerBuilder->setDefinition(
-            ExtConfigService::class,
-            new Definition(ExtConfigService::class)
-        )->setPublic(true)->setSynthetic(true);
+        $containerBuilder->setDefinition(ExtConfigService::class, new Definition(ExtConfigService::class))
+                         ->setPublic(true)->setSynthetic(true);
+        $containerBuilder->setDefinition(ConfigState::class, new Definition(ConfigState::class))
+                         ->setPublic(true)->setSynthetic(true);
     }
 
     /**

@@ -14,20 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.22 at 21:56
+ * Last modified: 2020.08.24 at 21:19
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Event;
 
-/**
- * Class ExtLocalConfLoadedEvent
- *
- * Dispatched after all extLocalConf.php files of the extensions have been loaded
- *
- * @package LaborDigital\T3BA\Core\Event
- */
-class ExtLocalConfLoadedEvent
+namespace LaborDigital\T3BA\ExtConfig\ExtConfigHandler\Core;
+
+
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+
+interface ConfigureTypoCoreInterface
 {
+
+    /**
+     * Allows you to configure TYPO3 core options, that did not fit in other categories
+     *
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigHandler\Core\TypoCoreConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                            $context
+     */
+    public static function configure(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
+
 }

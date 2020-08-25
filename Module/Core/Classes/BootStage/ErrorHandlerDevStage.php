@@ -28,6 +28,7 @@ use Error;
 use LaborDigital\T3BA\Core\Event\ErrorFilterEvent;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
+use LaborDigital\T3BA\Core\TempFs\TempFs;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Core\Environment;
@@ -58,9 +59,12 @@ class ErrorHandlerDevStage implements BootStageInterface
         $error = $event->getError();
         if ($error instanceof ArgumentCountError
             || $error instanceof InvalidArgumentException
+            || ($error instanceof \InvalidArgumentException
+                && preg_match('~Event listener ".*?" is not callable~i', $error->getMessage()))
             || ($error instanceof Error && preg_match('~class \'.*?\' not found~i', $error->getMessage()))
         ) {
             Bootstrap::createCache('di')->getBackend()->forceFlush();
+            TempFs::makeInstance('')->flush();
         }
     }
 
