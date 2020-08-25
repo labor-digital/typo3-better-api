@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -16,8 +14,28 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 18:39
+ * Last modified: 2020.03.18 at 13:47
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\CommandRegistrationEvent())->getCommands();
+declare(strict_types=1);
+
+namespace LaborDigital\T3BA\Event;
+
+/**
+ * Class TcaCompletelyLoadedEvent
+ *
+ * Dispatched when the TCA is being generated, after the base tca and the overrides have been loaded and before the TCA
+ * is stored in the cache
+ *
+ * Special priorities:
+ * 500: EXT_CONFIG_BEFORE_TCA_OVERRIDE
+ * 400: EXT_CONFIG_TCA_OVERRIDE
+ * 300: TCA_OVERRIDE_FILTER
+ * 200: EXT_CONFIG_DYNAMIC_TYPO_SCRIPT
+ * 100: PID_TCA_FILTER
+ *
+ * @package LaborDigital\T3BA\Core\Event
+ */
+class TcaCompletelyLoadedEvent
+{
+}

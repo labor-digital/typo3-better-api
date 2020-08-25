@@ -1,7 +1,5 @@
 <?php
-declare(strict_types=1);
-
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +14,21 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 18:39
+ * Last modified: 2020.08.24 at 22:06
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\CommandRegistrationEvent())->getCommands();
+declare(strict_types=1);
+
+
+namespace LaborDigital\T3BA\ExtConfigHandler\Http;
+
+
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator;
+
+interface ConfigureHttpInterface
+{
+
+    public static function configure(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
+
+}

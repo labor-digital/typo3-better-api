@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,13 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 18:39
+ * Last modified: 2020.08.22 at 22:36
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\CommandRegistrationEvent())->getCommands();
+namespace LaborDigital\T3BA\Core\TempFs\Exception;
+
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
+
+class TempFsException extends BetterApiException
+{
+}

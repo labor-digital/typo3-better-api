@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,205 +14,210 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.21 at 16:01
+ * Last modified: 2020.08.24 at 20:17
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigBeforeLoadEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigClassListFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigInitEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigLoadedEvent;
-use LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionInterface;
-use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList;
-use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use Neunerlei\EventBus\EventBusInterface;
-use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
-use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
-class ExtConfigService implements LazyEventSubscriberInterface
+namespace LaborDigital\T3BA\ExtConfig;
+
+
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Event\ConfigLoaderFilterEvent;
+use Neunerlei\Configuration\Loader\Loader;
+use Neunerlei\PathUtil\Path;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Package\PackageManager;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+class ExtConfigService implements SingletonInterface
 {
-    
     /**
-     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     * The list of default handler locations to traverse.
+     * This is a public "api" and can be extended if you need to
      */
-    protected $container;
-    
+    public static $handlerLocations
+        = [
+            'Classes/ExtConfigHandler/**',
+        ];
+
     /**
-     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
+     * @var \TYPO3\CMS\Core\Package\PackageManager
      */
-    protected $typoContext;
-    
+    protected $packageManager;
+
     /**
-     * @var \Neunerlei\EventBus\EventBusInterface
+     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
-    
+
     /**
-     * A list of all registered extensions
+     * @var \LaborDigital\T3BA\Core\TempFs\TempFs
+     */
+    protected $fs;
+
+    /**
+     * The list of collected root locations
      *
      * @var array
      */
-    protected static $registeredExtensions = [];
-    
+    protected $rootLocations;
+
+    /**
+     * An internal cache between class names and their matching namespaces
+     *
+     * @var array
+     */
+    protected $classNamespaceCache = [];
+
     /**
      * ExtConfigService constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $typoContext
-     * @param   \Neunerlei\EventBus\EventBusInterface                          $eventBus
+     * @param   \TYPO3\CMS\Core\Package\PackageManager         $packageManager
+     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3BA\Core\TempFs\TempFs          $fs
      */
-    public function __construct(
-        TypoContainerInterface $container,
-        TypoContext $typoContext,
-        EventBusInterface $eventBus
-    ) {
-        $this->container   = $container;
-        $this->typoContext = $typoContext;
-        $this->eventBus    = $eventBus;
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public function __construct(PackageManager $packageManager, TypoEventBus $eventBus, TempFs $fs)
     {
-        $subscription->subscribe(ExtConfigInitEvent::class, '__init');
+        $this->packageManager = $packageManager;
+        $this->eventBus       = $eventBus;
+        $this->fs             = $fs;
     }
-    
+
     /**
-     * Internal helper to register an extension using the betterExtConfig() function
+     * Returns the local storage filesystem instance
      *
-     * @param   string  $extKeyWithVendor
-     * @param   string  $configurationClass
-     * @param   array   $options
-     *
-     * @see betterExtConfig()
-     * @internal
+     * @return \LaborDigital\T3BA\Core\TempFs\TempFs
      */
-    public static function __registerExtension(
-        string $extKeyWithVendor,
-        string $configurationClass,
-        array $options = []
-    ): void {
-        static::$registeredExtensions[] = [$extKeyWithVendor, $configurationClass, $options];
-    }
-    
-    /**
-     * EventHandler which collect's the registered ext config objects and initializes the option configuration.
-     *
-     * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
-     */
-    public function __init()
+    public function getFs(): TempFs
     {
-        // Create the list of available configuration objects
-        $e = new ExtConfigBeforeLoadEvent(static::$registeredExtensions);
-        $this->eventBus->dispatch($e);
-        $rawConfigList = $e->getRawConfigList();
-        
-        // Pass 1: Validate configuration
-        $configList = [];
-        foreach ($rawConfigList as $rawConfig) {
-            [$extKeyWithVendor, $configurationClass, $options] = $rawConfig;
-            // Parse extKey and vendor
-            $extKey          = Naming::extkeyWithoutVendor($extKeyWithVendor);
-            $vendor          = ucfirst(Naming::vendorFromExtkey($extKeyWithVendor));
-            $isExtension     = in_array(ExtConfigExtensionInterface::class, class_implements($configurationClass));
-            $isConfiguration = in_array(ExtConfigInterface::class, class_implements($configurationClass));
-            
-            // Validate the class
-            if (isset($configList[$configurationClass])) {
-                // Ignore double registration
-                if ($configList[$configurationClass]['extKey'] === $extKey
-                    && $configList[$configurationClass]['vendor'] === $vendor) {
-                    continue;
+        return $this->fs;
+    }
+
+    /**
+     * Creates the new, preconfigured instance of an ext config loader
+     *
+     * @param   string  $type
+     *
+     * @return \Neunerlei\Configuration\Loader\Loader
+     */
+    public function makeLoader(string $type): Loader
+    {
+        $appContext = Environment::getContext();
+        $loader     = GeneralUtility::makeInstance(Loader::class, $type, (string)$appContext);
+        $loader->setConfigContextClass(ExtConfigContext::class);
+        $loader->setCache($this->fs->getCache());
+        foreach ($this->getRootLocations() as $rootLocation) {
+            $loader->registerRootLocation(...$rootLocation);
+        }
+        foreach (static::$handlerLocations as $handlerLocation) {
+            $loader->registerHandlerLocation($handlerLocation);
+        }
+
+        $this->eventBus->dispatch(($e = new ConfigLoaderFilterEvent($loader)));
+
+        return $e->getLoader();
+    }
+
+    /**
+     * Returns a list of all namespaces for each activated ext key
+     *
+     * @return array
+     */
+    public function getExtKeyNamespaceMap(): array
+    {
+        return $this->getNamespaceMaps()['extKeyNamespace'];
+    }
+
+    /**
+     * Returns the list of configuration php namespaces and the matching file paths for all active extensions
+     *
+     * @return array
+     */
+    public function getAutoloaderMap(): array
+    {
+        return $this->getNamespaceMaps()['autoload'];
+    }
+
+    /**
+     * Finds the list of all possible root locations and returns them
+     * in form of an array, containing arrays with both the path and namespace generator
+     *
+     * @return array
+     */
+    protected function getRootLocations(): array
+    {
+        if (is_array($this->rootLocations)) {
+            return $this->rootLocations;
+        }
+
+        $rootLocations = [];
+        foreach ($this->packageManager->getActivePackages() as $package) {
+            $rootLocations[] = [
+                $package->getPackagePath(),
+                function ($file, string $class) use ($package) {
+                    if (isset($this->classNamespaceCache[$class])) {
+                        return $this->classNamespaceCache[$class];
+                    }
+
+                    $classParts = array_filter(explode('\\', $class));
+                    if (count($classParts) === 1) {
+                        $namespace = $package->getPackageKey();
+                    } else {
+                        $namespace = reset($classParts) . '.' . $package->getPackageKey();
+                    }
+
+                    return $this->classNamespaceCache[$class] = $namespace;
+                },
+            ];
+        }
+
+        return $this->rootLocations = $rootLocations;
+    }
+
+    /**
+     * Returns the namespace lists for the auto loader and the ext-key namespace map
+     *
+     * @return array[]
+     */
+    protected function getNamespaceMaps(): array
+    {
+        $cache    = $this->fs->getCache();
+        $cacheKey = 'namespaceMaps-' . $this->packageManager->getCacheIdentifier();
+
+        if ($cache->has($cacheKey)) {
+            return $cache->get($cacheKey);
+        }
+
+        $autoloadMap        = [];
+        $extKeyNamespaceMap = [];
+        foreach ($this->packageManager->getActivePackages() as $package) {
+            $autoload = $package->getValueFromComposerManifest('autoload');
+            if (! is_object($autoload)) {
+                continue;
+            }
+            if (! is_object($autoload->{'psr-4'})) {
+                continue;
+            }
+            foreach ((array)$autoload->{'psr-4'} as $namespace => $directory) {
+                $directory = trim($directory, '/.');
+                if ($directory === 'Classes' || str_ends_with($directory, '/Classes')) {
+                    $extKeyNamespaceMap[$package->getPackageKey()][$namespace] = $directory;
+                    $potentialConfigDir                                        = Path::join($package->getPackagePath(),
+                        dirname($directory), 'Configuration');
+                    if (is_dir($potentialConfigDir)) {
+                        $autoloadMap[$namespace . 'Configuration\\'] = $potentialConfigDir;
+                    }
                 }
-                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor
-                                             . ' was already registered!');
             }
-            if (! class_exists($configurationClass)) {
-                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor
-                                             . ' was not found!');
-            }
-            if (! $isExtension && ! $isConfiguration) {
-                throw new ExtConfigException('The given class: ' . $configurationClass . ' for: ' . $extKeyWithVendor
-                                             . ' has to implement the ' . ExtConfigInterface::class . ' interface!');
-            }
-            
-            // Store configuration
-            $options['class']                = $configurationClass;
-            $options['extKey']               = $extKey;
-            $options['vendor']               = $vendor;
-            $options['isExtension']          = $isExtension;
-            $options['isConfiguration']      = $isConfiguration;
-            $configList[$configurationClass] = $options;
         }
-        
-        // Sort the configuration list
-        $configList = ConfigSorter::sortByDependencies($configList);
-        
-        // Create the ext config context
-        $context = $this->container->get(ExtConfigContext::class, ['args' => [$this->typoContext]]);
-        
-        // Create extension registry
-        $extensionRegistry = $context->ExtensionRegistry;
-        
-        // Allow filtering
-        $e = new ExtConfigClassListFilterEvent($configList, $context, $extensionRegistry);
-        $this->eventBus->dispatch($e);
-        $extensionRegistry = $e->getExtensionRegistry();
-        $configList        = $e->getConfigList();
-        $context           = $e->getContext();
-        
-        // Pass 2: Collect extensions
-        foreach ($configList as $config) {
-            if (! $config['isExtension']) {
-                continue;
-            }
-            
-            // Prepare the context
-            $context->setExtKey($config['extKey']);
-            $context->setVendor($config['vendor']);
-            
-            // Call the extension handler
-            call_user_func([$config['class'], 'extendExtConfig'], $extensionRegistry, $context);
-        }
-        
-        // Clear the context
-        $context->setExtKey('LIMBO');
-        $context->setVendor('LIMBO');
-        
-        // Call the extension handlers
-        $extensionRegistry->notifyExtensionHandlers();
-        
-        // Create the option list
-        $optionList = $this->container->get(ExtConfigOptionList::class, ['args' => [$context]]);
-        $context->__injectOptionList($optionList);
-        
-        // Pass 3: Apply the configuration passes
-        foreach ($configList as $config) {
-            if (! $config['isConfiguration']) {
-                continue;
-            }
-            
-            /** @var \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigInterface $i */
-            $i = $this->container->get($config['class']);
-            
-            // Prepare the context
-            $context->setExtKey($config['extKey']);
-            $context->setVendor($config['vendor']);
-            
-            // Apply the configuration
-            $i->configure($optionList, $context);
-        }
-        
-        // Clear the context
-        $context->setExtKey('LIMBO');
-        $context->setVendor('LIMBO');
-        
-        // Allow filtering
-        $this->eventBus->dispatch(new ExtConfigLoadedEvent($context));
+
+        $maps = ['autoload' => $autoloadMap, 'extKeyNamespace' => $extKeyNamespaceMap];
+        $cache->set($cacheKey, $maps);
+
+        return $maps;
     }
 }

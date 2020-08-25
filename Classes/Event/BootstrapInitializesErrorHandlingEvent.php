@@ -1,7 +1,5 @@
 <?php
-declare(strict_types=1);
-
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +14,22 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 18:39
+ * Last modified: 2020.08.23 at 15:34
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\CommandRegistrationEvent())->getCommands();
+declare(strict_types=1);
+
+
+namespace LaborDigital\T3BA\Event;
+
+/**
+ * Class BootstrapInitializesErrorHandlingEvent
+ *
+ * Emitted when the TYPO3 bootstrap initializes the error handling
+ *
+ * @package LaborDigital\T3BA\Core\Event
+ */
+class BootstrapInitializesErrorHandlingEvent
+{
+
+}

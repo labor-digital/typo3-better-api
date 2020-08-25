@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -16,8 +14,20 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 18:39
+ * Last modified: 2020.03.18 at 14:25
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\CommandRegistrationEvent())->getCommands();
+declare(strict_types=1);
+
+namespace LaborDigital\T3BA\Event\CoreHookAdapter;
+
+interface CoreHookEventInterface
+{
+
+    /**
+     * Returns the name of the used adapter class for this event
+     *
+     * @return string
+     */
+    public static function getAdapterClass(): string;
+}
