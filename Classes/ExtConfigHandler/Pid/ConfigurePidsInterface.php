@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,19 +18,20 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids;
+namespace LaborDigital\T3BA\ExtConfigHandler\Pid;
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface PidConfigurationInterface
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+
+interface ConfigurePidsInterface
 {
     /**
      * Is used to collect the pids this configuration provides
      *
-     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Pids\PidCollector  $collector
-     * @param   ExtConfigContext                                                            $context
+     * @param   PidCollector      $collector
+     * @param   ExtConfigContext  $context
      *
-     * @return mixed
+     * @return void
      */
-    public static function configurePids(PidCollector $collector, ExtConfigContext $context);
+    public static function configurePids(PidCollector $collector, ExtConfigContext $context): void;
 }

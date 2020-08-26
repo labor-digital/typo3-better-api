@@ -20,10 +20,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextException;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
-class FeUserAspect extends AbstractBetterUserAspect
+class FeUserAspect extends AbstractBetterUserAspect implements PublicServiceInterface
 {
 
     /**

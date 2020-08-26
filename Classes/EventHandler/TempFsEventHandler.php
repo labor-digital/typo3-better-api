@@ -28,7 +28,7 @@ use LaborDigital\T3BA\Event\CacheClearedEvent;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
-class TempFsClearHandler implements LazyEventSubscriberInterface
+class TempFsEventHandler implements LazyEventSubscriberInterface
 {
     /**
      * @inheritDoc

@@ -23,31 +23,27 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Configuration\ExtConfig;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\ConfigureTypoScriptInterface;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
-use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
+use LaborDigital\T3BA\ExtConfigHandler\Pid\ConfigurePidsInterface;
+use LaborDigital\T3BA\ExtConfigHandler\Pid\PidCollector;
 
-class TestConfig implements ConfigureTypoScriptInterface
+class TestConfig implements ConfigurePidsInterface
 {
-    use StaticContainerAwareTrait;
-
     /**
      * @inheritDoc
      */
-    public static function configure(TypoScriptConfigurator $configurator, ExtConfigContext $context): void
-    {
-        $ts = static::getSingletonOf(TypoScriptService::class);
-        dbge($ts->get());
-
-        $configurator->registerDynamicContent('myTest', 'config.test = 123');
-
-        $configurator->registerImport('dynamic:myTest');
-
-        $configurator->registerSelectablePageTsConfigFile('EXT:{{extkey}}/Configuration/PageTs/TestPageTs.typoscript');
-        $configurator->registerConstants('myExt.constant = 3');
-        $configurator->registerSetup('config.setup = {$myExt.constant}');
+    public static function configurePids(
+        PidCollector $collector,
+        ExtConfigContext $context
+    ): void {
+        $collector->set('foo', 1);
+        $collector->setMultiple([
+            'bar'  => [
+                'foo' => 123,
+                'baz' => 456,
+            ],
+            'test' => 123,
+        ]);
     }
 
 }

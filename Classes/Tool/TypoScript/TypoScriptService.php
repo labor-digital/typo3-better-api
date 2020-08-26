@@ -18,30 +18,13 @@
  */
 
 declare(strict_types=1);
-/**
- * Copyright 2020 LABOR.digital
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Last modified: 2020.03.18 at 13:47
- */
 
 namespace LaborDigital\T3BA\Tool\TypoScript;
 
 use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
-use LaborDigital\Typo3BetterApi\BetterApiException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -140,10 +123,15 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
                         return $v;
                     }
 
-                    throw new NotImplementedException();
+                    if ($v === null) {
+                        return $this->TypoContext()->Pid()->getCurrent();
+                    }
 
+                    if (is_numeric($v)) {
+                        return (int)$v;
+                    }
 
-                    $this->configurationManager->setCurrentPid($this->TypoContext->getPidAspect()->getCurrentPid());
+                    return $this->TypoContext()->Pid()->get($v);
 
                 },
             ],
@@ -247,9 +235,9 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      * @param   string|array  $selector  The access path where to find the content element in typoScript
      *
      * @return string
-     * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+     * @throws BetterApiException
      */
-    public function renderContentObjectWith($selector)
+    public function renderContentObjectWith($selector): string
     {
         $type   = $this->get($selector, ['getType']);
         $config = $this->get($selector);
@@ -268,6 +256,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      * @param   array  $options  Additional config options
      *
      * @return array|mixed|null
+     * @noinspection UnSafeIsSetOverArrayInspection
      */
     protected function getPathHelper(array $config, $path, array $options = [])
     {
@@ -289,7 +278,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
         $lastPathPart = rtrim(array_pop($path), '.');
         if (! empty($path)) {
             // Make path valid for typoScript lookups
-            $path   = array_map(function ($v) {
+            $path   = array_map(static function ($v) {
                 // Remove tailing dots
                 $v = rtrim($v, "\.");
                 // Ignore wildcards
@@ -303,7 +292,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
 
                 return $v . '.';
             }, $path);
-            $config = Arrays::getPath($config, $path);
+            $config = Arrays::getPath($config, $path) ?? [];
         }
 
         // Handle multi value last part
@@ -312,7 +301,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
             $result       = [];
             foreach (array_map('trim', explode(',', $lastPathPart)) as $key) {
                 if ($options['getType']) {
-                    $result[$key] = isset($config[$key]) ? $config[$key] : $options['default'];
+                    $result[$key] = $config[$key] ?? $options['default'];
                 } elseif (isset($config[$key . '.'])) {
                     $result[$key] = $config[$key . '.'];
                 } elseif (isset($config[$key])) {
@@ -327,15 +316,9 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
 
         // Find the last part
         if ($options['getType']) {
-            return isset($config[$lastPathPart]) ? $config[$lastPathPart] : $options['default'];
-        }
-        if (isset($config[$lastPathPart . '.'])) {
-            return $config[$lastPathPart . '.'];
-        }
-        if (isset($config[$lastPathPart])) {
-            return $config[$lastPathPart];
+            return $config[$lastPathPart] ?? $options['default'];
         }
 
-        return $options['default'];
+        return $config[$lastPathPart . '.'] ?? $config[$lastPathPart] ?? $options['default'];
     }
 }

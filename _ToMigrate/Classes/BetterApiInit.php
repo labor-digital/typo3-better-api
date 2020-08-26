@@ -33,7 +33,6 @@ use LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementNode;
 use LaborDigital\Typo3BetterApi\BackendForms\CustomWizard\CustomWizardNode;
 use LaborDigital\Typo3BetterApi\BackendForms\Node\PathSegmentSlugElementNode;
 use LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewService;
-use LaborDigital\Typo3BetterApi\Container\LazyConstructorInjection\LazyConstructorInjectionHook;
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\ObjectContainerAdapter;
@@ -51,20 +50,13 @@ use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedSiteConfigura
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\Typo3Console\ExtendedScripts;
 use LaborDigital\Typo3BetterApi\CoreModding\CodeGeneration\ClassOverrideGenerator;
 use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService;
-use LaborDigital\Typo3BetterApi\Domain\DbService\DbService;
-use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface;
 use LaborDigital\Typo3BetterApi\Error\DebugExceptionHandler;
 use LaborDigital\Typo3BetterApi\Error\ProductionExceptionHandler;
-use LaborDigital\Typo3BetterApi\Event\Dispatcher\TypoDispatcher;
 use LaborDigital\Typo3BetterApi\Event\Events\AfterExtLocalConfLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\BootstrapFailsafeDefinitionEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\ClassSchemaFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\InitEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\InitInstanceFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\PackageManagerCreatedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\Temporary\BootstrapContainerFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\ListenerProvider\TypoListenerProvider;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use LaborDigital\Typo3BetterApi\ExtConfig\Builtin\BetterApiExtConfig;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigService;
@@ -87,9 +79,7 @@ use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
-use TYPO3\CMS\Extbase\Reflection\ClassSchema;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class BetterApiInit
@@ -152,50 +142,7 @@ class BetterApiInit
      */
     public static function init(ClassLoader $composerClassLoader): void
     {
-        if (static::$initStarted) {
-            return;
-        }
-        static::$initStarted = true;
-
-        // Create the event bus
-        $eventBus         = new TypoEventBus();
-        $listenerProvider = new TypoListenerProvider();
-        $eventBus->setConcreteListenerProvider($listenerProvider);
-        $dispatcher = new TypoDispatcher($listenerProvider);
-        $eventBus->setConcreteDispatcher($dispatcher);
-        TypoEventBus::setInstance($eventBus);
-
-        // Load the global events
-        if (isset($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'])
-            && is_array($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'])) {
-            foreach (
-                $GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'] as $event => $handler
-            ) {
-                $eventBus->addListener($event, $handler);
-            }
-        }
-        unset($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'], $event, $handler);
-
-        // Register the override generator's auto-loader
-        ClassOverrideGenerator::init($composerClassLoader);
-
-        // Create myself
-        $self = new static($eventBus);
-
-        // Allow replacement of this object
-        $e = new InitInstanceFilterEvent($self, $eventBus);
-        $eventBus->dispatch($e);
-        $self = $e->getInitInstance();
-
-        // Apply the first step of our bootstrap
-        $self->applyCoreModding();
-        $self->applyDebuggerConfig();
         include __DIR__ . '/functions.php';
-
-        // Check if we need to apply the compatibility script for helhum' console
-        if (PHP_SAPI === 'cli') {
-            $self->applyHelhumConsoleCompatibility();
-        }
 
 
         // Do remaining bootstrap
@@ -322,82 +269,12 @@ class BetterApiInit
      */
     protected function setupContainer(): void
     {
-        // Create the container instance
-        $this->container = TypoContainer::getInstance();
-
         // Register our overwrite implementations
         $this->container->setClassFor(
             ExtendedCacheManager::class,
             CacheManager::class
         );
 
-        // Register implementations
-        $this->container->setClassFor(
-            DbServiceInterface::class,
-            DbService::class
-        );
-        $this->container->setClassFor(
-            EventBusInterface::class,
-            TypoEventBus::class
-        );
-        $this->container->setClassFor(
-            TypoContainerInterface::class,
-            TypoContainer::class
-        );
-
-        // Register existing instances
-        /** @noinspection PhpParamsInspection */
-        $this->container->set(TypoEventBus::class, $this->eventBus);
-
-        // Inject the container and the signal slot dispatcher into the event dispatcher
-        $this->addSignalSlotDispatcherToEventDispatcher();
-
-        // Register the lazy constructor injection hook
-        $this->eventBus->addLazySubscriber(LazyConstructorInjectionHook::class);
-        $this->eventBus->dispatch(new ClassSchemaFilterEvent(
-            new ClassSchema(LazyConstructorInjectionHook::class),
-            LazyConstructorInjectionHook::class
-        ));
-    }
-
-    /**
-     * Adds additional dependencies to the event dispatcher so it is linked
-     * with the signal slot dispatcher
-     */
-    protected function addSignalSlotDispatcherToEventDispatcher(): void
-    {
-        $signalSlotDispatcher = $this->container->get(Dispatcher::class);
-
-        // Update the event bus itself
-        $this->eventBus->setContainer($this->container);
-
-        // Update the listener provider
-        $listenerProvider = $this->eventBus->getConcreteListenerProvider();
-        if ($listenerProvider instanceof TypoListenerProvider) {
-            $listenerProvider->setHighLevelDependencies($signalSlotDispatcher, $this->container);
-        }
-
-        // Update the dispatcher instance
-        $dispatcher = $this->eventBus->getConcreteDispatcher();
-        if ($dispatcher instanceof TypoDispatcher) {
-            $dispatcher->setSignalSlotDispatcher($signalSlotDispatcher);
-        }
-    }
-
-    /**
-     * Dispatch the init event
-     */
-    protected function dispatchInitEvent(): void
-    {
-        $this->eventBus->dispatch(new InitEvent());
-    }
-
-    /**
-     * Creates the app context object
-     */
-    protected function setupTypoContext(): void
-    {
-        $this->context = $this->container->get(TypoContext::class);
     }
 
     /**

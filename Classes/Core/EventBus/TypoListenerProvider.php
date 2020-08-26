@@ -22,9 +22,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\EventBus;
 
 use LaborDigital\T3BA\Core\DependencyInjection\MiniContainer;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventAdapterInterface;
 use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\Dispatcher\EventBusListenerProvider;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
@@ -55,10 +55,8 @@ class TypoListenerProvider extends ListenerProvider
 
     /**
      * TypoListenerProvider constructor.
-     *
-     * @param   \Psr\Container\ContainerInterface|null  $container
      */
-    public function __construct(ContainerInterface $container = null)
+    public function __construct()
     {
         parent::__construct(new MiniContainer());
         $this->concreteListenerProvider = new EventBusListenerProvider();
@@ -83,6 +81,7 @@ class TypoListenerProvider extends ListenerProvider
             'service' => $service,
             'method'  => $method,
         ];
+        $this->registerCoreHookEventIfRequired($event);
 
         $this->concreteListenerProvider->addListener($event, function ($e) use ($service, $method) {
             $this->getCallable($service, $method)($e);
@@ -125,7 +124,7 @@ class TypoListenerProvider extends ListenerProvider
      * @param   string  $eventClass
      *
      * @throws \LaborDigital\T3BA\Core\EventBus\EventException
-     * @see \LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\CoreHookEventInterface
+     * @see CoreHookEventInterface
      */
     protected function registerCoreHookEventIfRequired(string $eventClass): void
     {
@@ -166,7 +165,6 @@ class TypoListenerProvider extends ListenerProvider
             return;
         }
 
-        throw new NotImplementedException('');
         // Bind the adapter
         call_user_func(
             [$adapterClass, 'prepare'],

@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+
 /**
  * Class FacetInterface
  *
@@ -27,7 +29,7 @@ namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
  *
  * @package LaborDigital\Typo3BetterApi\TypoContext
  */
-interface FacetInterface
+interface FacetInterface extends PublicServiceInterface
 {
     // Silence :)
 }

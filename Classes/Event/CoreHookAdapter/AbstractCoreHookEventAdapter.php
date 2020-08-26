@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,45 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 14:25
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
+namespace LaborDigital\T3BA\Event\CoreHookAdapter;
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
+use Psr\Container\ContainerInterface;
 
 abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInterface
 {
-    
+
     /**
      * @var EventBusInterface
      */
     protected static $bus;
-    
+
     /**
-     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
+     * @var ContainerInterface
      */
     protected static $container;
-    
+
     /**
      * @var TypoContext
      */
     protected static $context;
-    
+
     /**
      * @inheritDoc
      */
     public static function prepare(
         EventBusInterface $bus,
         TypoContext $context,
-        TypoContainerInterface $container
+        ContainerInterface $container
     ): void {
-        static::$bus = $bus;
+        static::$bus       = $bus;
         static::$container = $container;
-        static::$context = $context;
+        static::$context   = $context;
     }
 }

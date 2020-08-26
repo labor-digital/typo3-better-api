@@ -23,8 +23,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
-
 class InvalidConfiguratorException extends ExtConfigException
 {
 

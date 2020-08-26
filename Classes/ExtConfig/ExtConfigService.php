@@ -108,6 +108,7 @@ class ExtConfigService implements SingletonInterface
     {
         $appContext = Environment::getContext();
         $loader     = GeneralUtility::makeInstance(Loader::class, $type, (string)$appContext);
+        $loader->setEventDispatcher($this->eventBus);
         $loader->setConfigContextClass(ExtConfigContext::class);
         $loader->setCache($this->fs->getCache());
         foreach ($this->getRootLocations() as $rootLocation) {

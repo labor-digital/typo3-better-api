@@ -44,7 +44,7 @@ class HttpConfigurator implements ExtConfigContextAwareInterface
      * @param   array   $config  The is the equivalent of the yaml configuration you would put into your site.config
      *                           file
      *
-     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Http\HttpConfigOption
+     * @return \LaborDigital\T3BA\ExtConfigHandler\Http\HttpConfigurator
      * @see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/9.5/Feature-86365-RoutingEnhancersAndAspects.html
      */
     public function registerRouteEnhancer(string $key, array $config): self

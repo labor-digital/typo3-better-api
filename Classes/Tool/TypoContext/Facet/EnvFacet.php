@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
@@ -83,7 +83,8 @@ class EnvFacet implements FacetInterface
      *                                        The final statement will be read as: $typo3Version $operator $yourVersion
      *
      * @return bool
-     * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+     * @throws BetterApiException
+     * @noinspection TypeUnsafeComparisonInspection
      */
     public function isVersion($version, string $operator = '='): bool
     {
@@ -108,10 +109,10 @@ class EnvFacet implements FacetInterface
         $givenInt = VersionNumberUtility::convertVersionNumberToInteger($version);
         switch ($operator) {
             case '=':
-                $this->versionComparisons[$key] = $versionInt === $givenInt;
+                $this->versionComparisons[$key] = $versionInt == $givenInt;
                 break;
             case '!=':
-                $this->versionComparisons[$key] = $versionInt !== $givenInt;
+                $this->versionComparisons[$key] = $versionInt != $givenInt;
                 break;
             case '>':
                 $this->versionComparisons[$key] = $versionInt > $givenInt;

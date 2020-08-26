@@ -20,11 +20,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\LanguageAspect;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
-class BetterLanguageAspect extends LanguageAspect
+class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterface
 {
     use AutomaticAspectGetTrait;
 

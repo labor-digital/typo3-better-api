@@ -34,6 +34,6 @@ interface ConfigureTypoCoreInterface
      * @param   \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator  $configurator
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                  $context
      */
-    public static function configure(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
+    public static function configureCore(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
 
 }

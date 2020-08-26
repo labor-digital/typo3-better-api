@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 21:18
+ * Last modified: 2020.08.25 at 18:16
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Core;
+namespace LaborDigital\T3BA\ExtConfigHandler\Pid;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3BA\ExtConfigHandler\TypoScript\ConfigureTypoScriptHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
+class ConfigurePidsHandler extends AbstractSimpleExtConfigHandler
 {
-    protected $configureMethod = 'configureCore';
+    protected $configureMethod = 'configurePids';
 
     /**
      * @inheritDoc
@@ -36,7 +37,8 @@ class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->registerInterface(ConfigureTypoCoreInterface::class);
+        $configurator->executeThisHandlerAfter(ConfigureTypoScriptHandler::class);
+        $configurator->registerInterface(ConfigurePidsInterface::class);
     }
 
     /**
@@ -44,7 +46,7 @@ class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
      */
     protected function getConfiguratorClass(): string
     {
-        return TypoCoreConfigurator::class;
+        return PidCollector::class;
     }
 
     /**
@@ -52,7 +54,8 @@ class ConfigureTypoCoreHandler extends AbstractSimpleExtConfigHandler
      */
     protected function getStateNamespace(): string
     {
-        return 'typo.core';
+        return 't3ba';
     }
+
 
 }

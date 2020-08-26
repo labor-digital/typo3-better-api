@@ -39,6 +39,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\DependencyInjection;
 
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\EventBus\EventBusInterface;
 
@@ -56,15 +57,15 @@ trait CommonDependencyTrait
 {
     use ContainerAwareTrait;
 
-//    /**
-//     * Returns the typo context instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-//     */
-//    protected function TypoContext(): TypoContext
-//    {
-//        return $this->getSingletonOf(TypoContext::class);
-//    }
+    /**
+     * Returns the typo context instance
+     *
+     * @return TypoContext
+     */
+    protected function TypoContext(): TypoContext
+    {
+        return $this->getSingletonOf(TypoContext::class);
+    }
 //
 //    /**
 //     * Returns the db service instance

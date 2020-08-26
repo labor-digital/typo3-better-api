@@ -38,7 +38,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\CodeGeneration;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
+
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
 
 class ClassOverridesException extends BetterApiException
 {

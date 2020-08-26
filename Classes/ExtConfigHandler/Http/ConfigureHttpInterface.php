@@ -29,6 +29,6 @@ use LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator;
 interface ConfigureHttpInterface
 {
 
-    public static function configure(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
+    public static function configureHttp(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
 
 }

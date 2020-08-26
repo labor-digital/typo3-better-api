@@ -20,22 +20,16 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
-use InvalidArgumentException;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\ExtConfigHandler\Pid\PidCollector;
+use LaborDigital\T3BA\Tool\Exception\InvalidPidException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\PathUtil\Path;
+use Throwable;
 use function GuzzleHttp\Psr7\parse_query;
 
 class PidFacet implements FacetInterface
 {
-    /**
-     * The pid storage list
-     *
-     * @var array
-     */
-    protected $pids = [];
-
     /**
      * @var TypoContext
      */
@@ -60,7 +54,7 @@ class PidFacet implements FacetInterface
      */
     public function has(string $key): bool
     {
-        return Arrays::hasPath($this->pids, $this->stripPrefix($key));
+        return Arrays::hasPath($this->getAll(), $this->stripPrefix($key));
     }
 
     /**
@@ -74,7 +68,33 @@ class PidFacet implements FacetInterface
      */
     public function set(string $key, int $pid): self
     {
-        $this->pids = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
+        $pidsModified = Arrays::setPath($this->getAll(), $this->stripPrefix($key), $pid);
+        $this->context->Config()->getConfigState()->set('t3ba.pids', $pidsModified);
+
+        return $this;
+    }
+
+    /**
+     * The same as registerPid() but registers multiple pids at once
+     *
+     * @param   array  $pids  A list of pids as $path => $pid or as multidimensional array
+     *
+     * @return PidCollector
+     */
+    public function setMultiple(array $pids): self
+    {
+        foreach (Arrays::flatten($pids) as $k => $pid) {
+            if (! is_string($k)) {
+                throw new InvalidPidException('The given key for pid: ' . $pid . ' has to be a string!');
+            }
+            if (! is_numeric($pid)) {
+                throw new InvalidPidException(
+                    'The given value for pid: ' . $k . ' has to be numeric! Given value: ' . $pid);
+            }
+        }
+
+        $pidsModified = Arrays::merge($this->getAll(), $pids);
+        $this->context->Config()->getConfigState()->set('t3ba.pids', $pidsModified);
 
         return $this;
     }
@@ -90,20 +110,18 @@ class PidFacet implements FacetInterface
      *                                     exception if the pid was not found in the registry
      *
      * @return int
-     * @throws \LaborDigital\Typo3BetterApi\Pid\InvalidPidException
+     * @throws \LaborDigital\T3BA\Tool\Exception\InvalidPidException
      */
     public function get($key, int $fallback = -1): int
     {
-        throw new NotImplementedException();
-
         if (is_int($key)) {
             return $key;
         }
         if (! is_string($key)) {
-            throw new InvalidArgumentException(
+            throw new InvalidPidException(
                 'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
         }
-        $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
+        $pid = Arrays::getPath($this->getAll(), $this->stripPrefix($key), -9999);
         if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
                 return $fallback;
@@ -124,7 +142,7 @@ class PidFacet implements FacetInterface
      */
     public function getAll(): array
     {
-        return $this->pids;
+        return $this->context->Config()->getConfigValue('t3ba.pids', []);
     }
 
     /**
@@ -177,24 +195,14 @@ class PidFacet implements FacetInterface
         }
 
         // Fallback to the root pid of the site
-        if ($this->context->Site()->hasCurrent()) {
-            return $this->context->Site()->getCurrent()->getRootPageId();
+        try {
+            if ($this->context->Site()->hasCurrent()) {
+                return $this->context->Site()->getCurrent()->getRootPageId();
+            }
+        } catch (Throwable $exception) {
         }
 
         return 0;
-    }
-
-    /**
-     * Internal helper to completely replace the pid array.
-     * If you use this, use it with care!
-     *
-     * @param   array  $pids
-     *
-     * @internal
-     */
-    public function setInternalPids(array $pids): void
-    {
-        $this->pids = $pids;
     }
 
     /**

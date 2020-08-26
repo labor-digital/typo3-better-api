@@ -28,7 +28,7 @@ use LaborDigital\T3BA\Tool\TypoScript\DynamicTypoScriptRegistry;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
-class DynamicTypoScriptHandler implements LazyEventSubscriberInterface
+class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
 {
     /**
      * @var \LaborDigital\T3BA\Tool\TypoScript\DynamicTypoScriptRegistry

@@ -37,6 +37,13 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
     protected $configurator;
 
     /**
+     * The name of the configure method to use
+     *
+     * @var string
+     */
+    protected $configureMethod = 'configure';
+
+    /**
      * @inheritDoc
      * @throws \LaborDigital\T3BA\ExtConfig\InvalidConfiguratorException
      */
@@ -56,7 +63,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
      */
     public function handle(string $class): void
     {
-        call_user_func([$class, 'configure'], $this->configurator, $this->context);
+        call_user_func([$class, $this->configureMethod], $this->configurator, $this->context);
     }
 
     /**

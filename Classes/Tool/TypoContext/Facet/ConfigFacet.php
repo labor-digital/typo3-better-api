@@ -23,8 +23,10 @@ namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextException;
 use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
+use Neunerlei\Configuration\State\ConfigState;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
@@ -56,6 +58,35 @@ class ConfigFacet implements FacetInterface
      * @var array
      */
     protected $requestAttributeFallbackStorage = [];
+
+    /**
+     * Allows you to retrieve data from the ExtConfig config state object.
+     *
+     * @param   string      $key       Either a simple key or a colon separated path to find the value at
+     * @param   null|mixed  $fallback  Returned if the $key was not found in the state
+     *
+     * @return mixed|null
+     * @see ConfigState::get()
+     */
+    public function getConfigValue(string $key, $fallback = null)
+    {
+        return $this->getConfigState()->get($key, $fallback);
+    }
+
+    /**
+     * Returns the compiled ExtConfig state object.
+     *
+     * @return \Neunerlei\Configuration\State\ConfigState
+     * @throws \LaborDigital\T3BA\Tool\TypoContext\TypoContextException
+     */
+    public function getConfigState(): ConfigState
+    {
+        if (! isset($this->__localSingletons[ConfigState::class]) && ! $this->Container()->has(ConfigState::class)) {
+            throw new TypoContextException('The ConfigState object was not built and injected, yet! You are to early in the lifecycle!');
+        }
+
+        return $this->getSingletonOf(ConfigState::class);
+    }
 
     /**
      * Shortcut to TYPO3's system registry lookup method

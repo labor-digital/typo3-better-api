@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 14:25
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
+namespace LaborDigital\T3BA\Tool\Exception;
 
-interface CoreHookEventInterface
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
+
+class InvalidPidException extends BetterApiException
 {
-    
-    /**
-     * Returns the name of the used adapter class for this event
-     *
-     * @return string
-     */
-    public static function getAdapterClass(): string;
 }
