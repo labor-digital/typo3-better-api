@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3BA\Tool\OddsAndEnds;
 
 
 use LaborDigital\T3BA\Core\Exception\BetterApiException;

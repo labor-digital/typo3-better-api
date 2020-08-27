@@ -18,7 +18,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3BA\Tool\OddsAndEnds;
 
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;

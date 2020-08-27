@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.22 at 21:56
+ * Last modified: 2020.08.22 at 23:13
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3BA\Tool\OddsAndEnds;
 
 use InvalidArgumentException;
 
