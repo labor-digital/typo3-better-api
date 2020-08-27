@@ -31,7 +31,7 @@ abstract class AbstractFormField extends AbstractFormElement
 {
     use DataHandlerActionCollectorTrait;
     use DisplayConditionTrait;
-    
+
     /**
      * @inheritDoc
      */
@@ -41,10 +41,10 @@ abstract class AbstractFormField extends AbstractFormElement
         if (empty($label)) {
             return Inflector::toHuman($this->getId());
         }
-        
+
         return $label;
     }
-    
+
     /**
      * Set this to true, the form will reload itself after the value of this column was updated
      *
@@ -56,10 +56,10 @@ abstract class AbstractFormField extends AbstractFormElement
     public function setReloadOnChange(bool $state = true)
     {
         $this->config['onChange'] = $state ? 'reload' : '';
-        
+
         return $this;
     }
-    
+
     /**
      * Returns true if the field should reload itself after an update, false if not
      *
@@ -71,7 +71,7 @@ abstract class AbstractFormField extends AbstractFormElement
     {
         return $this->config['onChange'] === 'reload';
     }
-    
+
     /**
      * If set, all backend users are prevented from editing the field unless they are members of a backend user group
      * with this field added as an “Allowed Excludefield” (or “admin” user).
@@ -84,10 +84,10 @@ abstract class AbstractFormField extends AbstractFormElement
     public function setExclude(bool $state)
     {
         $this->config['exclude'] = $state;
-        
+
         return $this;
     }
-    
+
     /**
      * If true all backend users are prevented from editing the field unless they are members of a backend user group
      * with this field added as an “Allowed Excludefield” (or “admin” user).
@@ -100,7 +100,7 @@ abstract class AbstractFormField extends AbstractFormElement
     {
         return $this->config['exclude'] == true;
     }
-    
+
     /**
      * Sets if a field is read only or not
      * This property affects only the display. It is still possible to write to those fields when using the DataHandler
@@ -117,10 +117,10 @@ abstract class AbstractFormField extends AbstractFormElement
         } else {
             unset($this->config['config']['readOnly']);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Returns true if the field is configured to be read only, false if not
      *
@@ -128,9 +128,9 @@ abstract class AbstractFormField extends AbstractFormElement
      */
     public function isReadOnly(): bool
     {
-        return (bool)$this->config['config']['readOnly'];
+        return (bool)($this->config['config']['readOnly'] ?? false);
     }
-    
+
     /**
      * Can be used to set a field description text between the label and the input field.
      * Can contain html
@@ -143,10 +143,10 @@ abstract class AbstractFormField extends AbstractFormElement
     public function setDescription(string $info)
     {
         $this->config['description'] = $info;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently set field information, or an empty string if there is none
      *
@@ -154,9 +154,36 @@ abstract class AbstractFormField extends AbstractFormElement
      */
     public function getDescription(): string
     {
-        return Arrays::getPath($this->config, ['description'], '');
+        return $this->config['description'] ?? '';
     }
-    
+
+    /**
+     * Sets a default value for your field.
+     * NOTE: Not all field types support a default configuration option.
+     * In those cases the value is simply ignored
+     *
+     * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Input.html#default
+     *      https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Radio.html#default
+     *      https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#default
+     *      etc...
+     */
+    public function setDefault($default)
+    {
+        $this->config['config']['default'] = $default;
+
+        return $this;
+    }
+
+    /**
+     * Returns either the currently set default value or null if there is none
+     *
+     * @return mixed|null
+     */
+    public function getDefault()
+    {
+        return $this->config['config']['default'] ?? null;
+    }
+
     /**
      * Use the given object to apply presets to the given field.
      * This makes it a lot easier to configure your table fields, without the hassle of doing the configuration over
@@ -166,17 +193,17 @@ abstract class AbstractFormField extends AbstractFormElement
     {
         $applier = $this->context->getInstanceOf(FieldPresetApplier::class);
         $applier->__setField($this, $this->context);
-        
+
         return $applier;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getRaw(): array
     {
         $raw = parent::getRaw();
-        
+
         // Transform some keys into real typo3 translation keys
         // Because typo does not handle those elements using the default translation method...
         unset($raw['label']);
@@ -188,17 +215,17 @@ abstract class AbstractFormField extends AbstractFormElement
                 }
             }
         }
-        
+
         // Add the data handler actions
         $handlers = $this->__getDataHandlerActionHandlers();
         if (! empty($handlers)) {
             $raw['dataHandlerActions'] = $handlers['@table'];
         }
-        
+
         // Done
         return $raw;
     }
-    
+
     /**
      * Similar to setRaw() but will merge the given array of key/value pairs instead of
      * overwriting the original configuration.
@@ -214,10 +241,10 @@ abstract class AbstractFormField extends AbstractFormElement
         $raw = $this->config;
         ArrayUtility::mergeRecursiveWithOverrule($raw, $rawInput);
         $this->setRaw($raw);
-        
+
         return $this;
     }
-    
+
     /**
      * Lets you add additional entries to the field's "config" array.
      * This will merge your input with the existing value!
@@ -235,10 +262,10 @@ abstract class AbstractFormField extends AbstractFormElement
             $key = [$key => $value];
         }
         $this->mergeRaw(['config' => $key]);
-        
+
         return $this;
     }
-    
+
     /**
      * Internal helper to load a given cta configuration into a new field instance
      *
@@ -256,10 +283,10 @@ abstract class AbstractFormField extends AbstractFormElement
         $i->__setForm($parent->getForm());
         $i->__setParent($parent);
         $i->setRaw($tca);
-        
+
         return $i;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -267,7 +294,7 @@ abstract class AbstractFormField extends AbstractFormElement
     {
         return '@table';
     }
-    
+
     /**
      * @inheritDoc
      */
