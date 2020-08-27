@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\Middleware;
+declare(strict_types=1);
+
+namespace LaborDigital\T3BA\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +28,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RequestCollectorMiddleware implements MiddlewareInterface
 {
-    
+
     /**
      * @inheritDoc
      */
@@ -34,7 +36,7 @@ class RequestCollectorMiddleware implements MiddlewareInterface
     {
         // Store fallback request
         $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
-        
+
         // Done
         return $handler->handle($request);
     }
