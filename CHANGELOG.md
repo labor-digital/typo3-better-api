@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.21.0](https://github.com/labor-digital/typo3-better-api/compare/v9.20.0...v9.21.0) (2020-08-27)
+
+
+### Features
+
+* add setDefault() to form fields ([b45402c](https://github.com/labor-digital/typo3-better-api/commit/b45402c15ea8bf6d914d3e9d1b57739624f024e5))
+
+
+### Bug Fixes
+
+* **FalFileService:** generate file urls correctly even with external FAL drivers ([c60f03c](https://github.com/labor-digital/typo3-better-api/commit/c60f03c13a8a33c72b7ddf19303120b77ce98e8b))
+
 ## [9.20.0](https://github.com/labor-digital/typo3-better-api/compare/v9.19.1...v9.20.0) (2020-08-18)
 
 
