@@ -58,6 +58,7 @@ class DiContainerConfig implements ConfigureDependencyInjectionInterface
         static::autoWire([
             'Classes/Core/{Adapter,BootStage,CodeGeneration,DependencyInjection,Override,TempFs}',
             'Classes/ExtConfig/ExtConfigService.php',
+            'Classes/**/functions.php',
         ]);
 
         // LISTENER PROVIDER
