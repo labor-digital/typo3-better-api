@@ -67,6 +67,19 @@ trait ContainerAwareTrait
     }
 
     /**
+     * Returns true if the object already has an instance of the given class or interface in store,
+     * false if not.
+     *
+     * @param   string  $classOrInterfaceName  The name of the interface / class this instance that should be checked
+     *
+     * @return bool
+     */
+    public function hasLocalSingleton(string $classOrInterfaceName): bool
+    {
+        return isset($this->__localSingletons[$classOrInterfaceName]);
+    }
+
+    /**
      * Returns the instance of the container
      *
      * @return \Psr\Container\ContainerInterface
