@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:30
+ * Last modified: 2020.08.28 at 11:17
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -29,14 +29,8 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
 
 class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
 {
-    
-    /**
-     * The singleton instance to avoid overhead
-     *
-     * @var Typo3DbQueryParser
-     */
-    protected static $concreteQueryParser;
-    
+    use StaticContainerAwareTrait;
+
     /**
      * Sadly not all features of ext base are implemented using the doctrine restrictions.
      * So I use the settings object internally and force the constraints using the db query parser object
@@ -51,26 +45,12 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         QueryBuilder $queryBuilder,
         QuerySettingsInterface $settings
     ): void {
-        $self               = static::getConcreteQueryParser();
+        $self               = static::getSingletonOf(Typo3DbQueryParser::class);
         $self->queryBuilder = $queryBuilder;
         $dummyQuery         = new Query('');
         $dummyQuery->setQuerySettings($settings);
         $self->tableAliasMap             = [];
         $self->tableAliasMap[$tableName] = $tableName;
         $self->addTypo3Constraints($dummyQuery);
-    }
-    
-    /**
-     * Internal helper to access the instance of the query parser object
-     *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser
-     */
-    public static function getConcreteQueryParser(): Typo3DbQueryParser
-    {
-        if (! empty(static::$concreteQueryParser)) {
-            return static::$concreteQueryParser;
-        }
-        
-        return static::$concreteQueryParser = TypoContainer::getInstance()->get(Typo3DbQueryParser::class);
     }
 }

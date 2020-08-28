@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 18:03
+ * Last modified: 2020.08.28 at 10:52
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
-use LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter\DoctrineQueryAdapter;
-use LaborDigital\Typo3BetterApi\Domain\DbService\DbService;
-use LaborDigital\Typo3BetterApi\Page\PageService;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
+use LaborDigital\T3BA\Tool\Database\DbService;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Throwable;
@@ -36,6 +36,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 
 class StandaloneBetterQuery extends AbstractBetterQuery
 {
+    use ContainerAwareTrait;
 
     /**
      * The instance of the page repository after it was requested
@@ -57,17 +58,15 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      * @param   string                                                         $tableName
      * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $typoContext
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\Session                 $session
      */
     public function __construct(
         string $tableName,
         QueryBuilder $queryBuilder,
         QuerySettingsInterface $settings,
-        TypoContext $typoContext,
         Session $session
     ) {
-        parent::__construct(new DoctrineQueryAdapter($tableName, $queryBuilder, $settings), $typoContext, $session);
+        parent::__construct(new DoctrineQueryAdapter($tableName, $queryBuilder, $settings), $session);
     }
 
     /**
@@ -99,7 +98,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function getQueryBuilder(): QueryBuilder
     {
-        $this->applyWhere();
+        $this->applyWhere($this->adapter);
         $qb = $this->adapter->getQueryBuilder();
         if ($qb->getType() === \Doctrine\DBAL\Query\QueryBuilder::SELECT) {
             BetterQueryTypo3DbQueryParserAdapter::addConstraintsOfSettings(
@@ -215,11 +214,8 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      *
      * Translation overlays will be automatically applied.
      *
-     * @param   array       $fields   The names of the group fields to find the relations for
-     * @param   array|bool  $options  A list of additional options:
-     *
-     *                                  (LEGACY: can be set to true to set 'includeHiddenChildren' to true)
-     *
+     * @param   array  $fields          The names of the group fields to find the relations for
+     * @param   array  $options         A list of additional options:
      *                                  - includeHiddenChildren (bool) false: Set this to true if you
      *                                  want to include hidden children into your result
      *
@@ -230,21 +226,15 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      *
      * @return RelatedRecordRow[][] Returns either a list of entries per field name. The list of entries is ordered by
      *                            the name of the foreign table.
-     * @throws \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQueryException
-     * @see \LaborDigital\Typo3BetterApi\Domain\BetterQuery\RelatedRecordRow
+     * @throws BetterQueryException
+     * @throws BetterQueryException
+     * @see RelatedRecordRow
      */
-    public function getRelated($fields, $options = []): array
+    public function getRelated($fields, array $options = []): array
     {
         $tableName = $this->adapter->getTableName();
 
         // Validate options
-        // @todo remove deprecated option
-        if (is_bool($options)) {
-            $options = ['includeHiddenChildren' => $options];
-        }
-        if (! is_array($options)) {
-            $options = [];
-        }
         $options = Options::make($options, [
             'includeHiddenChildren' => [
                 'type'    => 'bool',
@@ -294,9 +284,11 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         // Fix issues with virtual columns
         /** @noinspection NullPointerExceptionInspection */
         $cols          = $qb->getConnection()->getSchemaManager()->listTableColumns($table);
-        $findAllFields = count(array_filter($fields, static function ($fieldName) use ($cols) {
-                return isset($cols[$fieldName]);
-            })) !== count($fields);
+        $findAllFields = count(
+                             array_filter($fields, static function ($fieldName) use ($cols) {
+                                 return isset($cols[$fieldName]);
+                             })
+                         ) !== count($fields);
         $selectFields  = $findAllFields ? ['*'] : array_unique(array_merge(['uid'], $fields));
 
         // Query the results from the database
@@ -306,8 +298,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         }
 
         // Lazy load additional dependencies
-        $container = TypoContainer::getInstance();
-        $dbService = $container->get(DbService::class);
+        $dbService = $this->getSingletonOf(DbService::class);
 
         // Iterate the configuration for the fields
         $resultsByField       = [];
@@ -328,7 +319,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             // Resolve the relations for every element
             foreach ($records as $result) {
                 // Create the relation handler
-                $relationHandler = $container->get(RelationHandler::class);
+                $relationHandler = $this->getWithoutDi(RelationHandler::class);
                 $relationHandler->setFetchAllFields(true);
                 $relationHandler->start(
                     empty($mmTable) ? $result[$currentField] : '',
@@ -371,7 +362,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                     if (! isset($relations[$item['table']][$item['id']])) {
                         continue;
                     }
-                    $relationList[] = $container->getWithoutDi(
+                    $relationList[] = $this->getWithoutDi(
                         RelatedRecordRow::class,
                         [
                             (int)$item['id'],
@@ -435,7 +426,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     {
         // Create page repository if required
         if (empty($this->pageRepository)) {
-            $this->pageRepository = TypoContainer::getInstance()->get(PageService::class)->getPageRepository();
+            $this->pageRepository = $this->getInstanceOf(PageService::class)->getPageRepository();
         }
 
         // Apply the version overlay

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,10 +18,10 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\DbService;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
-use LaborDigital\Typo3BetterApi\Domain\DomainException;
+use LaborDigital\T3BA\Tool\Database\DatabaseException;
 
-class DbServiceException extends DomainException
+class BetterQueryException extends DatabaseException
 {
 }

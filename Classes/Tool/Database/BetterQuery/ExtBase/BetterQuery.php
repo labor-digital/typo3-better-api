@@ -17,7 +17,7 @@
  * Last modified: 2020.03.20 at 15:45
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
 use LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter\ExtBaseQueryAdapter;
 use LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationQueryResult;
@@ -36,26 +36,26 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  */
 class BetterQuery extends AbstractBetterQuery
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository
      */
     protected $repository;
-    
+
     /**
      * The configuration for the inclusion of hidden children using the extended relation service
      *
      * @var mixed
      */
     protected $includeHiddenChildren;
-    
+
     /**
      * The configuration for the inclusion of deleted children using the extended relation service
      *
      * @var mixed
      */
     protected $includeDeletedChildren;
-    
+
     /**
      * @inheritDoc
      */
@@ -72,7 +72,7 @@ class BetterQuery extends AbstractBetterQuery
         );
         $this->repository = $repository;
     }
-    
+
     /**
      * This method can be used to include hidden child-relations in the resolved query result.
      *
@@ -95,10 +95,10 @@ class BetterQuery extends AbstractBetterQuery
         } else {
             $clone->includeHiddenChildren = $settings;
         }
-        
+
         return $clone;
     }
-    
+
     /**
      * This method can be used to include deleted child-relations in the resolved query result.
      *
@@ -121,10 +121,10 @@ class BetterQuery extends AbstractBetterQuery
         } else {
             $clone->includeDeletedChildren = $settings;
         }
-        
+
         return $clone;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -133,7 +133,7 @@ class BetterQuery extends AbstractBetterQuery
         return BetterQueryTypo3DbQueryParserAdapter::getConcreteQueryParser()
                                                    ->convertQueryToDoctrineQueryBuilder($this->getQuery());
     }
-    
+
     /**
      * Returns the preconfigured query object.
      *
@@ -145,10 +145,10 @@ class BetterQuery extends AbstractBetterQuery
         $this->adapter = $clone = clone $orgAdapter;
         $this->applyWhere();
         $this->adapter = $orgAdapter;
-        
+
         return $clone->getQuery();
     }
-    
+
     /**
      * Executes the currently configured query and returns the results
      *
@@ -167,11 +167,11 @@ class BetterQuery extends AbstractBetterQuery
                 'deleted' => $this->includeDeletedChildren,
             ]);
         }
-        
+
         // Perform a normal query
         return $this->getQuery()->execute($returnAsArray);
     }
-    
+
     /**
      * Returns the first element from the queries result set that matches your criteria
      *
@@ -183,7 +183,7 @@ class BetterQuery extends AbstractBetterQuery
     {
         return $returnAsArray ? reset($this->getAll(true)) : $this->getAll(false)->getFirst();
     }
-    
+
     /**
      * @inheritDoc
      */

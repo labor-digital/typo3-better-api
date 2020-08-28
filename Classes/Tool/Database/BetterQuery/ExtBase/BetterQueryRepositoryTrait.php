@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 13:03
+ * Last modified: 2020.08.28 at 10:52
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 use LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository;
@@ -25,12 +25,12 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 trait BetterQueryRepositoryTrait
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Domain\Repository\RepositoryWrapper
      */
     protected $__repositoryWrapper;
-    
+
     /**
      * Returns a "BetterQuery" object. This object is intended to be lightweight and easy to use.
      * It does NOT implement all the features of the typo3 extBase query builder. But it's syntax is short,
@@ -55,7 +55,7 @@ trait BetterQueryRepositoryTrait
             /** @noinspection PhpParamsInspection */
             $this->__repositoryWrapper = BetterRepository::getWrapper($this);
         }
-        
+
         return $this->__repositoryWrapper->getQuery();
     }
 }

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,27 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:16
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
 
 use Doctrine\DBAL\Connection;
-use LaborDigital\Typo3BetterApi\NotImplementedException;
+use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class DoctrineQueryAdapter extends AbstractQueryAdapter
 {
-    
+
     /**
      * @var \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     protected $queryBuilder;
-    
+
     /**
      * DoctrineQueryAdapter constructor.
      *
@@ -46,12 +47,12 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         parent::__construct($tableName, $settings);
         $this->queryBuilder = $queryBuilder;
-        
+
         // Reset query builder
         $queryBuilder->select('*');
         $queryBuilder->getRestrictions()->removeAll();
     }
-    
+
     /**
      * Clones the children of this query object to keep it immutable
      */
@@ -60,7 +61,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
         parent::__clone();
         $this->queryBuilder = clone $this->queryBuilder;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -68,15 +69,15 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         $this->queryBuilder->setMaxResults($limit);
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getLimit(): int
     {
-        return (int)$this->queryBuilder->getMaxResults();
+        return $this->queryBuilder->getMaxResults();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -84,15 +85,15 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         $this->queryBuilder->setFirstResult($offset);
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getOffset(): int
     {
-        return (int)$this->queryBuilder->getFirstResult();
+        return $this->queryBuilder->getFirstResult();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -103,15 +104,16 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
             $this->queryBuilder->addOrderBy($k, $v);
         }
     }
-    
+
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
     public function getQuery(): QueryInterface
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException('There is no underlying "query" for a doctrine BetterQuery! Use getQueryBuilder() instead!');
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -119,7 +121,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return clone $this->queryBuilder;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -127,7 +129,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->expr()->orX(...$list);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -135,71 +137,72 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->expr()->andX(...$list);
     }
-    
+
     /**
      * @inheritDoc
      */
     public function makeCondition(string $operator, $key, $value, bool $negated)
     {
+        $qb = $this->queryBuilder;
         switch ($operator) {
             case 'like':
                 if ($negated) {
-                    return $this->queryBuilder->expr()
-                                              ->notLike($key, $this->queryBuilder->createNamedParameter($value));
+                    return $qb->expr()
+                              ->notLike($key, $qb->createNamedParameter($value));
                 }
-                
-                return $this->queryBuilder->expr()->like($key, $this->queryBuilder->createNamedParameter($value));
+
+                return $qb->expr()->like($key, $qb->createNamedParameter($value));
             case 'in':
                 if ($negated) {
-                    return $this->queryBuilder->expr()->notIn(
+                    return $qb->expr()->notIn(
                         $key,
-                        $this->queryBuilder->createNamedParameter(
+                        $qb->createNamedParameter(
                             $this->ensureArrayValue($value, $key),
                             Connection::PARAM_STR_ARRAY
                         )
                     );
                 }
-                
-                return $this->queryBuilder->expr()->in(
+
+                return $qb->expr()->in(
                     $key,
-                    $this->queryBuilder->createNamedParameter(
+                    $qb->createNamedParameter(
                         $this->ensureArrayValue($value, $key),
                         Connection::PARAM_STR_ARRAY
                     )
                 );
             case '>':
                 if ($negated) {
-                    return $this->queryBuilder->expr()->lte($key, $this->queryBuilder->createNamedParameter($value));
+                    return $qb->expr()->lte($key, $qb->createNamedParameter($value));
                 }
-                
-                return $this->queryBuilder->expr()->gt($key, $this->queryBuilder->createNamedParameter($value));
+
+                return $qb->expr()->gt($key, $qb->createNamedParameter($value));
             case '>=':
                 if ($negated) {
-                    return $this->queryBuilder->expr()->lt($key, $this->queryBuilder->createNamedParameter($value));
+                    return $qb->expr()->lt($key, $qb->createNamedParameter($value));
                 }
-                
-                return $this->queryBuilder->expr()->gte($key, $this->queryBuilder->createNamedParameter($value));
+
+                return $qb->expr()->gte($key, $qb->createNamedParameter($value));
             case '<':
                 if ($negated) {
-                    return $this->queryBuilder->expr()->gte($key, $this->queryBuilder->createNamedParameter($value));
+                    return $qb->expr()->gte($key, $qb->createNamedParameter($value));
                 }
-                
-                return $this->queryBuilder->expr()->lt($key, $this->queryBuilder->createNamedParameter($value));
+
+                return $qb->expr()->lt($key, $qb->createNamedParameter($value));
             case '<=':
                 if ($negated) {
-                    return $this->queryBuilder->expr()->gt($key, $this->queryBuilder->createNamedParameter($value));
+                    return $qb->expr()->gt($key, $qb->createNamedParameter($value));
                 }
-                
-                return $this->queryBuilder->expr()->lte($key, $this->queryBuilder->createNamedParameter($value));
+
+                return $qb->expr()->lte($key, $qb->createNamedParameter($value));
             default:
                 if ($negated) {
-                    return $this->queryBuilder->expr()->neq($key, $this->queryBuilder->createNamedParameter($value));
+                    return $qb->expr()->neq($key, $qb->createNamedParameter($value));
                 }
-                
-                return $this->queryBuilder->expr()->eq($key, $this->queryBuilder->createNamedParameter($value));
+
+                return $qb->expr()->eq($key, $qb->createNamedParameter($value));
         }
     }
-    
+
     /**
      * @inheritDoc
      */

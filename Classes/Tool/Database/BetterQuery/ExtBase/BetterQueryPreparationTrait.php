@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 02:33
+ * Last modified: 2020.08.28 at 10:52
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
+namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
@@ -26,14 +26,14 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 trait BetterQueryPreparationTrait
 {
-    
+
     /**
      * Should return a new better query instance
      *
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
     abstract public function getQuery(): BetterQuery;
-    
+
     /**
      * Receives the query object after the initial preparation was done and should apply additional constraints to it.
      *
@@ -44,7 +44,7 @@ trait BetterQueryPreparationTrait
      * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
      */
     abstract protected function prepareBetterQuery(BetterQuery $query, array $settings, array $row): BetterQuery;
-    
+
     /**
      * This method is similar to getQuery() on the BetterRepository class,
      * but it does not simply return an empty query object, no it can also take ext base plugin settings and a database
@@ -58,7 +58,7 @@ trait BetterQueryPreparationTrait
     public function getPreparedQuery(array $settings, array $row = []): BetterQuery
     {
         $query = $this->getQuery();
-        
+
         // Fill default values
         if (! empty($settings['storagePid'])) {
             $query = $query->withPids(Arrays::makeFromStringList($settings['storagePid']));
@@ -79,15 +79,15 @@ trait BetterQueryPreparationTrait
                 $query = $query->withPids($pids);
             }
         }
-        
+
         // Apply additional configuration
         $query = $this->prepareBetterQuery($query, $settings, $row);
-        
+
         // Done
         return $query;
     }
-    
-    
+
+
     /**
      * Configures the given better query object to a date range constraint.
      * It is optional if you work on a single field or with startDate and endDate fields.
@@ -115,7 +115,7 @@ trait BetterQueryPreparationTrait
             },
         ], 'dateTimeRange');
     }
-    
+
     /**
      * Receives a query object and one/two fields that define a date range.
      * This method will query the database and calculate then min and max dates from the database.
@@ -151,7 +151,7 @@ trait BetterQueryPreparationTrait
         $minDate = new DateTimy(empty($minDate) || ! isset($minDate[$startDateField]) ?
             0 : $minDate[$startDateField]);
         $minDate->setTime(0, 0, 0);
-        
+
         // End date
         $endDateField = $endDateProperty;
         if ($endDateField === null) {
@@ -164,12 +164,12 @@ trait BetterQueryPreparationTrait
         $maxDate = new DateTimy(empty($maxDate) || ! isset($maxDate[$endDateField]) ?
             0 : $maxDate[$endDateField]);
         $maxDate->setTime(23, 59, 59);
-        
+
         // Limit min max values
         if ($minDate > $maxDate) {
             throw new BetterQueryException('The calculated oldest date is newer than the latest date. That can\'t be true!');
         }
-        
+
         // Done
         return [
             'startDateField' => $startDateField,
