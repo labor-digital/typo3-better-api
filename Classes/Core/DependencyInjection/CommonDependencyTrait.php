@@ -39,7 +39,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\DependencyInjection;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3BA\Tool\Database\DbService;
+use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
+use LaborDigital\T3BA\Tool\Translation\Translator;
+use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\EventBus\EventBusInterface;
 
@@ -56,27 +60,18 @@ use Neunerlei\EventBus\EventBusInterface;
 trait CommonDependencyTrait
 {
     use ContainerAwareTrait;
+    use TypoContextAwareTrait;
 
     /**
-     * Returns the typo context instance
+     * Returns the db service instance
      *
-     * @return TypoContext
+     * @return \LaborDigital\T3BA\Tool\Database\DbService
      */
-    protected function TypoContext(): TypoContext
+    protected function Db(): DbService
     {
-        return $this->getSingletonOf(TypoContext::class);
+        return $this->getSingletonOf(DbService::class);
     }
-//
-//    /**
-//     * Returns the db service instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface
-//     */
-//    protected function Db(): DbServiceInterface
-//    {
-//        return $this->getSingletonOf(DbServiceInterface::class);
-//    }
-//
+
 //    /**
 //     * Returns the link service instance
 //     *
@@ -87,15 +82,15 @@ trait CommonDependencyTrait
 //        return $this->getSingletonOf(LinkService::class);
 //    }
 //
-//    /**
-//     * Returns the TSFE service instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Tsfe\TsfeService
-//     */
-//    protected function Tsfe(): TsfeService
-//    {
-//        return $this->getSingletonOf(TsfeService::class);
-//    }
+    /**
+     * Returns the TSFE service instance
+     *
+     * @return \LaborDigital\T3BA\Tool\Tsfe\TsfeService
+     */
+    protected function Tsfe(): TsfeService
+    {
+        return $this->getSingletonOf(TsfeService::class);
+    }
 //
 //    /**
 //     * Returns the page service instance
@@ -136,26 +131,26 @@ trait CommonDependencyTrait
     {
         return $this->getSingletonOf(TypoScriptService::class);
     }
-//
-//    /**
-//     * Returns the translation service instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
-//     */
-//    protected function Translation(): TranslationService
-//    {
-//        return $this->getSingletonOf(TranslationService::class);
-//    }
-//
-//    /**
-//     * Returns the environment simulator instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator
-//     */
-//    protected function Simulator(): EnvironmentSimulator
-//    {
-//        return $this->getInstanceOf(EnvironmentSimulator::class);
-//    }
+
+    /**
+     * Returns the translation service instance
+     *
+     * @return \LaborDigital\T3BA\Tool\Translation\Translator
+     */
+    protected function Translator(): Translator
+    {
+        return $this->getSingletonOf(Translator::class);
+    }
+
+    /**
+     * Returns the environment simulator instance
+     *
+     * @return \LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator
+     */
+    protected function Simulator(): EnvironmentSimulator
+    {
+        return $this->getInstanceOf(EnvironmentSimulator::class);
+    }
 //
 //    /**
 //     * Returns the Frontend session provider instance
