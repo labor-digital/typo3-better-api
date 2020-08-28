@@ -40,6 +40,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\DependencyInjection;
 
 use LaborDigital\T3BA\Tool\Database\DbService;
+use LaborDigital\T3BA\Tool\Page\PageService;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
 use LaborDigital\T3BA\Tool\Translation\Translator;
 use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
@@ -91,17 +92,17 @@ trait CommonDependencyTrait
     {
         return $this->getSingletonOf(TsfeService::class);
     }
-//
-//    /**
-//     * Returns the page service instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Page\PageService
-//     */
-//    protected function Page(): PageService
-//    {
-//        return $this->getSingletonOf(PageService::class);
-//    }
-//
+
+    /**
+     * Returns the page service instance
+     *
+     * @return PageService
+     */
+    protected function Page(): PageService
+    {
+        return $this->getSingletonOf(PageService::class);
+    }
+
 //    /**
 //     * Returns the fal file service instance
 //     *

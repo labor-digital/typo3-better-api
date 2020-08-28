@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events;
+namespace LaborDigital\T3BA\Event;
 
 /**
  * Class PageContentsGridConfigFilterEvent
@@ -27,32 +27,32 @@ namespace LaborDigital\Typo3BetterApi\Event\Events;
  * Dispatched when the page service renders the list of all contents on a page.
  * This can be used to add custom grid types to the mapping
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event
  */
 class PageContentsGridConfigFilterEvent
 {
-    
+
     /**
      * The currently requested page id
      *
      * @var int
      */
     protected $pid;
-    
+
     /**
      * The list of records that were resolved for this page
      *
      * @var array
      */
     protected $records;
-    
+
     /**
      * The list of custom grid configurations that can be mapped
      *
      * @var array
      */
     protected $customGrids;
-    
+
     /**
      * PageContentsGridConfigFilterEvent constructor.
      *
@@ -66,7 +66,7 @@ class PageContentsGridConfigFilterEvent
         $this->records     = $records;
         $this->customGrids = $customGrids;
     }
-    
+
     /**
      * Returns the currently requested page id
      *
@@ -76,7 +76,7 @@ class PageContentsGridConfigFilterEvent
     {
         return $this->pid;
     }
-    
+
     /**
      * Returns the list of records that were resolved for this page
      *
@@ -86,7 +86,7 @@ class PageContentsGridConfigFilterEvent
     {
         return $this->records;
     }
-    
+
     /**
      * Used to update the list of records that were resolved for this page
      *
@@ -97,10 +97,10 @@ class PageContentsGridConfigFilterEvent
     public function setRecords(array $records): PageContentsGridConfigFilterEvent
     {
         $this->records = $records;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the list of custom grid configurations that can be mapped
      *
@@ -110,7 +110,7 @@ class PageContentsGridConfigFilterEvent
     {
         return $this->customGrids;
     }
-    
+
     /**
      * Used to update the list of custom grid configurations that can be mapped
      *
@@ -121,7 +121,7 @@ class PageContentsGridConfigFilterEvent
     public function setCustomGrids(array $customGrids): PageContentsGridConfigFilterEvent
     {
         $this->customGrids = $customGrids;
-        
+
         return $this;
     }
 }

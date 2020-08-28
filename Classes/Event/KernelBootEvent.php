@@ -25,6 +25,13 @@ namespace LaborDigital\T3BA\Event;
 
 use LaborDigital\T3BA\Core\Kernel;
 
+/**
+ * Class KernelBootEvent
+ *
+ * Emitted after the Better Api Kernel prepared all registered boot stages and is ready to turn on the lights ;)
+ *
+ * @package LaborDigital\T3BA\Event
+ */
 class KernelBootEvent
 {
     /**

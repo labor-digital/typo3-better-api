@@ -121,12 +121,6 @@ trait StaticContainerAwareTrait
      */
     protected static function getInstanceOf(string $class)
     {
-        // Create the instance as singleton
-        if (isset(static::$__localSingletons[$class])) {
-            return static::$__localSingletons[$class] = static::Container()->get($class);
-        }
-
-        // Just create the instance
         return static::Container()->get($class);
     }
 

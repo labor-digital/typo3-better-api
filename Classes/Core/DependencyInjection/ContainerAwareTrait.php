@@ -121,12 +121,6 @@ trait ContainerAwareTrait
      */
     protected function getInstanceOf(string $class)
     {
-        // Create the instance as singleton
-        if (isset($this->__localSingletons[$class])) {
-            return $this->__localSingletons[$class] = $this->Container()->get($class);
-        }
-
-        // Just create the instance
         return $this->Container()->get($class);
     }
 
@@ -147,8 +141,8 @@ trait ContainerAwareTrait
     protected function getSingletonOf(string $class)
     {
         // Check if we have a singleton
-        return $this->__localSingletons[$class] ?? ($this->__localSingletons[$class]
-                = $this->Container()->get($class));
+        return $this->__localSingletons[$class] ??
+               $this->__localSingletons[$class] = $this->Container()->get($class);
     }
 
 }
