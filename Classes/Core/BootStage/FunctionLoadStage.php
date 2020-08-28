@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.28 at 10:46
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\Domain\DomainException;
 
-class BetterQueryException extends DomainException
+namespace LaborDigital\T3BA\Core\BootStage;
+
+
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Core\Kernel;
+
+class FunctionLoadStage implements BootStageInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
+    {
+        // TODO: Implement prepare() method.
+    }
+
 }

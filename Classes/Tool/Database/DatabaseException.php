@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -14,22 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.07.17 at 15:49
+ * Last modified: 2020.03.16 at 18:42
  */
 
-declare(strict_types=1);
+namespace LaborDigital\T3BA\Tool\Database;
 
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
 
-namespace LaborDigital\Typo3BetterApi\Container;
-
-/**
- * Trait CommonServiceDependencyTrait
- *
- * @package    LaborDigital\Typo3BetterApi\Container
- * @deprecated use CommonDependencyTrait instead!
- */
-trait CommonServiceDependencyTrait
+class DatabaseException extends BetterApiException
 {
-    use CommonDependencyTrait;
-    
 }
