@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
+namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
 interface SimulatorPassInterface
@@ -30,7 +30,7 @@ interface SimulatorPassInterface
      * For performance reasons a pass should not have constructor arguments!
      */
     public function __construct();
-    
+
     /**
      * Adds new option definitions to the list
      *
@@ -39,7 +39,7 @@ interface SimulatorPassInterface
      * @return array
      */
     public function addOptionDefinition(array $options): array;
-    
+
     /**
      * Receives the prepared options and should check if simulation is required
      *
@@ -48,14 +48,14 @@ interface SimulatorPassInterface
      * @return bool
      */
     public function requireSimulation(array $options): bool;
-    
+
     /**
      * Sets up the simulation
      *
      * @param   array  $options
      */
     public function setup(array $options): void;
-    
+
     /**
      * Rolls back the simulation to the original state
      */

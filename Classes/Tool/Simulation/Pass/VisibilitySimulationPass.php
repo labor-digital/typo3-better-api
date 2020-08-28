@@ -20,22 +20,22 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
+namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 
 class VisibilitySimulationPass implements SimulatorPassInterface
 {
-    use CommonDependencyTrait;
-    
+    use TypoContextAwareTrait;
+
     protected $aspectBackup;
-    
+
     /**
      * @inheritDoc
      */
     public function __construct() { }
-    
+
     /**
      * @inheritDoc
      */
@@ -53,23 +53,23 @@ class VisibilitySimulationPass implements SimulatorPassInterface
             'type'    => 'bool',
             'default' => false,
         ];
-        
+
         return $options;
-        
+
     }
-    
+
     /**
      * @inheritDoc
      */
     public function requireSimulation(array $options): bool
     {
         $visibilityAspect = $this->TypoContext()->Visibility();
-        
+
         return $options['includeHiddenPages'] !== $visibilityAspect->includeHiddenPages()
                || $options['includeHiddenContent'] !== $visibilityAspect->includeHiddenContent()
                || $options['includeDeletedRecords'] !== $visibilityAspect->includeDeletedRecords();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -77,14 +77,14 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     {
         // Backup the aspect
         $this->aspectBackup = clone $this->TypoContext()->getRootContext()->getAspect('visibility');
-        
+
         // Update the aspect
         $visibilityAspect = $this->TypoContext()->Visibility();
         $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
         $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
         $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -92,5 +92,5 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     {
         $this->TypoContext()->getRootContext()->setAspect('visibility', $this->aspectBackup);
     }
-    
+
 }

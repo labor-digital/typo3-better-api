@@ -18,30 +18,24 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 13:59
  */
 
-namespace LaborDigital\Typo3BetterApi\Simulation;
+namespace LaborDigital\T3BA\Tool\Simulation;
 
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
-use LaborDigital\Typo3BetterApi\Simulation\Pass\AdminSimulationPass;
-use LaborDigital\Typo3BetterApi\Simulation\Pass\LanguageSimulationPass;
-use LaborDigital\Typo3BetterApi\Simulation\Pass\SimulatorPassInterface;
-use LaborDigital\Typo3BetterApi\Simulation\Pass\SiteSimulationPass;
-use LaborDigital\Typo3BetterApi\Simulation\Pass\TsfeSimulationPass;
-use LaborDigital\Typo3BetterApi\Simulation\Pass\VisibilitySimulationPass;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Tool\Simulation\Pass\AdminSimulationPass;
+use LaborDigital\T3BA\Tool\Simulation\Pass\LanguageSimulationPass;
+use LaborDigital\T3BA\Tool\Simulation\Pass\SimulatorPassInterface;
+use LaborDigital\T3BA\Tool\Simulation\Pass\SiteSimulationPass;
+use LaborDigital\T3BA\Tool\Simulation\Pass\TsfeSimulationPass;
+use LaborDigital\T3BA\Tool\Simulation\Pass\VisibilitySimulationPass;
+use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class EnvironmentSimulator
- *
- * This class is highly experimental, there may be bugs on your way!
- *
- * @package LaborDigital\Typo3BetterApi\Simulation
- */
-class EnvironmentSimulator implements SingletonInterface
+class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
 {
-    use CommonDependencyTrait;
-    
+    use ContainerAwareTrait;
+
     /**
      * The list of simulation pass classes with the option of extension.
      * All classes registered MUST implement the SimulatorPassInterface!
@@ -59,21 +53,36 @@ class EnvironmentSimulator implements SingletonInterface
             LanguageSimulationPass::class,
             TsfeSimulationPass::class,
         ];
-    
+
+    /**
+     * @var \LaborDigital\T3BA\Tool\Tsfe\TsfeService
+     */
+    protected $tsfeService;
+
     /**
      * This is true when we are currently running inside a transformation
      *
      * @var bool
      */
     protected $isInSimulation = false;
-    
+
     /**
      * True if child simulations should be ignored
      *
      * @var bool
      */
     protected $childSimulationsIgnored = false;
-    
+
+    /**
+     * EnvironmentSimulator constructor.
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tsfe\TsfeService  $tsfeService
+     */
+    public function __construct(TsfeService $tsfeService)
+    {
+        $this->tsfeService = $tsfeService;
+    }
+
     /**
      * Can be used to run a function in a different environment.
      * You can use this method to render frontend content's in the backend or in the CLI,
@@ -138,20 +147,23 @@ class EnvironmentSimulator implements SingletonInterface
         if (
             ($this->isInSimulation && $earlyOptions['ignoreInSimulations'])
             || ($this->isInSimulation && $this->childSimulationsIgnored)
-            || ($earlyOptions['ignoreIfFrontendExists'] && $this->Tsfe()->hasTsfe())
+            || (
+                $earlyOptions['ignoreIfFrontendExists']
+                && $this->tsfeService->hasTsfe()
+            )
         ) {
             return $handler();
         }
-        
+
         // Apply the real options
         $passes  = $this->makePassInstances();
         $options = Options::make($options, $this->getSimulatorOptions($passes));
-        
+
         // Backup the old ignore child simulation state
         $parentIgnoresChildSimulations = $this->childSimulationsIgnored;
         $this->childSimulationsIgnored = $options['ignoreChildSimulations'];
         $parentIsInSimulation          = $this->isInSimulation;
-        
+
         // Set up the simulation
         $rollBackPasses = [];
         $result         = null;
@@ -162,28 +174,28 @@ class EnvironmentSimulator implements SingletonInterface
                     $pass->setup($options);
                 }
             }
-            
+
             // Update the simulation state
             $this->isInSimulation = $this->isInSimulation || ! empty($rollBackPasses);
-            
+
             // Run the handler
             $result = $handler();
-            
+
         } finally {
             // Roll back
             foreach (array_reverse($rollBackPasses) as $pass) {
                 $pass->rollBack();
             }
-            
+
             // Restore parent state
             $this->childSimulationsIgnored = $parentIgnoresChildSimulations;
             $this->isInSimulation          = $parentIsInSimulation;
         }
-        
+
         // Done
         return $result;
     }
-    
+
     /**
      * ATTENTION: This method is extremely powerful and you should really consider twice if you want to use it
      * for whatever you want to achieve.
@@ -210,26 +222,31 @@ class EnvironmentSimulator implements SingletonInterface
     {
         return $this->runWithEnvironment(['asAdmin'], $handler);
     }
-    
+
     /**
      * Creates the instances of the simulator passes
      *
-     * @return \LaborDigital\Typo3BetterApi\Simulation\Pass\SimulatorPassInterface[]
+     * @return SimulatorPassInterface[]
      */
     protected function makePassInstances(): array
     {
         $instances = [];
+        $container = $this->Container();
         foreach (static::$environmentSimulatorPasses as $passClass) {
-            $instance = GeneralUtility::makeInstance($passClass);
+            if ($container->has($passClass)) {
+                $instance = $container->get($passClass);
+            } else {
+                $instance = $this->getWithoutDi($passClass);
+            }
             if (! $instance instanceof SimulatorPassInterface) {
                 continue;
             }
             $instances[] = $instance;
         }
-        
+
         return $instances;
     }
-    
+
     /**
      * Collects the simulator options from the simulator passes
      *
@@ -243,10 +260,10 @@ class EnvironmentSimulator implements SingletonInterface
         foreach ($passes as $pass) {
             $definition = $pass->addOptionDefinition($definition);
         }
-        
+
         return $definition;
     }
-    
+
     /**
      * Returns the default option definition
      *

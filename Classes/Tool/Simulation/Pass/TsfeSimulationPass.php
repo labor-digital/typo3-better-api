@@ -19,12 +19,14 @@
 
 declare(strict_types=1);
 
+namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
-namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
 
-
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
-use LaborDigital\Typo3BetterApi\Simulation\SimulatedTypoScriptFrontendController;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Tool\Page\PageService;
+use LaborDigital\T3BA\Tool\Simulation\SimulatedTypoScriptFrontendController;
+use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -33,7 +35,8 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class TsfeSimulationPass implements SimulatorPassInterface
 {
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
+    use TypoContextAwareTrait;
 
     protected $tsfeBackup;
     protected $languageAspectBackup;
@@ -67,7 +70,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
     {
         return $options['bootTsfe']
                || (
-                   ! $this->Tsfe()->hasTsfe()
+                   ! $this->getInstanceOf(TsfeService::class)->hasTsfe()
                    || (
                        $options['pid'] !== null
                        && $this->TypoContext()->Pid()->getCurrent() !== $options['pid']
@@ -114,15 +117,20 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     protected function makeSimulatedTsfe(int $pid): TypoScriptFrontendController
     {
-        $controller           = $this->getInstanceOf(SimulatedTypoScriptFrontendController::class, [null, $pid, 0,]);
+        $controller           = $this->getWithoutDi(
+            SimulatedTypoScriptFrontendController::class, [
+                null,
+                $pid,
+                $this->TypoContext()->Language()->getCurrentFrontendLanguage(),
+            ]
+        );
         $GLOBALS['TSFE']      = $controller;
         $controller->sys_page = $this->getInstanceOf(PageRepository::class);
-        $controller->rootLine = $this->getInstanceOf(RootlineUtility::class, [$pid])->get();
-        $controller->page     = $this->Page()->getPageInfo($pid);
+        $controller->rootLine = $this->getWithoutDi(RootlineUtility::class, [$pid])->get();
+        $controller->page     = $this->getInstanceOf(PageService::class)->getPageInfo($pid);
         $controller->getConfigArray();
         $controller->settingLanguage();
-        $controller->settingLocale();
-        $controller->cObj    = $this->getInstanceOf(ContentObjectRenderer::class, [$controller]);
+        $controller->cObj    = $this->getWithoutDi(ContentObjectRenderer::class, [$controller, $this->Container()]);
         $controller->fe_user = $this->getInstanceOf(FrontendUserAuthentication::class);
 
         return $controller;

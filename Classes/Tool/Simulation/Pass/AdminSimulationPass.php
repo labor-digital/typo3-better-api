@@ -19,34 +19,33 @@
 
 declare(strict_types=1);
 
+namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
-namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
 
-
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
-use LaborDigital\Typo3BetterApi\Simulation\AdminUserAuthentication;
+use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Tool\Simulation\AdminUserAuthentication;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\UserAspect;
 
 class AdminSimulationPass implements SimulatorPassInterface
 {
     use CommonDependencyTrait;
-    
+
     protected $userBackup;
     protected $aspectBackup;
-    
+
     /**
      * Holds the cached version of the admin user authentication
      *
-     * @var \LaborDigital\Typo3BetterApi\Simulation\AdminUserAuthentication
+     * @var AdminUserAuthentication
      */
     protected static $adminUserAuth;
-    
+
     /**
      * @inheritDoc
      */
     public function __construct() { }
-    
+
     /**
      * @inheritDoc
      */
@@ -56,10 +55,10 @@ class AdminSimulationPass implements SimulatorPassInterface
             'type'    => 'bool',
             'default' => false,
         ];
-        
+
         return $options;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -74,7 +73,7 @@ class AdminSimulationPass implements SimulatorPassInterface
                    || ! $GLOBALS['BE_USER']->isAdmin()
                );
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -83,10 +82,10 @@ class AdminSimulationPass implements SimulatorPassInterface
         // Backup the data
         $this->aspectBackup = $this->TypoContext()->getRootContext()->getAspect('backend.user');
         $this->userBackup   = $currentUser = $GLOBALS['BE_USER'];
-        
+
         // Make the admin user
         $adminUser = $this->getAdminAuth();
-        
+
         // Create a more speaking log if possible
         if ($currentUser instanceof BackendUserAuthentication
             && is_array($currentUser->user)
@@ -94,14 +93,14 @@ class AdminSimulationPass implements SimulatorPassInterface
             $adminUser                         = clone $adminUser;
             $adminUser->user['ses_backuserid'] = $currentUser->user['uid'];
         }
-        
+
         // Inject the admin user
         $GLOBALS['BE_USER'] = $adminUser;
         $this->TypoContext()->getRootContext()->setAspect('backend.user',
-            $this->Container()->getWithoutDi(UserAspect::class, [$adminUser])
+            $this->getWithoutDi(UserAspect::class, [$adminUser])
         );
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -110,11 +109,11 @@ class AdminSimulationPass implements SimulatorPassInterface
         $GLOBALS['BE_USER'] = $this->userBackup;
         $this->TypoContext()->getRootContext()->setAspect('backend.user', $this->aspectBackup);
     }
-    
+
     /**
      * Tries to return a cached user auth or creates a new one
      *
-     * @return \LaborDigital\Typo3BetterApi\Simulation\AdminUserAuthentication
+     * @return AdminUserAuthentication
      */
     protected function getAdminAuth(): AdminUserAuthentication
     {
@@ -122,12 +121,12 @@ class AdminSimulationPass implements SimulatorPassInterface
         if (isset(static::$adminUserAuth)) {
             return static::$adminUserAuth;
         }
-        
+
         // Create a new instance
         static::$adminUserAuth = $this->getInstanceOf(AdminUserAuthentication::class);
         static::$adminUserAuth->start();
-        
+
         return static::$adminUserAuth;
     }
-    
+
 }

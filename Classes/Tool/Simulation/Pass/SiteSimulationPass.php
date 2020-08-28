@@ -19,24 +19,22 @@
 
 declare(strict_types=1);
 
+namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
-namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
 
-
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 
 class SiteSimulationPass implements SimulatorPassInterface
 {
-    
-    use CommonDependencyTrait;
-    
+    use TypoContextAwareTrait;
+
     protected $siteBackup;
-    
+
     /**
      * @inheritDoc
      */
     public function __construct() { }
-    
+
     /**
      * @inheritDoc
      */
@@ -46,10 +44,10 @@ class SiteSimulationPass implements SimulatorPassInterface
             'type'    => ['string', 'null'],
             'default' => null,
         ];
-        
+
         return $options;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -62,7 +60,7 @@ class SiteSimulationPass implements SimulatorPassInterface
                    || $this->TypoContext()->Site()->getCurrent()->getIdentifier() !== $options['site']
                );
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -70,12 +68,12 @@ class SiteSimulationPass implements SimulatorPassInterface
     {
         // Backup the current site
         $this->siteBackup = $this->TypoContext()->Config()->getRequestAttribute('site');
-        
+
         // Find the given site instance and inject it into the request
         $site = $this->TypoContext()->Site()->get($options['site']);
         $this->TypoContext()->Config()->setRequestAttribute('site', $site);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -83,5 +81,5 @@ class SiteSimulationPass implements SimulatorPassInterface
     {
         $this->TypoContext()->Config()->setRequestAttribute('site', $this->siteBackup);
     }
-    
+
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,27 +18,29 @@
  * Last modified: 2020.03.20 at 13:57
  */
 
-namespace LaborDigital\Typo3BetterApi\Simulation;
+namespace LaborDigital\T3BA\Tool\Simulation;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
-use LaborDigital\Typo3BetterApi\Domain\DbService\DbService;
+
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Tool\Database\DbService;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 
-class AdminUserAuthentication extends BackendUserAuthentication
+class AdminUserAuthentication extends BackendUserAuthentication implements PublicServiceInterface
 {
     public const ADMIN_USERNAME = '_betterApi_adminUser_';
-    
+
     /**
-     * @var \LaborDigital\Typo3BetterApi\Domain\DbService\DbService
+     * @var \LaborDigital\T3BA\Tool\Database\DbService
      */
     protected $dbService;
-    
+
     /**
      * @var \TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory
      */
     protected $passwordHashFactory;
-    
+
     /**
      * @inheritDoc
      */
@@ -48,78 +51,82 @@ class AdminUserAuthentication extends BackendUserAuthentication
         $this->dbService           = $db;
         $this->passwordHashFactory = $passwordHashFactory;
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function start()
+    public function start(): void
     {
         parent::start();
         $this->loginUser();
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function backendCheckLogin($proceedIfNoUserIsLoggedIn = false)
+    public function backendCheckLogin($proceedIfNoUserIsLoggedIn = false): void
     {
         $this->loginUser();
     }
-    
+
     /**
      * @inheritDoc
      */
-    protected function isUserAllowedToLogin()
+    protected function isUserAllowedToLogin(): bool
     {
         return true;
     }
-    
+
     /**
      * @inheritDoc
      */
-    protected function getCookie($cookieName)
+    protected function getCookie($cookieName): string
     {
         return '';
     }
-    
-    protected function loginUser()
+
+    /**
+     * @throws \LaborDigital\T3BA\Core\Exception\BetterApiException
+     */
+    protected function loginUser(): void
     {
         // Skip if we already are logged in
         if (! empty($this->user['uid'])) {
             return;
         }
-        
+
         // Try to login with a username
         $this->setBeUserByName(static::ADMIN_USERNAME);
-        
+
         // Check if the login succeeded
         if (empty($this->user['uid'])) {
             $this->ensureBackendUserExists();
-            
+
             // Try to login again
             $this->setBeUserByName(static::ADMIN_USERNAME);
-            
+
             // Failed ?
+            /** @noinspection NotOptimalIfConditionsInspection */
             if (empty($this->user['uid'])) {
                 throw new BetterApiException('Could not automatically create an admin user for you to use!');
             }
         }
-        
+
         // Initialize the object
         $this->fetchGroupData();
         $this->backendSetUC();
         $this->uc['recursiveDelete'] = true;
     }
-    
+
     /**
      * Removes all users that match our username from the database and creates a new, admin user
      */
-    protected function ensureBackendUserExists()
+    protected function ensureBackendUserExists(): void
     {
         // Make sure that there are no other remnants of this user...
         $this->dbService->getQuery('be_users', true)
                         ->withWhere(['username' => static::ADMIN_USERNAME])->delete();
-        
+
         // Create a new user
         $this->dbService->getQuery('be_users', true)
                         ->insert([
@@ -130,16 +137,14 @@ class AdminUserAuthentication extends BackendUserAuthentication
                             'crdate'   => $GLOBALS['EXEC_TIME'],
                         ]);
     }
-    
+
     /**
      * This function returns a salted hashed key.
      *
      * @return string a random password
      */
-    protected function generateHashedPassword()
+    protected function generateHashedPassword(): string
     {
-        $hashing = $this->passwordHashFactory->getDefaultHashInstance('BE');
-        
-        return $hashing->getHashedPassword(random_bytes(20));
+        return $this->passwordHashFactory->getDefaultHashInstance('BE')->getHashedPassword(random_bytes(20));
     }
 }

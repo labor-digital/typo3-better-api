@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
+namespace LaborDigital\T3BA\Tool\Simulation;
 
-namespace LaborDigital\Typo3BetterApi\Simulation;
 
-
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -37,7 +37,7 @@ class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
     /**
      * @inheritDoc
      */
-    public function settingLanguage()
+    public function settingLanguage(ServerRequestInterface $request = null)
     {
         // Make sure to use the existing language service if possible
         if (! isset($GLOBALS['LANG'])) {
@@ -49,8 +49,6 @@ class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
         $lang                               = $GLOBALS['LANG'];
         $this->config['config']['language'] = $lang->lang;
 
-        return parent::settingLanguage();
+        return parent::settingLanguage($request);
     }
-
-
 }

@@ -20,34 +20,35 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
+namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
 use InvalidArgumentException;
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
+use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 class LanguageSimulationPass implements SimulatorPassInterface
 {
     use CommonDependencyTrait;
-    
+
     protected $requestLangBackup;
     protected $langServiceBackup;
     protected $aspectBackup;
-    
+
     /**
      * True if $GLOBALS['LANG'] is empty and we provide a fallback for it
      *
      * @var bool
      */
     protected $provideLangFallback = false;
-    
+
     /**
      * @inheritDoc
      */
     public function __construct() { }
-    
+
     /**
      * @inheritDoc
      */
@@ -61,10 +62,10 @@ class LanguageSimulationPass implements SimulatorPassInterface
             'type'    => ['int', 'string', 'null', SiteLanguage::class, 'true'],
             'default' => null,
         ];
-        
+
         return $options;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -75,16 +76,16 @@ class LanguageSimulationPass implements SimulatorPassInterface
             if (! isset($GLOBALS['LANG'])) {
                 return $this->provideLangFallback = true;
             }
-            
+
             return false;
         }
-        
+
         $languageObject = $this->resolveLanguageObject($options['language'], $options['fallbackLanguage']);
-        
+
         return $languageObject->getLanguageId() !==
                $this->TypoContext()->Language()->getCurrentFrontendLanguage()->getLanguageId();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -93,25 +94,26 @@ class LanguageSimulationPass implements SimulatorPassInterface
         // Check if we have to provide the language service
         if ($this->provideLangFallback) {
             $this->langServiceBackup = $GLOBALS['LANG'];
-            $GLOBALS['LANG']         = $this->Translation()->getTypoLanguageService();
-            
+            $GLOBALS['LANG']         = $this->Translator()->getTypoLanguageService();
+
             return;
         }
-        
+
         // Create backup
         $this->requestLangBackup = $this->TypoContext()->Config()->getRequestAttribute('language');
         $this->langServiceBackup = $GLOBALS['LANG'];
         $this->aspectBackup      = $this->TypoContext()->getRootContext()->getAspect('language');
-        
+
         // Update the language
         $languageObject = $this->resolveLanguageObject($options['language'], $options['fallbackLanguage']);
+        Locales::setSystemLocaleFromSiteLanguage($languageObject);
         $this->TypoContext()->Config()->setRequestAttribute('language', $languageObject);
         $languageAspect = LanguageAspectFactory::createFromSiteLanguage($languageObject);
         $this->TypoContext()->getRootContext()->setAspect('language', $languageAspect);
         unset($GLOBALS['LANG']);
-        $GLOBALS['LANG'] = $this->Translation()->getTypoLanguageService();
+        $GLOBALS['LANG'] = $this->Translator()->getTypoLanguageService();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -121,28 +123,31 @@ class LanguageSimulationPass implements SimulatorPassInterface
         if ($this->provideLangFallback) {
             return;
         }
-        
+
         $this->TypoContext()->getRootContext()->setAspect('language', $this->aspectBackup);
         $this->TypoContext()->Config()->setRequestAttribute('language', $this->requestLangBackup);
+
+        dbge($this, 'what is to revert here?');
+        Locales::setSystemLocaleFromSiteLanguage($languageObject);
     }
-    
+
     /**
      * Internal helper to resolve the language by a multitude of different formats
      *
-     * @param   int|string|SiteLanguage       $language          The language to set the frontend to.
-     *                                                           Either as sys_language_uid value or as language object
+     * @param   int|string|SiteLanguage            $language          The language to set the frontend to.
+     *                                                                Either as sys_language_uid value or as language
+     *                                                                object
      *
-     * @param   int|string|SiteLanguage|true  $fallbackLanguage  The language which should be used when the $language
-     *                                                           was not found for this site. If true is given, the
-     *                                                           default language will be used
+     * @param   null|int|string|SiteLanguage|true  $fallbackLanguage  The language which should be used when the
+     *                                                                $language was not found for this site. If true is
+     *                                                                given, the default language will be used
      *
      * @return mixed|\TYPO3\CMS\Core\Site\Entity\SiteLanguage
      */
     protected function resolveLanguageObject($language, $fallbackLanguage = null)
     {
         if (! is_object($language)) {
-            $languages = $this->TypoContext()->Site()->getCurrent()->getLanguages();
-            foreach ($languages as $lang) {
+            foreach ($this->TypoContext()->Site()->getCurrent()->getLanguages() as $lang) {
                 if (
                     (is_numeric($language) && $lang->getLanguageId() === (int)$language)
                     || strtolower($lang->getTwoLetterIsoCode()) === $language) {
@@ -156,13 +161,13 @@ class LanguageSimulationPass implements SimulatorPassInterface
                 if ($fallbackLanguage === true) {
                     $fallbackLanguage = $this->TypoContext()->Site()->getCurrent()->getDefaultLanguage();
                 }
-                
+
                 return $this->resolveLanguageObject($fallbackLanguage);
             }
             throw new InvalidArgumentException('Could not determine the site language for the given language value!');
         }
-        
+
         return $language;
     }
-    
+
 }
