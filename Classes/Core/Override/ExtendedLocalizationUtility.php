@@ -38,7 +38,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\Translation\TranslationLabelProvider;
+
+use LaborDigital\T3BA\Tool\Translation\TranslationLabelProvider;
 use TYPO3\CMS\Extbase\Utility\BetterApiClassOverrideCopy__LocalizationUtility;
 
 class ExtendedLocalizationUtility extends BetterApiClassOverrideCopy__LocalizationUtility
@@ -47,15 +48,16 @@ class ExtendedLocalizationUtility extends BetterApiClassOverrideCopy__Localizati
      * @inheritDoc
      */
     public static function translate(
-        $key,
-        $extensionName = null,
-        $arguments = null,
+        string $key,
+        ?string $extensionName = null,
+        array $arguments = null,
         string $languageKey = null,
         array $alternativeLanguageKeys = null
-    ) {
+    ): ?string {
         return TranslationLabelProvider::provideLabelFor($key,
-            function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
+            static function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
                 return parent::translate($input, $extensionName, $arguments, $languageKey, $alternativeLanguageKeys);
             });
     }
+
 }

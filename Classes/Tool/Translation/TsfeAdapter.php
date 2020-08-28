@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2020.08.22 at 21:56
  */
 
 declare(strict_types=1);
@@ -36,14 +36,20 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-
-namespace LaborDigital\T3BA\Core\Adapter;
+namespace LaborDigital\T3BA\Tool\Translation;
 
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class TsfeAdapter extends TypoScriptFrontendController
 {
+    /**
+     * Adapter to extract the language service from a TypoScriptFrontendController instance
+     *
+     * @param   \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController  $tsfe
+     *
+     * @return \TYPO3\CMS\Core\Localization\LanguageService
+     */
     public static function getLanguageService(TypoScriptFrontendController $tsfe): LanguageService
     {
         return $tsfe->languageService;

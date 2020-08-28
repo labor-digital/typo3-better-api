@@ -29,22 +29,28 @@ use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
 use LaborDigital\T3BA\Core\Override\ExtendedCacheManager;
 use LaborDigital\T3BA\Core\Override\ExtendedContainerBuilder;
+use LaborDigital\T3BA\Core\Override\ExtendedLanguageService;
+use LaborDigital\T3BA\Core\Override\ExtendedLocalizationUtility;
 use LaborDigital\T3BA\Core\Override\ExtendedTypoScriptParser;
 use LaborDigital\T3BA\Event\KernelBootEvent;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class ClassOverrideStage implements BootStageInterface
 {
 
     public const OVERRIDE_MAP
         = [
-            Bootstrap::class        => ExtendedBootstrap::class,
-            ContainerBuilder::class => ExtendedContainerBuilder::class,
-            CacheManager::class     => ExtendedCacheManager::class,
-            TypoScriptParser::class => ExtendedTypoScriptParser::class,
+            Bootstrap::class           => ExtendedBootstrap::class,
+            ContainerBuilder::class    => ExtendedContainerBuilder::class,
+            CacheManager::class        => ExtendedCacheManager::class,
+            TypoScriptParser::class    => ExtendedTypoScriptParser::class,
+            LocalizationUtility::class => ExtendedLocalizationUtility::class,
+            LanguageService::class     => ExtendedLanguageService::class,
         ];
 
     /**
@@ -52,38 +58,21 @@ class ClassOverrideStage implements BootStageInterface
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
-        // Register the override generator's auto-loader
         ClassOverrideGenerator::init($kernel->getClassLoader());
+        $eventBus->addListener(KernelBootEvent::class, [$this, 'onKernelBoot']);
+    }
 
-        // Register overrides
-        $eventBus->addListener(KernelBootEvent::class, static function () {
-            foreach (static::OVERRIDE_MAP as $target => $override) {
-                if (ClassOverrideGenerator::hasClassOverride($override)) {
-                    continue;
-                }
-                ClassOverrideGenerator::registerOverride($target, $override);
+    /**
+     * Register all class overrides
+     */
+    public function onKernelBoot(): void
+    {
+        foreach (static::OVERRIDE_MAP as $target => $override) {
+            if (ClassOverrideGenerator::hasClassOverride($override)) {
+                continue;
             }
-        });
-
-//        // Apply the required overrides
-//        ClassOverrideGenerator::registerOverride(\TYPO3\CMS\Core\Core\Bootstrap::class, ExtendedBootstrap::class);
-//        ClassOverrideGenerator::registerOverride(CacheManager::class, ExtendedCacheManager::class);
-//        ClassOverrideGenerator::registerOverride(LocalizationUtility::class, ExtendedLocalizationUtility::class);
-//        ClassOverrideGenerator::registerOverride(DataHandler::class, ExtendedDataHandler::class);
-//        ClassOverrideGenerator::registerOverride(NodeFactory::class, ExtendedNodeFactory::class);
-//        ClassOverrideGenerator::registerOverride(DataMapper::class, ExtendedDataMapper::class);
-//        ClassOverrideGenerator::registerOverride(SiteConfiguration::class, ExtendedSiteConfiguration::class);
-//        ClassOverrideGenerator::registerOverride(ReferenceIndex::class, ExtendedReferenceIndex::class);
-//
-//        // Make sure we don't crash legacy code when changing the language service
-//        ClassOverrideGenerator::registerOverride(
-//            LanguageService::class,
-//            ExtendedLanguageService::class
-//        );
-//        if (! class_exists(LanguageService::class, false)
-//            && ! class_exists(\TYPO3\CMS\Lang\LanguageService::class, false)) {
-//            class_alias(LanguageService::class, \TYPO3\CMS\Lang\LanguageService::class);
-//        }
+            ClassOverrideGenerator::registerOverride($target, $override);
+        }
     }
 
 }

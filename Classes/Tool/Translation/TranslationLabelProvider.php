@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,29 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 17:49
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\Translation;
+namespace LaborDigital\T3BA\Tool\Translation;
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
 
 class TranslationLabelProvider
 {
-    
+    use StaticContainerAwareTrait;
+
     /**
      * Stores all requested labels to speed up subsequent requests
      *
      * @var array
      */
     protected static $labelCache = [];
-    
-    
-    /**
-     * @var \LaborDigital\Typo3BetterApi\Translation\TranslationService
-     */
-    protected static $translator;
-    
+
     /**
      * Bridge for the translation service, used in the core modding classes
      *
@@ -51,34 +47,20 @@ class TranslationLabelProvider
         if (! is_string($input)) {
             return $translationProvider($input);
         }
-        $input = trim($input);
-        
+
         // Skip events and override resolution if we already resolved this label
+        $input = trim($input);
         if (isset(static::$labelCache[$input])) {
             return static::$labelCache[$input] === true ?
                 $translationProvider($input) : $translationProvider(static::$labelCache[$input]);
         }
-        
+
         // Resolve our label
         $inputRaw                   = $input;
-        $input                      = static::getTranslator()->getTranslationKeyMaybe($input);
+        $input                      = static::getSingletonOf(Translator::class)->getLabelKey($input);
         static::$labelCache[$input] = $inputRaw === $input ? true : $input;
-        
+
         // Do the translation
         return $translationProvider($input);
-    }
-    
-    /**
-     * Returns the translator instance
-     *
-     * @return \LaborDigital\Typo3BetterApi\Translation\TranslationService
-     */
-    protected static function getTranslator(): TranslationService
-    {
-        if (! empty(static::$translator)) {
-            return static::$translator;
-        }
-        
-        return static::$translator = TypoContainer::getInstance()->get(TranslationService::class);
     }
 }
