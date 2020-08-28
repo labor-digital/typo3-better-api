@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,9 +18,9 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\Tsfe;
+namespace LaborDigital\T3BA\Tool\Tsfe;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
 
 class TsfeNotLoadedException extends BetterApiException
 {

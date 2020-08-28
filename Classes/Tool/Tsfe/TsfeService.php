@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,41 +18,22 @@
  * Last modified: 2020.03.19 at 01:21
  */
 
-namespace LaborDigital\Typo3BetterApi\Tsfe;
+namespace LaborDigital\T3BA\Tool\Tsfe;
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
-use LaborDigital\Typo3BetterApi\Simulation\EnvironmentSimulator;
-use LaborDigital\Typo3BetterApi\Simulation\SimulatedTypoScriptFrontendController;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
+use LaborDigital\T3BA\Tool\Simulation\SimulatedTypoScriptFrontendController;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class TsfeService implements SingletonInterface
+class TsfeService implements SingletonInterface, PublicServiceInterface
 {
-
-    /**
-     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
-     */
-    protected $context;
-
-    /**
-     * TsfeService constructor.
-     *
-     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $context
-     */
-    public function __construct(TypoContainerInterface $container, TypoContext $context)
-    {
-        $this->container = $container;
-        $this->context   = $context;
-    }
+    use ContainerAwareTrait;
+    use TypoContextAwareTrait;
 
     /**
      * Returns true if the frontend is being simulated
@@ -80,7 +62,7 @@ class TsfeService implements SingletonInterface
      * If we have to forcefully initialize it, we will do that.
      *
      * @return TypoScriptFrontendController
-     * @throws \LaborDigital\Typo3BetterApi\Tsfe\TsfeNotLoadedException
+     * @throws \LaborDigital\T3BA\Tool\Tsfe\TsfeNotLoadedException
      */
     public function getTsfe(): TypoScriptFrontendController
     {
@@ -108,14 +90,13 @@ class TsfeService implements SingletonInterface
         }
 
         // Get the content object renderer from the config manager
-        if (! $cObj instanceof ContentObjectRenderer && $this->context->Env()->isFrontend()) {
-            $cm   = $this->container->get(ConfigurationManager::class);
-            $cObj = $cm->getContentObject();
+        if (! $cObj instanceof ContentObjectRenderer && $this->TypoContext()->Env()->isFrontend()) {
+            $cObj = $this->getSingletonOf(ConfigurationManager::class)->getContentObject();
         }
 
         // Create it ourselves
         if (! $cObj instanceof ContentObjectRenderer) {
-            return $this->container->get(EnvironmentSimulator::class)->runWithEnvironment([], function () {
+            return $this->getSingletonOf(EnvironmentSimulator::class)->runWithEnvironment([], function () {
                 return $this->getTsfe()->cObj;
             });
         }
