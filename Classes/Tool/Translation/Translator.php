@@ -23,6 +23,8 @@ namespace LaborDigital\T3BA\Tool\Translation;
 use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
+use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\EventBus\EventBusInterface;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -31,6 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class Translator implements SingletonInterface
 {
     use TypoContextAwareTrait;
+    use LocallyCachedStatePropertyTrait;
 
     protected const PARSE_RESULT_ALREADY_TRANS_KEY = 0;
     protected const PARSE_RESULT_NOT_TRANSLATABLE  = 1;
@@ -80,13 +83,21 @@ class Translator implements SingletonInterface
     /**
      * TranslationService constructor.
      *
-     * @param   \Neunerlei\EventBus\EventBusInterface     $eventBus
-     * @param   \LaborDigital\T3BA\Tool\Tsfe\TsfeService  $tsfe
+     * @param   \Neunerlei\EventBus\EventBusInterface       $eventBus
+     * @param   \LaborDigital\T3BA\Tool\Tsfe\TsfeService    $tsfe
+     * @param   \Neunerlei\Configuration\State\ConfigState  $configState
      */
-    public function __construct(EventBusInterface $eventBus, TsfeService $tsfe)
+    public function __construct(EventBusInterface $eventBus, TsfeService $tsfe, ConfigState $configState)
     {
         $this->eventBus = $eventBus;
         $this->tsfe     = $tsfe;
+        $this->registerCachedProperty('namespaces', 'typo.translation.namespaces', $configState);
+        $this->registerCachedProperty('overrides', 'typo.translation.overrideLabels', $configState);
+        $configState->addWatcher('typo.translation', function () {
+            // Clear local caches if something changed in the configuration
+            $this->translatableSelectorMap = [];
+            $this->selectorLabelMap        = [];
+        });
     }
 
     /**
@@ -98,9 +109,7 @@ class Translator implements SingletonInterface
      */
     public function hasNamespace(string $namespaceName): bool
     {
-        $namespaces = $this->getNamespaces();
-
-        return isset($namespaces[$namespaceName]);
+        return isset($this->namespaces[$namespaceName]);
     }
 
     /**
@@ -110,11 +119,7 @@ class Translator implements SingletonInterface
      */
     public function getNamespaces(): array
     {
-        if (isset($this->namespaces)) {
-            return $this->namespaces;
-        }
-
-        return $this->namespaces = $this->TypoContext()->Config()->getConfigValue('typo.translation.namespaces', []);
+        return $this->namespaces;
     }
 
     /**
@@ -273,21 +278,6 @@ class Translator implements SingletonInterface
     }
 
     /**
-     * This class stores some config states internally, because I want to avoid
-     * a bottleneck in the config resolution on a high-volume service like translation labels.
-     * So if you ever should modify the translation config state AFTER this class was initialized,
-     * you can reset those internal cashes. There is no other reason for this method, and it is a
-     * real edge case. Therefore make sure this is what you need.
-     */
-    public function flushInternalCaches(): void
-    {
-        $this->overrides               = null;
-        $this->namespaces              = null;
-        $this->selectorLabelMap        = [];
-        $this->translatableSelectorMap = [];
-    }
-
-    /**
      * Parses the given selector into it's real selector (aka. lookup path) and the context.
      * Will return one of the PARSE_RESULT constants to signalize what to do with the result
      *
@@ -369,32 +359,18 @@ class Translator implements SingletonInterface
      * @param   string       $namespaceName  The name of the namespace to check for
      * @param   string|null  $selector       Optional value to render the failing selector in the message
      *
+     * @return string
      * @throws \LaborDigital\T3BA\Tool\Translation\TranslationException
      */
     protected function requireNamespace(string $namespaceName, ?string $selector = null): string
     {
-        $namespaces = $this->getNamespaces();
-        if (! isset($namespaces[$namespaceName])) {
+        if (! isset($this->namespaces[$namespaceName])) {
             $selector = ! empty($selector) ? ' for selector: "' . $selector . '"' : '';
             throw new TranslationException(
                 'Your translation requires a missing context: "' . $namespaceName . '"' . $selector
             );
         }
 
-        return $namespaces[$namespaceName];
-    }
-
-    /**
-     * Returns the list of registered label overrides
-     *
-     * @return array
-     */
-    protected function getOverrides(): array
-    {
-        if (isset($this->overrides)) {
-            return $this->overrides;
-        }
-
-        return $this->overrides = $this->TypoContext()->Config()->getConfigValue('typo.translation.overrideLabels', []);
+        return $this->namespaces[$namespaceName];
     }
 }
