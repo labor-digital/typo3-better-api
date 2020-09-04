@@ -40,6 +40,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
 
     protected $tsfeBackup;
     protected $languageAspectBackup;
+    protected $pidBackup;
 
     /**
      * @inheritDoc
@@ -86,6 +87,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
         // Backup the tsfe
         $this->tsfeBackup           = $GLOBALS['TSFE'];
         $this->languageAspectBackup = clone $this->TypoContext()->getRootContext()->getAspect('language');
+        $this->pidBackup            = $this->TypoContext()->Config()->getConfigState()->get('t3ba.pids', []);
 
         // Store the language aspect temporarily
         $pid = $options['pid'] ?? $this->TypoContext()->Pid()->getCurrent();
@@ -100,6 +102,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     public function rollBack(): void
     {
+        $this->TypoContext()->Config()->getConfigState()->set('t3ba.pids', $this->pidBackup);
         $GLOBALS['TSFE'] = $this->tsfeBackup;
         $this->TypoContext()->getRootContext()->setAspect('language', $this->languageAspectBackup);
     }
