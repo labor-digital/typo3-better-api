@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.09.04 at 16:29
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 
-interface LinkSetConfigurationInterface
+namespace LaborDigital\T3BA\ExtConfigHandler\LinkSet;
+
+
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+
+interface ConfigureLinkSetsInterface
 {
-    
     /**
      * Is used to collect the link sets this configuration provides
      *
-     * @param   \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector  $collector
-     * @param   ExtConfigContext                                                                 $context
+     * @param   LinkSetCollector  $collector
+     * @param   ExtConfigContext  $context
      *
      * @return mixed
      */

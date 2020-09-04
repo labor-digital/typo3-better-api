@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,15 +18,10 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\Link;
+namespace LaborDigital\T3BA\Tool\Link;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\BetterApiException;
 
-/**
- * Class LinkException
- *
- * @package LaborDigital\Typo3BetterApi\LinkService
- */
 class LinkException extends BetterApiException
 {
 }

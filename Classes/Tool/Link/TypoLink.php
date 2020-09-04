@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,9 +18,9 @@
  * Last modified: 2020.03.19 at 01:45
  */
 
-namespace LaborDigital\Typo3BetterApi\Link;
+namespace LaborDigital\T3BA\Tool\Link;
 
-use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\CacheHashCalculatorAdapter;
+use LaborDigital\T3BA\Tool\Link\Adapter\CacheHashCalculatorAdapter;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
@@ -37,31 +38,30 @@ use function GuzzleHttp\Psr7\parse_query;
  */
 class TypoLink
 {
-    
     /**
-     * @var \LaborDigital\Typo3BetterApi\Link\LinkContext
+     * @var \LaborDigital\T3BA\Tool\Link\LinkContext
      */
     protected $context;
-    
+
     /**
      * @var Request|null
      */
     protected $controllerRequest;
-    
+
     /**
      * The target page id
      *
      * @var int
      */
     protected $pid;
-    
+
     /**
      * True if the current query string should be appended to the new url
      *
      * @var bool
      */
     protected $keepQuery = false;
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be kept.
      * All others will be dropped.
@@ -70,7 +70,7 @@ class TypoLink
      * @var array
      */
     protected $allowedQueryArgs = [];
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be removed.
      * All others will be kept.
@@ -79,21 +79,21 @@ class TypoLink
      * @var array
      */
     protected $deniedQueryArgs = [];
-    
+
     /**
      * The fragment / hash / anchor of the url
      *
      * @var string|iterable|null
      */
     protected $fragment;
-    
+
     /**
      * Optional The controller class to create the request for
      *
      * @var string
      */
     protected $controllerClass;
-    
+
     /**
      * Optional if the controller class name is not known.
      * NOTE: $controllerClass has priority over this setting
@@ -101,7 +101,7 @@ class TypoLink
      * @var string
      */
     protected $controllerName;
-    
+
     /**
      * Optional if the controller class name is not known.
      * NOTE: $controllerClass has priority over this setting
@@ -109,89 +109,82 @@ class TypoLink
      * @var string
      */
     protected $controllerExtKey;
-    
+
     /**
      * Optional The controller action to create the link for
      *
      * @var string
      */
     protected $controllerAction;
-    
+
     /**
      * Optional The plugin name to create the link for
      *
      * @var string
      */
     protected $pluginName;
-    
+
     /**
      * The arguments to build the link with
      *
      * @var array
      */
     protected $args = [];
-    
-    /**
-     * True as long as the chash should be added to the generated link
-     *
-     * @var bool
-     */
-    protected $cHash = true;
-    
+
     /**
      * A list of arguments that should be ignored when the chash is generated for this link
      *
      * @var array
      */
     protected $cHashExcludedArgs = [];
-    
+
     /**
      * Holds the user defined request object
      *
      * @var Request
      */
     protected $request;
-    
+
     /**
      * Holds the user defined uri builder
      *
      * @var \TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder
      */
     protected $uriBuilder;
-    
+
     /**
      * Used if a link set was applied which requires specific arguments to be present
      *
      * @var array
      */
     protected $requiredArgs = [];
-    
+
     /**
      * Used if a link set was applied which requires specific fragments-arguments to be present
      *
      * @var array
      */
     protected $requiredFragmentArgs = [];
-    
+
     /**
      * Holds the language this link should be generated for
      *
      * @var \TYPO3\CMS\Core\Site\Entity\SiteLanguage|null
      */
     protected $language;
-    
+
     /**
      * Link constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\Link\LinkContext  $context
-     * @param   \TYPO3\CMS\Extbase\Mvc\Request|null            $controllerRequest
+     * @param   \LaborDigital\T3BA\Tool\Link\LinkContext  $context
+     * @param   \TYPO3\CMS\Extbase\Mvc\Request|null       $controllerRequest
      */
     public function __construct(LinkContext $context, ?Request $controllerRequest)
     {
         $this->context           = $context;
         $this->controllerRequest = $controllerRequest;
     }
-    
+
     /**
      * Make sure the linked objects are cloned when we clone ourselves
      */
@@ -204,7 +197,7 @@ class TypoLink
             $this->uriBuilder = clone $this->uriBuilder;
         }
     }
-    
+
     /**
      * Returns the target page id or null
      *
@@ -214,25 +207,25 @@ class TypoLink
     {
         return $this->pid;
     }
-    
+
     /**
      * Sets the target page id
      *
      * @param   int|string  $pid
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withPid($pid): TypoLink
+    public function withPid($pid): self
     {
         $clone = clone $this;
         if (! is_numeric($pid)) {
-            $pid = $this->context->TypoContext->getPidAspect()->getPid($pid);
+            $pid = $this->context->TypoContext()->Pid()->get($pid);
         }
         $clone->pid = (int)$pid;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the request which was set for this link.
      *
@@ -241,32 +234,32 @@ class TypoLink
      *                               which is stored in the global context of the used "LinkService" instance.
      *                               If you change stuff in it you may break stuff.
      *
-     * @return \TYPO3\CMS\Extbase\Mvc\Web\Request|null
+     * @return Request|null
      */
     public function getRequest(bool $alsoInternal): ?Request
     {
         if (! empty($this->request)) {
             return $this->request;
         }
-        
-        return $alsoInternal ? $this->context->getRequest() : null;
+
+        return $alsoInternal ? $this->context->Request() : null;
     }
-    
+
     /**
      * Sets the request object of this link instance
      *
-     * @param   \TYPO3\CMS\Extbase\Mvc\Request  $request
+     * @param   Request  $request
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withRequest(Request $request): TypoLink
+    public function withRequest(Request $request): self
     {
         $clone          = clone $this;
         $clone->request = $request;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the set uri builder for this link
      *
@@ -275,32 +268,32 @@ class TypoLink
      *                               which is stored in the global context of the used "LinkService" instance.
      *                               If you change stuff in it, you may break in other places.
      *
-     * @return \TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder
+     * @return UriBuilder
      */
-    public function getUriBuilder(bool $alsoInternal): UriBuilder
+    public function getUriBuilder(bool $alsoInternal = false): ?UriBuilder
     {
         if (! empty($this->uriBuilder)) {
             return $this->uriBuilder;
         }
-        
-        return $alsoInternal ? $this->context->getUriBuilder() : null;
+
+        return $alsoInternal ? $this->context->UriBuilder() : null;
     }
-    
+
     /**
      * Sets the uri builder of this link instance
      *
      * @param   \TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder  $uriBuilder
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withUriBuilder(UriBuilder $uriBuilder): TypoLink
+    public function withUriBuilder(UriBuilder $uriBuilder): self
     {
         $clone             = clone $this;
         $clone->uriBuilder = $uriBuilder;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns true if the current query string should be kept, otherwise false
      *
@@ -310,7 +303,7 @@ class TypoLink
     {
         return $this->keepQuery;
     }
-    
+
     /**
      * Setting this to true will keep the current query string.
      * Default is false.
@@ -319,14 +312,14 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withKeepQuery(bool $keepQuery): TypoLink
+    public function withKeepQuery(bool $keepQuery): self
     {
         $clone            = clone $this;
         $clone->keepQuery = $keepQuery;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns an array containing two keys:
      * - "type" is either denied, allowed or none which represents the type of query modifier that is used
@@ -342,20 +335,20 @@ class TypoLink
                 'list' => $this->deniedQueryArgs,
             ];
         }
-        
+
         if (! empty($this->allowedQueryArgs)) {
             return [
                 'type' => 'allowed',
                 'list' => $this->deniedQueryArgs,
             ];
         }
-        
+
         return [
             'type' => 'none',
             'list' => [],
         ];
     }
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be kept.
      * All others will be dropped.
@@ -363,16 +356,16 @@ class TypoLink
      *
      * @param   array  $list
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withAllowedQueryArgs(array $list): TypoLink
+    public function withAllowedQueryArgs(array $list): self
     {
         $clone                   = clone $this;
         $clone->allowedQueryArgs = array_values($list);
-        
+
         return $clone;
     }
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be removed.
      * All others will be kept.
@@ -380,16 +373,16 @@ class TypoLink
      *
      * @param   array  $list
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withDeniedQueryArgs(array $list): TypoLink
+    public function withDeniedQueryArgs(array $list): self
     {
         $clone                  = clone $this;
         $clone->deniedQueryArgs = array_values($list);
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the fragment/anchor tag of the link
      *
@@ -402,7 +395,7 @@ class TypoLink
     {
         return $this->fragment;
     }
-    
+
     /**
      * Sets the fragment/anchor tag of the link
      *
@@ -413,29 +406,29 @@ class TypoLink
      * @param   string|null|array  $fragment
      *
      * @return TypoLink
-     * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
+     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
      */
-    public function withFragment($fragment): TypoLink
+    public function withFragment($fragment): self
     {
         $clone = clone $this;
         if (! is_array($fragment) && ! is_string($fragment) && ! is_null($fragment)) {
             throw new LinkException('The given fragment is invalid!');
         }
         $clone->fragment = is_string($fragment) ? trim(ltrim(trim($fragment), '#')) : $fragment;
-        
+
         return $clone;
     }
-    
+
     /**
      * Adds a single fragment argument and its value to the link
      *
      * @param   string  $key    The key to set the value for
      * @param   mixed   $value  The value to set for the given key
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
-     * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
+     * @return $this
+     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
      */
-    public function withAddedToFragment(string $key, $value): TypoLink
+    public function withAddedToFragment(string $key, $value): self
     {
         $clone = clone $this;
         if (! is_iterable($clone->fragment)) {
@@ -446,28 +439,28 @@ class TypoLink
             $clone->fragment = [];
         }
         $clone->fragment[trim(ltrim(trim($key), '#'))] = $value;
-        
+
         return $clone;
     }
-    
+
     /**
      * Removes a single argument from the list of fragment arguments
      *
      * @param   string  $key
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withRemovedFromFragment(string $key): TypoLink
+    public function withRemovedFromFragment(string $key): self
     {
         $clone = clone $this;
         if (! is_iterable($clone->fragment)) {
             return $clone;
         }
         unset($clone->args[trim(ltrim(trim($key), '#'))]);
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently configured extbase controller target-class for the link
      *
@@ -477,7 +470,7 @@ class TypoLink
     {
         return $this->controllerClass;
     }
-    
+
     /**
      * Can be used to set the target extbase controller, extension and vendor for this link.
      *
@@ -485,14 +478,14 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withControllerClass(string $controllerClass): TypoLink
+    public function withControllerClass(string $controllerClass): self
     {
         $clone                  = clone $this;
         $clone->controllerClass = $controllerClass;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently set extbase controller name for this link.
      * Optional if the controller class name is not known.
@@ -505,7 +498,7 @@ class TypoLink
     {
         return $this->controllerName;
     }
-    
+
     /**
      * Sets the used extbase controller name for this link.
      * Optional if the controller class name is not known.
@@ -515,14 +508,14 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withControllerName(string $controllerName): TypoLink
+    public function withControllerName(string $controllerName): self
     {
         $clone                 = clone $this;
         $clone->controllerName = $controllerName;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently set extbase extension key for the controller used by this link.
      * Optional if the controller class name is not known.
@@ -535,7 +528,7 @@ class TypoLink
     {
         return $this->controllerExtKey;
     }
-    
+
     /**
      * Sets the extbase extension key for the controller used by this link.
      * Optional if the controller class name is not known.
@@ -545,14 +538,14 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withControllerExtKey(string $controllerExtKey): TypoLink
+    public function withControllerExtKey(string $controllerExtKey): self
     {
         $clone                   = clone $this;
         $clone->controllerExtKey = $controllerExtKey;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently configured action name for the extbase controller used by this link.
      *
@@ -562,7 +555,7 @@ class TypoLink
     {
         return $this->controllerAction;
     }
-    
+
     /**
      * Sets the extbase controller's action name this link should lead to
      *
@@ -570,14 +563,14 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withControllerAction(string $controllerAction): TypoLink
+    public function withControllerAction(string $controllerAction): self
     {
         $clone                   = clone $this;
         $clone->controllerAction = $controllerAction;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently configured plugin name for this link.
      *
@@ -587,7 +580,7 @@ class TypoLink
     {
         return $this->pluginName;
     }
-    
+
     /**
      * Optionally sets the name of the typo3 plugin name this link should lead to.
      *
@@ -595,39 +588,14 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withPluginName(string $pluginName): TypoLink
+    public function withPluginName(string $pluginName): self
     {
         $clone             = clone $this;
         $clone->pluginName = $pluginName;
-        
+
         return $clone;
     }
-    
-    /**
-     * Returns true if the link will contain a cHash, false if not
-     *
-     * @return bool
-     */
-    public function useCHash(): bool
-    {
-        return $this->cHash;
-    }
-    
-    /**
-     * If set to FALSE the link will not contain a cHash
-     *
-     * @param   bool  $state
-     *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
-     */
-    public function withCHash(bool $state): TypoLink
-    {
-        $clone        = clone $this;
-        $clone->cHash = $state;
-        
-        return $clone;
-    }
-    
+
     /**
      * Returns the list of arguments that should be excluded from cHash generation when the url is being build
      *
@@ -637,22 +605,22 @@ class TypoLink
     {
         return $this->cHashExcludedArgs;
     }
-    
+
     /**
      * Sets the list of arguments that should be excluded from cHash generation when the url is being build
      *
      * @param   array  $argsToExclude
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withCHashExcludedArgs(array $argsToExclude): TypoLink
+    public function withCHashExcludedArgs(array $argsToExclude): self
     {
         $clone                    = clone $this;
         $clone->cHashExcludedArgs = $argsToExclude;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently set arguments
      *
@@ -662,7 +630,7 @@ class TypoLink
     {
         return $this->args;
     }
-    
+
     /**
      * Sets all currently configured arguments for the link
      *
@@ -670,78 +638,81 @@ class TypoLink
      *
      * @return TypoLink
      */
-    public function withArgs(iterable $args): TypoLink
+    public function withArgs(iterable $args): self
     {
         $clone       = clone $this;
         $clone->args = $args;
-        
+
         return $clone;
     }
-    
+
     /**
      * Adds a single argument and its value to the list of link arguments
      *
      * @param   string  $key    The key to set the value for
      * @param   mixed   $value  The value to set for the given key
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withAddedToArgs(string $key, $value): TypoLink
+    public function withAddedToArgs(string $key, $value): self
     {
         $clone             = clone $this;
         $clone->args[$key] = $value;
-        
+
         return $clone;
     }
-    
+
     /**
      * Removes a single argument from the list of arguments
      *
      * @param   string  $key
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
+     * @return $this
      */
-    public function withRemovedFromArgs(string $key): TypoLink
+    public function withRemovedFromArgs(string $key): self
     {
         $clone = clone $this;
         unset($clone->args[$key]);
-        
+
         return $clone;
     }
-    
+
     /**
      * Is used to set the language (L parameter) of the currently configured link.
      * Note: Using this will override the L parameter in your "args"
      *
      * @param   \TYPO3\CMS\Core\Site\Entity\SiteLanguage|null|int|string  $language
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
-     * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
+     * @return $this
+     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
      */
-    public function withLanguage($language): TypoLink
+    public function withLanguage($language): self
     {
         $clone = clone $this;
         if (! is_null($language)) {
             if (! is_object($language)) {
-                $languages = $this->context->TypoContext->getSiteAspect()->getSite()->getLanguages();
-                foreach ($languages as $lang) {
-                    if ((is_numeric($language) && $lang->getLanguageId() === (int)$language)
-                        || strtolower($lang->getTwoLetterIsoCode()) == $language) {
+                foreach ($this->context->TypoContext()->Site()->getCurrent()->getLanguages() as $lang) {
+                    if (
+                        (is_numeric($language) && $lang->getLanguageId() === (int)$language)
+                        || strtolower($lang->getTwoLetterIsoCode()) === $language
+                    ) {
                         $language = $lang;
                         break;
                     }
                 }
             }
             if (! $language instanceof SiteLanguage) {
-                throw new LinkException('The given language could not be found on site: '
-                                        . $this->context->TypoContext->getSiteAspect()->getSite()->getIdentifier());
+                throw new LinkException(
+                    'The given language could not be found on site: '
+                    . $this->context->TypoContext()->Site()->getCurrent()->getIdentifier()
+                );
             }
         }
         $clone->language = $language;
-        
+
         return $clone;
     }
-    
+
     /**
      * Returns the currently configured language or null
      *
@@ -751,23 +722,22 @@ class TypoLink
     {
         return $this->language;
     }
-    
+
     /**
-     * Applies a link set which was previously defined in typoscript,
+     * Applies a link set which was previously defined in typoScript,
      * or using the LinkSetRepository in your php code.
      *
      * This will override existing data, so call it early in your link generation!
      *
      * @param   string  $setKey  The name of the link set which should be applied
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
-     * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
+     * @return $this
      */
-    public function withSetApplied(string $setKey): TypoLink
+    public function withSetApplied(string $setKey): self
     {
-        return $this->context->LinkSetRepo->get($setKey)->__applyToLink($this);
+        return $this->context->getLinkSet($setKey)->applyToLink($this);
     }
-    
+
     /**
      * Uses the given configuration and builds a link as a simple string out of it
      *
@@ -782,12 +752,12 @@ class TypoLink
      *                           action. The latter is the typo3 default way which I found really counter intuitive.
      *
      * @return string
-     * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
+     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
      */
     public function build(array $options = []): string
     {
         // Prepare options
-        $options = Options::make($options, [
+        $options     = Options::make($options, [
             'relative' => [
                 'type'    => ['boolean'],
                 'default' => false,
@@ -801,50 +771,50 @@ class TypoLink
                 'default' => false,
             ],
         ]);
-        
+        $typoContext = $this->context->TypoContext();
+
         // Prepare the uri builder
         if (! empty($this->uriBuilder)) {
             $ub = $this->uriBuilder;
         } else {
-            $ub = $this->context->getUriBuilder();
+            $ub = $this->context->UriBuilder();
             $ub->reset();
         }
-        
+
         // Find the request to work with
         if ($options['forMe']) {
             $request = $this->controllerRequest;
         }
-        if (! isset($request) || $request === null) {
+        if (! isset($request)) {
             $request = $this->request;
         }
-        
+
         // Check if for me can be used
         if ($options['forMe'] && $request === null) {
             throw new LinkException('The "forMe" flag can only be used if you are inside a better api extbase controller, or if you manually supplied a Request object using setRequest()!');
         }
-        
+
         // Get our context's request object if nothing was supplied
         if ($request === null) {
-            $request = $this->context->getRequest();
+            $request = $this->context->Request();
         }
-        
+
         // Inject our request into the uri builder
         $backupRequest = $ub->getRequest();
         $ub->setRequest($request);
-        
+
         // Set config flags
         if (! $options['relative']) {
             $ub->setCreateAbsoluteUri(true);
         }
-        $ub->setUseCacheHash($this->cHash);
-        
+
         // Page id
         if (! empty($this->pid)) {
             $ub->setTargetPageUid($this->pid);
         } else {
-            $ub->setTargetPageUid($this->context->TypoContext->getPidAspect()->getCurrentPid());
+            $ub->setTargetPageUid($typoContext->Pid()->getCurrent());
         }
-        
+
         // Query string settings
         $ub->setAddQueryString($this->keepQuery);
         if ($this->keepQuery) {
@@ -858,12 +828,12 @@ class TypoLink
                 $ub->setArgumentsToBeExcludedFromQueryString($excludedKeys);
             }
         }
-        
+
         // Backup request data
         $backupController = $request->getControllerObjectName();
         $backupAction     = $request->getControllerActionName();
         $backupPlugin     = $request->getPluginName();
-        
+
         // Determine if we have to use uriFor()
         $useUriFor = $options['forMe'];
         if (! empty($this->controllerClass)) {
@@ -887,20 +857,21 @@ class TypoLink
             $request->setPluginName($this->pluginName);
             $useUriFor = true;
         }
-        
+
         // Resolve $pid. lookups in our args
+        $pidFacet = $typoContext->Pid();
         foreach ($this->args as $k => $v) {
-            if (! is_string($v) || substr($v, 1, 4) !== 'pid.') {
+            if (! $pidFacet->has($v)) {
                 continue;
             }
-            $this->args[$k] = $this->context->TypoContext->getPidAspect()->getPid($v);
+            $this->args[$k] = $pidFacet->get($v);
         }
-        
+
         // Inject the language into the args
         if (! empty($this->language)) {
             $this->args['L'] = $this->language->getLanguageId();
         }
-        
+
         // Validate if we have all the required arguments
         if (! empty($this->requiredArgs)) {
             $missingArgs = [];
@@ -910,16 +881,18 @@ class TypoLink
                 }
             }
             if (! empty($missingArgs)) {
-                throw new LinkException('Could not build link, because it misses one or multiple arguments: '
-                                        . implode(', ', $missingArgs));
+                throw new LinkException(
+                    'Could not build link, because it misses one or multiple arguments: ' .
+                    implode(', ', $missingArgs));
             }
         }
-        
+
         // Validate if we have all the required fragment-arguments
         if (! empty($this->requiredFragmentArgs)) {
             if (! is_iterable($this->fragment)) {
-                throw new LinkException('Could not build link, the applied link set requires (iterable) fragment arguments, but the fragment was set to: '
-                                        . gettype($this->fragment));
+                throw new LinkException(
+                    'Could not build link, the applied link set requires (iterable) fragment arguments, but the fragment was set to: '
+                    . gettype($this->fragment));
             }
             $missingArgs = [];
             foreach ($this->requiredFragmentArgs as $arg) {
@@ -932,33 +905,33 @@ class TypoLink
                                         . implode(', ', $missingArgs));
             }
         }
-        
+
         // Execute uriFor if required
         if ($useUriFor) {
             // Do some adjustments if we are in cli mode, because typo3 checks if we are in frontend mode
-            if (! $this->context->TypoContext->getEnvAspect()->isFrontend()) {
+            if (! $typoContext->Env()->isFrontend()) {
                 // Automatically find the plugin name if there is none
                 $plugin = $request->getPluginName();
                 if (empty($plugin)) {
-                    $plugin = $this->context->Extension->getPluginNameByAction(
+                    $plugin = $this->context->ExtensionService()->getPluginNameByAction(
                         $request->getControllerExtensionName(),
                         $request->getControllerName(),
                         $request->getControllerActionName()
                     );
                     $request->setPluginName($plugin);
                 }
-                
+
                 // Automatically find pid if none is given
-                if (empty($ub->getTargetPageUid())) {
+                if ($ub->getTargetPageUid() === null) {
                     $ub->setTargetPageUid(
-                        $this->context->Extension->getTargetPidByPlugin(
+                        $this->context->ExtensionService()->getTargetPidByPlugin(
                             $request->getControllerExtensionName(),
                             $request->getPluginName()
                         )
                     );
                 }
             }
-            
+
             // Note: Yes, we COULD use this output, but in cli and other edge cases the result will be wrong,
             // so we go the extra mile and let the build process run twice to be sure everything works smoothly
             $ub->uriFor(
@@ -972,35 +945,35 @@ class TypoLink
             // Set arguments
             $ub->setArguments($this->args);
         }
-        
+
         // Render the uri
-        if ($options['backend'] && $this->context->TypoContext->getEnvAspect()->isBackend()) {
+        if ($options['backend'] && $typoContext->Env()->isBackend()) {
             $uri = $ub->buildBackendUri();
-            if ($this->context->TypoContext->getEnvAspect()->isCli()) {
+            if ($typoContext->Env()->isCli()) {
                 $uri = preg_replace('~^(.*?)/index.php~',
-                    $this->context->TypoContext->getRequestAspect()->getHost() . '/' . TYPO3_mainDir . 'index.php',
-                    $uri);
+                    $typoContext->Request()->getHost() . '/' . TYPO3_mainDir . 'index.php',
+                    $uri
+                );
             }
         } else {
             // Simulate the ignored cHash fields
             if (! empty($this->cHashExcludedArgs)) {
-                $calculator = CacheHashCalculatorAdapter::getGlobalCalculator();
-                // @todo automatic rewrite for extbase arguments
+                $calculator                    = CacheHashCalculatorAdapter::getGlobalCalculator();
                 $cHashExcludedParametersBackup = CacheHashCalculatorAdapter::getExcludedParameters($calculator);
                 CacheHashCalculatorAdapter::updateExcludedParameters(
                     $calculator, Arrays::attach($cHashExcludedParametersBackup, $this->cHashExcludedArgs));
             }
-            
+
             // Build the url
             $uri = $ub->buildFrontendUri();
-            
+
             // Restore cHash fields if required
             if (isset($calculator, $cHashExcludedParametersBackup)) {
                 CacheHashCalculatorAdapter::updateExcludedParameters($calculator, $cHashExcludedParametersBackup);
                 unset($cHashExcludedParametersBackup);
             }
         }
-        
+
         // Build the fragment / anchor
         if (! empty($this->fragment)) {
             $fragment = $this->fragment;
@@ -1013,7 +986,7 @@ class TypoLink
             }
             $uri .= '#' . $fragment;
         }
-        
+
         // Clean up
         $request->setPluginName($backupPlugin);
         $request->setControllerActionName($backupAction);
@@ -1024,37 +997,36 @@ class TypoLink
         if (! isset($this->uriBuilder)) {
             $ub->reset();
         }
-        
+
         // Done
         return $uri;
     }
-    
-    /**
-     * Automatically call the build method if we are converted to a string
-     *
-     * @return string
-     * @throws \LaborDigital\Typo3BetterApi\Link\LinkException
-     */
-    public function __toString()
-    {
-        return $this->build();
-    }
-    
+
     /**
      * Internal helper to inject the required elements of a link when applying a link set
      *
      * @param   array  $requiredArgs
      * @param   array  $requiredFragmentArgs
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
-     * @deprecated Will be renamed in v10
+     * @return $this
+     * @internal
      */
-    public function __withRequiredElements(array $requiredArgs, array $requiredFragmentArgs)
+    public function defineRequiredElements(array $requiredArgs, array $requiredFragmentArgs): self
     {
         $clone                       = clone $this;
         $clone->requiredArgs         = $requiredArgs;
         $clone->requiredFragmentArgs = $requiredFragmentArgs;
-        
+
         return $clone;
+    }
+
+    /**
+     * Automatically call the build method if we are converted to a string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->build();
     }
 }

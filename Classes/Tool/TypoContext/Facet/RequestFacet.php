@@ -21,8 +21,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -32,6 +34,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RequestFacet implements FacetInterface
 {
+    use TypoContextAwareTrait;
+
+    /**
+     * A cache to store resolved hosts on
+     *
+     * @var array
+     */
+    protected $hostCache = [];
 
     /**
      * Returns the http request object that was passed through the middleware stack.
@@ -157,11 +167,25 @@ class RequestFacet implements FacetInterface
      */
     public function getHost(bool $withProtocol = true): string
     {
-        if ($withProtocol) {
-            return GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+        $typoContext = $this->TypoContext();
+        $pid         = $typoContext->Pid()->getCurrent();
+
+        if (! isset($this->hostCache[$pid])) {
+            try {
+                $site                  = $typoContext->Site()->getForPid($pid);
+                $this->hostCache[$pid] = [
+                    $site->getBase()->getHost(),
+                    $site->getBase()->getScheme() . '://' . $site->getBase()->getHost(),
+                ];
+            } catch (SiteNotFoundException $exception) {
+                $this->hostCache[$pid] = [
+                    GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY'),
+                    GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'),
+                ];
+            }
         }
 
-        return GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY');
+        return $this->hostCache[$pid][(int)$withProtocol];
     }
 
     /**

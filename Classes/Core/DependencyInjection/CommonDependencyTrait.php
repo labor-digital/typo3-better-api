@@ -40,6 +40,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\DependencyInjection;
 
 use LaborDigital\T3BA\Tool\Database\DbService;
+use LaborDigital\T3BA\Tool\Link\LinkService;
 use LaborDigital\T3BA\Tool\Page\PageService;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
 use LaborDigital\T3BA\Tool\Translation\Translator;
@@ -73,16 +74,16 @@ trait CommonDependencyTrait
         return $this->getSingletonOf(DbService::class);
     }
 
-//    /**
-//     * Returns the link service instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Link\LinkService
-//     */
-//    protected function Links(): LinkService
-//    {
-//        return $this->getSingletonOf(LinkService::class);
-//    }
-//
+    /**
+     * Returns the link service instance
+     *
+     * @return \LaborDigital\T3BA\Tool\Link\LinkService
+     */
+    protected function Links(): LinkService
+    {
+        return $this->getSingletonOf(LinkService::class);
+    }
+
     /**
      * Returns the TSFE service instance
      *

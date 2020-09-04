@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.06.18 at 14:18
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters;
+namespace LaborDigital\T3BA\Tool\Link\Adapter;
 
-
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 
 class CacheHashCalculatorAdapter extends CacheHashCalculator
@@ -35,9 +34,9 @@ class CacheHashCalculatorAdapter extends CacheHashCalculator
      */
     public static function getGlobalCalculator(): CacheHashCalculator
     {
-        return TypoContainer::getInstance()->get(CacheHashCalculator::class);
+        return GeneralUtility::makeInstance(CacheHashCalculator::class);
     }
-    
+
     /**
      * Returns the list of excluded parameters for a cache hash calculator instance
      *
@@ -47,9 +46,11 @@ class CacheHashCalculatorAdapter extends CacheHashCalculator
      */
     public static function getExcludedParameters(CacheHashCalculator $calculator): array
     {
+        dbge($calculator->configuration);
+
         return $calculator->excludedParameters;
     }
-    
+
     /**
      * Updates the list of excluded parameters for a given calculator instance
      *
@@ -58,6 +59,7 @@ class CacheHashCalculatorAdapter extends CacheHashCalculator
      */
     public static function updateExcludedParameters(CacheHashCalculator $calculator, array $excluded): void
     {
+        dbge($calculator->configuration);
         $calculator->setExcludedParameters($excluded);
     }
 }

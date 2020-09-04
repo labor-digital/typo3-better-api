@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,57 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
-use LaborDigital\Typo3BetterApi\Link\LinkSetDefinition;
+namespace LaborDigital\T3BA\ExtConfigHandler\LinkSet;
 
-class LinkSetCollector
+
+use LaborDigital\T3BA\ExtConfig\ExtConfigConfiguratorInterface;
+use LaborDigital\T3BA\Tool\Link\LinkSetDefinition;
+use Neunerlei\Configuration\State\ConfigState;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+class LinkSetCollector implements ExtConfigConfiguratorInterface
 {
-    
+
     /**
      * The list of registered set definitions
      *
      * @var array
      */
     protected $definitions = [];
-    
-    /**
-     * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
-     */
-    protected $container;
-    
-    /**
-     * LinkSetCollector constructor.
-     *
-     * @param   \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface  $container
-     */
-    public function __construct(TypoContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-    
+
     /**
      * Returns a link set definition object you may use to define the link set
+     *
      * Note: If another extension already defined the set with the given key the existing instance will be returned!
      * This can be used to override existing link sets
      *
      * @param   string  $key
      *
-     * @return \LaborDigital\Typo3BetterApi\Link\LinkSetDefinition
+     * @return \LaborDigital\T3BA\Tool\Link\LinkSetDefinition
      */
     public function getSet(string $key): LinkSetDefinition
     {
         if (isset($this->definitions[$key])) {
             return $this->definitions[$key];
         }
-        
-        return $this->definitions[$key] = $this->container->get(LinkSetDefinition::class);
+
+        return $this->definitions[$key] = GeneralUtility::makeInstance(LinkSetDefinition::class);
     }
-    
+
     /**
      * Can be used to check if a set exists or not
      *
@@ -76,29 +67,28 @@ class LinkSetCollector
     {
         return isset($this->definitions[$key]);
     }
-    
+
     /**
      * Can be used to remove a set completely.
      * Becomes useful if you want to completely change an existing set of an another extension
      *
      * @param   string  $key
      *
-     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\LinkAndPid\Links\LinkSetCollector
+     * @return \LaborDigital\T3BA\ExtConfigHandler\LinkSet\LinkSetCollector
      */
-    public function removeSet(string $key): LinkSetCollector
+    public function removeSet(string $key): self
     {
         unset($this->definitions[$key]);
-        
+
         return $this;
     }
-    
+
     /**
-     * Internal helper to extract all the definitions that we collected
-     *
-     * @return array
+     * @inheritDoc
      */
-    public function __getDefinitions(): array
+    public function finish(ConfigState $state): void
     {
-        return $this->definitions;
+        $state->set('sets', array_map('serialize', $this->definitions));
+        $state->set('allowedClasses', [LinkSetDefinition::class]);
     }
 }

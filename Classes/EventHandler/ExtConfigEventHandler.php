@@ -98,7 +98,8 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
         $loader->setHandlerFinder(new FilteredHandlerFinder([StandAloneHandlerInterface::class], []));
         $loader->setContainer($this->container);
         $loader->setCache(null); // @todo remove this
-        $loader->load();
+        $state = $loader->load();
+        dbge($state);
     }
 
 }
