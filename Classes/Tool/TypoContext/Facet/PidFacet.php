@@ -20,20 +20,29 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\ExtConfigHandler\Pid\PidCollector;
 use LaborDigital\T3BA\Tool\Exception\InvalidPidException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
+use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\PathUtil\Path;
 use Throwable;
 use function GuzzleHttp\Psr7\parse_query;
 
 class PidFacet implements FacetInterface
 {
+    use LocallyCachedStatePropertyTrait;
+
     /**
      * @var TypoContext
      */
     protected $context;
+
+    /**
+     * The list of configured pids
+     *
+     * @var array
+     */
+    protected $pids;
 
     /**
      * PidFacet constructor.
@@ -43,6 +52,7 @@ class PidFacet implements FacetInterface
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
+        $this->registerCachedProperty('pids', 't3ba.pids', $context->Config()->getConfigState());
     }
 
     /**
@@ -54,7 +64,7 @@ class PidFacet implements FacetInterface
      */
     public function has(string $key): bool
     {
-        return Arrays::hasPath($this->getAll(), $this->stripPrefix($key));
+        return Arrays::hasPath($this->pids, $this->stripPrefix($key));
     }
 
     /**
@@ -64,22 +74,24 @@ class PidFacet implements FacetInterface
      * @param   string  $key  A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
      * @param   int     $pid  The numeric page id which should be returned when the given pid is required
      *
-     * @return PidFacet
+     * @return $this
      */
     public function set(string $key, int $pid): self
     {
-        $pidsModified = Arrays::setPath($this->getAll(), $this->stripPrefix($key), $pid);
+        $pidsModified = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
         $this->context->Config()->getConfigState()->set('t3ba.pids', $pidsModified);
 
         return $this;
     }
 
     /**
-     * The same as registerPid() but registers multiple pids at once
+     * The same as set() but adds multiple pids at once.
+     * Note: The mapping will not be persisted!
      *
      * @param   array  $pids  A list of pids as $path => $pid or as multidimensional array
      *
-     * @return PidCollector
+     * @return $this
+     * @throws \LaborDigital\T3BA\Tool\Exception\InvalidPidException
      */
     public function setMultiple(array $pids): self
     {
@@ -89,12 +101,15 @@ class PidFacet implements FacetInterface
             }
             if (! is_numeric($pid)) {
                 throw new InvalidPidException(
-                    'The given value for pid: ' . $k . ' has to be numeric! Given value: ' . $pid);
+                    'The given value for pid identifier: "' . $k . '" has to be numeric! Given value: '
+                    . gettype($pid));
             }
         }
 
-        $pidsModified = Arrays::merge($this->getAll(), $pids);
-        $this->context->Config()->getConfigState()->set('t3ba.pids', $pidsModified);
+        $this->context->Config()->getConfigState()->set(
+            't3ba.pids',
+            Arrays::merge($this->pids, $pids)
+        );
 
         return $this;
     }
@@ -121,7 +136,7 @@ class PidFacet implements FacetInterface
             throw new InvalidPidException(
                 'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
         }
-        $pid = Arrays::getPath($this->getAll(), $this->stripPrefix($key), -9999);
+        $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
         if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
                 return $fallback;
@@ -136,13 +151,13 @@ class PidFacet implements FacetInterface
     }
 
     /**
-     * Returns the whole list of all registered pid's by their keys
+     * Returns the whole list of all registered pids by their keys
      *
      * @return array
      */
     public function getAll(): array
     {
-        return $this->context->Config()->getConfigValue('t3ba.pids', []);
+        return $this->pids;
     }
 
     /**
