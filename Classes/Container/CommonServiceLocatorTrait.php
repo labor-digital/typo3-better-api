@@ -68,121 +68,121 @@ trait CommonServiceLocatorDeprecationTrait
 {
     /**
      * @var TranslationService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Translation;
-    
+
     /**
      * @var SessionService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Session;
-    
+
     /**
      * @var TypoScriptService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $TypoScript;
-    
+
     /**
      * @var DbServiceInterface
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Db;
-    
+
     /**
      * @var FalFileService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $FalFiles;
-    
+
     /**
      * @var EventBusInterface
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $EventBus;
-    
+
     /**
      * @var LinkService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Links;
-    
+
     /**
      * @var TsfeService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Tsfe;
-    
+
     /**
      * @var EnvironmentSimulator
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Simulator;
-    
+
     /**
      * @var FlexFormService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $FlexForm;
-    
+
     /**
      * @var BackendRenderingService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $BackendRendering;
-    
+
     /**
      * @var TemplateRenderingService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $TemplateRendering;
-    
+
     /**
      * @var FlashMessageRenderingService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $FlashMessageRendering;
-    
+
     /**
      * @var PageService
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Page;
-    
+
     /**
      * @var PageBasedCache
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $PageBasedCache;
-    
+
     /**
      * @var FrontendCache
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $FrontendCache;
-    
+
     /**
      * @var GeneralCache
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $GeneralCache;
-    
+
     /**
      * @var TypoContainerInterface
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $Container;
-    
+
     /**
      * @var DataHandler
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $DataHandler;
-    
+
     /**
      * @var TypoContext
-     * @deprecated Will be removed in v10 - Use ContainerAwareTrait or LazySingletonTrait instead
+     * @deprecated Will be removed in v10 - Use ContainerAwareTrait instead
      */
     public $TypoContext;
 }
@@ -199,35 +199,35 @@ trait CommonServiceLocatorDeprecationTrait
  */
 trait CommonServiceLocatorTrait
 {
-    
+
     /**
      * The instance of the container we will use as service locator
      *
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $__container;
-    
+
     /**
      * The local instance cache to avoid asking the container over and over again...
      *
      * @var array
      */
     protected $__instances = [];
-    
+
     /**
      * The map of the variable name to the matching service class
      *
      * @var array
      */
     protected $__serviceMap = [];
-    
+
     /**
      * True if the trait was initialized and the static mapping was loaded
      *
      * @var bool
      */
     protected $__traitInitialized = false;
-    
+
     /**
      * Injects the container instance we use as service locator
      *
@@ -237,7 +237,7 @@ trait CommonServiceLocatorTrait
     {
         $this->__container = $container;
     }
-    
+
     /**
      * You can use this method if you want to lazy load an object using the container instance.
      *
@@ -260,10 +260,10 @@ trait CommonServiceLocatorTrait
         if (empty($this->__container)) {
             $this->__container = TypoContainer::getInstance();
         }
-        
+
         return $this->__container->get($class, ['args' => $args]);
     }
-    
+
     /**
      * Should be called in the __construct method of the including class.
      * Can be used to add additional service classes to the list of resolvable properties
@@ -281,7 +281,7 @@ trait CommonServiceLocatorTrait
         }
         $this->__serviceMap = array_merge($this->__serviceMap, $map);
     }
-    
+
     /**
      * Magic method to handle the lazy lookup
      *
@@ -295,45 +295,45 @@ trait CommonServiceLocatorTrait
         if (! $this->__traitInitialized) {
             $this->__initializeTrait();
         }
-        
+
         // Return existing instances
         if (! empty($this->__instances[$name])) {
             return $this->__instances[$name];
         }
-        
+
         // Try to fix broken names
         if (! isset($this->__serviceMap[$name])) {
             $name = Inflector::toCamelCase($name);
         }
-        
+
         // Ignore not registered services
         if (! isset($this->__serviceMap[$name])) {
             return null;
         }
-        
+
         // Return existing instances with fixed names...
         if (! empty($this->__instances[$name])) {
             return $this->__instances[$name];
         }
-        
+
         // Get the service definition
         $definition = $this->__serviceMap[$name];
-        
+
         // Handle objects
         if (is_object($definition)) {
             // Check if we got a factory closure
             if ($definition instanceof Closure) {
                 return $this->__instances[$name] = call_user_func($definition, $this->Container);
             }
-            
+
             // Use the definition as instance
             return $this->__instances[$name] = $definition;
         }
-        
+
         // Create a new object
         return $this->__instances[$name] = $this->getInstanceOf($definition);
     }
-    
+
     /**
      * Loads an optional static mapping from the $this->serviceMap from the parent class
      */
@@ -343,10 +343,10 @@ trait CommonServiceLocatorTrait
             return;
         }
         $this->__traitInitialized = true;
-        
+
         // Load the global, static service map
         $this->__serviceMap = COMMON_SERVICE_LOCATOR_STATIC_SERVICE_MAP;
-        
+
         // Check if this object defines a static service map
         if (isset($this->serviceMap) && is_array($this->serviceMap)) {
             $this->addToServiceMap($this->serviceMap);
