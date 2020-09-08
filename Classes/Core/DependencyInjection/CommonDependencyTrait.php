@@ -41,6 +41,7 @@ namespace LaborDigital\T3BA\Core\DependencyInjection;
 
 use LaborDigital\T3BA\Tool\Database\DbService;
 use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
+use LaborDigital\T3BA\Tool\Fal\FalService;
 use LaborDigital\T3BA\Tool\Link\LinkService;
 use LaborDigital\T3BA\Tool\Page\PageService;
 use LaborDigital\T3BA\Tool\Session\SessionService;
@@ -106,16 +107,16 @@ trait CommonDependencyTrait
         return $this->getSingletonOf(PageService::class);
     }
 
-//    /**
-//     * Returns the fal file service instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService
-//     */
-//    protected function FalFiles(): FalFileService
-//    {
-//        return $this->getSingletonOf(FalFileService::class);
-//    }
-//
+    /**
+     * Returns the fal file service instance
+     *
+     * @return \LaborDigital\T3BA\Tool\Fal\FalService
+     */
+    protected function Fal(): FalService
+    {
+        return $this->getSingletonOf(FalService::class);
+    }
+
     /**
      * Returns the event bus instance
      *
