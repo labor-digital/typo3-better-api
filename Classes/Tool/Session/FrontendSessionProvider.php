@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 01:26
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\Session;
+namespace LaborDigital\T3BA\Tool\Session;
 
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -26,7 +27,8 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class FrontendSessionProvider implements SessionInterface, SingletonInterface
 {
-    
+    public const STORAGE_KEY = 'T3BA';
+
     /**
      * @inheritDoc
      */
@@ -34,7 +36,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
     {
         return Arrays::hasPath($this->getSessionValues(), $path);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -44,42 +46,44 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if ($path === null) {
             return $values;
         }
-        
+
         return Arrays::getPath($values, $path, $default);
     }
-    
+
     /**
      * @inheritDoc
      */
     public function set(string $path, $value)
     {
         $feUser = $this->getFeUser();
-        if (empty($feUser)) {
+        if ($feUser === null) {
             return $this;
         }
+
         $values = $this->getSessionValues();
         $values = Arrays::setPath($values, $path, $value);
-        $feUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
-        
+        $feUser->setAndSaveSessionData(static::STORAGE_KEY, $values);
+
         return $this;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function remove(string $path)
     {
         $feUser = $this->getFeUser();
-        if (empty($feUser)) {
+        if ($feUser === null) {
             return $this;
         }
+
         $values = $this->getSessionValues();
         $values = Arrays::removePath($values, $path);
-        $feUser->setAndSaveSessionData('LaborTypo3BetterApi', $values);
-        
+        $feUser->setAndSaveSessionData(static::STORAGE_KEY, $values);
+
         return $this;
     }
-    
+
     /**
      * Helper to retrieve the session values from typo3
      *
@@ -88,14 +92,15 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
     protected function getSessionValues(): array
     {
         $feUser = $this->getFeUser();
-        if (empty($feUser)) {
+        if ($feUser === null) {
             return [];
         }
-        $value = $feUser->getKey('ses', 'LaborTypo3BetterApi');
-        
+
+        $value = $feUser->getKey('ses', static::STORAGE_KEY);
+
         return is_array($value) ? $value : [];
     }
-    
+
     /**
      * Helper to get the instance of the typo3 frontend user
      *
@@ -109,7 +114,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if (empty($GLOBALS['TSFE']->fe_user) || ! $GLOBALS['TSFE']->fe_user instanceof FrontendUserAuthentication) {
             return null;
         }
-        
+
         return $GLOBALS['TSFE']->fe_user;
     }
 }

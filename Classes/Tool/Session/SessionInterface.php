@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\Session;
+namespace LaborDigital\T3BA\Tool\Session;
 
 interface SessionInterface
 {
@@ -29,7 +30,7 @@ interface SessionInterface
      * @return bool
      */
     public function has(string $path): bool;
-    
+
     /**
      * Returns either the value for the given path or null, if it does not exist
      * Will return the whole session data if null is given as path
@@ -40,7 +41,7 @@ interface SessionInterface
      * @return mixed|null
      */
     public function get(string $path = null, $default = null);
-    
+
     /**
      * Sets the given value for the path
      *
@@ -50,7 +51,7 @@ interface SessionInterface
      * @return $this
      */
     public function set(string $path, $value);
-    
+
     /**
      * Removes a given path from the session.
      *
