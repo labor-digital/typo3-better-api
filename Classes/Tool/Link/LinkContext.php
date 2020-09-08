@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Link;
 
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Tool\Fal\FalService;
 use LaborDigital\T3BA\Tool\Link\Adapter\ExtendedUriBuilder;
 use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
@@ -79,7 +80,7 @@ class LinkContext implements SingletonInterface
      *
      * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
-    public function TypoContext(): TypoContext
+    public function getTypoContext(): TypoContext
     {
         return $this->typoContext;
     }
@@ -89,7 +90,7 @@ class LinkContext implements SingletonInterface
      *
      * @return \TYPO3\CMS\Extbase\Mvc\Request
      */
-    public function Request(): Request
+    public function getRequest(): Request
     {
         $this->initializeIfRequired();
 
@@ -101,7 +102,7 @@ class LinkContext implements SingletonInterface
      *
      * @return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
      */
-    public function ContentObject(): ContentObjectRenderer
+    public function getContentObject(): ContentObjectRenderer
     {
         if ($this->hasLocalSingleton(ContentObjectRenderer::class)) {
             return $this->getSingletonOf(ContentObjectRenderer::class);
@@ -121,7 +122,7 @@ class LinkContext implements SingletonInterface
      *
      * @return \TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder
      */
-    public function UriBuilder(): UriBuilder
+    public function getUriBuilder(): UriBuilder
     {
         if ($this->hasLocalSingleton(UriBuilder::class)) {
             return $this->getSingletonOf(UriBuilder::class);
@@ -131,7 +132,7 @@ class LinkContext implements SingletonInterface
         $builder = $this->getInstanceOf(ExtendedUriBuilder::class);
         $this->setLocalSingleton(UriBuilder::class, $builder);
         if (! $builder->hasContentObject()) {
-            $builder->setContentObject($this->ContentObject());
+            $builder->setContentObject($this->getContentObject());
         } else {
             $this->setLocalSingleton(ContentObjectRenderer::class, $builder->getContentObject());
         }
@@ -144,7 +145,7 @@ class LinkContext implements SingletonInterface
      *
      * @return \TYPO3\CMS\Backend\Routing\UriBuilder
      */
-    public function BackendUriBuilder(): \TYPO3\CMS\Backend\Routing\UriBuilder
+    public function getBackendUriBuilder(): \TYPO3\CMS\Backend\Routing\UriBuilder
     {
         return $this->getSingletonOf(\TYPO3\CMS\Backend\Routing\UriBuilder::class);
     }
@@ -154,9 +155,19 @@ class LinkContext implements SingletonInterface
      *
      * @return \TYPO3\CMS\Backend\Routing\Router
      */
-    public function BackendRouter(): Router
+    public function getBackendRouter(): Router
     {
         return $this->getSingletonOf(Router::class);
+    }
+
+    /**
+     * Returns the instance of the FAL service to generate file urls with
+     *
+     * @return \LaborDigital\T3BA\Tool\Fal\FalService
+     */
+    public function getFalService(): FalService
+    {
+        return $this->getSingletonOf(FalService::class);
     }
 
     /**

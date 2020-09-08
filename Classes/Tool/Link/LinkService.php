@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Link;
 
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -110,7 +109,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function getTypoLink($typoLink): string
     {
-        return $this->context->ContentObject()->typoLink_URL(
+        return $this->context->getContentObject()->typoLink_URL(
             is_string($typoLink) ? ['parameter' => $typoLink, 'forceAbsoluteUrl' => 1] : $typoLink
         );
     }
@@ -125,7 +124,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function getTypoLinkTarget($typoLink): string
     {
-        $cObj = $this->context->ContentObject();
+        $cObj = $this->context->getContentObject();
         $this->getTypoLink($typoLink);
 
         return empty($cObj->lastTypoLinkTarget) ? '_self' : $cObj->lastTypoLinkTarget;
@@ -147,7 +146,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     public function getBackendLink(string $target, array $options = []): string
     {
         // Skip if we are not in the backend
-        if (! $this->context->TypoContext()->Env()->isBackend()) {
+        if (! $this->context->getTypoContext()->Env()->isBackend()) {
             return '';
         }
 
@@ -160,7 +159,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
         ]);
 
         return (string)$this->context
-            ->BackendUriBuilder()
+            ->getBackendUriBuilder()
             ->buildUriFromRoute(
                 $target,
                 $options['args'],
@@ -176,12 +175,12 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     public function getBackendRoutes(): array
     {
         // Skip if we are not in the backend
-        if (! $this->context->TypoContext()->Env()->isBackend()) {
+        if (! $this->context->getTypoContext()->Env()->isBackend()) {
             return [];
         }
 
         // Load the routes from the router
-        return $this->context->BackendRouter()->getRoutes();
+        return $this->context->getBackendRouter()->getRoutes();
     }
 
     /**
@@ -195,21 +194,19 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function getHost(bool $withProtocol = true): string
     {
-        return $this->context->TypoContext()->Request()->getHost($withProtocol);
+        return $this->context->getTypoContext()->Request()->getHost($withProtocol);
     }
 
     /**
      * Can be used to retrieve the fully qualified url of a given file object
      *
-     * @param $file
+     * @param   mixed  $file
      *
      * @return string
      */
     public function getFileLink($file): string
     {
-        throw new NotImplementedException();
-
-        return $this->context->FalFiles->getFileInfo($file)->getUrl();
+        return $this->context->getFalService()->getFileUrl($file);
     }
 
     /**
@@ -219,7 +216,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function getUriBuilder(): UriBuilder
     {
-        return $this->context->UriBuilder();
+        return $this->context->getUriBuilder();
     }
 
     /**

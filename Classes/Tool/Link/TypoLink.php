@@ -219,7 +219,7 @@ class TypoLink
     {
         $clone = clone $this;
         if (! is_numeric($pid)) {
-            $pid = $this->context->TypoContext()->Pid()->get($pid);
+            $pid = $this->context->getTypoContext()->Pid()->get($pid);
         }
         $clone->pid = (int)$pid;
 
@@ -242,7 +242,7 @@ class TypoLink
             return $this->request;
         }
 
-        return $alsoInternal ? $this->context->Request() : null;
+        return $alsoInternal ? $this->context->getRequest() : null;
     }
 
     /**
@@ -276,7 +276,7 @@ class TypoLink
             return $this->uriBuilder;
         }
 
-        return $alsoInternal ? $this->context->UriBuilder() : null;
+        return $alsoInternal ? $this->context->getUriBuilder() : null;
     }
 
     /**
@@ -691,7 +691,7 @@ class TypoLink
         $clone = clone $this;
         if (! is_null($language)) {
             if (! is_object($language)) {
-                foreach ($this->context->TypoContext()->Site()->getCurrent()->getLanguages() as $lang) {
+                foreach ($this->context->getTypoContext()->Site()->getCurrent()->getLanguages() as $lang) {
                     if (
                         (is_numeric($language) && $lang->getLanguageId() === (int)$language)
                         || strtolower($lang->getTwoLetterIsoCode()) === $language
@@ -704,7 +704,7 @@ class TypoLink
             if (! $language instanceof SiteLanguage) {
                 throw new LinkException(
                     'The given language could not be found on site: '
-                    . $this->context->TypoContext()->Site()->getCurrent()->getIdentifier()
+                    . $this->context->getTypoContext()->Site()->getCurrent()->getIdentifier()
                 );
             }
         }
@@ -771,13 +771,13 @@ class TypoLink
                 'default' => false,
             ],
         ]);
-        $typoContext = $this->context->TypoContext();
+        $typoContext = $this->context->getTypoContext();
 
         // Prepare the uri builder
         if (! empty($this->uriBuilder)) {
             $ub = $this->uriBuilder;
         } else {
-            $ub = $this->context->UriBuilder();
+            $ub = $this->context->getUriBuilder();
             $ub->reset();
         }
 
@@ -796,7 +796,7 @@ class TypoLink
 
         // Get our context's request object if nothing was supplied
         if ($request === null) {
-            $request = $this->context->Request();
+            $request = $this->context->getRequest();
         }
 
         // Inject our request into the uri builder
