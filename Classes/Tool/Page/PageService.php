@@ -22,9 +22,9 @@ namespace LaborDigital\T3BA\Tool\Page;
 
 use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
 use LaborDigital\T3BA\Event\PageContentsGridConfigFilterEvent;
+use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
-use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -48,6 +48,25 @@ class PageService implements SingletonInterface
     protected $rootLineCache = [];
 
     /**
+     * The record data handler instance after it was created at least once
+     *
+     * @var \LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
+     */
+    protected $recordHandler;
+
+    /**
+     * Returns the record data handler for the pages table.
+     * Which allows you root level access to the TYPO3 data handler.
+     *
+     * @return \LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler
+     */
+    public function getPageDataHandler(): RecordDataHandler
+    {
+        return $this->recordHandler ??
+               $this->recordHandler = $this->DataHandler()->getRecordDataHandler('pages');
+    }
+
+    /**
      * Creates a new, empty page below the given $parentPid with the given title and returns the new
      * page's pid for further processing
      *
@@ -65,7 +84,6 @@ class PageService implements SingletonInterface
      *                             the newly created page
      *
      * @return int
-     * @throws \LaborDigital\T3BA\Tool\Page\PageServiceException
      */
     public function createNewPage(int $parentPid, array $options = []): int
     {
@@ -73,7 +91,7 @@ class PageService implements SingletonInterface
         $options = Options::make($options, [
             'title'   => [
                 'type'    => 'string',
-                'default' => 'Unnamed Page',
+                'default' => '',
             ],
             'force'   => [
                 'type'    => 'bool',
@@ -85,27 +103,12 @@ class PageService implements SingletonInterface
             ],
         ]);
 
-        // Handle the creation
-        return $this->forceWrapper(function () use ($parentPid, $options) {
-            // Create the new row
-            $row = Arrays::merge([
-                'title' => $options['title'],
-                'pid'   => $parentPid,
-            ], $options['pageRow']);
+        $row = $options['pageRow'];
+        if ($options['title'] !== '' && ! isset($row['title'])) {
+            $row['title'] = $options['title'];
+        }
 
-            // Create a new page, programmatically
-            $dataHandler = $this->getWithoutDi(DataHandler::class);
-            $dataHandler->start(['pages' => ['NEW_1' => $row]], []);
-            $dataHandler->process_datamap();
-
-            // Handle errors
-            if (! empty($dataHandler->errorLog)) {
-                throw new PageServiceException(reset($dataHandler->errorLog));
-            }
-
-            // Return the new page's id
-            return reset($dataHandler->substNEWwithIDs);
-        }, $options['force']);
+        return $this->recordHandler->makeNew($row, $parentPid, $options['force']);
     }
 
     /**
@@ -125,15 +128,14 @@ class PageService implements SingletonInterface
      *                               ignoring all permissions or access rights!
      *
      * @return int
-     * @throws \LaborDigital\T3BA\Tool\Page\PageServiceException
      */
     public function copyPage(int $pageId, array $options = []): int
     {
         // Prepare the options
         $options = Options::make($options, [
             'targetPid' => [
-                'type'    => 'int',
-                'default' => -1,
+                'type'    => ['null', 'int'],
+                'default' => null,
             ],
             'force'     => [
                 'type'    => 'bool',
@@ -141,27 +143,7 @@ class PageService implements SingletonInterface
             ],
         ]);
 
-        return $this->forceWrapper(function () use ($pageId, $options) {
-            // Copy the page
-            $dataHandler           = $this->getWithoutDi(DataHandler::class);
-            $dataHandler->errorLog = [];
-            $dataHandler->start([], [
-                'pages' => [
-                    $pageId => [
-                        'copy' => $options['targetPid'] === -1 ? -$pageId : $options['targetPid'],
-                    ],
-                ],
-            ]);
-            $dataHandler->process_cmdmap();
-
-            // Handle errors
-            if (! empty($dataHandler->errorLog)) {
-                throw new PageServiceException(reset($dataHandler->errorLog));
-            }
-
-            // Return the page id of the copied page
-            return $dataHandler->copyMappingArray['pages'][$pageId];
-        }, $options['force']);
+        return $this->getPageDataHandler()->copy($pageId, $options['targetPid'], $options['force']);
     }
 
     /**
@@ -173,27 +155,10 @@ class PageService implements SingletonInterface
      *                            ignoring all permissions or access rights!
      *
      * @return void
-     * @throws \LaborDigital\T3BA\Tool\Page\PageServiceException
      */
     public function movePage(int $pageId, int $targetPid, bool $force = false): void
     {
-        $this->forceWrapper(function () use ($pageId, $targetPid) {
-            // Move the page
-            $dataHandler = $this->getWithoutDi(DataHandler::class);
-            $dataHandler->start([], [
-                'pages' => [
-                    $pageId => [
-                        'move' => $targetPid,
-                    ],
-                ],
-            ]);
-            $dataHandler->process_cmdmap();
-
-            // Handle errors
-            if (! empty($dataHandler->errorLog)) {
-                throw new PageServiceException(reset($dataHandler->errorLog));
-            }
-        }, $force);
+        $this->getPageDataHandler()->move($pageId, $targetPid, $force);
     }
 
     /**
@@ -202,28 +167,10 @@ class PageService implements SingletonInterface
      * @param   int   $pageId  The page to delete
      * @param   bool  $force   If set to true, the new page is deleted as forced admin user,
      *                         ignoring all permissions or access rights!
-     *
-     * @throws \LaborDigital\T3BA\Tool\Page\PageServiceException
      */
     public function deletePage(int $pageId, bool $force = false): void
     {
-        $this->forceWrapper(function () use ($pageId) {
-            // Move the page
-            $dataHandler = $this->getWithoutDi(DataHandler::class);
-            $dataHandler->start([], [
-                'pages' => [
-                    $pageId => [
-                        'delete' => 1,
-                    ],
-                ],
-            ]);
-            $dataHandler->process_cmdmap();
-
-            // Handle errors
-            if (! empty($dataHandler->errorLog)) {
-                throw new PageServiceException(reset($dataHandler->errorLog));
-            }
-        }, $force);
+        $this->getPageDataHandler()->delete($pageId, $force);
     }
 
     /**
@@ -232,28 +179,10 @@ class PageService implements SingletonInterface
      * @param   int   $pageId  The page to restore
      * @param   bool  $force   If set to true, the new page is restored as forced admin user,
      *                         ignoring all permissions or access rights!
-     *
-     * @throws \LaborDigital\T3BA\Tool\Page\PageServiceException
      */
     public function restorePage(int $pageId, bool $force = false): void
     {
-        $this->forceWrapper(function () use ($pageId) {
-            // Move the page
-            $dataHandler = $this->getWithoutDi(DataHandler::class);
-            $dataHandler->start([], [
-                'pages' => [
-                    $pageId => [
-                        'delete' => 1,
-                    ],
-                ],
-            ]);
-            $dataHandler->process_cmdmap();
-
-            // Handle errors
-            if (! empty($dataHandler->errorLog)) {
-                throw new PageServiceException(reset($dataHandler->errorLog));
-            }
-        }, $force);
+        $this->getPageDataHandler()->restore($pageId, $force);
     }
 
     /**
@@ -604,23 +533,6 @@ class PageService implements SingletonInterface
 
         // Fallback to creating a new instance when the frontend did not serve us
         return $this->getInstanceOf(PageRepository::class);
-    }
-
-    /**
-     * Internal helper to run the given callback either as forced user or as the current user
-     *
-     * @param   callable  $callback  The callback to execute
-     * @param   bool      $force     True to run as a forced admin user
-     *
-     * @return mixed
-     */
-    protected function forceWrapper(callable $callback, bool $force)
-    {
-        if (! $force) {
-            return $callback();
-        }
-
-        return $this->Simulator()->runWithEnvironment(['asAdmin'], $callback);
     }
 
     /**
