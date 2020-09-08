@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 01:47
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\FileAndFolder;
+namespace LaborDigital\T3BA\Tool\Fal;
 
-use Exception;
 use InvalidArgumentException;
-use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\ProcessedFileAdapter;
-use LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo;
-use LaborDigital\Typo3BetterApi\LazyLoading\LazyLoadingTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo;
+use LaborDigital\T3BA\Tool\Fal\FileInfo\ProcessedFileAdapter;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
+use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\Area;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
@@ -45,33 +46,31 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\ImageService;
 
-/**
- * Class FalFileService
- *
- * @package LaborDigital\Typo3BetterApi\FileAndFolder
- *
- * @property ImageService    $ImageService
- * @property ResourceFactory $ResourceFactory
- * @property FileRepository  $FileRepository
- */
-class FalFileService implements SingletonInterface
+class FalService implements SingletonInterface
 {
-    use CommonServiceLocatorTrait;
-    use LazyLoadingTrait;
+    use CommonDependencyTrait;
     use ResizedImageOptionsTrait;
-    
+
     /**
-     * FalFileService constructor.
+     * Returns the instance of the core file repository to find file references using the root level api
+     *
+     * @return \TYPO3\CMS\Core\Resource\FileRepository
      */
-    public function __construct()
+    public function getFileRepository(): FileRepository
     {
-        $this->addToServiceMap([
-            'ResourceFactory' => ResourceFactory::class,
-            'FileRepository'  => FileRepository::class,
-            'ImageService'    => ImageService::class,
-        ]);
+        return $this->getSingletonOf(FileRepository::class);
     }
-    
+
+    /**
+     * Returns the resource factory instance to interact with the root level FAL api
+     *
+     * @return \TYPO3\CMS\Core\Resource\ResourceFactory
+     */
+    public function getResourceFactory(): ResourceFactory
+    {
+        return $this->getSingletonOf(ResourceFactory::class);
+    }
+
     /**
      * This method has two modes to operate in.
      * The first one is by only supplying a $uid. This uid should be a valid uid of a row in "sys_file"
@@ -111,13 +110,13 @@ class FalFileService implements SingletonInterface
                 '$uid can"t be null if neither a $table nor a $field are defined'
             );
         }
-        
+
         try {
             // Read the strange string identifiers
-            if (is_string($uid) && ! is_numeric($uid) || is_numeric($uid) && $useUidOnly) {
+            if ((is_string($uid) && ! is_numeric($uid)) || (is_numeric($uid) && $useUidOnly)) {
                 // Prepare identifier
                 $identifier = $uid;
-                
+
                 // Check if we got a Pseudo Link|Label combination...
                 // Oh gosh typo3 is so weired...
                 if (strpos($identifier, '%') !== false && strpos($identifier, '|') !== false) {
@@ -134,43 +133,43 @@ class FalFileService implements SingletonInterface
                 elseif (strpos($identifier, '=') !== false) {
                     $params = parse_url($uid);
                     if (! isset($params['query'])) {
-                        throw new Exception('');
+                        throw new RuntimeException('');
                     }
                     parse_str($params['query'], $params);
                     if (! isset($params['uid'])) {
-                        throw new Exception('');
+                        throw new RuntimeException('');
                     }
                     $identifier = $params['uid'];
                 } // Parse path
-                elseif (stripos($identifier, '/') !== false) {
+                elseif (strpos($identifier, '/') !== false) {
                     $path       = $this->getFalPathArray($identifier);
                     $identifier = $path['identifier'];
                 }
-                
+
                 // Check if we got a file
-                $file = $this->ResourceFactory->retrieveFileOrFolderObject($identifier);
+                $file = $this->getResourceFactory()->retrieveFileOrFolderObject($identifier);
                 if ($file instanceof File) {
                     return $file;
                 }
-                
+
                 return null;
             }
-            
-            $file = $this->FileRepository->findByRelation($table, $field, $uid);
-            
+
+            $file = $this->getFileRepository()->findByRelation($table, $field, $uid);
+
             if (! empty($file)) {
                 $file = $onlyFirst ? reset($file) : $file;
             } else {
                 $file = null;
             }
-            
+
             // Done
             return $file;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return null;
         }
     }
-    
+
     /**
      * Similar to getFile() as it finds a file object in the FAL. However this will
      * solely search for file references and requires a numeric id for a reference to find in the database.
@@ -181,9 +180,9 @@ class FalFileService implements SingletonInterface
      */
     public function getFileReference(int $uid): FileReference
     {
-        return $this->ResourceFactory->getFileReferenceObject($uid);
+        return $this->getResourceFactory()->getFileReferenceObject($uid);
     }
-    
+
     /**
      * This method creates a new file reference. It expects to receive a FAL file instance and
      * some metadata to create the mapping on an external field.
@@ -196,6 +195,7 @@ class FalFileService implements SingletonInterface
      * @param   string         $table  The table of the record that should be linked with this file
      *
      * @return \TYPO3\CMS\Core\Resource\FileReference
+     * @throws \LaborDigital\T3BA\Tool\Fal\FalException
      */
     public function addFileReference(
         FileInterface $file,
@@ -204,65 +204,50 @@ class FalFileService implements SingletonInterface
         string $table = 'tt_content'
     ): FileReference {
         // Ignore the access checks
-        $referenceUid = $this->Simulator->runWithEnvironment(['asAdmin'],
+        $referenceUid = $this->Simulator()->runWithEnvironment(['asAdmin'],
             function () use ($file, $uid, $field, $table) {
                 // Get the record from the database
-                $record = $this->Db->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
+                $record = $this->Db()->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
                 if (empty($record)) {
-                    throw new FalFileServiceException('Invalid table: ' . $table . ' or uid: ' . $uid
-                                                      . ' to create a file reference for');
+                    throw new FalException(
+                        'Invalid table: ' . $table . ' or uid: ' . $uid . ' to create a file reference for');
                 }
-                
-                // Create the data to be added for the reference
-                $data = [
-                    'sys_file_reference' => [
-                        'NEW1' => [
-                            'table_local' => 'sys_file',
-                            'uid_local'   => $file->getProperty('uid'),
-                            'tablenames'  => $table,
-                            'uid_foreign' => $uid,
-                            'fieldname'   => $field,
-                            'pid'         => $record['pid'],
-                        ],
-                    ],
-                    $table               => [
-                        $uid => [
-                            'pid'  => $record['pid'],
-                            $field => 'NEW1',
-                        ],
-                    ],
-                ];
-                
+
                 // Make sure we can add sys_file_references everywhere
                 $allowedTablesBackup = $GLOBALS['PAGES_TYPES']['default']['allowedTables'];
                 ExtensionManagementUtility::allowTableOnStandardPages('sys_file_reference');
-                
-                // Execute the data handler
-                $dataHandler = $this->DataHandler;
-                $dataHandler->start($data, []);
-                $dataHandler->process_datamap();
-                
-                // Restore the backup
-                $GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
-                
-                // Check for errors
-                if (count($dataHandler->errorLog) !== 0) {
-                    throw new FalFileServiceException(
-                        'Error while creating file reference in table: ' . $table . ' with uid: ' . $uid
-                        . ' Errors were: '
-                        .
-                        implode(PHP_EOL, $dataHandler->errorLog)
-                    );
+
+                try {
+                    $handler = $this->DataHandler()->processData([
+                        'sys_file_reference' => [
+                            'NEW1' => [
+                                'table_local' => 'sys_file',
+                                'uid_local'   => $file->getProperty('uid'),
+                                'tablenames'  => $table,
+                                'uid_foreign' => $uid,
+                                'fieldname'   => $field,
+                                'pid'         => $record['pid'],
+                            ],
+                        ],
+                        $table               => [
+                            $uid => [
+                                'pid'  => $record['pid'],
+                                $field => 'NEW1',
+                            ],
+                        ],
+                    ]);
+                } finally {
+                    $GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
                 }
-                
+
                 // Get the new id
-                return reset($dataHandler->newRelatedIDs['sys_file_reference']);
+                return reset($handler->newRelatedIDs['sys_file_reference']);
             });
-        
+
         // Done
         return $this->getFileReference($referenceUid);
     }
-    
+
     /**
      * Adds a file on your local file system to the FAL file system.
      * IMPORTANT: The file given as $fileSystemPath will be moved to the FAL directory, not copied!
@@ -294,14 +279,11 @@ class FalFileService implements SingletonInterface
             $filename = basename($falPath);
             $falPath  = dirname($falPath);
         }
-        
-        // Make sure the folder exists
-        $folder = $this->mkFolder($falPath);
-        
-        // Add the file
-        return $folder->addFile($fileSystemPath, $filename, $onDuplication);
+
+        return $this->mkFolder($falPath)
+                    ->addFile($fileSystemPath, $filename, $onDuplication);
     }
-    
+
     /**
      * Handles the upload of files and adds them to the FAL storage.
      *
@@ -331,7 +313,7 @@ class FalFileService implements SingletonInterface
      *                                    fileSize of the uploaded file. 0 means no limit.
      *
      * @return \TYPO3\CMS\Core\Resource\FileInterface|null
-     * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileUploadException
+     * @throws \LaborDigital\T3BA\Tool\Fal\FalUploadException
      * @throws \TYPO3\CMS\Core\Resource\Exception\UploadSizeException
      */
     public function addUploadedFile(string $uploadFieldName, string $falPath, array $options = []): ?FileInterface
@@ -346,28 +328,28 @@ class FalFileService implements SingletonInterface
             'allowedExtensions'   => [
                 'type'      => ['string', 'array'],
                 'default'   => $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['allow'],
-                'preFilter' => function ($v) {
+                'preFilter' => static function ($v) {
                     return empty($v) ? [] : $v;
                 },
-                'filter'    => function ($v) {
+                'filter'    => static function ($v) {
                     if (is_string($v)) {
                         $v = Arrays::makeFromStringList($v);
                     }
-                    
+
                     return array_unique(array_map('strtolower', $v));
                 },
             ],
             'deniedExtensions'    => [
                 'type'      => ['string', 'array'],
                 'default'   => $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['deny'],
-                'preFilter' => function ($v) {
+                'preFilter' => static function ($v) {
                     return empty($v) ? [] : $v;
                 },
-                'filter'    => function ($v) {
+                'filter'    => static function ($v) {
                     if (is_string($v)) {
                         $v = Arrays::makeFromStringList($v);
                     }
-                    
+
                     return array_unique(array_map('strtolower', $v));
                 },
             ],
@@ -376,112 +358,51 @@ class FalFileService implements SingletonInterface
                 'default' => 0,
             ],
         ]);
-        
+
         // Check if fieldName contains namespace
         if (strpos($uploadFieldName, '.') !== false) {
-            $uploadFieldName = GeneralUtility::trimExplode('.', $uploadFieldName);
-            $namespace       = array_shift($uploadFieldName);
-            $uploadFieldName = implode('.', $uploadFieldName);
+            $uploadFieldNameList = GeneralUtility::trimExplode('.', $uploadFieldName);
+            $namespace           = array_shift($uploadFieldNameList);
+            $uploadFieldName     = implode('.', $uploadFieldNameList);
             if (! isset($_FILES[$namespace])) {
                 return null;
             }
         } else {
             $namespace = key($_FILES);
         }
-        
+
         // Convert the upload array to an easier to process format
         $field = [];
         foreach ($_FILES[$namespace] as $k => $v) {
             $field[$k] = $v[$uploadFieldName];
         }
-        
+
         // Check if an error occurred
         if (! empty($field['error'])) {
-            throw new FalFileUploadException('An error occurred while uploading', $field['error'], 0);
+            throw new FalUploadException('An error occurred while uploading', $field['error'], 0);
         }
-        
+
         // Validate fileSize
         if ($options['maxFileSize'] > 0 && $field['size'] > $options['maxFileSize']) {
             throw new UploadSizeException('The given file exceeds the max size of ' . $options['maxFileSize']);
         }
-        
+
         // Validate extension
         $ext = strtolower(pathinfo($field['name'], PATHINFO_EXTENSION));
-        if (! in_array('*', $options['allowedExtensions'])) {
-            if (! in_array($ext, $options['allowedExtensions'])) {
-                throw new FalFileUploadException("The file extension: $ext is not allowed!", 1);
-            }
+        if (
+            ! in_array('*', $options['allowedExtensions'], true)
+            && ! in_array($ext, $options['allowedExtensions'], true)
+        ) {
+            throw new FalUploadException("The file extension: $ext is not allowed!", 1);
         }
-        if (in_array($ext, $options['deniedExtensions'])) {
-            throw new FalFileUploadException("The file extension: $ext is not allowed!", 1);
+        if (in_array($ext, $options['deniedExtensions'], true)) {
+            throw new FalUploadException("The file extension: $ext is not allowed!", 1);
         }
-        
+
         // Add the file
         return $this->addFile($field['tmp_name'], $falPath . '/' . $field['name'], $options['duplicationBehavior']);
     }
-    
-    /**
-     * Returns an array containing information for a given file, like it's size, url, mime type and similar options.
-     * Image files also contain additional metadata like dimensions or alt attributes
-     *
-     * @param   string|int|FileReference|File|mixed  $file  Can either be the instance of a file or anything that is
-     *                                                      valid as a $uid when using getFile()
-     *
-     * @return array
-     *
-     * @throws \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileServiceException
-     * @deprecated use getFileInfo() instead!
-     */
-    public function getFileInformation($file)
-    {
-        // Build legacy array
-        $fileInfo = $this->getFileInfo($file);
-        $info     = [
-            'isReference' => $fileInfo->isFileReference(),
-            'id'          => $fileInfo->getUid(),
-            'referenceId' => $fileInfo->getFileReferenceUid(),
-            'isProcessed' => $fileInfo->isProcessed(),
-            'fileId'      => $fileInfo->getFileUid(),
-            'hash'        => $fileInfo->getHash(),
-            'url'         => $fileInfo->getUrl(),
-            'originalUrl' => $fileInfo->getOriginalUrl(),
-            'mime'        => $fileInfo->getMimeType(),
-            'size'        => $fileInfo->getSize(),
-            'ext'         => $fileInfo->getExtension(),
-            'image'       => null,
-        ];
-        
-        // Handle video information
-        if ($fileInfo->isVideo() && $fileInfo->getVideoInfo()->isYouTube()) {
-            $info['youtubeId'] = $fileInfo->getVideoInfo()->getVideoId();
-        }
-        if (! $fileInfo->isImage()) {
-            return $info;
-        }
-        
-        // Build legacy image info
-        $imageInfo = $fileInfo->getImageInfo();
-        $image     = [
-            'alt'       => $imageInfo->getAlt(),
-            'title'     => $imageInfo->getTitle(),
-            'desc'      => $imageInfo->getDescription(),
-            'width'     => $imageInfo->getWidth(),
-            'height'    => $imageInfo->getHeight(),
-            'alignment' => $imageInfo->getImageAlignment(),
-            'variants'  => [],
-        ];
-        
-        // Build legacy image variants
-        foreach ($imageInfo->getCropVariants() as $k => $conf) {
-            $image['variants'][$k] = $imageInfo->getCroppedUrl($k);
-        }
-        
-        // Done
-        $info['image'] = $image;
-        
-        return $info;
-    }
-    
+
     /**
      * Returns an object containing information for a given file, like it's size, url, mime type and similar options.
      * Image and video files also contain additional metadata like dimensions, description and platform video id's
@@ -489,13 +410,17 @@ class FalFileService implements SingletonInterface
      * @param   string|int|FileReference|File|mixed  $file  Can either be the instance of a file or anything that is
      *                                                      valid as a $uid when using getFile()
      *
-     * @return \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo
+     * @return \LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo
      */
     public function getFileInfo($file): FileInfo
     {
-        return $this->getInstanceOf(FileInfo::class, [$file, $this, $this->lazyLoading]);
+        if ($file instanceof FileInfo) {
+            return $file;
+        }
+
+        return GeneralUtility::makeInstance(FileInfo::class, $file, $this);
     }
-    
+
     /**
      * Returns the url of a given file object
      *
@@ -510,7 +435,7 @@ class FalFileService implements SingletonInterface
     {
         return $this->getFileInfo($file)->getUrl($withHash);
     }
-    
+
     /**
      * This method is used to apply resizing and cropping definitions to a image file.
      * The result will be a processed file
@@ -543,34 +468,34 @@ class FalFileService implements SingletonInterface
         } else {
             $file = $fileInfo->getFile();
         }
-        
+
         // Build options
         $options = $this->applyResizedImageOptions($options);
-        
+
         // Build crop definition if a crop
         if (is_string($options['crop'])) {
-            $cropString            = ($file->hasProperty('crop') && $file->getProperty('crop'))
+            $cropString      = ($file->hasProperty('crop') && $file->getProperty('crop'))
                 ? $file->getProperty('crop') : '';
-            $cropVariantCollection = CropVariantCollection::create((string)$cropString);
-            $cropArea              = $cropVariantCollection->getCropArea($options['crop']);
-            $crop                  = $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($file);
-            $options['crop']       = $crop;
+            $cropArea        = CropVariantCollection::create((string)$cropString)
+                                                    ->getCropArea($options['crop']);
+            $crop            = $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($file);
+            $options['crop'] = $crop;
         } elseif (is_array($options['crop'])) {
             $options['crop'] = Area::createFromConfiguration($options['crop']);
         }
-        
+
         // Apply the processing
-        $processed = $this->ImageService->applyProcessingInstructions($file, $options);
-        
+        $processed = $this->getSingletonOf(ImageService::class)->applyProcessingInstructions($file, $options);
+
         // Inject the file reference as property to use it in later processing steps
         if ($file instanceof FileReference) {
             ProcessedFileAdapter::injectProperty($processed, '@fileReference', $file);
         }
-        
+
         // Done
         return $processed;
     }
-    
+
     /**
      * Similar to getFileUrl() but is designed to resize and crop images on the fly.
      * Note: If the image is not found, or the editing failed the original url of the file is returned!
@@ -594,10 +519,10 @@ class FalFileService implements SingletonInterface
     public function getResizedImageUrl($file, array $options = []): string
     {
         $processed = $this->getResizedImage($file, $options);
-        
-        return $this->Links->getHost() . '/' . $processed->getPublicUrl(false) . '?hash=' . md5($processed->getSha1());
+
+        return FalFileUrlUtil::makeAbsoluteUrl($processed->getPublicUrl(false) . '?hash=' . md5($processed->getSha1()));
     }
-    
+
     /**
      * Checks if a certain fal folder exists or not.
      *
@@ -609,13 +534,13 @@ class FalFileService implements SingletonInterface
     {
         try {
             $this->getFolder($falPath);
-            
+
             return true;
         } catch (FolderDoesNotExistException $e) {
             return false;
         }
     }
-    
+
     /**
      * Retrieves a fal folder object from the storage and returns it.
      * Throws an exception if the folder does not exist!
@@ -623,15 +548,14 @@ class FalFileService implements SingletonInterface
      * @param   string  $falPath  Something like /myFolder/mySubFolder, 1:/myFolder, 2
      *
      * @return \TYPO3\CMS\Core\Resource\Folder
-     * @throws \TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException
      */
     public function getFolder(string $falPath): Folder
     {
         $path = $this->getFalPathArray($falPath);
-        
-        return $this->ResourceFactory->getFolderObjectFromCombinedIdentifier($path['identifier']);
+
+        return $this->getResourceFactory()->getFolderObjectFromCombinedIdentifier($path['identifier']);
     }
-    
+
     /**
      * Creates a new directory at the given path. This method handles the path recursively.
      * Folders that already exist will simply be ignored.
@@ -643,10 +567,10 @@ class FalFileService implements SingletonInterface
     public function mkFolder(string $falPath): Folder
     {
         $path = $this->getFalPathArray($falPath);
-        
+
         // Load the root folder
-        $folder = $this->ResourceFactory->getFolderObjectFromCombinedIdentifier($path['storage'] . ':/');
-        
+        $folder = $this->getResourceFactory()->getFolderObjectFromCombinedIdentifier($path['storage'] . ':/');
+
         // Traverse the path and create the directory recursively
         foreach ($path['path'] as $part) {
             if (! $folder->hasFolder($part)) {
@@ -654,11 +578,11 @@ class FalFileService implements SingletonInterface
             }
             $folder = $folder->getSubfolder($part);
         }
-        
+
         // Done
         return $folder;
     }
-    
+
     /**
      * Internal helper to receive a fal (currently only folder)path and parses it to avoid common errors.
      * The resulting array has three keys, "storage" containing the storage id (1 if none was given), "path",
@@ -680,16 +604,16 @@ class FalFileService implements SingletonInterface
             $parts[] = '';
         }
         $storageId          = count($parts) > 1 && is_numeric($parts[0]) ? (int)array_shift($parts) : 1;
-        $remainingPathParts = array_filter(explode('/', implode(':', $parts)));
+        $remainingPathParts = array_values(array_filter(explode('/', implode(':', $parts))));
         if (empty($remainingPathParts)) {
             $remainingPathParts[] = '';
         }
-        
+
         // Make sure to remove fileadmin from path when using the storage with id 1
         if ($storageId === 1 && $remainingPathParts[0] === 'fileadmin') {
             array_shift($remainingPathParts);
         }
-        
+
         // Done
         return [
             'storage'    => $storageId,

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,28 +18,28 @@
  * Last modified: 2020.03.31 at 21:54
  */
 
-namespace LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo;
+namespace LaborDigital\T3BA\Tool\Fal\FileInfo;
 
 class VideoFileInfo
 {
-    
+
     /**
      * The file info object that represents this video file
      *
-     * @var \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo
+     * @var FileInfo
      */
     protected $parent;
-    
+
     /**
      * VideoFileInfo constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\FileAndFolder\FileInfo\FileInfo  $parent
+     * @param   FileInfo  $parent
      */
     public function __construct(FileInfo $parent)
     {
         $this->parent = $parent;
     }
-    
+
     /**
      * Returns the title text to this video or an empty string
      *
@@ -46,9 +47,10 @@ class VideoFileInfo
      */
     public function getTitle(): string
     {
-        return $this->parent->isFileReference() ? (string)$this->parent->getFileReference()->getTitle() : '';
+        return $this->parent->getFileReference() !== null
+            ? (string)$this->parent->getFileReference()->getTitle() : '';
     }
-    
+
     /**
      * Returns the description text to this file or an empty string
      *
@@ -56,9 +58,10 @@ class VideoFileInfo
      */
     public function getDescription(): string
     {
-        return $this->parent->isFileReference() ? (string)$this->parent->getFileReference()->getDescription() : '';
+        return $this->parent->getFileReference() !== null
+            ? (string)$this->parent->getFileReference()->getDescription() : '';
     }
-    
+
     /**
      * Returns true if this video has an auto-play or not
      *
@@ -66,10 +69,10 @@ class VideoFileInfo
      */
     public function isAutoPlay(): bool
     {
-        return $this->parent->isFileReference() ? (bool)$this->parent->getFileReference()
-                                                                     ->getReferenceProperty('autoplay') : false;
+        return $this->parent->getFileReference() !== null
+            ? (bool)$this->parent->getFileReference()->getReferenceProperty('autoplay') : false;
     }
-    
+
     /**
      * Returns true if this is a youTube video, false if not
      *
@@ -79,7 +82,7 @@ class VideoFileInfo
     {
         return $this->parent->getMimeType() === 'video/youtube';
     }
-    
+
     /**
      * Returns true if this is a vimeo video, false if not
      *
@@ -89,7 +92,7 @@ class VideoFileInfo
     {
         return $this->parent->getMimeType() === 'video/vimeo';
     }
-    
+
     /**
      * Returns the video id on youtube or on vimeo or the url if the video is locally hosted
      *
@@ -100,7 +103,7 @@ class VideoFileInfo
         if ($this->isVimeo() || $this->isYouTube()) {
             return $this->parent->getFile()->getContents();
         }
-        
+
         return $this->parent->getUrl();
     }
 }

@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.04.11 at 18:28
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\FileAndFolder;
+namespace LaborDigital\T3BA\Tool\Fal;
 
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 
 trait ResizedImageOptionsTrait
 {
-    
+
     /**
      * Applies the option definition to create resized/manipulated images.
      * Encapsulated for other extension to use as global image processing format
@@ -34,7 +35,7 @@ trait ResizedImageOptionsTrait
      *
      * @return array The prepared option array
      *
-     * @see \LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService::getResizedImage()
+     * @see FalService::getResizedImage()
      */
     protected function applyResizedImageOptions(array $options, array $additionalDefinition = []): array
     {
@@ -42,33 +43,33 @@ trait ResizedImageOptionsTrait
         $def           = [
             'type'    => ['number', 'null', 'string'],
             'default' => null,
-            'filter'  => function ($v) {
+            'filter'  => static function ($v) {
                 if (! is_null($v)) {
                     return (string)$v;
                 }
-                
+
                 return null;
             },
         ];
         $defNumberOnly = [
             'type'      => ['number', 'null'],
             'default'   => null,
-            'preFilter' => function ($v) {
+            'preFilter' => static function ($v) {
                 if (is_numeric($v)) {
-                    return floatval($v);
+                    return (float)$v;
                 }
-                
+
                 return $v;
             },
-            'filter'    => function ($v) {
+            'filter'    => static function ($v) {
                 if (! is_null($v)) {
                     return (string)$v;
                 }
-                
+
                 return null;
             },
         ];
-        
+
         // Build the definition
         $defaultDefinition = [
             'width'     => $def,
@@ -80,10 +81,10 @@ trait ResizedImageOptionsTrait
             'crop'      => [
                 'type'    => ['bool', 'null', 'string', 'array'],
                 'default' => null,
-                'filter'  => function ($v) {
+                'filter'  => static function ($v) {
                     if (is_array($v)) {
                         $def = ['type' => 'number', 'default' => 0];
-                        
+
                         return Options::make($v, [
                             'x'      => $def,
                             'y'      => $def,
@@ -94,7 +95,7 @@ trait ResizedImageOptionsTrait
                     if (! $v) {
                         return null;
                     }
-                    
+
                     return $v;
                 },
             ],
@@ -103,20 +104,20 @@ trait ResizedImageOptionsTrait
                 'default' => '',
             ],
         ];
-        
+
         // Apply the options
         $definition = Arrays::merge($defaultDefinition, $additionalDefinition);
         $options    = Options::make($options, $definition);
-        $options    = array_filter($options, function ($v) {
+        $options    = array_filter($options, static function ($v) {
             return ! is_null($v);
         });
-        
+
         // Build additional parameters
         if (! empty($options['params'])) {
             $options['additionalParameters'] = $options['params'];
         }
         unset($options['params']);
-        
+
         // Done
         return $options;
     }
