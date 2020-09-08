@@ -40,8 +40,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\DependencyInjection;
 
 use LaborDigital\T3BA\Tool\Database\DbService;
+use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
 use LaborDigital\T3BA\Tool\Link\LinkService;
 use LaborDigital\T3BA\Tool\Page\PageService;
+use LaborDigital\T3BA\Tool\Session\SessionService;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
 use LaborDigital\T3BA\Tool\Translation\Translator;
 use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
@@ -153,24 +155,24 @@ trait CommonDependencyTrait
     {
         return $this->getInstanceOf(EnvironmentSimulator::class);
     }
-//
-//    /**
-//     * Returns the Frontend session provider instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Session\FrontendSessionProvider
-//     */
-//    protected function FrontendSession(): FrontendSessionProvider
-//    {
-//        return $this->getSingletonOf(SessionService::class)->getFrontendSession();
-//    }
-//
-//    /**
-//     * Returns the Backend session provider instance
-//     *
-//     * @return \LaborDigital\Typo3BetterApi\Session\BackendSessionProvider
-//     */
-//    protected function BackendSession(): BackendSessionProvider
-//    {
-//        return $this->getSingletonOf(SessionService::class)->getBackendSession();
-//    }
+
+    /**
+     * Returns the session abstraction provider instance
+     *
+     * @return \LaborDigital\T3BA\Tool\Session\SessionService
+     */
+    public function Session(): SessionService
+    {
+        return $this->getSingletonOf(SessionService::class);
+    }
+
+    /**
+     * Returns the instance of the data handler abstraction service class
+     *
+     * @return \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
+     */
+    public function DataHandler(): DataHandlerService
+    {
+        return $this->getSingletonOf(DataHandlerService::class);
+    }
 }
