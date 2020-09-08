@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,78 +14,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:51
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events;
+namespace LaborDigital\T3BA\Event;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 
 /**
- * Class ActionControllerRequestFilterEvent
+ * Class ActionControllerMethodNameFilterEvent
  *
- * Emitted when a "Better action controller" ext base action controller is executed.
- * Can be used to filter the response and request.
- *
- * Called twice. Once before and once after the request was processed.
+ * Emitted when a "Better action controller" extbase action controller is executed.
+ * Can be used to filter the action method name before it is invoked.
  *
  * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class ActionControllerRequestFilterEvent
+class ActionControllerMethodNameFilterEvent
 {
-    
     /**
-     * The ext base request object to handle
+     * The name of the action to filter
+     *
+     * @var string
+     */
+    protected $actionName;
+
+    /**
+     * The extbase request object to handle
      *
      * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
      */
     protected $request;
-    
+
     /**
      * The ext base response object to dump the contents into
      *
      * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
     protected $response;
-    
+
     /**
      * The controller to handle the request
      *
      * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     protected $controller;
-    
+
     /**
-     * True if the event is emitted before and false if emitted after the processRequest() method of the controller
+     * ActionControllerMethodNameFilterEvent constructor.
      *
-     * @var bool
-     */
-    protected $beforeProcessing;
-    
-    /**
-     * ActionControllerRequestFilterEvent constructor.
-     *
+     * @param   string                                              $actionName
      * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface             $request
      * @param   \TYPO3\CMS\Extbase\Mvc\ResponseInterface            $response
      * @param   \TYPO3\CMS\Extbase\Mvc\Controller\ActionController  $controller
-     * @param   bool                                                $beforeProcessing
      */
     public function __construct(
+        string $actionName,
         RequestInterface $request,
         ResponseInterface $response,
-        ActionController $controller,
-        bool $beforeProcessing
+        ActionController $controller
     ) {
-        $this->request          = $request;
-        $this->response         = $response;
-        $this->controller       = $controller;
-        $this->beforeProcessing = $beforeProcessing;
+        $this->actionName = $actionName;
+        $this->request    = $request;
+        $this->response   = $response;
+        $this->controller = $controller;
     }
-    
+
+    /**
+     * Returns the name of the action to filter
+     *
+     * @return string
+     */
+    public function getActionMethodName(): string
+    {
+        return $this->actionName;
+    }
+
+    /**
+     * Updates the name of the action to invoke
+     *
+     * @param   string  $actionName
+     *
+     * @return ActionControllerMethodNameFilterEvent
+     */
+    public function setActionMethodName(string $actionName): ActionControllerMethodNameFilterEvent
+    {
+        $this->actionName = $actionName;
+
+        return $this;
+    }
+
     /**
      * Returns the extbase request object to handle
      *
@@ -95,7 +116,7 @@ class ActionControllerRequestFilterEvent
     {
         return $this->request;
     }
-    
+
     /**
      * Returns the ext base response object to dump the contents into
      *
@@ -105,7 +126,7 @@ class ActionControllerRequestFilterEvent
     {
         return $this->response;
     }
-    
+
     /**
      * Returns the controller to handle the request
      *
@@ -114,16 +135,5 @@ class ActionControllerRequestFilterEvent
     public function getController(): ActionController
     {
         return $this->controller;
-    }
-    
-    /**
-     * Returns true if the event is emitted before and false if emitted after the processRequest() method of the
-     * controller
-     *
-     * @return bool
-     */
-    public function isBeforeProcessing(): bool
-    {
-        return $this->beforeProcessing;
     }
 }

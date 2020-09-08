@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 02:50
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\BackendPreview;
+namespace LaborDigital\T3BA\ExtBase\Controller;
 
+use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Dispatcher;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
-use TYPO3\CMS\Fluid\View\Exception\InvalidTemplateResourceException;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -38,21 +38,21 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 trait ExtBaseBackendPreviewRendererTrait
 {
     protected static $transfer = [];
-    
+
     /**
      * The context instance for this renderer
      *
      * @var \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext
      */
     protected $context;
-    
+
     /**
      * Holds the data if the backend action is executed
      *
      * @var array|null
      */
     protected $data = [];
-    
+
     /**
      * Injects the context when the renderer is instantiated
      *
@@ -60,9 +60,10 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     public function setContext(BackendPreviewRendererContext $context)
     {
+        throw new NotImplementedException();
         $this->context = $context;
     }
-    
+
     /**
      * Returns a prepared fluid view you can use to render your backend preview with.
      * There are two variables already defined: "data" contains the raw db row and "settings" contains everything your
@@ -74,6 +75,7 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     public function getFluidView(string $templateName = 'BackendPreview'): StandaloneView
     {
+        throw new NotImplementedException();
         // Load the view configuration from typoScript
         $row        = $this->context->getRow();
         $signature  = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
@@ -83,16 +85,16 @@ trait ExtBaseBackendPreviewRendererTrait
         }
         $viewConfig = $this->context->TypoScript->get([$configType, $signature, 'view'], ['default' => []]);
         $viewConfig = $this->context->TypoScript->removeDots($viewConfig);
-        
+
         // Make and prepare the view instance
         $view = $this->context->TemplateRendering->getFluidView($templateName, $viewConfig);
         $view->assign('settings', $row['settings']);
         $view->assign('data', $row);
-        
+
         // Done
         return $view;
     }
-    
+
     /**
      * We use this method to override the basic controller properties.
      * Also provides the required environment properties to create a "mostly" real ext-base controller experience.
@@ -103,6 +105,7 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     protected function emitBeforeCallActionMethodSignal(array $preparedArguments)
     {
+        throw new NotImplementedException();
         if (! empty(static::$transfer)) {
             $this->context  = static::$transfer['context'];
             $this->data     = $this->context->getRow();
@@ -114,11 +117,11 @@ trait ExtBaseBackendPreviewRendererTrait
                 // Silence
             }
         }
-        
+
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return parent::emitBeforeCallActionMethodSignal($preparedArguments);
     }
-    
+
     /**
      * This helper is used execute an extbase request in the backend.
      * The given action will be executed on the current controller class.
@@ -135,9 +138,10 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     public function callBackendAction(string $actionName, array $options = []): ResponseInterface
     {
+        throw new NotImplementedException();
         $this->validateThatBePreviewTraitIsCalledInActionController();
         static::$transfer['context'] = $this->context;
-        
+
         // Prepare the options
         static::$transfer['options'] = Options::make($options, [
             'additionalArgs' => [
@@ -149,18 +153,18 @@ trait ExtBaseBackendPreviewRendererTrait
                 'default' => 'BackendPreview',
             ],
         ]);
-        
+
         /** @var ActionController $this */
         $objectManager = $this->objectManager;
         $row           = $this->context->getRow();
         $listType      = $row['list_type'];
         $config        = $this->context->TypoScript->get(['plugin', 'tx_' . $listType], ['default' => []]);
-        
+
         // Prepare the config manager
         /** @var ActionController $this */
         $configManager = $this->configurationManager;
         $configManager->setConfiguration($config);
-        
+
         // Create a new request
         $request = $objectManager->get(RequestInterface::class);
         $request->setPluginName($this->context->getRow()['list_type']);
@@ -168,19 +172,19 @@ trait ExtBaseBackendPreviewRendererTrait
         $request->setControllerActionName($actionName);
         $request->setArguments(static::$transfer['options']['additionalArgs']);
         $request->setFormat('html');
-        
+
         // Create a response and dispatcher
         $response   = $objectManager->get(ResponseInterface::class);
         $dispatcher = $objectManager->get(Dispatcher::class);
         $dispatcher->dispatch($request, $response);
-        
+
         // Remove transfer
         static::$transfer = null;
-        
+
         // Done
         return $response;
     }
-    
+
     /**
      * Internal helper to check if all our required properties exist
      *
@@ -188,6 +192,7 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     protected function validateThatBePreviewTraitIsCalledInActionController()
     {
+        throw new NotImplementedException();
         if (! $this instanceof ActionController) {
             throw new BackendPreviewException('To use this trait you have to call it in an ActionController action!');
         }

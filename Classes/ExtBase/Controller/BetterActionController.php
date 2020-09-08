@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 02:49
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\BetterController;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
-use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\Event\Events\ActionControllerMethodNameFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\ActionControllerRequestFilterEvent;
+namespace LaborDigital\T3BA\ExtBase\Controller;
+
+use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Event\ActionControllerMethodNameFilterEvent;
+use LaborDigital\T3BA\Event\ActionControllerRequestFilterEvent;
+use LaborDigital\T3BA\Tool\Link\LinkService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
@@ -30,21 +32,17 @@ use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
 
 class BetterActionController extends ActionController
 {
-    use CommonServiceLocatorTrait;
-    use CommonDependencyTrait {
-        CommonDependencyTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
-        CommonDependencyTrait::injectContainer insteadof CommonServiceLocatorTrait;
-    }
-    
+    use CommonDependencyTrait;
+
     /**
      * The list of the raw content object data
      *
      * @var array
      */
     protected $data = [];
-    
+
     /**
-     * Implements new hooks, catches a weired typo3 exception if a dbal entry was not found
+     * Implements new hooks, catches a weired TYPO3 exception if a dbal entry was not found
      * and provides additional data attribute, containing the raw content element data
      *
      * @see https://forum.typo3.org/index.php?t=msg&goto=740402&
@@ -62,42 +60,38 @@ class BetterActionController extends ActionController
         if (empty($this->data)) {
             $this->data = $this->configurationManager->getContentObject()->data;
         }
-        
+
         // Inject the this controller's request into the links object
-        $this->Links()->__setControllerRequest($request);
-        
+        $this->setLocalSingleton(
+            LinkService::class, $this->Links()->makeControllerClone($request)
+        );
+
         // Allow filtering
         $this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, true));
-        
+
         // Do the default stuff
         try {
             parent::processRequest($request, $response);
         } catch (TargetNotFoundException $e) {
             // Catch dbal overkill exceptions
         }
-        
+
         // Allow filtering
         $this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, false));
     }
-    
+
     /**
-     * Resolves and checks the current action method name
-     *
-     * @return string Method name of the current action
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchActionException if the action specified in the request object
-     *                                                                does not exist (and if there's no default action
-     *                                                                either).
+     * @inheritDoc
      */
     protected function resolveActionMethodName()
     {
-        $actionName = parent::resolveActionMethodName();
         $this->EventBus()->dispatch(($e = new ActionControllerMethodNameFilterEvent(
-            $actionName,
+            parent::resolveActionMethodName(),
             $this->request,
             $this->response,
             $this
         )));
-        
+
         return $e->getActionMethodName();
     }
 }

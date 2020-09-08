@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\BetterController;
+namespace LaborDigital\T3BA\ExtBase\Controller;
 
-use LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext;
-use LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererInterface;
-use LaborDigital\Typo3BetterApi\BackendPreview\ExtBaseBackendPreviewRendererTrait;
-use TYPO3\CMS\Fluid\View\Exception\InvalidTemplateResourceException;
+use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
 
 /**
  * Class SimpleDefaultActionController
@@ -34,7 +31,7 @@ use TYPO3\CMS\Fluid\View\Exception\InvalidTemplateResourceException;
 abstract class SimpleDefaultActionController extends BetterActionController implements BackendPreviewRendererInterface
 {
     use ExtBaseBackendPreviewRendererTrait;
-    
+
     /**
      * Default handler for the main action of this plugin
      */
@@ -42,17 +39,17 @@ abstract class SimpleDefaultActionController extends BetterActionController impl
     {
         // Add data to view
         $this->view->assign('data', $this->data);
-        
+
         // Check if an image has to be loaded
         foreach (['image', 'media', 'image_a', 'image_b'] as $field) {
             if (empty($this->data[$field])) {
                 continue;
             }
             $this->view->assign($field,
-                $this->FalFiles()->getFile($this->data['uid'], 'tt_content', $field, $field !== 'media'));
+                $this->Fal()->getFile($this->data['uid'], 'tt_content', $field, $field !== 'media'));
         }
     }
-    
+
     /**
      * @inheritDoc
      */
