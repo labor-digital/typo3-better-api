@@ -25,7 +25,6 @@ namespace LaborDigital\T3BA\Tool\DataHandler\Record;
 
 use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
-use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -203,7 +202,7 @@ class RecordDataHandler
             return $callback();
         }
 
-        return GeneralUtility::makeInstance(ContainerInterface::class)
+        return GeneralUtility::getContainer()
                              ->get(EnvironmentSimulator::class)
                              ->runWithEnvironment(['asAdmin'], $callback);
     }

@@ -19,8 +19,9 @@
 
 declare(strict_types=1);
 
+use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\BetterQuery;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3BA\Tool\Database\DatabaseException;
-use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
@@ -52,8 +53,9 @@ if (! function_exists('dbgQuery')) {
             $dQuery       = $query->getQueryBuilder();
             $isStandalone = true;
         } else {
-            $parser = GeneralUtility::makeInstance(ContainerInterface::class)->get(Typo3DbQueryParser::class);
-            $dQuery = $parser->convertQueryToDoctrineQueryBuilder($query);
+            $dQuery = GeneralUtility::getContainer()
+                                    ->get(Typo3DbQueryParser::class)
+                                    ->convertQueryToDoctrineQueryBuilder($query);
             if (! empty($query->getLimit())) {
                 $dQuery->setMaxResults($query->getLimit());
             }

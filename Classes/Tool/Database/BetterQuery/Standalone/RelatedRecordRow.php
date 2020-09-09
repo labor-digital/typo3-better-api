@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
 
 use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
-use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
@@ -128,7 +127,7 @@ class RelatedRecordRow
                 'Could not hydrate a related row for table: ' . $this->getTableName()
                 . ' because it was not mapped to a model');
         }
-        $objects = GeneralUtility::makeInstance(ContainerInterface::class)
+        $objects = GeneralUtility::getContainer()
                                  ->get(DataMapper::class)
                                  ->map($this->modelMap[$this->getTableName()], [$this->row]);
 
