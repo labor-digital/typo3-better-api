@@ -152,7 +152,7 @@ class PathFacet implements FacetInterface
     {
         return 'EXT:' . strtolower($extKey) . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR .
                'Private' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR .
-               (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . '/');
+               (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -169,7 +169,7 @@ class PathFacet implements FacetInterface
     {
         return 'EXT:' . strtolower($extKey) . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR .
                'Private' . DIRECTORY_SEPARATOR . 'Partials' . DIRECTORY_SEPARATOR .
-               (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . '/');
+               (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -186,7 +186,32 @@ class PathFacet implements FacetInterface
     {
         return 'EXT:' . strtolower($extKey) . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR .
                'Private' . DIRECTORY_SEPARATOR . 'Layouts' . DIRECTORY_SEPARATOR .
-               (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . '/');
+               (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . DIRECTORY_SEPARATOR);
+    }
+
+    /**
+     * Tries to find the extension icon for the extension with the given ext key.
+     * It will either return the path to the icon or an empty string
+     *
+     * @param   string  $extKey    The extension key to find the icon path for
+     * @param   bool    $absolute  By default the path will start with EXT:$extKey/...
+     *                             If you set this to true the absolute, real path will be returned instead
+     *
+     * @return string
+     */
+    public function getExtensionIconPath(string $extKey, bool $absolute = false): string
+    {
+        $extensionPath = $this->getExtensionPath($extKey);
+        $iconPath      = ExtensionManagementUtility::getExtensionIcon($extensionPath);
+
+        if (empty($iconPath)) {
+            return '';
+        }
+        if ($absolute) {
+            return Path::join($extensionPath, $iconPath);
+        }
+
+        return Path::join('EXT:' . $extKey, $iconPath);
     }
 
     /**
