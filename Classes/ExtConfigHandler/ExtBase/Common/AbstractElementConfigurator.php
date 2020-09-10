@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 19:37
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Generic;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
-use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
+namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
+
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -29,36 +31,36 @@ use SplStack;
 
 abstract class AbstractElementConfigurator
 {
-    
-    
+    use TypoContextAwareTrait;
+
     /**
      * The context to create the plugin with
      *
      * @var ExtConfigContext
      */
     protected $context;
-    
+
     /**
      * The typoScript signature of this element
      *
      * @var string
      */
     protected $signature;
-    
+
     /**
      * The class name of the element's controller
      *
      * @var string
      */
     protected $controllerClass;
-    
+
     /**
      * The ext base plugin name for this element
      *
      * @var string
      */
     protected $pluginName;
-    
+
     /**
      * Optional path like EXT:extkey... to a icon for this element.
      * If not given the ext_icon.gif in the root directory will be used.
@@ -66,28 +68,28 @@ abstract class AbstractElementConfigurator
      * @var string
      */
     protected $icon;
-    
+
     /**
      * The list of all registered template root paths for this element
      *
      * @var \SplStack
      */
     protected $templateRootPaths;
-    
+
     /**
      * The list of all registered partial root paths for this element
      *
      * @var \SplStack
      */
     protected $partialRootPaths;
-    
+
     /**
      * The list of all registered layout root paths for this element
      *
      * @var \SplStack
      */
     protected $layoutRootPaths;
-    
+
     /**
      * Defines the allowed actions of the module controller class.
      * If this is empty all public methods that end with "Action" will be used as action methods.
@@ -95,44 +97,40 @@ abstract class AbstractElementConfigurator
      * @var array
      */
     protected $actions = [];
-    
+
     /**
      * AbstractExtBaseElementConfigurator constructor.
      *
      * @param   string            $pluginName
      * @param   ExtConfigContext  $context
      */
-    public function __construct(string $pluginName, ExtConfigContext $context)
+    public function __construct(string $signature, string $pluginName, ExtConfigContext $context)
     {
         $this->context = $context;
-        
+        $extKey        = $context->getExtKey();
+        $pathAspect    = $this->TypoContext()->Path();
+
         $this->templateRootPaths = new SplStack();
-        $this->templateRootPaths->push("EXT:{$context->getExtKey()}/Resources/Private/Templates/");
-        $this->templateRootPaths->push(
-            $context->TypoContext->getPathAspect()->getTemplatePath($context->getExtKey(), $pluginName)
-        );
-        
+        $this->templateRootPaths->push($pathAspect->getTemplatePath($extKey));
+        $this->templateRootPaths->push($pathAspect->getTemplatePath($extKey, $pluginName));
+
         $this->partialRootPaths = new SplStack();
-        $this->partialRootPaths->push("EXT:{$context->getExtKey()}/Resources/Private/Partials/");
-        $this->partialRootPaths->push(
-            $context->TypoContext->getPathAspect()->getPartialPath($context->getExtKey(), $pluginName)
-        );
-        
+        $this->partialRootPaths->push($pathAspect->getPartialPath($extKey));
+        $this->partialRootPaths->push($pathAspect->getPartialPath($extKey, $pluginName));
+
         $this->layoutRootPaths = new SplStack();
-        $this->layoutRootPaths->push("EXT:{$context->getExtKey()}/Resources/Private/Layouts/");
-        $this->layoutRootPaths->push(
-            $context->TypoContext->getPathAspect()->getLayoutPath($context->getExtKey(), $pluginName)
-        );
-        
-        $this->icon       = 'EXT:' . $context->getExtKey() . '/ext_icon.gif';
-        $this->pluginName = Inflector::toCamelCase($pluginName);
-        $this->signature  = Naming::pluginSignature($pluginName, $context->getExtKey());
+        $this->layoutRootPaths->push($pathAspect->getLayoutPath($extKey));
+        $this->layoutRootPaths->push($pathAspect->getLayoutPath($extKey, $pluginName));
+
+        $this->icon       = $pathAspect->getExtensionIconPath($extKey);
+        $this->pluginName = $pluginName;
+        $this->signature  = $signature;
         $controllerClass  = $this->makeControllerClassName($this->pluginName);
         if (class_exists($controllerClass)) {
             $this->setControllerClass($controllerClass);
         }
     }
-    
+
     /**
      * Returns the typoScript signature of this element
      *
@@ -142,7 +140,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->signature;
     }
-    
+
     /**
      * Returns the ext base plugin name for this element
      *
@@ -152,7 +150,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->pluginName;
     }
-    
+
     /**
      * Returns the class name of the element's controller
      *
@@ -162,7 +160,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->controllerClass;
     }
-    
+
     /**
      * Returns the icon of this element
      *
@@ -172,7 +170,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->icon;
     }
-    
+
     /**
      * Sets the path like EXT:extkey... to a icon for this element.
      * If not given the ext_icon.gif in the root directory will be used.
@@ -181,13 +179,13 @@ abstract class AbstractElementConfigurator
      *
      * @return $this
      */
-    public function setIcon(string $icon): AbstractElementConfigurator
+    public function setIcon(string $icon): self
     {
         $this->icon = $this->context->replaceMarkers($icon);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the list of all registered template root paths for this element
      *
@@ -197,7 +195,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->templateRootPaths;
     }
-    
+
     /**
      * Sets the list of all registered template root paths for this element
      *
@@ -205,13 +203,13 @@ abstract class AbstractElementConfigurator
      *
      * @return $this
      */
-    public function setTemplateRootPaths(SplStack $templateRootPaths): AbstractElementConfigurator
+    public function setTemplateRootPaths(SplStack $templateRootPaths): self
     {
         $this->templateRootPaths = $templateRootPaths;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the list of all registered partial root paths for this element
      *
@@ -221,7 +219,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->partialRootPaths;
     }
-    
+
     /**
      * Sets the list of all registered partial root paths for this element
      *
@@ -229,13 +227,13 @@ abstract class AbstractElementConfigurator
      *
      * @return $this
      */
-    public function setPartialRootPaths(SplStack $partialRootPaths): AbstractElementConfigurator
+    public function setPartialRootPaths(SplStack $partialRootPaths): self
     {
         $this->partialRootPaths = $partialRootPaths;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the list of all registered layout root paths for this element
      *
@@ -245,7 +243,7 @@ abstract class AbstractElementConfigurator
     {
         return $this->layoutRootPaths;
     }
-    
+
     /**
      * Sets the list of all registered layout root paths for this element
      *
@@ -253,24 +251,23 @@ abstract class AbstractElementConfigurator
      *
      * @return $this
      */
-    public function setLayoutRootPaths(SplStack $layoutRootPaths): AbstractElementConfigurator
+    public function setLayoutRootPaths(SplStack $layoutRootPaths): self
     {
         $this->layoutRootPaths = $layoutRootPaths;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the allowed actions of the module controller class.
      *
      * @return array
-     * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
      */
     public function getActions(): array
     {
         return $this->actionsProcessor($this->actions);
     }
-    
+
     /**
      * Sets the allowed actions of the module controller class.
      * If this is empty all public methods that end with "Action" will be used as action methods.
@@ -280,12 +277,12 @@ abstract class AbstractElementConfigurator
      * @param   array  $actions
      *
      * @return $this
-     * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
-    public function setActions(array $actions): AbstractElementConfigurator
+    public function setActions(array $actions): self
     {
         $this->actions = $actions;
-        
+
         // Update the controller class
         $actions = $this->getActions();
         reset($actions);
@@ -297,57 +294,63 @@ abstract class AbstractElementConfigurator
         if ($newControllerClass !== $this->controllerClass) {
             $this->setControllerClass($newControllerClass);
         }
-        
+
         // Done
         return $this;
     }
-    
+
     /**
      * Internal helper which is used to format the actions array correctly before outputting it
      *
      * @param   array  $actions
      *
      * @return array
-     * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
     protected function actionsProcessor(array $actions): array
     {
         // Make default actions
-        if (empty($actions) && class_exists($this->controllerClass)) {
+        if (empty($actions) && $this->controllerClass !== null && class_exists($this->controllerClass)) {
             $actions = [
-                $this->pluginName => array_map(function ($v) {
-                    return substr($v, 0, -6);
-                }, array_filter(get_class_methods($this->controllerClass), function ($v) {
-                    if ($v === 'initializeAction') {
-                        return false;
-                    }
-                    
-                    return substr($v, -6) === 'Action';
-                })),
+                $this->pluginName => array_map(
+                    static function ($v) {
+                        return substr($v, 0, -6);
+                    },
+                    array_filter(
+                        get_class_methods($this->controllerClass),
+                        static function ($v) {
+                            return $v === 'initializeAction' ? false : substr($v, -6) === 'Action';
+                        }
+                    )
+                ),
             ];
         }
-        
+
         // Filter the actions
         if (Arrays::isSequential($actions)) {
             $actions = [$this->pluginName => $actions];
         }
+
         foreach ($actions as $k => $list) {
             if (is_string($list)) {
                 $list = Arrays::makeFromStringList($list);
             }
+
             if (! is_array($list)) {
                 throw new ExtConfigException("Invalid plugin action array for $this->pluginName given!");
             }
-            $list        = array_map(function ($v) {
-                return preg_replace('~Action$~s', '', $v);
-            }, $list);
-            $actions[$k] = implode(',', $list);
+
+            $actions[$k] = implode(',',
+                array_map(static function ($v) {
+                    return preg_replace('~Action$~', '', $v);
+                }, $list)
+            );
         }
-        
+
         // Done
         return $actions;
     }
-    
+
     /**
      * Generates the controller class name for the given base name
      *
@@ -364,34 +367,30 @@ abstract class AbstractElementConfigurator
             Inflector::toCamelCase($baseName) . 'Controller',
         ]));
     }
-    
+
     /**
      * Internal helper to set the controller class when the action list changes.
      * Can be extended to serve as semi-event emitter...
      *
      * @param   string  $controllerClass
      *
-     * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
-    protected function setControllerClass(string $controllerClass)
+    protected function setControllerClass(string $controllerClass): void
     {
         if (! class_exists($controllerClass)) {
             throw new ExtConfigException("The controller class $controllerClass does not exist!");
         }
-        
+
         $this->controllerClass = $controllerClass;
-        
+
         // Update the template root path's
-        $controllerBaseName = Inflector::toCamelCase(preg_replace('~controller$~si', '',
-            Path::classBasename($controllerClass)));
-        $this->templateRootPaths->push($this->context->TypoContext->getPathAspect()
-                                                                  ->getTemplatePath($this->context->getExtKey(),
-                                                                      $controllerBaseName));
-        $this->partialRootPaths->push($this->context->TypoContext->getPathAspect()
-                                                                 ->getPartialPath($this->context->getExtKey(),
-                                                                     $controllerBaseName));
-        $this->layoutRootPaths->push($this->context->TypoContext->getPathAspect()
-                                                                ->getLayoutPath($this->context->getExtKey(),
-                                                                    $controllerBaseName));
+        $pathAspect         = $this->TypoContext()->Path();
+        $controllerBaseName = Inflector::toCamelCase(
+            preg_replace('~controller$~i', '', Path::classBasename($controllerClass))
+        );
+        $this->templateRootPaths->push($pathAspect->getTemplatePath($this->context->getExtKey(), $controllerBaseName));
+        $this->partialRootPaths->push($pathAspect->getPartialPath($this->context->getExtKey(), $controllerBaseName));
+        $this->layoutRootPaths->push($pathAspect->getLayoutPath($this->context->getExtKey(), $controllerBaseName));
     }
 }

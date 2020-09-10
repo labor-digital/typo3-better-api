@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,50 +18,58 @@
  * Last modified: 2020.03.18 at 19:37
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Generic;
+namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
 
 use Iterator;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
-abstract class AbstractConfigGenerator
+abstract class AbstractElementConfigGenerator
 {
+
     /**
-     * Internal helper to build the typoscript, template definition for a extbase plugin/module
+     * Internal helper to build the typoScript, template definition for a extbase plugin/module
      *
      * @param   string                       $type
      * @param   AbstractElementConfigurator  $configurator
      *
      * @return string
      */
-    protected function makeTemplateDefinition(string $type, AbstractElementConfigurator $configurator): string
-    {
+    protected function registerTemplateDefinition(
+        string $type,
+        AbstractElementConfigurator $configurator,
+        ExtConfigContext $context
+    ): void {
         // Template path helper
-        $pathHelper = function (Iterator $stack): string {
+        $pathHelper = static function (Iterator $stack): string {
             $paths = [];
             foreach ($stack as $k => $path) {
                 $paths[$path] = (((int)$k) * 10 + 10) . ' = ' . $path;
             }
-            
+
             return implode(PHP_EOL . '					', array_reverse($paths));
         };
-        
-        // Build the typoscript
-        return <<<TS
-		# Register template for {$configurator->getSignature()}
-		$type.tx_{$configurator->getSignature()} {
+
+        // Build the typoScript
+        $signature = $configurator->getSignature();
+        $configKey = 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup';
+        $ts        = $context->getState()->get($configKey, '') . '
+		# Register template for ' . $signature . '
+		' . $type . '.tx_' . $signature . ' {
 			view {
 				templateRootPaths {
-					{$pathHelper($configurator->getTemplateRootPaths())}
+					' . $pathHelper($configurator->getTemplateRootPaths()) . '
 				}
-		
+
 				partialRootPaths {
-					{$pathHelper($configurator->getPartialRootPaths())}
+					' . $pathHelper($configurator->getPartialRootPaths()) . '
 				}
-		
+
 				layoutRootPaths {
-					{$pathHelper($configurator->getLayoutRootPaths())}
+					' . $pathHelper($configurator->getLayoutRootPaths()) . '
 				}
 			}
 		}
-TS;
+';
+        $context->getState()->set($configKey, $ts);
     }
 }

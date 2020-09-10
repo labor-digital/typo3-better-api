@@ -1,5 +1,6 @@
 <?php
-/**
+declare(strict_types=1);
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Module;
+namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
-interface ModuleConfigurationInterface
+interface ConfigureExtBaseModuleInterface
 {
-    
+
     /**
      * Is used to configure a single ext base backend module.
      *
      * @param   ModuleConfigurator  $configurator
      * @param   ExtConfigContext    $context
      *
-     * @return mixed
+     * @return void
      */
-    public static function configureModule(ModuleConfigurator $configurator, ExtConfigContext $context);
+    public static function configureModule(ModuleConfigurator $configurator, ExtConfigContext $context): void;
 }

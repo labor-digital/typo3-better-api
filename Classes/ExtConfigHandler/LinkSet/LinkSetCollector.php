@@ -89,6 +89,5 @@ class LinkSetCollector implements ExtConfigConfiguratorInterface
     public function finish(ConfigState $state): void
     {
         $state->set('sets', array_map('serialize', $this->definitions));
-        $state->set('allowedClasses', [LinkSetDefinition::class]);
     }
 }
