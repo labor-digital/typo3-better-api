@@ -211,8 +211,9 @@ class LinkContext implements SingletonInterface
         $baseUrl = Path::makeUri($baseUrl)->getHost();
 
         // Create a new request instance
-        $this->request = $this->getInstanceOf(Request::class);
-        $this->request->setBaseUri($baseUrl);
+        $request = $this->getWithoutDi(Request::class);
+        $request->setBaseUri($baseUrl);
+        $this->setLocalSingleton(Request::class, $request);
 
         // Inject the base url if we are in cli context
         if ($this->typoContext->Env()->isCli()) {
