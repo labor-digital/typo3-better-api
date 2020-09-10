@@ -162,7 +162,7 @@ trait CommonDependencyTrait
      *
      * @return \LaborDigital\T3BA\Tool\Session\SessionService
      */
-    public function Session(): SessionService
+    protected function Session(): SessionService
     {
         return $this->getSingletonOf(SessionService::class);
     }
@@ -172,7 +172,7 @@ trait CommonDependencyTrait
      *
      * @return \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
      */
-    public function DataHandler(): DataHandlerService
+    protected function DataHandler(): DataHandlerService
     {
         return $this->getSingletonOf(DataHandlerService::class);
     }
