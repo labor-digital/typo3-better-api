@@ -23,11 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use Neunerlei\Configuration\Handler\AbstractConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-abstract class AbstractExtConfigHandler extends AbstractConfigHandler
+abstract class AbstractExtConfigHandler extends AbstractConfigHandler implements PublicServiceInterface
 {
+
     /**
      * The configuration context we are working with
      *
