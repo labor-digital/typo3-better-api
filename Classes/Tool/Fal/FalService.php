@@ -94,14 +94,14 @@ class FalService implements SingletonInterface
      *                                       - "uploads/myfile.png" (backwards-compatibility, storage "0")
      *                                       - "file:23"
      *
-     * @param   string           $table      The table to use as reference
-     * @param   string           $field      The field to use as reference
+     * @param   string|null      $table      The table to use as reference
+     * @param   string|null      $field      The field to use as reference
      * @param   bool             $onlyFirst  If true only the first result in an array of FileReferences will be
      *                                       returned
      *
      * @return null|array|\TYPO3\CMS\Core\Resource\File|\TYPO3\CMS\Core\Resource\FileReference|\TYPO3\CMS\Core\Resource\FileReference[]
      */
-    public function getFile($uid, string $table = '', string $field = '', bool $onlyFirst = true)
+    public function getFile($uid, ?string $table = null, ?string $field = null, bool $onlyFirst = true)
     {
         // Check how we select
         $useUidOnly = empty($table) || empty($field);
@@ -112,8 +112,15 @@ class FalService implements SingletonInterface
         }
 
         try {
+            if (is_int($uid)) {
+                $uid = (string)$uid;
+            }
+
             // Read the strange string identifiers
-            if ((is_string($uid) && ! is_numeric($uid)) || (is_numeric($uid) && $useUidOnly)) {
+            if (
+                (is_string($uid) && ! is_numeric($uid))
+                || (is_numeric($uid) && $useUidOnly)
+            ) {
                 // Prepare identifier
                 $identifier = $uid;
 
