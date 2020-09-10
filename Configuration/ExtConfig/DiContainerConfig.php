@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Configuration\ExtConfig;
 
 
+use LaborDigital\T3BA\Core\DependencyInjection\CompilerPass\ContainerAwareTraitPass;
 use LaborDigital\T3BA\Core\DependencyInjection\CompilerPass\EventBusListenerProviderPass;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
@@ -60,6 +61,9 @@ class DiContainerConfig implements ConfigureDependencyInjectionInterface
             'Classes/ExtConfig/ExtConfigService.php',
             'Classes/**/functions.php',
         ]);
+
+        // CONTAINER AWARE TRAIT
+        $containerBuilder->addCompilerPass(new ContainerAwareTraitPass());
 
         // LISTENER PROVIDER
         $containerBuilder->getDefinition(TypoListenerProvider::class)
