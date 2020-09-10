@@ -44,9 +44,11 @@ trait ContainerAwareTrait
     /**
      * Injects the container instance if possible
      *
+     * NOTE: We can't use "injectContainer" here, because otherwise the ExtBase dependency injection will break -.-...
+     *
      * @param   \Psr\Container\ContainerInterface  $container
      */
-    public function injectContainer(ContainerInterface $container): void
+    public function setContainer(ContainerInterface $container): void
     {
         $this->__localSingletons['@container'] = $container;
     }
