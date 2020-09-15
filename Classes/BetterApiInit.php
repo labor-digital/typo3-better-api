@@ -112,7 +112,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class BetterApiInit
 {
-    
+
     /**
      * True if the init method was executed,
      * this will block further executions
@@ -120,35 +120,35 @@ class BetterApiInit
      * @var bool
      */
     protected static $initStarted = false;
-    
+
     /**
      * True when the init is complete
      *
      * @var bool
      */
     protected static $initComplete = false;
-    
+
     /**
      * Holds the typo3 event bus if we are ready for it
      *
      * @var EventBusInterface
      */
     protected $eventBus;
-    
+
     /**
      * The container instance
      *
      * @var TypoContainer
      */
     protected $container;
-    
+
     /**
      * The app context object
      *
      * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
     protected $context;
-    
+
     /**
      * BetterApiInit constructor.
      *
@@ -158,7 +158,7 @@ class BetterApiInit
     {
         $this->eventBus = $eventBus;
     }
-    
+
     /**
      * This stage is executed inside the composerAutoloadInclude.php
      * which is, as the name suggests, loaded as "autoload file" via composer.
@@ -174,7 +174,7 @@ class BetterApiInit
             return;
         }
         static::$initStarted = true;
-        
+
         // Create the event bus
         $eventBus         = new TypoEventBus();
         $listenerProvider = new TypoListenerProvider();
@@ -182,7 +182,7 @@ class BetterApiInit
         $dispatcher = new TypoDispatcher($listenerProvider);
         $eventBus->setConcreteDispatcher($dispatcher);
         TypoEventBus::setInstance($eventBus);
-        
+
         // Load the global events
         if (isset($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'])
             && is_array($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'])) {
@@ -193,28 +193,28 @@ class BetterApiInit
             }
         }
         unset($GLOBALS['BETTER_API_LOW_LEVEL_EVENTS'], $event, $handler);
-        
+
         // Register the override generator's auto-loader
         ClassOverrideGenerator::init($composerClassLoader);
-        
+
         // Create myself
         $self = new static($eventBus);
-        
+
         // Allow replacement of this object
         $e = new InitInstanceFilterEvent($self, $eventBus);
         $eventBus->dispatch($e);
         $self = $e->getInitInstance();
-        
+
         // Apply the first step of our bootstrap
         $self->applyCoreModding();
         $self->applyDebuggerConfig();
         include __DIR__ . '/functions.php';
-        
+
         // Check if we need to apply the compatibility script for helhum' console
         if (PHP_SAPI === 'cli') {
             $self->applyHelhumConsoleCompatibility();
         }
-        
+
         // TYPO3 9
         // When the Cache Manager is instantiated we create the extBase cache
         // to prevent deprecation warnings...
@@ -227,7 +227,7 @@ class BetterApiInit
                 $self->registerErrorHandlerAdapter();
             }
         );
-        
+
         // Handle the failsafe state
         $eventBus->addListener(
             BootstrapFailsafeDefinitionEvent::class,
@@ -235,7 +235,7 @@ class BetterApiInit
                 FailsafeWrapper::$isFailsafe = $e->isFailsafe();
             }
         );
-        
+
         // Activate myself
         $eventBus->addListener(
             RegisterRuntimePackagesEvent::class,
@@ -250,7 +250,7 @@ class BetterApiInit
             },
             ['priority' => -500]
         );
-        
+
         // Do remaining bootstrap
         $eventBus->addListener(
             AfterExtLocalConfLoadedEvent::class,
@@ -265,13 +265,16 @@ class BetterApiInit
             },
             ['priority' => 100]
         );
-        
+
         // Make sure to destroy the context instance after the bootstrap finished
         // We need this for v9 because we require the Context class, before it is initialized
         // in the Application classes. This will lead to unexpected behaviour in the backend and edge cases.
         $eventBus->addListener(
             BootstrapContainerFilterEvent::class,
             static function () use ($self) {
+                if ($self->context === null) {
+                    return;
+                }
                 GeneralUtility::removeSingletonInstance(
                     Context::class,
                     $self->context->getRootContext()
@@ -283,7 +286,7 @@ class BetterApiInit
                 $self->context->__unlinkContext();
             }
         );
-        
+
         // Register a fallback that loads the ext localconf files if the install tool applies some TCA related checks
         $eventBus->addListener(
             LoadExtLocalConfIfTcaIsRequiredWithoutItEvent::class,
@@ -292,13 +295,13 @@ class BetterApiInit
                 if (BetterApiInit::isComplete()) {
                     return;
                 }
-                
+
                 // Load the ext local conf files
                 ExtensionManagementUtility::loadExtLocalconf(false);
             }
         );
     }
-    
+
     /**
      * Returns true if the init is completed, false if it is still running
      *
@@ -308,7 +311,7 @@ class BetterApiInit
     {
         return static::$initComplete;
     }
-    
+
     /**
      * Makes sure that this package is always active in the package states
      *
@@ -327,7 +330,7 @@ class BetterApiInit
             $packageManager->activatePackage($packageKey);
         }
     }
-    
+
     /**
      * Activates the hook extension that should be always the last in the list
      * of extension. This is important because we want all other extensions to
@@ -342,11 +345,10 @@ class BetterApiInit
         if ($packageManager->isPackageActive($packageKey)) {
             $packageManager->deactivatePackage($packageKey);
         }
-        
+
         // Create the package and register the base path
         $package = new Package($packageManager, $packageKey, __DIR__ . '/../HookExtension/' . $packageKey . '/');
-        $adapter = new class extends PackageManager
-        {
+        $adapter = new class extends PackageManager {
             public function registerHookPackage(
                 PackageManager $packageManager,
                 PackageInterface $package
@@ -354,14 +356,14 @@ class BetterApiInit
                 // Register a new base path
                 $packageManager->packagesBasePaths[$package->getPackageKey()]
                     = $package->getPackagePath();
-                
+
                 // Activate the package
                 $packageManager->activatePackageDuringRuntime($package->getPackageKey());
             }
         };
         $adapter->registerHookPackage($packageManager, $package);
     }
-    
+
     /**
      * Registers some low level class overrides.
      *
@@ -380,7 +382,7 @@ class BetterApiInit
         ClassOverrideGenerator::registerOverride(DataMapper::class, ExtendedDataMapper::class);
         ClassOverrideGenerator::registerOverride(SiteConfiguration::class, ExtendedSiteConfiguration::class);
         ClassOverrideGenerator::registerOverride(ReferenceIndex::class, ExtendedReferenceIndex::class);
-        
+
         // Make sure we don't crash legacy code when changing the language service
         ClassOverrideGenerator::registerOverride(
             LanguageService::class,
@@ -391,7 +393,7 @@ class BetterApiInit
             class_alias(LanguageService::class, \TYPO3\CMS\Lang\LanguageService::class);
         }
     }
-    
+
     /**
      * Apply the configuration for the labor/dbg package
      */
@@ -401,7 +403,7 @@ class BetterApiInit
             // Register our Plugins
             Kint::$plugins[] = LazyLoadingPlugin::class;
             Kint::$plugins[] = TypoInstanceTypePlugin::class;
-            
+
             // Register pre hook to fix broken typo3 iframe
             $recursion = false;
             dbgConfig('postHooks', static function () use (&$recursion) {
@@ -430,7 +432,7 @@ HTML;
                 }
                 $recursion = false;
             });
-            
+
             // Register blacklisted objects to prevent kint from breaking apart ...
             if (class_exists(BlacklistPlugin::class)) {
                 BlacklistPlugin::$shallow_blacklist[]
@@ -450,7 +452,7 @@ HTML;
             }
         }
     }
-    
+
     /**
      * Registers our custom exception handler that wraps the registered
      * exception handler to emit events when an error/exception occurred
@@ -464,7 +466,7 @@ HTML;
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
                 = ProductionExceptionHandler::class;
         }
-        
+
         // Register debug exception handler
         if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
             !== DebugExceptionHandler::class) {
@@ -473,7 +475,7 @@ HTML;
                 = DebugExceptionHandler::class;
         }
     }
-    
+
     /**
      * Creates the typo container instance and sets up the default configuration
      */
@@ -481,13 +483,13 @@ HTML;
     {
         // Create the container instance
         $this->container = TypoContainer::getInstance();
-        
+
         // Register our overwrite implementations
         $this->container->setClassFor(
             ExtendedCacheManager::class,
             CacheManager::class
         );
-        
+
         // Register implementations
         $this->container->setClassFor(
             DbServiceInterface::class,
@@ -501,14 +503,14 @@ HTML;
             TypoContainerInterface::class,
             TypoContainer::class
         );
-        
+
         // Register existing instances
         /** @noinspection PhpParamsInspection */
         $this->container->set(TypoEventBus::class, $this->eventBus);
-        
+
         // Inject the container and the signal slot dispatcher into the event dispatcher
         $this->addSignalSlotDispatcherToEventDispatcher();
-        
+
         // Register the lazy constructor injection hook
         $this->eventBus->addLazySubscriber(LazyConstructorInjectionHook::class);
         $this->eventBus->dispatch(new ClassSchemaFilterEvent(
@@ -516,7 +518,7 @@ HTML;
             LazyConstructorInjectionHook::class
         ));
     }
-    
+
     /**
      * Adds additional dependencies to the event dispatcher so it is linked
      * with the signal slot dispatcher
@@ -524,23 +526,23 @@ HTML;
     protected function addSignalSlotDispatcherToEventDispatcher(): void
     {
         $signalSlotDispatcher = $this->container->get(Dispatcher::class);
-        
+
         // Update the event bus itself
         $this->eventBus->setContainer($this->container);
-        
+
         // Update the listener provider
         $listenerProvider = $this->eventBus->getConcreteListenerProvider();
         if ($listenerProvider instanceof TypoListenerProvider) {
             $listenerProvider->setHighLevelDependencies($signalSlotDispatcher, $this->container);
         }
-        
+
         // Update the dispatcher instance
         $dispatcher = $this->eventBus->getConcreteDispatcher();
         if ($dispatcher instanceof TypoDispatcher) {
             $dispatcher->setSignalSlotDispatcher($signalSlotDispatcher);
         }
     }
-    
+
     /**
      * Dispatch the init event
      */
@@ -548,7 +550,7 @@ HTML;
     {
         $this->eventBus->dispatch(new InitEvent());
     }
-    
+
     /**
      * Creates the app context object
      */
@@ -556,7 +558,7 @@ HTML;
     {
         $this->context = $this->container->get(TypoContext::class);
     }
-    
+
     /**
      * Is used to bin our internal event subscribers to the event bus
      */
@@ -570,14 +572,14 @@ HTML;
             ->addLazySubscriber(TypoScriptService::class)
             ->addLazySubscriber(PidTcaFilter::class)
             ->addLazySubscriber(ExtConfigService::class);
-        
+
         // Backend only events
         if ($this->context->Env()->isBackend()) {
             $this->eventBus
                 ->addLazySubscriber(BackendPreviewService::class)
                 ->addLazySubscriber(DataHandlerActionService::class)
                 ->addLazySubscriber(CustomElementContextFilter::class);
-            
+
             // Register form engine addons/patches
             $this->eventBus
                 ->addLazySubscriber(DbBaseIdApplier::class)
@@ -587,7 +589,7 @@ HTML;
                 ->addLazySubscriber(FixSectionToggleStateApplier::class)
                 ->addLazySubscriber(FalFileBaseDirApplier::class);
         }
-        
+
         // Make sure the exception handler is registered correctly
         $this->eventBus->addListener(
             ExtLocalConfLoadedEvent::class,
@@ -596,7 +598,7 @@ HTML;
             },
             ['priority' => -500]
         );
-        
+
         // Register our own ext config class
         betterExtConfig(
             'laborDigital.typo3_better_api',
@@ -604,7 +606,7 @@ HTML;
             ['before' => ['first', 'last']]
         );
     }
-    
+
     /**
      * Register some of our cache configurations
      */
@@ -637,7 +639,7 @@ HTML;
             'groups'   => ['system'],
         ];
     }
-    
+
     /**
      * Adds our form engine nodes to the configuration
      */
@@ -649,7 +651,7 @@ HTML;
         }
         $nodeRegistry
             = &$GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'];
-        
+
         // Register the custom element node
         $nodeRegistry['betterApiCustomElement'] = [
             'nodeName' => 'betterApiCustomElement',
@@ -669,7 +671,7 @@ HTML;
             'class'    => PathSegmentSlugElementNode::class,
         ];
     }
-    
+
     /**
      * Serves as compatibility layer with helhum's console package
      */
@@ -695,7 +697,7 @@ HTML;
         if (! $found) {
             return;
         }
-        
+
         // Register the extended scripts class
         ClassOverrideGenerator::registerOverride(
             Scripts::class,
