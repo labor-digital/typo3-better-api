@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.22.0](https://github.com/labor-digital/typo3-better-api/compare/v9.21.1...v9.22.0) (2020-09-28)
+
+
+### Features
+
+* **Naming:** add tableNameFromModelClass() ([6f0901b](https://github.com/labor-digital/typo3-better-api/commit/6f0901b215514721c3cfa9886e64a6e98b7d80cf))
+* **PidFacet:** add getSubSet() to retrieve a pid sub-list ([f4f25a4](https://github.com/labor-digital/typo3-better-api/commit/f4f25a4bd2d031e4a345ca05e7325014e8a456ac))
+
+
+### Bug Fixes
+
+* **CacheClearedEvent:** use array for $tags instead of a single tag ([f6aa7fa](https://github.com/labor-digital/typo3-better-api/commit/f6aa7faf3139e15ff41a879e8a5bb6e5f330a559))
+* **ExtendedCacheManager:** add missing flushCachesInGroupByTags() and flushCachesByTags() overrides ([80c4075](https://github.com/labor-digital/typo3-better-api/commit/80c40755a50c4f2c58b99f017ca7e453b64140d0))
+* **TempFs:** only remove the temp fs cache data if the "all" cache is cleared without any tags ([8daf4de](https://github.com/labor-digital/typo3-better-api/commit/8daf4de9e9d83e4387d4798310f4395fc1c86c71))
+
 ### [9.21.1](https://github.com/labor-digital/typo3-better-api/compare/v9.21.0...v9.21.1) (2020-09-10)
 
 
