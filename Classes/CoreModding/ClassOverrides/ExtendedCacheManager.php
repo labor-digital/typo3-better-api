@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -25,7 +26,7 @@ use TYPO3\CMS\Core\Cache\BetterApiClassOverrideCopy__CacheManager;
 
 class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
 {
-    
+
     /**
      * @inheritDoc
      */
@@ -34,7 +35,7 @@ class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
         parent::flushCaches();
         $this->__emitFlushEvent(__FUNCTION__);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -43,25 +44,43 @@ class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
         parent::flushCachesInGroup($groupIdentifier);
         $this->__emitFlushEvent(__FUNCTION__, $groupIdentifier);
     }
-    
+
     /**
      * @inheritDoc
      */
     public function flushCachesInGroupByTag($groupIdentifier, $tag)
     {
         parent::flushCachesInGroupByTag($groupIdentifier, $tag);
-        $this->__emitFlushEvent(__FUNCTION__, $groupIdentifier, $tag);
+        $this->__emitFlushEvent(__FUNCTION__, $groupIdentifier, [$tag]);
     }
-    
+
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesInGroupByTags($groupIdentifier, array $tags)
+    {
+        parent::flushCachesInGroupByTags($groupIdentifier, $tags);
+        $this->__emitFlushEvent(__FUNCTION__, $groupIdentifier, $tags);
+    }
+
     /**
      * @inheritDoc
      */
     public function flushCachesByTag($tag)
     {
         parent::flushCachesByTag($tag);
-        $this->__emitFlushEvent(__FUNCTION__, null, $tag);
+        $this->__emitFlushEvent(__FUNCTION__, null, [$tag]);
     }
-    
+
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesByTags(array $tags)
+    {
+        parent::flushCachesByTags($tags);
+        $this->__emitFlushEvent(__FUNCTION__, null, $tags);
+    }
+
     /**
      * Internal helper to emit the clear cache event
      *
@@ -69,13 +88,13 @@ class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
      * @param   string|null  $group
      * @param   string|null  $tag
      */
-    protected function __emitFlushEvent(string $caller, ?string $group = null, ?string $tag = null)
+    protected function __emitFlushEvent(string $caller, ?string $group = null, ?array $tags = null)
     {
         /** @noinspection PhpParamsInspection */
         TypoEventBus::getInstance()->dispatch(new CacheClearedEvent(
             $caller,
             empty($group) ? 'all' : $group,
-            $tag,
+            $tags,
             $this
         ));
     }
