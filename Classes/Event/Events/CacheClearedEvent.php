@@ -40,44 +40,53 @@ class CacheClearedEvent
      * @var string
      */
     protected $method;
-    
+
     /**
      * The group that should be flushed
      *
      * @var string|null
      */
     protected $group;
-    
+
+    /**
+     * The list of tags that should be flushed in the group
+     *
+     * @var array|null
+     */
+    protected $tags;
+
     /**
      * The tag that should be flushed in the group
      *
      * @var string|null
+     * @deprecated will be removed in v10 -> use $tags instead
      */
     protected $tag;
-    
+
     /**
      * The cache manager instance
      *
      * @var \TYPO3\CMS\Core\Cache\CacheManager
      */
     protected $cacheManager;
-    
+
     /**
      * CacheClearedEvent constructor.
      *
      * @param   string                              $method
      * @param   string|null                         $group
-     * @param   string|null                         $tag
+     * @param   array|null                          $tags
      * @param   \TYPO3\CMS\Core\Cache\CacheManager  $cacheManager
      */
-    public function __construct(string $method, ?string $group, ?string $tag, CacheManager $cacheManager)
+    public function __construct(string $method, ?string $group, ?array $tags, CacheManager $cacheManager)
     {
         $this->method       = $method;
         $this->group        = $group;
-        $this->tag          = $tag;
+        $this->tags         = $tags;
+        $this->tag          = is_array($tags) ? reset($tags) : null;
         $this->cacheManager = $cacheManager;
     }
-    
+
     /**
      * Returns the method that lead to the cache flushing
      *
@@ -87,7 +96,7 @@ class CacheClearedEvent
     {
         return $this->method;
     }
-    
+
     /**
      * Returns the group that should be flushed
      *
@@ -97,17 +106,28 @@ class CacheClearedEvent
     {
         return $this->group;
     }
-    
+
     /**
      * Returns the tag that should be flushed in the group
      *
      * @return string|null
+     * @deprecated will be removed in v10 -> use getTags instead
      */
     public function getTag(): ?string
     {
         return $this->tag;
     }
-    
+
+    /**
+     * Returns the list of tags that should be flushed in the group
+     *
+     * @return array|null
+     */
+    public function getTags(): ?array
+    {
+        return $this->tags;
+    }
+
     /**
      * Returns the cache manager instance
      *
