@@ -35,12 +35,12 @@ class PidFacet implements FacetInterface
      * @var array
      */
     protected $pids = [];
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
     protected $context;
-    
+
     /**
      * PidFacet constructor.
      *
@@ -50,7 +50,7 @@ class PidFacet implements FacetInterface
     {
         $this->context = $context;
     }
-    
+
     /**
      * Returns true if the pid with the given key exists
      *
@@ -62,7 +62,7 @@ class PidFacet implements FacetInterface
     {
         return Arrays::hasPath($this->pids, $this->stripPrefix($key));
     }
-    
+
     /**
      * Sets the given pid for the defined key for the current runtime.
      * Note: The mapping will not be persisted!
@@ -75,10 +75,10 @@ class PidFacet implements FacetInterface
     public function set(string $key, int $pid): PidFacet
     {
         $this->pids = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the pid for the given key
      *
@@ -111,10 +111,30 @@ class PidFacet implements FacetInterface
             }
             throw new InvalidPidException('There is no registered pid for key: ' . $key);
         }
-        
+
         return $pid;
     }
-    
+
+    /**
+     * Returns a subset of pids. A subset is a list of pids that are stored in the same "path".
+     * For example "page.foo", "page.boo" and "page.bar" all live in the same subset of "page".
+     * So you can request the subset key "page" to retrieve the list of all pids.
+     *
+     * @param   string  $key  The key of a subset to retrieve, use a typical path to retrieve nested subsets
+     *
+     * @return array
+     * @throws \LaborDigital\Typo3BetterApi\Pid\InvalidPidException
+     */
+    public function getSubSet(string $key): array
+    {
+        $list = Arrays::getPath($this->pids, $this->stripPrefix($key), []);
+        if (! is_array($list)) {
+            throw new InvalidPidException('There given key : ' . $key . ' did not resolve to a pid subset!');
+        }
+
+        return $list;
+    }
+
     /**
      * Returns the whole list of all registered pid's by their keys
      *
@@ -124,7 +144,7 @@ class PidFacet implements FacetInterface
     {
         return $this->pids;
     }
-    
+
     /**
      * Returns the current page's pid
      *
@@ -170,15 +190,15 @@ class PidFacet implements FacetInterface
                 return (int)$requestFacet->getGet('id');
             }
         }
-        
+
         // Fallback to the root pid of the site
         if ($this->context->Site()->hasCurrent()) {
             return $this->context->Site()->getCurrent()->getRootPageId();
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Internal helper to completely replace the pid array.
      * If you use this, use it with care!
@@ -191,7 +211,7 @@ class PidFacet implements FacetInterface
     {
         $this->pids = $pids;
     }
-    
+
     /**
      * Internal helper to make sure there is no $pid, (at)pid (stupid annotation parsing...) prefix in the given keys
      *
@@ -206,7 +226,7 @@ class PidFacet implements FacetInterface
         if ($prefix === '$pid.' || $prefix === '@pid.') {
             return substr($key, 5);
         }
-        
+
         return $key;
     }
 }
