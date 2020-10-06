@@ -79,6 +79,7 @@ use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigService;
 use LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs;
 use LaborDigital\Typo3BetterApi\Kint\LazyLoadingPlugin;
 use LaborDigital\Typo3BetterApi\Kint\TypoInstanceTypePlugin;
+use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkEventHandler;
 use LaborDigital\Typo3BetterApi\Pid\PidTcaFilter;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptService;
@@ -578,7 +579,8 @@ HTML;
             $this->eventBus
                 ->addLazySubscriber(BackendPreviewService::class)
                 ->addLazySubscriber(DataHandlerActionService::class)
-                ->addLazySubscriber(CustomElementContextFilter::class);
+                ->addLazySubscriber(CustomElementContextFilter::class)
+                ->addLazySubscriber(LinkSetRecordLinkEventHandler::class);
 
             // Register form engine addons/patches
             $this->eventBus

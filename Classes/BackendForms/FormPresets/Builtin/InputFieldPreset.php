@@ -26,7 +26,7 @@ use Neunerlei\TinyTimy\DateTimy;
 
 class InputFieldPreset extends AbstractFormPreset
 {
-    
+
     /**
      * Configures the current field as a simple input element
      *
@@ -60,10 +60,10 @@ class InputFieldPreset extends AbstractFormPreset
                 )
             )
         );
-        
+
         // Prepare the config
         $config = ['type' => 'input'];
-        
+
         // Apply defaults
         if (! empty($options['default'])) {
             $config['default'] = $options['default'];
@@ -72,11 +72,11 @@ class InputFieldPreset extends AbstractFormPreset
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
         $config = $this->addPlaceholderConfig($config, $options);
-        
+
         // Done
         $this->field->addConfig($config);
     }
-    
+
     /**
      * Configures this field as either a date or a datetime field.
      * Date fields have their own datepicker.
@@ -112,7 +112,7 @@ class InputFieldPreset extends AbstractFormPreset
                 ],
             ], ['required', 'trim'])
         );
-        
+
         // Set sql statement
         $this->setSqlDefinitionForTcaField(
             $options['asInt']
@@ -121,7 +121,7 @@ class InputFieldPreset extends AbstractFormPreset
                 :
                 'datetime DEFAULT \'CURRENT_TIMESTAMP\''
         );
-        
+
         // Prepare the config
         $config = ['type' => 'input'];
         if ($options['default'] !== null) {
@@ -133,15 +133,18 @@ class InputFieldPreset extends AbstractFormPreset
         if (! $options['asInt']) {
             $config['dbType'] = 'datetime';
         }
-        
+
         // Done
         $this->field->addConfig($config);
     }
-    
+
     /**
      * Configures the current field as a link selection.
      *
      * @param   array  $options  Additional config options for this preset
+     *                           - allowLinkSets bool|array (FALSE): True to allow all link sets that were added
+     *                           to the link browser, false to disable all link sets (default), or an array
+     *                           of specific link sets that should be allowed for this field
      *                           - allowFiles bool (FALSE): True to allow file links
      *                           - allowExternal bool (TRUE): True to allow external URL links
      *                           - allowPages bool (TRUE): True to allow links to pages
@@ -164,6 +167,10 @@ class InputFieldPreset extends AbstractFormPreset
             $this->addEvalOptions(
                 $this->addMinMaxLengthOptions(
                     [
+                        'allowLinkSets' => [
+                            'type'    => ['bool', 'array'],
+                            'default' => false,
+                        ],
                         'allowFiles'    => [
                             'type'    => 'bool',
                             'default' => false,
@@ -199,7 +206,7 @@ class InputFieldPreset extends AbstractFormPreset
                 ['trim' => true]
             )
         );
-        
+
         // Prepare blinded url types
         $blindFields = [];
         if (! $options['allowFiles']) {
@@ -217,8 +224,11 @@ class InputFieldPreset extends AbstractFormPreset
         if (! $options['allowFolder']) {
             $blindFields[] = 'folder';
         }
-        $blindFields = implode(',', $blindFields);
-        
+
+        // Add link sets config
+        $blindFields[] = '@linkSets:' . urlencode(\GuzzleHttp\json_encode($options['allowLinkSets']));
+        $blindFields   = implode(',', $blindFields);
+
         // Prepare the config
         $config = [
             'type'         => 'input',
@@ -233,19 +243,19 @@ class InputFieldPreset extends AbstractFormPreset
                 ],
             ],
         ];
-        
+
         // Apply defaults
         if (! empty($options['default'])) {
             $config['default'] = $options['default'];
         }
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
-        
+
         // Set the field
         $this->field->addConfig($config);
     }
-    
-    
+
+
     /**
      * Converts your field into a slug or path segment field. By default we will use a custom renderer
      * to make sure your slug's don't look like "www.your-domain.deyour-slug". If you want the default
@@ -285,8 +295,8 @@ class InputFieldPreset extends AbstractFormPreset
                 ],
             ], ['required', 'uniqueInSite'])
         );
-        
-        
+
+
         // Build the configuration
         $config = [
             'type'              => 'slug',
@@ -306,7 +316,7 @@ class InputFieldPreset extends AbstractFormPreset
         }
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048]);
-        
+
         // Inject the field configuration
         $this->field->addConfig($config);
     }

@@ -40,6 +40,8 @@ use LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\Preset\FieldPresetApplier
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\Table\TableOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList;
 use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerator;
+use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkBuilder;
+use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkHandler;
 use LaborDigital\Typo3BetterApi\Middleware\RequestCollectorMiddleware;
 use LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationSyncCommand;
 use LaborDigital\Typo3BetterApi\Translation\TranslationConfigOption;
@@ -47,23 +49,42 @@ use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigOption;
 
 class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterface
 {
-    
+
     /**
      * @inheritDoc
      */
     public function configure(ExtConfigOptionList $configurator, ExtConfigContext $context)
     {
+        // Register link handling options
+        $configurator->core()->registerRawConfig([
+            'SYS' => [
+                'linkHandler' => [
+                    'linkSetRecord' => LinkSetRecordLinkHandler::class,
+                ],
+                'formEngine'  => [
+                    'linkHandler' => [
+                        'linkSetRecord' => LinkSetRecordLinkHandler::class,
+                    ],
+                ],
+            ],
+            'FE'  => [
+                'typolinkBuilder' => [
+                    'linkSetRecord' => LinkSetRecordLinkBuilder::class,
+                ],
+            ],
+        ]);
+
         // Register translation
         $configurator->translation()->registerContext('betterApi');
-        
+
         // Register commands
         $configurator->backend()->registerCommand(TranslationSyncCommand::class);
-        
+
         // Register route aspects
         $configurator->http()
                      ->registerRouteAspectHandler(
                          'BetterApiStoragePidAwarePersistedAliasMapper', StoragePidAwarePersistedAliasMapper::class);
-        
+
         // Register middlewares
         $configurator->http()
                      ->registerMiddleware(RequestCollectorMiddleware::class, 'frontend', [
@@ -74,7 +95,7 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
                          'after' => 'typo3/cms-backend/site-resolver',
                      ]);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -85,13 +106,13 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
             $context->getInstanceOf(FieldPresetApplierTraitGenerator::class));
         $extender->registerExtensionHandler(ExtConfigExtensionInterface::TYPE_OPTION_LIST_ENTRY,
             $context->getInstanceOf(ExtConfigOptionTraitGenerator::class));
-        
+
         // Register default presets
         $extender->registerFieldPreset(BasicFieldPreset::class);
         $extender->registerFieldPreset(CustomElementPreset::class);
         $extender->registerFieldPreset(InputFieldPreset::class);
         $extender->registerFieldPreset(RelationPreset::class);
-        
+
         // Register default options
         $extender->registerOptionListEntry(LinkAndPidOption::class);
         $extender->registerOptionListEntry(EventConfigOption::class);

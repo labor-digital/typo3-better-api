@@ -38,12 +38,12 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInterface
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Link\LinkSetRepository
      */
     protected $linkSetRepository;
-    
+
     /**
      * LinkConfigOption constructor.
      *
@@ -53,7 +53,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
     {
         $this->linkSetRepository = $linkSetRepository;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -61,7 +61,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
     {
         $subscription->subscribe(ExtLocalConfLoadedEvent::class, '__applyExtLocalConf');
     }
-    
+
     /**
      * Can be used to add a link set registration class.
      *
@@ -75,7 +75,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
     {
         return $this->addRegistrationToCachedStack('linkSets', 'main', $linkSetDefinitionClass);
     }
-    
+
     /**
      * Can be used to add a link set override class.
      *
@@ -89,7 +89,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
     {
         return $this->addOverrideToCachedStack('linkSets', 'main', $linkSetOverrideClass);
     }
-    
+
     /**
      * Can be used to add a pid registration class.
      *
@@ -103,7 +103,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
     {
         return $this->addRegistrationToCachedStack('pids', 'main', $pidDefinitionClass);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -117,15 +117,18 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
                 $pidAspect->setPid($k, $pid);
             }
         }
-        
+
         // Register link sets
         $linkSets = $this->getCachedStackValueOrRun('linkSets', LinkSetGenerator::class);
-        if (! empty($linkSets)) {
-            foreach ($linkSets as $k => $linkSet) {
+        if (! empty($linkSets['definitions'])) {
+            foreach ($linkSets['definitions'] as $k => $linkSet) {
                 $this->linkSetRepository->set($k, $linkSet);
             }
         }
-        
+        if (! empty($linkSets['tsConfig'])) {
+            $this->context->TypoScript->addPageTsConfig($linkSets['tsConfig']);
+        }
+
         // Register pid typoScript
         [$ts, $constants] = $this->getCachedValueOrRun('pidTypoScript', function () {
             return $this->context->getInstanceOf(PidTypoScriptGenerator::class)
@@ -135,7 +138,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
             'constants' => (string)$constants,
             'title'     => 'BetterApi - Pid Mapping',
         ]);
-        
+
         // Register typoScript hook for updating the pid service when the typoScript template was parsed
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['configArrayPostProc']['betterApiPid']
             = TypoScriptHook::class . '->updatePidService';

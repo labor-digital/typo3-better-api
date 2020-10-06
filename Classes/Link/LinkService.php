@@ -31,19 +31,19 @@ class LinkService
      * @var \LaborDigital\Typo3BetterApi\Link\LinkContext|null
      */
     protected $context;
-    
+
     /**
      * @var Request|null
      */
     protected $controllerRequest;
-    
+
     /**
      * Holds the host name and protocol, once it was generated
      *
      * @var string|null
      */
     protected $host;
-    
+
     /**
      * LinkService constructor.
      *
@@ -53,7 +53,7 @@ class LinkService
     {
         $this->context = $context;
     }
-    
+
     /**
      * Creates a new link instance which is a better version of the typo3 extbase query builder.
      * You can use this method anywhere, no matter if you are in an extbase controller, the cli
@@ -74,7 +74,7 @@ class LinkService
     {
         // Lazy load the context only when we need it
         $link = new TypoLink($this->context, $this->controllerRequest);
-        
+
         // Inject link set and args if given
         if (! empty($linkSet)) {
             $link = $link->withSetApplied($linkSet);
@@ -89,11 +89,11 @@ class LinkService
                 $link = $link->withAddedToFragment($k, $v);
             }
         }
-        
+
         // Done
         return $link;
     }
-    
+
     /**
      * This helper can be used to render typo3's text urls which look like t3://page?uid=26
      * into a real, url using the typoscript cObject of the frontend
@@ -109,7 +109,7 @@ class LinkService
             is_string($typoLink) ? ['parameter' => $typoLink, 'forceAbsoluteUrl' => 1] : $typoLink
         );
     }
-    
+
     /**
      * Returns the target frame for a typo link definition object.
      *
@@ -122,10 +122,10 @@ class LinkService
     {
         $cObj = $this->context->getContentObject();
         $this->getTypoLink($typoLink);
-        
+
         return empty($cObj->lastTypoLinkTarget) ? '_self' : $cObj->lastTypoLinkTarget;
     }
-    
+
     /**
      * This helper can be used to render a typo3 backend url.
      * There are currently TWO possible options of creating links.
@@ -151,7 +151,7 @@ class LinkService
         if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return '';
         }
-        
+
         // Prepare options
         $options = Options::make($options, [
             'mode' => [
@@ -164,7 +164,7 @@ class LinkService
                 'default' => [],
             ],
         ]);
-        
+
         // Load the existing routes
         if ($options['mode'] === 'auto') {
             $routes = $this->getBackendRoutes();
@@ -174,7 +174,7 @@ class LinkService
                 $options['mode'] = 'module';
             }
         }
-        
+
         // Build the uri
         if ($options['mode'] === 'route') {
             $uri = $this->context->BackendUriBuilder
@@ -183,11 +183,11 @@ class LinkService
             $uri = $this->context->BackendUriBuilder
                 ->buildUriFromModule($target, $options['args'], \TYPO3\CMS\Backend\Routing\UriBuilder::ABSOLUTE_URL);
         }
-        
+
         // Done
         return (string)$uri;
     }
-    
+
     /**
      * Returns the list of all registered backend routes
      *
@@ -199,11 +199,11 @@ class LinkService
         if (! $this->context->TypoContext->getEnvAspect()->isBackend()) {
             return [];
         }
-        
+
         // Load the routes from the router
         return $this->context->Router->getRoutes();
     }
-    
+
     /**
      * Returns the host name for the current request.
      *
@@ -218,10 +218,18 @@ class LinkService
         if (! empty($this->host)) {
             return $this->host;
         }
+
+        // This is a temporary workaround until v10 cleans up this process
+        // @todo check this for v10
+        $requestHost = $this->context->TypoContext->Request()->getHost($withProtocol);
+        if (! empty($requestHost)) {
+            return $requestHost;
+        }
+
         $pid      = $this->context->TypoContext->getPidAspect()->getCurrentPid();
         $rootLine = $this->context->Page->getRootLine($pid, true);
         $rootUid  = reset($rootLine);
-        
+
         // Make sure we have a request object
         if (! is_null($this->context->TypoContext->getRequestAspect()->getRootRequest())) {
             $domain = $this->getUriBuilder()->reset()->setTargetPageUid(! empty($rootUid) ? $rootUid['uid'] : 0)
@@ -238,10 +246,10 @@ class LinkService
             $domain = $uri->getScheme() . '://' . $uri->getHost();
         }
         $domain = parse_url($domain);
-        
+
         return $this->host = ($withProtocol ? ($domain['scheme'] . '://') : '') . $domain['host'];
     }
-    
+
     /**
      * Can be used to retrieve the fully qualified url of a given file object
      *
@@ -253,7 +261,7 @@ class LinkService
     {
         return $this->context->FalFiles->getFileInfo($file)->getUrl();
     }
-    
+
     /**
      * Returns a instance of the default extbase uri builder
      *
@@ -263,7 +271,7 @@ class LinkService
     {
         return $this->context->getUriBuilder();
     }
-    
+
     /**
      * Internal helper which is called in the BetterActionController to automatically
      * inject the controller's request object into the TypoLink instance when it is created

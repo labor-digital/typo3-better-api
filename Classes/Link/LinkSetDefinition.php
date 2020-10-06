@@ -19,26 +19,27 @@
 
 namespace LaborDigital\Typo3BetterApi\Link;
 
+use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkBrowserHandler;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Extbase\Mvc\Request;
 
 class LinkSetDefinition
 {
-    
+
     /**
      * The target page id
      *
      * @var int
      */
     protected $pid;
-    
+
     /**
      * True if the current query string should be appended to the new url
      *
      * @var bool
      */
     protected $keepQuery = false;
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be kept.
      * All others will be dropped.
@@ -47,7 +48,7 @@ class LinkSetDefinition
      * @var array
      */
     protected $allowedQueryArgs = [];
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be removed.
      * All others will be kept.
@@ -56,21 +57,21 @@ class LinkSetDefinition
      * @var array
      */
     protected $deniedQueryArgs = [];
-    
+
     /**
      * The fragment / hash / anchor of the url
      *
      * @var string|iterable|null
      */
     protected $fragment;
-    
+
     /**
      * Optional The controller class to create the request for
      *
      * @var string
      */
     protected $controllerClass;
-    
+
     /**
      * Optional if the controller class name is not known.
      * NOTE: $controllerClass has priority over this setting
@@ -78,7 +79,7 @@ class LinkSetDefinition
      * @var string
      */
     protected $controllerName;
-    
+
     /**
      * Optional if the controller class name is not known.
      * NOTE: $controllerClass has priority over this setting
@@ -86,63 +87,70 @@ class LinkSetDefinition
      * @var string
      */
     protected $controllerExtKey;
-    
+
     /**
      * Optional The controller action to create the link for
      *
      * @var string
      */
     protected $controllerAction;
-    
+
     /**
      * Optional The plugin name to create the link for
      *
      * @var string
      */
     protected $pluginName;
-    
+
     /**
      * The arguments to build the link with
      *
      * @var array
      */
     protected $args = [];
-    
+
     /**
      * True as long as the chash should be added to the generated link
      *
      * @var bool
      */
     protected $cHash = true;
-    
+
     /**
      * A list of arguments that should be ignored when the chash is generated for this link
      *
      * @var array
      */
     protected $cHashExcludedArgs = [];
-    
+
     /**
      * Holds the user defined request object
      *
      * @var Request
      */
     protected $request;
-    
+
     /**
      * Holds the user defined uri builder
      *
      * @var \TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder
      */
     protected $uriBuilder;
-    
+
     /**
      * Holds the language this link should be generated for
      *
      * @var \TYPO3\CMS\Core\Site\Entity\SiteLanguage|null
      */
     protected $language;
-    
+
+    /**
+     * Holds the setup for the link browser if it was given
+     *
+     * @var array|null
+     */
+    protected $linkBrowserConfig;
+
     /**
      * Returns the target page id or null
      *
@@ -152,7 +160,7 @@ class LinkSetDefinition
     {
         return $this->pid;
     }
-    
+
     /**
      * Sets the target page id
      *
@@ -163,10 +171,10 @@ class LinkSetDefinition
     public function setPid($pid): LinkSetDefinition
     {
         $this->pid = $pid;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns true if the current query string should be kept, otherwise false
      *
@@ -176,7 +184,7 @@ class LinkSetDefinition
     {
         return $this->keepQuery;
     }
-    
+
     /**
      * Setting this to true will keep the current query string.
      * Default is false.
@@ -188,10 +196,10 @@ class LinkSetDefinition
     public function setKeepQuery(bool $keepQuery): LinkSetDefinition
     {
         $this->keepQuery = $keepQuery;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns an array containing two keys:
      * - "type" is either denied, allowed or none which represents the type of query modifier that is used
@@ -207,20 +215,20 @@ class LinkSetDefinition
                 'list' => $this->deniedQueryArgs,
             ];
         }
-        
+
         if (! empty($this->allowedQueryArgs)) {
             return [
                 'type' => 'allowed',
                 'list' => $this->deniedQueryArgs,
             ];
         }
-        
+
         return [
             'type' => 'none',
             'list' => [],
         ];
     }
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be kept.
      * All others will be dropped.
@@ -233,10 +241,10 @@ class LinkSetDefinition
     public function setAllowedQueryArgs(array $list): LinkSetDefinition
     {
         $this->allowedQueryArgs = array_values($list);
-        
+
         return $this;
     }
-    
+
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be removed.
      * All others will be kept.
@@ -249,10 +257,10 @@ class LinkSetDefinition
     public function setDeniedQueryArgs(array $list): LinkSetDefinition
     {
         $this->deniedQueryArgs = array_values($list);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the fragment/anchor tag of the link
      *
@@ -265,7 +273,7 @@ class LinkSetDefinition
     {
         return $this->fragment;
     }
-    
+
     /**
      * Sets the fragment/anchor tag of the link
      *
@@ -284,10 +292,10 @@ class LinkSetDefinition
             throw new LinkException('The given fragment is invalid!');
         }
         $this->fragment = is_string($fragment) ? trim(ltrim(trim($fragment), '#')) : $fragment;
-        
+
         return $this;
     }
-    
+
     /**
      * Adds a single fragment argument and its value to the link
      *
@@ -307,10 +315,10 @@ class LinkSetDefinition
             $this->fragment = [];
         }
         $this->fragment[trim(ltrim(trim($key), '#'))] = $value;
-        
+
         return $this;
     }
-    
+
     /**
      * Removes a single argument from the list of fragment arguments
      *
@@ -324,10 +332,10 @@ class LinkSetDefinition
             return $this;
         }
         unset($this->args[trim(ltrim(trim($key), '#'))]);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently configured extbase controller target-class for the link
      *
@@ -337,7 +345,7 @@ class LinkSetDefinition
     {
         return $this->controllerClass;
     }
-    
+
     /**
      * Can be used to set the target extbase controller, extension and vendor for this link.
      *
@@ -348,10 +356,10 @@ class LinkSetDefinition
     public function setControllerClass(string $controllerClass): LinkSetDefinition
     {
         $this->controllerClass = $controllerClass;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently set extbase controller name for this link.
      * Optional if the controller class name is not known.
@@ -364,7 +372,7 @@ class LinkSetDefinition
     {
         return $this->controllerName;
     }
-    
+
     /**
      * Sets the used extbase controller name for this link.
      * Optional if the controller class name is not known.
@@ -377,10 +385,10 @@ class LinkSetDefinition
     public function setControllerName(string $controllerName): LinkSetDefinition
     {
         $this->controllerName = $controllerName;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently set extbase extension key for the controller used by this link.
      * Optional if the controller class name is not known.
@@ -393,7 +401,7 @@ class LinkSetDefinition
     {
         return $this->controllerExtKey;
     }
-    
+
     /**
      * Sets the extbase extension key for the controller used by this link.
      * Optional if the controller class name is not known.
@@ -406,10 +414,10 @@ class LinkSetDefinition
     public function setControllerExtKey(string $controllerExtKey): LinkSetDefinition
     {
         $this->controllerExtKey = $controllerExtKey;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently configured action name for the extbase controller used by this link.
      *
@@ -419,7 +427,7 @@ class LinkSetDefinition
     {
         return $this->controllerAction;
     }
-    
+
     /**
      * Sets the extbase controller's action name this link should lead to
      *
@@ -430,10 +438,10 @@ class LinkSetDefinition
     public function setControllerAction(string $controllerAction): LinkSetDefinition
     {
         $this->controllerAction = $controllerAction;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently configured plugin name for this link.
      *
@@ -443,7 +451,7 @@ class LinkSetDefinition
     {
         return $this->pluginName;
     }
-    
+
     /**
      * Optionally sets the name of the typo3 plugin name this link should lead to.
      *
@@ -454,10 +462,10 @@ class LinkSetDefinition
     public function setPluginName(string $pluginName): LinkSetDefinition
     {
         $this->pluginName = $pluginName;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns true if the link will contain a cHash, false if not
      *
@@ -467,7 +475,7 @@ class LinkSetDefinition
     {
         return $this->cHash;
     }
-    
+
     /**
      * If set to FALSE the link will not contain a cHash
      *
@@ -478,10 +486,10 @@ class LinkSetDefinition
     public function setCHash(bool $state): LinkSetDefinition
     {
         $this->cHash = $state;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the list of arguments that should be excluded from cHash generation when the url is being build
      *
@@ -491,7 +499,7 @@ class LinkSetDefinition
     {
         return $this->cHashExcludedArgs;
     }
-    
+
     /**
      * Sets the list of arguments that should be excluded from cHash generation when the url is being build
      *
@@ -502,10 +510,10 @@ class LinkSetDefinition
     public function setCHashExcludedArgs(array $argsToExclude): LinkSetDefinition
     {
         $this->cHashExcludedArgs = $argsToExclude;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently set arguments
      *
@@ -515,7 +523,7 @@ class LinkSetDefinition
     {
         return $this->args;
     }
-    
+
     /**
      * Sets all currently configured arguments for the link
      *
@@ -529,10 +537,10 @@ class LinkSetDefinition
     public function setArgs(iterable $args): LinkSetDefinition
     {
         $this->args = $args;
-        
+
         return $this;
     }
-    
+
     /**
      * Adds a single argument and its value to the list of link arguments
      *
@@ -547,10 +555,10 @@ class LinkSetDefinition
     public function addToArgs(string $key, $value): LinkSetDefinition
     {
         $this->args[$key] = $value;
-        
+
         return $this;
     }
-    
+
     /**
      * Removes a single argument from the list of arguments
      *
@@ -561,10 +569,10 @@ class LinkSetDefinition
     public function removeFromArgs(string $key): LinkSetDefinition
     {
         unset($this->args[$key]);
-        
+
         return $this;
     }
-    
+
     /**
      * Is used to set the language (L parameter) of the currently configured link.
      * Note: Using this will override the L parameter in your "args"
@@ -576,10 +584,10 @@ class LinkSetDefinition
     public function setLanguage(?SiteLanguage $language): LinkSetDefinition
     {
         $this->language = $language;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently configured language or null
      *
@@ -589,7 +597,57 @@ class LinkSetDefinition
     {
         return $this->language;
     }
-    
+
+    /**
+     * This method allows you to register this link set as "selectable" in the TYPO3 link selector.
+     * That allows you to directly link to records in your TCA or other input fields.
+     *
+     * IMPORTANT: You can only add link sets to the link browser if they have exactly ONE required
+     * argument. This is, because we utilize the RecordLinkHandler under the hood to select a record
+     * in the backend.
+     *
+     * @param   string  $label             A label for the generated tab in the link browser. Can be a translation
+     *                                     label.
+     * @param   string  $tableOrModelName  A database table name which can also be a short code like '...something"
+     * @param   array   $options           Additional options for the setup
+     *
+     * @return $this
+     * @see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/8.6/Feature-79626-IntegrateRecordLinkHandler.html
+     */
+    public function addToLinkBrowser(string $label, string $tableOrModelName, array $options = []): self
+    {
+        $this->linkBrowserConfig = [
+            'handler' => LinkSetRecordLinkBrowserHandler::class,
+            'label'   => $label,
+            'table'   => $tableOrModelName,
+            'options' => $options,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Removes the previously defined link browser configuration for this set
+     *
+     * @return $this
+     */
+    public function clearLinkBrowserConfig(): self
+    {
+        $this->linkBrowserConfig = null;
+
+        return $this;
+    }
+
+    /**
+     * Returns either the currently set link browser configuration, or null if there is none
+     *
+     * @return array|null
+     */
+    public function getLinkBrowserConfig(): ?array
+    {
+        return $this->linkBrowserConfig;
+    }
+
     /**
      * Internal helper which is called by the link to create a new link instance with this link set applied to it
      *
@@ -637,7 +695,7 @@ class LinkSetDefinition
         if (! empty($this->language)) {
             $link = $link->withLanguage($this->language);
         }
-        
+
         // Build args and required args
         $requiredArgs = $requiredFragmentArgs = [];
         if (! empty($this->args)) {
@@ -673,7 +731,7 @@ class LinkSetDefinition
         if (! empty($requiredArgs) || ! empty($requiredFragmentArgs)) {
             $link = $link->__withRequiredElements($requiredArgs, $requiredFragmentArgs);
         }
-        
+
         // Done
         return $link;
     }
