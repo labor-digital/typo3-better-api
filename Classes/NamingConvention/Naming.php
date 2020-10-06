@@ -113,6 +113,8 @@ class Naming
     /**
      * Finds the database table name for the given extbase model class
      *
+     * IMPORTANT: This method requires a TypoScript as well as the TCA to be set up!
+     *
      * @param   string  $modelClass  The name of the extbase model we should find the table name for
      *
      * @return string
