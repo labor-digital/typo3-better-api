@@ -41,17 +41,15 @@ class LinkSetRecordLinkBuilder extends AbstractTypolinkBuilder
             'TCEMAIN.linkHandler.' . $linkDetails['identifier'] . '.configuration');
 
         $link = $this->getInstanceOf(LinkService::class)
-                     ->getLink(substr($linkDetails['identifier'], 8), ['branch' => $linkDetails['uid']])->build();
-
-        dbge($config, $link);
+                     ->getLink(substr($linkDetails['identifier'], 8), [$config['arg'] => $linkDetails['uid']])->build();
 
         return [
-            $this->encodeFallbackLinkTextIfLinkTextIsEmpty($linkText, $linkDetails['url']),
+            $link,
+            $linkText,
             $target
                 ?: $this->resolveTargetAttribute($conf, 'extTarget', true,
                 $this->getTypoScriptFrontendController()->extTarget),
         ];
-        dbge(func_get_args(), $tsConfig);
     }
 
 }

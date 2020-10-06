@@ -86,11 +86,12 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
                           'label = ' . $config['label'] . PHP_EOL .
                           'configuration {' . PHP_EOL .
                           'table = ' . $config['table'] . PHP_EOL .
+                          'arg = ' . key($requiredArgs) . PHP_EOL .
                           (! empty($options['basePid']) ?
                               'storagePid =' . $context->TypoContext->Pid()->get(
                                   $options['basePid'], (int)$options['basePid']
                               ) . PHP_EOL : '') .
-                          (in_array('hidePageTree', $options) || $options['hidePageTree'] === true ?
+                          (in_array('hidePageTree', $options, true) || $options['hidePageTree'] === true ?
                               'hidePageTree = 1' . PHP_EOL : ''
                           ) .
                           '}' . PHP_EOL;
