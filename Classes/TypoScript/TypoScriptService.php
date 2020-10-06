@@ -47,33 +47,33 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterface
 {
     use CommonServiceLocatorTrait;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigurationManager
      */
     protected $cm;
-    
+
     /**
      * True as soon as the event was fired to block all further setter calls.
      *
      * @var bool
      */
     protected $tsEventFired = false;
-    
+
     /**
      * True as soon as the event was fired to block all further setter calls.
      *
      * @var bool
      */
     protected $tsConfigEventFired = false;
-    
+
     /**
      * The list of all registered typoScript we have to apply
      *
      * @var array
      */
     protected $registeredScripts = [];
-    
+
     /**
      * TypoScript constructor.
      *
@@ -88,7 +88,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             'Fs'            => TempFs::makeInstance('typoScript'),
         ]);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -97,7 +97,39 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         $subscription->subscribe(ExtTablesLoadedEvent::class, '__injectPageTs', ['priority' => -200]);
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, '__injectTypoScript', ['priority' => 200]);
     }
-    
+
+    /**
+     * This method can be used to retrieve page ts config from the template.
+     *
+     * @param   null|string|array  $path     Either a key or a path like "config.lang" to query the hierarchy. If left
+     *                                       empty, the method will return the complete typoScript array.
+     * @param   array              $options  Additional options
+     *                                       - default (mixed): By default the method returns null, if the queried
+     *                                       value was not found in the configuration. If this option is set, the given
+     *                                       value will be returned instead.
+     *                                       - separator (string) ".": A separator trough which the path parts are
+     *                                       separated from each other
+     *                                       - getType (bool) FALSE: If set to TRUE the method will try return
+     *                                       the typoScript object's type instead of it's value.
+     *                                       The Type is normally stored as: key.key.type
+     *                                       while the value is stored as: key.key.type. <- Note the period
+     *                                       Not all elements have a type. If we don't fine one we will return the
+     *                                       "default" value Otherwise we will try to get the value, and if not set
+     *                                       return the type
+     *
+     * @return array|mixed|null
+     */
+    public function getTsConfig($path = null, array $options = [])
+    {
+        $options = Options::make($options, [
+            'default'   => null,
+            'separator' => '.',
+            'getType'   => false,
+        ]);
+
+        return $this->getPathHelper($this->Tsfe->getTsfe()->getPagesTSconfig(), $path, $options);
+    }
+
     /**
      * This method can be used to retrieve typoScript constants from the template.
      *
@@ -121,7 +153,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             'pid'       => null,
             'separator' => '.',
         ]);
-        
+
         // Load configuration
         if (! empty($options['pid'])) {
             $this->cm->setCurrentPid($options['pid']);
@@ -130,11 +162,11 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         if (! empty($options['pid'])) {
             $this->cm->resetCurrentPid();
         }
-        
+
         // Read contents
         return $this->getPathHelper($constants, $path, $options);
     }
-    
+
     /**
      * This method can be used to retrieve typoScript setup from the template.
      *
@@ -166,7 +198,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             'separator' => '.',
             'getType'   => false,
         ]);
-        
+
         // Load configuration
         if (! empty($options['pid'])) {
             $this->cm->setCurrentPid($options['pid']);
@@ -175,11 +207,11 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         }
         $config = $this->cm->getTypoScriptSetup();
         $this->cm->resetCurrentPid();
-        
+
         // Read contents
         return $this->getPathHelper($config, $path, $options);
     }
-    
+
     /**
      * Returns the plugin / extension configuration for ext base extensions
      *
@@ -192,11 +224,11 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
     {
         $settings = $this->ConfigManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             $extensionName, $pluginName);
-        
+
         return ! empty($settings) && is_array($settings) ? $settings
             : $this->cm->getConfiguration($extensionName, $pluginName);
     }
-    
+
     /**
      * This is an alternative to ExtensionManagementUtility's addTypoScript(), but it will not
      * just add the typoScript to the default rendering. It will simulate static files, which you can (and have to)
@@ -238,7 +270,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                 'default' => '',
             ],
         ]);
-        
+
         // Create or load set
         $id = $options['extension'] . $options['title'];
         if (! isset($this->registeredScripts['ts'][$id])) {
@@ -249,14 +281,14 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                 'extension' => $options['extension'],
             ];
         }
-        
+
         // Add the source to the set
         $this->registeredScripts['ts'][$id]['setup'][]     = trim($setup);
         $this->registeredScripts['ts'][$id]['constants'][] = trim($options['constants']);
-        
+
         return $this;
     }
-    
+
     /**
      * Wrapper for addSetup() which adds the include for a given path to the typoScript setup
      *
@@ -275,7 +307,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
     {
         return $this->addSetup('<INCLUDE_TYPOSCRIPT: source="FILE:' . $path . '">', $options);
     }
-    
+
     /**
      * This is quite similar to addSetup() but only for typoScript constants
      *
@@ -292,10 +324,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
     {
         $this->validateEventIsNotFired();
         $options['constants'] = $constants;
-        
+
         return $this->addSetup('', $options);
     }
-    
+
     /**
      * Adds a static setup.txt and constants.txt from your extensions Configuration/TypoScript directory
      * to the backend list. Use this either in ext_tables or ext_localconf it works in both.
@@ -313,16 +345,16 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         string $title = ''
     ): TypoScriptService {
         $this->validateEventIsNotFired();
-        
+
         // Fix incorrect path's that start with EXT:something...
         if (stripos($path, 'ext:') === 0) {
             $path = preg_replace('~(ext):/?.*?/~si', '', $path);
         }
         $this->registeredScripts['tsFiles'][] = [$extension, $path, $title];
-        
+
         return $this;
     }
-    
+
     /**
      * Shortcut, reminder and bridge to ExtensionManagementUtility::addPageTSConfig.
      * Let's you add pageTsConfig to the configuration tree
@@ -337,10 +369,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         $config                              = '# INJECTED WITH TYPOSCRIPT SERVICE - addPageTsConfig' . PHP_EOL
                                                . $config;
         $this->registeredScripts['pageTs'][] = $config;
-        
+
         return $this;
     }
-    
+
     /**
      * Registers a file which can be selected in the "TyposScript Configuration" section of page records in the page
      * backend. A registered file is not globally included but only on the pages it was selected.
@@ -369,10 +401,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             'path'   => $path,
             'title'  => $title,
         ];
-        
+
         return $this;
     }
-    
+
     /**
      * Shortcut, reminder and bridge to ExtensionManagementUtility::addUserTSConfig.
      * Let's you add userTsConfig to the configuration tree
@@ -387,10 +419,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         $config                              = '# INJECTED WITH TYPOSCRIPT SERVICE - addUserTsConfig' . PHP_EOL
                                                . $config;
         $this->registeredScripts['userTs'][] = $config;
-        
+
         return $this;
     }
-    
+
     /**
      * Parses the given typoScript configuration into an array and returns the result
      *
@@ -402,10 +434,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
     {
         $parser = $this->TsParser;
         $parser->parse($config);
-        
+
         return $parser->setup;
     }
-    
+
     /**
      * Removes the tailing dot's from the given definition of parsed typoScript.
      *
@@ -429,10 +461,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             }
             $out[$keyWithoutDot] = $v;
         }
-        
+
         return $out;
     }
-    
+
     /**
      * Renders a content object with a given type, based on the given configuration
      *
@@ -447,7 +479,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             return $this->Tsfe->getContentObjectRenderer()->cObjGetSingle($type, $config);
         });
     }
-    
+
     /**
      * Renders an existing content element, based on the configuration set via typoScript.
      *
@@ -463,17 +495,17 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         if (empty($type) || empty($config)) {
             throw new BetterApiException("The given selector $selector is not a valid cObject");
         }
-        
+
         return $this->renderContentObject($type, $config);
     }
-    
+
     /**
      * Event handler to inject the ts config into typo3
      */
     public function __injectPageTs()
     {
         $this->tsConfigEventFired = true;
-        
+
         // Register page ts
         if (! empty($this->registeredScripts['pageTs'])) {
             foreach ($this->registeredScripts['pageTs'] as $script) {
@@ -481,7 +513,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             }
         }
         unset($this->registeredScripts['pageTs']);
-        
+
         // Register selectable page ts
         if (! empty($this->registeredScripts['selectablePageTs'])) {
             foreach ($this->registeredScripts['selectablePageTs'] as $config) {
@@ -495,7 +527,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             }
         }
         unset($this->registeredScripts['selectablePageTs']);
-        
+
         // Register user ts
         if (! empty($this->registeredScripts['userTs'])) {
             foreach ($this->registeredScripts['userTs'] as $script) {
@@ -504,7 +536,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         }
         unset($this->registeredScripts['userTs']);
     }
-    
+
     /**
      * Event handler to write the configured typoScript to static files and register them in typo3
      */
@@ -512,7 +544,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
     {
         // Mark as fired
         $this->tsEventFired = true;
-        
+
         // Convert ts entries into tsFiles entries
         if (! empty($this->registeredScripts['ts'])) {
             foreach ($this->registeredScripts['ts'] as $id => $ts) {
@@ -539,19 +571,19 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                     }
                     $ts[$key] = $tmp;
                 }
-                
+
                 // Dump the files
                 $dir = Inflector::toFile($id);
                 $this->Fs->setFileContent($dir . '/constants.txt', $ts['constants']);
                 $this->Fs->setFileContent($dir . '/setup.txt', $ts['setup']);
                 $relPath = $this->Fs->getBaseDirectoryPath(true) . $dir;
-                
+
                 // Add the file to the tsFiles list
                 $this->registeredScripts['tsFiles'][] = [$ts['extension'], $relPath, $ts['title']];
             }
             unset($this->registeredScripts['ts']);
         }
-        
+
         // Register the ts files entries
         if (! empty($this->registeredScripts['tsFiles'])) {
             foreach ($this->registeredScripts['tsFiles'] as $file) {
@@ -561,10 +593,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                 ExtensionManagementUtility::addStaticFile(...$file);
             }
         }
-        
+
         unset($this->registeredScripts['tsFiles']);
     }
-    
+
     /**
      * Internal helper which is called inside the setter methods to check
      * if the it is still possible to register new typoScript, or if the computation had already begun.
@@ -582,13 +614,13 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         if ($this->TypoContext->getEnvAspect()->isBackend()) {
             return;
         }
-        
+
         // Validate if the author is to late
         if ($validateTsConfig ? $this->tsConfigEventFired : $this->tsEventFired) {
             throw new BetterApiException('You can no longer add typoScript or ts config, because it was already processed by TYPO3');
         }
     }
-    
+
     /**
      * Internal helper which is used to extract the requested $path's data from the given $config array
      *
@@ -605,15 +637,15 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
             'separator' => '.',
             'getType'   => false,
         ], ['ignoreUnknown' => true]);
-        
+
         // Skip if we have no path
         if (empty($path)) {
             return $config;
         }
-        
+
         // Prepare the path
         $path = Arrays::parsePath($path, $options['separator']);
-        
+
         // Resolve the path until the last element
         $lastPathPart = rtrim(array_pop($path), '.');
         if (! empty($path)) {
@@ -629,12 +661,12 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                 if ($v[0] === '[') {
                     return str_replace(',', '.,', $v);
                 }
-                
+
                 return $v . '.';
             }, $path);
             $config = Arrays::getPath($config, $path);
         }
-        
+
         // Handle multi value last part
         if ($lastPathPart[0] === '[') {
             $lastPathPart = trim($lastPathPart, '[]');
@@ -650,10 +682,10 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                     $result[$key] = $options['default'];
                 }
             }
-            
+
             return $result;
         }
-        
+
         // Find the last part
         if ($options['getType']) {
             return isset($config[$lastPathPart]) ? $config[$lastPathPart] : $options['default'];
@@ -664,7 +696,7 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         if (isset($config[$lastPathPart])) {
             return $config[$lastPathPart];
         }
-        
+
         return $options['default'];
     }
 }

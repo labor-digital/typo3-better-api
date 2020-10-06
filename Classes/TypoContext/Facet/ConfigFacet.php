@@ -32,12 +32,12 @@ use TYPO3\CMS\Core\Registry;
 class ConfigFacet implements FacetInterface
 {
     use ContainerAwareTrait;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
     protected $context;
-    
+
     /**
      * ConfigFacet constructor.
      *
@@ -47,14 +47,14 @@ class ConfigFacet implements FacetInterface
     {
         $this->context = $context;
     }
-    
+
     /**
      * Holds the request attributes for all actions where we don't have a HTTP request
      *
      * @var array
      */
     protected $requestAttributeFallbackStorage = [];
-    
+
     /**
      * Shortcut to TYPO3's system registry lookup method
      *
@@ -70,7 +70,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getSingletonOf(Registry::class)->get($namespace, $key, $defaultValue);
     }
-    
+
     /**
      * Shortcut to add or remove a value to/from TYPO3's system registry.
      * NOTE: Setting $value to NULL will remove the entry from the registry
@@ -90,10 +90,10 @@ class ConfigFacet implements FacetInterface
         } else {
             $this->getSingletonOf(Registry::class)->set($namespace, $key, $value);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Retrieve a single derived ServerRequest attribute.
      *
@@ -118,10 +118,10 @@ class ConfigFacet implements FacetInterface
         if ($request === null) {
             return $localValue;
         }
-        
+
         return $request->getAttribute($attributeName, $localValue);
     }
-    
+
     /**
      * Updates the global server request object with an additional attribute.
      * As the request is immutable we create a new copy of the request and reset the global
@@ -148,10 +148,10 @@ class ConfigFacet implements FacetInterface
             $request = $request->withAttribute($attributeName, $value);
             $requestFacet->setRootRequest($request);
         }
-        
+
         return $request;
     }
-    
+
     /**
      * Returns the values of a certain environment variable or returns the $fallback if the
      * variable was not defined.
@@ -166,10 +166,10 @@ class ConfigFacet implements FacetInterface
         if (getenv($varName) === false) {
             return $fallback;
         }
-        
+
         return getenv($varName);
     }
-    
+
     /**
      * Returns information based on the Extension Configuration (defined in the ext_conf_template.txt)
      *
@@ -195,7 +195,7 @@ class ConfigFacet implements FacetInterface
             return $default;
         }
     }
-    
+
     /**
      * Returns the plugin / extension configuration for ext base extensions
      *
@@ -208,7 +208,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getSingletonOf(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
     }
-    
+
     /**
      * Shortcut to find a TypoScript configuration value using the TypoScriptService
      *
@@ -233,10 +233,42 @@ class ConfigFacet implements FacetInterface
      */
     public function getTypoScriptValue($path = null, $default = null, array $options = [])
     {
-        if (! is_null($default)) {
+        if ($default !== null) {
             $options['default'] = $default;
         }
-        
+
         return $this->getSingletonOf(TypoScriptService::class)->get($path, $options);
     }
+
+    /**
+     * Shortcut to find TS config settings for the current page.
+     *
+     * @param   null        $path     Either a key or a path like "config.lang" to query the hierarchy. If left
+     *                                empty, the method will return the complete tsConfig array.
+     * @param   null|mixed  $default  By default the method returns null, if the queried value
+     *                                was not found in the configuration. If this option is set, the given value
+     *                                will be returned instead.
+     * @param   array       $options  Additional options
+     *                                - separator (string) ".": A separator trough which the path parts are
+     *                                separated from each other
+     *                                - getType (bool) FALSE: If set to TRUE the method will try return
+     *                                the typoScript object's type instead of it's value.
+     *                                The Type is normally stored as: key.key.type
+     *                                while the value is stored as: key.key.type. <- Note the period
+     *                                Not all elements have a type. If we don't fine one we will return the
+     *                                "default" value Otherwise we will try to get the value, and if not set return
+     *                                the type
+     *
+     * @return array|mixed|null
+     */
+    public function getTsConfigValue($path = null, $default = null, array $options = [])
+    {
+        if ($default !== null) {
+            $options['default'] = $default;
+        }
+
+        return $this->getSingletonOf(TypoScriptService::class)->getTsConfig($path, $options);
+    }
+
+
 }
