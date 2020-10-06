@@ -21,6 +21,7 @@ namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Core;
 
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 
 /**
@@ -32,12 +33,12 @@ use Neunerlei\Options\Options;
  */
 class CoreConfigOption extends AbstractExtConfigOption
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $container;
-    
+
     /**
      * CoreConfigOption constructor.
      *
@@ -47,7 +48,7 @@ class CoreConfigOption extends AbstractExtConfigOption
     {
         $this->container = $container;
     }
-    
+
     /**
      * Helper to register a class implementation
      *
@@ -63,10 +64,10 @@ class CoreConfigOption extends AbstractExtConfigOption
     public function registerXClass(string $classToOverride, string $classToOverrideWith): CoreConfigOption
     {
         $this->container->setXClassFor($classToOverride, $classToOverrideWith);
-        
+
         return $this;
     }
-    
+
     /**
      * Registers a given interface for a given classname. So If the interface is required, the class can be resolved.
      * Note: This works for class overrides as well :)
@@ -80,10 +81,10 @@ class CoreConfigOption extends AbstractExtConfigOption
     public function registerImplementation(string $insteadOfThisClass, string $useThisClass): CoreConfigOption
     {
         $this->container->setClassFor($insteadOfThisClass, $useThisClass);
-        
+
         return $this;
     }
-    
+
     /**
      * Registers a new cache configuration to typo3's caching framework.
      *
@@ -118,7 +119,7 @@ class CoreConfigOption extends AbstractExtConfigOption
                         }))) {
                             return 'Your cache groups are invalid! Only the values all, system and pages are allowed!';
                         }
-                        
+
                         return true;
                     },
                 ],
@@ -129,7 +130,22 @@ class CoreConfigOption extends AbstractExtConfigOption
             'options'  => $this->replaceMarkers($options['options']),
             'groups'   => $this->replaceMarkers($options['groups']),
         ];
-        
+
+        return $this;
+    }
+
+    /**
+     * Merges the given configuration into the globals "API" of TYPO3
+     *
+     * @param   array   $config      The configuration to add into the globals array
+     * @param   string  $globalsKey  By default: "TYPO3_CONF_VARS" but can be any of the TYPO3 conf keys
+     *
+     * @return $this
+     */
+    public function registerRawConfig(array $config, string $globalsKey = 'TYPO3_CONF_VARS'): self
+    {
+        $GLOBALS[$globalsKey] = Arrays::merge($GLOBALS[$globalsKey] ?? [], $config);
+
         return $this;
     }
 }
