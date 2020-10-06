@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -21,7 +22,7 @@ namespace LaborDigital\Typo3BetterApi\BackendPreview;
 
 interface BackendPreviewRendererInterface
 {
-    
+
     /**
      * Should use the given context object to render the backend preview.
      * The body of the preview can either be set into the $context or returned directly as a string.

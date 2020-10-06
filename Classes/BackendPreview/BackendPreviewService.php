@@ -366,7 +366,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
                     continue;
                 }
 
-                return $this->translationService->translateMaybe($listTypeItem[0]);
+                return $this->translationService->translateBe($listTypeItem[0]);
             }
 
             return '';
@@ -379,7 +379,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
                 continue;
             }
 
-            return $this->translationService->translateMaybe($listTypeItem[0]);
+            return $this->translationService->translateBe($listTypeItem[0]);
         }
 
         return '';
