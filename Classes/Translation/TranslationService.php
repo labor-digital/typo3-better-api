@@ -34,36 +34,38 @@ class TranslationService implements SingletonInterface
     protected const PARSE_RESULT_ALREADY_TRANSKEY = 0;
     protected const PARSE_RESULT_NOT_TRANSLATABLE = 1;
     protected const PARSE_RESULT_OK               = 2;
-    
+
     /**
      * @var \Neunerlei\EventBus\EventBusInterface
      */
     protected $eventBus;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Tsfe\TsfeService
      */
     protected $tsfe;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
     protected $typoContext;
-    
+
     /**
      * The list of registered contexts
      *
      * @var array
      */
     protected $contexts = [];
-    
+
     /**
      * A list of labels and their overrides
      *
      * @var array
      */
     protected $overrides = [];
-    
+
+    protected $beLangInstances = [];
+
     /**
      * TranslationService constructor.
      *
@@ -77,7 +79,7 @@ class TranslationService implements SingletonInterface
         $this->tsfe        = $tsfe;
         $this->typoContext = $typoContext;
     }
-    
+
     /**
      * Registers a new translation context.
      *
@@ -98,14 +100,14 @@ class TranslationService implements SingletonInterface
             $filename = substr($filename, 0, 5);
         }
         $filename = $this->typoContext->getPathAspect()->realPathToTypoExt($filename);
-        
+
         // Store context
         $this->contexts[$context] = $filename;
-        
+
         // Done
         return $this;
     }
-    
+
     /**
      * Returns the list of registered contexts as key (context) -> value (filename) pairs
      *
@@ -115,7 +117,7 @@ class TranslationService implements SingletonInterface
     {
         return $this->contexts;
     }
-    
+
     /**
      * Sets a list of contexts which should be specified as key (context) -> value (filename) pairs
      *
@@ -129,10 +131,10 @@ class TranslationService implements SingletonInterface
         foreach ($contexts as $k => $v) {
             $this->addContext($k, $v);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Returns true if the given context was registered, false if not
      *
@@ -144,7 +146,7 @@ class TranslationService implements SingletonInterface
     {
         return isset($this->contexts[$context]);
     }
-    
+
     /**
      * Returns the filename of a given context
      *
@@ -158,10 +160,10 @@ class TranslationService implements SingletonInterface
     {
         $this->requireContext($context);
         $result = $this->contexts[$context];
-        
+
         return $withTripleLPrefix ? 'LLL:' . $result : $result;
     }
-    
+
     /**
      * Creates the typo3 translation key (LLL:filename.xlf:key) from a given
      * translation selector
@@ -180,10 +182,10 @@ class TranslationService implements SingletonInterface
         if ($pr === static::PARSE_RESULT_NOT_TRANSLATABLE) {
             $this->requireContext($context, $selector);
         }
-        
+
         return $this->resolveOverride($this->getContextFile($context, true) . ':' . $selector);
     }
-    
+
     /**
      * Creates the typo3 translation key (LLL:filename.xlf:key) from a given
      * translation selector, but returns the given $selector if the selector seems not to be translatable.
@@ -200,7 +202,7 @@ class TranslationService implements SingletonInterface
             return $selector;
         }
     }
-    
+
     /**
      * Checks if a given selector is translatable by any means.
      * Checks if it starts with LLL: or if the part before the first . is a valid context
@@ -213,7 +215,7 @@ class TranslationService implements SingletonInterface
     {
         return $this->parseSelector($selector) !== static::PARSE_RESULT_NOT_TRANSLATABLE;
     }
-    
+
     /**
      * This method can be used to translate selectors / language labels into their speaking counterpart.
      * It should work in all three contexts (FE, BE and CLI) and also works with both default labels and context labels
@@ -230,22 +232,59 @@ class TranslationService implements SingletonInterface
      */
     public function translate(string $selector, array $args = []): string
     {
-        $key = $this->getTranslationKey($selector);
+        try {
+            $selector = $this->getTranslationKey($selector);
+        } catch (TranslationException $exception) {
+            return empty($args) ? $selector : vsprintf($selector, $args);
+        }
+
         if ($this->tsfe->hasTsfe()) {
-            $result = $this->tsfe->getTsfe()->sL($key);
+            $result = (string)$this->tsfe->getTsfe()->sL($selector);
         } else {
-            $result = $this->getTypoLanguageService()->sl($key);
+            $result = (string)$this->getTypoLanguageService()->sl($selector);
         }
-        if (! is_string($result)) {
-            $result = '';
-        }
-        if (! empty($args)) {
-            $result = vsprintf($result, $args);
-        }
-        
-        return $result;
+
+        return empty($args) ? $result : vsprintf($result, $args);
     }
-    
+
+    /**
+     * This method is quite similar to translate() but translates labels for the language
+     * of the current backend user. This allows you to translate labels in the backend language
+     * alongside the default frontend language
+     *
+     * @param   string  $selector
+     * @param   array   $args
+     *
+     * @return string
+     */
+    public function translateBe(string $selector, array $args = []): string
+    {
+        // Fall back to the default translator if there is no backend user
+        $beUser = $this->typoContext->BeUser();
+        if (! $beUser->hasUser()) {
+            return $this->translate($selector, $args);
+        }
+
+        try {
+            $selector = $this->getTranslationKey($selector);
+        } catch (TranslationException $exception) {
+            return empty($args) ? $selector : vsprintf($selector, $args);
+        }
+
+        $languageKey = $beUser->hasUser() ? $beUser->getUser()->uc['lang'] : 'default';
+
+        if (! isset($this->beLangInstances[$languageKey])) {
+            $this->beLangInstances[$languageKey] = GeneralUtility::makeInstance(
+                LanguageService::class
+            );
+            $this->beLangInstances[$languageKey]->init($languageKey);
+        }
+
+        $result = (string)$this->beLangInstances[$languageKey]->sL($selector);
+
+        return empty($args) ? $result : vsprintf($result, $args);
+    }
+
     /**
      * The same as translate() but will return the $selector, if it does not look like it is translatable
      *
@@ -253,6 +292,8 @@ class TranslationService implements SingletonInterface
      * @param   mixed   $args      Arguments to replace with placeholders
      *
      * @return string
+     * @deprecated this method will be removed in v10 -> translate() no longer throws an exception
+     *             if the required label was not found
      */
     public function translateMaybe(string $selector, array $args = []): string
     {
@@ -264,10 +305,10 @@ class TranslationService implements SingletonInterface
         if (empty($result) && $this->isTranslatable($selector)) {
             return '';
         }
-        
+
         return $result;
     }
-    
+
     /**
      * This method is used to register a complete language file override.
      * Should be used in your ext_localconf.php
@@ -286,10 +327,10 @@ class TranslationService implements SingletonInterface
             // Hook into the base "api"
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['locallangXMLOverride'][$lang][$original][md5($override)] = $override;
         });
-        
+
         return $this;
     }
-    
+
     /**
      * Registers a label override for a single translation label.
      * Both labels should either be something like: EXT:ext/Resources/Private/Language/locallang_db.xlf:key
@@ -306,10 +347,10 @@ class TranslationService implements SingletonInterface
         $original                   = $this->getTranslationKey($original);
         $override                   = $this->getTranslationKeyMaybe($override);
         $this->overrides[$original] = $override;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the instance of typo3's backend translation service or.
      * If the instance currently not exists at $GLOBALS['LANG'] we will forcefully create one
@@ -321,7 +362,7 @@ class TranslationService implements SingletonInterface
         if ($this->tsfe->hasTsfe()) {
             return TsfeAdapter::getLanguageService($this->tsfe->getTsfe());
         }
-        
+
         if (! is_object($GLOBALS['LANG'])) {
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
             $lang            = $this->typoContext
@@ -330,10 +371,10 @@ class TranslationService implements SingletonInterface
                 ->getTwoLetterIsoCode();
             $GLOBALS['LANG']->init($lang === 'en' ? 'default' : $lang);
         }
-        
+
         return $GLOBALS['LANG'];
     }
-    
+
     /**
      * Returns all available labels in a given translation file.
      *
@@ -356,10 +397,10 @@ class TranslationService implements SingletonInterface
             return $filename . ':' . $v;
         }, $labels);
         $languageService->lang = $backupLang;
-        
+
         return $labels;
     }
-    
+
     /**
      * Parses the given selector into it's real selector (aka. lookup path) and the context.
      * Will return one of the PARSE_RESULT constants to signalize what to do with the result
@@ -372,31 +413,31 @@ class TranslationService implements SingletonInterface
     protected function parseSelector(string &$selector, &$context = null): int
     {
         $selectorTrimmed = trim($selector);
-        
+
         // Unify path's relative to an extension
         if (stripos($selectorTrimmed, 'lll:') !== 0) {
             if (stripos($selectorTrimmed, 'ext:') === 0) {
                 $selector = 'LLL:' . $selectorTrimmed;
-                
+
                 return self::PARSE_RESULT_ALREADY_TRANSKEY;
             }
         } else {
             return self::PARSE_RESULT_ALREADY_TRANSKEY;
         }
-        
+
         // Get context from selector
         $separatorPos = (int)stripos($selectorTrimmed, '.');
         $context      = substr($selectorTrimmed, 0, $separatorPos);
-        
+
         // Check if we have the context
         if (! $this->hasContext($context)) {
             return static::PARSE_RESULT_NOT_TRANSLATABLE;
         }
         $selector = substr($selectorTrimmed, $separatorPos + 1);
-        
+
         return static::PARSE_RESULT_OK;
     }
-    
+
     /**
      * Internal helper which is used to resolve overridden selectors
      *
@@ -410,7 +451,7 @@ class TranslationService implements SingletonInterface
         if (empty($this->overrides)) {
             return $selector;
         }
-        
+
         // Unify path's relative to an extension
         if (stripos($selector, 'lll:') !== 0) {
             $selector = 'LLL:' . $selector;
@@ -421,7 +462,7 @@ class TranslationService implements SingletonInterface
                                                                 ->realPathToTypoExt(array_shift($parts)) . ':'
                         . implode(':', $parts);
         }
-        
+
         // Resolve the overrides
         $c = 0;
         while (isset($this->overrides[$selector])) {
@@ -430,11 +471,11 @@ class TranslationService implements SingletonInterface
                 throw new TranslationException('More than 10 subsequent overrides are not supported. Maybe a circular override?');
             }
         }
-        
+
         // Done
         return $selector;
     }
-    
+
     /**
      * Internal helper to FORCE that a given context exists.
      * If context does NOT EXIST the script will throw an exception
