@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -19,34 +20,32 @@
 
 namespace LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides;
 
-use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
+use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
 use LaborDigital\Typo3BetterApi\Event\Events\SiteConfigFilterEvent;
 use TYPO3\CMS\Core\Configuration\BetterApiClassOverrideCopy__SiteConfiguration;
 
 class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfiguration
 {
-    use CommonServiceLocatorTrait;
-    
+    use CommonDependencyTrait;
+
     /**
      * @inheritDoc
      */
     public function getAllSiteConfigurationFromFiles(): array
     {
-        // Create the configuration if it is not yet cached
-        $isCached   = ! empty($this->getCache()->get($this->cacheIdentifier));
         $siteConfig = parent::getAllSiteConfigurationFromFiles();
-        if ($isCached) {
+
+        // Ignore this if the backend generates new yaml files
+        if ($this->TypoContext()->Env()->isBackend()
+            && $this->TypoContext()->Request()->getGet('route') === '/site/configuration/'
+            && $this->TypoContext()->Request()->getGet('action') === 'save') {
             return $siteConfig;
         }
-        
+
         // Allow filtering
-        $this->EventBus->dispatch(($e = new SiteConfigFilterEvent($siteConfig)));
+        $this->EventBus()->dispatch(($e = new SiteConfigFilterEvent($siteConfig)));
         $siteConfig = $e->getConfig();
-        
-        // Update the cached value
-        $this->getCache()->set($this->cacheIdentifier, json_encode($siteConfig));
-        
-        // Done
+
         return $siteConfig;
     }
 }
