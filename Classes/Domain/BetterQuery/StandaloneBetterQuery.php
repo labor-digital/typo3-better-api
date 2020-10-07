@@ -218,7 +218,6 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         foreach ($values as $column => $value) {
             $queryBuilder->set($column, $value, true);
         }
-        dbge($queryBuilder->getSQL());
 
         return $queryBuilder->execute();
     }
