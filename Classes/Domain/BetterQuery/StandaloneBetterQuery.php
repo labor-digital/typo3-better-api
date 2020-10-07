@@ -94,14 +94,21 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         return $this->versionOverlay;
     }
 
+
     /**
-     * @inheritDoc
+     * Returns the configured instance of the query builder for this query
+     *
+     * @param   bool  $forSelect  By default all select query constraints are added to the query builder instance.
+     *                            You can set this to false if you want to get a query builder for an update/delete or
+     *                            insert query
+     *
+     * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
-    public function getQueryBuilder(): QueryBuilder
+    public function getQueryBuilder(bool $forSelect = true): QueryBuilder
     {
         $this->applyWhere();
         $qb = $this->adapter->getQueryBuilder();
-        if ($qb->getType() === \Doctrine\DBAL\Query\QueryBuilder::SELECT) {
+        if ($forSelect) {
             BetterQueryTypo3DbQueryParserAdapter::addConstraintsOfSettings(
                 $this->adapter->getTableName(),
                 $qb,
@@ -177,7 +184,9 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function delete()
     {
-        return $this->getQueryBuilder()->delete($this->adapter->getTableName())->execute();
+        return $this->getQueryBuilder(false)
+                    ->delete($this->adapter->getTableName())
+                    ->execute();
     }
 
     /**
@@ -189,7 +198,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function insert(array $values)
     {
-        return $this->getQueryBuilder()->insert($this->adapter->getTableName())->values($values, true)->execute();
+        return $this->getQueryBuilder(false)
+                    ->insert($this->adapter->getTableName())
+                    ->values($values, true)
+                    ->execute();
     }
 
     /**
@@ -201,10 +213,12 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function update(array $values)
     {
-        $queryBuilder = $this->getQueryBuilder()->update($this->adapter->getTableName());
+        $queryBuilder = $this->getQueryBuilder(false)
+                             ->update($this->adapter->getTableName());
         foreach ($values as $column => $value) {
             $queryBuilder->set($column, $value, true);
         }
+        dbge($queryBuilder->getSQL());
 
         return $queryBuilder->execute();
     }
