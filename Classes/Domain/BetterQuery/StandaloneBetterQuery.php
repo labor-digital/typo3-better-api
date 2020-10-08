@@ -67,7 +67,8 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         TypoContext $typoContext,
         Session $session
     ) {
-        parent::__construct(new DoctrineQueryAdapter($tableName, $queryBuilder, $settings), $typoContext, $session);
+        parent::__construct(new DoctrineQueryAdapter($tableName, $queryBuilder, $settings, $typoContext), $typoContext,
+            $session);
     }
 
     /**
@@ -139,7 +140,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             $tableName = $this->adapter->getTableName();
 
             return $this->handleTranslationAndVersionOverlay($tableName, $row);
-        }, $qb->execute()->fetchAll());
+        }, $qb->execute()->fetchAllAssociative());
     }
 
 
@@ -444,7 +445,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      *
      * @return array
      */
-    protected function handleTranslationAndVersionOverlay(string $tableName, array $row): array
+    protected function handleTranslationAndVersionOverlay(string $tableName, array $row): ?array
     {
         // Create page repository if required
         if (empty($this->pageRepository)) {
@@ -455,6 +456,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         if ($this->versionOverlay) {
             $this->pageRepository->versionOL($tableName, $row, true);
         }
+
 
         // Apply the translation overlay only if required
         if (! $this->adapter->getSettings()->getRespectSysLanguage()) {
@@ -473,11 +475,13 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             return $this->pageRepository->getPageOverlay($row, $languageUid);
         }
 
-        return $this->pageRepository->getRecordOverlay(
+        $result = $this->pageRepository->getRecordOverlay(
             $tableName,
             $row,
             $languageUid,
-            is_string($this->adapter->getSettings()->getLanguageOverlayMode()) ? 'hideNonTranslated' : '1'
+            $this->adapter->getSettings()->getLanguageOverlayMode()
         );
+
+        return $result;
     }
 }

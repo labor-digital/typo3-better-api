@@ -23,35 +23,41 @@ namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter;
 
 use Doctrine\DBAL\Connection;
 use LaborDigital\Typo3BetterApi\NotImplementedException;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class DoctrineQueryAdapter extends AbstractQueryAdapter
 {
-    
+
     /**
      * @var \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     protected $queryBuilder;
-    
+
     /**
      * DoctrineQueryAdapter constructor.
      *
      * @param   string                                                         $tableName
      * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext           $context
      */
-    public function __construct(string $tableName, QueryBuilder $queryBuilder, QuerySettingsInterface $settings)
-    {
-        parent::__construct($tableName, $settings);
+    public function __construct(
+        string $tableName,
+        QueryBuilder $queryBuilder,
+        QuerySettingsInterface $settings,
+        TypoContext $context
+    ) {
+        parent::__construct($tableName, $settings, $context);
         $this->queryBuilder = $queryBuilder;
-        
+
         // Reset query builder
         $queryBuilder->select('*');
         $queryBuilder->getRestrictions()->removeAll();
     }
-    
+
     /**
      * Clones the children of this query object to keep it immutable
      */
@@ -60,7 +66,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
         parent::__clone();
         $this->queryBuilder = clone $this->queryBuilder;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -68,7 +74,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         $this->queryBuilder->setMaxResults($limit);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -76,7 +82,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return (int)$this->queryBuilder->getMaxResults();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -84,7 +90,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         $this->queryBuilder->setFirstResult($offset);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -92,7 +98,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return (int)$this->queryBuilder->getFirstResult();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -103,7 +109,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
             $this->queryBuilder->addOrderBy($k, $v);
         }
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -111,7 +117,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         throw new NotImplementedException();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -119,7 +125,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return clone $this->queryBuilder;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -127,7 +133,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->expr()->orX(...$list);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -135,7 +141,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->expr()->andX(...$list);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -147,7 +153,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                     return $this->queryBuilder->expr()
                                               ->notLike($key, $this->queryBuilder->createNamedParameter($value));
                 }
-                
+
                 return $this->queryBuilder->expr()->like($key, $this->queryBuilder->createNamedParameter($value));
             case 'in':
                 if ($negated) {
@@ -159,7 +165,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                         )
                     );
                 }
-                
+
                 return $this->queryBuilder->expr()->in(
                     $key,
                     $this->queryBuilder->createNamedParameter(
@@ -171,35 +177,35 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                 if ($negated) {
                     return $this->queryBuilder->expr()->lte($key, $this->queryBuilder->createNamedParameter($value));
                 }
-                
+
                 return $this->queryBuilder->expr()->gt($key, $this->queryBuilder->createNamedParameter($value));
             case '>=':
                 if ($negated) {
                     return $this->queryBuilder->expr()->lt($key, $this->queryBuilder->createNamedParameter($value));
                 }
-                
+
                 return $this->queryBuilder->expr()->gte($key, $this->queryBuilder->createNamedParameter($value));
             case '<':
                 if ($negated) {
                     return $this->queryBuilder->expr()->gte($key, $this->queryBuilder->createNamedParameter($value));
                 }
-                
+
                 return $this->queryBuilder->expr()->lt($key, $this->queryBuilder->createNamedParameter($value));
             case '<=':
                 if ($negated) {
                     return $this->queryBuilder->expr()->gt($key, $this->queryBuilder->createNamedParameter($value));
                 }
-                
+
                 return $this->queryBuilder->expr()->lte($key, $this->queryBuilder->createNamedParameter($value));
             default:
                 if ($negated) {
                     return $this->queryBuilder->expr()->neq($key, $this->queryBuilder->createNamedParameter($value));
                 }
-                
+
                 return $this->queryBuilder->expr()->eq($key, $this->queryBuilder->createNamedParameter($value));
         }
     }
-    
+
     /**
      * @inheritDoc
      */

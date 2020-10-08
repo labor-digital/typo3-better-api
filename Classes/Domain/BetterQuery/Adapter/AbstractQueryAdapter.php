@@ -22,7 +22,9 @@ declare(strict_types=1);
 namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter;
 
 use LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceException;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
+use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -35,22 +37,27 @@ abstract class AbstractQueryAdapter
      * @var string
      */
     protected $tableName;
-    
+
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface
      */
     protected $settings;
-    
-    public function __construct(string $tableName, QuerySettingsInterface $settings)
+
+    public function __construct(string $tableName, QuerySettingsInterface $settings, TypoContext $context)
     {
         $this->tableName = $tableName;
         $this->settings  = $settings;
-        
+
         // Reset the settings
-        $this->settings->setRespectStoragePage(false);
-        $this->settings->setRespectSysLanguage(true);
+        $language   = $context->Language()->getCurrentFrontendLanguage();
+        $langAspect = LanguageAspectFactory::createFromSiteLanguage($language);
+        $settings->setLanguageMode($langAspect->getLegacyLanguageMode());
+        $settings->setLanguageOverlayMode($langAspect->getLegacyOverlayType());
+        $settings->setRespectStoragePage(false);
+        $settings->setRespectSysLanguage(true);
+        $settings->setLanguageUid($language->getLanguageId());
     }
-    
+
     /**
      * Clones the children of this query object to keep it immutable
      */
@@ -58,7 +65,7 @@ abstract class AbstractQueryAdapter
     {
         $this->settings = clone $this->settings;
     }
-    
+
     /**
      * Returns the name of the table
      *
@@ -68,7 +75,7 @@ abstract class AbstractQueryAdapter
     {
         return $this->tableName;
     }
-    
+
     /**
      * Returns the Query settings object
      *
@@ -78,35 +85,35 @@ abstract class AbstractQueryAdapter
     {
         return $this->settings;
     }
-    
+
     /**
      * Sets the max items in the result
      *
      * @param   int  $limit
      */
     abstract public function setLimit(int $limit): void;
-    
+
     /**
      * Returns the max items in the result
      *
      * @return int
      */
     abstract public function getLimit(): int;
-    
+
     /**
      * Sets the offset to the first result
      *
      * @param   int  $offset
      */
     abstract public function setOffset(int $offset): void;
-    
+
     /**
      * Returns the offset to the first result
      *
      * @return int
      */
     abstract public function getOffset(): int;
-    
+
     /**
      * Sets the order fields as $field => $direction
      *
@@ -115,21 +122,21 @@ abstract class AbstractQueryAdapter
      * @return mixed
      */
     abstract public function setOrderings(array $orderings);
-    
+
     /**
      * Returns the query object instance
      *
      * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     abstract public function getQuery(): QueryInterface;
-    
+
     /**
      * Returns the query builder instance
      *
      * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     abstract public function getQueryBuilder(): QueryBuilder;
-    
+
     /**
      * Returns a prepared or conditional for the current implementation
      *
@@ -138,7 +145,7 @@ abstract class AbstractQueryAdapter
      * @return mixed
      */
     abstract public function makeOr(array $list);
-    
+
     /**
      * Returns a prepared and conditional for the current implementation
      *
@@ -147,7 +154,7 @@ abstract class AbstractQueryAdapter
      * @return mixed
      */
     abstract public function makeAnd(array $list);
-    
+
     /**
      * Returns a prepared condition for the current implementation
      *
@@ -159,7 +166,7 @@ abstract class AbstractQueryAdapter
      * @return mixed
      */
     abstract public function makeCondition(string $operator, $key, $value, bool $negated);
-    
+
     /**
      * Injects the build constraints into the query implementation
      *
@@ -168,7 +175,7 @@ abstract class AbstractQueryAdapter
      * @return mixed
      */
     abstract public function finalizeConstraints($constraints): void;
-    
+
     /**
      * An internal helper which is used to make sure some fields either receive an array of numbers,
      * or at least a comma separated string or a single number. It will then make sure that the resulting
@@ -193,7 +200,7 @@ abstract class AbstractQueryAdapter
                 throw new DbServiceException("Invalid value for \"$field\" given! Only strings, numbers or arrays are allowed!");
             }
         }
-        
+
         return $value;
     }
 }

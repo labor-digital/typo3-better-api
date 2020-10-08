@@ -23,10 +23,13 @@ use Exception;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery;
 use LaborDigital\Typo3BetterApi\Domain\BetterQuery\StandaloneBetterQuery;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
+use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
+use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -34,17 +37,17 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class DbService implements DbServiceInterface
 {
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $container;
-    
+
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
      */
     protected $lazyPersistenceManager;
-    
+
     /**
      * DbService constructor.
      *
@@ -56,7 +59,7 @@ class DbService implements DbServiceInterface
         $this->container              = $container;
         $this->lazyPersistenceManager = $lazyPersistenceManager;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -64,7 +67,7 @@ class DbService implements DbServiceInterface
     {
         $this->lazyPersistenceManager->persistAll();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -79,24 +82,32 @@ class DbService implements DbServiceInterface
         if (! empty($tableName)) {
             $qb->from($tableName);
         }
-        
+
         return $qb;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getQuery(string $tableName, bool $disableDefaultConstraints = false): StandaloneBetterQuery
     {
-        $queryBuilder = $this->getQueryBuilder($tableName);
-        $query        = $this->container->get(StandaloneBetterQuery::class, ['args' => [$tableName, $queryBuilder]]);
+        $query = $this->container->getWithoutDi(
+            StandaloneBetterQuery::class, [
+                $tableName,
+                $this->getQueryBuilder($tableName),
+                $this->container->get(QuerySettingsInterface::class),
+                $this->container->get(TypoContext::class),
+                $this->container->get(Session::class),
+            ]
+        );
+
         if ($disableDefaultConstraints) {
             $query = $query->withIncludeHidden()->withIncludeDeleted()->withLanguage(false);
         }
-        
+
         return $query;
     }
-    
+
     /**
      * @inheritDoc
      * @deprecated
@@ -108,12 +119,12 @@ class DbService implements DbServiceInterface
         // Execute query
         $statement = $connection->executeQuery($query, $args);
         if ($statement->columnCount() > 0) {
-            return $statement->fetchAll();
+            return $statement->fetchAllAssociative();
         }
-        
+
         return true;
     }
-    
+
     /**
      * @inheritDoc
      * @deprecated
@@ -142,10 +153,10 @@ class DbService implements DbServiceInterface
             }
             throw $e;
         }
-        
+
         return $result;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -153,11 +164,11 @@ class DbService implements DbServiceInterface
     {
         /** @var ConnectionPool $pool */
         $pool = $this->container->get(ConnectionPool::class);
-        
+
         return $pool->getConnectionByName(empty($connectionName) ? ConnectionPool::DEFAULT_CONNECTION_NAME
             : $connectionName);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -173,7 +184,7 @@ class DbService implements DbServiceInterface
         $builder->select(...Arrays::makeFromStringList($fields));
         $builder->from($table);
         $builder->where($where);
-        
+
         // Prepare order by
         if (! empty($orderBy)) {
             $orderByParts = explode(',', $orderBy);
@@ -182,18 +193,18 @@ class DbService implements DbServiceInterface
                 $builder->addOrderBy(array_shift($parts), array_shift($parts));
             }
         }
-        
+
         // Add Limit
         if (! empty($limit)) {
             $builder->setMaxResults((int)$limit);
         }
-        
+
         // Execute query
         $result = $builder->execute()->fetchAll();
-        
+
         return ! is_array($result) ? [] : $result;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -223,10 +234,10 @@ class DbService implements DbServiceInterface
                 $dQuery->setFirstResult($query->getOffset());
             }
         }
-        
+
         // Build the query
         $queryString = $dQuery->getSQL();
-        
+
         // Prepare query with parameters
         $in = $out = [];
         foreach ($dQuery->getParameters() as $k => $v) {
@@ -234,7 +245,7 @@ class DbService implements DbServiceInterface
             $out[] = '"' . addslashes($v) . '"';
         }
         $queryString = str_replace($in, $out, $queryString);
-        
+
         // Try to execute the message
         try {
             if ($isStandalone) {
@@ -247,7 +258,7 @@ class DbService implements DbServiceInterface
         } catch (Exception $e) {
             $exception = $e->getMessage();
         }
-        
+
         // Show general query information
         echo '<h5>Query string</h5>';
         if (function_exists('dbg')) {
@@ -255,7 +266,7 @@ class DbService implements DbServiceInterface
         } else {
             DebuggerUtility::var_dump($queryString);
         }
-        
+
         try {
             if (! empty($exception)) {
                 echo '<h5>Db Errors</h5>';

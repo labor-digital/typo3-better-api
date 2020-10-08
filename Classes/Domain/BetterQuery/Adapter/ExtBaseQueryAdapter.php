@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter;
 
 use LaborDigital\Typo3BetterApi\NotImplementedException;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
@@ -31,19 +32,20 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
      * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     protected $query;
-    
+
     /**
      * ExtBaseQueryAdapter constructor.
      *
-     * @param   string                                         $tableName
-     * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface  $query
+     * @param   string                                                $tableName
+     * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface         $query
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
      */
-    public function __construct(string $tableName, QueryInterface $query)
+    public function __construct(string $tableName, QueryInterface $query, TypoContext $context)
     {
-        parent::__construct($tableName, $query->getQuerySettings());
+        parent::__construct($tableName, $query->getQuerySettings(), $context);
         $this->query = $query;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -53,7 +55,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
         $this->query = clone $this->query;
         $this->query->setQuerySettings($this->settings);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -65,7 +67,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
             $this->query->setLimit($limit);
         }
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -73,7 +75,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->getLimit();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -81,7 +83,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         $this->query->setOffset($offset);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -89,7 +91,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->getOffset();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -97,7 +99,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         $this->query->setOrderings($orderings);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -105,7 +107,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return clone $this->query;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -113,7 +115,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         throw new NotImplementedException();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -121,7 +123,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->logicalOr($list);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -129,7 +131,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->logicalAnd($list);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -169,15 +171,15 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
                 $condition = $this->query->equals($key, $value);
                 break;
         }
-        
+
         // Handle negation
         if ($negated) {
             $condition = $this->query->logicalNot($condition);
         }
-        
+
         return $condition;
     }
-    
+
     /**
      * @inheritDoc
      */
