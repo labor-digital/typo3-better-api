@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.24.0](https://github.com/labor-digital/typo3-better-api/compare/v9.23.0...v9.24.0) (2020-10-08)
+
+
+### Features
+
+* **BetterQuery:** allow advanced options on withLanguage() method ([89b5f80](https://github.com/labor-digital/typo3-better-api/commit/89b5f8018794a457ca72d307450898a316babc87))
+* **StandaloneBetterQuery:** add $forSelect property to getQueryBuilder() method ([3bb94e2](https://github.com/labor-digital/typo3-better-api/commit/3bb94e27787e9b95ace6f35126a07cfb87d50b38))
+
+
+### Bug Fixes
+
+* **StandaloneBetterQuery:** remove dev fragment ([83dd3be](https://github.com/labor-digital/typo3-better-api/commit/83dd3bea4f6ebc6cdef2740d5a8ce9c60148f144))
+
 ## [9.23.0](https://github.com/labor-digital/typo3-better-api/compare/v9.22.0...v9.23.0) (2020-10-06)
 
 
