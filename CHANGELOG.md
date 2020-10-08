@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.23.0](https://github.com/labor-digital/typo3-better-api/compare/v9.22.0...v9.23.0) (2020-10-06)
+
+
+### Features
+
+* **TranslationService:** implement translateBe() + deprecate translateMaybe() ([793ca38](https://github.com/labor-digital/typo3-better-api/commit/793ca38d404e7c7103783d463b92e42ea07a99e9))
+* implements option to use "linkSets" as link handlers in the link browser using feature: [#79626](https://github.com/labor-digital/typo3-better-api/issues/79626) ([8c2c6ae](https://github.com/labor-digital/typo3-better-api/commit/8c2c6ae4c46be56a7c405440594567313b9197b2))
+* **ConfigFacet:** add getTsConfigValue() to retrieve tsConfig options ([bf61468](https://github.com/labor-digital/typo3-better-api/commit/bf61468287976b2fb50ed821517451d7816cfda3))
+* **CoreConfigOption:** implement registerRawConfig() to add global configuration through ExtConfig ([8995d12](https://github.com/labor-digital/typo3-better-api/commit/8995d12d0a128393bc4c5fb315400ed5e3b850be))
+* **Event:** implement LinkBrowserAllowedTabsFilterEvent to filter the link browser tabs ([1f5daaf](https://github.com/labor-digital/typo3-better-api/commit/1f5daaf1d9e74f2deeabec5705fb20ef1b7b64a5))
+
+
+### Bug Fixes
+
+* **BackendPreviewService:** render element labels in the backend and not the frontend language ([e069b06](https://github.com/labor-digital/typo3-better-api/commit/e069b065d6399cf68dc6a008ed62c02024e4cdbd))
+* **ExtendedSiteConfiguration:** don't pollute the site config yml files when saving the min the backend ([886e23b](https://github.com/labor-digital/typo3-better-api/commit/886e23b6bb4e4c4e91f4968442afb35627031543))
+* **LinkSetLinks:** add the missing link generator parts ([7a45d5f](https://github.com/labor-digital/typo3-better-api/commit/7a45d5fb45c5dea86dc64713569d14b6be393a45))
+* **PageService:** generate root line more reliably ([f5f630d](https://github.com/labor-digital/typo3-better-api/commit/f5f630d7085a7acfa5466157a6f05a5f6879fe72))
+* **TypoLink:** add exception if getUriBuilder() could not find an instance ([7a600fe](https://github.com/labor-digital/typo3-better-api/commit/7a600fe39bb4746f461b7ba0a67ea0cabe556917))
+
 ## [9.22.0](https://github.com/labor-digital/typo3-better-api/compare/v9.21.1...v9.22.0) (2020-09-28)
 
 
