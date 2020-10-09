@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.24.1](https://github.com/labor-digital/typo3-better-api/compare/v9.24.0...v9.24.1) (2020-10-09)
+
+
+### Bug Fixes
+
+* **BetterQuery:** rework language handling ([162fcfa](https://github.com/labor-digital/typo3-better-api/commit/162fcfa505ddb14fb898e3455f9630ef9caceae3))
+
 ## [9.24.0](https://github.com/labor-digital/typo3-better-api/compare/v9.23.0...v9.24.0) (2020-10-08)
 
 
