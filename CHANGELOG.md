@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.24.2](https://github.com/labor-digital/typo3-better-api/compare/v9.24.1...v9.24.2) (2020-10-09)
+
+
+### Bug Fixes
+
+* **SiteFacet:** make sure "NullSites" are ignored correctly ([3b0c483](https://github.com/labor-digital/typo3-better-api/commit/3b0c483dc371223ff8624f04aaa51217b787d1ac))
+
 ### [9.24.1](https://github.com/labor-digital/typo3-better-api/compare/v9.24.0...v9.24.1) (2020-10-09)
 
 
