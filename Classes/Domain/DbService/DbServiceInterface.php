@@ -35,7 +35,7 @@ interface DbServiceInterface
      * @throws \Doctrine\DBAL\DBALException
      */
     public function query(string $query, array $args = []);
-    
+
     /**
      * Helper to execute multiple queries inside a transaction.
      * The rollback will be automatically handled if one of the queries failed
@@ -47,7 +47,7 @@ interface DbServiceInterface
      * @return mixed
      */
     public function multiQuery(iterable $queries, array $args = []);
-    
+
     /**
      * Returns the instance of the database connection
      * BE CAREFUL WITH THIS!
@@ -57,13 +57,13 @@ interface DbServiceInterface
      * @return \TYPO3\CMS\Core\Database\Connection
      */
     public function getConnection(?string $connectionName = null);
-    
+
     /**
      * Persists all current database changes
      * Simple wrapper around the persistence manager
      */
     public function persistAll();
-    
+
     /**
      * Simple link to typo3's select query.
      *
@@ -82,7 +82,7 @@ interface DbServiceInterface
      * @see        \LaborDigital\Typo3BetterApi\Domain\DbService\DbServiceInterface::getQuery()
      */
     public function getRecords(string $table, $uid, $fields = '*', $where = '', $orderBy = '', $limit = ''): array;
-    
+
     /**
      * Helper to debug a typo3 query. Will render the sql statement, the result, and exceptions to the screen to see.
      *
@@ -91,7 +91,7 @@ interface DbServiceInterface
      * @throws \Doctrine\DBAL\DBALException
      */
     public function debugQuery($query);
-    
+
     /**
      * Creates a new query builder instance either for a table or a connection name.
      * If the table name is given the connection name will be ignored.
@@ -103,7 +103,7 @@ interface DbServiceInterface
      * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     public function getQueryBuilder(?string $tableName = null, ?string $connectionName = null): QueryBuilder;
-    
+
     /**
      * Creates a new instance of a better query object for the given table name.
      * Better Query is a simplified, speaking wrapper around the doctrine query builder fused with the
@@ -112,7 +112,8 @@ interface DbServiceInterface
      * The main use case is to create select queries but you can also use the better query object to prepare
      * other sql actions by preparing the query builder
      *
-     * @param   string  $tableName                  The name of the table you want to
+     * @param   string  $tableName                  The name of the table you want to use in your query.
+     *                                              Can also be the name of the extbase domain model class
      * @param   bool    $disableDefaultConstraints  If this is set to true all constraints will be disabled
      *                                              by default and you have to enable them explicitly
      *

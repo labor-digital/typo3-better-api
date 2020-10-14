@@ -23,6 +23,7 @@ use Exception;
 use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
 use LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery;
 use LaborDigital\Typo3BetterApi\Domain\BetterQuery\StandaloneBetterQuery;
+use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -91,6 +92,10 @@ class DbService implements DbServiceInterface
      */
     public function getQuery(string $tableName, bool $disableDefaultConstraints = false): StandaloneBetterQuery
     {
+        if (class_exists($tableName)) {
+            $tableName = Naming::tableNameFromModelClass($tableName);
+        }
+
         $query = $this->container->getWithoutDi(
             StandaloneBetterQuery::class, [
                 $tableName,
