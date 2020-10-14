@@ -154,7 +154,7 @@ class LinkSetDefinition
     /**
      * Returns the target page id or null
      *
-     * @return int|string|null
+     * @return int|string|null|array|callable
      */
     public function getPid()
     {
@@ -164,7 +164,7 @@ class LinkSetDefinition
     /**
      * Sets the target page id
      *
-     * @param   int|string  $pid
+     * @param   int|string|array  $pid
      *
      * @return \LaborDigital\Typo3BetterApi\Link\LinkSetDefinition
      */
@@ -610,6 +610,10 @@ class LinkSetDefinition
      *                                     label.
      * @param   string  $tableOrModelName  A database table name which can also be a short code like '...something"
      * @param   array   $options           Additional options for the setup
+     *                                     - storagePid (string|int): an optional storage pid to force the link browser
+     *                                     to. This can be either a numeric value or a pid identifier.
+     *                                     - hidePageTree (bool) FALSE: If this is flag is set, the page tree will be
+     *                                     hidden when the link browser is rendered
      *
      * @return $this
      * @see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/8.6/Feature-79626-IntegrateRecordLinkHandler.html

@@ -1,4 +1,6 @@
 <?php
+/** @noinspection NotOptimalIfConditionsInspection */
+
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -20,6 +22,7 @@
 namespace LaborDigital\Typo3BetterApi\Link;
 
 use LaborDigital\Typo3BetterApi\CoreModding\ClassAdapters\CacheHashCalculatorAdapter;
+use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
@@ -51,7 +54,7 @@ class TypoLink
     /**
      * The target page id
      *
-     * @var int
+     * @var int|string|null|array|callable
      */
     protected $pid;
 
@@ -208,27 +211,79 @@ class TypoLink
     /**
      * Returns the target page id or null
      *
+     * @param   bool  $allowAllValues  Temporary workaround until v10 is finished.
+     *                                 This allows all, new pid options to be returned and not only integers or null
+     *
      * @return int|null
+     * @todo make this return all possible options of a pid in v10
+     * @todo implement a "getResolvedPid" option, to find the numeric pid
      */
-    public function getPid(): ?int
+    public function getPid(bool $allowAllValues = false)
     {
-        return $this->pid;
+        if ($allowAllValues) {
+            return $this->pid;
+        }
+
+        return is_int($this->pid) ? $this->pid : null;
     }
 
     /**
      * Sets the target page id
      *
-     * @param   int|string  $pid
+     * You have multiple options to resolve the pid of a link:
+     * - numeric value: When you pass a numeric value like an int 34 or "556" the script takes
+     * that as the real id of the page you want to link to
+     * - string value: You can pass a Pid identifier like "@pid.page.something" which will be resolved
+     * based on your pid configuration.
+     * - null: If no pid is given, the link is resolved on the current page id (DEFAULT)
+     * - callable: Any kind of callable to resolve the pid dynamically based on current link object.
+     * The callable will receive the link object as parameter and should return a numeric value or
+     * pid identifier.
+     * - array (Variant a): If you provide an array containing a class and method name, that are not
+     * static (therefore are not callable): the script will instantiate the first item as an object
+     * through the container and call the second item as method. The method also receives the current link
+     * object and should behave in the same way a "callable" would.
+     * - array (Variant b): If your link contains exactly ONE argument, you can pass an array containing
+     * storage pids and their matching target pids as an array. For example you have records in a folder with pid 10
+     * that map to a detail plugin on the page 20, as well as records in folder with pid 11 that map to a detail plugin
+     * on the page 21 you can provide a map like: [10 => 20, 11 => 21].
+     * NOTE: This works only if you provide extbase domain models or objects that have a public "getPid()" method.
+     * If you are working with numeric values in your argument you have to provide a "table" key in the map,
+     * that is used to resolve the storage pid of the record uid: ['table' => 'tx_my_table', 10 => 20, 11 => 21].
+     * The 'table' can also be the class name of the extbase model we will map to a table name.
+     * NOTE 2: If you work with multiple arguments the first, given argument in the list is used for pid resolution.
+     * You can also specify the name of the argument by providing an "argument" key.
+     *
+     * As an example for arrays (Variant b):
+     * // This will work, because $myExtbaseModel contains an extbase model
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['model' => $myExtbaseModel])->build();
+     *
+     * // This will fail, because the link does not know how it should map the uid 2 to a storage pid
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
+     *
+     * // To make this work you have to do this:
+     * $link->withPid(['table' => 'tx_my_table', 10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
+     * // or:
+     * $link->withPid(['table' => MyExtBaseModel::class, 10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
+     *
+     * // This will fail, because there are multiple arguments present, and the first argument, "foo" is numeric
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['foo' => 123, 'model' => $myExtbaseModel, ])->build();
+     *
+     * // To make this work, either use 'model' as the first argument:
+     * $link->withPid(['argument' => 'model', 10 => 20, 11 => 21])
+     *      ->withArgs(['model' => $myExtbaseModel, 'foo' => 123, ])->build();
+     * // or define the argument which should be used for pid resolution:
+     * $link->withPid(['argument' => 'model', 10 => 20, 11 => 21])
+     *      ->withArgs(['foo' => 123, 'model' => $myExtbaseModel])->build();
+     *
+     * @param   int|string|null|array|callable  $pid
      *
      * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
      */
     public function withPid($pid): TypoLink
     {
-        $clone = clone $this;
-        if (! is_numeric($pid)) {
-            $pid = $this->context->TypoContext->getPidAspect()->getPid($pid);
-        }
-        $clone->pid = (int)$pid;
+        $clone      = clone $this;
+        $clone->pid = $pid;
 
         return $clone;
     }
@@ -422,7 +477,7 @@ class TypoLink
     public function withFragment($fragment): TypoLink
     {
         $clone = clone $this;
-        if (! is_array($fragment) && ! is_string($fragment) && ! is_null($fragment)) {
+        if (! is_array($fragment) && ! is_string($fragment) && $fragment !== null) {
             throw new LinkException('The given fragment is invalid!');
         }
         $clone->fragment = is_string($fragment) ? trim(ltrim(trim($fragment), '#')) : $fragment;
@@ -844,7 +899,63 @@ class TypoLink
 
         // Page id
         if (! empty($this->pid)) {
-            $ub->setTargetPageUid($this->pid);
+            // Resolve callable
+            if (is_array($this->pid) && class_exists((string)$this->pid[0])
+                && method_exists((string)$this->pid[0], (string)$this->pid[1])
+                && ! (new \ReflectionMethod($this->pid[0], $this->pid[1]))->isStatic()) {
+                $pid = $this->context->getInstanceOf($this->pid[0])->{$this->pid[1]}($this);
+            } elseif (is_callable($this->pid)) {
+                $pid = call_user_func($this->pid, $this);
+
+            } elseif (is_array($this->pid)) {
+                // Translate the map keys into real pids so we can do a lookup for the correct value
+                $keys = array_map(function ($k) {
+                    if ($k === 'table' || $k === 'argument') {
+                        return $k;
+                    }
+
+                    return $this->context->TypoContext->Pid()->get($k);
+                }, array_keys($this->pid));
+                $pids = array_combine($keys, array_values((array)$this->pid));
+
+                // Try to fetch the storage pid based on the given argument
+                $arg        = isset($pids['argument']) ? $this->args[$pids['argument']] : reset($this->args);
+                $storagePid = 0;
+                if (is_array($arg) && isset($arg['pid'])) {
+                    $storagePid = $arg['pid'];
+                } elseif (is_object($arg) && method_exists($arg, 'getPid')) {
+                    $storagePid = $arg->getPid();
+                } elseif (is_numeric($arg)) {
+                    if (! isset($pids['table'])) {
+                        throw new LinkException(
+                            'Failed to map argument: ' . $arg
+                            . ' to a storage pid, because the "table" key is missing in the setPid() array of the link!');
+                    }
+
+                    // Resolve a model name to a table name
+                    $table = $pids['table'];
+                    if (class_exists($table)) {
+                        $table = Naming::tableNameFromModelClass($table);
+                    }
+
+                    $storagePid = $this->context->Db
+                                      ->getQuery($table)
+                                      ->withWhere(['uid' => is_array($arg) && isset($arg['uid']) ? $arg['uid'] : $arg])
+                                      ->getFirst(['pid'])['pid'] ?? 0;
+                }
+
+                if (isset($pids[$storagePid])) {
+                    $pid = $pids[$storagePid];
+                } else {
+                    $argString = is_object($arg) ? get_class($arg) : (string)$arg;
+                    throw new LinkException('Failed to map argument value: "' . $argString .
+                                            '" (key: ' . array_search($arg, $this->args, true) . ')' .
+                                            ' with storage pid: ' . $storagePid . ' to a link pid!');
+                }
+            } else {
+                $pid = $this->pid;
+            }
+            $ub->setTargetPageUid($this->context->TypoContext->Pid()->get($pid));
         } else {
             $ub->setTargetPageUid($this->context->TypoContext->getPidAspect()->getCurrentPid());
         }
@@ -939,6 +1050,11 @@ class TypoLink
             }
         }
 
+        // Resolve raw, db rows to numeric args
+        $args = array_map(static function ($arg) {
+            return is_array($arg) && isset($arg['uid']) ? $arg['uid'] : $arg;
+        }, $this->args);
+
         // Execute uriFor if required
         if ($useUriFor) {
             // Do some adjustments if we are in cli mode, because typo3 checks if we are in frontend mode
@@ -969,14 +1085,14 @@ class TypoLink
             // so we go the extra mile and let the build process run twice to be sure everything works smoothly
             $ub->uriFor(
                 empty(($tmp = $request->getControllerActionName())) ? null : $tmp,
-                $this->args,
+                $args,
                 empty(($tmp = $request->getControllerName())) ? null : $tmp,
                 empty(($tmp = $request->getControllerExtensionName())) ? null : $tmp,
                 empty(($tmp = $request->getPluginName())) ? null : $tmp
             );
         } else {
             // Set arguments
-            $ub->setArguments($this->args);
+            $ub->setArguments($args);
         }
 
         // Render the uri
