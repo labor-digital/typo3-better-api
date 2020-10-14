@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.25.0](https://github.com/labor-digital/typo3-better-api/compare/v9.24.2...v9.25.0) (2020-10-14)
+
+
+### Features
+
+* **DbService:** add support to use extbase model name as table name in getQuery() ([259cdbc](https://github.com/labor-digital/typo3-better-api/commit/259cdbc3a215f4e948ab8d5f719c4f46b654d6fb))
+* **Link:** allow link browser registration if a required fragment is present ([560d744](https://github.com/labor-digital/typo3-better-api/commit/560d7444be10f5d9c5cf73a4b5602760d95d7138))
+* **Naming:** implement resolveTableName and resolveCallable methods ([1dbefc3](https://github.com/labor-digital/typo3-better-api/commit/1dbefc3d3f2105b37e014fd01b7fe312e1d8395a))
+* **TypoLink:** add support for complex pid types. ([f0016fc](https://github.com/labor-digital/typo3-better-api/commit/f0016fc370b568abdda04ad02b06ebe77f47a1c9))
+
+
+### Bug Fixes
+
+* **LinkSetGenerator:** add missing, closing brace ([9df3468](https://github.com/labor-digital/typo3-better-api/commit/9df34683f49251177737b99a803cb9e68a7c6f78))
+
 ### [9.24.2](https://github.com/labor-digital/typo3-better-api/compare/v9.24.1...v9.24.2) (2020-10-09)
 
 
