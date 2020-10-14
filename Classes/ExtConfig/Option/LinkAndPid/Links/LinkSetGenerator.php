@@ -65,7 +65,6 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
     protected function generateLinkBrowserTsConfig(array $linkSets, ExtConfigContext $context): string
     {
         $tsConfig = [];
-
         foreach ($linkSets as $key => $linkSet) {
             if ($linkSet->getLinkBrowserConfig() === null) {
                 continue;
@@ -88,12 +87,13 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
                           'table = ' . $config['table'] . PHP_EOL .
                           'arg = ' . key($requiredArgs) . PHP_EOL .
                           (! empty($options['basePid']) ?
-                              'storagePid =' . $context->TypoContext->Pid()->get(
+                              'storagePid = ' . $context->TypoContext->Pid()->get(
                                   $options['basePid'], (int)$options['basePid']
                               ) . PHP_EOL : '') .
                           (in_array('hidePageTree', $options, true) || $options['hidePageTree'] === true ?
                               'hidePageTree = 1' . PHP_EOL : ''
                           ) .
+                          '}' . PHP_EOL .
                           '}' . PHP_EOL;
         }
 
