@@ -93,7 +93,7 @@ class DbService implements DbServiceInterface
     public function getQuery(string $tableName, bool $disableDefaultConstraints = false): StandaloneBetterQuery
     {
         if (class_exists($tableName)) {
-            $tableName = Naming::tableNameFromModelClass($tableName);
+            $tableName = Naming::resolveTableName($tableName);
         }
 
         $query = $this->container->getWithoutDi(

@@ -66,6 +66,13 @@ class LinkSetDefinition
     protected $fragment;
 
     /**
+     * The fragment generator to be used instead of the $fragment property.
+     *
+     * @var array|null
+     */
+    protected $fragmentGenerator;
+
+    /**
      * Optional The controller class to create the request for
      *
      * @var string
@@ -262,6 +269,39 @@ class LinkSetDefinition
     }
 
     /**
+     * Sometimes you want to create the fragment of the link dynamically based on certain rules.
+     * For this case you can provide a fragment generator. The generator will receive this link instance
+     * to build the fragment with.
+     *
+     * NOTE: Defining a generator will replace all other defined fragments.
+     * If you implement a generator it has to take care of the fragments itself.
+     *
+     * @param   string|null  $generatorClass  The name of a class that is used as generator
+     * @param   string       $method          The method to call on the generator class.
+     *                                        The method should return either an array or a string.
+     *                                        Basically the same as if you would set withFragment()
+     *
+     * @return $this
+     */
+    public function setFragmentGenerator(?string $generatorClass, string $method = 'generateFragment'): self
+    {
+        $this->fragmentGenerator = $generatorClass === null ? null : [$generatorClass, $method];
+
+        return $this;
+    }
+
+    /**
+     * Returns either the configured fragment generator callable, or null if there is none
+     *
+     * @return array|null
+     */
+    public function getFragmentGenerator(): ?array
+    {
+        return $this->fragmentGenerator;
+    }
+
+
+    /**
      * Returns the fragment/anchor tag of the link
      *
      * Can be either a string like: myFragment
@@ -288,7 +328,7 @@ class LinkSetDefinition
      */
     public function setFragment($fragment): LinkSetDefinition
     {
-        if (! is_array($fragment) && ! is_string($fragment) && ! is_null($fragment)) {
+        if (! is_array($fragment) && ! is_string($fragment) && $fragment !== null) {
             throw new LinkException('The given fragment is invalid!');
         }
         $this->fragment = is_string($fragment) ? trim(ltrim(trim($fragment), '#')) : $fragment;
@@ -542,6 +582,31 @@ class LinkSetDefinition
     }
 
     /**
+     * Returns the list of required argument and fragment elements that have to be set
+     * in order to build the link successfully
+     *
+     * @return array
+     */
+    public function getRequiredElements(): array
+    {
+        $required = [];
+        foreach ($this->args as $arg => $val) {
+            if ($val === '?') {
+                $required[] = $arg;
+            }
+        }
+        if (is_iterable($this->fragment)) {
+            foreach ($this->fragment as $arg => $val) {
+                if ($val === '?') {
+                    $required[] = 'fragment:' . $arg;
+                }
+            }
+        }
+
+        return $required;
+    }
+
+    /**
      * Adds a single argument and its value to the list of link arguments
      *
      * Note: if you set the $value to "?" the argument will be registered as "required" placeholder
@@ -699,17 +764,17 @@ class LinkSetDefinition
         if (! empty($this->language)) {
             $link = $link->withLanguage($this->language);
         }
+        if (! empty($this->fragmentGenerator)) {
+            $link = $link->withFragmentGenerator(...$this->fragmentGenerator);
+        }
 
         // Build args and required args
-        $requiredArgs = $requiredFragmentArgs = [];
         if (! empty($this->args)) {
             $args = [];
             foreach ($this->args as $k => $v) {
-                if (trim($v) === '?') {
-                    $requiredArgs[] = $k;
-                    continue;
+                if (trim($v) !== '?') {
+                    $args[$k] = $v;
                 }
-                $args[$k] = $v;
             }
             if (! empty($args)) {
                 $link = $link->withArgs($args);
@@ -721,20 +786,17 @@ class LinkSetDefinition
             } else {
                 $fragment = [];
                 foreach ($this->fragment as $k => $v) {
-                    if (trim($v) === '?') {
-                        $requiredFragmentArgs[] = $k;
-                        continue;
+                    if (trim($v) !== '?') {
+                        $fragment[$k] = $v;
                     }
-                    $fragment[$k] = $v;
                 }
                 if (! empty($fragment)) {
                     $link = $link->withFragment($fragment);
                 }
             }
         }
-        if (! empty($requiredArgs) || ! empty($requiredFragmentArgs)) {
-            $link = $link->__withRequiredElements($requiredArgs, $requiredFragmentArgs);
-        }
+
+        $link = $link->withRequiredElements($this->getRequiredElements());
 
         // Done
         return $link;

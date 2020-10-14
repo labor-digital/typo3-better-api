@@ -70,10 +70,10 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
                 continue;
             }
 
-            $requiredArgs = array_filter($linkSet->getArgs(), function ($v) { return $v === '?'; });
-            if (count($requiredArgs) !== 1) {
+            $required = $linkSet->getRequiredElements();
+            if (count($required) !== 1) {
                 throw new LinkException('You can\'t register the link set: "' . $key
-                                        . '" to show up in the link browser, because it MUST have EXACTLY ONE required argument!');
+                                        . '" to show up in the link browser, because it MUST have EXACTLY ONE required argument or ONE required fragment part!');
             }
 
             $config  = $linkSet->getLinkBrowserConfig();
@@ -85,7 +85,7 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
                           'label = ' . $config['label'] . PHP_EOL .
                           'configuration {' . PHP_EOL .
                           'table = ' . $config['table'] . PHP_EOL .
-                          'arg = ' . key($requiredArgs) . PHP_EOL .
+                          'arg = ' . reset($required) . PHP_EOL .
                           (! empty($options['basePid']) ?
                               'storagePid = ' . $context->TypoContext->Pid()->get(
                                   $options['basePid'], (int)$options['basePid']
@@ -95,6 +95,7 @@ class LinkSetGenerator implements CachedStackGeneratorInterface
                           ) .
                           '}' . PHP_EOL .
                           '}' . PHP_EOL;
+
         }
 
         return implode(PHP_EOL . PHP_EOL, $tsConfig);

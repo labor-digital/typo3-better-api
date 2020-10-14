@@ -91,6 +91,13 @@ class TypoLink
     protected $fragment;
 
     /**
+     * The fragment generator to be used instead of the $fragment property.
+     *
+     * @var array|null
+     */
+    protected $fragmentGenerator;
+
+    /**
      * Optional The controller class to create the request for
      *
      * @var string
@@ -163,9 +170,18 @@ class TypoLink
     protected $uriBuilder;
 
     /**
+     * The list of fragment and argument elements that are "required" to build the link.
+     * This is used when a linkSet was applied
+     *
+     * @var array
+     */
+    protected $requiredElements = [];
+
+    /**
      * Used if a link set was applied which requires specific arguments to be present
      *
      * @var array
+     * @deprecated will be removed in v10
      */
     protected $requiredArgs = [];
 
@@ -173,6 +189,7 @@ class TypoLink
      * Used if a link set was applied which requires specific fragments-arguments to be present
      *
      * @var array
+     * @deprecated will be removed in v10
      */
     protected $requiredFragmentArgs = [];
 
@@ -447,6 +464,39 @@ class TypoLink
         $clone->deniedQueryArgs = array_values($list);
 
         return $clone;
+    }
+
+    /**
+     * Sometimes you want to create the fragment of the link dynamically based on certain rules.
+     * For this case you can provide a fragment generator. The generator will receive this link instance
+     * to build the fragment with.
+     *
+     * NOTE: Defining a generator will replace all other defined fragments.
+     * If you implement a generator it has to take care of the fragments itself.
+     *
+     * @param   string|null  $generatorClass  The name of a class that is used as generator
+     * @param   string       $method          The method to call on the generator class.
+     *                                        The method should return either an array or a string.
+     *                                        Basically the same as if you would set withFragment()
+     *
+     * @return $this
+     */
+    public function withFragmentGenerator(?string $generatorClass, string $method = 'generateFragment'): self
+    {
+        $clone                    = clone $this;
+        $clone->fragmentGenerator = $generatorClass === null ? null : [$generatorClass, $method];
+
+        return $clone;
+    }
+
+    /**
+     * Returns either the configured fragment generator callable, or null if there is none
+     *
+     * @return array|null
+     */
+    public function getFragmentGenerator(): ?array
+    {
+        return $this->fragmentGenerator;
     }
 
     /**
@@ -828,6 +878,33 @@ class TypoLink
     }
 
     /**
+     * Internal method to set the list of argument and fragment keys that are required to build the link
+     * successfully. This is used internally to inject the elements from a link set.
+     *
+     * @param   array  $requiredElements
+     *
+     * @return $this
+     * @internal
+     */
+    public function withRequiredElements(array $requiredElements): self
+    {
+        $clone                   = clone $this;
+        $clone->requiredElements = $requiredElements;
+
+        return $clone;
+    }
+
+    /**
+     * Returns the list of element keys that have to be present to build the link
+     *
+     * @return array
+     */
+    public function getRequiredElements(): array
+    {
+        return $this->requiredElements;
+    }
+
+    /**
      * Uses the given configuration and builds a link as a simple string out of it
      *
      * @param   array  $options  Additional configuration options
@@ -900,13 +977,8 @@ class TypoLink
         // Page id
         if (! empty($this->pid)) {
             // Resolve callable
-            if (is_array($this->pid) && class_exists((string)$this->pid[0])
-                && method_exists((string)$this->pid[0], (string)$this->pid[1])
-                && ! (new \ReflectionMethod($this->pid[0], $this->pid[1]))->isStatic()) {
-                $pid = $this->context->getInstanceOf($this->pid[0])->{$this->pid[1]}($this);
-            } elseif (is_callable($this->pid)) {
-                $pid = call_user_func($this->pid, $this);
-
+            if (is_callable($this->pid) || (is_array($this->pid) && class_exists((string)$this->pid[0]))) {
+                $pid = call_user_func(Naming::resolveCallable($this->pid), $this);
             } elseif (is_array($this->pid)) {
                 // Translate the map keys into real pids so we can do a lookup for the correct value
                 $keys = array_map(function ($k) {
@@ -935,7 +1007,7 @@ class TypoLink
                     // Resolve a model name to a table name
                     $table = $pids['table'];
                     if (class_exists($table)) {
-                        $table = Naming::tableNameFromModelClass($table);
+                        $table = Naming::resolveTableName($table);
                     }
 
                     $storagePid = $this->context->Db
@@ -1018,35 +1090,32 @@ class TypoLink
             $this->args['L'] = $this->context->TypoContext->Language()->getCurrentFrontendLanguage()->getLanguageId();
         }
 
+        // Validate required elements
+        $requiredFragments = array_filter($this->getRequiredElements(), static function ($v) {
+            return strpos($v, 'fragment:') === 0;
+        });
+        $requiredArgs      = array_diff($this->getRequiredElements(), $requiredFragments);
+
         // Validate if we have all the required arguments
-        if (! empty($this->requiredArgs)) {
-            $missingArgs = [];
-            foreach ($this->requiredArgs as $arg) {
-                if (! array_key_exists($arg, $this->args)) {
-                    $missingArgs[] = $arg;
-                }
-            }
-            if (! empty($missingArgs)) {
-                throw new LinkException('Could not build link, because it misses one or multiple arguments: '
-                                        . implode(', ', $missingArgs));
-            }
+        $missingArgs = array_diff_key(array_fill_keys($requiredArgs, true), $this->args);
+        if (! empty($missingArgs)) {
+            throw new LinkException('Could not build link, because it misses one or multiple arguments: '
+                                    . implode(', ', $missingArgs));
         }
 
         // Validate if we have all the required fragment-arguments
-        if (! empty($this->requiredFragmentArgs)) {
+        if (! empty($requiredFragments)) {
             if (! is_iterable($this->fragment)) {
                 throw new LinkException('Could not build link, the applied link set requires (iterable) fragment arguments, but the fragment was set to: '
                                         . gettype($this->fragment));
             }
-            $missingArgs = [];
-            foreach ($this->requiredFragmentArgs as $arg) {
-                if (! array_key_exists($arg, (array)$this->fragment)) {
-                    $missingArgs[] = $arg;
-                }
-            }
-            if (! empty($missingArgs)) {
+
+            $missingFragmentArgs = array_diff_key(array_fill_keys(array_map(static function ($v): string {
+                return substr($v, 9);
+            }, $requiredFragments), true), (array)$this->fragment);
+            if (! empty($missingFragmentArgs)) {
                 throw new LinkException('Could not build link, because it misses one or multiple fragment arguments: '
-                                        . implode(', ', $missingArgs));
+                                        . implode(', ', $missingFragmentArgs));
             }
         }
 
@@ -1124,11 +1193,14 @@ class TypoLink
         }
 
         // Build the fragment / anchor
-        if (! empty($this->fragment)) {
-            $fragment = $this->fragment;
-            if (is_iterable($this->fragment)) {
+        $fragment = $this->fragment;
+        if ($this->fragmentGenerator !== null) {
+            $fragment = call_user_func(Naming::resolveCallable($this->fragmentGenerator), $this);
+        }
+        if (! empty($fragment)) {
+            if (is_iterable($fragment)) {
                 $fPath = [];
-                foreach ($this->fragment as $k => $v) {
+                foreach ($fragment as $k => $v) {
                     $fPath[] = rawurlencode($k) . '/' . rawurlencode($v);
                 }
                 $fragment = '/' . implode('/', $fPath);
@@ -1169,7 +1241,7 @@ class TypoLink
      * @param   array  $requiredFragmentArgs
      *
      * @return \LaborDigital\Typo3BetterApi\Link\TypoLink
-     * @deprecated Will be renamed in v10
+     * @deprecated Will be removed in v10
      */
     public function __withRequiredElements(array $requiredArgs, array $requiredFragmentArgs)
     {

@@ -37,7 +37,7 @@ class LinkSetRecordLinkBrowserHandler extends RecordLinkHandler
         parent::initialize($linkBrowser, $identifier, $configuration);
 
         if (isset($this->configuration['table']) && class_exists($this->configuration['table'])) {
-            $this->configuration['table'] = Naming::tableNameFromModelClass($this->configuration['table']);
+            $this->configuration['table'] = Naming::resolveTableName($this->configuration['table']);
         }
     }
 

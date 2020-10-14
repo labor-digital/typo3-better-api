@@ -81,6 +81,10 @@ class LinkService
         }
         if (! empty($args)) {
             foreach ($args as $k => $v) {
+                if (strpos($k, 'fragment:') === 0) {
+                    $link = $link->withAddedToFragment(substr($k, 9), $v);
+                    continue;
+                }
                 $link = $link->withAddedToArgs($k, $v);
             }
         }

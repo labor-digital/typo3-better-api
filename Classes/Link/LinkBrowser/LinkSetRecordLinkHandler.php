@@ -49,7 +49,7 @@ class LinkSetRecordLinkHandler extends RecordLinkHandler
         $table = &$data['pageTsConfig']['TCEMAIN.']['linkHandler.'][$linkData['identifier'] . '.']
                   ['configuration.']['table'];
         if (class_exists($table)) {
-            $table = Naming::tableNameFromModelClass($table);
+            $table = Naming::resolveTableName($table);
         }
 
         // Rewrite the request to a default "record" type
