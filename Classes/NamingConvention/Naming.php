@@ -20,8 +20,13 @@
 namespace LaborDigital\Typo3BetterApi\NamingConvention;
 
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+use LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository;
 use Neunerlei\PathUtil\Path;
+use ReflectionMethod;
+use TYPO3\CMS\Core\Utility\ClassNamingUtility;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class Naming
 {
@@ -111,6 +116,124 @@ class Naming
     }
 
     /**
+     * Tries to find the correct sql database table for the given selector.
+     *
+     * IMPORTANT: This method requires a TypoScript as well as the TCA to be set up!
+     *
+     * @param   string|AbstractEntity|Repository  $selector  The selector to find the database table for:
+     *                                                       The valid options are:
+     *                                                       - a string already containing a table name -> will be
+     *                                                       kept as is
+     *                                                       - the class|instance of a domain model
+     *                                                       - the class|instance of a domain repository
+     *
+     * @return string
+     * @throws \LaborDigital\Typo3BetterApi\NamingConvention\NamingConventionException
+     */
+    public static function resolveTableName($selector): string
+    {
+        if (is_object($selector)) {
+            if ($selector instanceof BetterRepository) {
+                return $selector->getTableName();
+            }
+            if ($selector instanceof Repository || $selector instanceof AbstractEntity) {
+                $selector = get_class($selector);
+            }
+        }
+
+        if (is_string($selector)) {
+            if (class_exists($selector)) {
+                // Resolve repository class
+                if (in_array(Repository::class, class_parents($selector), true)) {
+                    $selector = ClassNamingUtility::translateRepositoryNameToModelName($selector);
+                }
+
+                // Resolve entity class
+                if (in_array(AbstractEntity::class, class_parents($selector), true)) {
+                    return TypoContainer::getInstance()->get(DataMapper::class)
+                                        ->getDataMap($selector)->getTableName();
+                }
+            }
+
+            return $selector;
+        }
+
+        throw new NamingConventionException('Could not convert the given selector: ' . $selector
+                                            . ' into a database table name!');
+    }
+
+    /**
+     * Resolves the given callable into an actual callable.
+     *
+     * @param   string|array|callable  $callable               Allowed values are:
+     *                                                         - callable types -> will be passed through
+     *                                                         - TYPO3 callables like namespace\\class->method
+     *                                                         - instantiatable callables [Class::class, 'method']
+     *                                                         Class will be instantiated using the container if
+     *                                                         "method" is not declared "static".
+     * @param   bool                   $instantiateIfRequired  Set this to false if you don't want to instantiate the
+     *                                                         class of instantiable callbacks. Mostly for legacy
+     *                                                         support.
+     *
+     * @return callable
+     * @throws \LaborDigital\Typo3BetterApi\NamingConvention\NamingConventionException
+     */
+    public static function resolveCallable($callable, bool $instantiateIfRequired = true): callable
+    {
+        if (is_string($callable)) {
+            // Return something that is already callable
+            if (is_callable($callable)) {
+                return $callable;
+            }
+
+            // Resolve a list of multiple callables -> FlexForms
+            if (strpos($callable, ';') !== false) {
+                return array_map(
+                    [static::class, __FUNCTION__],
+                    array_filter(array_map('trim', explode(';', $callable)))
+                );
+            }
+
+            // Resolve typo callable
+            if (strpos($callable, '->') !== false) {
+                $parts = explode('->', $callable);
+                if (count($parts) !== 2) {
+                    throw new NamingConventionException(
+                        'Invalid callback given: "' . $callable
+                        . '". It has to be something like: namespace\\class->method'
+                    );
+                }
+
+                $callable = [
+                    trim(str_replace('/', '\\', $parts[0]), '\\ '),
+                    trim($parts[1], ' \\/()'),
+                ];
+            }
+        }
+
+        if (is_array($callable) && count($callable) === 2) {
+            // Already a callable using an instance, or instantiation disabled
+            if (is_callable($callable) && (is_object($callable[0]) || ! $instantiateIfRequired)) {
+                return $callable;
+            }
+
+            // Check if we have to instantiate the class first
+            if (! (new ReflectionMethod($callable[0], $callable[1]))->isStatic()) {
+                return [
+                    TypoContainer::getInstance()->get($callable[0]),
+                    $callable[1],
+                ];
+            }
+        }
+
+        if (! is_callable($callable)) {
+            throw new NamingConventionException('Could not resolve the given callable into an actual callable!');
+        }
+
+        return $callable;
+    }
+
+    /**
      * Finds the database table name for the given extbase model class
      *
      * IMPORTANT: This method requires a TypoScript as well as the TCA to be set up!
@@ -118,6 +241,7 @@ class Naming
      * @param   string  $modelClass  The name of the extbase model we should find the table name for
      *
      * @return string
+     * @deprecated will be removed in v10 use resolveTableName() instead
      */
     public static function tableNameFromModelClass(string $modelClass): string
     {
@@ -132,6 +256,7 @@ class Naming
      *
      * @return array
      * @throws \LaborDigital\Typo3BetterApi\NamingConvention\NamingConventionException
+     * @deprecated will be removed in v10 use resolveCallable() instead!
      */
     public static function typoCallbackToArray(string $callback): array
     {
