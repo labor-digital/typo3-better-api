@@ -47,7 +47,7 @@ class LinkSetRecordLinkBuilder extends AbstractTypolinkBuilder
             $link,
             $linkText,
             $target
-                ?: $this->resolveTargetAttribute($conf, 'extTarget', true,
+                ?: $this->resolveTargetAttribute($conf, 'target', true,
                 $this->getTypoScriptFrontendController()->extTarget),
         ];
     }
