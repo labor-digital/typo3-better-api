@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.25.1](https://github.com/labor-digital/typo3-better-api/compare/v9.25.0...v9.25.1) (2020-10-15)
+
+
+### Bug Fixes
+
+* **LinkSetRecordLinkBuilder:** only build external links if required ([6e06cef](https://github.com/labor-digital/typo3-better-api/commit/6e06cefbc942ad52519b0ada9e5fee036ff65a2c))
+* write cache key in lower case to prevent db issues ([b4d4e9e](https://github.com/labor-digital/typo3-better-api/commit/b4d4e9e4a4b9c3a712a17aab88faab7c99af7000))
+
 ## [9.25.0](https://github.com/labor-digital/typo3-better-api/compare/v9.24.2...v9.25.0) (2020-10-14)
 
 
