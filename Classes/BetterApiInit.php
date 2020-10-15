@@ -615,7 +615,7 @@ HTML;
     protected function applyCacheConfiguration(): void
     {
         $cc                       = &$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'];
-        $cc['ba_cache_pageBased'] = [
+        $cc['ba_cache_pagebased'] = [
             'frontend' => VariableFrontend::class,
             'backend'  => Typo3DatabaseBackend::class,
             'options'  => [

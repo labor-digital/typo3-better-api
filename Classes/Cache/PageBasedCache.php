@@ -21,15 +21,15 @@ namespace LaborDigital\Typo3BetterApi\Cache;
 
 class PageBasedCache extends AbstractCache
 {
-    protected $cacheConfigKey = 'ba_cache_pageBased';
-    
+    protected $cacheConfigKey = 'ba_cache_pagebased';
+
     /**
      * Contains the current page id after it was once acquired
      *
      * @var int|null
      */
     protected $pageId;
-    
+
     /**
      * @inheritDoc
      */
@@ -37,7 +37,7 @@ class PageBasedCache extends AbstractCache
     {
         return $this->setInternal($key, $value, $ttl, $this->getTags());
     }
-    
+
     /**
      * Removes all cache entries for a given page
      *
@@ -49,7 +49,7 @@ class PageBasedCache extends AbstractCache
     {
         $this->getTypoCache()->flushByTag('pageId_' . $pid);
     }
-    
+
     /**
      * Prepares the key with an additional prefix and formats it so it is save for all applications
      *
@@ -67,14 +67,14 @@ class PageBasedCache extends AbstractCache
             $prefix .= '-' . $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId();
             $prefix .= '-' . $this->tsfe->getTsfe()->newHash;
         }
-        
+
         // Build combined key
         $key = parent::prepareKey(is_string($key) ? $key : md5(serialize($key)));
         $key = $prefix . '-' . $key;
-        
+
         return $key;
     }
-    
+
     /**
      * Returns either the current page id or 0 if no page id was found
      *
@@ -87,11 +87,11 @@ class PageBasedCache extends AbstractCache
         if (isset($this->pageId)) {
             return $this->pageId;
         }
-        
+
         // Extract pid
         return $this->pageId = $this->typoContext->getPidAspect()->getCurrentPid();
     }
-    
+
     /**
      * Returns the pagebased tags for all created cache entries
      *
@@ -102,7 +102,7 @@ class PageBasedCache extends AbstractCache
     {
         return ['pageId_' . $this->getPageId()];
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -110,14 +110,14 @@ class PageBasedCache extends AbstractCache
     {
         // Use default method
         $ttl = parent::prepareTtl($ttl);
-        
+
         // Check if we have to add the page"s cache time
         if ($ttl === null && $this->typoContext->getEnvAspect()->isFrontend()) {
             if ($this->tsfe->hasTsfe() && is_array($this->tsfe->getTsfe()->page)) {
                 $ttl = (int)$this->tsfe->getTsfe()->page['cache_timeout'];
             }
         }
-        
+
         // Done
         return $ttl;
     }
