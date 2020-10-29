@@ -300,7 +300,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
                     }
 
                     // Check if we have to link the content
-                    $content = $context->getBody();
+                    $content = '<br>' . $context->getBody();
                     if ($context->isLinkPreview()) {
                         $content = $event->getView()->linkEditContent($content, $row);
                     }
