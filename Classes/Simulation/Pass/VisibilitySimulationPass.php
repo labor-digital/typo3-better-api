@@ -23,19 +23,25 @@ declare(strict_types=1);
 namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
 
 
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 
 class VisibilitySimulationPass implements SimulatorPassInterface
 {
-    use CommonDependencyTrait;
-    
-    protected $aspectBackup;
-    
     /**
-     * @inheritDoc
+     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
-    public function __construct() { }
-    
+    protected $typoContext;
+
+    /**
+     * VisibilitySimulationPass constructor.
+     *
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $typoContext
+     */
+    public function __construct(TypoContext $typoContext)
+    {
+        $this->typoContext = $typoContext;
+    }
+
     /**
      * @inheritDoc
      */
@@ -53,44 +59,44 @@ class VisibilitySimulationPass implements SimulatorPassInterface
             'type'    => 'bool',
             'default' => false,
         ];
-        
+
         return $options;
-        
+
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function requireSimulation(array $options): bool
+    public function requireSimulation(array $options, array &$storage): bool
     {
-        $visibilityAspect = $this->TypoContext()->Visibility();
-        
+        $visibilityAspect = $this->typoContext->Visibility();
+
         return $options['includeHiddenPages'] !== $visibilityAspect->includeHiddenPages()
                || $options['includeHiddenContent'] !== $visibilityAspect->includeHiddenContent()
                || $options['includeDeletedRecords'] !== $visibilityAspect->includeDeletedRecords();
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function setup(array $options): void
+    public function setup(array $options, array &$storage): void
     {
         // Backup the aspect
-        $this->aspectBackup = clone $this->TypoContext()->getRootContext()->getAspect('visibility');
-        
+        $storage['aspect'] = clone $this->typoContext->getRootContext()->getAspect('visibility');
+
         // Update the aspect
-        $visibilityAspect = $this->TypoContext()->Visibility();
+        $visibilityAspect = $this->typoContext->Visibility();
         $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
         $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
         $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function rollBack(): void
+    public function rollBack(array $storage): void
     {
-        $this->TypoContext()->getRootContext()->setAspect('visibility', $this->aspectBackup);
+        $this->typoContext->getRootContext()->setAspect('visibility', $storage['aspect']);
     }
-    
+
 }

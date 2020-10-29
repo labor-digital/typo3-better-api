@@ -23,20 +23,25 @@ declare(strict_types=1);
 namespace LaborDigital\Typo3BetterApi\Simulation\Pass;
 
 
-use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
+use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 
 class SiteSimulationPass implements SimulatorPassInterface
 {
-    
-    use CommonDependencyTrait;
-    
-    protected $siteBackup;
-    
     /**
-     * @inheritDoc
+     * @var \LaborDigital\Typo3BetterApi\TypoContext\TypoContext
      */
-    public function __construct() { }
-    
+    protected $typoContext;
+
+    /**
+     * SiteSimulationPass constructor.
+     *
+     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $typoContext
+     */
+    public function __construct(TypoContext $typoContext)
+    {
+        $this->typoContext = $typoContext;
+    }
+
     /**
      * @inheritDoc
      */
@@ -46,42 +51,42 @@ class SiteSimulationPass implements SimulatorPassInterface
             'type'    => ['string', 'null'],
             'default' => null,
         ];
-        
+
         return $options;
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function requireSimulation(array $options): bool
+    public function requireSimulation(array $options, array &$storage): bool
     {
         return $options['site'] !== null
                && $options['pid'] === null
                && (
-                   ! $this->TypoContext()->Site()->hasCurrent()
-                   || $this->TypoContext()->Site()->getCurrent()->getIdentifier() !== $options['site']
+                   ! $this->typoContext->Site()->hasCurrent()
+                   || $this->typoContext->Site()->getCurrent()->getIdentifier() !== $options['site']
                );
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function setup(array $options): void
+    public function setup(array $options, array &$storage): void
     {
         // Backup the current site
-        $this->siteBackup = $this->TypoContext()->Config()->getRequestAttribute('site');
-        
+        $storage['site'] = $this->typoContext->Config()->getRequestAttribute('site');
+
         // Find the given site instance and inject it into the request
-        $site = $this->TypoContext()->Site()->get($options['site']);
-        $this->TypoContext()->Config()->setRequestAttribute('site', $site);
+        $site = $this->typoContext->Site()->get($options['site']);
+        $this->typoContext->Config()->setRequestAttribute('site', $site);
     }
-    
+
     /**
      * @inheritDoc
      */
-    public function rollBack(): void
+    public function rollBack(array $storage): void
     {
-        $this->TypoContext()->Config()->setRequestAttribute('site', $this->siteBackup);
+        $this->typoContext->Config()->setRequestAttribute('site', $storage['site']);
     }
-    
+
 }

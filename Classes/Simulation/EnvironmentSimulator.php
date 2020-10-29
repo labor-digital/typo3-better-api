@@ -29,7 +29,6 @@ use LaborDigital\Typo3BetterApi\Simulation\Pass\TsfeSimulationPass;
 use LaborDigital\Typo3BetterApi\Simulation\Pass\VisibilitySimulationPass;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class EnvironmentSimulator
@@ -41,7 +40,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class EnvironmentSimulator implements SingletonInterface
 {
     use CommonDependencyTrait;
-    
+
     /**
      * The list of simulation pass classes with the option of extension.
      * All classes registered MUST implement the SimulatorPassInterface!
@@ -59,21 +58,35 @@ class EnvironmentSimulator implements SingletonInterface
             LanguageSimulationPass::class,
             TsfeSimulationPass::class,
         ];
-    
+
     /**
      * This is true when we are currently running inside a transformation
      *
      * @var bool
      */
     protected $isInSimulation = false;
-    
+
     /**
      * True if child simulations should be ignored
      *
      * @var bool
      */
     protected $childSimulationsIgnored = false;
-    
+
+    /**
+     * The list of instantiated passes
+     *
+     * @var SimulatorPassInterface[]
+     */
+    protected $passes;
+
+    /**
+     * The compiles option definition of all simulation passes
+     *
+     * @var array
+     */
+    protected $optionDefinition;
+
     /**
      * Can be used to run a function in a different environment.
      * You can use this method to render frontend content's in the backend or in the CLI,
@@ -142,48 +155,50 @@ class EnvironmentSimulator implements SingletonInterface
         ) {
             return $handler();
         }
-        
-        // Apply the real options
-        $passes  = $this->makePassInstances();
-        $options = Options::make($options, $this->getSimulatorOptions($passes));
-        
+
+        // Prepare the simulation
+        $this->initialize();
+        $options = Options::make($options, $this->optionDefinition);
+
         // Backup the old ignore child simulation state
         $parentIgnoresChildSimulations = $this->childSimulationsIgnored;
         $this->childSimulationsIgnored = $options['ignoreChildSimulations'];
         $parentIsInSimulation          = $this->isInSimulation;
-        
+
         // Set up the simulation
         $rollBackPasses = [];
         $result         = null;
         try {
-            foreach ($passes as $pass) {
-                if ($pass->requireSimulation($options)) {
-                    $rollBackPasses[] = $pass;
-                    $pass->setup($options);
+            foreach ($this->passes as $pass) {
+                $storage = [];
+                if ($pass->requireSimulation($options, $storage)) {
+                    $pass->setup($options, $storage);
+                    $rollBackPasses[] = [$pass, $storage];
                 }
             }
-            
+
             // Update the simulation state
             $this->isInSimulation = $this->isInSimulation || ! empty($rollBackPasses);
-            
+
             // Run the handler
             $result = $handler();
-            
+
         } finally {
             // Roll back
-            foreach (array_reverse($rollBackPasses) as $pass) {
-                $pass->rollBack();
+            foreach (array_reverse($rollBackPasses) as $args) {
+                $args[0]->rollBack($args[1]);
+                unset($args[1], $args);
             }
-            
+
             // Restore parent state
             $this->childSimulationsIgnored = $parentIgnoresChildSimulations;
             $this->isInSimulation          = $parentIsInSimulation;
         }
-        
+
         // Done
         return $result;
     }
-    
+
     /**
      * ATTENTION: This method is extremely powerful and you should really consider twice if you want to use it
      * for whatever you want to achieve.
@@ -210,43 +225,31 @@ class EnvironmentSimulator implements SingletonInterface
     {
         return $this->runWithEnvironment(['asAdmin'], $handler);
     }
-    
+
     /**
-     * Creates the instances of the simulator passes
-     *
-     * @return \LaborDigital\Typo3BetterApi\Simulation\Pass\SimulatorPassInterface[]
+     * Initializes the instance by creating the pass instances and preparing the option definition
      */
-    protected function makePassInstances(): array
+    protected function initialize(): void
     {
-        $instances = [];
+        if (isset($this->passes)) {
+            return;
+        }
+
+        $optionDefinition = $this->getDefaultOptionDefinition();
+        $passes           = [];
         foreach (static::$environmentSimulatorPasses as $passClass) {
-            $instance = GeneralUtility::makeInstance($passClass);
+            $instance = $this->getInstanceOf($passClass);
             if (! $instance instanceof SimulatorPassInterface) {
                 continue;
             }
-            $instances[] = $instance;
+            $optionDefinition = $instance->addOptionDefinition($optionDefinition);
+            $passes[]         = $instance;
         }
-        
-        return $instances;
+
+        $this->passes           = $passes;
+        $this->optionDefinition = $optionDefinition;
     }
-    
-    /**
-     * Collects the simulator options from the simulator passes
-     *
-     * @param   SimulatorPassInterface[]  $passes  The list of passes to extract the definition from
-     *
-     * @return array
-     */
-    protected function getSimulatorOptions(array $passes): array
-    {
-        $definition = $this->getDefaultOptionDefinition();
-        foreach ($passes as $pass) {
-            $definition = $pass->addOptionDefinition($definition);
-        }
-        
-        return $definition;
-    }
-    
+
     /**
      * Returns the default option definition
      *
