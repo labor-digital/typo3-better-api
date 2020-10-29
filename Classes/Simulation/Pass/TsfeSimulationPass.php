@@ -118,8 +118,8 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $storage['languageAspect'] = clone $this->typoContext->getRootContext()->getAspect('language');
 
         // Store the language aspect temporarily
-        $pid = $options['pid'] ?? $this->typoContext->Pid()->getCurrent();
-        $this->makeSimulatedTsfe($pid, $storage);
+        $pid             = $options['pid'] ?? $this->typoContext->Pid()->getCurrent();
+        $GLOBALS['TSFE'] = $this->makeSimulatedTsfe($pid, $storage);
 
         // Make sure the language aspect stays the same way as we set it...
         $this->typoContext->getRootContext()->setAspect('language', $storage['languageAspect']);
