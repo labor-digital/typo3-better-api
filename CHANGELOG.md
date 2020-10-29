@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.25.2](https://github.com/labor-digital/typo3-better-api/compare/v9.25.1...v9.25.2) (2020-10-29)
+
+
+### Bug Fixes
+
+* **Simulation:** multiple performance improvements ([ae40483](https://github.com/labor-digital/typo3-better-api/commit/ae40483bd8f2b3d7654c8aa736955f2808c93cc1))
+
 ### [9.25.1](https://github.com/labor-digital/typo3-better-api/compare/v9.25.0...v9.25.1) (2020-10-15)
 
 
