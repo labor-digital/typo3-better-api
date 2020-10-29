@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.26.0](https://github.com/labor-digital/typo3-better-api/compare/v9.25.2...v9.26.0) (2020-10-29)
+
+
+### Features
+
+* **TypoScript:** backport the v10 dynamic typoScript injection method for v9 ([23c9b2f](https://github.com/labor-digital/typo3-better-api/commit/23c9b2fa6ed5286f8f4035908396277eb87f4f7e))
+
 ### [9.25.2](https://github.com/labor-digital/typo3-better-api/compare/v9.25.1...v9.25.2) (2020-10-29)
 
 
