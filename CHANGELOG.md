@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.26.2](https://github.com/labor-digital/typo3-better-api/compare/v9.26.1...v9.26.2) (2020-10-29)
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderer:** add a linebreak to the beginning of the preview ([c244512](https://github.com/labor-digital/typo3-better-api/commit/c244512e331fc962a6f0af6f6a732f4a0408b62a))
+
 ### [9.26.1](https://github.com/labor-digital/typo3-better-api/compare/v9.26.0...v9.26.1) (2020-10-29)
 
 
