@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.26.1](https://github.com/labor-digital/typo3-better-api/compare/v9.26.0...v9.26.1) (2020-10-29)
+
+
+### Bug Fixes
+
+* **Simulator:** update tsfe globals entry even if using a cached tsfe instance ([74f0f40](https://github.com/labor-digital/typo3-better-api/commit/74f0f400af62034b24c76847d006068e805aa75e))
+
 ## [9.26.0](https://github.com/labor-digital/typo3-better-api/compare/v9.25.2...v9.26.0) (2020-10-29)
 
 
