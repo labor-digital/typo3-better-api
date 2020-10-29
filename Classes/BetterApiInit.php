@@ -82,6 +82,8 @@ use LaborDigital\Typo3BetterApi\Kint\TypoInstanceTypePlugin;
 use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkEventHandler;
 use LaborDigital\Typo3BetterApi\Pid\PidTcaFilter;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\Typo3BetterApi\TypoScript\DynamicTypoScript\DynamicTypoScriptEventHandler;
+use LaborDigital\Typo3BetterApi\TypoScript\DynamicTypoScript\ExtendedTypoScriptParser;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptService;
 use Neunerlei\EventBus\EventBusInterface;
 use TYPO3\CMS\Backend\Form\NodeFactory;
@@ -97,6 +99,7 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
@@ -374,6 +377,7 @@ class BetterApiInit
      */
     protected function applyCoreModding(): void
     {
+        ClassOverrideGenerator::registerOverride(TypoScriptParser::class, ExtendedTypoScriptParser::class);
         ClassOverrideGenerator::registerOverride(Bootstrap::class, ExtendedBootstrap::class);
         ClassOverrideGenerator::registerOverride(ReflectionService::class, ExtendedReflectionService::class);
         ClassOverrideGenerator::registerOverride(CacheManager::class, ExtendedCacheManager::class);
@@ -572,7 +576,8 @@ HTML;
             })
             ->addLazySubscriber(TypoScriptService::class)
             ->addLazySubscriber(PidTcaFilter::class)
-            ->addLazySubscriber(ExtConfigService::class);
+            ->addLazySubscriber(ExtConfigService::class)
+            ->addLazySubscriber(DynamicTypoScriptEventHandler::class);
 
         // Backend only events
         if ($this->context->Env()->isBackend()) {

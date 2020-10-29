@@ -25,6 +25,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\ExtTablesLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent;
 use LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs;
 use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
+use LaborDigital\Typo3BetterApi\TypoScript\DynamicTypoScript\DynamicTypoScriptRegistry;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
@@ -75,18 +76,27 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
     protected $registeredScripts = [];
 
     /**
+     * @var \LaborDigital\Typo3BetterApi\TypoScript\DynamicTypoScript\DynamicTypoScriptRegistry
+     */
+    protected $dynamicTypoScriptRegistry;
+
+    /**
      * TypoScript constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigurationManager  $cm
+     * @param   \LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigurationManager               $cm
+     * @param   \LaborDigital\Typo3BetterApi\TypoScript\DynamicTypoScript\DynamicTypoScriptRegistry  $dynamicTypoScriptRegistry
      */
-    public function __construct(TypoScriptConfigurationManager $cm)
-    {
+    public function __construct(
+        TypoScriptConfigurationManager $cm,
+        DynamicTypoScriptRegistry $dynamicTypoScriptRegistry
+    ) {
         $this->cm = $cm;
         $this->addToServiceMap([
             'ConfigManager' => ConfigurationManagerInterface::class,
             'TsParser'      => TypoScriptParser::class,
             'Fs'            => TempFs::makeInstance('typoScript'),
         ]);
+        $this->dynamicTypoScriptRegistry = $dynamicTypoScriptRegistry;
     }
 
     /**
@@ -248,6 +258,13 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
      *                            single file
      *                            - constants (string): Can be used to pass along additional constants for your script
      *
+     *                            - dynKey (string): This allows you to register the script for the v10 dynamic
+     *                            typo script api which you can utilize by calling (at)import
+     *                            'dynamic:$yourKey.constants' or (at)import 'dynamic:$yourKey.setup' in your typo
+     *                            script files
+     *                            - dynMemory (bool): A dirty hack to simulate the config state of v10 in v9.
+     *                            This stores the given content for later uses -> This forces io operations!
+     *
      * @return \LaborDigital\Typo3BetterApi\TypoScript\TypoScriptService
      */
     public function addSetup(string $setup, array $options = []): TypoScriptService
@@ -261,15 +278,36 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
                 },
                 'default' => 'typo3_better_api',
             ],
+            'dynKey'    => [
+                'type'    => ['string', 'null'],
+                'default' => null,
+            ],
+            'dynMemory' => [
+                'type'    => 'bool',
+                'default' => false,
+            ],
             'title'     => [
-                'type'    => ['string'],
-                'default' => 'BetterApi - Dynamic TypoScript',
+                'type'    => ['string', 'null'],
+                'default' => null,
             ],
             'constants' => [
                 'type'    => ['string'],
                 'default' => '',
             ],
         ]);
+
+        // Break when using v10 api
+        if ($options['dynKey'] === null && $options['title'] === null) {
+            $options['dynKey'] = 'generic';
+        }
+        if ($options['dynKey'] !== null) {
+            $method = $options['dynMemory'] ? 'memorizeContent' : 'addContent';
+            $this->dynamicTypoScriptRegistry->$method($options['dynKey'] . '.setup', trim($setup));
+            $this->dynamicTypoScriptRegistry->$method($options['dynKey'] . '.constants',
+                trim($options['constants']));
+
+            return $this;
+        }
 
         // Create or load set
         $id = $options['extension'] . $options['title'];

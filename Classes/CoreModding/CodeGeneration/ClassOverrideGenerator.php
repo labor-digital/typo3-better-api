@@ -31,35 +31,35 @@ use TYPO3\ClassAliasLoader\ClassAliasMap;
 
 class ClassOverrideGenerator
 {
-    
+
     /**
      * True if the init method ran at least once
      *
      * @var bool
      */
     protected static $initDone = false;
-    
+
     /**
      * The temporary file system to store the class copies in
      *
      * @var \LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs
      */
     protected static $fs;
-    
+
     /**
      * The instance of the we use to resolve the class file names with
      *
      * @var ClassLoader
      */
     protected static $classLoader;
-    
+
     /**
      * The list of class overrides that are registered
      *
      * @var array
      */
     protected static $overrideDefinitions = [];
-    
+
     /**
      * Called once in the better api init boot phase to populate the required properties
      * and to register our event handler
@@ -73,15 +73,15 @@ class ClassOverrideGenerator
             return;
         }
         static::$initDone = true;
-        
+
         // Create local references
         static::$fs          = TempFs::makeInstance('classOverrides');
         static::$classLoader = $composerClassLoader;
-        
+
         // Register autoload hook
         spl_autoload_register([static::class, '__classLoader'], false, true);
     }
-    
+
     /**
      * Our own spl autoload function
      *
@@ -104,15 +104,15 @@ class ClassOverrideGenerator
                     break;
                 }
             }
-            
+
             // Resolve the stack
             $args['result'] = true;
             static::resolveOverrideStack($stack);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Registers a new class override. The override will completely replace the original source class.
      * The overwritten class will be copied and is available in the same namespace but with the
@@ -146,7 +146,7 @@ class ClassOverrideGenerator
         }
         static::$overrideDefinitions[$classToOverride] = $classToOverrideWith;
     }
-    
+
     /**
      * Returns true if the given class can be overwritten with something else
      *
@@ -166,10 +166,10 @@ class ClassOverrideGenerator
         if ($withOverrule) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Returns true if the class with the given name is registered as override
      *
@@ -181,7 +181,7 @@ class ClassOverrideGenerator
     {
         return isset(static::$overrideDefinitions[$classToOverride]);
     }
-    
+
     /**
      * Internal method which resolves the override stack compiles the required source code
      * and includes the generated files at runtime.
@@ -197,12 +197,12 @@ class ClassOverrideGenerator
         $e = new ClassOverrideStackFilterEvent($stack);
         TypoEventBus::getInstance()->dispatch($e);
         $stack = $e->getStack();
-        
+
         // Get the class names
         reset($stack);
         $initialClassName = key($stack);
         $finalClassName   = end($stack);
-        
+
         // Compile the copies
         $filesToInclude = [];
         foreach ($stack as $classToOverride => $classToOverrideWith) {
@@ -211,19 +211,19 @@ class ClassOverrideGenerator
             $aliasFilename    = $basename . '.php';
             $filesToInclude[] = $cloneFilename;
             $filesToInclude[] = $aliasFilename;
-            
+
             // Check if we have to create the override
             if (! static::$fs->hasFile($aliasFilename) || ! static::$fs->hasFile($cloneFilename)) {
                 // Make the class name
                 $namespace         = Path::classNamespace($classToOverride);
                 $copyClassName     = 'BetterApiClassOverrideCopy__' . Path::classBasename($classToOverride);
                 $copyClassFullName = ltrim($namespace . '\\' . $copyClassName, '\\');
-                
+
                 // Create content
                 $cloneContent = static::getClassCloneContentOf($classToOverride, $copyClassName);
                 $aliasContent = static::getClassAliasContent($classToOverride, $classToOverrideWith, $finalClassName,
                     $copyClassFullName);
-                
+
                 // Allow filtering
                 $e = new ClassOverrideContentFilterEvent(
                     $classToOverride,
@@ -236,29 +236,29 @@ class ClassOverrideGenerator
                 TypoEventBus::getInstance()->dispatch($e);
                 $cloneContent = $e->getCloneContent();
                 $aliasContent = $e->getAliasContent();
-                
+
                 // Dump the files
                 static::$fs->setFileContent($cloneFilename, $cloneContent);
                 static::$fs->setFileContent($aliasFilename, $aliasContent);
             }
         }
-        
+
         // Include the files
         foreach ($filesToInclude as $aliasFilename) {
             static::$fs->includeFile($aliasFilename);
         }
-        
+
         // Register alias map
         ClassAliasMap::addAliasMap([
             'aliasToClassNameMapping' => [
                 $finalClassName => $initialClassName,
             ],
         ]);
-        
+
         // Done
         return true;
     }
-    
+
     /**
      * Generates the class alias file content and returns it
      *
@@ -277,7 +277,7 @@ class ClassOverrideGenerator
     ): string {
         $namespace = Path::classNamespace($classToOverride);
         $baseName  = Path::classBasename($classToOverride);
-        
+
         return "<?php
 /**
  * CLASS OVERRIDE GENERATOR - GENERATED FILE
@@ -302,7 +302,7 @@ if(!class_exists('\\$classToOverride', false)) {
 }
 ";
     }
-    
+
     /**
      * This internal helper is used to read the source code of a given class, and create a copy out of it.
      * The copy has a unique name and all references, like return types and type hints will be replaced by said, new
@@ -322,10 +322,10 @@ if(!class_exists('\\$classToOverride', false)) {
             throw new ClassOverridesException('Could not create a clone of class: ' . $of
                                               . ' because Composer could not resolve it\'s filename!');
         }
-        
+
         // Load the content
         $source = Fs::readFileAsLines($overrideSourceFile);
-        
+
         // Find matching class definition
         $className   = Path::classBasename($of);
         $nameChanged = false;
@@ -342,14 +342,14 @@ if(!class_exists('\\$classToOverride', false)) {
             $source[$k]  = str_replace($find, $replaceWith, $source[$k]);
             break;
         }
-        
+
         // Fail if we could not rewrite the class
         if (! $nameChanged) {
             throw new ClassOverridesException('Failed to rewrite the name of class: ' . $className .
                                               ' to: ' . $copyClassName . ' when creating a copy of file: '
                                               . $overrideSourceFile);
         }
-        
+
         // Fix return types
         foreach ($source as $k => $line) {
             if (stripos($line, '@return') === false) {
@@ -360,13 +360,13 @@ if(!class_exists('\\$classToOverride', false)) {
             $pattern    = '~(^\\s*\\*\\s*@return\\s+)\\\\?' . preg_quote($of, '~') . '~si';
             $source[$k] = preg_replace($pattern, '$1' . $copyClassName, $source[$k]);
         }
-        
+
         // Inject notice
         $noticeSet = false;
         foreach ($source as $k => $line) {
             // Fix __CLASS__ references
             $line = str_replace('__CLASS__', '\\' . rtrim($of, '\\') . '::class', $line);
-            
+
             $sourceParsed[] = $line;
             if (! $noticeSet
                 && (stripos($line, '<?php') !== false || stripos($line, '<?=') !== false
@@ -389,14 +389,22 @@ if(!class_exists('\\$classToOverride', false)) {
             $source = $sourceParsed;
         }
         $source = implode($source);
-        
+
         // Unlock all "private" methods to be "protected"...
         $source = preg_replace_callback('~(^|\\s|\\t)private(\\s(?:static\\s)?(?:\$|function))~si', function ($m) {
             [$foo, $before, $after] = $m;
-            
+
             return $before . 'protected' . $after;
         }, $source);
-        
+
+        // Replace all "self::" references with "static::" to allow external overrides
+        $source = preg_replace_callback('~(^|\\s|\\t)self::([$\w])~i',
+            static function ($m) {
+                [$foo, $before, $after] = $m;
+
+                return $before . 'static::' . $after;
+            }, $source);
+
         // Combine source
         return $source;
     }

@@ -136,7 +136,7 @@ class LinkAndPidOption extends AbstractExtConfigOption implements SingletonInter
         });
         $this->context->TypoScript->addSetup((string)$ts, [
             'constants' => (string)$constants,
-            'title'     => 'BetterApi - Pid Mapping',
+            'dynKey'    => 'pids',
         ]);
 
         // Register typoScript hook for updating the pid service when the typoScript template was parsed

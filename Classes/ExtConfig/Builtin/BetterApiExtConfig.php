@@ -85,6 +85,17 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
                      ->registerRouteAspectHandler(
                          'BetterApiStoragePidAwarePersistedAliasMapper', StoragePidAwarePersistedAliasMapper::class);
 
+        // Typo script files
+        $configurator->typoScript()
+                     ->registerStaticTsDirectory(
+                         'Configuration/TypoScript/ExtBaseTemplates/', 'BetterApi - ExtBase Templates')
+                     ->registerStaticTsDirectory(
+                         'Configuration/TypoScript/Generic/', 'BetterApi - Dynamic TypoScript')
+                     ->registerStaticTsDirectory(
+                         'Configuration/TypoScript/Pids/', 'BetterApi - Pid Mapping')
+                     ->registerStaticTsDirectory(
+                         'Configuration/TypoScript/TableModels/', 'BetterApi - Table-Model Mapping');
+
         // Register middlewares
         $configurator->http()
                      ->registerMiddleware(RequestCollectorMiddleware::class, 'frontend', [

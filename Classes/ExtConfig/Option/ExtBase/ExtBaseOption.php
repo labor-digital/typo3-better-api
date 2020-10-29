@@ -47,12 +47,12 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 class ExtBaseOption extends AbstractExtConfigOption
 {
     use CTypeRegistrationTrait;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewServiceInterface
      */
     protected $lazyBackendPreviewService;
-    
+
     /**
      * ExtBaseOptions constructor.
      *
@@ -62,7 +62,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         $this->lazyBackendPreviewService = $lazyBackendPreviewService;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -72,7 +72,7 @@ class ExtBaseOption extends AbstractExtConfigOption
         $subscription->subscribe(ExtTablesLoadedEvent::class, '__applyExtTables');
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, '__applyTcaOverrides', ['priority' => 400]);
     }
-    
+
     /**
      * Registers a new module to the typo3 backend
      *
@@ -90,10 +90,10 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
-        
+
         return $this->addRegistrationToCachedStack('modules', $pluginName, $configuratorClass);
     }
-    
+
     /**
      * Can be used to modify a TYPO3 backend module.
      *
@@ -112,10 +112,10 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
-        
+
         return $this->addOverrideToCachedStack('modules', $pluginName, $configuratorClass);
     }
-    
+
     /**
      * Registers a new ext base plugin / content element configuration
      *
@@ -132,10 +132,10 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
-        
+
         return $this->addRegistrationToCachedStack('plugins', $pluginName, $configuratorClass);
     }
-    
+
     /**
      * Similar to registerPlugin() but registers all plugin definitions in a directory at once.
      *
@@ -152,7 +152,7 @@ class ExtBaseOption extends AbstractExtConfigOption
             return $this->makePluginNameFromConfigClass($className);
         });
     }
-    
+
     /**
      * Registers an override for an ext base plugin / content element configuration
      *
@@ -168,10 +168,10 @@ class ExtBaseOption extends AbstractExtConfigOption
         if (empty($pluginName)) {
             $pluginName = $this->makePluginNameFromConfigClass($configuratorClass);
         }
-        
+
         return $this->addOverrideToCachedStack('plugins', $pluginName, $configuratorClass);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -179,23 +179,23 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         // Load the plugin config
         $pluginConfig = $this->getPluginConfig();
-        
+
         // Register plugins
         foreach ($pluginConfig->configurePluginArgs as $args) {
             ExtensionUtility::configurePlugin(...$args);
         }
-        
-        
+
+
         // Register plugin typoScript
         $this->context->TypoScript->addSetup($pluginConfig->typoScript, [
-            'title' => 'BetterApi - ExtBase Plugin Templates',
+            'dynKey' => 'extbase.plugin',
         ]);
-        
+
         // Register module typoScript
         $this->context->TypoScript->addSetup($this->getModuleConfig()->typoScript, [
-            'title' => 'BetterApi - ExtBase Module Templates',
+            'dynKey' => 'extbase.module',
         ]);
-        
+
         // This is only required when we are in the backend
         if ($this->context->TypoContext->getEnvAspect()->isBackend()) {
             // Register plugin wizard icons
@@ -206,7 +206,7 @@ class ExtBaseOption extends AbstractExtConfigOption
             }
         }
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -216,7 +216,7 @@ class ExtBaseOption extends AbstractExtConfigOption
         if ($this->context->TypoContext->getEnvAspect()->isBackend()) {
             // Load the plugin config
             $pluginConfig = $this->getPluginConfig();
-            
+
             // Register data handler action handlers
             foreach ($pluginConfig->dataHandlerActionHandlers as $table => $actions) {
                 foreach ($actions as $action => $handlers) {
@@ -225,7 +225,7 @@ class ExtBaseOption extends AbstractExtConfigOption
                     }
                 }
             }
-            
+
             // Register backend preview and label renderers
             foreach ($pluginConfig->backendPreviewRenderers as $args) {
                 $this->lazyBackendPreviewService->registerBackendPreviewRenderer(...$args);
@@ -233,24 +233,24 @@ class ExtBaseOption extends AbstractExtConfigOption
             foreach ($pluginConfig->backendListLabelRenderers as $args) {
                 $this->lazyBackendPreviewService->registerBackendListLabelRenderer(...$args);
             }
-            
+
             // Register plugin flex forms
             foreach ($pluginConfig->addPiFlexFormArgs as $args) {
                 ExtensionManagementUtility::addPiFlexFormValue(...$args);
             }
-            
+
             // Register plugins
             foreach ($pluginConfig->registerPluginArgs as $args) {
                 ExtensionUtility::registerPlugin(...$args);
             }
-            
+
             // Register modules
             foreach ($this->getModuleConfig()->registerModuleArgs as $args) {
                 ExtensionUtility::registerModule(...$args);
             }
         }
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -258,10 +258,10 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         // Load the plugin config
         $pluginConfig = $this->getPluginConfig();
-        
+
         // Inject our cType entries into the tt content tca
         $this->registerCTypesForElements($GLOBALS['TCA'], $pluginConfig->cTypeEntries);
-        
+
         // Register flex forms
         foreach ($pluginConfig->flexFormPlugins as $plugin) {
             $flexFormPath = ['TCA', 'tt_content', 'types', 'list', 'subtypes_addlist', $plugin];
@@ -276,7 +276,7 @@ class ExtBaseOption extends AbstractExtConfigOption
             $GLOBALS['TCA'] = Arrays::setPath($GLOBALS, $flexFormPath, $val)['TCA'];
         }
     }
-    
+
     /**
      * Returns the module configuration object
      *
@@ -286,7 +286,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         return $this->getCachedStackValueOrRun('modules', ModuleConfigGenerator::class);
     }
-    
+
     /**
      * Returns the module configuration object
      *
@@ -296,7 +296,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         return $this->getCachedStackValueOrRun('plugins', PluginConfigGenerator::class);
     }
-    
+
     /**
      * Internal helper that is used if there was no plugin name given.
      * In that case we will use the config class as naming base and try to extract the plugin name out of it.
@@ -312,7 +312,7 @@ class ExtBaseOption extends AbstractExtConfigOption
     {
         $baseName = Path::classBasename($configClass);
         $baseName = preg_replace('~(controller)?(overrides?)?$~si', '', $baseName);
-        
+
         return Inflector::toCamelCase($baseName);
     }
 }
