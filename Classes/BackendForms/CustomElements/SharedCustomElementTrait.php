@@ -29,33 +29,33 @@ use Neunerlei\PathUtil\Path;
 
 trait SharedCustomElementTrait
 {
-    
+
     /**
      * True if the global event handler for injecting the backend assets is already bound
      *
      * @var bool
      */
     protected static $eventBound = false;
-    
+
     /**
      * The list of javascript files that are registered for the backend
      *
      * @var array
      */
     protected static $js = [];
-    
+
     /**
      * The list of registered css files for the backend
      *
      * @var array
      */
     protected static $css = [];
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\BackendForms\CustomElements\CustomElementContext
      */
     protected $context;
-    
+
     /**
      * Internal helper which is used to inject the custom element context for easier access
      *
@@ -65,7 +65,7 @@ trait SharedCustomElementTrait
     {
         $this->context = $context;
     }
-    
+
     /**
      * This method is called when, and ONLY IF the field is configured using the AbstractFormField's applyPreset method
      * It will receive the array of options as well as the field instance. You can use this method to apply additional
@@ -83,7 +83,7 @@ trait SharedCustomElementTrait
     {
         // Silence
     }
-    
+
     /**
      * This method can be used to execute some kind of user function that was registered on your tca.
      *
@@ -122,16 +122,16 @@ trait SharedCustomElementTrait
     ) {
         // Load the config array
         $config = Arrays::getPath($this->context->getConfig(), 'config', []);
-        
-        // First try the @customOptions, then the field config
-        $functionStack = Arrays::getPath($config, ['@customOptions', $configKey],
+
+        // First try the customElementOptions, then the field config
+        $functionStack = Arrays::getPath($config, ['customElementOptions', $configKey],
             Arrays::getPath($config, [$configKey], []));
-        
+
         // Skip if the stack is empty
         if (empty($functionStack)) {
             return $defaultData;
         }
-        
+
         // Load the function stack from the configuration
         if (is_string($functionStack)) {
             $functionStack = [$functionStack];
@@ -148,7 +148,7 @@ trait SharedCustomElementTrait
             throw new BackendFormException('The configured user function of field: ' . $this->context->getFieldName()
                                            . ' is invalid! Only a single function is allowed!');
         }
-        
+
         // Run the stack
         $result = $defaultData;
         foreach ($functionStack as $func) {
@@ -162,7 +162,7 @@ trait SharedCustomElementTrait
             if (is_array($func) && count($func) === 2 && Arrays::isSequential($func)) {
                 $func = ['class' => $func[0], 'method' => $func[1]];
             }
-            
+
             // Validate the class and the method
             if (! class_exists($func['class'])) {
                 throw new BackendFormException('The configured user function of field: '
@@ -174,27 +174,27 @@ trait SharedCustomElementTrait
                                                . $this->context->getFieldName() . ' is invalid! The registered method: '
                                                . $func['method'] . ' does not exist!');
             }
-            
+
             // Update first argument when multiple elements are allowed
             if ($allowMultiple) {
                 array_unshift($arguments);
                 array_unshift($arguments, $result);
             }
-            
+
             // Run the function
             $result = call_user_func_array([$this->context->getInstanceOf($func['class']), $func['method']],
                 $arguments);
-            
+
             // Check if we are running multiple
             if (! $allowMultiple) {
                 break;
             }
         }
-        
+
         // Done
         return $result;
     }
-    
+
     /**
      * Can be used to register an additional JS file to the typo3 backend.
      * The file is only included when the element is rendered.
@@ -206,10 +206,10 @@ trait SharedCustomElementTrait
     public function registerBackendJs(string $path)
     {
         $this->addAsset($path);
-        
+
         return $this;
     }
-    
+
     /**
      * Can be used to register an additional css file to the typo3 backend.
      * The file is only included when the element is rendered.
@@ -221,10 +221,10 @@ trait SharedCustomElementTrait
     public function registerBackendCss(string $path)
     {
         $this->addAsset($path, true);
-        
+
         return $this;
     }
-    
+
     /**
      * Internal helper to append a given js / css path to our stacks
      * It will check if the file was already added do avoid duplicates
@@ -236,7 +236,7 @@ trait SharedCustomElementTrait
     {
         // Make sure our event is bound
         $this->bindEventHandlerIfRequired();
-        
+
         // Helper to resolve urls
         if (! filter_var($path, FILTER_VALIDATE_URL)) {
             $pathAspect = $this->context->TypoContext->getPathAspect();
@@ -246,7 +246,7 @@ trait SharedCustomElementTrait
                 $path = '.' . $path;
             }
         }
-        
+
         // Add the file to the list or skip
         if ($css) {
             // CSS
@@ -262,7 +262,7 @@ trait SharedCustomElementTrait
             static::$js[] = $path;
         }
     }
-    
+
     /**
      * Binds an event handler to inject the backend assets if required
      */
@@ -272,7 +272,7 @@ trait SharedCustomElementTrait
             return;
         }
         static::$eventBound = true;
-        
+
         // Register event handler to inject the backend assets for this
         $this->context->EventBus->addListener(BackendAssetFilterEvent::class, function (BackendAssetFilterEvent $e) {
             // Register files
