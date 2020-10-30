@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.26.3](https://github.com/labor-digital/typo3-better-api/compare/v9.26.2...v9.26.3) (2020-10-30)
+
+
+### Bug Fixes
+
+* **SharedCustomElementTrait:** access the correct "customElementOptions" field to read the dataFunc definition ([36c0c9c](https://github.com/labor-digital/typo3-better-api/commit/36c0c9c6dd9f38a2b96d88a9ba4dd195dadad8be))
+
 ### [9.26.2](https://github.com/labor-digital/typo3-better-api/compare/v9.26.1...v9.26.2) (2020-10-29)
 
 
