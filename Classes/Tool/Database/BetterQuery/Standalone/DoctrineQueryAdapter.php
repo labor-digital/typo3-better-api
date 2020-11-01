@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
 use Doctrine\DBAL\Connection;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -43,9 +44,13 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
      * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
      */
-    public function __construct(string $tableName, QueryBuilder $queryBuilder, QuerySettingsInterface $settings)
-    {
-        parent::__construct($tableName, $settings);
+    public function __construct(
+        string $tableName,
+        QueryBuilder $queryBuilder,
+        QuerySettingsInterface $settings,
+        TypoContext $context
+    ) {
+        parent::__construct($tableName, $settings, $context);
         $this->queryBuilder = $queryBuilder;
 
         // Reset query builder

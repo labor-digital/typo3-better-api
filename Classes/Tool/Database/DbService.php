@@ -23,19 +23,20 @@ namespace LaborDigital\T3BA\Tool\Database;
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
-use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class DbService implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
+    use TypoContextAwareTrait;
 
     /**
      * Persists all current database changes
@@ -44,6 +45,23 @@ class DbService implements SingletonInterface, PublicServiceInterface
     public function persistAll(): void
     {
         $this->getSingletonOf(PersistenceManagerInterface::class)->persistAll();
+    }
+
+    /**
+     * Returns the instance of the database connection pool
+     *
+     * @return \TYPO3\CMS\Core\Database\ConnectionPool
+     */
+    public function getConnectionPool(): ConnectionPool
+    {
+        if ($this->hasLocalSingleton(ConnectionPool::class)) {
+            return $this->getSingletonOf(ConnectionPool::class);
+        }
+
+        $connectionPool = $this->getWithoutDi(ConnectionPool::class);
+        $this->setLocalSingleton(ConnectionPool::class, $connectionPool);
+
+        return $connectionPool;
     }
 
     /**
@@ -59,7 +77,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
     public function getQueryBuilder(?string $tableName = null, ?string $connectionName = null): QueryBuilder
     {
         if (! empty($tableName)) {
-            $connection = $this->getSingletonOf(ConnectionPool::class)->getConnectionForTable($tableName);
+            $connection = $this->getConnectionPool()->getConnectionForTable($tableName);
         } else {
             $connection = $this->getConnection($connectionName);
         }
@@ -88,16 +106,20 @@ class DbService implements SingletonInterface, PublicServiceInterface
      */
     public function getQuery(string $tableName, bool $disableDefaultConstraints = false): StandaloneBetterQuery
     {
-        $queryBuilder = $this->getQueryBuilder($tableName);
-        dbg($this->getInstanceOf(QuerySettingsInterface::class));
-        $settings = $this->getWithoutDi(Typo3QuerySettings::class);
-        $settings->injectEnvironmentService($this->getInstanceOf(EnvironmentService::class));
-        $settings->initializeObject();
-        dbge($settings);
+        if (class_exists($tableName)) {
+            $tableName = NamingUtil::resolveTableName($tableName);
+        }
+
         $query = $this->getWithoutDi(
-            StandaloneBetterQuery::class,
-            [$tableName, $queryBuilder, $settings, $this->getSingletonOf(Session::class)]
+            StandaloneBetterQuery::class, [
+                $tableName,
+                $this->getQueryBuilder($tableName),
+                $this->TypoContext()->Di()->getObjectManager()->get(QuerySettingsInterface::class),
+                $this->TypoContext(),
+                $this->getSingletonOf(Session::class),
+            ]
         );
+
         if ($disableDefaultConstraints) {
             $query = $query->withIncludeHidden()->withIncludeDeleted()->withLanguage(false);
         }
@@ -116,7 +138,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
      */
     public function getConnection(?string $connectionName = null): Connection
     {
-        return $this->getSingletonOf(ConnectionPool::class)
+        return $this->getConnectionPool()
                     ->getConnectionByName($connectionName ?? ConnectionPool::DEFAULT_CONNECTION_NAME);
     }
 }

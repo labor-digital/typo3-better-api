@@ -21,7 +21,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
+use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -40,20 +42,19 @@ abstract class AbstractQueryAdapter
      */
     protected $settings;
 
-    /**
-     * AbstractQueryAdapter constructor.
-     *
-     * @param   string                                                         $tableName
-     * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
-     */
-    public function __construct(string $tableName, QuerySettingsInterface $settings)
+    public function __construct(string $tableName, QuerySettingsInterface $settings, TypoContext $context)
     {
         $this->tableName = $tableName;
         $this->settings  = $settings;
 
         // Reset the settings
-        $this->settings->setRespectStoragePage(false);
-        $this->settings->setRespectSysLanguage(true);
+        $language   = $context->Language()->getCurrentFrontendLanguage();
+        $langAspect = LanguageAspectFactory::createFromSiteLanguage($language);
+        $settings->setLanguageMode($langAspect->getLegacyLanguageMode());
+        $settings->setLanguageOverlayMode($langAspect->getLegacyOverlayType());
+        $settings->setRespectStoragePage(false);
+        $settings->setRespectSysLanguage(true);
+        $settings->setLanguageUid($language->getLanguageId());
     }
 
     /**

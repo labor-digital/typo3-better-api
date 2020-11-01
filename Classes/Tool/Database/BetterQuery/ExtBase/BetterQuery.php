@@ -66,7 +66,7 @@ class BetterQuery extends AbstractBetterQuery
         Session $session
     ) {
         parent::__construct(
-            new ExtBaseQueryAdapter($repository->getTableName(), $query),
+            new ExtBaseQueryAdapter($repository->getTableName(), $query, $typoContext),
             $typoContext,
             $session
         );

@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
 use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -45,7 +46,7 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         QueryBuilder $queryBuilder,
         QuerySettingsInterface $settings
     ): void {
-        $self               = static::getSingletonOf(Typo3DbQueryParser::class);
+        $self               = TypoContext::getInstance()->Di()->getObjectManager()->get(Typo3DbQueryParser::class);
         $self->queryBuilder = $queryBuilder;
         $dummyQuery         = new Query('');
         $dummyQuery->setQuerySettings($settings);

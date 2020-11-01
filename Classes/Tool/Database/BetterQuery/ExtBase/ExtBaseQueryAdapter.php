@@ -39,9 +39,9 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
      * @param   string                                         $tableName
      * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface  $query
      */
-    public function __construct(string $tableName, QueryInterface $query)
+    public function __construct(string $tableName, QueryInterface $query, TypoContext $context)
     {
-        parent::__construct($tableName, $query->getQuerySettings());
+        parent::__construct($tableName, $query->getQuerySettings(), $context);
         $this->query = $query;
     }
 

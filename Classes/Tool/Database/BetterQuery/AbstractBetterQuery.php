@@ -21,14 +21,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 
 abstract class AbstractBetterQuery
 {
-    use TypoContextAwareTrait;
     use QueryWhereApplierTrait;
 
     /**
@@ -40,6 +40,11 @@ abstract class AbstractBetterQuery
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\Session
      */
     protected $session;
+
+    /**
+     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     */
+    protected $typoContext;
 
     /**
      * Defines, if set the number of items that are on a logical "page" when using the getPage() or getPages() methods
@@ -59,15 +64,18 @@ abstract class AbstractBetterQuery
     /**
      * BetterQuery constructor.
      *
-     * @param   AbstractQueryAdapter                            $adapter
-     * @param   \TYPO3\CMS\Extbase\Persistence\Generic\Session  $session
+     * @param   \LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext                    $typoContext
+     * @param   \TYPO3\CMS\Extbase\Persistence\Generic\Session                     $session
      */
     public function __construct(
         AbstractQueryAdapter $adapter,
+        TypoContext $typoContext,
         Session $session
     ) {
-        $this->adapter = $adapter;
-        $this->session = $session;
+        $this->adapter     = $adapter;
+        $this->typoContext = $typoContext;
+        $this->session     = $session;
     }
 
     /**
@@ -130,7 +138,7 @@ abstract class AbstractBetterQuery
         if (is_bool($pids)) {
             // True means use current pid
             if ($pids) {
-                $pids = $clone->TypoContext()->Pid()->getCurrent();
+                $pids = $clone->typoContext->Pid()->getCurrent();
             } // False means reset storage page
             else {
                 $settings->setRespectStoragePage(false);
@@ -141,11 +149,11 @@ abstract class AbstractBetterQuery
 
         // Apply possible pid values
         $pids = array_map(static function ($v) use ($clone) {
-            if (! is_string($v) || ! $clone->TypoContext()->Pid()->has($v)) {
+            if (! is_string($v) || ! $clone->typoContext->Pid()->has($v)) {
                 return $v;
             }
 
-            return $clone->TypoContext()->Pid()->get($v);
+            return $clone->typoContext->Pid()->get($v);
         }, $clone->adapter->ensureArrayValue($pids, 'pid'));
 
         // Update the page limitations in the query settings
@@ -177,15 +185,23 @@ abstract class AbstractBetterQuery
      *                                                   If this is set to TRUE you can reset the limitations back to
      *                                                   the current language uid If this is set to FALSE you disable
      *                                                   all language constraints
-     * @param   bool                          $strict    If you specify a language, all entities for this language, as
-     *                                                   well as the default language entities will be returned. If you
-     *                                                   ONLY want to retrieve elements for the given language and not
-     *                                                   the default language, you can set strict to TRUE.
+     * @param   array                         $options   Additional, language specific options to apply.
+     *                                                   - languageMode string|null (NULL): If you specify a language,
+     *                                                   all entities for this language, as well as the default
+     *                                                   language entities will be returned. If you ONLY want to
+     *                                                   retrieve elements for the given language and not the default
+     *                                                   language, you can set languageMode to "strict".
+     *                                                   Values: NULL, "content_fallback", "strict" or "ignore"
+     *                                                   {@link QuerySettingsInterface::setLanguageMode()}
+     *                                                   - overlayMode string|bool (FALSE): Defines how TYPO3 should
+     *                                                   handle language overlays.
+     *                                                   Values: TRUE, FALSE or "hideNonTranslated"
+     *                                                   {@link QuerySettingsInterface::setLanguageOverlayMode()}
      *
      * @return $this
      * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
      */
-    public function withLanguage($language, bool $strict = false): self
+    public function withLanguage($language, array $options = [])
     {
         $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
@@ -193,15 +209,28 @@ abstract class AbstractBetterQuery
         // Reset the ext base object cache
         $clone->session->destroy();
 
+        // Handle legacy options
+        $options = Options::make($options, [
+            'languageMode' => [
+                'type'    => ['null', 'string'],
+                'default' => null,
+            ],
+            'overlayMode'  => [
+                'type'    => ['bool', 'string'],
+                'default' => false,
+            ],
+        ]);
+
         // Set language mode
-        $settings->setLanguageMode($strict ? 'strict' : null);
+        $settings->setLanguageMode($options['languageMode']);
+        $settings->setLanguageOverlayMode($options['overlayMode']);
 
         // Handle special language values
         if (is_bool($language)) {
             $settings->setRespectSysLanguage($language);
             if ($language) {
                 $settings->setLanguageUid(
-                    $clone->TypoContext()->Language()->getCurrentFrontendLanguage()->getLanguageId()
+                    $clone->typoContext->Language()->getCurrentFrontendLanguage()->getLanguageId()
                 );
             }
 
