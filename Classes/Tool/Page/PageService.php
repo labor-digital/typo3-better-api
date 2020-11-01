@@ -25,11 +25,9 @@ use LaborDigital\T3BA\Event\PageContentsGridConfigFilterEvent;
 use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
-use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Utility\RootlineUtility;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Class PageService
@@ -39,13 +37,6 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class PageService implements SingletonInterface
 {
     use CommonDependencyTrait;
-
-    /**
-     * Holds the list of cached root lines by their cache key
-     *
-     * @var array
-     */
-    protected $rootLineCache = [];
 
     /**
      * The record data handler instance after it was created at least once
@@ -455,40 +446,19 @@ class PageService implements SingletonInterface
      * If you want more fields in the rootline records than default such can be added
      * by listing them in $GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']
      *
-     * @param   int   $pageId
-     * @param   bool  $includeAllNotDeleted  If set to true this will generate the rootline without caring for
-     *                                       permissions
+     * @param   int         $pageId
+     * @param   array|bool  $options  Additional options for the root line renderer
+     *                                In v9 this can be a bool to set $includeAllNotDeleted for legacy compatibility
+     *                                - includeAllNotDeleted bool (FALSE): If set to true this will generate the
+     *                                rootline without caring for permissions
+     *                                - additionalFields array: A list of additional fields to fetch for the
+     *                                generated root line
      *
      * @return array|mixed
      */
-    public function getRootLine(int $pageId, bool $includeAllNotDeleted = false)
+    public function getRootLine(int $pageId, array $options = [])
     {
-        // Try to load the root line from our cache
-        $cacheKey = $pageId . '' . $includeAllNotDeleted;
-        if (isset($this->rootLineCache[$cacheKey])) {
-            return $this->rootLineCache[$cacheKey];
-        }
-
-        // Prepare the repository
-        $repo             = $this->getPageRepository();
-        $backupPermission = $repo->where_groupAccess;
-        if ($includeAllNotDeleted) {
-            $repo->where_groupAccess = '';
-        }
-
-        // Get the root line
-        try {
-            $rootLine = $this->getWithoutDi(RootlineUtility::class, [$pageId])->get();
-        } catch (PageNotFoundException $e) {
-            $rootLine = [];
-        }
-        $this->rootLineCache[$cacheKey] = $rootLine;
-
-        // Restore the repository
-        $repo->where_groupAccess = $backupPermission;
-
-        // Done
-        return $rootLine;
+        return ExtendedRootLineUtility::getWith($pageId, $options);
     }
 
     /**
@@ -532,7 +502,7 @@ class PageService implements SingletonInterface
         }
 
         // Fallback to creating a new instance when the frontend did not serve us
-        return $this->getInstanceOf(PageRepository::class);
+        return $this->getWithoutDi(PageRepository::class);
     }
 
     /**
