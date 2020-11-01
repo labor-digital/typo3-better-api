@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 14:50
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
+namespace LaborDigital\T3BA\Event\FormEngine\Adapter;
 
-use LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterEvent;
+use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
 use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
 use TYPO3\CMS\Backend\Form\FormDataProvider\InlineOverrideChildTca;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsRemoveUnused;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaGroup;
 use TYPO3\CMS\Backend\Form\FormDataProviderInterface;
 
-class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
+class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
 {
     /**
      * @inheritDoc
@@ -44,7 +45,7 @@ class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter impleme
             'before'  => [TcaColumnsRemoveUnused::class],
         ];
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -53,8 +54,8 @@ class BackendFormFilterEventAdapter extends AbstractCoreHookEventAdapter impleme
         if (! isset($result['tableName'])) {
             return $result;
         }
-        static::$bus->dispatch(($e = new BackendFormFilterEvent($result['tableName'], $result)));
-        
+        static::$bus->dispatch(($e = new FormFilterEvent($result['tableName'], $result)));
+
         return $e->getData();
     }
 }

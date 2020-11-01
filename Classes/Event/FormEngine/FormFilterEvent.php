@@ -21,6 +21,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\FormEngine;
 
+use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3BA\Event\FormEngine\Adapter\FormFilterEventAdapter;
+
 /**
  * Class BackendFormFilterEvent
  *
@@ -30,18 +33,16 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  *
  * The events will be called between the DatabaseRowInitializeNew and TcaGroup data providers to make sure you have
  * all data you may need for the form, but before the later stages start manipulating the TCA.
- *
- * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormFilterEvent implements CoreHookEventInterface
+class FormFilterEvent implements CoreHookEventInterface
 {
-    use BackendFormFilterEventTrait;
+    use FormFilterEventTrait;
 
     /**
      * @inheritDoc
      */
     public static function getAdapterClass(): string
     {
-        return BackendFormFilterEventAdapter::class;
+        return FormFilterEventAdapter::class;
     }
 }

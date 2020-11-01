@@ -27,6 +27,7 @@ use LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent;
 use LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent;
 use LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent;
 use LaborDigital\T3BA\Event\DataHandler\SavePostProcessorEvent;
+use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
 use LaborDigital\T3BA\Tool\Database\DbService;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use LaborDigital\T3BA\Tool\DataHook\Dispatcher;
@@ -66,6 +67,7 @@ class DataHookEventHandler implements LazyEventSubscriberInterface
         $subscription->subscribe(SavePostProcessorEvent::class, 'onSavePostProcessor');
         $subscription->subscribe(SaveAfterDbOperationsEvent::class, 'onAfterDbOperations');
         $subscription->subscribe(ActionPostProcessorEvent::class, 'onActionPostProcessor');
+        $subscription->subscribe(FormFilterEvent::class, 'onFormFilter');
     }
 
     /**
@@ -120,5 +122,21 @@ class DataHookEventHandler implements LazyEventSubscriberInterface
                                ->getFirst();
 
         $this->dispatcher->dispatch($event->getCommand(), $event->getTableName(), $row, $event);
+    }
+
+    /**
+     * Run the form filter hook queue
+     *
+     * @param   \LaborDigital\T3BA\Event\FormEngine\FormFilterEvent  $event
+     */
+    public function onFormFilter(FormFilterEvent $event): void
+    {
+        $this->dispatcher->dispatch(DataHookTypes::TYPE_FORM,
+            $event->getTableName(), $event->getData()['databaseRow'], $event)
+                         ->runIfDirty(static function (array $row) use ($event) {
+                             $data                = $event->getData();
+                             $data['databaseRow'] = $row;
+                             $event->setData($data);
+                         });
     }
 }

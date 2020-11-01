@@ -21,24 +21,26 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\FormEngine;
 
+use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\LateFormFilterEventAdapter;
+
 /**
- * Class BackendFormFilterLateEvent
+ * Class LateFormFilterEvent
  *
- * Behaves exactly the same as EVENT_BACKEND_FORM_FILTER but is called between InlineOverrideChildTca and
+ * Behaves exactly the same as FormFilterEvent but is called between InlineOverrideChildTca and
  * TcaColumnsRemoveUnused. It is the latest possible place we can call the event (as far as I could see when
  * writing this adapter).
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
  */
-class BackendFormFilterLateEvent implements CoreHookEventInterface
+class LateFormFilterEvent implements CoreHookEventInterface
 {
-    use BackendFormFilterEventTrait;
+    use FormFilterEventTrait;
 
     /**
      * @inheritDoc
      */
     public static function getAdapterClass(): string
     {
-        return BackendFormFilterLateEventAdapter::class;
+        return LateFormFilterEventAdapter::class;
     }
 }

@@ -21,13 +21,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
 
-use LaborDigital\Typo3BetterApi\Event\Events\BackendFormFilterLateEvent;
+use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3BA\Event\FormEngine\LateFormFilterEvent;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineConfiguration;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineIsOnSymmetricSide;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInputPlaceholders;
 use TYPO3\CMS\Backend\Form\FormDataProviderInterface;
 
-class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
+class LateFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
 {
     /**
      * @inheritDoc
@@ -42,7 +43,7 @@ class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter imp
             'depends' => [TcaInlineConfiguration::class],
         ];
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -51,8 +52,8 @@ class BackendFormFilterLateEventAdapter extends AbstractCoreHookEventAdapter imp
         if (! isset($result['tableName'])) {
             return $result;
         }
-        static::$bus->dispatch(($e = new BackendFormFilterLateEvent($result['tableName'], $result)));
-        
+        static::$bus->dispatch(($e = new LateFormFilterEvent($result['tableName'], $result)));
+
         return $e->getData();
     }
 }

@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\FormEngine;
 
-trait BackendFormFilterEventTrait
+trait FormFilterEventTrait
 {
     /**
      * The name of the table that the current form applies to
