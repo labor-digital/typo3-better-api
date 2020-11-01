@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2020 LABOR.digital
  *
@@ -20,6 +21,11 @@
 namespace LaborDigital\T3BA\ExtBase\Controller;
 
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
+use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
+use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -42,7 +48,7 @@ trait ExtBaseBackendPreviewRendererTrait
     /**
      * The context instance for this renderer
      *
-     * @var \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext
+     * @var BackendPreviewRendererContext
      */
     protected $context;
 
@@ -56,11 +62,10 @@ trait ExtBaseBackendPreviewRendererTrait
     /**
      * Injects the context when the renderer is instantiated
      *
-     * @param   \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext  $context
+     * @param   BackendPreviewRendererContext  $context
      */
     public function setContext(BackendPreviewRendererContext $context)
     {
-        throw new NotImplementedException();
         $this->context = $context;
     }
 
@@ -75,51 +80,27 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     public function getFluidView(string $templateName = 'BackendPreview'): StandaloneView
     {
-        throw new NotImplementedException();
         // Load the view configuration from typoScript
         $row        = $this->context->getRow();
         $signature  = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
         $configType = $row['CType'] === 'list' ? 'plugin' : 'contentElement';
-        if (substr($signature, 0, 3) !== 'tx_') {
+        if (strpos($signature, 'tx_') !== 0) {
             $signature = 'tx_' . $signature;
         }
-        $viewConfig = $this->context->TypoScript->get([$configType, $signature, 'view'], ['default' => []]);
-        $viewConfig = $this->context->TypoScript->removeDots($viewConfig);
+        $typoContext = TypoContext::getInstance();
+        $typoScript  = $typoContext->Di()->getSingletonOf(TypoScriptService::class);
+        $viewConfig  = $typoScript->get([$configType, $signature, 'view'], ['default' => []]);
+        $viewConfig  = $typoScript->removeDots($viewConfig);
 
         // Make and prepare the view instance
-        $view = $this->context->TemplateRendering->getFluidView($templateName, $viewConfig);
+        $view = $typoContext->Di()
+                            ->getSingletonOf(TemplateRenderingService::class)
+                            ->getFluidView($templateName, $viewConfig);
         $view->assign('settings', $row['settings']);
         $view->assign('data', $row);
 
         // Done
         return $view;
-    }
-
-    /**
-     * We use this method to override the basic controller properties.
-     * Also provides the required environment properties to create a "mostly" real ext-base controller experience.
-     *
-     * @param   array  $preparedArguments
-     *
-     * @return \TYPO3\CMS\Extbase\Mvc\View\ViewInterface|\TYPO3\CMS\Fluid\View\StandaloneView
-     */
-    protected function emitBeforeCallActionMethodSignal(array $preparedArguments)
-    {
-        throw new NotImplementedException();
-        if (! empty(static::$transfer)) {
-            $this->context  = static::$transfer['context'];
-            $this->data     = $this->context->getRow();
-            $this->settings = is_array($this->settings) ?
-                Arrays::merge($this->settings, $this->data['settings']) : $this->data['settings'];
-            try {
-                $this->view = $this->getFluidView(static::$transfer['options']['templateName']);
-            } catch (InvalidTemplateResourceException $e) {
-                // Silence
-            }
-        }
-
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return parent::emitBeforeCallActionMethodSignal($preparedArguments);
     }
 
     /**
@@ -192,9 +173,36 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     protected function validateThatBePreviewTraitIsCalledInActionController()
     {
-        throw new NotImplementedException();
         if (! $this instanceof ActionController) {
             throw new BackendPreviewException('To use this trait you have to call it in an ActionController action!');
         }
     }
+
+    /**
+     * We use this method to override the basic controller properties.
+     * Also provides the required environment properties to create a "mostly" real ext-base controller experience.
+     *
+     * @param   array  $preparedArguments
+     *
+     * @return \TYPO3\CMS\Extbase\Mvc\View\ViewInterface|\TYPO3\CMS\Fluid\View\StandaloneView
+     */
+    protected function emitBeforeCallActionMethodSignal(array $preparedArguments)
+    {
+        throw new NotImplementedException();
+        if (! empty(static::$transfer)) {
+            $this->context  = static::$transfer['context'];
+            $this->data     = $this->context->getRow();
+            $this->settings = is_array($this->settings) ?
+                Arrays::merge($this->settings, $this->data['settings']) : $this->data['settings'];
+            try {
+                $this->view = $this->getFluidView(static::$transfer['options']['templateName']);
+            } catch (InvalidTemplateResourceException $e) {
+                // Silence
+            }
+        }
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return parent::emitBeforeCallActionMethodSignal($preparedArguments);
+    }
+
 }

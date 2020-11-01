@@ -22,8 +22,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtBase\Controller;
 
 use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
-use LaborDigital\T3BA\Event\ActionControllerMethodNameFilterEvent;
-use LaborDigital\T3BA\Event\ActionControllerRequestFilterEvent;
+use LaborDigital\T3BA\Event\ExtBase\ActionController\MethodNameFilterEvent;
+use LaborDigital\T3BA\Event\ExtBase\ActionController\RequestFilterEvent;
 use LaborDigital\T3BA\Tool\Link\LinkService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -67,7 +67,7 @@ class BetterActionController extends ActionController
         );
 
         // Allow filtering
-        $this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, true));
+        $this->EventBus()->dispatch(new RequestFilterEvent($request, $response, $this, true));
 
         // Do the default stuff
         try {
@@ -77,7 +77,7 @@ class BetterActionController extends ActionController
         }
 
         // Allow filtering
-        $this->EventBus()->dispatch(new ActionControllerRequestFilterEvent($request, $response, $this, false));
+        $this->EventBus()->dispatch(new RequestFilterEvent($request, $response, $this, false));
     }
 
     /**
@@ -85,7 +85,7 @@ class BetterActionController extends ActionController
      */
     protected function resolveActionMethodName()
     {
-        $this->EventBus()->dispatch(($e = new ActionControllerMethodNameFilterEvent(
+        $this->EventBus()->dispatch(($e = new MethodNameFilterEvent(
             parent::resolveActionMethodName(),
             $this->request,
             $this->response,
