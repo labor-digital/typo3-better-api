@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.09.09 at 01:07
+ * Last modified: 2020.10.18 at 16:34
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
+namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractGroupExtConfigHandler;
@@ -28,33 +28,26 @@ use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrai
 use LaborDigital\T3BA\ExtConfigHandler\TypoScript\ConfigureTypoScriptHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class ExtBaseModuleConfigHandler extends AbstractGroupExtConfigHandler
+class ExtBasePluginConfigHandler extends AbstractGroupExtConfigHandler
 {
     use SignaturePluginNameMapTrait;
 
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigGenerator
+     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigGenerator
      */
     protected $generator;
 
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigurator
+     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator
      */
     protected $configurator;
 
     /**
-     * The collected list of arguments to store in the configuration
+     * ExtBasePluginConfigHandler constructor.
      *
-     * @var array
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigGenerator  $generator
      */
-    protected $registerModuleArgs = [];
-
-    /**
-     * ExtBaseModuleConfigHandler constructor.
-     *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigGenerator  $generator
-     */
-    public function __construct(ModuleConfigGenerator $generator)
+    public function __construct(PluginConfigGenerator $generator)
     {
         $this->generator = $generator;
     }
@@ -66,7 +59,7 @@ class ExtBaseModuleConfigHandler extends AbstractGroupExtConfigHandler
     {
         $configurator->registerLocation('Classes/Controller');
         $configurator->executeThisHandlerAfter(ConfigureTypoScriptHandler::class);
-        $configurator->registerInterface(ConfigureExtBaseModuleInterface::class);
+        $configurator->registerInterface(ConfigureExtBasePluginInterface::class);
     }
 
     /**
@@ -79,9 +72,7 @@ class ExtBaseModuleConfigHandler extends AbstractGroupExtConfigHandler
      */
     public function finishHandler(): void
     {
-        /** @see \LaborDigital\T3BA\ExtConfigHandler\ExtBase\ExtBaseConfigApplier::registerModules() */
-        $this->context->getState()->set('typo.extBase.module.args',
-            json_encode($this->registerModuleArgs, JSON_THROW_ON_ERROR));
+        $this->generator->dump($this->context->getState());
     }
 
     /**
@@ -89,14 +80,11 @@ class ExtBaseModuleConfigHandler extends AbstractGroupExtConfigHandler
      */
     public function prepareGroup(string $signature, array $groupClasses): void
     {
-        $this->configurator = $this->getInstanceWithoutDi(
-            ModuleConfigurator::class,
-            [
-                $signature,
-                $this->getPluginNameForSignature($signature),
-                $this->context,
-            ]
-        );
+        $this->configurator = $this->getInstanceWithoutDi(PluginConfigurator::class, [
+            $signature,
+            $this->getPluginNameForSignature($signature),
+            $this->context,
+        ]);
     }
 
     /**
@@ -104,7 +92,7 @@ class ExtBaseModuleConfigHandler extends AbstractGroupExtConfigHandler
      */
     public function handleGroupItem(string $class): void
     {
-        call_user_func([$class, 'configureModule'], $this->configurator, $this->context);
+        call_user_func([$class, 'configurePlugin'], $this->configurator, $this->context);
     }
 
     /**
@@ -112,6 +100,8 @@ class ExtBaseModuleConfigHandler extends AbstractGroupExtConfigHandler
      */
     public function finishGroup(string $groupKey, array $groupClasses): void
     {
-        $this->registerModuleArgs[] = $this->generator->generate($this->configurator, $this->context);
+        $this->generator->generate($this->configurator, $this->context);
     }
+
+
 }

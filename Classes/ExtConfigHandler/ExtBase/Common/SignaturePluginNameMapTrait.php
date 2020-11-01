@@ -47,6 +47,8 @@ trait SignaturePluginNameMapTrait
      */
     protected function getGroupKeyOfClass(string $class): string
     {
+        // @todo are we sure that $class is always the correct controller class?
+        // The configurator could also specify another controller class, or am I mistaken?
         return $this->getElementKeyForClass($class, function (string $classBaseName): string {
             $name      = NamingUtil::pluginNameFromControllerClass($classBaseName);
             $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());

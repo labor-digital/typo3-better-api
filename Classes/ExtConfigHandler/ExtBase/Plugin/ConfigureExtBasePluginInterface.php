@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtBase\Plugin;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
+namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 
-interface PluginConfigurationInterface
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+
+interface ConfigureExtBasePluginInterface
 {
-    
+
     /**
      * This method is used to configure a single ext base plugin / content element using the
      * given configurator and context object
@@ -31,7 +33,8 @@ interface PluginConfigurationInterface
      * @param   PluginConfigurator  $configurator
      * @param   ExtConfigContext    $context
      *
-     * @return mixed
+     * @return void
      */
-    public static function configurePlugin(PluginConfigurator $configurator, ExtConfigContext $context);
+    public static function configurePlugin(PluginConfigurator $configurator, ExtConfigContext $context): void;
+
 }

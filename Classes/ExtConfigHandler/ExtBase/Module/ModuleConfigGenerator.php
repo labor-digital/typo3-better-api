@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2020 LABOR.digital
  *
@@ -48,6 +49,14 @@ class ModuleConfigGenerator extends AbstractElementConfigGenerator
         $this->translator = $translator;
     }
 
+    /**
+     * Generates the configuration array
+     *
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
+     *
+     * @return array
+     */
     public function generate(ModuleConfigurator $configurator, ExtConfigContext $context): array
     {
         $this->makeTranslationFileIfRequired($configurator, $context);

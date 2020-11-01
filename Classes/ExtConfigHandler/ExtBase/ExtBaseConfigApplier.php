@@ -23,15 +23,22 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase;
 
 
-use LaborDigital\T3BA\Event\ExtTablesLoadedEvent;
-use LaborDigital\T3BA\Event\TcaCompletelyLoadedEvent;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Util\CTypeRegistrationTrait;
+use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
+use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
+use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
+use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 class ExtBaseConfigApplier extends AbstractExtConfigApplier
 {
+    use ContainerAwareTrait;
+    use CTypeRegistrationTrait;
 
     /**
      * @inheritDoc
@@ -39,16 +46,26 @@ class ExtBaseConfigApplier extends AbstractExtConfigApplier
     public static function subscribeToEvents(EventSubscriptionInterface $subscription)
     {
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaCompletelyLoaded');
+        $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(ExtTablesLoadedEvent::class, 'onExtTablesLoaded');
     }
 
     public function onExtTablesLoaded(): void
     {
         $this->registerModules();
+        $this->registerPluginIcons();
     }
 
     public function onTcaCompletelyLoaded(): void
     {
+        $this->registerPlugins();
+        $this->registerPluginDataHooks();
+        $this->registerPluginBackendPreviewHooks();
+    }
+
+    public function onExtLocalConfLoaded(): void
+    {
+        $this->configurePlugins();
     }
 
     /**
@@ -56,13 +73,95 @@ class ExtBaseConfigApplier extends AbstractExtConfigApplier
      */
     protected function registerModules(): void
     {
-        $argDefinition = $this->state->get('typo.extBase.module.args', '');
-        if (empty($argDefinition)) {
-            return;
-        }
-
-        foreach (Arrays::makeFromJson($argDefinition) as $args) {
-            ExtensionUtility::registerModule(...$args);
+        $argDefinition = $this->state->get('typo.extBase.module.args');
+        if (! empty($argDefinition)) {
+            foreach (Arrays::makeFromJson($argDefinition) as $args) {
+                ExtensionUtility::registerModule(...$args);
+            }
         }
     }
+
+    /**
+     * Registers the plugin icons into the icon registry
+     */
+    protected function registerPluginIcons(): void
+    {
+        $argDefinition = $this->state->get('typo.extBase.plugin.iconArgs');
+        if (! empty($argDefinition)) {
+            $iconRegistry = $this->getInstanceOf(IconRegistry::class);
+            foreach (Arrays::makeFromJson($argDefinition) as $args) {
+                $iconRegistry->registerIcon(...$args);
+            }
+        }
+    }
+
+    /**
+     * Registers the configured data hooks in the tt_content table by merging them into the table's TCA
+     */
+    protected function registerPluginDataHooks(): void
+    {
+        $hookDefinition = $this->state->get('typo.extBase.plugin.dataHooks');
+        if (! empty($hookDefinition)) {
+            $dataHooks      = Arrays::makeFromJson($hookDefinition);
+            $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
+                'tt_content' => [
+                    DataHookTypes::TCA_DATA_HOOK_KEY => $dataHooks,
+                ],
+            ], 'noNumericMerge');
+        }
+    }
+
+    /**
+     * Registers the backend preview rendering hooks into the tca
+     */
+    protected function registerPluginBackendPreviewHooks(): void
+    {
+        $hookDefinition = $this->state->get('typo.extBase.plugin.backendPreviewHooks');
+        if (! empty($hookDefinition)) {
+            $hooks          = Arrays::makeFromJson($hookDefinition);
+            $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
+                'tt_content' => $hooks,
+            ], 'noNumericMerge');
+        }
+    }
+
+    /**
+     * Performs the "configurePlugins" loop when the ext local conf files are loaded
+     */
+    protected function configurePlugins(): void
+    {
+        $argDefinition = $this->state->get('typo.extBase.plugin.configureArgs');
+        if (! empty($argDefinition)) {
+            foreach (Arrays::makeFromJson($argDefinition) as $args) {
+                ExtensionUtility::configurePlugin(...$args);
+            }
+        }
+    }
+
+    /**
+     * Registers the plugins / content elements in the TYPO3 backend
+     */
+    protected function registerPlugins(): void
+    {
+        // Register the plugins in the TYPO3 api
+        $argDefinition = $this->state->get('typo.extBase.plugin.args');
+        if (! empty($argDefinition)) {
+            $args = Arrays::makeFromJson($argDefinition);
+
+            // Plugin registration
+            if (is_array($args['registerPlugin'])) {
+                foreach ($args['registerPlugin'] as $args) {
+                    ExtensionUtility::registerPlugin(...$args);
+                }
+            }
+
+            // Content element registration
+            if (is_array($args['registerCType'])) {
+                $this->registerCTypesForElements($GLOBALS['TCA'], $args['registerCType']);
+            }
+
+        }
+
+    }
+
 }

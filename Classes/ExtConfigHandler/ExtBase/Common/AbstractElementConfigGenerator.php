@@ -21,10 +21,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
 
 use Iterator;
+use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 abstract class AbstractElementConfigGenerator
 {
+    use ConfigStateUtilTrait;
 
     /**
      * Internal helper to build the typoScript, template definition for a extbase plugin/module
@@ -51,8 +53,7 @@ abstract class AbstractElementConfigGenerator
 
         // Build the typoScript
         $signature = $configurator->getSignature();
-        $configKey = 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup';
-        $ts        = $context->getState()->get($configKey, '') . '
+        $this->attachToStringValue($context->getState(), 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup', '
 		# Register template for ' . $signature . '
 		' . $type . '.tx_' . $signature . ' {
 			view {
@@ -69,7 +70,7 @@ abstract class AbstractElementConfigGenerator
 				}
 			}
 		}
-';
-        $context->getState()->set($configKey, $ts);
+');
     }
+
 }

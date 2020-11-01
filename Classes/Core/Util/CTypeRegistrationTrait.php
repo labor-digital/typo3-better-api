@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.19 at 01:48
+ * Last modified: 2020.08.23 at 23:23
  */
+declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Helper;
+namespace LaborDigital\T3BA\Core\Util;
 
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
 trait CTypeRegistrationTrait
 {
-    
+
     /**
      * A mostly internal helper that is used to inject a given list of elements as cTypes in the tt_content TCA array
      *
@@ -36,7 +37,7 @@ trait CTypeRegistrationTrait
     {
         // Get the correct slot in the tca
         $itemList = Arrays::getPath($tca, ['tt_content', 'columns', 'CType', 'config', 'items'], []);
-        
+
         // Build the section list from all entries
         $sectionList = [];
         $options     = [];
@@ -53,15 +54,15 @@ trait CTypeRegistrationTrait
             $options[] = $item;
         }
         $sectionList = array_reverse($sectionList);
-        
+
         // Process the elements
         foreach ($elements as $element) {
             // Prepare the input
             [$sectionLabel, $title, $signature, $icon] = array_values($element);
-            
+
             // Find the section id
             $sectionId = Inflector::toUuid($sectionLabel);
-            
+
             // Create a new section if it does not exist
             if (! isset($sectionList[$sectionId])) {
                 $sectionList[$sectionId] = [
@@ -72,7 +73,7 @@ trait CTypeRegistrationTrait
                     'options' => [],
                 ];
             }
-            
+
             // Create the element
             $sectionList[$sectionId]['options'][] = [
                 $title,
@@ -80,7 +81,7 @@ trait CTypeRegistrationTrait
                 $icon,
             ];
         }
-        
+
         // Rebuild the list
         $newItemList = [];
         foreach ($sectionList as $section) {
