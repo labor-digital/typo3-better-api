@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\Typo3BetterApi\BackendPreview;
+declare(strict_types=1);
 
-interface BackendPreviewRendererInterface
+namespace LaborDigital\T3BA\Tool\BackendPreview;
+
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+
+interface BackendPreviewRendererInterface extends PublicServiceInterface
 {
-    
+
     /**
      * Should use the given context object to render the backend preview.
      * The body of the preview can either be set into the $context or returned directly as a string.
      * If you set the body AND return a string, the returned value has priority and overrides the set value of the body.
      *
-     * @param   \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewRendererContext  $context
+     * @param   BackendPreviewRendererContext  $context
      *
-     * @return string|void
+     * @return string|void|\TYPO3Fluid\Fluid\View\ViewInterface|\TYPO3\CMS\Extbase\Mvc\Response
      */
     public function renderBackendPreview(BackendPreviewRendererContext $context);
 }
