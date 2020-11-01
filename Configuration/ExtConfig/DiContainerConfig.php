@@ -33,6 +33,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\DependencyInjection\ConfigureDependencyInjectionInterface;
 use LaborDigital\T3BA\ExtConfigHandler\DependencyInjection\ConfigureDependencyInjectionTrait;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\EventBus\EventBusInterface;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
@@ -57,7 +58,7 @@ class DiContainerConfig implements ConfigureDependencyInjectionInterface
         ExtConfigContext $context
     ): void {
         static::autoWire([
-            'Classes/Core/{Adapter,BootStage,CodeGeneration,DependencyInjection,Override,TempFs}',
+            'Classes/Core/{Adapter,BootStage,CodeGeneration,DependencyInjection,Override,TempFs,Event}',
             'Classes/ExtConfig/ExtConfigService.php',
             'Classes/**/functions.php',
         ]);
@@ -90,6 +91,9 @@ class DiContainerConfig implements ConfigureDependencyInjectionInterface
                          ->setPublic(true)->setSynthetic(true);
         $containerBuilder->setDefinition(ConfigState::class, new Definition(ConfigState::class))
                          ->setPublic(true)->setSynthetic(true);
+        $containerBuilder->findDefinition(TypoContext::class)
+                         ->setPublic(true)->setSynthetic(true);
+
     }
 
     /**
