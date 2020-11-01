@@ -181,7 +181,7 @@ class RecordDataHandler
             $this->handlerService->processCommands([
                 $this->tableName => [
                     $uid => [
-                        'delete' => 0,
+                        'undelete' => 0,
                     ],
                 ],
             ]);
