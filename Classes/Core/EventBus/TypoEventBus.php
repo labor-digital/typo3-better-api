@@ -22,8 +22,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\EventBus;
 
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Util\SingletonInstanceTrait;
 use Neunerlei\EventBus\EventBus;
-use Neunerlei\EventBus\EventBusInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
@@ -35,35 +35,5 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class TypoEventBus extends EventBus implements SingletonInterface, PublicServiceInterface
 {
-    /**
-     * @var EventBusInterface
-     */
-    protected static $eventBus;
-
-    /**
-     * Returns the event bus instance
-     *
-     * @return \Neunerlei\EventBus\EventBusInterface
-     * @throws \LaborDigital\T3BA\Core\EventBus\EventBusNotInitializedException
-     */
-    public static function getInstance(): EventBusInterface
-    {
-        if (empty(static::$eventBus)) {
-            throw new EventBusNotInitializedException('The event bus instance was not injected using setInstance()');
-        }
-
-        return static::$eventBus;
-    }
-
-    /**
-     * Internal helper to inject the event bus instance into the class
-     *
-     * @param   \Neunerlei\EventBus\EventBusInterface  $eventBus
-     *
-     * @internal
-     */
-    public static function setInstance(EventBusInterface $eventBus): void
-    {
-        static::$eventBus = $eventBus;
-    }
+    use SingletonInstanceTrait;
 }

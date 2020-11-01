@@ -139,11 +139,6 @@ class TypoListenerProvider extends ListenerProvider
             return;
         }
 
-        // Check if we got the container
-        if (empty($this->container)) {
-            throw new EventException('You can\'t register core hook events before the container instance is loaded!');
-        }
-
         // Validate the adapter class
         $adapterClass = call_user_func([$eventClass, 'getAdapterClass']);
         if (! class_exists($adapterClass)) {
@@ -166,11 +161,11 @@ class TypoListenerProvider extends ListenerProvider
         }
 
         // Bind the adapter
+        $context = TypoContext::getInstance();
         call_user_func(
             [$adapterClass, 'prepare'],
             TypoEventBus::getInstance(),
-            $this->container->get(TypoContext::class),
-            $this->container
+            $context
         );
         call_user_func([$adapterClass, 'bind']);
         $this->boundCoreHooks[$adapterClass] = true;
