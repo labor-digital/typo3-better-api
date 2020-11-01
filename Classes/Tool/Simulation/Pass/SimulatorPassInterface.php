@@ -23,7 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
-interface SimulatorPassInterface
+use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+
+interface SimulatorPassInterface extends PublicServiceInterface
 {
     /**
      * Adds new option definitions to the list
