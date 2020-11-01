@@ -53,7 +53,6 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     {
         $this->fs       = TempFs::makeInstance('DynamicTypoScript');
         $this->contents = (array)$configState->get('typo.typoScript.dynamicTypoScript', []);
-//        dbge($this->contents);
     }
 
     /**

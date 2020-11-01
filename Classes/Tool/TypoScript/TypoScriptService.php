@@ -198,7 +198,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
 
         $out = [];
         foreach ($config as $k => $v) {
-            $keyWithoutDot = rtrim($k, '.');
+            $keyWithoutDot = ! is_string($k) ? $k : rtrim($k, '.');
             if (is_array($v)) {
                 if ($keepTypes && $k !== $keyWithoutDot && isset($config[$keyWithoutDot])) {
                     $v['@type'] = $config[$keyWithoutDot];
