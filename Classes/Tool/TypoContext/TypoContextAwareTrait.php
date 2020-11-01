@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\TypoContext;
 
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Psr\Container\ContainerInterface;
 
 trait TypoContextAwareTrait
 {
@@ -49,7 +49,16 @@ trait TypoContextAwareTrait
      */
     protected function TypoContext(): TypoContext
     {
-        return $this->__typoContext ?? $this->__typoContext
-                = GeneralUtility::getContainer()->get(TypoContext::class);
+        if (isset($this->__typoContext)) {
+            return $this->__typoContext;
+        }
+        if (method_exists($this, 'Container')) {
+            $container = $this->Container();
+            if ($container instanceof ContainerInterface) {
+                return $this->__typoContext = $container->get(TypoContext::class);
+            }
+        }
+
+        return $this->__typoContext = TypoContext::getInstance();
     }
 }
