@@ -23,12 +23,14 @@ namespace LaborDigital\T3BA\Tool\TypoContext;
 
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Util\SingletonInstanceTrait;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\BetterLanguageAspect;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\BetterVisibilityAspect;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\BeUserAspect;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\FacetAspect;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\FeUserAspect;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\ConfigFacet;
+use LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\FacetInterface;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\PathFacet;
@@ -43,6 +45,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 class TypoContext implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
+    use SingletonInstanceTrait;
 
     /**
      * @var \TYPO3\CMS\Core\Context\Context
@@ -181,6 +184,16 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     public function Config(): ConfigFacet
     {
         return $this->getOrMakeFacet('globalConfig', ConfigFacet::class);
+    }
+
+    /**
+     * Repository to all dependency injection capabilities of typo3
+     *
+     * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet
+     */
+    public function Di(): DependencyInjectionFacet
+    {
+        return $this->getOrMakeFacet('di', DependencyInjectionFacet::class);
     }
 
     /**
