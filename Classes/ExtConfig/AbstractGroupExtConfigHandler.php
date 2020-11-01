@@ -29,12 +29,7 @@ use Neunerlei\PathUtil\Path;
 
 abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler implements PublicServiceInterface
 {
-    /**
-     * The configuration context we are working with
-     *
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
-     */
-    protected $context;
+    use ExtConfigContextTrait;
 
     /**
      * Helper to generate the element key for a given class, that automatically takes care

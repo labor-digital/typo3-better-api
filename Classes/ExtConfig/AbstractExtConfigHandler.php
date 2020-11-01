@@ -24,27 +24,14 @@ namespace LaborDigital\T3BA\ExtConfig;
 
 
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
 use Neunerlei\Configuration\Handler\AbstractConfigHandler;
-use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 abstract class AbstractExtConfigHandler extends AbstractConfigHandler implements PublicServiceInterface
 {
+    use ExtConfigContextTrait;
 
-    /**
-     * The configuration context we are working with
-     *
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
-     */
-    protected $context;
-
-    /**
-     * Registers the default ext config location for your handler.
-     * Just a helper, to save a bit of typing.
-     *
-     * @param   \Neunerlei\Configuration\Handler\HandlerConfigurator  $configurator
-     */
-    protected function registerDefaultLocation(HandlerConfigurator $configurator): void
+    public function generate(PluginConfigurator $configurator, ExtConfigContext $context)
     {
-        $configurator->registerLocation('Configuration/ExtConfig');
     }
 }
