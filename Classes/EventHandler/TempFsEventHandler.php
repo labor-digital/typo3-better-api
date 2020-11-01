@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\EventHandler;
 
 
 use LaborDigital\T3BA\Core\TempFs\TempFs;
-use LaborDigital\T3BA\Event\CacheClearedEvent;
+use LaborDigital\T3BA\Event\Core\CacheClearedEvent;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
@@ -41,7 +41,7 @@ class TempFsEventHandler implements LazyEventSubscriberInterface
     /**
      * Flushes all temp fs data from the drive when all caches were cleared
      *
-     * @param   \LaborDigital\T3BA\Event\CacheClearedEvent  $event
+     * @param   \LaborDigital\T3BA\Event\Core\CacheClearedEvent  $event
      */
     public function onCacheClear(CacheClearedEvent $event): void
     {

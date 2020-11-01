@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\DiContainerBeingBuildEvent;
+use LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 

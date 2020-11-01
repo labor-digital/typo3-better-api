@@ -26,7 +26,7 @@ namespace LaborDigital\T3BA\Core\BootStage;
 use LaborDigital\T3BA\Core\Adapter\PackageManagerAdapter;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Event\PackageManagerCreatedEvent;
+use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Package\Package;
 

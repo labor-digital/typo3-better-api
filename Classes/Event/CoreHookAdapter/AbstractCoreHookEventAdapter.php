@@ -21,22 +21,15 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\CoreHookAdapter;
 
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use Neunerlei\EventBus\EventBusInterface;
-use Psr\Container\ContainerInterface;
 
 abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInterface
 {
-
     /**
-     * @var EventBusInterface
+     * @var TypoEventBus
      */
     protected static $bus;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected static $container;
 
     /**
      * @var TypoContext
@@ -47,12 +40,26 @@ abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInter
      * @inheritDoc
      */
     public static function prepare(
-        EventBusInterface $bus,
-        TypoContext $context,
-        ContainerInterface $container
+        TypoEventBus $bus,
+        TypoContext $context
     ): void {
-        static::$bus       = $bus;
-        static::$container = $container;
-        static::$context   = $context;
+        static::$bus     = $bus;
+        static::$context = $context;
+    }
+
+    /**
+     * @return \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     */
+    public function EventBus(): TypoEventBus
+    {
+        return static::$bus;
+    }
+
+    /**
+     * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     */
+    public function TypoContext(): TypoContext
+    {
+        return static::$context;
     }
 }

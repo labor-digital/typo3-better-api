@@ -30,14 +30,15 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\TempFs\TempFs;
-use LaborDigital\T3BA\Event\DiContainerBeingBuildEvent;
-use LaborDigital\T3BA\Event\DiContainerFilterEvent;
-use LaborDigital\T3BA\Event\Internal\InternalCreateDependencyInjectionContainerEvent;
-use LaborDigital\T3BA\Event\PackageManagerCreatedEvent;
+use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
+use LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent;
+use LaborDigital\T3BA\Event\Di\DiContainerFilterEvent;
+use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\DependencyInjection\ConfigureDependencyInjectionHandler;
 use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\ConfigureEventSubscribersHandler;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -81,7 +82,7 @@ class DiConfigurationStage implements BootStageInterface
      * Stores the package manager reference and registers the composer autoload
      * capabilities for the Configuration directories of each activated package.
      *
-     * @param   \LaborDigital\T3BA\Event\PackageManagerCreatedEvent  $event
+     * @param   \LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent  $event
      */
     public function onPackageManagerCreated(PackageManagerCreatedEvent $event): void
     {
@@ -92,7 +93,7 @@ class DiConfigurationStage implements BootStageInterface
     /**
      * Executes the configuration for the di container builder and related stuff, like event registration and so on.
      *
-     * @param   \LaborDigital\T3BA\Event\DiContainerBeingBuildEvent  $event
+     * @param   \LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent  $event
      */
     public function onDiContainerBeingBuild(DiContainerBeingBuildEvent $event): void
     {
@@ -106,7 +107,7 @@ class DiConfigurationStage implements BootStageInterface
      * Injects the early dependencies into the real di container instance
      * and runs the "runtime" container configuration handler
      *
-     * @param   \LaborDigital\T3BA\Event\Internal\InternalCreateDependencyInjectionContainerEvent  $event
+     * @param   \LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent  $event
      */
     public function onDiContainerBeingInstantiated(InternalCreateDependencyInjectionContainerEvent $event): void
     {
@@ -145,6 +146,11 @@ class DiConfigurationStage implements BootStageInterface
         $realContainer->set(ExtConfigContext::class, $this->container->get(ExtConfigContext::class));
         $realContainer->set(ExtConfigService::class, $this->container->get(ExtConfigService::class));
 
+        // Prepare the Typo context instance
+        $context = TypoContext::setInstance(new TypoContext());
+        $context->setContainer($realContainer);
+        $realContainer->set(TypoContext::class, $context);
+
         // Provide the container to the general utility a bit early
         $this->symfonyContainer = $realContainer;
         GeneralUtility::setContainer($realContainer);
@@ -155,7 +161,7 @@ class DiConfigurationStage implements BootStageInterface
         });
 
         // Allow global filtering
-        $this->kernel->getEventBus()->dispatch(new DiContainerFilterEvent($realContainer));
+        $eventBus->dispatch(new DiContainerFilterEvent($realContainer));
     }
 
     /**

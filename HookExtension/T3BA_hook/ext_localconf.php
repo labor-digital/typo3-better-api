@@ -19,7 +19,7 @@
 
 (function () {
     $bus = \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance();
-    $bus->dispatch(new \LaborDigital\T3BA\Event\ExtConfigLoadedEvent());
-    $bus->dispatch(new \LaborDigital\T3BA\Event\ExtLocalConfLoadedEvent());
+    $bus->dispatch(new \LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent());
+    $bus->dispatch(new \LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent());
 })();
 

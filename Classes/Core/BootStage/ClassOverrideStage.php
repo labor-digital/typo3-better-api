@@ -51,6 +51,7 @@ class ClassOverrideStage implements BootStageInterface
             TypoScriptParser::class    => ExtendedTypoScriptParser::class,
             LocalizationUtility::class => ExtendedLocalizationUtility::class,
             LanguageService::class     => ExtendedLanguageService::class,
+            //            DataHandler::class         => ExtendedDataHandler::class,
         ];
 
     /**

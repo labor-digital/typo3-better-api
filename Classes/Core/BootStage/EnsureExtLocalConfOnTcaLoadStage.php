@@ -25,8 +25,8 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Event\ExtLocalConfLoadedEvent;
-use LaborDigital\T3BA\Event\TcaWithoutOverridesLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3BA\Event\Core\TcaWithoutOverridesLoadedEvent;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class EnsureExtLocalConfOnTcaLoadStage implements BootStageInterface

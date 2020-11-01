@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.23 at 15:34
+ * Last modified: 2020.10.19 at 23:18
  */
 
 declare(strict_types=1);
@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event;
  *
  * Emitted when the TYPO3 bootstrap initializes the error handling
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3BA\Core\Event\Misc
  */
 class BootstrapInitializesErrorHandlingEvent
 {

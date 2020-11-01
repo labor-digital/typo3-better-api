@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\EventHandler;
 
 
-use LaborDigital\T3BA\Event\TypoScriptFileImportFilterEvent;
+use LaborDigital\T3BA\Event\TypoScript\FileImportFilterEvent;
 use LaborDigital\T3BA\Tool\TypoScript\DynamicTypoScriptRegistry;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
@@ -50,16 +50,16 @@ class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription)
     {
-        $subscription->subscribe(TypoScriptFileImportFilterEvent::class, 'onTypoScriptFileImport');
+        $subscription->subscribe(FileImportFilterEvent::class, 'onTypoScriptFileImport');
     }
 
     /**
      * Watches imported typo script files (only with the new @import notation) getting included
      * and handles the rewrite of the filename to our dynamic typo script file
      *
-     * @param   \LaborDigital\T3BA\Event\TypoScriptFileImportFilterEvent  $event
+     * @param   \LaborDigital\T3BA\Event\TypoScript\FileImportFilterEvent  $event
      */
-    public function onTypoScriptFileImport(TypoScriptFileImportFilterEvent $event): void
+    public function onTypoScriptFileImport(FileImportFilterEvent $event): void
     {
         if (stripos($event->getFilename(), 'dynamic:') === 0) {
             $event->setFilename(

@@ -28,7 +28,7 @@ use LaborDigital\T3BA\Core\ErrorHandler\ProductionExceptionHandler;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Event\BootstrapInitializesErrorHandlingEvent;
-use LaborDigital\T3BA\Event\ExtLocalConfLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
 
 class ErrorHandlerAdapterRegistrationStage implements BootStageInterface
 {

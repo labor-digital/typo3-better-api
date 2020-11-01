@@ -18,4 +18,4 @@
  */
 
 \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\ExtTablesLoadedEvent());
+    new \LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent());

@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
-use LaborDigital\T3BA\Event\ExtLocalConfLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 

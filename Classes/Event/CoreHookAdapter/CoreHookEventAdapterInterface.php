@@ -21,25 +21,22 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\CoreHookAdapter;
 
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use Neunerlei\EventBus\EventBusInterface;
-use Psr\Container\ContainerInterface;
 
 interface CoreHookEventAdapterInterface
 {
     /**
      * Provides some dependencies that are likely to be required in the event adapter implementation
      *
-     * @param   \Neunerlei\EventBus\EventBusInterface            $bus
+     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus    $bus
      * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
-     * @param   \Psr\Container\ContainerInterface                $container
      *
      * @return void
      */
     public static function prepare(
-        EventBusInterface $bus,
-        TypoContext $context,
-        ContainerInterface $container
+        TypoEventBus $bus,
+        TypoContext $context
     ): void;
 
     /**

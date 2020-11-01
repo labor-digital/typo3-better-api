@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\Core\ErrorHandler;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Exception\BetterApiException;
-use LaborDigital\T3BA\Event\ErrorFilterEvent;
+use LaborDigital\T3BA\Event\Core\ErrorFilterEvent;
 use Throwable;
 use TYPO3\CMS\Core\Error\ExceptionHandlerInterface;
 use TYPO3\CMS\Core\Error\ProductionExceptionHandler;

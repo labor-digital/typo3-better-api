@@ -28,7 +28,7 @@ use Error;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\TempFs\TempFs;
-use LaborDigital\T3BA\Event\ErrorFilterEvent;
+use LaborDigital\T3BA\Event\Core\ErrorFilterEvent;
 use Neunerlei\Configuration\Exception\ConfigClassNotAutoloadableException;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use TYPO3\CMS\Core\Core\Bootstrap;
@@ -48,7 +48,7 @@ class ErrorHandlerDevStage implements BootStageInterface
      * Special development only error handling helpers.
      * This clears your container cache if it failed to resolve something, which allows you easier debugging.
      *
-     * @param   \LaborDigital\T3BA\Event\ErrorFilterEvent  $event
+     * @param   \LaborDigital\T3BA\Event\Core\ErrorFilterEvent  $event
      */
     public function onError(ErrorFilterEvent $event): void
     {

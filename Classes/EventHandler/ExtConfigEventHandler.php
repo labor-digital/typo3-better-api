@@ -23,9 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\EventHandler;
 
 
-use LaborDigital\T3BA\Event\ExtConfigLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
+use Neunerlei\Configuration\Event\AfterConfigLoadEvent;
 use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
 use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
 use Neunerlei\Configuration\State\ConfigState;
@@ -71,7 +72,8 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(ExtConfigLoadedEvent::class, 'onExtConfigLoaded', ['priority' => 100]);
-        $subscription->subscribe(BeforeConfigLoadEvent::class, 'onBeforeConfigLoadEvent', ['priority' => 100]);
+        $subscription->subscribe(BeforeConfigLoadEvent::class, 'onBeforeConfigLoad', ['priority' => 100]);
+        $subscription->subscribe(AfterConfigLoadEvent::class, 'onAfterConfigLoad', ['priority' => 100]);
     }
 
     /**
@@ -79,7 +81,7 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
      *
      * @param   \Neunerlei\Configuration\Event\BeforeConfigLoadEvent  $event
      */
-    public function onBeforeConfigLoadEvent(BeforeConfigLoadEvent $event): void
+    public function onBeforeConfigLoad(BeforeConfigLoadEvent $event): void
     {
         if ($this->configStateInjected || $event->getLoaderContext()->type !== 'ExtConfigMain') {
             return;
@@ -87,6 +89,13 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
 
         $this->configStateInjected = true;
         $this->container->set(ConfigState::class, $event->getLoaderContext()->configContext->getState());
+    }
+
+    public function onAfterConfigLoad(AfterConfigLoadEvent $event): void
+    {
+        if ($event->getLoaderContext()->type === 'ExtConfigMain') {
+            $this->container->set(ConfigState::class, $event->getState());
+        }
     }
 
     /**

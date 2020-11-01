@@ -42,7 +42,7 @@ use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\BootstrapFailsafeDefinitionEvent;
 use LaborDigital\T3BA\Event\BootstrapInitializesErrorHandlingEvent;
-use LaborDigital\T3BA\Event\PackageManagerCreatedEvent;
+use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Core\BetterApiClassOverrideCopy__Bootstrap;

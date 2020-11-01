@@ -19,4 +19,4 @@ declare(strict_types=1);
  */
 
 \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\TcaCompletelyLoadedEvent());
+    new \LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent());

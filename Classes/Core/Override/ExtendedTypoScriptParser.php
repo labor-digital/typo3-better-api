@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\Core\Override;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\TypoScriptFileImportFilterEvent;
+use LaborDigital\T3BA\Event\TypoScript\FileImportFilterEvent;
 use TYPO3\CMS\Core\TypoScript\Parser\BetterApiClassOverrideCopy__TypoScriptParser;
 
 class ExtendedTypoScriptParser extends BetterApiClassOverrideCopy__TypoScriptParser
@@ -39,7 +39,7 @@ class ExtendedTypoScriptParser extends BetterApiClassOverrideCopy__TypoScriptPar
         array &$includedFiles
     ) {
         TypoEventBus::getInstance()->dispatch(
-            $e = new TypoScriptFileImportFilterEvent(
+            $e = new FileImportFilterEvent(
                 (string)$filename,
                 (int)$cycleCounter,
                 (bool)$returnFiles,

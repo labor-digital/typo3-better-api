@@ -20,4 +20,4 @@ declare(strict_types=1);
  */
 
 return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\MiddlewareRegistrationEvent())->getMiddlewares();
+    new \LaborDigital\T3BA\Event\Configuration\MiddlewareRegistrationEvent())->getMiddlewares();

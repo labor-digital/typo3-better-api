@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\Event\ExtLocalConfLoadedEvent;
-use LaborDigital\T3BA\Event\TcaCompletelyLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\Inflection\Inflector;
@@ -45,6 +45,7 @@ class TypoScriptConfigApplier extends AbstractExtConfigApplier
     public function onExtLocalConfLoaded(): void
     {
         $this->applyUserTsConfig();
+        $this->applyStaticPageTsConfig();
     }
 
     public function onTcaCompletelyLoaded(): void
@@ -66,7 +67,7 @@ class TypoScriptConfigApplier extends AbstractExtConfigApplier
      */
     protected function applyStaticPageTsConfig(): void
     {
-        ExtensionManagementUtility::addPageTSConfig($this->state->get('typo.typoScript.userTsConfig', ''));
+        ExtensionManagementUtility::addPageTSConfig($this->state->get('typo.typoScript.pageTsConfig', ''));
     }
 
     /**

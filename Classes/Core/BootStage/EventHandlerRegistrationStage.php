@@ -23,7 +23,7 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Event\Internal\InternalCreateDependencyInjectionContainerEvent;
+use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\ConfigureEventSubscribersHandler;
 
@@ -43,7 +43,7 @@ class EventHandlerRegistrationStage implements BootStageInterface
     /**
      * Loads the event handler configuration and registers them into the event bus
      *
-     * @param   \LaborDigital\T3BA\Event\Internal\InternalCreateDependencyInjectionContainerEvent  $event
+     * @param   \LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent  $event
      */
     public function onDiContainerBeingInstantiated(InternalCreateDependencyInjectionContainerEvent $event): void
     {

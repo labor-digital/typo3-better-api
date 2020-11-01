@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\EventHandler;
 
 
-use LaborDigital\T3BA\Event\TypoScriptConfigArrayPostProcEvent;
+use LaborDigital\T3BA\Event\TypoScript\ConfigArrayPostProcEvent;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
@@ -61,17 +61,17 @@ class PidEventHandler implements LazyEventSubscriberInterface
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
-        $subscription->subscribe(TypoScriptConfigArrayPostProcEvent::class, 'onTypoScriptConfigPostProcessing');
+        $subscription->subscribe(ConfigArrayPostProcEvent::class, 'onTypoScriptConfigPostProcessing');
     }
 
     /**
      * Reads the pids from typo script and re-injects their values into the pid aspect.
      * This allows the pid aspect to be modified using typoScript
      *
-     * @param   \LaborDigital\T3BA\Event\TypoScriptConfigArrayPostProcEvent  $event
+     * @param   \LaborDigital\T3BA\Event\TypoScript\ConfigArrayPostProcEvent  $event
      *
      */
-    public function onTypoScriptConfigPostProcessing(TypoScriptConfigArrayPostProcEvent $event): void
+    public function onTypoScriptConfigPostProcessing(ConfigArrayPostProcEvent $event): void
     {
         $pidConfig = Arrays::getPath($event->getConfig(), ['t3ba.', 'pid.'], []);
         $pidConfig = $this->typoScriptService->removeDots($pidConfig);

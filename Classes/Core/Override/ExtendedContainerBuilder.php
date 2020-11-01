@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\Core\Override;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Internal\InternalCreateDependencyInjectionContainerEvent;
+use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\DependencyInjection\BetterApiClassOverrideCopy__ContainerBuilder;
