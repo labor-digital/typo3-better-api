@@ -210,7 +210,7 @@ class Translator implements SingletonInterface
     {
         $key = $this->getLabelKey($selector);
 
-        if ($key === $selector) {
+        if ($key === $selector && strpos($selector, 'LLL:') !== 0) {
             return $selector;
         }
 
@@ -220,11 +220,7 @@ class Translator implements SingletonInterface
             $result = (string)$this->getTypoLanguageService()->sl($key);
         }
 
-        if (! empty($args)) {
-            $result = vsprintf($result, $args);
-        }
-
-        return $result;
+        return empty($args) ? $result : vsprintf($result, $args);
     }
 
     /**
