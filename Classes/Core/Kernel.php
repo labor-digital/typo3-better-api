@@ -191,8 +191,7 @@ class Kernel
         }
 
         // Create the eventbus instance
-        $eventBus = new TypoEventBus();
-        TypoEventBus::setInstance($eventBus);
+        $eventBus         = TypoEventBus::setInstance(new TypoEventBus());
         $listenerProvider = new TypoListenerProvider();
         $eventBus->setConcreteListenerProvider($listenerProvider);
         $eventBus->setProviderAdapter(TypoListenerProvider::class, static function (
