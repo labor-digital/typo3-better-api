@@ -22,29 +22,23 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Simulation\AdminUserAuthentication;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\UserAspect;
 
 class AdminSimulationPass implements SimulatorPassInterface
 {
-    use CommonDependencyTrait;
-
-    protected $userBackup;
-    protected $aspectBackup;
+    use ContainerAwareTrait;
+    use TypoContextAwareTrait;
 
     /**
      * Holds the cached version of the admin user authentication
      *
      * @var AdminUserAuthentication
      */
-    protected static $adminUserAuth;
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct() { }
+    protected $adminUserAuth;
 
     /**
      * @inheritDoc
@@ -62,7 +56,7 @@ class AdminSimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function requireSimulation(array $options): bool
+    public function requireSimulation(array $options, array &$storage): bool
     {
         return $options['asAdmin'] === true
                // Check if we already are logged in as and admin -> If we are, we don't need the simulation
@@ -77,11 +71,11 @@ class AdminSimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function setup(array $options): void
+    public function setup(array $options, array &$storage): void
     {
         // Backup the data
-        $this->aspectBackup = $this->TypoContext()->getRootContext()->getAspect('backend.user');
-        $this->userBackup   = $currentUser = $GLOBALS['BE_USER'];
+        $storage['aspect'] = $this->TypoContext()->getRootContext()->getAspect('backend.user');
+        $storage['user']   = $currentUser = $GLOBALS['BE_USER'];
 
         // Make the admin user
         $adminUser = $this->getAdminAuth();
@@ -104,10 +98,10 @@ class AdminSimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function rollBack(): void
+    public function rollBack(array $storage): void
     {
-        $GLOBALS['BE_USER'] = $this->userBackup;
-        $this->TypoContext()->getRootContext()->setAspect('backend.user', $this->aspectBackup);
+        $GLOBALS['BE_USER'] = $storage['user'];
+        $this->TypoContext()->getRootContext()->setAspect('backend.user', $storage['aspect']);
     }
 
     /**
@@ -118,15 +112,15 @@ class AdminSimulationPass implements SimulatorPassInterface
     protected function getAdminAuth(): AdminUserAuthentication
     {
         // Check if the auth already exists
-        if (isset(static::$adminUserAuth)) {
-            return static::$adminUserAuth;
+        if (isset($this->adminUserAuth)) {
+            return $this->adminUserAuth;
         }
 
         // Create a new instance
-        static::$adminUserAuth = $this->getInstanceOf(AdminUserAuthentication::class);
-        static::$adminUserAuth->start();
+        $this->adminUserAuth = $this->getInstanceOf(AdminUserAuthentication::class);
+        $this->adminUserAuth->start();
 
-        return static::$adminUserAuth;
+        return $this->adminUserAuth;
     }
 
 }

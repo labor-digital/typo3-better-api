@@ -28,13 +28,6 @@ class SiteSimulationPass implements SimulatorPassInterface
 {
     use TypoContextAwareTrait;
 
-    protected $siteBackup;
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct() { }
-
     /**
      * @inheritDoc
      */
@@ -51,7 +44,7 @@ class SiteSimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function requireSimulation(array $options): bool
+    public function requireSimulation(array $options, array &$storage): bool
     {
         return $options['site'] !== null
                && $options['pid'] === null
@@ -64,10 +57,10 @@ class SiteSimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function setup(array $options): void
+    public function setup(array $options, array &$storage): void
     {
         // Backup the current site
-        $this->siteBackup = $this->TypoContext()->Config()->getRequestAttribute('site');
+        $storage['site'] = $this->TypoContext()->Config()->getRequestAttribute('site');
 
         // Find the given site instance and inject it into the request
         $site = $this->TypoContext()->Site()->get($options['site']);
@@ -77,9 +70,9 @@ class SiteSimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function rollBack(): void
+    public function rollBack(array $storage): void
     {
-        $this->TypoContext()->Config()->setRequestAttribute('site', $this->siteBackup);
+        $this->TypoContext()->Config()->setRequestAttribute('site', $storage['site']);
     }
 
 }

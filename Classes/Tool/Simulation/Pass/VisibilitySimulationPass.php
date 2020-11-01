@@ -29,13 +29,6 @@ class VisibilitySimulationPass implements SimulatorPassInterface
 {
     use TypoContextAwareTrait;
 
-    protected $aspectBackup;
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct() { }
-
     /**
      * @inheritDoc
      */
@@ -61,7 +54,7 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function requireSimulation(array $options): bool
+    public function requireSimulation(array $options, array &$storage): bool
     {
         $visibilityAspect = $this->TypoContext()->Visibility();
 
@@ -73,10 +66,10 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function setup(array $options): void
+    public function setup(array $options, array &$storage): void
     {
         // Backup the aspect
-        $this->aspectBackup = clone $this->TypoContext()->getRootContext()->getAspect('visibility');
+        $storage['aspect'] = clone $this->TypoContext()->getRootContext()->getAspect('visibility');
 
         // Update the aspect
         $visibilityAspect = $this->TypoContext()->Visibility();
@@ -88,9 +81,9 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     /**
      * @inheritDoc
      */
-    public function rollBack(): void
+    public function rollBack(array $storage): void
     {
-        $this->TypoContext()->getRootContext()->setAspect('visibility', $this->aspectBackup);
+        $this->TypoContext()->getRootContext()->setAspect('visibility', $storage['aspect']);
     }
 
 }

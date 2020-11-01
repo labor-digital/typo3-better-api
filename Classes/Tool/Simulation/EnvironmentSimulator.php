@@ -74,6 +74,20 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     protected $childSimulationsIgnored = false;
 
     /**
+     * The list of instantiated passes
+     *
+     * @var SimulatorPassInterface[]
+     */
+    protected $passes;
+
+    /**
+     * The compiles option definition of all simulation passes
+     *
+     * @var array
+     */
+    protected $optionDefinition;
+
+    /**
      * EnvironmentSimulator constructor.
      *
      * @param   \LaborDigital\T3BA\Tool\Tsfe\TsfeService  $tsfeService
@@ -155,9 +169,9 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
             return $handler();
         }
 
-        // Apply the real options
-        $passes  = $this->makePassInstances();
-        $options = Options::make($options, $this->getSimulatorOptions($passes));
+        // Prepare the simulation
+        $this->initialize();
+        $options = Options::make($options, $this->optionDefinition);
 
         // Backup the old ignore child simulation state
         $parentIgnoresChildSimulations = $this->childSimulationsIgnored;
@@ -168,10 +182,11 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         $rollBackPasses = [];
         $result         = null;
         try {
-            foreach ($passes as $pass) {
-                if ($pass->requireSimulation($options)) {
-                    $rollBackPasses[] = $pass;
-                    $pass->setup($options);
+            foreach ($this->passes as $pass) {
+                $storage = [];
+                if ($pass->requireSimulation($options, $storage)) {
+                    $pass->setup($options, $storage);
+                    $rollBackPasses[] = [$pass, $storage];
                 }
             }
 
@@ -183,8 +198,9 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
 
         } finally {
             // Roll back
-            foreach (array_reverse($rollBackPasses) as $pass) {
-                $pass->rollBack();
+            foreach (array_reverse($rollBackPasses) as $args) {
+                $args[0]->rollBack($args[1]);
+                unset($args[1], $args);
             }
 
             // Restore parent state
@@ -224,44 +240,27 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     }
 
     /**
-     * Creates the instances of the simulator passes
-     *
-     * @return SimulatorPassInterface[]
+     * Initializes the instance by creating the pass instances and preparing the option definition
      */
-    protected function makePassInstances(): array
+    protected function initialize(): void
     {
-        $instances = [];
-        $container = $this->Container();
+        if (isset($this->passes)) {
+            return;
+        }
+
+        $optionDefinition = $this->getDefaultOptionDefinition();
+        $passes           = [];
         foreach (static::$environmentSimulatorPasses as $passClass) {
-            if ($container->has($passClass)) {
-                $instance = $container->get($passClass);
-            } else {
-                $instance = $this->getWithoutDi($passClass);
-            }
+            $instance = $this->getInstanceOf($passClass);
             if (! $instance instanceof SimulatorPassInterface) {
                 continue;
             }
-            $instances[] = $instance;
+            $optionDefinition = $instance->addOptionDefinition($optionDefinition);
+            $passes[]         = $instance;
         }
 
-        return $instances;
-    }
-
-    /**
-     * Collects the simulator options from the simulator passes
-     *
-     * @param   SimulatorPassInterface[]  $passes  The list of passes to extract the definition from
-     *
-     * @return array
-     */
-    protected function getSimulatorOptions(array $passes): array
-    {
-        $definition = $this->getDefaultOptionDefinition();
-        foreach ($passes as $pass) {
-            $definition = $pass->addOptionDefinition($definition);
-        }
-
-        return $definition;
+        $this->passes           = $passes;
+        $this->optionDefinition = $optionDefinition;
     }
 
     /**

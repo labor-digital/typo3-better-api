@@ -26,15 +26,9 @@ namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 interface SimulatorPassInterface
 {
     /**
-     * SimulatorPassInterface constructor.
-     * For performance reasons a pass should not have constructor arguments!
-     */
-    public function __construct();
-
-    /**
      * Adds new option definitions to the list
      *
-     * @param   array  $options
+     * @param   array  $options  The option list to add the pass' definition to
      *
      * @return array
      */
@@ -44,20 +38,24 @@ interface SimulatorPassInterface
      * Receives the prepared options and should check if simulation is required
      *
      * @param   array  $options  The prepared option list
+     * @param   array  $storage  A storage array to store potential backups for the rollBack method on
      *
      * @return bool
      */
-    public function requireSimulation(array $options): bool;
+    public function requireSimulation(array $options, array &$storage): bool;
 
     /**
      * Sets up the simulation
      *
-     * @param   array  $options
+     * @param   array  $options  The prepared option list
+     * @param   array  $storage  A storage array to store potential backups for the rollBack method on
      */
-    public function setup(array $options): void;
+    public function setup(array $options, array &$storage): void;
 
     /**
      * Rolls back the simulation to the original state
+     *
+     * @param   array  $storage  The list of stored values that should be restored
      */
-    public function rollBack(): void;
+    public function rollBack(array $storage): void;
 }
