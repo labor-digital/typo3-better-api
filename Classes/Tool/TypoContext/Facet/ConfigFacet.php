@@ -272,4 +272,36 @@ class ConfigFacet implements FacetInterface
 
         return $this->getSingletonOf(TypoScriptService::class)->get($path, $options);
     }
+
+    /**
+     * This method can be used to retrieve ts config values from the configuration.
+     *
+     * @param   null        $path     Either a key or a path like "config.lang" to query the hierarchy. If left
+     *                                empty, the method will return the complete typoScript array.
+     * @param   null|mixed  $default  By default the method returns null, if the queried value
+     *                                was not found in the configuration. If this option is set, the given value
+     *                                will be returned instead.
+     * @param   array       $options  Additional options
+     *                                - pid (integer): An optional pid to query the typoScript for.
+     *                                - separator (string) ".": A separator trough which the path parts are
+     *                                separated from each other
+     *                                - getType (bool) FALSE: If set to TRUE the method will try return
+     *                                the typoScript object's type instead of it's value.
+     *                                The Type is normally stored as: key.key.type
+     *                                while the value is stored as: key.key.type. <- Note the period
+     *                                Not all elements have a type. If we don't fine one we will return the
+     *                                "default" value Otherwise we will try to get the value, and if not set return
+     *                                the type
+     *
+     * @return array|mixed|null
+     */
+    public function getTsConfigValue($path = null, $default = null, array $options = [])
+    {
+        if (! is_null($default)) {
+            $options['default'] = $default;
+        }
+
+        return $this->getSingletonOf(TypoScriptService::class)->getTsConfig($path, $options);
+    }
 }
+

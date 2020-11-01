@@ -27,6 +27,7 @@ use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -71,7 +72,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     {
         $options = Options::make($options, [
             'default'   => null,
-            'pid'       => null,
+            'pid'       => $this->getPidOptionDefinition(),
             'separator' => '.',
         ]);
 
@@ -115,26 +116,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     {
         $options = Options::make($options, [
             'default'   => null,
-            'pid'       => [
-                'default' => null,
-                'type'    => ['int', 'string', 'null'],
-                'filter'  => function ($v) {
-                    if (is_int($v)) {
-                        return $v;
-                    }
-
-                    if ($v === null) {
-                        return $this->TypoContext()->Pid()->getCurrent();
-                    }
-
-                    if (is_numeric($v)) {
-                        return (int)$v;
-                    }
-
-                    return $this->TypoContext()->Pid()->get($v);
-
-                },
-            ],
+            'pid'       => $this->getPidOptionDefinition(),
             'separator' => '.',
             'getType'   => false,
         ]);
@@ -145,6 +127,47 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
 
         // Read contents
         return $this->getPathHelper($config, $path, $options);
+    }
+
+    /**
+     * This method can be used to retrieve ts config values from the configuration.
+     *
+     * @param   null|string|array  $path     Either a key or a path like "mod.web_list" to query the hierarchy. If left
+     *                                       empty, the method will return the complete typoScript array.
+     * @param   array              $options  Additional options
+     *                                       - default (mixed): By default the method returns null, if the queried
+     *                                       value was not found in the configuration. If this option is set, the given
+     *                                       value will be returned instead.
+     *                                       - pid (integer): An optional pid to query the typoScript for.
+     *                                       - separator (string) ".": A separator trough which the path parts are
+     *                                       separated from each other
+     *                                       - getType (bool) FALSE: If set to TRUE the method will try return
+     *                                       the typoScript object's type instead of it's value.
+     *                                       The Type is normally stored as: key.key.type
+     *                                       while the value is stored as: key.key.type. <- Note the period
+     *                                       Not all elements have a type. If we don't fine one we will return the
+     *                                       "default" value Otherwise we will try to get the value, and if not set
+     *                                       return the type
+     *
+     * @return array|mixed|null
+     */
+    public function getTsConfig($path = null, array $options = [])
+    {
+        /** @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $user */
+        $user     = $GLOBALS['BE_USER'];
+        $tsConfig = Arrays::merge(
+            BackendUtility::getPagesTSconfig($this->TypoContext()->Pid()->getCurrent()),
+            is_object($user) ? $user->getTSConfig() : []
+        );
+
+        $options = Options::make($options, [
+            'default'   => null,
+            'pid'       => $this->getPidOptionDefinition(),
+            'separator' => '.',
+            'getType'   => false,
+        ]);
+
+        return $this->getPathHelper($tsConfig, $path, $options);
     }
 
     /**
@@ -246,6 +269,35 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
         }
 
         return $this->renderContentObject($type, $config);
+    }
+
+    /**
+     * Returns the option definition for the pid option
+     *
+     * @return array
+     */
+    protected function getPidOptionDefinition(): array
+    {
+        return [
+            'default' => null,
+            'type'    => ['int', 'string', 'null'],
+            'filter'  => function ($v) {
+                if (is_int($v)) {
+                    return $v;
+                }
+
+                if ($v === null) {
+                    return $this->TypoContext()->Pid()->getCurrent();
+                }
+
+                if (is_numeric($v)) {
+                    return (int)$v;
+                }
+
+                return $this->TypoContext()->Pid()->get($v);
+
+            },
+        ];
     }
 
     /**
