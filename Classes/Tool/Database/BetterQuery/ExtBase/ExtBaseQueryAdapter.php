@@ -21,8 +21,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
+use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter;
-use LaborDigital\Typo3BetterApi\NotImplementedException;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
@@ -36,8 +37,9 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     /**
      * ExtBaseQueryAdapter constructor.
      *
-     * @param   string                                         $tableName
-     * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface  $query
+     * @param   string                                           $tableName
+     * @param   \TYPO3\CMS\Extbase\Persistence\QueryInterface    $query
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
      */
     public function __construct(string $tableName, QueryInterface $query, TypoContext $context)
     {
@@ -112,7 +114,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
      */
     public function getQueryBuilder(): QueryBuilder
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException('The query builder is generated in the ext base better query implementation');
     }
 
     /**

@@ -21,8 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
-use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -30,7 +30,12 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
 
 class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
 {
-    use StaticContainerAwareTrait;
+    /**
+     * The singleton instance to avoid overhead
+     *
+     * @var Typo3DbQueryParser
+     */
+    protected static $concreteQueryParser;
 
     /**
      * Sadly not all features of ext base are implemented using the doctrine restrictions.
@@ -46,12 +51,27 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         QueryBuilder $queryBuilder,
         QuerySettingsInterface $settings
     ): void {
-        $self               = TypoContext::getInstance()->Di()->getObjectManager()->get(Typo3DbQueryParser::class);
+        $self               = static::getConcreteQueryParser();
         $self->queryBuilder = $queryBuilder;
         $dummyQuery         = new Query('');
         $dummyQuery->setQuerySettings($settings);
         $self->tableAliasMap             = [];
         $self->tableAliasMap[$tableName] = $tableName;
         $self->addTypo3Constraints($dummyQuery);
+    }
+
+    /**
+     * Internal helper to access the instance of the query parser object
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser
+     */
+    public static function getConcreteQueryParser(): Typo3DbQueryParser
+    {
+        if (! empty(static::$concreteQueryParser)) {
+            return static::$concreteQueryParser;
+        }
+
+        return static::$concreteQueryParser
+            = TypoContext::getInstance()->Di()->getObjectManager()->get(Typo3DbQueryParser::class);
     }
 }

@@ -96,9 +96,9 @@ abstract class AbstractBetterQuery
     /**
      * Executes the currently configured query and returns the results
      *
-     * @return array
+     * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
-    abstract public function getAll(): array;
+    abstract public function getAll();
 
     /**
      * Returns the total number of items in the result set, matching the given query parameters
@@ -113,6 +113,16 @@ abstract class AbstractBetterQuery
      * @return mixed
      */
     abstract public function getFirst();
+
+    /**
+     * Returns the name of the database table this query applies to
+     *
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->adapter->getTableName();
+    }
 
     /**
      * By default the results from ALL pages will be returned.

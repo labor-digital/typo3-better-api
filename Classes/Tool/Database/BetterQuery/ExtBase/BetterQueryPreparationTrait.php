@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2020 LABOR.digital
  *
@@ -19,6 +20,8 @@
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
+use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\TinyTimy\DateTimy;
@@ -30,20 +33,24 @@ trait BetterQueryPreparationTrait
     /**
      * Should return a new better query instance
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
+     * @return AbstractBetterQuery
      */
-    abstract public function getQuery(): BetterQuery;
+    abstract public function getQuery(): AbstractBetterQuery;
 
     /**
      * Receives the query object after the initial preparation was done and should apply additional constraints to it.
      *
-     * @param   BetterQuery  $query
-     * @param   array        $settings
-     * @param   array        $row
+     * @param   AbstractBetterQuery  $query
+     * @param   array                $settings
+     * @param   array                $row
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
+     * @return ExtBaseBetterQuery
      */
-    abstract protected function prepareBetterQuery(BetterQuery $query, array $settings, array $row): BetterQuery;
+    abstract protected function prepareBetterQuery(
+        AbstractBetterQuery $query,
+        array $settings,
+        array $row
+    ): AbstractBetterQuery;
 
     /**
      * This method is similar to getQuery() on the BetterRepository class,
@@ -53,9 +60,9 @@ trait BetterQueryPreparationTrait
      * @param   array  $settings  The ext base $this->settings value of a controller class
      * @param   array  $row       The row of a tt_content record containing the ext base plugin configuration.
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
+     * @return AbstractBetterQuery
      */
-    public function getPreparedQuery(array $settings, array $row = []): BetterQuery
+    public function getPreparedQuery(array $settings, array $row = []): AbstractBetterQuery
     {
         $query = $this->getQuery();
 
@@ -70,10 +77,8 @@ trait BetterQueryPreparationTrait
                 foreach ($row['pages'] as $page) {
                     if (is_numeric($page)) {
                         $pids[] = $page;
-                    } else {
-                        if (is_array($page) && isset($page['uid'])) {
-                            $pids[] = $page['uid'];
-                        }
+                    } elseif (is_array($page) && isset($page['uid'])) {
+                        $pids[] = $page['uid'];
                     }
                 }
                 $query = $query->withPids($pids);
@@ -92,22 +97,25 @@ trait BetterQueryPreparationTrait
      * Configures the given better query object to a date range constraint.
      * It is optional if you work on a single field or with startDate and endDate fields.
      *
-     * @param   BetterQuery  $query                 The query object to configure
-     * @param   array        $queryDateRangeConfig  Expects an array containing four parameters
-     *                                              "startDateField": The database field name that holds the start dates
-     *                                              "endDateField": The database field name that holds the end dates (is
-     *                                              equal to "startDateField" if no the min and the max date should be
-     *                                              determined only by a single field)
-     *                                              "min": The minimum date value in the start date field
-     *                                              "max": The maximum date value in the end date field
+     * @param   AbstractBetterQuery  $query                 The query object to configure
+     * @param   array                $queryDateRangeConfig  Expects an array containing four parameters
+     *                                                      "startDateField": The database field name that holds the
+     *                                                      start dates
+     *                                                      "endDateField": The database field name that holds the end
+     *                                                      dates (is equal to "startDateField" if no the min and the
+     *                                                      max date should be determined only by a single field)
+     *                                                      "min": The minimum date value in the start date field
+     *                                                      "max": The maximum date value in the end date field
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
+     * @return AbstractBetterQuery
      */
-    protected function setQueryDateRangeConstraint(BetterQuery $query, array $queryDateRangeConfig): BetterQuery
-    {
+    protected function setQueryDateRangeConstraint(
+        AbstractBetterQuery $query,
+        array $queryDateRangeConfig
+    ): AbstractBetterQuery {
         // Add the constraint to the query object
         return $query->withWhere([
-            function (QueryInterface $query) use ($queryDateRangeConfig) {
+            static function (QueryInterface $query) use ($queryDateRangeConfig) {
                 return $query->logicalAnd([
                     $query->greaterThanOrEqual($queryDateRangeConfig['endDateField'], $queryDateRangeConfig['min']),
                     $query->lessThanOrEqual($queryDateRangeConfig['startDateField'], $queryDateRangeConfig['max']),
@@ -123,12 +131,12 @@ trait BetterQueryPreparationTrait
      * You can either get the range over two columns (one for the start- and one for the end date)
      * Or you can get the date range in a single column (just keep the third argument null)
      *
-     * @param   BetterQuery  $query              The preconfigured query object to request the values with
-     * @param   string       $startDateProperty  The ext base property name that holds the start dates of an entity.
-     *                                           Or the property name of the column that just holds the dates (just
-     *                                           start; no end dates)
-     * @param   string|null  $endDateProperty    Optionally the ext base property name of the column that defines the
-     *                                           end dates of an entity.
+     * @param   AbstractBetterQuery  $query              The preconfigured query object to request the values with
+     * @param   string               $startDateProperty  The ext base property name that holds the start dates of an
+     *                                                   entity. Or the property name of the column that just holds the
+     *                                                   dates (just start; no end dates)
+     * @param   string|null          $endDateProperty    Optionally the ext base property name of the column that
+     *                                                   defines the end dates of an entity.
      *
      * @return array The result is an array containing four values:
      *               "startDateField": The database field name that holds the start dates
@@ -137,10 +145,14 @@ trait BetterQueryPreparationTrait
      *               "min": The oldest entry in the start date field
      *               "max": The newest entry in the end date field
      *
-     * @throws \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQueryException
+     * @throws BetterQueryException
+     * @noinspection PhpMethodParametersCountMismatchInspection
      */
-    protected function getQueryDateRange(BetterQuery $query, string $startDateProperty, ?string $endDateProperty = null)
-    {
+    protected function getQueryDateRange(
+        AbstractBetterQuery $query,
+        string $startDateProperty,
+        ?string $endDateProperty = null
+    ): array {
         // Get the date constraints
         // Start date
         $startDateField = $startDateProperty;

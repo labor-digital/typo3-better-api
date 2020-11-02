@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright 2020 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 16:23
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events;
+namespace LaborDigital\T3BA\Event\ExtBase\Persistence;
 
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -33,42 +33,42 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  */
 class DataMapperQueryFilterEvent
 {
-    
+
     /**
      * The database query that is currently filtered
      *
      * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     protected $query;
-    
+
     /**
      * The domain object for which the relation is created
      *
      * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
     protected $parentObject;
-    
+
     /**
      * The name of the property for which the relation is created
      *
      * @var string
      */
     protected $propertyName;
-    
+
     /**
      * The value of the field that should be filtered
      *
      * @var mixed
      */
     protected $fieldValue;
-    
+
     /**
      * The class name of the related object that should be resolved
      *
      * @var string
      */
     protected $propertyType;
-    
+
     /**
      * DataMapperQueryFilterEvent constructor.
      *
@@ -91,7 +91,7 @@ class DataMapperQueryFilterEvent
         $this->fieldValue   = $fieldValue;
         $this->propertyType = $propertyType;
     }
-    
+
     /**
      * Returns the database query that is currently filtered
      *
@@ -101,7 +101,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->query;
     }
-    
+
     /**
      * Updates the database query that is currently filtered
      *
@@ -112,10 +112,10 @@ class DataMapperQueryFilterEvent
     public function setQuery(QueryInterface $query): DataMapperQueryFilterEvent
     {
         $this->query = $query;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the domain object for which the relation is created
      *
@@ -125,7 +125,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->parentObject;
     }
-    
+
     /**
      * Returns the name of the property for which the relation is created
      *
@@ -135,7 +135,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->propertyName;
     }
-    
+
     /**
      * Returns the value of the field that should be filtered
      *
@@ -145,7 +145,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->fieldValue;
     }
-    
+
     /**
      * Returns the class name of the related object that should be resolved
      *

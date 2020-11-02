@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,42 +18,49 @@
  * Last modified: 2020.03.20 at 16:24
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\ExtendedRelation;
+namespace LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation;
 
 use LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent;
 use Neunerlei\EventBus\EventBusInterface;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
 
+/**
+ * Class ExtendedRelationService
+ *
+ * @package LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation
+ *
+ * @todo    finalize migrating this!
+ */
 class ExtendedRelationService implements SingletonInterface
 {
-    
+
     /**
      * True if our internal event handler was registered
      *
      * @var bool
      */
     protected $handlerRegistered = false;
-    
+
     /**
      * The query filter we are currently applying
      *
      * @var callable|null
      */
     protected $filter;
-    
+
     /**
      * @var \Neunerlei\EventBus\EventBusInterface
      */
     protected $eventBus;
-    
+
     /**
      * The cached enabled state to avoid a lot of repetitive work
      *
      * @var array
      */
     protected $enabledStateCache = [];
-    
+
     /**
      * ExtendedRelationService constructor.
      *
@@ -62,7 +70,7 @@ class ExtendedRelationService implements SingletonInterface
     {
         $this->eventBus = $eventBus;
     }
-    
+
     /**
      * Runs the given callback with the extended settings applied
      *
@@ -109,30 +117,30 @@ class ExtendedRelationService implements SingletonInterface
                 'default'   => false,
             ],
         ]);
-        
+
         // Check if we have work to do
         if ($settings['hidden'] === false && $settings['deleted'] === false) {
             return $function();
         }
-        
+
         // Store the current filter to allow nesting
         $filterBackup            = $this->filter;
         $cacheBackup             = $this->enabledStateCache;
         $this->enabledStateCache = [];
-        
+
         // Build the main query modifier with the given settings
         $this->filter = function (DataMapperQueryFilterEvent $event) use ($settings) {
             $model         = $event->getParentObject();
             $property      = $event->getPropertyName();
             $querySettings = $event->getQuery()->getQuerySettings();
-            
+
             // HIDDEN
             if ($this->validateEnabledState('hidden', $settings, $model, $property)) {
                 $querySettings
                     ->setIgnoreEnableFields(true)
                     ->setEnableFieldsToBeIgnored(['hidden', 'disabled']);
             }
-            
+
             // DELETED
             if ($this->validateEnabledState('deleted', $settings, $model, $property)) {
                 $querySettings
@@ -140,13 +148,13 @@ class ExtendedRelationService implements SingletonInterface
                     ->setIncludeDeleted(true);
             }
         };
-        
+
         // Bind our event if required
         if (! $this->handlerRegistered) {
             $this->handlerRegistered = true;
             $this->eventBus->addListener(DataMapperQueryFilterEvent::class, [$this, '__dataMapperQueryFilter']);
         }
-        
+
         // Run our given function
         try {
             return $function();
@@ -155,7 +163,7 @@ class ExtendedRelationService implements SingletonInterface
             $this->enabledStateCache = $cacheBackup;
         }
     }
-    
+
     /**
      * Event listener to inject or special configuration into the generated query object
      *
@@ -169,7 +177,7 @@ class ExtendedRelationService implements SingletonInterface
         }
         call_user_func($this->filter, $event);
     }
-    
+
     /**
      * Internal helper that validates the given settings for the deleted and hidden relations
      * It will return true if the adjustments for the given $key have to be applied to the query settings
@@ -196,7 +204,7 @@ class ExtendedRelationService implements SingletonInterface
             if ($state === false) {
                 return false;
             }
-            
+
             // Check if a class name is given -> Allow all properties
             if (is_string($state)) {
                 $state = [$state];
@@ -204,14 +212,14 @@ class ExtendedRelationService implements SingletonInterface
             if (in_array($model, $state)) {
                 return true;
             }
-            
+
             // Check if a specific property is allowed
             if (isset($state[$model])
                 && ($state[$model] === $property
                     || is_array($state[$model]) && in_array($property, $state[$model]))) {
                 return true;
             }
-            
+
             // Check if a class parent is allowed
             $parents = class_parents($model);
             foreach ($parents as $parent) {
@@ -219,7 +227,7 @@ class ExtendedRelationService implements SingletonInterface
                 if (in_array($parent, $state)) {
                     return true;
                 }
-                
+
                 // Check if a specific property is allowed
                 if (isset($state[$model])
                     && ($state[$model] === $property
@@ -227,10 +235,10 @@ class ExtendedRelationService implements SingletonInterface
                     return true;
                 }
             }
-            
+
             return false;
         })();
-        
+
         return $this->enabledStateCache[$cacheKey] = $result;
     }
 }

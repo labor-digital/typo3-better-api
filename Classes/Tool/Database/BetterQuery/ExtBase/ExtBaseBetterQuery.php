@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -19,10 +20,11 @@
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
-use LaborDigital\Typo3BetterApi\Domain\BetterQuery\Adapter\ExtBaseQueryAdapter;
-use LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationQueryResult;
-use LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
+use LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation\ExtendedRelationQueryResult;
+use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -34,11 +36,11 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  *
  * @package LaborDigital\Typo3BetterApi\Domain\BetterQuery
  */
-class BetterQuery extends AbstractBetterQuery
+class ExtBaseBetterQuery extends AbstractBetterQuery
 {
 
     /**
-     * @var \LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository
+     * @var BetterRepository
      */
     protected $repository;
 
@@ -85,9 +87,9 @@ class BetterQuery extends AbstractBetterQuery
      *                           - [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property", "foo"]:
      *                           Allow hidden children for either a single property or a list of properties
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
+     * @return $this
      */
-    public function withIncludeHiddenChildren($settings = true): BetterQuery
+    public function withIncludeHiddenChildren($settings = true): ExtBaseBetterQuery
     {
         $clone = clone $this;
         if (empty($settings)) {
@@ -111,9 +113,9 @@ class BetterQuery extends AbstractBetterQuery
      *                           - [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property", "foo"]:
      *                           Allow deleted children for either a single property or a list of properties
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
+     * @return $this
      */
-    public function withIncludeDeletedChildren($settings = true): BetterQuery
+    public function withIncludeDeletedChildren($settings = true): ExtBaseBetterQuery
     {
         $clone = clone $this;
         if (empty($settings)) {
@@ -143,7 +145,7 @@ class BetterQuery extends AbstractBetterQuery
     {
         $orgAdapter    = $this->adapter;
         $this->adapter = $clone = clone $orgAdapter;
-        $this->applyWhere();
+        $this->applyWhere($clone);
         $this->adapter = $orgAdapter;
 
         return $clone->getQuery();
@@ -162,10 +164,15 @@ class BetterQuery extends AbstractBetterQuery
     {
         // Check if we have to apply an advanced relation lookup
         if (! $returnAsArray && ! empty($this->includeHiddenChildren) || ! empty($this->includeDeletedChildren)) {
-            return ExtendedRelationQueryResult::makeInstance($this->getQuery()->execute($returnAsArray), [
-                'hidden'  => $this->includeHiddenChildren,
-                'deleted' => $this->includeDeletedChildren,
-            ]);
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return $this->typoContext->Di()->getObjectManager()->get(
+                ExtendedRelationQueryResult::class,
+                $this->getQuery(),
+                [
+                    'hidden'  => $this->includeHiddenChildren,
+                    'deleted' => $this->includeDeletedChildren,
+                ]
+            );
         }
 
         // Perform a normal query
@@ -181,7 +188,13 @@ class BetterQuery extends AbstractBetterQuery
      */
     public function getFirst(bool $returnAsArray = false)
     {
-        return $returnAsArray ? reset($this->getAll(true)) : $this->getAll(false)->getFirst();
+        if ($returnAsArray) {
+            $result = $this->getAll(true);
+
+            return reset($result);
+        }
+
+        return $this->getAll(false)->getFirst();
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,10 +18,14 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain;
+namespace LaborDigital\T3BA\ExtBase\Domain\Model;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
+use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingTrait;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-class DomainException extends BetterApiException
+abstract class BetterEntity extends AbstractEntity
 {
+    use LazyLoadingTrait;
+    use CommonDependencyTrait;
 }

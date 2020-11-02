@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2020 LABOR.digital
  *
@@ -19,8 +20,8 @@
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
-use LaborDigital\Typo3BetterApi\Domain\Repository\BetterRepository;
+use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 trait BetterQueryRepositoryTrait
@@ -43,16 +44,15 @@ trait BetterQueryRepositoryTrait
      * If your current repository has a prepareQuery() method it will be called every time
      * the query object is requested with this method
      *
-     * @return \LaborDigital\Typo3BetterApi\Domain\BetterQuery\BetterQuery
-     * @throws \LaborDigital\Typo3BetterApi\BetterApiException
+     * @return \LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery
+     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
      */
-    public function getQuery(): BetterQuery
+    public function getQuery(): ExtBaseBetterQuery
     {
         if (! $this instanceof Repository) {
-            throw new BetterApiException('You can use the BetterQueryRepositoryTrait only on extbase repositories!');
+            throw new BetterQueryException('You can use the BetterQueryRepositoryTrait only on extbase repositories!');
         }
         if (! isset($this->__repositoryWrapper)) {
-            /** @noinspection PhpParamsInspection */
             $this->__repositoryWrapper = BetterRepository::getWrapper($this);
         }
 

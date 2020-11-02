@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\BetterQuery;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3BA\Tool\Database\DatabaseException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -32,7 +32,7 @@ if (! function_exists('dbgQuery')) {
     /**
      * Helper to debug a typo3 query. Will render the sql statement, the result, and exceptions to the screen to see.
      *
-     * @param   QueryInterface|BetterQuery|StandaloneBetterQuery  $query  The query to debug
+     * @param   QueryInterface|ExtBaseBetterQuery|StandaloneBetterQuery  $query  The query to debug
      *
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -40,7 +40,7 @@ if (! function_exists('dbgQuery')) {
     {
         $result       = $exception = $count = null;
         $isStandalone = false;
-        if ($query instanceof BetterQuery) {
+        if ($query instanceof ExtBaseBetterQuery) {
             $query = $query->getQuery();
         }
         if ($query instanceof QueryResult) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,35 +18,43 @@
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\ExtendedRelation;
+namespace LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation;
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class ExtendedRelationQueryResult extends QueryResult
 {
-    
+
+    /**
+     * @var ExtendedRelationService
+     */
+    protected $extendedRelationService;
+
     /**
      * The settings for the extended relation service
      *
      * @var array
      */
     protected $settings;
-    
+
     /**
-     * @var \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService
+     * @inheritDoc
      */
-    protected $extendedRelationService;
-    
+    public function __construct(QueryInterface $query, array $settings)
+    {
+        parent::__construct($query);
+        $this->settings = $settings;
+    }
+
     /**
-     * @param   \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationService  $extendedRelationService
+     * @param   ExtendedRelationService  $extendedRelationService
      */
     public function injectExtendedRelationService(ExtendedRelationService $extendedRelationService)
     {
         $this->extendedRelationService = $extendedRelationService;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -55,7 +64,7 @@ class ExtendedRelationQueryResult extends QueryResult
             parent::initialize();
         });
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -64,21 +73,5 @@ class ExtendedRelationQueryResult extends QueryResult
         return $this->extendedRelationService->runWithRelationSettings($this->settings, function () {
             return parent::getFirst();
         });
-    }
-    
-    /**
-     * Factory method to create a new instance of myself
-     *
-     * @param   \TYPO3\CMS\Extbase\Persistence\QueryResultInterface  $result
-     * @param   array                                                $settings
-     *
-     * @return \LaborDigital\Typo3BetterApi\Domain\ExtendedRelation\ExtendedRelationQueryResult
-     */
-    public static function makeInstance(QueryResultInterface $result, array $settings): ExtendedRelationQueryResult
-    {
-        $self           = TypoContainer::getInstance()->get(static::class, ['args' => [$result->getQuery()]]);
-        $self->settings = $settings;
-        
-        return $self;
     }
 }
