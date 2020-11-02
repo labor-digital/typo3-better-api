@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.26.4](https://github.com/labor-digital/typo3-better-api/compare/v9.26.3...v9.26.4) (2020-11-02)
+
+
+### Bug Fixes
+
+* **DisplayConditionTrait:** make array based condition handling more reliable ([43b0c52](https://github.com/labor-digital/typo3-better-api/commit/43b0c52da521460763854cd675f8040efd65c9e7))
+
 ### [9.26.3](https://github.com/labor-digital/typo3-better-api/compare/v9.26.2...v9.26.3) (2020-10-30)
 
 
