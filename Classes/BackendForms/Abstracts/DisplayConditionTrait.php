@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -24,7 +25,7 @@ use Neunerlei\Arrays\Arrays;
 
 trait DisplayConditionTrait
 {
-    
+
     /**
      * Sets the display condition for the current column
      *
@@ -41,34 +42,36 @@ trait DisplayConditionTrait
      * @return $this
      * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
      */
-    public function setDisplayCondition($condition)
+    public function setDisplayCondition($condition): self
     {
         if (empty($condition)) {
             return $this;
         }
         if (is_array($condition)) {
-            $fieldProcessor = function ($condition) {
-                if (count($condition) === 3 && Arrays::isSequential($condition)) {
-                    $condition = 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
+            if (! Arrays::isAssociative($condition)) {
+                $fieldProcessor = static function ($condition) {
+                    if (count($condition) === 3 && Arrays::isSequential($condition)) {
+                        $condition = 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
+                    }
+
+                    return $condition;
+                };
+                if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
+                    $condition = [
+                        'AND' => array_map($fieldProcessor, $condition),
+                    ];
+                } else {
+                    $condition = $fieldProcessor($condition);
                 }
-                
-                return $condition;
-            };
-            if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
-                $condition = [
-                    'AND' => array_map($fieldProcessor, $condition),
-                ];
-            } else {
-                $condition = $fieldProcessor($condition);
             }
         } elseif (! is_string($condition)) {
             throw new BackendFormException('Only strings and arrays are allowed as display conditions!');
         }
         $this->config['displayCond'] = $condition;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the currently configured display condition, or null
      *
