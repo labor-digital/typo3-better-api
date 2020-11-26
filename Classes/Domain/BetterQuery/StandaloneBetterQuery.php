@@ -341,6 +341,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
 
             // Resolve the relations for every element
             foreach ($records as $result) {
+                if (empty($result)) {
+                    continue;
+                }
+
                 // Create the relation handler
                 $relationHandler = $container->get(RelationHandler::class);
                 $relationHandler->setFetchAllFields(true);
@@ -371,6 +375,11 @@ class StandaloneBetterQuery extends AbstractBetterQuery
 
                 // Request the database using the backend relation handler
                 $relations = $relationHandler->getFromDB();
+                if (empty($relations)) {
+                    // Make sure the field exists and is an array -> to avoid issues later
+                    $resultsByField[$currentField] = $resultsByField[$currentField] ?? [];
+                    continue;
+                }
 
                 // Handle Overlays
                 foreach ($relations as $localTable => $rows) {
