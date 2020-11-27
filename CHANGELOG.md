@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.26.5](https://github.com/labor-digital/typo3-better-api/compare/v9.26.4...v9.26.5) (2020-11-27)
+
+
+### Bug Fixes
+
+* **StandaloneBetterQuery:** handle empty results in getRelatedRecords correctly ([7a1ae35](https://github.com/labor-digital/typo3-better-api/commit/7a1ae35218f98c3498a917be50d0efd34c36fa67))
+
 ### [9.26.4](https://github.com/labor-digital/typo3-better-api/compare/v9.26.3...v9.26.4) (2020-11-02)
 
 
