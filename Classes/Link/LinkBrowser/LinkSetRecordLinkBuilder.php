@@ -24,9 +24,11 @@ namespace LaborDigital\Typo3BetterApi\Link\LinkBrowser;
 
 
 use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
+use LaborDigital\Typo3BetterApi\Link\LinkException;
 use LaborDigital\Typo3BetterApi\Link\LinkService;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use TYPO3\CMS\Frontend\Typolink\AbstractTypolinkBuilder;
+use TYPO3\CMS\Frontend\Typolink\UnableToLinkException;
 
 class LinkSetRecordLinkBuilder extends AbstractTypolinkBuilder
 {
@@ -40,8 +42,18 @@ class LinkSetRecordLinkBuilder extends AbstractTypolinkBuilder
         $config = $this->getInstanceOf(TypoContext::class)->Config()->getTsConfigValue(
             'TCEMAIN.linkHandler.' . $linkDetails['identifier'] . '.configuration');
 
-        $link = $this->getInstanceOf(LinkService::class)
-                     ->getLink(substr($linkDetails['identifier'], 8), [$config['arg'] => $linkDetails['uid']])->build();
+        try {
+            $link = $this->getInstanceOf(LinkService::class)
+                         ->getLink(substr($linkDetails['identifier'], 8), [$config['arg'] => $linkDetails['uid']])
+                         ->build();
+        } catch (LinkException $e) {
+            throw new UnableToLinkException(
+                $e->getMessage(),
+                1606838973297,
+                null,
+                $linkText
+            );
+        }
 
         return [
             $link,
