@@ -662,6 +662,11 @@ class RelationPreset extends AbstractFormPreset
      *                                 maxItems = 1 there is no requirement for an mm table so we will just
      *                                 use a 1:1 relation in the database. If you, however want this field
      *                                 to always use an mmTable, just set this to TRUE manually
+     *                                 - additionalItems array: Additional items that should be attached to the
+     *                                 list of items gathered by the relation lookup. Provide an array of $key =>
+     *                                 $label pairs as a definition.
+     *                                 - default string|number: If given this is used as default value when a new
+     *                                 record is created
      *
      *                             AVAILABLE WHEN maxItems > 1:
      *                             - allowNew bool (FALSE): If set new records can be created with the new record
@@ -681,15 +686,27 @@ class RelationPreset extends AbstractFormPreset
                 $this->addMinMaxItemOptions(
                     $this->addBasePidOptions(
                         [
-                            'where'       => [
+                            'additionalItems' => [
+                                'type'    => 'array',
+                                'default' => [],
+                            ],
+                            'default'         => [
+                                'type'    => ['string', 'number', 'null'],
+                                'default' => null,
+                            ],
+                            'allowEmpty'      => [
+                                'type'    => 'bool',
+                                'default' => false,
+                            ],
+                            'where'           => [
                                 'type'    => 'string',
                                 'default' => '',
                             ],
-                            'userFunc'    => [
+                            'userFunc'        => [
                                 'type'    => 'string',
                                 'default' => '',
                             ],
-                            'mmTable'     => [
+                            'mmTable'         => [
                                 'type'    => 'bool',
                                 'default' => function ($field, $given) {
                                     // Automatically disable the mm table
@@ -700,7 +717,7 @@ class RelationPreset extends AbstractFormPreset
                                     return true;
                                 },
                             ],
-                            'mmTableName' => [
+                            'mmTableName'     => [
                                 'type'    => 'string',
                                 'default' => '',
                             ],
@@ -730,11 +747,23 @@ class RelationPreset extends AbstractFormPreset
             $options['where'] = "AND $foreignTable.pid = " . $options['basePid'];
         }
 
+        // Convert the items array
+        $itemsFiltered = [];
+        foreach ($options['additionalItems'] as $k => $v) {
+            $itemsFiltered[] = [$v, $k];
+        }
+
+        // Add additional config
+        if ($options['default'] !== null) {
+            $config['default'] = $options['default'];
+        }
+
         // Build the tca
         $config = [
             'type'                                   => 'select',
-            'renderType'                             => $options['maxItems'] > 1 ? 'selectMultipleSideBySide'
-                : 'selectSingle',
+            'items'                                  => $itemsFiltered,
+            'renderType'                             => $options['maxItems'] > 1
+                ? 'selectMultipleSideBySide' : 'selectSingle',
             'foreign_table'                          => $foreignTable,
             'foreign_table_where'                    => $options['where'],
             'multiple'                               => false,
