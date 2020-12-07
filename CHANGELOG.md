@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.27.0](https://github.com/labor-digital/typo3-better-api/compare/v9.26.6...v9.27.0) (2020-12-07)
+
+
+### Features
+
+* **RelationPreset:** add additional options ([a0f807d](https://github.com/labor-digital/typo3-better-api/commit/a0f807d09a1c50243aa6510cd45907fe12250ffb))
+
 ### [9.26.6](https://github.com/labor-digital/typo3-better-api/compare/v9.26.5...v9.26.6) (2020-12-02)
 
 
