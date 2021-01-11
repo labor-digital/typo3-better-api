@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\Tool\Rendering;
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageRendererResolver;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -31,6 +32,15 @@ use TYPO3\CMS\Core\SingletonInterface;
 class FlashMessageRenderingService implements SingletonInterface
 {
     use ContainerAwareTrait;
+
+    public const DEFAULT_QUEUE = 'core.template.flashMessages';
+
+    /**
+     * Holds the default queue id that is used when a message is added without a specific id
+     *
+     * @var string
+     */
+    protected $defaultQueueId = self::DEFAULT_QUEUE;
 
     /**
      * @var \TYPO3\CMS\Core\Messaging\FlashMessageService
@@ -57,20 +67,56 @@ class FlashMessageRenderingService implements SingletonInterface
     }
 
     /**
-     * Adds a new flash message of type "NOTICE" to the stack
+     * Returns the queue id which is used if none was specifically defined
      *
-     * @param   string  $message  The message to be shown
-     * @param   string  $header   The header of the message
-     * @param   array   $options  Additional options when creating your message
-     *                            - queueId string (core.template.flashMessages) the stack identifier to
-     *                            add this message to.
-     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                            instead of the local context. If the message is stored in the session it survives page
-     *                            changes and redirects.
+     * @return string
+     */
+    public function getDefaultQueueId(): string
+    {
+        return $this->defaultQueueId;
+    }
+
+    /**
+     * Allows you to override the default queue id
+     *
+     * @param   string  $id
      *
      * @return $this
      */
-    public function addNotice(string $message, string $header = '', array $options = []): self
+    public function setDefaultQueueId(string $id): self
+    {
+        $this->defaultQueueId = $id;
+
+        return $this;
+    }
+
+    /**
+     * Resets the default queue id back to the value of DEFAULT_QUEUE
+     *
+     * @return $this
+     */
+    public function resetDefaultQueueId(): self
+    {
+        $this->defaultQueueId = static::DEFAULT_QUEUE;
+
+        return $this;
+    }
+
+    /**
+     * Adds a new flash message of type "NOTICE" to the stack
+     *
+     * @param   string       $message  The message to be shown
+     * @param   string|null  $header   The header of the message
+     * @param   array        $options  Additional options when creating your message
+     *                                 - queueId string (core.template.flashMessages) the stack identifier to
+     *                                 add this message to.
+     *                                 - storeInSession bool (FALSE) If set to true the message will be stored in the
+     *                                 session instead of the local context. If the message is stored in the session it
+     *                                 survives page changes and redirects.
+     *
+     * @return $this
+     */
+    public function addNotice(string $message, ?string $header = null, array $options = []): self
     {
         return $this->addMessageInternal(FlashMessage::NOTICE, $message, $header, $options);
     }
@@ -78,18 +124,18 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "WARNING" to the stack
      *
-     * @param   string  $message  The message to be shown
-     * @param   string  $header   The header of the message
-     * @param   array   $options  Additional options when creating your message
-     *                            - queueId string (core.template.flashMessages) the stack identifier to
-     *                            add this message to.
-     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                            instead of the local context. If the message is stored in the session it survives page
-     *                            changes and redirects.
+     * @param   string       $message  The message to be shown
+     * @param   string|null  $header   The header of the message
+     * @param   array        $options  Additional options when creating your message
+     *                                 - queueId string (core.template.flashMessages) the stack identifier to
+     *                                 add this message to.
+     *                                 - storeInSession bool (FALSE) If set to true the message will be stored in the
+     *                                 session instead of the local context. If the message is stored in the session it
+     *                                 survives page changes and redirects.
      *
      * @return $this
      */
-    public function addWarning(string $message, string $header = '', array $options = []): self
+    public function addWarning(string $message, ?string $header = null, array $options = []): self
     {
         return $this->addMessageInternal(FlashMessage::WARNING, $message, $header, $options);
     }
@@ -97,18 +143,18 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "OK" to the stack
      *
-     * @param   string  $message  The message to be shown
-     * @param   string  $header   The header of the message
-     * @param   array   $options  Additional options when creating your message
-     *                            - queueId string (core.template.flashMessages) the stack identifier to
-     *                            add this message to.
-     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                            instead of the local context. If the message is stored in the session it survives page
-     *                            changes and redirects.
+     * @param   string       $message  The message to be shown
+     * @param   string|null  $header   The header of the message
+     * @param   array        $options  Additional options when creating your message
+     *                                 - queueId string (core.template.flashMessages) the stack identifier to
+     *                                 add this message to.
+     *                                 - storeInSession bool (FALSE) If set to true the message will be stored in the
+     *                                 session instead of the local context. If the message is stored in the session it
+     *                                 survives page changes and redirects.
      *
      * @return $this
      */
-    public function addOk(string $message, string $header = '', array $options = []): self
+    public function addOk(string $message, ?string $header = null, array $options = []): self
     {
         return $this->addMessageInternal(FlashMessage::OK, $message, $header, $options);
     }
@@ -116,18 +162,18 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "INFO" to the stack
      *
-     * @param   string  $message  The message to be shown
-     * @param   string  $header   The header of the message
-     * @param   array   $options  Additional options when creating your message
-     *                            - queueId string (core.template.flashMessages) the stack identifier to
-     *                            add this message to.
-     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                            instead of the local context. If the message is stored in the session it survives page
-     *                            changes and redirects.
+     * @param   string       $message  The message to be shown
+     * @param   string|null  $header   The header of the message
+     * @param   array        $options  Additional options when creating your message
+     *                                 - queueId string (core.template.flashMessages) the stack identifier to
+     *                                 add this message to.
+     *                                 - storeInSession bool (FALSE) If set to true the message will be stored in the
+     *                                 session instead of the local context. If the message is stored in the session it
+     *                                 survives page changes and redirects.
      *
      * @return $this
      */
-    public function addInfo(string $message, string $header = '', array $options = []): self
+    public function addInfo(string $message, ?string $header = null, array $options = []): self
     {
         return $this->addMessageInternal(FlashMessage::INFO, $message, $header, $options);
     }
@@ -135,50 +181,73 @@ class FlashMessageRenderingService implements SingletonInterface
     /**
      * Adds a new flash message of type "ERROR" to the stack
      *
-     * @param   string  $message  The message to be shown
-     * @param   string  $header   The header of the message
-     * @param   array   $options  Additional options when creating your message
-     *                            - queueId string (core.template.flashMessages) the stack identifier to
-     *                            add this message to.
-     *                            - storeInSession bool (FALSE) If set to true the message will be stored in the session
-     *                            instead of the local context. If the message is stored in the session it survives page
-     *                            changes and redirects.
+     * @param   string       $message  The message to be shown
+     * @param   string|null  $header   The header of the message
+     * @param   array        $options  Additional options when creating your message
+     *                                 - queueId string (core.template.flashMessages) the stack identifier to
+     *                                 add this message to.
+     *                                 - storeInSession bool (FALSE) If set to true the message will be stored in the
+     *                                 session instead of the local context. If the message is stored in the session it
+     *                                 survives page changes and redirects.
      *
      * @return $this
      */
-    public function addError(string $message, string $header = '', array $options = []): self
+    public function addError(string $message, ?string $header = null, array $options = []): self
     {
         return $this->addMessageInternal(FlashMessage::ERROR, $message, $header, $options);
     }
 
     /**
      * Can be used to render the stack of flash messages to a variable.
-     * NOTE: This is supported from Typo3 v8 and up!
      *
-     * @param   string  $queueId  The query id of messages to render to the variable
+     * @param   string|null  $queueId  The query id of messages to render, or null for the default queue
      *
      * @return string
      */
-    public function renderMessages(string $queueId = 'core.template.flashMessages'): string
+    public function renderMessages(?string $queueId = null): string
     {
-        // Get the stack
-        $stack = $this->flashMessageService->getMessageQueueByIdentifier($queueId);
+        $queue = $this->flashMessageService->getMessageQueueByIdentifier($queueId ?? $this->defaultQueueId);
 
-        return $this->rendererResolver->resolve()->render($stack->getAllMessagesAndFlush());
+        return $this->rendererResolver->resolve()->render($queue->getAllMessagesAndFlush());
+    }
+
+    /**
+     * Returns true if there are currently messages in the queue false if not
+     *
+     * @param   string|null  $queueId  The query id of messages to check, or null for the default queue
+     *
+     * @return bool
+     */
+    public function hasMessages(?string $queueId = null): bool
+    {
+        // ->count() will always return 0 here, which does not help us in any way...
+        return count($this->getQueue($queueId)->getAllMessages()) > 0;
+    }
+
+    /**
+     * Returns the queue object for either a selected queue id or the default queue
+     *
+     * @param   string|null  $queueId  The query id of messages to retrieve, or null for the default queue
+     *
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessageQueue
+     */
+    public function getQueue(?string $queueId = null): FlashMessageQueue
+    {
+        return $this->flashMessageService->getMessageQueueByIdentifier($queueId ?? $this->defaultQueueId);
     }
 
     /**
      * Internal helper which is used to validate the given options and to create the message instance on a certain
      * stack.
      *
-     * @param   int     $type
-     * @param   string  $message
-     * @param   string  $header
-     * @param   array   $options
+     * @param   int          $type
+     * @param   string       $message
+     * @param   string|null  $header
+     * @param   array        $options
      *
      * @return $this
      */
-    protected function addMessageInternal(int $type, string $message, string $header, array $options): self
+    protected function addMessageInternal(int $type, string $message, ?string $header, array $options): self
     {
         // Prepare the options
         $options = Options::make($options, [
@@ -188,7 +257,7 @@ class FlashMessageRenderingService implements SingletonInterface
             ],
             'queueId'        => [
                 'type'    => 'string',
-                'default' => 'core.template.flashMessages',
+                'default' => $this->defaultQueueId,
             ],
         ]);
 
@@ -197,7 +266,7 @@ class FlashMessageRenderingService implements SingletonInterface
             FlashMessage::class,
             [
                 $message,
-                $header,
+                $header ?? '',
                 $type,
                 $options['storeInSession'],
             ]

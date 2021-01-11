@@ -25,10 +25,12 @@ use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
 use LaborDigital\T3BA\Event\ExtBase\ActionController\MethodNameFilterEvent;
 use LaborDigital\T3BA\Event\ExtBase\ActionController\RequestFilterEvent;
 use LaborDigital\T3BA\Tool\Link\LinkService;
+use LaborDigital\T3BA\Tool\Rendering\FlashMessageRenderingService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
+use TYPO3\CMS\Extbase\Service\ExtensionService;
 
 class BetterActionController extends ActionController
 {
@@ -66,18 +68,29 @@ class BetterActionController extends ActionController
             LinkService::class, $this->Links()->makeControllerClone($request)
         );
 
+        // Update the messaging service
+        $messagingService = $this->getInstanceOf(FlashMessageRenderingService::class);
+        $extensionService = $this->getInstanceOf(ExtensionService::class);
+        $messagingService->setDefaultQueueId(
+            'extbase.flashmessages.' . $extensionService->getPluginNamespace(
+                $request->getControllerExtensionName(), $request->getPluginName())
+        );
+
         // Allow filtering
-        $this->EventBus()->dispatch(new RequestFilterEvent($request, $response, $this, true));
+        $eventBus = $this->EventBus();
+        $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, true));
 
         // Do the default stuff
         try {
             parent::processRequest($request, $response);
         } catch (TargetNotFoundException $e) {
             // Catch dbal overkill exceptions
+        } finally {
+            $messagingService->setDefaultQueueId(FlashMessageRenderingService::DEFAULT_QUEUE);
         }
 
         // Allow filtering
-        $this->EventBus()->dispatch(new RequestFilterEvent($request, $response, $this, false));
+        $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, false));
     }
 
     /**
