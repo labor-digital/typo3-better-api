@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
+namespace LaborDigital\T3BA\Event\FormEngine\Adapter;
 
 use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 use LaborDigital\T3BA\Event\FormEngine\LateFormFilterEvent;

@@ -21,14 +21,34 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Rendering;
 
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Backend\DbListQueryFilterEvent;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use Neunerlei\Options\Options;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 
 class BackendRenderingService implements SingletonInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
+
+    /**
+     * True if the record filter event was registered, false if not
+     *
+     * @var bool
+     */
+    protected $dbRecordFilterRegistered = false;
+
+    /**
+     * Holds the data for the database record list renderer
+     *
+     * @var array
+     */
+    protected $dbRecordFilterTmp = [];
 
     /**
      * This method can be used to render a database record list in the backend.
@@ -50,8 +70,6 @@ class BackendRenderingService implements SingletonInterface
      */
     public function renderDatabaseRecordList(string $table, array $fields, array $options = []): string
     {
-        throw new NotImplementedException();
-
         // Prepare the options
         $options = Options::make($options, [
             'limit'    => [
@@ -61,7 +79,7 @@ class BackendRenderingService implements SingletonInterface
             'pid'      => [
                 'type'    => 'int',
                 'default' => function () {
-                    return $this->context->getPidAspect()->getCurrentPid();
+                    return $this->TypoContext()->Pid()->getCurrent();
                 },
             ],
             'where'    => [
@@ -81,7 +99,7 @@ class BackendRenderingService implements SingletonInterface
         $backendUser = $GLOBALS['BE_USER'];
 
         /** @var DatabaseRecordList $dbList */
-        $dbList                            = $this->container->get(DatabaseRecordList::class, ['gu' => true]);
+        $dbList                            = $this->getWithoutDi(DatabaseRecordList::class);
         $dbList->script                    = GeneralUtility::getIndpEnv('REQUEST_URI');
         $dbList->thumbs                    = $backendUser->uc['thumbnailsByDefault'];
         $dbList->allFields                 = 1;
@@ -94,7 +112,7 @@ class BackendRenderingService implements SingletonInterface
         $dbList->dontShowClipControlPanels = true;
         $dbList->counter++;
 
-        $pointer = MathUtility::forceIntegerInRange($this->context->getRequestAspect()->getGet('pointer'), 0);
+        $pointer = MathUtility::forceIntegerInRange($this->TypoContext()->Request()->getGet('pointer'), 0);
         $dbList->start($pid, $table, $pointer, '', 0, $options['limit']);
         $dbList->script = $_SERVER['REQUEST_URI'];
         $dbList->setDispFields();
@@ -110,38 +128,52 @@ class BackendRenderingService implements SingletonInterface
         }
 
         // Register the event handler for injecting our additional where clause
+        $this->dbRecordFilterTmp = [];
         if (! empty($options['where'])) {
-            $emitted = false;
-            $this->eventBus->addListener(
-                BackendDbListQueryFilterEvent::class,
-                function (BackendDbListQueryFilterEvent $event) use (&$emitted, $options) {
+            if (! $this->dbRecordFilterRegistered) {
+                $this->dbRecordFilterRegistered = true;
+
+                $this->getInstanceOf(TypoEventBus::class)->addListener(
+                    DbListQueryFilterEvent::class, function (DbListQueryFilterEvent $event) {
                     // Skip if the event was already emitted
-                    if ($emitted) {
+                    if ($this->dbRecordFilterTmp['emitted'] || empty($this->dbRecordFilterTmp['options'])) {
                         return;
                     }
-                    $emitted = true;
+                    $this->dbRecordFilterTmp['emitted'] = true;
+                    $options                            = $this->dbRecordFilterTmp['options'];
 
                     // Inject our where statement
                     $whereParts = explode(' OR ', $event->getAdditionalWhereClause());
-                    $event->setAdditionalWhereClause(implode(' ' . $options['where'] . ' OR ', $whereParts) . ' '
-                                                     . $options['where']);
+                    $event->setAdditionalWhereClause(
+                        implode(' ' . $options['where'] . ' OR ', $whereParts) . ' ' . $options['where']
+                    );
 
                     // Move all pseudo fields to the right...
-                    $fieldArray                           = $event->getListRenderer()->fieldArray;
-                    $fieldArrayFiltered                   = array_filter($fieldArray, function ($v) {
-                        return $v[0] !== '_';
-                    });
-                    $fieldArrayFiltered                   = $fieldArrayFiltered + array_filter($fieldArray,
-                            function ($v) {
-                                return $v[0] === '_';
-                            });
+                    $fieldArray         = $event->getListRenderer()->fieldArray;
+                    $fieldArrayFiltered = array_filter($fieldArray,
+                        static function ($v) {
+                            return $v[0] !== '_';
+                        });
+                    $fieldArrayFiltered += array_filter($fieldArray,
+                        static function ($v) {
+                            return $v[0] === '_';
+                        });
+
                     $event->getListRenderer()->fieldArray = array_values($fieldArrayFiltered);
-                }
-            );
+                });
+            }
+
+            // Set our options
+            $this->dbRecordFilterTmp = [
+                'emitted' => false,
+                'options' => $options,
+            ];
+
         }
 
         // Generate the list
         $dbList->generateList();
+
 
         // Check for empty response
         if ($dbList->totalItems === 0) {

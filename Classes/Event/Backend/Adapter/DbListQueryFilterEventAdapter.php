@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.20 at 14:05
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter;
+namespace LaborDigital\T3BA\Event\Backend\Adapter;
 
-use LaborDigital\Typo3BetterApi\Event\Events\BackendDbListQueryFilterEvent;
+use LaborDigital\T3BA\Event\Backend\DbListQueryFilterEvent;
+use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
 
-class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
+class DbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
     implements RecordListGetTableHookInterface
 {
-    
+
     /**
      * @inheritDoc
      */
@@ -37,22 +38,23 @@ class BackendDbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
         [static::class]
             = static::class;
     }
-    
-    public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject)
+
+    public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject): void
     {
-        if (! static::$context->getEnvAspect()->isBackend()) {
+        if (! static::$context->Env()->isBackend()) {
             return;
         }
-        static::$bus->dispatch(($e = new BackendDbListQueryFilterEvent(
+
+        static::$bus->dispatch(($e = new DbListQueryFilterEvent(
             $table,
             $pageId,
             $additionalWhereClause,
             $selectedFieldsList,
             $parentObject
         )));
+
         $additionalWhereClause = $e->getAdditionalWhereClause();
         $selectedFieldsList    = $e->getSelectedFieldList();
         $parentObject          = $e->getListRenderer();
-        
     }
 }
