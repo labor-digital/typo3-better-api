@@ -18,9 +18,8 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 18:04
  */
 
-namespace LaborDigital\Typo3BetterApi\Domain\Repository;
+namespace LaborDigital\T3BA\ExtBase\Domain\Repository;
 
-use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 

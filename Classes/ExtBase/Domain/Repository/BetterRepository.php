@@ -26,7 +26,6 @@ use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\BetterQueryPreparationTrait;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\Typo3BetterApi\Domain\Repository\RepositoryWrapper;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
