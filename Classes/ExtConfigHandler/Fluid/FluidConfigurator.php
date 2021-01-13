@@ -63,7 +63,7 @@ class FluidConfigurator extends AbstractExtConfigConfigurator
             $namespace .= '\\ViewHelpers';
         }
 
-        $this->viewHelpers[$this->context->replaceMarkers($key)] = $this->context->replaceMarkers($namespace);
+        $this->viewHelpers[$this->context->replaceMarkers($key)][] = $this->context->replaceMarkers($namespace);
 
         return $this;
     }
