@@ -32,7 +32,7 @@ use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 
-class BetterActionController extends ActionController
+abstract class BetterActionController extends ActionController
 {
     use CommonDependencyTrait;
 

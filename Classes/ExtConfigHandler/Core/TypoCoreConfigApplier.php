@@ -44,6 +44,7 @@ class TypoCoreConfigApplier extends AbstractExtConfigApplier
     {
         $this->applyXClasses();
         $this->applyCacheConfig();
+        $this->applyLogConfig();
     }
 
     /**
@@ -63,8 +64,19 @@ class TypoCoreConfigApplier extends AbstractExtConfigApplier
      */
     protected function applyCacheConfig(): void
     {
-        foreach ($this->state->get('typo.core.cacheConfiguration', []) as $key => $options) {
+        foreach ($this->state->get('typo.core.cache', []) as $key => $options) {
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$key] = $options;
         }
+    }
+
+    /**
+     * Applies the registered log configuration to the global array
+     */
+    protected function applyLogConfig(): void
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['LOG'] = array_merge(
+            $GLOBALS['TYPO3_CONF_VARS']['LOG'],
+            $this->state->get('typo.core.log', [])
+        );
     }
 }

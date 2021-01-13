@@ -24,11 +24,16 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
+use LaborDigital\T3BA\Tool\Log\BetterFileWriter;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
 
 class TypoCoreConfigurator extends AbstractExtConfigConfigurator
 {
+    use TypoContextAwareTrait;
+    use LogConfigTrait;
 
     /**
      * The list of registered x classes
@@ -115,6 +120,80 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
     }
 
     /**
+     * Registers a new logfile writer in the system. It utilizes our internal
+     * better file writer that has built-in log rotation capabilities.
+     *
+     * @param   array  $options   Additional log configuration options
+     *                            - key string: Allows you to provide a unique key for this configuration
+     *                            so other configuration classes may override your config. The key will also be used
+     *                            for the file name generation
+     *                            - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
+     *                            It defines the minimal viable severity that should be logged, all levels with a higher
+     *                            number that the given level will be be ignored
+     *                            - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                            This can be either a class name or a part of a php namespace. If an empty
+     *                            string is given the configuration is applied globally
+     *                            - writer array: the writer configuration array for the configured loglevel
+     *                            - processor array: the processor configuration array for the configured loglevel
+     *                            - logRotation bool (TRUE): By default the log files will be rotated once a day.
+     *                            If you want to disable the log rotation set this option to false.
+     *                            - filesToKeep int (5): If logRotation is enabled, this defines how many
+     *                            files will be kept before they are deleted
+     *
+     * @see \TYPO3\CMS\Core\Log\LogLevel
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
+     */
+    public function registerFileLog(array $options = [])
+    {
+        $additionalDefinition = [
+            'logRotation' => [
+                'type'    => 'bool',
+                'default' => true,
+            ],
+            'filesToKeep' => [
+                'type'    => 'int',
+                'default' => 5,
+            ],
+        ];
+
+        $options = $this->prepareLogConfig($options, $additionalDefinition);
+
+        $options['writer'] = [
+            BetterFileWriter::class => [
+                'logRotation' => $options['logRotation'],
+                'filesToKeep' => $options['filesToKeep'],
+                'name'        => is_numeric($options['key']) ? md5($options['key']) : $options['key'],
+            ],
+        ];
+
+        return $this->pushLogConfig($options);
+    }
+
+    /**
+     * Registers any kind of log configuration based on your input.
+     *
+     * @param   array  $options  The options for your log configuration
+     *                           - key string: Allows you to provide a unique key for this configuration
+     *                           so other configuration classes may override your config
+     *                           - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
+     *                           It defines the minimal viable severity that should be logged, all levels with a higher
+     *                           number that the given level will be be ignored
+     *                           - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                           This can be either a class name or a part of a php namespace. If an empty
+     *                           string is given the configuration is applied globally
+     *                           - writer array: the writer configuration array for the configured loglevel
+     *                           - processor array: the processor configuration array for the configured loglevel
+     *
+     * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
+     * @see \TYPO3\CMS\Core\Log\LogLevel
+     */
+    public function registerLogWriter(array $options): self
+    {
+        return $this->pushLogConfig($this->prepareLogConfig($options));
+    }
+
+    /**
      * Internal helper to store the configuration on the config state
      *
      * @param   \Neunerlei\Configuration\State\ConfigState  $state
@@ -122,6 +201,10 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
     public function finish(ConfigState $state): void
     {
         $state->set('xClass', $this->xClasses);
-        $state->set('cacheConfiguration', $this->cacheConfigurations);
+        $state->set('cache', $this->cacheConfigurations);
+
+        $state->set('log', array_reduce($this->logConfigurations, function (array $target, array $item) {
+            return Arrays::merge($target, $item);
+        }, []));
     }
 }
