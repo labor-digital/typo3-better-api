@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 19:41
+ * Last modified: 2021.01.13 at 18:14
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption;
+
+namespace LaborDigital\T3BA\ExtConfigHandler\Fluid;
+
+
+use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
+use LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption;
 use Neunerlei\Inflection\Inflector;
-use TYPO3\CMS\Core\SingletonInterface;
 
-/**
- * Class FluidConfigOption
- *
- * Can be used to configure the FLUID template engine
- *
- * @package LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid
- */
-class FluidConfigOption extends AbstractExtConfigOption implements SingletonInterface
+class FluidConfigurator extends AbstractExtConfigConfigurator
 {
-    
+    /**
+     * The list of registered view helper namespaces
+     *
+     * @var array
+     */
+    protected $viewHelpers = [];
+
     /**
      * Globally registers the extension's view helpers when $key and $namespace are empty.
      * The default key is the CamelCase of your extension key, and the namespace the CamelCase of
@@ -43,13 +46,14 @@ class FluidConfigOption extends AbstractExtConfigOption implements SingletonInte
      * @param   string|NULL  $key        The key to use as prefix for the namespaced viewhelpers
      * @param   string|NULL  $namespace  The namespace of the viewhelpers
      *
-     * @return \LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption
+     * @return $this
      */
-    public function registerViewHelpers(string $key = null, string $namespace = null): FluidConfigOption
+    public function registerViewHelpers(?string $key = null, ?string $namespace = null): self
     {
         if (empty($key)) {
             $key = Inflector::toCamelCase($this->context->getExtKey());
         }
+
         if (empty($namespace)) {
             $namespace = '';
             if (! empty($this->context->getVendor())) {
@@ -58,9 +62,10 @@ class FluidConfigOption extends AbstractExtConfigOption implements SingletonInte
             $namespace .= Inflector::toCamelCase($this->context->getExtKey());
             $namespace .= '\\ViewHelpers';
         }
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces'][$this->replaceMarkers($key)]
-            = [$this->replaceMarkers($namespace)];
-        
+
+        $this->viewHelpers[$this->context->replaceMarkers($key)] = $this->context->replaceMarkers($namespace);
+
         return $this;
     }
+
 }
