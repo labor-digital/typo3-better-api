@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.28.0](https://github.com/labor-digital/typo3-better-api/compare/v9.27.0...v9.28.0) (2021-01-21)
+
+
+### Features
+
+* **EnvFacet:** add isFeDebug() and isFeDebug() helpers ([0d13f57](https://github.com/labor-digital/typo3-better-api/commit/0d13f570d7200f46fecf3cb08e13501964cbd2cf))
+
 ## [9.27.0](https://github.com/labor-digital/typo3-better-api/compare/v9.26.6...v9.27.0) (2020-12-07)
 
 
