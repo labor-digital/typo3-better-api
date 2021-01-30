@@ -219,7 +219,7 @@ class TypoLink
     {
         $clone = clone $this;
         if (! is_numeric($pid)) {
-            $pid = $this->context->getTypoContext()->Pid()->get($pid);
+            $pid = $this->context->getTypoContext()->pid()->get($pid);
         }
         $clone->pid = (int)$pid;
 
@@ -691,7 +691,7 @@ class TypoLink
         $clone = clone $this;
         if (! is_null($language)) {
             if (! is_object($language)) {
-                foreach ($this->context->getTypoContext()->Site()->getCurrent()->getLanguages() as $lang) {
+                foreach ($this->context->getTypoContext()->site()->getCurrent()->getLanguages() as $lang) {
                     if (
                         (is_numeric($language) && $lang->getLanguageId() === (int)$language)
                         || strtolower($lang->getTwoLetterIsoCode()) === $language
@@ -704,7 +704,7 @@ class TypoLink
             if (! $language instanceof SiteLanguage) {
                 throw new LinkException(
                     'The given language could not be found on site: '
-                    . $this->context->getTypoContext()->Site()->getCurrent()->getIdentifier()
+                    . $this->context->getTypoContext()->site()->getCurrent()->getIdentifier()
                 );
             }
         }
@@ -812,7 +812,7 @@ class TypoLink
         if (! empty($this->pid)) {
             $ub->setTargetPageUid($this->pid);
         } else {
-            $ub->setTargetPageUid($typoContext->Pid()->getCurrent());
+            $ub->setTargetPageUid($typoContext->pid()->getCurrent());
         }
 
         // Query string settings
@@ -859,7 +859,7 @@ class TypoLink
         }
 
         // Resolve $pid. lookups in our args
-        $pidFacet = $typoContext->Pid();
+        $pidFacet = $typoContext->pid();
         foreach ($this->args as $k => $v) {
             if (! $pidFacet->has($v)) {
                 continue;
@@ -909,7 +909,7 @@ class TypoLink
         // Execute uriFor if required
         if ($useUriFor) {
             // Do some adjustments if we are in cli mode, because typo3 checks if we are in frontend mode
-            if (! $typoContext->Env()->isFrontend()) {
+            if (! $typoContext->env()->isFrontend()) {
                 // Automatically find the plugin name if there is none
                 $plugin = $request->getPluginName();
                 if (empty($plugin)) {
@@ -947,11 +947,11 @@ class TypoLink
         }
 
         // Render the uri
-        if ($options['backend'] && $typoContext->Env()->isBackend()) {
+        if ($options['backend'] && $typoContext->env()->isBackend()) {
             $uri = $ub->buildBackendUri();
-            if ($typoContext->Env()->isCli()) {
+            if ($typoContext->env()->isCli()) {
                 $uri = preg_replace('~^(.*?)/index.php~',
-                    $typoContext->Request()->getHost() . '/' . TYPO3_mainDir . 'index.php',
+                    $typoContext->request()->getHost() . '/' . TYPO3_mainDir . 'index.php',
                     $uri
                 );
             }

@@ -25,9 +25,9 @@ use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\DataHook\DataHookException;
 use LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\TcaTraverser;
 use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FieldPackerInterface;
+use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 class DefinitionResolver
 {
@@ -86,18 +86,14 @@ class DefinitionResolver
         $definition->dataRaw   = $data;
         $definition->tableName = $tableName;
 
-        $definition->tca = Arrays::getPath($GLOBALS, ['TCA', $tableName]);
-        if (! is_array($definition->tca)) {
+        if (! Arrays::hasPath($GLOBALS, ['TCA', $tableName])) {
             throw new DataHookException('Failed to execute data hook on: ' . $tableName
                                         . ' because the table is not defined in the TCA!');
         }
 
-        $recordType = BackendUtility::getTCAtypeValue($tableName, $data);
-        if (! empty($recordType)) {
-            $typeColumns                = Arrays::getPath(
-                $definition->tca, ['types', $recordType, 'columnsOverrides'], []);
-            $definition->tca['columns'] = Arrays::merge($definition->tca['columns'] ?? [], $typeColumns);
-        }
+        TcaUtil::runWithResolvedTypeTca($data, $tableName, static function (array $typeTca) use ($definition) {
+            $definition->tca = $typeTca;
+        });
 
         return $definition;
     }
@@ -112,8 +108,8 @@ class DefinitionResolver
      */
     protected function applyFieldPackers(DataHookDefinition $definition): void
     {
-        $typoContext = $this->TypoContext();
-        foreach ($typoContext->Config()->getConfigValue('t3ba.dataHook.fieldPackers', []) as $fieldPackerClass) {
+        $typoContext = $this->getTypoContext();
+        foreach ($typoContext->config()->getConfigValue('t3ba.dataHook.fieldPackers', []) as $fieldPackerClass) {
             if (! class_exists($fieldPackerClass)
                 || ! in_array(FieldPackerInterface::class, class_implements($fieldPackerClass), true)) {
                 throw new DataHookException('Invalid field packer class given: ' . $fieldPackerClass);

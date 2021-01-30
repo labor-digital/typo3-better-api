@@ -48,7 +48,7 @@ abstract class AbstractQueryAdapter
         $this->settings  = $settings;
 
         // Reset the settings
-        $language   = $context->Language()->getCurrentFrontendLanguage();
+        $language   = $context->language()->getCurrentFrontendLanguage();
         $langAspect = LanguageAspectFactory::createFromSiteLanguage($language);
         $settings->setLanguageMode($langAspect->getLegacyLanguageMode());
         $settings->setLanguageOverlayMode($langAspect->getLegacyOverlayType());

@@ -44,6 +44,8 @@ class ExtKeyModifierHandler extends AbstractConfigModifier
             $extKey = call_user_func([$class, 'getExtKey']);
             dbge($extKey, $context);
         }
+
+        $context->getConfigContext()->getNamespace();
         dbge($classes);
     }
 

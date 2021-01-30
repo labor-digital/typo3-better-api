@@ -88,12 +88,12 @@ trait ExtBaseBackendPreviewRendererTrait
             $signature = 'tx_' . $signature;
         }
         $typoContext = TypoContext::getInstance();
-        $typoScript  = $typoContext->Di()->getSingletonOf(TypoScriptService::class);
+        $typoScript  = $typoContext->di()->getSingletonOf(TypoScriptService::class);
         $viewConfig  = $typoScript->get([$configType, $signature, 'view'], ['default' => []]);
         $viewConfig  = $typoScript->removeDots($viewConfig);
 
         // Make and prepare the view instance
-        $view = $typoContext->Di()
+        $view = $typoContext->di()
                             ->getSingletonOf(TemplateRenderingService::class)
                             ->getFluidView($templateName, $viewConfig);
         $view->assign('settings', $row['settings']);

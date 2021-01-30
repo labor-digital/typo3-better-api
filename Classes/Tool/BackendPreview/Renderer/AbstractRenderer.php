@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
@@ -32,7 +32,7 @@ use Throwable;
 abstract class AbstractRenderer implements PublicServiceInterface
 {
     use TypoContextAwareTrait;
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
 
     /**
      * Internal helper that is used to resolve the default header based on the given database row.
@@ -45,6 +45,8 @@ abstract class AbstractRenderer implements PublicServiceInterface
     protected function findDefaultHeader(array $row): string
     {
         return TcaUtil::runWithResolvedTypeTca($row, 'tt_content', function () use ($row) {
+            $translator = $this->cs()->translator;
+
             // Find for plugin
             if ($row['CType'] === 'list') {
                 $signature = $row['list_type'];
@@ -54,7 +56,7 @@ abstract class AbstractRenderer implements PublicServiceInterface
                     }
 
                     // @todo translateBe!
-                    return $this->Translator()->translate($listTypeItem[0]);
+                    return $translator->translate($listTypeItem[0]);
                 }
 
                 return '';
@@ -68,7 +70,7 @@ abstract class AbstractRenderer implements PublicServiceInterface
                 }
 
                 // @todo translateBe!
-                return $this->Translator()->translate($listTypeItem[0]);
+                return $translator->translate($listTypeItem[0]);
             }
 
             return '';

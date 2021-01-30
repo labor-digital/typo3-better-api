@@ -21,10 +21,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoScript;
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -35,7 +36,8 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 class TypoScriptService implements SingletonInterface, PublicServiceInterface
 {
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
+    use TypoContextAwareTrait;
 
     /**
      * @var \LaborDigital\T3BA\Tool\TypoScript\TypoScriptConfigurationManager
@@ -156,7 +158,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
         /** @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $user */
         $user     = $GLOBALS['BE_USER'];
         $tsConfig = Arrays::merge(
-            BackendUtility::getPagesTSconfig($this->TypoContext()->Pid()->getCurrent()),
+            BackendUtility::getPagesTSconfig($this->getTypoContext()->pid()->getCurrent()),
             is_object($user) ? $user->getTSConfig() : []
         );
 
@@ -287,14 +289,14 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
                 }
 
                 if ($v === null) {
-                    return $this->TypoContext()->Pid()->getCurrent();
+                    return $this->getTypoContext()->pid()->getCurrent();
                 }
 
                 if (is_numeric($v)) {
                     return (int)$v;
                 }
 
-                return $this->TypoContext()->Pid()->get($v);
+                return $this->getTypoContext()->pid()->get($v);
 
             },
         ];

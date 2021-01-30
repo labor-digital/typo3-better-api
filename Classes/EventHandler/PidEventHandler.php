@@ -75,6 +75,6 @@ class PidEventHandler implements LazyEventSubscriberInterface
     {
         $pidConfig = Arrays::getPath($event->getConfig(), ['t3ba.', 'pid.'], []);
         $pidConfig = $this->typoScriptService->removeDots($pidConfig);
-        $this->context->Pid()->setMultiple($pidConfig);
+        $this->context->pid()->setMultiple($pidConfig);
     }
 }

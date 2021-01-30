@@ -41,7 +41,9 @@ class BackendListLabelRenderer extends AbstractRenderer
     {
         $title      = $this->findDefaultHeader($event->getRow());
         $foundLabel = false;
-        foreach ($this->TypoContext()->Config()->getConfigValue('t3ba.backendPreview.listLabelRenderers', []) as $def) {
+        foreach (
+            $this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.listLabelRenderers', []) as $def
+        ) {
             [$handler, $constraints] = $def;
 
             // Non-empty constraints in form of an array that don't match the row -> skip

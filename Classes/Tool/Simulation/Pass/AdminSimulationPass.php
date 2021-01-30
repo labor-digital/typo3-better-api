@@ -74,7 +74,7 @@ class AdminSimulationPass implements SimulatorPassInterface
     public function setup(array $options, array &$storage): void
     {
         // Backup the data
-        $storage['aspect'] = $this->TypoContext()->getRootContext()->getAspect('backend.user');
+        $storage['aspect'] = $this->getTypoContext()->getRootContext()->getAspect('backend.user');
         $storage['user']   = $currentUser = $GLOBALS['BE_USER'];
 
         // Make the admin user
@@ -90,7 +90,7 @@ class AdminSimulationPass implements SimulatorPassInterface
 
         // Inject the admin user
         $GLOBALS['BE_USER'] = $adminUser;
-        $this->TypoContext()->getRootContext()->setAspect('backend.user',
+        $this->getTypoContext()->getRootContext()->setAspect('backend.user',
             $this->getWithoutDi(UserAspect::class, [$adminUser])
         );
     }
@@ -101,7 +101,7 @@ class AdminSimulationPass implements SimulatorPassInterface
     public function rollBack(array $storage): void
     {
         $GLOBALS['BE_USER'] = $storage['user'];
-        $this->TypoContext()->getRootContext()->setAspect('backend.user', $storage['aspect']);
+        $this->getTypoContext()->getRootContext()->setAspect('backend.user', $storage['aspect']);
     }
 
     /**

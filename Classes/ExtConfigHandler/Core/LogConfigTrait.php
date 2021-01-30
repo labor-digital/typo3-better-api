@@ -56,7 +56,7 @@ trait LogConfigTrait
             ],
             'logLevel'  => [
                 'type'    => ['string', 'int'],
-                'default' => $this->TypoContext()->Env()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
+                'default' => $this->getTypoContext()->Env()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
                 'values'  => [
                     LogLevel::EMERGENCY,
                     LogLevel::ERROR,

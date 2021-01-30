@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Controller;
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\ExtBase\ActionController\MethodNameFilterEvent;
 use LaborDigital\T3BA\Event\ExtBase\ActionController\RequestFilterEvent;
 use LaborDigital\T3BA\Tool\Link\LinkService;
@@ -34,7 +34,7 @@ use TYPO3\CMS\Extbase\Service\ExtensionService;
 
 abstract class BetterActionController extends ActionController
 {
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
 
     /**
      * The list of the raw content object data
@@ -52,9 +52,6 @@ abstract class BetterActionController extends ActionController
      * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface   $request
      * @param   \TYPO3\CMS\Extbase\Mvc\ResponseInterface  $response
      *
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
      */
     public function processRequest(RequestInterface $request, ResponseInterface $response)
     {
@@ -65,7 +62,7 @@ abstract class BetterActionController extends ActionController
 
         // Inject the this controller's request into the links object
         $this->setLocalSingleton(
-            LinkService::class, $this->Links()->makeControllerClone($request)
+            LinkService::class, $this->cs()->links->makeControllerClone($request)
         );
 
         // Update the messaging service
@@ -77,7 +74,7 @@ abstract class BetterActionController extends ActionController
         );
 
         // Allow filtering
-        $eventBus = $this->EventBus();
+        $eventBus = $this->cs()->eventBus;
         $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, true));
 
         // Do the default stuff
@@ -98,7 +95,7 @@ abstract class BetterActionController extends ActionController
      */
     protected function resolveActionMethodName()
     {
-        $this->EventBus()->dispatch(($e = new MethodNameFilterEvent(
+        $this->cs()->eventBus->dispatch(($e = new MethodNameFilterEvent(
             parent::resolveActionMethodName(),
             $this->request,
             $this->response,

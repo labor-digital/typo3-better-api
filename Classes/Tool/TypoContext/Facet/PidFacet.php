@@ -52,7 +52,7 @@ class PidFacet implements FacetInterface
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
-        $this->registerCachedProperty('pids', 't3ba.pids', $context->Config()->getConfigState());
+        $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState());
     }
 
     /**
@@ -79,7 +79,7 @@ class PidFacet implements FacetInterface
     public function set(string $key, int $pid): self
     {
         $pidsModified = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
-        $this->context->Config()->getConfigState()->set('t3ba.pids', $pidsModified);
+        $this->context->config()->getConfigState()->set('t3ba.pids', $pidsModified);
 
         return $this;
     }
@@ -106,7 +106,7 @@ class PidFacet implements FacetInterface
             }
         }
 
-        $this->context->Config()->getConfigState()->set(
+        $this->context->config()->getConfigState()->set(
             't3ba.pids',
             Arrays::merge($this->pids, $pids)
         );
@@ -132,11 +132,14 @@ class PidFacet implements FacetInterface
         if (is_int($key)) {
             return $key;
         }
+
         if (! is_string($key)) {
             throw new InvalidPidException(
                 'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
         }
+
         $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
+
         if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
                 return $fallback;
@@ -172,8 +175,8 @@ class PidFacet implements FacetInterface
      */
     public function getCurrent(): int
     {
-        $requestFacet = $this->context->Request();
-        if ($this->context->Env()->isBackend()) {
+        $requestFacet = $this->context->request();
+        if ($this->context->env()->isBackend()) {
             // BACKEND
             // ============
             // Read current ID when in backend
@@ -211,8 +214,8 @@ class PidFacet implements FacetInterface
 
         // Fallback to the root pid of the site
         try {
-            if ($this->context->Site()->hasCurrent()) {
-                return $this->context->Site()->getCurrent()->getRootPageId();
+            if ($this->context->site()->hasCurrent()) {
+                return $this->context->site()->getCurrent()->getRootPageId();
             }
         } catch (Throwable $exception) {
         }

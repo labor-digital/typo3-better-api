@@ -74,7 +74,7 @@ class ModuleConfigGenerator extends AbstractElementConfigGenerator
     protected function makeTranslationFileIfRequired(ModuleConfigurator $configurator, ExtConfigContext $context): void
     {
         // Check if the file exists
-        $translationFile = $this->TypoContext()->Path()->typoPathToRealPath($configurator->getTranslationFile());
+        $translationFile = $this->getTypoContext()->path()->typoPathToRealPath($configurator->getTranslationFile());
         if (file_exists($translationFile)) {
             return;
         }

@@ -72,7 +72,7 @@ class LinkContext implements SingletonInterface
     public function __construct(TypoContext $typoContext)
     {
         $this->typoContext = $typoContext;
-        $this->registerCachedProperty('linkSets', 't3ba.link.sets', $typoContext->Config()->getConfigState());
+        $this->registerCachedProperty('linkSets', 't3ba.link.sets', $typoContext->config()->getConfigState());
     }
 
     /**
@@ -204,9 +204,9 @@ class LinkContext implements SingletonInterface
         $this->initialized = true;
 
         // Read the base url
-        $baseUrl = $this->typoContext->Config()->getTypoScriptValue('config.baseURL');
+        $baseUrl = $this->typoContext->config()->getTypoScriptValue('config.baseURL');
         if ($baseUrl === null) {
-            $baseUrl = $this->typoContext->Request()->getHost();
+            $baseUrl = $this->typoContext->request()->getHost();
         }
         $baseUrl = Path::makeUri($baseUrl)->getHost();
 
@@ -216,7 +216,7 @@ class LinkContext implements SingletonInterface
         $this->setLocalSingleton(Request::class, $request);
 
         // Inject the base url if we are in cli context
-        if ($this->typoContext->Env()->isCli()) {
+        if ($this->typoContext->env()->isCli()) {
             // Fix for external cli tools
             $_SERVER['SCRIPT_NAME']     = '/index.php';
             $_SERVER['SCRIPT_FILENAME'] = '/index.php';

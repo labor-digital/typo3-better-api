@@ -188,6 +188,26 @@ class EnvFacet implements FacetInterface
     }
 
     /**
+     * Returns true if debug messages in the frontend should be shown
+     *
+     * @return bool
+     */
+    public function isFeDebug(): bool
+    {
+        return ! empty($GLOBALS['TYPO3_CONF_VARS']['FE']['debug']);
+    }
+
+    /**
+     * Returns true if debug messages in the backend should be shown
+     *
+     * @return bool
+     */
+    public function isBeDebug(): bool
+    {
+        return ! empty($GLOBALS['TYPO3_CONF_VARS']['BE']['debug']);
+    }
+
+    /**
      * Returns true if the current instance is running in development context
      *
      * @return bool

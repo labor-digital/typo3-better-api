@@ -56,7 +56,7 @@ class VisibilitySimulationPass implements SimulatorPassInterface
      */
     public function requireSimulation(array $options, array &$storage): bool
     {
-        $visibilityAspect = $this->TypoContext()->Visibility();
+        $visibilityAspect = $this->getTypoContext()->visibility();
 
         return $options['includeHiddenPages'] !== $visibilityAspect->includeHiddenPages()
                || $options['includeHiddenContent'] !== $visibilityAspect->includeHiddenContent()
@@ -69,10 +69,10 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     public function setup(array $options, array &$storage): void
     {
         // Backup the aspect
-        $storage['aspect'] = clone $this->TypoContext()->getRootContext()->getAspect('visibility');
+        $storage['aspect'] = clone $this->getTypoContext()->getRootContext()->getAspect('visibility');
 
         // Update the aspect
-        $visibilityAspect = $this->TypoContext()->Visibility();
+        $visibilityAspect = $this->getTypoContext()->visibility();
         $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
         $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
         $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
@@ -83,7 +83,7 @@ class VisibilitySimulationPass implements SimulatorPassInterface
      */
     public function rollBack(array $storage): void
     {
-        $this->TypoContext()->getRootContext()->setAspect('visibility', $storage['aspect']);
+        $this->getTypoContext()->getRootContext()->setAspect('visibility', $storage['aspect']);
     }
 
 }

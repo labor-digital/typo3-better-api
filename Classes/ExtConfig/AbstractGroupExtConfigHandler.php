@@ -33,25 +33,25 @@ abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler 
 
     /**
      * Helper to generate the element key for a given class, that automatically takes care
-     * for classes implementing the ElementKeyDefiningInterface
+     * for classes implementing the ElementKeyProviderInterface
      *
      * @param   string         $class            The class to generate the element key for
      * @param   callable|null  $postProcessor    An optional post processor which will be executed if the class
-     *                                           does not implement the ElementKeyDefiningInterface
+     *                                           does not implement the ElementKeyProviderInterface
      * @param   bool           $useOnlyBaseName  By default only the class basename is used for key generation.
      *                                           If you set this to false, the whole class including the namespace will
      *                                           be used
      *
      * @return string
-     * @see \LaborDigital\T3BA\ExtConfig\ElementKeyDefiningInterface
+     * @see \LaborDigital\T3BA\ExtConfig\ElementKeyProviderInterface
      */
     protected function getElementKeyForClass(
         string $class,
         ?callable $postProcessor = null,
         bool $useOnlyBaseName = true
     ): string {
-        if (in_array(ElementKeyDefiningInterface::class, class_implements($class), true)) {
-            return call_user_func(ElementKeyDefiningInterface::class, 'getElementKey');
+        if (in_array(ElementKeyProviderInterface::class, class_implements($class), true)) {
+            return $class('getElementKey');
         }
 
         if ($useOnlyBaseName) {

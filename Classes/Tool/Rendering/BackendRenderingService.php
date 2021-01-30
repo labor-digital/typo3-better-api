@@ -79,7 +79,7 @@ class BackendRenderingService implements SingletonInterface
             'pid'      => [
                 'type'    => 'int',
                 'default' => function () {
-                    return $this->TypoContext()->Pid()->getCurrent();
+                    return $this->getTypoContext()->pid()->getCurrent();
                 },
             ],
             'where'    => [
@@ -112,7 +112,7 @@ class BackendRenderingService implements SingletonInterface
         $dbList->dontShowClipControlPanels = true;
         $dbList->counter++;
 
-        $pointer = MathUtility::forceIntegerInRange($this->TypoContext()->Request()->getGet('pointer'), 0);
+        $pointer = MathUtility::forceIntegerInRange($this->getTypoContext()->request()->getGet('pointer'), 0);
         $dbList->start($pid, $table, $pointer, '', 0, $options['limit']);
         $dbList->script = $_SERVER['REQUEST_URI'];
         $dbList->setDispFields();

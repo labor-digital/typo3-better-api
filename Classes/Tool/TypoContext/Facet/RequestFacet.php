@@ -167,12 +167,12 @@ class RequestFacet implements FacetInterface
      */
     public function getHost(bool $withProtocol = true): string
     {
-        $typoContext = $this->TypoContext();
-        $pid         = $typoContext->Pid()->getCurrent();
+        $typoContext = $this->getTypoContext();
+        $pid         = $typoContext->pid()->getCurrent();
 
         if (! isset($this->hostCache[$pid])) {
             try {
-                $site                  = $typoContext->Site()->getForPid($pid);
+                $site                  = $typoContext->site()->getForPid($pid);
                 $this->hostCache[$pid] = [
                     $site->getBase()->getHost(),
                     $site->getBase()->getScheme() . '://' . $site->getBase()->getHost(),

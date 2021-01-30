@@ -81,7 +81,7 @@ class ConfigFacet implements FacetInterface
      */
     public function getConfigState(): ConfigState
     {
-        if (! isset($this->__localSingletons[ConfigState::class]) && ! $this->Container()->has(ConfigState::class)) {
+        if (! isset($this->__localSingletons[ConfigState::class]) && ! $this->getContainer()->has(ConfigState::class)) {
             throw new TypoContextException('The ConfigState object was not built and injected, yet! You are to early in the lifecycle!');
         }
 
@@ -146,7 +146,7 @@ class ConfigFacet implements FacetInterface
      */
     public function getRequestAttribute(string $attributeName, $fallback = null)
     {
-        $request    = $this->context->Request()->getRootRequest();
+        $request    = $this->context->request()->getRootRequest();
         $localValue = $this->requestAttributeFallbackStorage[$attributeName] ?? $fallback;
         if ($request === null) {
             return $localValue;
@@ -171,7 +171,7 @@ class ConfigFacet implements FacetInterface
      */
     public function setRequestAttribute(string $attributeName, $value): ?ServerRequestInterface
     {
-        $requestFacet = $this->context->Request();
+        $requestFacet = $this->context->request();
         $request      = $requestFacet->getRootRequest();
         if (is_null($request)) {
             // Store the attribute locally

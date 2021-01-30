@@ -114,8 +114,8 @@ class DbService implements SingletonInterface, PublicServiceInterface
             StandaloneBetterQuery::class, [
                 $tableName,
                 $this->getQueryBuilder($tableName),
-                $this->TypoContext()->Di()->getObjectManager()->get(QuerySettingsInterface::class),
-                $this->TypoContext(),
+                $this->getTypoContext()->di()->getObjectManager()->get(QuerySettingsInterface::class),
+                $this->getTypoContext(),
                 $this->getSingletonOf(Session::class),
             ]
         );

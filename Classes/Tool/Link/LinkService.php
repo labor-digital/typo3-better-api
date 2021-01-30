@@ -146,7 +146,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     public function getBackendLink(string $target, array $options = []): string
     {
         // Skip if we are not in the backend
-        if (! $this->context->getTypoContext()->Env()->isBackend()) {
+        if (! $this->context->getTypoContext()->env()->isBackend()) {
             return '';
         }
 
@@ -175,7 +175,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     public function getBackendRoutes(): array
     {
         // Skip if we are not in the backend
-        if (! $this->context->getTypoContext()->Env()->isBackend()) {
+        if (! $this->context->getTypoContext()->env()->isBackend()) {
             return [];
         }
 
@@ -194,7 +194,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function getHost(bool $withProtocol = true): string
     {
-        return $this->context->getTypoContext()->Request()->getHost($withProtocol);
+        return $this->context->getTypoContext()->request()->getHost($withProtocol);
     }
 
     /**

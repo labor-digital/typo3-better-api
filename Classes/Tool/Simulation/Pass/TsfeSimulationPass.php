@@ -94,7 +94,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
                    ! $this->getInstanceOf(TsfeService::class)->hasTsfe()
                    || (
                        $options['pid'] !== null
-                       && $this->TypoContext()->Pid()->getCurrent() !== $options['pid']
+                       && $this->getTypoContext()->pid()->getCurrent() !== $options['pid']
                    )
                );
     }
@@ -106,15 +106,15 @@ class TsfeSimulationPass implements SimulatorPassInterface
     {
         // Backup the tsfe
         $storage['tsfe']           = $GLOBALS['TSFE'];
-        $storage['languageAspect'] = clone $this->TypoContext()->getRootContext()->getAspect('language');
-        $storage['pid']            = $this->TypoContext()->Config()->getConfigState()->get('t3ba.pids', []);
+        $storage['languageAspect'] = clone $this->getTypoContext()->getRootContext()->getAspect('language');
+        $storage['pid']            = $this->getTypoContext()->config()->getConfigState()->get('t3ba.pids', []);
 
         // Store the language aspect temporarily
-        $pid             = $options['pid'] ?? $this->TypoContext()->Pid()->getCurrent();
+        $pid             = $options['pid'] ?? $this->getTypoContext()->pid()->getCurrent();
         $GLOBALS['TSFE'] = $this->makeSimulatedTsfe($pid, $storage);
 
         // Make sure the language aspect stays the same way as we set it...
-        $this->TypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
+        $this->getTypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
     }
 
     /**
@@ -122,9 +122,9 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     public function rollBack(array $storage): void
     {
-        $this->TypoContext()->Config()->getConfigState()->set('t3ba.pids', $storage['pid']);
+        $this->getTypoContext()->config()->getConfigState()->set('t3ba.pids', $storage['pid']);
         $GLOBALS['TSFE'] = $storage['tsfe'];
-        $this->TypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
+        $this->getTypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
     }
 
 
@@ -149,7 +149,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
             SimulatedTypoScriptFrontendController::class, [
                 null,
                 $pid,
-                $this->TypoContext()->Language()->getCurrentFrontendLanguage(),
+                $this->getTypoContext()->language()->getCurrentFrontendLanguage(),
             ]
         );
         $GLOBALS['TSFE']      = $controller;
@@ -158,7 +158,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $controller->page     = $this->pageService->getPageInfo($pid);
         $controller->getConfigArray();
         $controller->settingLanguage();
-        $controller->cObj    = $this->getWithoutDi(ContentObjectRenderer::class, [$controller, $this->Container()]);
+        $controller->cObj    = $this->getWithoutDi(ContentObjectRenderer::class, [$controller, $this->getContainer()]);
         $controller->fe_user = $this->getWithoutDi(FrontendUserAuthentication::class);
 
 

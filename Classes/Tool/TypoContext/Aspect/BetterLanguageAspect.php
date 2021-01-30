@@ -59,7 +59,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
      */
     public function getCurrentFrontendLanguage(): SiteLanguage
     {
-        return $this->context->Site()->getCurrent()->getLanguageById($this->getRootLanguageAspect()->getId());
+        return $this->context->site()->getCurrent()->getLanguageById($this->getRootLanguageAspect()->getId());
     }
 
     /**
@@ -69,7 +69,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
      */
     public function getAllFrontendLanguages(): array
     {
-        return $this->context->Site()->getCurrent()->getLanguages();
+        return $this->context->site()->getCurrent()->getLanguages();
     }
 
     /**
@@ -79,10 +79,10 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
      */
     public function getCurrentBackendLanguage(): string
     {
-        if ($this->context->BeUser()->hasUser()
-            && isset($this->context->BeUser()->getUser()->uc['lang'])) {
+        if ($this->context->beUser()->hasUser()
+            && isset($this->context->beUser()->getUser()->uc['lang'])) {
             // Read language (empty means "en")
-            $isoCode = $this->context->BeUser()->getUser()->uc['lang'];
+            $isoCode = $this->context->beUser()->getUser()->uc['lang'];
             $isoCode = empty($isoCode) ? 'en' : $isoCode;
         } else {
             $isoCode = 'en';

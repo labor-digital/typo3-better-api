@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 20:16
+ * Last modified: 2021.01.13 at 18:57
  */
 
 declare(strict_types=1);
@@ -23,6 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\Loader\ConfigContext;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
@@ -33,6 +35,11 @@ class ExtConfigContext extends ConfigContext
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
+
+    /**
+     * @var TypoContext
+     */
+    protected $typoContext;
 
     /**
      * Holds the cached namespace to ext key and vendor value map
@@ -49,6 +56,50 @@ class ExtConfigContext extends ConfigContext
     public function __construct(ExtConfigService $extConfigService)
     {
         $this->extConfigService = $extConfigService;
+    }
+
+    /**
+     * Returns the typo context instance if it was provided by the lifecycle yet
+     *
+     * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     */
+    public function getTypoContext(): TypoContext
+    {
+        if (! $this->typoContext) {
+            throw new ExtConfigException('You can\'t access the TypoContext object here, because it is to early in the lifecycle!');
+        }
+
+        return $this->typoContext;
+    }
+
+    /**
+     * Returns multiple environment related constraint helpers
+     *
+     * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet
+     */
+    public function env(): EnvFacet
+    {
+        if ($this->typoContext) {
+            return $this->typoContext->env();
+        }
+
+        // Fallback if used to early in the lifecycle
+        return new EnvFacet();
+    }
+
+    /**
+     * Allows to inject the typo context instance
+     *
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $typoContext
+     *
+     * @return $this
+     */
+    public function setTypoContext(TypoContext $typoContext): self
+    {
+        $this->typoContext = $typoContext;
+
+        return $this;
     }
 
     /**

@@ -42,28 +42,28 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInterface
 {
     use ExtBasePersistenceMapperTrait;
-    
+
     /**
      * Contains the list of registered model classes and their mapped tables
      *
      * @var array
      */
     protected $tableModels = [];
-    
+
     /**
      * Holds a list of tables that are allowed on standard pages
      *
      * @var array
      */
     protected $tablesOnStandardPages = [];
-    
+
     /**
      * Stores the list of the table positions when showing the list view
      *
      * @var array
      */
     protected $tableListPositions = [];
-    
+
     /**
      * @inheritDoc
      */
@@ -74,7 +74,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         $subscription->subscribe(ExtTablesLoadedEvent::class, '__applyExtTables');
         $subscription->subscribe(SqlDefinitionFilterEvent::class, '__applySqlExtension');
     }
-    
+
     /**
      * Use this to register a new table in typo3's database.
      * You should NOT use this if you want to edit existing tables! Use registerTableOverride() for that!
@@ -95,10 +95,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (empty($tableName)) {
             $tableName = $this->getTableNameFromConfigClass($configClass);
         }
-        
+
         return $this->addRegistrationToCachedStack('tables', $this->getRealTableName($tableName), $configClass);
     }
-    
+
     /**
      * Similar to registerNewTable() but registers all table definitions in a directory at once.
      *
@@ -115,7 +115,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
             return $this->getRealTableName($this->getTableNameFromConfigClass($className));
         });
     }
-    
+
     /**
      * Use if you want to modify existing tables.
      * You should NOT use this to define new tables! Use registerNewTable() for that!
@@ -136,10 +136,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (empty($tableName)) {
             $tableName = $this->getTableNameFromConfigClass($configClass);
         }
-        
+
         return $this->addOverrideToCachedStack('tables', $this->getRealTableName($tableName), $configClass);
     }
-    
+
     /**
      * Use this method if you want to remove a specific table configuration. This works both for new tables as well as
      * overrides.
@@ -162,10 +162,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (empty($tableName)) {
             $tableName = $this->getTableNameFromConfigClass($configClass);
         }
-        
+
         return $this->removeFromCachedStack('tables', $this->getRealTableName($tableName), $configClass, $overrides);
     }
-    
+
     /**
      * You may use this method if you want to configure a model to map to a specific table.
      *
@@ -184,10 +184,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     public function registerModelForTable(string $tableName, string $modelClass): TableOption
     {
         $this->tableModels[$this->getRealTableName($tableName)][] = $modelClass;
-        
+
         return $this;
     }
-    
+
     /**
      * The registered filter called every time the typo3 backend saves data for $tableName using the backend forms.
      *
@@ -211,10 +211,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         }
         $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'save',
             $filterClass, $filterMethod, $fieldConstraints);
-        
+
         return $this;
     }
-    
+
     /**
      * Can be used to remove a previously registered save filter from a table.
      *
@@ -235,10 +235,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         }
         $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'save',
             $filterClass, $filterMethod);
-        
+
         return $this;
     }
-    
+
     /**
      * Register a new backend form filter for a table.
      *
@@ -266,10 +266,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         }
         $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'form',
             $filterClass, $filterMethod, $fieldConstraints);
-        
+
         return $this;
     }
-    
+
     /**
      * Can be used to remove a previously registered form filter from a table.
      *
@@ -287,10 +287,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         }
         $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'form',
             $filterClass, $filterMethod);
-        
+
         return $this;
     }
-    
+
     /**
      * The registered method is called every time the backend performs an action. Actions are deletion,
      * translation, copy or moving of a record and many others.
@@ -315,10 +315,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         }
         $this->context->DataHandlerActions->registerActionHandler($this->getRealTableName($tableName), 'default',
             $handlerClass, $handlerMethod, $fieldConstraints);
-        
+
         return $this;
     }
-    
+
     /**
      * Removes a previously registered backend action handler from the table.
      *
@@ -339,10 +339,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         }
         $this->context->DataHandlerActions->removeActionHandler($this->getRealTableName($tableName), 'default',
             $handlerClass, $handlerMethod);
-        
+
         return $this;
     }
-    
+
     /**
      * By default tables are only allowed in "folder" elements. If you want to allow a table on
      * default "pages" as well supply the name of the table and we handle the rest...
@@ -354,10 +354,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     public function allowTableOnStandardPages(string $tableName): TableOption
     {
         $this->tablesOnStandardPages[] = $this->getRealTableName($tableName);
-        
+
         return $this;
     }
-    
+
     /**
      * Can be used to configure the order of tables when they are rendered in the "list" mode in the backend.
      * The table with $tableName will be sorted either before or after the table with $otherTableName
@@ -375,10 +375,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         bool $before = true
     ): TableOption {
         $this->tableListPositions[$tableName][$before ? 'before' : 'after'][] = $otherTableName;
-        
+
         return $this;
     }
-    
+
     /**
      * Internal event handler to run the "new tables" generator stack, when the TCA files were loaded
      */
@@ -386,11 +386,11 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         // Flush the sql builder
         $this->context->SqlGenerator->flush();
-        
+
         // Build and apply the table registration tca
         $this->applyTableTca(false);
     }
-    
+
     /**
      * Internal event handler to run the "modify tables" generator stack, when the TCA override files were loaded.
      * Will also persist some generated values into a cache for the appliers that are required on every execution.
@@ -399,26 +399,26 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         // Build and apply the table override tca
         $this->applyTableTca(true);
-        
+
         // Register mapping typoScript
         $typoScript = $this->getCachedValueOrRun('tableMappingTypoScript', function () {
             // Get the table config ts
             $ts = $this->getTableConfig()->typoScript;
-            
+
             // Get our local ts
             foreach ($this->tableModels as $tableName => $modelList) {
                 $ts .= PHP_EOL . $this->getPersistenceTs($modelList, $tableName);
             }
-            
+
             // Done
             return $ts;
         });
-        
+
         $this->context->TypoScript->addSetup($typoScript, [
             'title' => 'BetterApi - Table-Model Mapping',
         ]);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -426,7 +426,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         // Allow tables on standard pages
         $tablesOnStandardPages = $this->getCachedValueOrRun('tablesOnStandardPages', function () {
-            return $this->getTableConfig()->tablesOnStandardPages;
+            return $this->getTableConfig()- >tablesOnStandardPages;
         });
         foreach ($tablesOnStandardPages as $tableName) {
             ExtensionManagementUtility::allowTableOnStandardPages($tableName);
@@ -434,13 +434,13 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         foreach ($this->tablesOnStandardPages as $tableName) {
             ExtensionManagementUtility::allowTableOnStandardPages($tableName);
         }
-        
+
         // Add page ts config for table ordering when in backend
         if ($this->context->TypoContext->getEnvAspect()->isBackend()) {
             $this->context->TypoScript->addPageTsConfig($this->getTableListOrderTsConfig());
         }
     }
-    
+
     /**
      * Internal event handler which is called in the install tool when the sql schema is validated
      * It injects our compiled sql code for typo3 to use
@@ -451,7 +451,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         $event->addNewDefinition($this->getTableConfig()->sql);
     }
-    
+
     /**
      * Internal helper which is used to unfold the "..." prefixed table names to a ext base, default table name
      *
@@ -465,7 +465,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         if (substr($tableName, 0, 3) !== '...') {
             return $tableName;
         }
-        
+
         return implode('_', array_filter([
             'tx',
             Naming::flattenExtKey($this->context->getExtKey()),
@@ -474,7 +474,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
             strtolower(Inflector::toCamelBack(substr($tableName, 3))),
         ]));
     }
-    
+
     /**
      *
      * Internal helper that is used if there was no table name given.
@@ -491,10 +491,10 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         $baseName = Path::classBasename($configClass);
         $baseName = preg_replace('~(Tables?)?(Ext)?(Config|Configuration)?(Overrides?)?$~', '', $baseName);
-        
+
         return '...' . $baseName;
     }
-    
+
     /**
      * Internal helper that executes the stack of table configurations and applies the resulting TCA modifications to
      * the TCA array. This method runs twice. Once for the normal TCA files and once for the TCA.overrides files.
@@ -506,12 +506,12 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         $generator    = $this->context->getInstanceOf(TableConfigGenerator::class);
         $tableTcaList = $generator->generateTableTcaList($this->getCachedStackDefinitions('tables', $overrides),
             $this->context, $overrides);
-        
+
         foreach ($tableTcaList as $table => $tca) {
             $GLOBALS['TCA'][$table] = $tca;
         }
     }
-    
+
     /**
      * Returns the instance of the table configuration.
      * The object may be cached for better performance.
@@ -524,7 +524,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
             return $this->context->getInstanceOf(TableConfigGenerator::class)->generateTableConfig($this->context);
         });
     }
-    
+
     /**
      * Is used to build the ts config string that is required to define the order of tables in the backend's list view
      *
@@ -539,7 +539,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
                 $c           = Arrays::merge(['before' => [], 'after' => []], $c);
                 $c['before'] = array_unique($c['before']);
                 $c['after']  = array_unique($c['after']);
-                
+
                 $tsLocal   = [];
                 $tsLocal[] = 'mod.web_list.tableDisplayOrder.' . $table . ' {';
                 if (! empty($c['before'])) {
@@ -551,7 +551,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
                 $tsLocal[] = '}';
                 $ts[]      = implode(PHP_EOL, $tsLocal);
             }
-            
+
             return implode(PHP_EOL, $ts);
         });
     }

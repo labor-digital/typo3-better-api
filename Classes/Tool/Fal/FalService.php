@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Fal;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3BA\Tool\Fal\FileInfo\ProcessedFileAdapter;
 use Neunerlei\Arrays\Arrays;
@@ -48,7 +48,7 @@ use TYPO3\CMS\Extbase\Service\ImageService;
 
 class FalService implements SingletonInterface
 {
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
     use ResizedImageOptionsTrait;
 
     /**
@@ -211,10 +211,10 @@ class FalService implements SingletonInterface
         string $table = 'tt_content'
     ): FileReference {
         // Ignore the access checks
-        $referenceUid = $this->Simulator()->runWithEnvironment(['asAdmin'],
+        $referenceUid = $this->cs()->simulator->runWithEnvironment(['asAdmin'],
             function () use ($file, $uid, $field, $table) {
                 // Get the record from the database
-                $record = $this->Db()->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
+                $record = $this->cs()->db->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
                 if (empty($record)) {
                     throw new FalException(
                         'Invalid table: ' . $table . ' or uid: ' . $uid . ' to create a file reference for');
@@ -225,7 +225,7 @@ class FalService implements SingletonInterface
                 ExtensionManagementUtility::allowTableOnStandardPages('sys_file_reference');
 
                 try {
-                    $handler = $this->DataHandler()->processData([
+                    $handler = $this->cs()->dataHandler->processData([
                         'sys_file_reference' => [
                             'NEW1' => [
                                 'table_local' => 'sys_file',

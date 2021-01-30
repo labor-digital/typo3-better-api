@@ -140,16 +140,18 @@ class DiConfigurationStage implements BootStageInterface
         $realContainer->set(TypoListenerProvider::class, $listenerProvider);
         $realContainer->get(ListenerProvider::class);
 
-        // Inject our early services into the container
-        $realContainer->set(EventBusInterface::class, $eventBus);
-        $realContainer->set(TypoEventBus::class, $eventBus);
-        $realContainer->set(ExtConfigContext::class, $this->container->get(ExtConfigContext::class));
-        $realContainer->set(ExtConfigService::class, $this->container->get(ExtConfigService::class));
-
         // Prepare the Typo context instance
         $context = TypoContext::setInstance(new TypoContext());
         $context->setContainer($realContainer);
         $realContainer->set(TypoContext::class, $context);
+
+        // Inject our early services into the container
+        $realContainer->set(EventBusInterface::class, $eventBus);
+        $realContainer->set(TypoEventBus::class, $eventBus);
+        $realContainer->set(ExtConfigContext::class,
+            $this->container->get(ExtConfigContext::class)
+                            ->setTypoContext($context));
+        $realContainer->set(ExtConfigService::class, $this->container->get(ExtConfigService::class));
 
         // Provide the container to the general utility a bit early
         $this->symfonyContainer = $realContainer;

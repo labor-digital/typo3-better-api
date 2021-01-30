@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Domain\Repository;
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\ExtBase\Domain\DomainException;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\BetterQueryPreparationTrait;
@@ -35,7 +35,7 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 abstract class BetterRepository extends Repository
 {
     use BetterQueryPreparationTrait;
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
 
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper
@@ -122,7 +122,7 @@ abstract class BetterRepository extends Repository
         return $this->getWithoutDi(ExtBaseBetterQuery::class, [
             $this,
             $this->createQuery(),
-            $this->TypoContext(),
+            $this->cs()->typoContext,
             $this->getSingletonOf(Session::class),
         ]);
     }
@@ -141,7 +141,7 @@ abstract class BetterRepository extends Repository
         if ($repository instanceof BetterRepository) {
             return $repository;
         }
-        $wrapper = TypoContext::getInstance()->Di()->getObjectManager()->get(RepositoryWrapper::class);
+        $wrapper = TypoContext::getInstance()->di()->getObjectManager()->get(RepositoryWrapper::class);
         $wrapper->initialize($repository);
 
         return $wrapper;
@@ -149,6 +149,7 @@ abstract class BetterRepository extends Repository
 
     /**
      * @inheritDoc
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function prepareBetterQuery(AbstractBetterQuery $query, array $settings, array $row): AbstractBetterQuery
     {

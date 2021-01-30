@@ -50,7 +50,7 @@ trait ContainerAwareTrait
      */
     public function setContainer(ContainerInterface $container): void
     {
-        $this->__localSingletons['@container'] = $container;
+        $this->__localSingletons[ContainerInterface::class] = $container;
     }
 
     /**
@@ -86,10 +86,10 @@ trait ContainerAwareTrait
      *
      * @return \Psr\Container\ContainerInterface
      */
-    protected function Container(): ContainerInterface
+    protected function getContainer(): ContainerInterface
     {
-        return $this->__localSingletons['@container'] ??
-               $this->__localSingletons['@container']
+        return $this->__localSingletons[ContainerInterface::class] ??
+               $this->__localSingletons[ContainerInterface::class]
                    = GeneralUtility::getContainer();
     }
 
@@ -123,7 +123,7 @@ trait ContainerAwareTrait
      */
     protected function getInstanceOf(string $class)
     {
-        return $this->Container()->get($class);
+        return $this->getContainer()->get($class);
     }
 
     /**
@@ -144,7 +144,37 @@ trait ContainerAwareTrait
     {
         // Check if we have a singleton
         return $this->__localSingletons[$class] ??
-               $this->__localSingletons[$class] = $this->Container()->get($class);
+               $this->__localSingletons[$class] = $this->getContainer()->get($class);
     }
 
+    /**
+     * Returns a list of commonly used services as a "lazy" lookup method.
+     *
+     * @return \LaborDigital\T3BA\Core\DependencyInjection\CommonServices
+     * @see cs() for a short hand
+     */
+    protected function getCommonServices(): CommonServices
+    {
+        return $this->cs();
+    }
+
+    /**
+     * Shorthand alias of: getCommonServices()
+     * Returns a list of commonly used services as a "lazy" lookup method.
+     *
+     * @return \LaborDigital\T3BA\Core\DependencyInjection\CommonServices
+     * @see getCommonServices()
+     */
+    protected function cs(): CommonServices
+    {
+        return $this->__localSingletons[CommonServices::class] ??
+               $this->__localSingletons[CommonServices::class]
+                   = $this->getWithoutDi(CommonServices::class, [
+                   function (string $className, bool $new = false) {
+                       return $new
+                           ? $this->getInstanceOf($className)
+                           : $this->getSingletonOf($className);
+                   },
+               ]);
+    }
 }

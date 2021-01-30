@@ -90,7 +90,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
         }
 
         // Get the content object renderer from the config manager
-        if (! $cObj instanceof ContentObjectRenderer && $this->TypoContext()->Env()->isFrontend()) {
+        if (! $cObj instanceof ContentObjectRenderer && $this->getTypoContext()->env()->isFrontend()) {
             $cObj = $this->getSingletonOf(ConfigurationManager::class)->getContentObject();
         }
 

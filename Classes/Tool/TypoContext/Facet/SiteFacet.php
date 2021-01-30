@@ -89,7 +89,7 @@ class SiteFacet implements FacetInterface
     public function getCurrent(): SiteInterface
     {
         // Check if we can fetch a better site
-        $site = $this->context->Config()->getRequestAttribute('site');
+        $site = $this->context->config()->getRequestAttribute('site');
         if (! empty($site)) {
             // Make sure to reset the current site if we suddenly get a site
             $this->currentSite = null;
@@ -106,7 +106,7 @@ class SiteFacet implements FacetInterface
 
         // Try to find the site via pid
         $this->simulateNoSite = true;
-        $pid                  = $this->context->Pid()->getCurrent();
+        $pid                  = $this->context->pid()->getCurrent();
         $this->simulateNoSite = false;
         if (! empty($pid)) {
             $site = $this->siteFinder->getSiteByPageId($pid);
@@ -122,7 +122,7 @@ class SiteFacet implements FacetInterface
         }
 
         // Try to match the site with the current host
-        $request = $this->context->Request()->getRootRequest();
+        $request = $this->context->request()->getRootRequest();
         if (! is_null($request)) {
             try {
                 $result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(true)));
@@ -189,7 +189,7 @@ class SiteFacet implements FacetInterface
      */
     public function getForPid($pid): Site
     {
-        return $this->siteFinder->getSiteByPageId($this->context->Pid()->get($pid));
+        return $this->siteFinder->getSiteByPageId($this->context->pid()->get($pid));
     }
 
     /**

@@ -59,7 +59,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      */
     public function getRootContext(): Context
     {
-        return $this->rootContext ?? ($this->rootContext = $this->Container()->get(Context::class));
+        return $this->rootContext ?? ($this->rootContext = $this->getContainer()->get(Context::class));
     }
 
     /** ====================================================
@@ -73,7 +73,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return WorkspaceAspect|mixed
      */
-    public function Workspace(): WorkspaceAspect
+    public function workspace(): WorkspaceAspect
     {
         return $this->rootContext->getAspect('workspace');
     }
@@ -85,7 +85,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return BetterLanguageAspect
      */
-    public function Language(): BetterLanguageAspect
+    public function language(): BetterLanguageAspect
     {
         return $this->getOrMakeAspect('betterLanguage', BetterLanguageAspect::class);
     }
@@ -95,7 +95,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return BetterVisibilityAspect
      */
-    public function Visibility(): BetterVisibilityAspect
+    public function visibility(): BetterVisibilityAspect
     {
         return $this->getOrMakeAspect('betterVisibility', BetterVisibilityAspect::class);
     }
@@ -105,7 +105,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return FeUserAspect
      */
-    public function FeUser(): FeUserAspect
+    public function feUser(): FeUserAspect
     {
         return $this->getOrMakeAspect('frontend.betterUser', FeUserAspect::class);
     }
@@ -115,7 +115,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return BeUserAspect
      */
-    public function BeUser(): BeUserAspect
+    public function beUser(): BeUserAspect
     {
         return $this->getOrMakeAspect('backend.betterUser', BeUserAspect::class);
     }
@@ -131,7 +131,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return PathFacet
      */
-    public function Path(): PathFacet
+    public function path(): PathFacet
     {
         return $this->getOrMakeFacet('path', PathFacet::class);
     }
@@ -141,7 +141,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return EnvFacet
      */
-    public function Env(): EnvFacet
+    public function env(): EnvFacet
     {
         return $this->getOrMakeFacet('env', EnvFacet::class);
     }
@@ -151,7 +151,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return SiteFacet
      */
-    public function Site(): SiteFacet
+    public function site(): SiteFacet
     {
         return $this->getOrMakeFacet('site', SiteFacet::class);
     }
@@ -161,7 +161,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return RequestFacet
      */
-    public function Request(): RequestFacet
+    public function request(): RequestFacet
     {
         return $this->getOrMakeFacet('request', RequestFacet::class);
     }
@@ -171,7 +171,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return PidFacet
      */
-    public function Pid(): PidFacet
+    public function pid(): PidFacet
     {
         return $this->getOrMakeFacet('pid', PidFacet::class);
     }
@@ -181,7 +181,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return ConfigFacet
      */
-    public function Config(): ConfigFacet
+    public function config(): ConfigFacet
     {
         return $this->getOrMakeFacet('globalConfig', ConfigFacet::class);
     }
@@ -191,7 +191,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      *
      * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet
      */
-    public function Di(): DependencyInjectionFacet
+    public function di(): DependencyInjectionFacet
     {
         return $this->getOrMakeFacet('di', DependencyInjectionFacet::class);
     }

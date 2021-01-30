@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\OddsAndEnds;
 
 use InvalidArgumentException;
+use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
+use LaborDigital\T3BA\ExtConfigHandler\Table\ConfigureTcaTableInterface;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\PathUtil\Path;
 use ReflectionMethod;
@@ -31,6 +33,20 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class NamingUtil
 {
+    /**
+     * A list of tca configuration class names and their matching db table names
+     *
+     * @var array
+     * @internal
+     */
+    public static $tcaTableClassNameMap = [];
+
+    /**
+     * The list of resolved table names by their specified selector, for faster lookup
+     *
+     * @var string[]
+     */
+    protected static $resolvedTableNames = [];
 
     /**
      * Receives the class of a plugin / module controller and returns the matching plugin name
@@ -122,12 +138,14 @@ class NamingUtil
      *
      * IMPORTANT: This method requires a TypoScript as well as the TCA to be set up!
      *
-     * @param   string|AbstractEntity|Repository  $selector  The selector to find the database table for:
-     *                                                       The valid options are:
-     *                                                       - a string already containing a table name -> will be
-     *                                                       kept as is
-     *                                                       - the class|instance of a domain model
-     *                                                       - the class|instance of a domain repository
+     * @param   string|AbstractEntity|Repository  $selector     The selector to find the database table for:
+     *                                                          The valid options are:
+     *                                                          - a string already containing a table name -> will be
+     *                                                          kept as is
+     *                                                          - the class|instance of a domain model
+     *                                                          - the class|instance of a domain repository
+     *                                                          - the class|instance of a table config class
+     *                                                          -> the class has to implement ConfigureTcaTableInterface
      *
      * @return string
      */
@@ -137,12 +155,22 @@ class NamingUtil
             if ($selector instanceof BetterRepository) {
                 return $selector->getTableName();
             }
-            if ($selector instanceof Repository || $selector instanceof AbstractEntity) {
+
+            if ($selector instanceof Repository
+                || $selector instanceof AbstractEntity
+                || $selector instanceof ConfigureTcaTableInterface) {
                 $selector = get_class($selector);
             }
         }
 
         if (is_string($selector)) {
+            if (isset(static::$tcaTableClassNameMap[$selector])) {
+                return static::$tcaTableClassNameMap[$selector];
+            }
+            if (isset(static::$resolvedTableNames[$selector])) {
+                return static::$resolvedTableNames[$selector];
+            }
+
             if (class_exists($selector)) {
                 // Resolve repository class
                 if (in_array(Repository::class, class_parents($selector), true)) {
@@ -151,12 +179,13 @@ class NamingUtil
 
                 // Resolve entity class
                 if (in_array(AbstractEntity::class, class_parents($selector), true)) {
-                    return TypoContext::getInstance()->Di()->getInstanceOf(DataMapper::class)
-                                      ->getDataMap($selector)->getTableName();
+                    return static::$resolvedTableNames[$selector]
+                        = TypoContext::getInstance()->di()->getInstanceOf(DataMapper::class)
+                                     ->getDataMap($selector)->getTableName();
                 }
             }
 
-            return $selector;
+            return static::$resolvedTableNames[$selector] = $selector;
         }
 
         throw new InvalidArgumentException('Could not convert the given selector: ' . $selector
@@ -220,7 +249,7 @@ class NamingUtil
             // Check if we have to instantiate the class first
             if (! (new ReflectionMethod($callable[0], $callable[1]))->isStatic()) {
                 return [
-                    TypoContext::getInstance()->Di()->getInstanceOf($callable[0]),
+                    TypoContext::getInstance()->di()->getInstanceOf($callable[0]),
                     $callable[1],
                 ];
             }
@@ -232,4 +261,5 @@ class NamingUtil
 
         return $callable;
     }
+
 }

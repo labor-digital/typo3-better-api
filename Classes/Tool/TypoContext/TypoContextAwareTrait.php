@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\TypoContext;
 
 
+use LaborDigital\T3BA\Core\DependencyInjection\CommonServices;
 use Psr\Container\ContainerInterface;
 
 trait TypoContextAwareTrait
@@ -47,16 +48,18 @@ trait TypoContextAwareTrait
      *
      * @return TypoContext
      */
-    protected function TypoContext(): TypoContext
+    protected function getTypoContext(): TypoContext
     {
         if (isset($this->__typoContext)) {
             return $this->__typoContext;
         }
-        if (method_exists($this, 'Container')) {
-            $container = $this->Container();
-            if ($container instanceof ContainerInterface) {
-                return $this->__typoContext = $container->get(TypoContext::class);
-            }
+
+        if (method_exists($this, 'getCommonServices') && $this->getCommonServices() instanceof CommonServices) {
+            return $this->__typoContext = $this->getCommonServices()->typoContext;
+        }
+
+        if (method_exists($this, 'getContainer') && $this->getContainer() instanceof ContainerInterface) {
+            return $this->__typoContext = $this->getContainer()->get(TypoContext::class);
         }
 
         return $this->__typoContext = TypoContext::getInstance();

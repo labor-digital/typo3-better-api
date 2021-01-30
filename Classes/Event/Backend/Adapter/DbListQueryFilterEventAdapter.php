@@ -41,7 +41,7 @@ class DbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
 
     public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject): void
     {
-        if (! static::$context->Env()->isBackend()) {
+        if (! static::$context->env()->isBackend()) {
             return;
         }
 

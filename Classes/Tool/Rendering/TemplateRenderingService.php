@@ -72,7 +72,7 @@ class TemplateRenderingService implements SingletonInterface
     {
         // Check if we have to load a template file
         if (stripos($template, 'file:') === 0) {
-            $templateFile = $this->TypoContext()->Path()->typoPathToRealPath($template);
+            $templateFile = $this->getTypoContext()->path()->typoPathToRealPath($template);
             $template     = Fs::readFile($templateFile);
         }
 
@@ -141,7 +141,7 @@ class TemplateRenderingService implements SingletonInterface
         ]);
 
         // Prepare the template name
-        $filename = $this->TypoContext()->Path()->typoPathToRealPath($templateName);
+        $filename = $this->getTypoContext()->path()->typoPathToRealPath($templateName);
         if (strpos(substr($filename, -6), '.') === false) {
             $filename .= '.html';
         }
@@ -186,7 +186,7 @@ class TemplateRenderingService implements SingletonInterface
 
                     return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
                         ::getInstance()
-                        ->Di()
+                        ->di()
                         ->getSingletonOf(\LaborDigital\T3BA\Tool\Translation\Translator::class)
                         ->translate($selector);
                 },

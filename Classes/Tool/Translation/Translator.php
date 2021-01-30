@@ -237,8 +237,8 @@ class Translator implements SingletonInterface
 
         if (! is_object($GLOBALS['LANG'])) {
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
-            $lang            = $this->TypoContext()
-                                    ->Language()
+            $lang            = $this->getTypoContext()
+                                    ->language()
                                     ->getCurrentFrontendLanguage()
                                     ->getTwoLetterIsoCode();
             $GLOBALS['LANG']->init($lang === 'en' ? 'default' : $lang);
@@ -331,7 +331,7 @@ class Translator implements SingletonInterface
         if (stripos($selector, 'lll:ext:') !== 0) {
             $parts    = explode(':', $selector);
             $selector = array_shift($parts) .
-                        $this->TypoContext()->Path()->realPathToTypoExt(array_shift($parts)) . ':'
+                        $this->getTypoContext()->path()->realPathToTypoExt(array_shift($parts)) . ':'
                         . implode(':', $parts);
         }
 

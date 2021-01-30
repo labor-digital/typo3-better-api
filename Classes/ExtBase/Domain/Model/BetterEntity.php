@@ -20,12 +20,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Domain\Model;
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingTrait;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 abstract class BetterEntity extends AbstractEntity
 {
     use LazyLoadingTrait;
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
 }

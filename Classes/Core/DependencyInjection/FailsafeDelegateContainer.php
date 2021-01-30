@@ -79,14 +79,4 @@ class FailsafeDelegateContainer implements ContainerInterface
     {
         return $this->container;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function __call($name, $arguments)
-    {
-        dbge($name, $arguments);
-        // TODO: Implement __call() method.
-    }
-
 }

@@ -61,6 +61,6 @@ class FalFileUrlUtil
         $context = static::$context ??
                    static::$context = GeneralUtility::makeInstance(TypoContext::class);
 
-        return $context->Request()->getHost();
+        return $context->request()->getHost();
     }
 }

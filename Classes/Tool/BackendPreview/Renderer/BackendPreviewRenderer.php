@@ -52,7 +52,8 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
      */
     public function render(PreviewRenderingEvent $event): void
     {
-        foreach ($this->TypoContext()->Config()->getConfigValue('t3ba.backendPreview.previewRenderers', []) as $def) {
+        foreach ($this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.previewRenderers', []) as $def)
+        {
             [$handler, $constraints] = $def;
 
             // Non-empty constraints in form of an array that don't match the row -> skip
@@ -176,7 +177,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         // Load the type descriptions from ts config
         if (! isset($this->typeDescriptions)) {
             $this->typeDescriptions = [];
-            $items                  = $this->TypoContext()->Config()
+            $items                  = $this->getTypoContext()->config()
                                            ->getTsConfigValue('mod.wizards.newContentElement.wizardItems');
             foreach ($items as $item) {
                 if (! is_array($item['elements.'])) {

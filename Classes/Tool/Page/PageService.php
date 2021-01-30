@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Page;
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\PageContentsGridConfigFilterEvent;
 use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
 use Neunerlei\Arrays\Arrays;
@@ -36,7 +36,7 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
  */
 class PageService implements SingletonInterface
 {
-    use CommonDependencyTrait;
+    use ContainerAwareTrait;
 
     /**
      * The record data handler instance after it was created at least once
@@ -54,7 +54,8 @@ class PageService implements SingletonInterface
     public function getPageDataHandler(): RecordDataHandler
     {
         return $this->recordHandler ??
-               $this->recordHandler = $this->DataHandler()->getRecordDataHandler('pages');
+               $this->recordHandler
+                   = $this->cs()->dataHandler->getRecordDataHandler('pages');
     }
 
     /**
@@ -241,7 +242,7 @@ class PageService implements SingletonInterface
             ],
         ]);
 
-        return $this->Simulator()->runWithEnvironment([
+        return $this->cs()->simulator->runWithEnvironment([
             'pid'                   => $pageId,
             'language'              => $options['language'],
             'includeHiddenPages'    => $options['includeHiddenPages'],
@@ -249,7 +250,7 @@ class PageService implements SingletonInterface
             'includeDeletedRecords' => $options['includeDeletedRecords'],
         ], function () use ($pageId) {
             // Render the page
-            return $this->TypoScript()->renderContentObject('CONTENT', [
+            return $this->cs()->ts->renderContentObject('CONTENT', [
                 'table'   => 'tt_content',
                 'select.' => [
                     'pidInList'     => $this->resolveContentPid($pageId),
@@ -317,13 +318,13 @@ class PageService implements SingletonInterface
         ]);
 
         // Collect the records
-        $records = $this->Simulator()->runWithEnvironment([
+        $records = $this->cs()->simulator->runWithEnvironment([
             'language'              => $options['language'],
             'includeHiddenPages'    => $options['includeHiddenPages'],
             'includeHiddenContent'  => $options['includeHiddenContent'],
             'includeDeletedRecords' => $options['includeDeletedRecords'],
         ], function () use ($pageId, $options) {
-            return $this->Tsfe()->getContentObjectRenderer()->getRecords('tt_content', [
+            return $this->cs()->tsfe->getContentObjectRenderer()->getRecords('tt_content', [
                 'pidInList' => $this->resolveContentPid($pageId),
                 'where'     => $options['where'],
             ]);
@@ -344,7 +345,8 @@ class PageService implements SingletonInterface
         ];
 
         // Let the outside world add it's own grids or filter the records if required...
-        $this->EventBus()->dispatch(($e = new PageContentsGridConfigFilterEvent($pageId, $records, $customGrids)));
+        $this->cs()->eventBus
+            ->dispatch(($e = new PageContentsGridConfigFilterEvent($pageId, $records, $customGrids)));
         $records     = $e->getRecords();
         $customGrids = $e->getCustomGrids();
 
@@ -494,8 +496,9 @@ class PageService implements SingletonInterface
     public function getPageRepository(): PageRepository
     {
         // Try to load the page repository from the frontend
-        if ($this->Tsfe()->hasTsfe()) {
-            $sysPage = $this->Tsfe()->getTsfe()->sys_page;
+        $tsfe = $this->cs()->tsfe;
+        if ($tsfe->hasTsfe()) {
+            $sysPage = $tsfe->getTsfe()->sys_page;
             if ($sysPage instanceof PageRepository) {
                 return $sysPage;
             }

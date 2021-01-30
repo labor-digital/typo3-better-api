@@ -396,7 +396,7 @@ class PathFacet implements FacetInterface
 
         // Inject language if required
         if (! empty($languageField) && ! isset($record[$languageField])) {
-            $record[$languageField] = $this->context->Language()->getCurrentFrontendLanguage()->getLanguageId();
+            $record[$languageField] = $this->context->language()->getCurrentFrontendLanguage()->getLanguageId();
         }
 
         // Create the slug using the slug helper

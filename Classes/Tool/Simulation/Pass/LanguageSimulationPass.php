@@ -24,7 +24,6 @@ namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\DependencyInjection\CommonDependencyTrait;
 use LaborDigital\T3BA\Tool\Translation\Translator;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
@@ -33,7 +32,6 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 class LanguageSimulationPass implements SimulatorPassInterface
 {
-    use CommonDependencyTrait;
 
     /**
      * @var Translator
@@ -91,7 +89,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
         $languageObject = $this->resolveLanguageObject($options['language'], $options['fallbackLanguage']);
 
         return $languageObject->getLanguageId() !==
-               $this->typoContext->Language()->getCurrentFrontendLanguage()->getLanguageId();
+               $this->typoContext->language()->getCurrentFrontendLanguage()->getLanguageId();
     }
 
     /**
@@ -108,14 +106,14 @@ class LanguageSimulationPass implements SimulatorPassInterface
         }
 
         // Create backup
-        $storage['request'] = $this->typoContext->Config()->getRequestAttribute('language');
+        $storage['request'] = $this->typoContext->config()->getRequestAttribute('language');
         $storage['service'] = $GLOBALS['LANG'];
         $storage['aspect']  = $this->typoContext->getRootContext()->getAspect('language');
 
         // Update the language
         $languageObject = $this->resolveLanguageObject($options['language'], $options['fallbackLanguage']);
         Locales::setSystemLocaleFromSiteLanguage($languageObject);
-        $this->typoContext->Config()->setRequestAttribute('language', $languageObject);
+        $this->typoContext->config()->setRequestAttribute('language', $languageObject);
         $languageAspect = LanguageAspectFactory::createFromSiteLanguage($languageObject);
         $this->typoContext->getRootContext()->setAspect('language', $languageAspect);
         unset($GLOBALS['LANG']);
@@ -133,7 +131,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
         }
 
         $this->typoContext->getRootContext()->setAspect('language', $storage['aspect']);
-        $this->typoContext->Config()->setRequestAttribute('language', $storage['request']);
+        $this->typoContext->config()->setRequestAttribute('language', $storage['request']);
         Locales::setSystemLocaleFromSiteLanguage($storage['request']);
     }
 
@@ -153,7 +151,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
     protected function resolveLanguageObject($language, $fallbackLanguage = null)
     {
         if (! is_object($language)) {
-            $languages = $this->typoContext->Site()->getCurrent()->getLanguages();
+            $languages = $this->typoContext->site()->getCurrent()->getLanguages();
             foreach ($languages as $lang) {
                 if (
                     (is_numeric($language) && $lang->getLanguageId() === (int)$language)
@@ -166,7 +164,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
         if (! $language instanceof SiteLanguage) {
             if ($fallbackLanguage !== null) {
                 if ($fallbackLanguage === true) {
-                    $fallbackLanguage = $this->typoContext->Site()->getCurrent()->getDefaultLanguage();
+                    $fallbackLanguage = $this->typoContext->site()->getCurrent()->getDefaultLanguage();
                 }
 
                 return $this->resolveLanguageObject($fallbackLanguage);

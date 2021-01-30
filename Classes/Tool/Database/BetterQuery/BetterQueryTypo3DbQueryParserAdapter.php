@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
 
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
@@ -72,6 +71,6 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         }
 
         return static::$concreteQueryParser
-            = TypoContext::getInstance()->Di()->getObjectManager()->get(Typo3DbQueryParser::class);
+            = TypoContext::getInstance()->di()->getObjectManager()->get(Typo3DbQueryParser::class);
     }
 }

@@ -49,8 +49,8 @@ class SiteSimulationPass implements SimulatorPassInterface
         return $options['site'] !== null
                && $options['pid'] === null
                && (
-                   ! $this->TypoContext()->Site()->hasCurrent()
-                   || $this->TypoContext()->Site()->getCurrent()->getIdentifier() !== $options['site']
+                   ! $this->getTypoContext()->site()->hasCurrent()
+                   || $this->getTypoContext()->site()->getCurrent()->getIdentifier() !== $options['site']
                );
     }
 
@@ -60,11 +60,11 @@ class SiteSimulationPass implements SimulatorPassInterface
     public function setup(array $options, array &$storage): void
     {
         // Backup the current site
-        $storage['site'] = $this->TypoContext()->Config()->getRequestAttribute('site');
+        $storage['site'] = $this->getTypoContext()->config()->getRequestAttribute('site');
 
         // Find the given site instance and inject it into the request
-        $site = $this->TypoContext()->Site()->get($options['site']);
-        $this->TypoContext()->Config()->setRequestAttribute('site', $site);
+        $site = $this->getTypoContext()->site()->get($options['site']);
+        $this->getTypoContext()->config()->setRequestAttribute('site', $site);
     }
 
     /**
@@ -72,7 +72,7 @@ class SiteSimulationPass implements SimulatorPassInterface
      */
     public function rollBack(array $storage): void
     {
-        $this->TypoContext()->Config()->setRequestAttribute('site', $storage['site']);
+        $this->getTypoContext()->config()->setRequestAttribute('site', $storage['site']);
     }
 
 }

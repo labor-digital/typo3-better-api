@@ -108,7 +108,7 @@ abstract class AbstractElementConfigurator
     {
         $this->context = $context;
         $extKey        = $context->getExtKey();
-        $pathAspect    = $this->TypoContext()->Path();
+        $pathAspect    = $this->getTypoContext()->path();
 
         $this->templateRootPaths = new SplStack();
         $this->templateRootPaths->push($pathAspect->getTemplatePath($extKey));
@@ -385,7 +385,7 @@ abstract class AbstractElementConfigurator
         $this->controllerClass = $controllerClass;
 
         // Update the template root path's
-        $pathAspect         = $this->TypoContext()->Path();
+        $pathAspect         = $this->getTypoContext()->path();
         $controllerBaseName = Inflector::toCamelCase(
             preg_replace('~controller$~i', '', Path::classBasename($controllerClass))
         );

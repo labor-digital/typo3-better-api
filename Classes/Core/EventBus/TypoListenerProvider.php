@@ -164,7 +164,7 @@ class TypoListenerProvider extends ListenerProvider
         $context = TypoContext::getInstance();
         call_user_func(
             [$adapterClass, 'prepare'],
-            TypoEventBus::getInstance(),
+            $context->di()->cs()->eventBus,
             $context
         );
         call_user_func([$adapterClass, 'bind']);

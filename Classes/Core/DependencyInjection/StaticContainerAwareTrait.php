@@ -50,7 +50,7 @@ trait StaticContainerAwareTrait
      */
     public static function injectContainer(ContainerInterface $container): void
     {
-        static::$__localSingletons['@container'] = $container;
+        static::$__localSingletons[ContainerInterface::class] = $container;
     }
 
     /**
@@ -61,7 +61,7 @@ trait StaticContainerAwareTrait
      *
      * @return void
      */
-    public static function setLocalSingletons(string $classOrInterfaceName, $instance): void
+    public static function setLocalSingleton(string $classOrInterfaceName, $instance): void
     {
         static::$__localSingletons[$classOrInterfaceName] = $instance;
     }
@@ -84,10 +84,10 @@ trait StaticContainerAwareTrait
      *
      * @return \Psr\Container\ContainerInterface
      */
-    protected static function Container(): ContainerInterface
+    protected static function getContainer(): ContainerInterface
     {
-        return static::$__localSingletons['@container'] ??
-               static::$__localSingletons['@container']
+        return static::$__localSingletons[ContainerInterface::class] ??
+               static::$__localSingletons[ContainerInterface::class]
                    = GeneralUtility::getContainer();
     }
 
@@ -121,7 +121,7 @@ trait StaticContainerAwareTrait
      */
     protected static function getInstanceOf(string $class)
     {
-        return static::Container()->get($class);
+        return static::getContainer()->get($class);
     }
 
     /**
@@ -142,7 +142,24 @@ trait StaticContainerAwareTrait
     {
         // Check if we have a singleton
         return static::$__localSingletons[$class] ??
-               static::$__localSingletons[$class] = static::Container()->get($class);
+               static::$__localSingletons[$class] = static::getContainer()->get($class);
     }
 
+    /**
+     * Returns a list of commonly used services as a "lazy" lookup method.
+     *
+     * @return \LaborDigital\T3BA\Core\DependencyInjection\CommonServices
+     */
+    protected static function getCommon(): CommonServices
+    {
+        return static::$__localSingletons[CommonServices::class] ??
+               static::$__localSingletons[CommonServices::class]
+                   = static::getWithoutDi(CommonServices::class, [
+                   function (string $className, bool $new) {
+                       return $new
+                           ? static::getInstanceOf($className)
+                           : static::getSingletonOf($className);
+                   },
+               ]);
+    }
 }

@@ -148,7 +148,7 @@ abstract class AbstractBetterQuery
         if (is_bool($pids)) {
             // True means use current pid
             if ($pids) {
-                $pids = $clone->typoContext->Pid()->getCurrent();
+                $pids = $clone->typoContext->pid()->getCurrent();
             } // False means reset storage page
             else {
                 $settings->setRespectStoragePage(false);
@@ -159,11 +159,11 @@ abstract class AbstractBetterQuery
 
         // Apply possible pid values
         $pids = array_map(static function ($v) use ($clone) {
-            if (! is_string($v) || ! $clone->typoContext->Pid()->has($v)) {
+            if (! is_string($v) || ! $clone->typoContext->pid()->has($v)) {
                 return $v;
             }
 
-            return $clone->typoContext->Pid()->get($v);
+            return $clone->typoContext->pid()->get($v);
         }, $clone->adapter->ensureArrayValue($pids, 'pid'));
 
         // Update the page limitations in the query settings
@@ -240,7 +240,7 @@ abstract class AbstractBetterQuery
             $settings->setRespectSysLanguage($language);
             if ($language) {
                 $settings->setLanguageUid(
-                    $clone->typoContext->Language()->getCurrentFrontendLanguage()->getLanguageId()
+                    $clone->typoContext->language()->getCurrentFrontendLanguage()->getLanguageId()
                 );
             }
 
