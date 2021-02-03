@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.28.1](https://github.com/labor-digital/typo3-better-api/compare/v9.28.0...v9.28.1) (2021-02-03)
+
+
+### Bug Fixes
+
+* **TypoScriptService:** load pageTsConfig at the correct event ([976791f](https://github.com/labor-digital/typo3-better-api/commit/976791fd7fbbc1afa6edfc26e81153f92655d6c0))
+
 ## [9.28.0](https://github.com/labor-digital/typo3-better-api/compare/v9.27.0...v9.28.0) (2021-01-21)
 
 
