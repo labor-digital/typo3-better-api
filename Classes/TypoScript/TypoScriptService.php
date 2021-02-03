@@ -21,7 +21,7 @@ namespace LaborDigital\Typo3BetterApi\TypoScript;
 
 use LaborDigital\Typo3BetterApi\BetterApiException;
 use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtTablesLoadedEvent;
+use LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent;
 use LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs;
 use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
@@ -104,7 +104,8 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription)
     {
-        $subscription->subscribe(ExtTablesLoadedEvent::class, '__injectPageTs', ['priority' => -200]);
+        $subscription->subscribe(ExtLocalConfLoadedEvent::class, '__injectPageTs', ['priority' => -200]);
+        $subscription->subscribe(TcaCompletelyLoadedEvent::class, '__injectSelectablePageTs', ['priority' => -200]);
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, '__injectTypoScript', ['priority' => 200]);
     }
 
@@ -552,6 +553,17 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         }
         unset($this->registeredScripts['pageTs']);
 
+        // Register user ts
+        if (! empty($this->registeredScripts['userTs'])) {
+            foreach ($this->registeredScripts['userTs'] as $script) {
+                ExtensionManagementUtility::addUserTSConfig($script);
+            }
+        }
+        unset($this->registeredScripts['userTs']);
+    }
+
+    public function __injectSelectablePageTs(): void
+    {
         // Register selectable page ts
         if (! empty($this->registeredScripts['selectablePageTs'])) {
             foreach ($this->registeredScripts['selectablePageTs'] as $config) {
@@ -566,13 +578,6 @@ class TypoScriptService implements SingletonInterface, LazyEventSubscriberInterf
         }
         unset($this->registeredScripts['selectablePageTs']);
 
-        // Register user ts
-        if (! empty($this->registeredScripts['userTs'])) {
-            foreach ($this->registeredScripts['userTs'] as $script) {
-                ExtensionManagementUtility::addUserTSConfig($script);
-            }
-        }
-        unset($this->registeredScripts['userTs']);
     }
 
     /**
