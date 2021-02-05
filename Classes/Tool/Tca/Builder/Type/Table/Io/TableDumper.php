@@ -26,21 +26,18 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Tca\TableDumperAfterBuildEvent;
 use LaborDigital\T3BA\Event\Tca\TableDumperBeforeBuildEvent;
-use LaborDigital\T3BA\Event\Tca\TableDumperTypeFilterEvent;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperDataHookTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperGenericTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperMergingTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTableTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTypeGeneratorTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 
-class TableDumper implements TcaDumperInterface
+class TableDumper
 {
     use DumperGenericTrait;
-    use DumperMergingTrait;
     use DumperTypeGeneratorTrait;
     use DumperTableTrait;
+    use DumperDataHookTrait;
 
     /**
      * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
@@ -60,40 +57,42 @@ class TableDumper implements TcaDumperInterface
     /**
      * @inheritDoc
      */
-    public function dump(AbstractTcaTable $table): array
+    public function dump(TcaTable $table): array
     {
-        if (! $table instanceof TcaTable) {
-            throw new TcaBuilderException('Invalid table given!');
-        }
-
         $this->eventBus->dispatch(new TableDumperBeforeBuildEvent($table));
 
-        $tca        = $this->dumpBasicTca($table);
-        $initialTca = $table->getInitialConfig();
-        $this->mergeMissingColumns($initialTca, $tca);
+        $this->clearDataHookCache();
+
+        $tca = $this->dumpRootTca($table);
+        $this->extractDataHooksFromTca($tca);
+        $defaultTypeName = $table->getDefaultTypeName();
 
         // Dump types
-        foreach ($table->getLoadedTypes() as $type) {
-            $typeName = $type->getTypeName();
-            $typeTca  = $this->dumpBasicTca($type);
+        foreach ($table->getLoadedTypes() as $typeName => $type) {
+            // Ignore the default type -> as is is already part of the $tca
+            /** @noinspection TypeUnsafeComparisonInspection */
+            if ($defaultTypeName == $typeName) {
+                continue;
+            }
 
-            $this->eventBus->dispatch($e = new TableDumperTypeFilterEvent(
-                $typeTca, $type, $table
-            ));
-            $typeTca = $e->getTypeTca();
+            $typeName = $type->getTypeName();
+            $typeTca  = $this->dumpTcaTypeVariant($type);
+            $this->extractDataHooksFromTca($typeTca);
+            $typeRaw = $type->getRaw();
+            $this->extractDataHooksFromTca($typeRaw);
+            $tca['types'][$typeName] = $typeRaw;
 
             $this->dumpColumnOverrides($typeName, $tca, $typeTca, $table);
             $this->dumpTypePalettes($typeName, $tca, $typeTca);
-            $this->mergeTableDataHooks($tca, $typeTca);
         }
 
-        $this->mergeMissingTypes($initialTca, $tca);
+        $this->injectDataHooksIntoTca($tca);
+
         $this->dumpSql($table, $tca);
 
         $this->eventBus->dispatch($e = new TableDumperAfterBuildEvent($tca, $table));
         $tca = $e->getTca();
 
-        dbge($table, $tca);
-        // TODO: Implement dump() method.
+        return $tca;
     }
 }

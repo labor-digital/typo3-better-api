@@ -23,6 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits;
 
 
+use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
+use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
+use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -91,7 +94,7 @@ trait TcaTableConfigTrait
      */
     public function isAllowedOnStandardPages(): bool
     {
-        return (bool)$this->config['ctrl']['allowOnStandardPages'] ?? false;
+        return (bool)$this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] ?? false;
     }
 
     /**
@@ -103,7 +106,7 @@ trait TcaTableConfigTrait
      */
     public function setAllowOnStandardPages(bool $state = true): self
     {
-        $this->config['ctrl']['allowOnStandardPages'] = $state;
+        $this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] = $state;
 
         return $this;
     }
@@ -111,13 +114,29 @@ trait TcaTableConfigTrait
     /**
      * This allows you to set a class of the model which then will be mapped to this table
      *
-     * @param   string  $className
+     * @param   string  $className  The name of the model class to map to this table
+     * @param   array   $columnMap  Optional list of fieldNames => propertyNames to be mapped
+     *                              for extbase models
      *
      * @return $this
      */
-    public function addModelClass(string $className): self
+    public function addModelClass(string $className, array $columnMap = [])
     {
-        $this->config['ctrl']['extBaseModels'][] = $className;
+        $this->config['ctrl'][DomainModelMapStep::CONFIG_KEY][$className] = $columnMap;
+
+        return $this;
+    }
+
+    /**
+     * Allows you to remove a previously registered model class mapping
+     *
+     * @param   string  $className  The name of the model class to remove
+     *
+     * @return $this
+     */
+    public function removeModelClass(string $className)
+    {
+        unset($this->config['ctrl'][DomainModelMapStep::CONFIG_KEY][$className]);
 
         return $this;
     }
@@ -129,7 +148,7 @@ trait TcaTableConfigTrait
      */
     public function getModelClasses(): array
     {
-        return array_unique($this->config['ctrl']['extBaseModels'] ?? []);
+        return array_unique($this->config['ctrl'][DomainModelMapStep::CONFIG_KEY] ?? []);
     }
 
     /**
@@ -144,7 +163,7 @@ trait TcaTableConfigTrait
      */
     public function setListPosition(string $otherTableName, bool $before = true): self
     {
-        $this->config['ctrl']['listPosition'][$before ? 'before' : 'after'][]
+        $this->config['ctrl'][ListPositionStep::CONFIG_KEY][$before ? 'before' : 'after'][]
             = $this->getContext()->getRealTableName($otherTableName);
 
         return $this;
@@ -492,16 +511,41 @@ trait TcaTableConfigTrait
      * the FormEngine. It will probably also affect how the record is used in the context where it belongs.
      *
      * The most widely known usage of this feature is the case of Content Elements where the “Type:” selector is
-     * defined as the “type” field and when you change that selector you will also get another rendering of the form:
+     * defined as the “type” field and when you change that selector you will also get another rendering of the form.
      *
-     * @param   string|null  $columnName
+     * $types and $typeFieldOptions allow you to not only configure the type columns name, but also create a column
+     * entry for it on the fly
+     *
+     * @param   string|null  $columnName        The name of the database column
+     * @param   array|null   $types             A list of types as $id => $label array. This follows the same logic as
+     *                                          a select preset:
+     *                                          {@link \LaborDigital\T3BA\FormEngine\FieldPreset\BasicFieldPreset::applySelect()}
+     * @param   array|null   $typeFieldOptions  Allows to provide additional options for the generated field. See
+     *                                          the link above to learn more about the possible options
      *
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#type
      */
-    public function setTypeColumn(?string $columnName): self
+    public function setTypeColumn(?string $columnName, ?array $types = [], ?array $typeFieldOptions = []): self
     {
         $this->config['ctrl']['type'] = $columnName;
+
+        // Apply the type definition as a field automatically if it was provided
+        if ($columnName && is_array($types)) {
+            $typeFieldOptions             = $typeFieldOptions ?? [];
+            $typeFieldOptions['maxItems'] = 1;
+            $typeFieldOptions['default']  = $typeFieldOptions['default'] ?? key($types);
+
+            // Add the field to the default type
+            $type     = $this->getType();
+            $tabKeys  = iterator_to_array($type->getTabKeys());
+            $firstTab = reset($tabKeys);
+            $type->getField($columnName)
+                 ->setReloadOnChange()
+                 ->applyPreset()
+                 ->select($types, $typeFieldOptions)
+                 ->moveTo('top:' . $firstTab);
+        }
 
         return $this;
     }

@@ -21,8 +21,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Tree;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType;
 
 class Tree
 {
@@ -30,9 +30,9 @@ class Tree
     /**
      * The form that is linked with this tree
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
      */
-    protected $form;
+    protected $type;
 
     /**
      * A list of form nodes by their type and their id for direct lookup
@@ -67,14 +67,14 @@ class Tree
     /**
      * FormTree constructor.
      *
-     * @param   AbstractForm  $form
+     * @param   AbstractType  $type
      * @param   string        $tabClass
      */
-    public function __construct(AbstractForm $form, string $tabClass)
+    public function __construct(AbstractType $type, string $tabClass)
     {
-        $this->form     = $form;
+        $this->type     = $type;
         $this->tabClass = $tabClass;
-        $this->root     = $form->getContext()->cs()
+        $this->root     = $type->getContext()->cs()
             ->di->getWithoutDi(
                 Node::class,
                 ['root', Node::TYPE_ROOT, $this]
@@ -84,11 +84,11 @@ class Tree
     /**
      * Returns the linked form instance
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
      */
-    public function getForm(): AbstractForm
+    public function getType(): AbstractType
     {
-        return $this->form;
+        return $this->type;
     }
 
     /**
@@ -103,7 +103,7 @@ class Tree
      */
     public function makeNewNode($id, int $type): Node
     {
-        $node = $this->form->getContext()->cs()
+        $node = $this->type->getContext()->cs()
             ->di->getWithoutDi(Node::class, [$id, $type, $this]);
 
         $parent = $type === Node::TYPE_TAB ? $this->root : $this->getDefaultNode();
@@ -402,8 +402,8 @@ class Tree
         // Make sure we have at least a single tab
         if (empty($this->nodes[Node::TYPE_TAB])) {
             $node = $this->makeNewNode(0, Node::TYPE_TAB);
-            $tab  = $this->form->getContext()->cs()
-                ->di->getWithoutDi($this->tabClass, [$node, $this->form]);
+            $tab  = $this->type->getContext()->cs()
+                ->di->getWithoutDi($this->tabClass, [$node, $this->type]);
 
             if ($tab instanceof AbstractTab) {
                 $tab->setLabel('betterApi.tab.general');

@@ -45,7 +45,7 @@ class TypoScriptConfigApplier extends AbstractExtConfigApplier
     public function onExtLocalConfLoaded(): void
     {
         $this->applyUserTsConfig();
-        $this->applyStaticPageTsConfig();
+        $this->applyPageTsConfig();
     }
 
     public function onTcaCompletelyLoaded(): void
@@ -63,9 +63,9 @@ class TypoScriptConfigApplier extends AbstractExtConfigApplier
     }
 
     /**
-     * Registers the static page ts configuration
+     * Registers the page ts configuration
      */
-    protected function applyStaticPageTsConfig(): void
+    protected function applyPageTsConfig(): void
     {
         ExtensionManagementUtility::addPageTSConfig($this->state->get('typo.typoScript.pageTsConfig', ''));
     }

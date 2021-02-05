@@ -23,6 +23,7 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
 use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetApplier;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\DisplayConditionTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
@@ -30,14 +31,14 @@ use Neunerlei\Inflection\Inflector;
 abstract class AbstractField extends AbstractElement
 {
     use DataHookCollectorTrait;
-    use FormDisplayConditionTrait;
+    use DisplayConditionTrait;
 
     /**
      * @inheritDoc
      */
-    public function __construct(Node $node, AbstractForm $form)
+    public function __construct(Node $node, AbstractType $type)
     {
-        parent::__construct($node, $form);
+        parent::__construct($node, $type);
     }
 
     /**
@@ -174,9 +175,9 @@ abstract class AbstractField extends AbstractElement
      */
     public function inheritFrom(AbstractField $field)
     {
-        $this->config    = $field->config;
-        $this->label     = $field->label;
-        $this->dataHooks = $field->dataHooks;
+        $this->config = $field->config;
+        $this->label  = $field->label;
+        $this->loadDataHooks([DataHookTypes::TCA_DATA_HOOK_KEY => $field->getRegisteredDataHooks()]);
 
         return $this;
     }
@@ -190,12 +191,23 @@ abstract class AbstractField extends AbstractElement
      */
     public function applyPreset()
     {
-        $context = $this->form->getContext();
+        $context = $this->type->getContext();
         /** @var FieldPresetApplier $applier */
         $applier = $context->parent()->getTypoContext()->di()->getInstanceOf(FieldPresetApplier::class);
         $applier->configureField($this, $context);
 
         return $applier;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function setRaw(array $raw)
+    {
+        $this->loadDataHooks($raw);
+
+        return parent::setRaw($raw);
     }
 
     /**
@@ -207,9 +219,8 @@ abstract class AbstractField extends AbstractElement
 
         // Transform some keys into real typo3 translation keys
         // Because typo does not handle those elements using the default translation method...
-        unset($raw['label']);
-        $translator   = $this->form->getContext()->cs()->translator;
-        $raw['label'] = $translator->getLabelKey((string)$this->getLabel());
+        $translator   = $this->type->getContext()->cs()->translator;
+        $raw['label'] = $translator->getLabelKey($this->getLabel());
         if (is_array($raw['config'])) {
             foreach (['default', 'placeholder'] as $k) {
                 if (isset($raw['config'][$k])) {
@@ -218,31 +229,10 @@ abstract class AbstractField extends AbstractElement
             }
         }
 
-        // Add the data hooks
-        $handlers = $this->getRegisteredDataHooks();
-        if (! empty($handlers)) {
-            $raw[DataHookTypes::TCA_DATA_HOOK_KEY] = $handlers;
-        }
+        $this->dumpDataHooks($raw);
 
         // Done
         return $raw;
-    }
-
-    /**
-     * Similar to setRaw() but will merge the given array of key/value pairs instead of
-     * overwriting the original configuration.
-     *
-     * This method supports TYPO3's syntax of removing values from the current config if __UNSET is set as key
-     *
-     * @param   array  $rawInput
-     *
-     * @return $this
-     */
-    public function mergeRaw(array $rawInput)
-    {
-        $this->setRaw(Arrays::merge($this->config, $rawInput, 'allowRemoval'));
-
-        return $this;
     }
 
     /**
@@ -261,7 +251,8 @@ abstract class AbstractField extends AbstractElement
         if (! is_array($key)) {
             $key = [$key => $value];
         }
-        $this->mergeRaw(['config' => $key]);
+        $this->config['config']
+            = Arrays::merge($this->config['config'] ?? [], $key, 'allowRemoval');
 
         return $this;
     }

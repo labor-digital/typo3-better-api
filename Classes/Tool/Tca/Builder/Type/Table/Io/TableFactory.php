@@ -25,27 +25,29 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
 
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Event\Tca\TableDefaultTcaFilterEvent;
+use LaborDigital\T3BA\Event\Tca\TableFactoryTcaFilterEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryPopulatorTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryTcaLoaderTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryTypeLoaderTrait;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use Neunerlei\Arrays\Arrays;
+use Neunerlei\Inflection\Inflector;
 
-class TableFactory implements TcaInitializerInterface, PublicServiceInterface
+class TableFactory implements PublicServiceInterface
 {
     use ContainerAwareTrait;
-    use FactoryTcaLoaderTrait;
-    use FactoryTypeLoaderTrait;
-    use FactoryPopulatorTrait;
 
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
 
+    /**
+     * TableFactory constructor.
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory  $typeFactory
+     */
     public function __construct(TypeFactory $typeFactory)
     {
         $this->typeFactory = $typeFactory;
@@ -72,23 +74,65 @@ class TableFactory implements TcaInitializerInterface, PublicServiceInterface
     }
 
     /**
-     * @inheritDoc
+     * Either loads the tca for the given tca table from the global configuration or creates,
+     * a new, default configuration for it.
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     *
+     * @return void
      */
-    public function initialize(array $tca, AbstractTcaTable $table): void
+    public function initialize(TcaTable $table): void
     {
-        if (! $table instanceof TcaTable) {
-            throw new TcaBuilderException('Invalid table given!');
+        // Load the tca from globals...
+        $tca = Arrays::getPath($GLOBALS, ['TCA', $table->getTableName()], []);
+
+        // ... or find the default tca
+        if (empty($tca)) {
+            $tca = $this->generateDefaultTca($table);
         }
 
-        $table->removeAllChildren();
+        // Allow filtering
+        $table->getContext()->cs()->eventBus->dispatch(($e = new TableFactoryTcaFilterEvent($tca, $table)));
 
-        $table->setRaw(array_merge($tca, ['@factoryInit' => true]));
-        $table->setInitialConfig($tca);
-        $types       = $this->findTypes($tca);
-        $defaultType = $this->findDefaultTypeName($tca, $types);
+        // Update the raw tca
+        $table->setRaw($e->getTca());
 
-        $table->setTypeName($defaultType);
+        // We have to make sure that all types are loaded, so we can calculate
+        // the registered data hooks correctly. I have hoped not to rely on this,
+        // because it causes a lot of, potentially unnecessary, overhead.
+        // So, if there is a better solution for handling the dataHooks tell me, please!
+        foreach ($table->getTypeNames() as $typeName) {
+            $table->getType($typeName);
+        }
+    }
 
-        $this->populateElements($table, $types[$defaultType] ?? []);
+    /**
+     * Internal helper to generate a blank "default" TCA for a new table.
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     *
+     * @return array
+     */
+    protected function generateDefaultTca(TcaTable $table): array
+    {
+        $ctx       = $table->getContext();
+        $tableName = $table->getTableName();
+
+        $default                  = TableDefaults::TABLE_TCA;
+        $default['ctrl']['title'] = Inflector::toHuman(
+            preg_replace('/^(.*?_domain_model_)/', '', $tableName)
+        );
+        $ctx->cs()->typoContext->path()->getExtensionIconPath($ctx->parent()->getExtKey());
+        $default['columns']['l10n_parent']['config']['foreign_table']       = $tableName;
+        $default['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace(
+            '{{table}}',
+            $tableName,
+            $default['columns']['l10n_parent']['config']['foreign_table_where']
+        );
+
+        // Allow filtering
+        $ctx->cs()->eventBus->dispatch(($e = new TableDefaultTcaFilterEvent($default, $table)));
+
+        return $e->getDefaultTca();
     }
 }

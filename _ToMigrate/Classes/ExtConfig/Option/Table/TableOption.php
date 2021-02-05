@@ -426,7 +426,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
     {
         // Allow tables on standard pages
         $tablesOnStandardPages = $this->getCachedValueOrRun('tablesOnStandardPages', function () {
-            return $this->getTableConfig()- >tablesOnStandardPages;
+            return $this->getTableConfig()->tablesOnStandardPages;
         });
         foreach ($tablesOnStandardPages as $tableName) {
             ExtensionManagementUtility::allowTableOnStandardPages($tableName);

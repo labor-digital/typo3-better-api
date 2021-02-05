@@ -25,25 +25,30 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
 
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
+use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryDataHookTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryPopulatorTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryTypeLoaderTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 
-class TypeFactory implements TcaInitializerInterface, PublicServiceInterface
+class TypeFactory implements PublicServiceInterface
 {
     use ContainerAwareTrait;
     use FactoryTypeLoaderTrait;
     use FactoryPopulatorTrait;
+    use FactoryDataHookTrait;
 
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
 
+    /**
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory  $tableFactory
+     */
     public function injectTableFactory(TableFactory $tableFactory): void
     {
         $this->tableFactory = $tableFactory;
@@ -61,42 +66,41 @@ class TypeFactory implements TcaInitializerInterface, PublicServiceInterface
     {
         return $this->getWithoutDi(
             TcaTableType::class, [
-                $table->getContext(),
-                $this->tableFactory,
-                $this,
                 $table,
+                $typeName,
+                $table->getContext(),
+                $this,
             ]
-        )->setTypeName($typeName);
+        );
     }
 
     /**
-     * Finds the type TCA (the entry below "types" for the given $typename on the specified $table object
+     * Populates the type based on the TCA showitem string
      *
-     * @param                                                            $typeName
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
-     *
-     * @return array
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType  $type
+     * @param   array|null                                                   $typeTca
      */
-    public function getTypeTca($typeName, TcaTable $table): array
+    public function populate(TcaTableType $type, ?array $typeTca = null): void
     {
-        $types   = $this->findTypes($table->getInitialConfig());
-        $typeTca = $types[$typeName] ?? null;
+        // Prepare the tca to match the selected type
+        $tca            = $type->getParent()->getRaw(true);
+        $typeTca        = $typeTca ?? $tca['types'][$type->getTypeName()] ?? TableDefaults::TYPE_TCA;
+        $tca['columns'] = TcaUtil::applyColumnOverrides(
+            $tca['columns'] ?? [], $typeTca['columnsOverrides'] ?? []
+        );
 
-        return is_array($typeTca) ? $typeTca : TableDefaults::TYPE_TCA;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function initialize(array $typeTca, AbstractTcaTable $type): void
-    {
-        if (! $type instanceof TcaTableType) {
-            throw new TcaBuilderException('Invalid table given!');
+        // Inherit the data hooks from the table
+        if (! isset($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY])
+            || ! is_array($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY])) {
+            $typeTca[DataHookTypes::TCA_DATA_HOOK_KEY] = $tca[DataHookTypes::TCA_DATA_HOOK_KEY];
         }
 
-        $type->removeAllChildren();
+        $tca['types'][$type->getTypeName()] = $typeTca;
+        $type->setRaw($typeTca);
 
-        $this->populateElements($type, $typeTca);
+        // Start the population
+        $type->removeAllChildren();
+        $this->populateElements($type, $tca);
     }
 
 }

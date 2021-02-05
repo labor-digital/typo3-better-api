@@ -288,6 +288,10 @@ class TableSqlBuilder implements PublicServiceInterface
             }
         }
 
+        if (empty($statement)) {
+            $statement[] = '`uid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,PRIMARY KEY (`uid`)';
+        }
+
         // Build the statement
         return
             '--' . PHP_EOL .
@@ -319,50 +323,5 @@ class TableSqlBuilder implements PublicServiceInterface
     public function flush()
     {
         $this->sql = [];
-    }
-
-    public function getState(): array
-    {
-        return $this->sql;
-    }
-
-    public function setState(array $state)
-    {
-        return $this->sql = $state;
-    }
-
-    /**
-     * Internal helper which is used to load the sql definition from the tca array
-     *
-     * @param   string  $table
-     * @param   array   $definition
-     */
-    public function __setByTcaDefinition(string $table, array $definition)
-    {
-        // Load for all fields
-        if (is_array($definition['columns'])) {
-            foreach ($definition['columns'] as $k => $config) {
-                if (is_string($config['@sql'])) {
-                    $this->setDefinitionFor($table, (string)$k, (string)$config['@sql']);
-                }
-            }
-        }
-
-        // Load table values
-        if (isset($definition['@sql'])) {
-            // Load columns
-            if (is_array($definition['@sql']['additionalColumns'])) {
-                foreach ($definition['@sql']['additionalColumns'] as $k => $d) {
-                    $this->setDefinitionFor($table, (string)$k, (string)$d);
-                }
-            }
-
-            // Load meta
-            if (is_array($definition['@sql']['meta'])) {
-                foreach ($definition['@sql']['meta'] as $d) {
-                    $this->addTableMeta($table, (string)$d);
-                }
-            }
-        }
     }
 }

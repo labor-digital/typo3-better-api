@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><!--
   ~ Copyright 2020 LABOR.digital
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,58 +17,60 @@
   -->
 
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2019-10-30T17:39:36Z"
-		  product-name="typo3_better_api">
-		<header/>
-		<body>
-			<trans-unit id="formPreset.editRecord">
-				<source>Edit Record</source>
-			</trans-unit>
-			<trans-unit id="formPreset.newRecord">
-				<source>New Record</source>
-			</trans-unit>
-			<trans-unit id="tab.general">
-				<source>General</source>
-			</trans-unit>
-			<trans-unit id="tab.access">
-				<source>Access</source>
-			</trans-unit>
-			<trans-unit id="tab.language">
-				<source>Language</source>
-			</trans-unit>
-			<trans-unit id="field.hidden">
-				<source>Hide this element</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment">
-				<source>Image Alignment</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.bottomCenter">
-				<source>Bottom Center</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.bottomLeft">
-				<source>Bottom Left</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.bottomRight">
-				<source>Bottom Right</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.centerCenter">
-				<source>Center Center</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.centerLeft">
-				<source>Center Left</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.centerRight">
-				<source>Center Right</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.topCenter">
-				<source>Top Center</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.topLeft">
-				<source>Top Left</source>
-			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.topRight">
-				<source>Top Right</source>
-			</trans-unit>
-		</body>
-	</file>
+    <file source-language="en" datatype="plaintext" original="messages" date="2019-10-30T17:39:36Z" product-name="typo3_better_api">
+        <header/>
+        <body>
+            <trans-unit id="formPreset.editRecord">
+                <source>Edit Record</source>
+            </trans-unit>
+            <trans-unit id="formPreset.newRecord">
+                <source>New Record</source>
+            </trans-unit>
+            <trans-unit id="tab.untitled">
+                <source>Untitled</source>
+            </trans-unit>
+            <trans-unit id="tab.general">
+                <source>General</source>
+            </trans-unit>
+            <trans-unit id="tab.access">
+                <source>Access</source>
+            </trans-unit>
+            <trans-unit id="tab.language">
+                <source>Language</source>
+            </trans-unit>
+            <trans-unit id="field.hidden">
+                <source>Hide this element</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment">
+                <source>Image Alignment</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.bottomCenter">
+                <source>Bottom Center</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.bottomLeft">
+                <source>Bottom Left</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.bottomRight">
+                <source>Bottom Right</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.centerCenter">
+                <source>Center Center</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.centerLeft">
+                <source>Center Left</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.centerRight">
+                <source>Center Right</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.topCenter">
+                <source>Top Center</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.topLeft">
+                <source>Top Left</source>
+            </trans-unit>
+            <trans-unit id="d.sys_file_reference.imageAlignment.topRight">
+                <source>Top Right</source>
+            </trans-unit>
+        </body>
+    </file>
 </xliff>

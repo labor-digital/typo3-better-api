@@ -100,7 +100,8 @@ abstract class AbstractTraverser
                 continue;
             }
 
-            $handlerDefinition                 = $this->getWithoutDi(DataHookHandlerDefinition::class);
+            $handlerDefinition = $this->getWithoutDi(DataHookHandlerDefinition::class);
+            dbg($handler);
             $handlerDefinition->handler        = NamingUtil::resolveCallable($handler[0]);
             $handlerDefinition->key            = $nodeKey;
             $handlerDefinition->path           = $path;

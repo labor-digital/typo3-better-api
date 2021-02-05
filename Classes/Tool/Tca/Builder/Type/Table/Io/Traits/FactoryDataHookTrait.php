@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.01.27 at 13:29
+ * Last modified: 2021.02.02 at 21:03
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
+namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
-
-interface TcaInitializerInterface
+trait FactoryDataHookTrait
 {
-    /**
-     * Initializes the given table/type based on the given $raw TCA configuration
-     *
-     * @param   array             $raw
-     * @param   AbstractTcaTable  $table
-     */
-    public function initialize(array $raw, AbstractTcaTable $table): void;
+
 }

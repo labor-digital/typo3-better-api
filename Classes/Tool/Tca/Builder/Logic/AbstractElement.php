@@ -20,12 +20,15 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
 
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractElement
 {
+    use ElementConfigTrait;
+
     /**
      * The tree node that represents this element
      *
@@ -36,9 +39,9 @@ abstract class AbstractElement
     /**
      * The form this element is part of
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
      */
-    protected $form;
+    protected $type;
 
     /**
      * Contains the label for the tab
@@ -48,22 +51,15 @@ abstract class AbstractElement
     protected $label;
 
     /**
-     * The configuration of this element
-     *
-     * @var array
-     */
-    protected $config = [];
-
-    /**
      * AbstractFormElement constructor.
      *
      * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node           $node
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm  $form
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType  $type
      */
-    public function __construct(Node $node, AbstractForm $form)
+    public function __construct(Node $node, AbstractType $type)
     {
         $this->node = $node;
-        $this->form = $form;
+        $this->type = $type;
     }
 
     /**
@@ -93,13 +89,13 @@ abstract class AbstractElement
      * Returns the parent element of this element.
      * Either the form, a tab or a container element.
      *
-     * @return AbstractForm|AbstractElement
+     * @return AbstractType|AbstractElement
      */
     public function getParent()
     {
         // Return the form if this element is a tab
         if ($this->node->isTab()) {
-            return $this->form;
+            return $this->type;
         }
 
         // Return the parent element
@@ -107,13 +103,23 @@ abstract class AbstractElement
     }
 
     /**
-     * Returns the instance of the parent form / parent table
+     * Returns the instance of the type this element is part of
      *
-     * @return AbstractForm|TcaTable|TcaTableType|FlexForm
+     * @return AbstractType|TcaTableType|FlexFormSheet
      */
-    public function getForm()
+    public function getType()
     {
-        return $this->form;
+        return $this->type;
+    }
+
+    /**
+     * Returns the instance of the root element that holds the elements type
+     *
+     * @return AbstractTypeList|FlexForm|TcaTable
+     */
+    public function getRoot()
+    {
+        return $this->type->getParent();
     }
 
     /**
@@ -164,39 +170,22 @@ abstract class AbstractElement
     }
 
     /**
-     * Can be used to set raw config values, that are not implemented in this facade.
-     * Set either key => value pairs, or an Array of key => value pairs
+     * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
-     * @param   array|string|int  $key    Either a key to set the given $value for, or an array of $key => $value pairs
-     * @param   null              $value  The value to set for the given $key (if $key is not an array)
+     * @param   array  $raw  The new configuration to be set for this element
      *
      * @return $this
      */
-    public function setRaw($key, $value = null)
+    public function setRaw(array $raw)
     {
-        if (is_array($key)) {
-            $this->config = $key;
-        } else {
-            $this->config[$key] = $value;
+        if (isset($raw['label'])) {
+            $this->label = $raw['label'];
+            unset($raw['label']);
         }
 
-        // Special handling for the labels
-        if (isset($this->config['label'])) {
-            $this->label = $this->config['label'];
-        }
-        unset($this->config['label']);
+        $this->config = $raw;
 
         return $this;
-    }
-
-    /**
-     * Returns the raw configuration array for this object
-     *
-     * @return array
-     */
-    public function getRaw(): array
-    {
-        return $this->config;
     }
 
     /**

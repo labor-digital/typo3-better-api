@@ -201,7 +201,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         foreach ($this->typeDescriptions as $description) {
             if (empty(array_diff_assoc($description[1], $row))) {
                 // @todo translateBe
-                return '<p><i>' . $this->Translator()->translate($description[0]) . '</i></p>';
+                return '<p><i>' . $this->cs()->translator->translate($description[0]) . '</i></p>';
             }
         }
 

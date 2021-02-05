@@ -74,6 +74,9 @@ class FieldPresetHandler extends AbstractExtConfigHandler
     {
         // Store the presets
         $presets = $this->listGenerator->getPresets();
+
+        // @todo an event to filter the presets would be nice here...
+
         $this->context->getState()->set('tca.fieldPresets', $presets);
 
         // Generate the autocomplete helper in dev mode

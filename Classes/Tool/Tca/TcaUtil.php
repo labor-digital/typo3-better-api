@@ -116,9 +116,8 @@ class TcaUtil
                     unset(static::$resolvedTypeTca[$key]);
                     static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
                 } else {
-                    $typeTca                               = Arrays::getPath($GLOBALS,
-                        ['TCA', $tableName, 'types', $rowType],
-                        []);
+                    $typeTca = Arrays::getPath($GLOBALS, ['TCA', $tableName, 'types', $rowType], []);
+
                     $GLOBALS['TCA'][$tableName]['columns'] = static::applyColumnOverrides($tcaBackup, $typeTca);
 
                     // Only keep the last 20 results -> Save a bit of memory here...

@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.26 at 00:20
+ * Last modified: 2021.01.30 at 13:56
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits;
 
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractContainer;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
 
-trait FormElementContainingTrait
+trait ElementContainingTrait
 {
 
     /**

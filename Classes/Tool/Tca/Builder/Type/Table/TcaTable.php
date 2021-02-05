@@ -23,45 +23,38 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
 
 
+use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TcaTableConfigTrait;
+use Neunerlei\Arrays\Arrays;
 
-class TcaTable extends AbstractTcaTable
+class TcaTable extends AbstractTypeList
 {
+    use ElementConfigTrait;
     use TcaTableConfigTrait;
+    use DataHookCollectorTrait;
 
     /**
-     * Contains the list of all instantiated tca types of this table
-     *
-     * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
-     *
-     * @var TcaTableType[]
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
-    protected $types = [];
+    protected $tableFactory;
 
     /**
-     * Holds the type key this instance represents (Default Type)
-     *
-     * @var string|int
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
-    protected $typeName;
+    protected $typeFactory;
 
     /**
-     * True if this table should have sortable entries in the backend
+     * Holds the name of the db table we work with
      *
-     * @var bool
+     * @var string
      */
-    protected $sortable = false;
-
-    /**
-     * Holds the initial state of the TCA when this table was initialized.
-     * This allows children to access the raw data directly
-     *
-     * @var array
-     */
-    protected $initialConfig = [];
+    protected $tableName;
 
     /**
      * @inheritDoc
@@ -72,93 +65,31 @@ class TcaTable extends AbstractTcaTable
         TableFactory $tableFactory,
         TypeFactory $typeFactory
     ) {
-        parent::__construct($tableName, $context, $tableFactory, $typeFactory, $this);
-        $this->initializer = $tableFactory;
+        parent::__construct($context);
+        $this->tableName    = $tableName;
+        $this->tableFactory = $tableFactory;
+        $this->typeFactory  = $typeFactory;
     }
 
     /**
-     * Returns the instance of a certain tca type.
+     * Returns the name of the linked database table
      *
-     * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
-     *
-     * @param   string|int  $typeName
-     *
-     * @return TcaTableType
+     * @return string
      */
-    public function getType($typeName): TcaTableType
+    public function getTableName(): string
     {
-        if (isset($this->types[$typeName]) && $this->types[$typeName] instanceof TcaTableType) {
-            return $this->types[$typeName];
-        }
-
-        $type    = $this->typeFactory->create($typeName, $this);
-        $typeTca = $this->typeFactory->getTypeTca($typeName, $this);
-        $this->typeFactory->initialize($typeTca, $type);
-
-        return $this->types[$typeName] = $type;
+        return $this->tableName;
     }
 
     /**
-     * Returns the list of all type names that are currently registered (both loaded and defined)
+     * Used to provide the correct auto-complete information
      *
-     * @return array
+     * @inheritDoc
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType
      */
-    public function getTypeNames(): array
+    public function getType($typeName = null): AbstractType
     {
-        $typeKeys = array_keys($this->getInitialConfig()['types'] ?? []);
-        $typeKeys = array_merge($typeKeys, array_keys($this->types));
-
-        return array_unique($typeKeys);
-    }
-
-    /**
-     * Returns true if the given type name is currently registered (either loaded, or defined)
-     *
-     * @param $typeName
-     *
-     * @return bool
-     */
-    public function hasType($typeName): bool
-    {
-        return $this->isTypeLoaded($typeName) || in_array($typeName, $this->getTypeNames(), false);
-    }
-
-    /**
-     * Returns true if a certain type is currently loaded as object representation
-     *
-     * @param $typeName
-     *
-     * @return bool
-     */
-    public function isTypeLoaded($typeName): bool
-    {
-        return isset($this->types[$typeName]);
-    }
-
-    /**
-     * Allows you to completely replace all type instances for this table.
-     *
-     * @param   TcaTableType[]  $types
-     *
-     * @return $this
-     */
-    public function setLoadedTypes(array $types): self
-    {
-        $this->types = $types;
-
-        return $this;
-    }
-
-    /**
-     * Returns the list of all types inside this table
-     *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType[]
-     *
-     * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
-     */
-    public function getLoadedTypes(): array
-    {
-        return $this->types;
+        return parent::getType($typeName);
     }
 
     /**
@@ -167,32 +98,76 @@ class TcaTable extends AbstractTcaTable
     public function clear(): void
     {
         parent::clear();
+        $this->config = [];
         $this->context->cs()->sqlBuilder->removeTableDefinitions($this->getTableName());
-        $this->types = [];
     }
 
     /**
-     * Returns the initial state of the TCA when this table was initialized
+     * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
-     * @return array
+     * @param   array  $raw         The configuration to set
+     * @param   bool   $repopulate  Not all parts of the tca are updated automatically after you changed them.
+     *                              "types", "palettes" and "columns" are only stored in their initial state.
+     *                              Those elements are represented by a tree of objects containing the actual
+     *                              information. If you want to recreate this tree, set this property to true.
+     *                              This forces the system to invalidate all existing objects and recreate
+     *                              them based on your provided $data. All existing instances and their configuration
+     *                              will be dropped and set to the provided configuration in data. Be careful with this!
+     *
+     * @return $this
      */
-    public function getInitialConfig(): array
+    public function setRaw(array $raw, bool $repopulate = false)
     {
-        return $this->initialConfig;
-    }
+        $this->loadDataHooks($raw);
 
-    /**
-     * Allows to update the initial state of the TCA when this table was initialized
-     *
-     * @param   array  $initialConfig
-     *
-     * @return TcaTable
-     */
-    public function setInitialConfig(array $initialConfig): TcaTable
-    {
-        $this->initialConfig = $initialConfig;
+        if ($repopulate) {
+            $this->clear();
+        }
+
+        $this->config = $raw;
 
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getRaw(bool $initial = false): array
+    {
+        if ($initial) {
+            return $this->config;
+        }
+
+        $raw = Arrays::without($this->config, ['columns', 'types', 'palettes']);
+        $this->dumpDataHooks($raw);
+
+        return $raw;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function loadType($typeName): AbstractType
+    {
+        $type = $this->typeFactory->create($typeName, $this);
+        $this->typeFactory->populate($type);
+
+        return $type;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getDefinedTypeNames(): array
+    {
+        return array_keys($this->config['types'] ?? []);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getDataHookTableFieldConstraints(): array
+    {
+        return [];
+    }
 }

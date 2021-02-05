@@ -91,6 +91,11 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
         $this->container->set(ConfigState::class, $event->getLoaderContext()->configContext->getState());
     }
 
+    /**
+     * Inject the state into the container after we have initialized it
+     *
+     * @param   \Neunerlei\Configuration\Event\AfterConfigLoadEvent  $event
+     */
     public function onAfterConfigLoad(AfterConfigLoadEvent $event): void
     {
         if ($event->getLoaderContext()->type === 'ExtConfigMain') {

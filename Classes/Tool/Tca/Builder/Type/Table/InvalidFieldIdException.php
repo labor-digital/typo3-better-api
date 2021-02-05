@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.01.28 at 19:52
+ * Last modified: 2021.02.02 at 10:20
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table;
+namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
 
-class TcaPostProcessor implements PublicServiceInterface
+class InvalidFieldIdException extends TcaBuilderException
 {
-    public function process(): void
-    {
-    }
+
 }

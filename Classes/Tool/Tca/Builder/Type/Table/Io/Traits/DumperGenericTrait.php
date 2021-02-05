@@ -23,35 +23,60 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
+use LaborDigital\T3BA\Event\Tca\TableDumperTypeFilterEvent;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaPalette;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaPaletteLineBreak;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 trait DumperGenericTrait
 {
 
     /**
-     * Dumps the basic TCA array from both TcaTable and TcaTableType objects into an array.
+     * Dumps the root tca array based on the originally loaded tca as well as the data of the default type
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable  $table
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
      *
      * @return array
-     * @throws \JsonException
      */
-    protected function dumpBasicTca(AbstractTcaTable $table): array
+    protected function dumpRootTca(TcaTable $table): array
+    {
+        $tca                                   = unserialize(serialize($table->getRaw(true)));
+        $tca[DataHookTypes::TCA_DATA_HOOK_KEY] = $table->getRegisteredDataHooks();
+
+        $defaultType    = $table->getType();
+        $defaultTypeTca = $this->dumpTcaTypeVariant($defaultType);
+
+        foreach (['columns', 'palettes', 'types'] as $list) {
+            foreach ($defaultTypeTca[$list] ?? [] as $k => $v) {
+                $tca[$list][$k] = $v;
+            }
+        }
+
+        return $tca;
+    }
+
+    /**
+     * Dumps the a slim tca object with the data of a specific type
+     *
+     * @param   TcaTableType  $type
+     *
+     * @return array
+     */
+    protected function dumpTcaTypeVariant(TcaTableType $type): array
     {
         // Create a clean tca
-        $tca            = json_decode(
-            json_encode(
-                $table->getRaw(), JSON_THROW_ON_ERROR
-            ), true, 512, JSON_THROW_ON_ERROR);
-        $tca['columns'] = [];
+        $tca = [
+            'columns'  => [],
+            'palettes' => [],
+            'types'    => [],
+        ];
 
         // Dump the columns
-        foreach ($table->getFields() as $field) {
+        foreach ($type->getFields() as $field) {
             $fTca = $field->getRaw();
             if (! empty($fTca['config'])) {
                 $tca['columns'][$field->getId()] = $fTca;
@@ -60,25 +85,23 @@ trait DumperGenericTrait
         unset($fTca);
 
         // Dump layout
-        $this->dumpShowItemStringAndPalettes($tca, $table);
+        $this->dumpTypeShowItemAndPalettes($tca, $type);
 
-        // Dump data hooks
-        $handlers = $table->getRegisteredDataHooks();
-        // @todo does this work?
-        if (! empty($handlers)) {
-            $raw[DataHookTypes::TCA_DATA_HOOK_KEY] = $handlers['@table'];
-        }
+        // Allow filtering
+        $this->eventBus->dispatch($e = new TableDumperTypeFilterEvent(
+            $tca, $type, $type->getParent()
+        ));
 
-        return $tca;
+        return $e->getTypeTca();
     }
 
     /**
      * Iterates all elements in the TCA object and converts them into their showitem layout string.
      *
-     * @param   array                                                            $tca
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable  $table
+     * @param   array         $tca
+     * @param   TcaTableType  $type
      */
-    protected function dumpShowItemStringAndPalettes(array &$tca, AbstractTcaTable $table): void
+    protected function dumpTypeShowItemAndPalettes(array &$tca, TcaTableType $type): void
     {
         $showItem        = [];
         $palettes        = [];
@@ -86,7 +109,7 @@ trait DumperGenericTrait
         $paletteShowItem = [];
         $pointer         = &$showItem;
 
-        foreach ($table->getAllChildren() as $child) {
+        foreach ($type->getAllChildren() as $child) {
             if ($child instanceof TcaTab) {
                 $meta      = $child->getLayoutMeta();
                 $meta[0]   = $child->getLabel();
@@ -96,7 +119,7 @@ trait DumperGenericTrait
             }
 
             if ($child instanceof TcaPalette) {
-                $meta      = $child->getLayoutMeta();
+                $meta      = $o = $child->getLayoutMeta();
                 $meta[0]   = $child->hasLabel() ? $child->getLabel() : '';
                 $meta[1]   = $currentPalette = substr($child->getId(), 1);
                 $pointer[] = '--palette--;' . implode(';', $meta);
@@ -129,7 +152,7 @@ trait DumperGenericTrait
             }
         }
 
-        $tca['types'][$table->getTypeName()]['showitem'] = implode(',', $showItem);
-        $tca['palettes']                                 = $palettes;
+        $tca['types'][$type->getTypeName()]['showitem'] = implode(',', $showItem);
+        $tca['palettes']                                = $palettes;
     }
 }

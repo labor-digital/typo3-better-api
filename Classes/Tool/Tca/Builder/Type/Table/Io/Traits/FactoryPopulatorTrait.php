@@ -25,9 +25,8 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\FormElementContainingInterface;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 use Neunerlei\Arrays\Arrays;
 
 trait FactoryPopulatorTrait
@@ -36,22 +35,18 @@ trait FactoryPopulatorTrait
     /**
      * Creates the child instances of the table based on the given type tca
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable  $table
-     * @param   array                                                            $typeTca
+     * @param   TcaTableType  $type
+     * @param   array         $tca
      *
      * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
      */
-    protected function populateElements(AbstractTcaTable $table, array $typeTca): void
+    protected function populateElements(TcaTableType $type, array $tca): void
     {
-        // Load the columns
-        $tca  = $table->getForm()->getInitialConfig();
-        $cols = TcaUtil::applyColumnOverrides($tca['columns'] ?? [], $typeTca['columnsOverrides'] ?? []);
-
         // Load the palettes
         $palettes = Arrays::getPath($tca, 'palettes.*.showitem', []);
 
         // Load the showitem string
-        $showItem = $this->parseShowItemString($typeTca['showitem'] ?? '');
+        $showItem = $this->parseShowItemString($tca['types'][$type->getTypeName()]['showitem'] ?? '');
 
         $tabCounter = 0;
         $target     = null;
@@ -63,7 +58,7 @@ trait FactoryPopulatorTrait
                 array_shift($layoutMeta);
                 switch (strtolower(substr($id, 2, -2))) {
                     case 'div':
-                        $target = $this->populateTab($table, $layoutMeta, $tabCounter++);
+                        $target = $this->populateTab($type, $layoutMeta, $tabCounter++);
                         break;
                     case 'palette':
                         $id = end($layoutMeta);
@@ -71,22 +66,22 @@ trait FactoryPopulatorTrait
                         // Ignore the field if we don't have a configuration for it
                         // or the palette is already loaded
                         $config = Arrays::getPath($palettes, [$id]);
-                        if (empty($config) || $table->hasPalette($id)) {
+                        if (empty($config) || $type->hasPalette($id)) {
                             break;
                         }
 
                         $this->populatePalette(
-                            $table,
+                            $type,
                             $target,
                             $layoutMeta,
                             $id,
-                            $cols,
+                            $tca['columns'],
                             $config
                         );
 
                         break;
                     case 'linebreak':
-                        $table->addLineBreak();
+                        $type->addLineBreak();
                         break;
                     default:
                         throw new TcaBuilderException(
@@ -102,14 +97,14 @@ trait FactoryPopulatorTrait
             }
 
             // Ignore the field if we don't have a configuration for it
-            $config = Arrays::getPath($cols, [$id], []);
+            $config = Arrays::getPath($tca['columns'], [$id], []);
             if (empty($config)) {
                 continue;
             }
 
             // Add a new field
             $this->populateField(
-                $table,
+                $type,
                 $target,
                 $layoutMeta,
                 $id,
@@ -143,15 +138,15 @@ trait FactoryPopulatorTrait
     /**
      * Creates a new tab instance in the table object
      *
-     * @param   AbstractTcaTable  $table
-     * @param   array             $layoutMeta
-     * @param   int               $id
+     * @param   TcaTableType  $type
+     * @param   array         $layoutMeta
+     * @param   int           $id
      *
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab
      */
-    protected function populateTab(AbstractTcaTable $table, array $layoutMeta, int $id): TcaTab
+    protected function populateTab(TcaTableType $type, array $layoutMeta, int $id): TcaTab
     {
-        $i = $table->getTab($id);
+        $i = $type->getTab($id);
         $i->setLayoutMeta($layoutMeta);
         if (! empty($layoutMeta[0])) {
             $i->setLabel($layoutMeta[0]);
@@ -163,7 +158,7 @@ trait FactoryPopulatorTrait
     /**
      * Creates and populates a new palette / container instance in the table object
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable           $table
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType               $type
      * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\FormElementContainingInterface  $target
      * @param   array                                                                     $layoutMeta
      * @param   string                                                                    $id
@@ -171,19 +166,19 @@ trait FactoryPopulatorTrait
      * @param   string                                                                    $config
      */
     protected function populatePalette(
-        AbstractTcaTable $table,
+        TcaTableType $type,
         FormElementContainingInterface $target,
         array $layoutMeta,
         string $id,
         array $cols,
         string $config
     ): void {
-        $target->addMultiple(function () use ($table, $id, $layoutMeta, $cols, $config) {
-            $i = $table->getPalette($id);
+        $target->addMultiple(function () use ($type, $id, $layoutMeta, $cols, $config) {
+            $i = $type->getPalette($id);
             $i->setLayoutMeta($layoutMeta);
 
-            if (! empty($layoutMeta[1])) {
-                $i->setLabel($layoutMeta[1]);
+            if (! empty($layoutMeta[0])) {
+                $i->setLabel($layoutMeta[0]);
             }
 
             foreach ($this->parseShowItemString($config) as $_layoutMeta) {
@@ -193,8 +188,8 @@ trait FactoryPopulatorTrait
                 if (! $cols[$_id]) {
                     // Handle line breaks
                     if ($_id === '--linebreak--') {
-                        $i->addMultiple(static function () use ($table) {
-                            $table->addLineBreak();
+                        $i->addMultiple(static function () use ($type) {
+                            $type->addLineBreak();
                         });
                     }
 
@@ -203,7 +198,7 @@ trait FactoryPopulatorTrait
 
                 // Populate the field
                 $this->populateField(
-                    $table,
+                    $type,
                     $i,
                     $_layoutMeta,
                     $_id,
@@ -216,21 +211,21 @@ trait FactoryPopulatorTrait
     /**
      * Internal helper to create a new field in the table instance with the inherited config applied to it.
      *
-     * @param   AbstractTcaTable                $table
+     * @param   TcaTableType                    $type
      * @param   FormElementContainingInterface  $target
      * @param   array                           $layoutMeta
      * @param   string                          $id
      * @param   array                           $config
      */
     protected function populateField(
-        AbstractTcaTable $table,
+        TcaTableType $type,
         FormElementContainingInterface $target,
         array $layoutMeta,
         string $id,
         array $config
     ): void {
-        $target->addMultiple(static function () use ($table, $id, $layoutMeta, $config) {
-            $i = $table->getField($id);
+        $target->addMultiple(static function () use ($type, $id, $layoutMeta, $config) {
+            $i = $type->getField($id, true);
             $i->setLayoutMeta($layoutMeta);
             $i->setRaw($config);
 

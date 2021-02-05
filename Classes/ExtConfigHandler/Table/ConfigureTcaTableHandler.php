@@ -35,9 +35,6 @@ use Neunerlei\Inflection\Inflector;
 class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements StandAloneHandlerInterface
 {
 
-    public const CONFIG_LOCATION   = 'Configuration/Table';
-    public const OVERRIDE_LOCATION = 'Override';
-
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
@@ -58,7 +55,7 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
     /**
      * The object representation of the currently configured table
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable|null
      */
     protected $table;
 
@@ -96,7 +93,7 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
     {
         $configurator->registerLocation('Configuration/Table');
         $configurator->registerOverrideLocation('Override');
-        // We register "Overrides" for the TYPO3 natives that could otherwise feel a bit lost ;)
+        // We register "Override>s<" for the TYPO3 natives that could otherwise feel a bit lost ;)
         $configurator->registerOverrideLocation('Overrides');
         $configurator->registerInterface(ConfigureTcaTableInterface::class);
     }
@@ -113,29 +110,24 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
 
         // Shortcut if the class has a specific name provided
         if (in_array(TcaTableNameProviderInterface::class, class_implements($class), true)) {
-            return $this->classNameTableMap[$class] = $class('getTableName');
+            return $this->classNameTableMap[$class] = call_user_func([$class, 'getTableName']);
         }
 
-        // Find the table name by the PHP namespace
-        $path = $this->context->getVendor() . '\\' .
-                Inflector::toCamelCase($this->context->getExtKey()) . '\\' .
-                str_replace('/', '\\', ConfigureTcaTableHandler::CONFIG_LOCATION) . '\\';
+        // Remove the unwanted prefix from the namespace
+        $pattern        = '(?:\\\\)?' . preg_quote($this->context->getVendor(), '~') . '\\\\' .
+                          preg_quote(Inflector::toCamelCase($this->context->getExtKey()), '~') . '\\\\' .
+                          'Configuration\\\\Table\\\\' .
+                          '(?:Overrides?\\\\)?';
+        $pattern        = '~' . $pattern . '~';
+        $tableNamespace = preg_replace($pattern, '', $class);
 
-        if (! strpos($class, $path) === 0) {
+        // Check if the transformation was successful
+        if ($tableNamespace === $class) {
             throw new ExtConfigException(
-                'The TCA table config class ' . $class . ' should start with the following namespace: ' . $path);
+                'The TCA table config class ' . $class . ' MUST start with the following PHP namespace: '
+                . $this->context->getVendor() . '\\' . Inflector::toCamelCase($this->context->getExtKey()) . '\\'
+                . 'Configuration\\Table\\...');
         }
-
-        $tableNamespace = substr($class, strlen($path));
-
-        // Strip optional override path
-        $path = str_replace('/', '\\', ConfigureTcaTableHandler::OVERRIDE_LOCATION) . '\\';
-        if (strpos($tableNamespace, $path) === 0) {
-            $tableNamespace = substr($class, strlen($path));
-        }
-
-        // Remove optional suffixes
-        $tableNamespace = preg_replace('~(Tables?)?(Overrides?)?$~', '', $tableNamespace);
 
         // Compile table name
         $tableName = implode('_', array_filter(
@@ -145,7 +137,7 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
                 'domain',
                 'model',
             ],
-                array_map(function (string $part) {
+                array_map(static function (string $part) {
                     return strtolower(Inflector::toCamelBack($part));
                 }, explode('\\', $tableNamespace)))
         ));
@@ -165,26 +157,17 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
     /**
      * @inheritDoc
      */
-    public function finishHandler(): void
-    {
-        $this->context->getState()
-                      ->set('classNameTableMap', $this->classNameTableMap)
-                      ->set('tca', []);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function prepareGroup(string $groupKey, array $groupClasses): void
     {
         // Ignore disabled
         if ($groupKey === '') {
+            $this->table = null;
+
             return;
         }
 
         $this->table = $this->tableFactory->create($groupKey, $this->context);
-        $tca         = $this->tableFactory->getTca($this->table);
-        $this->tableFactory->initialize($tca, $this->table);
+        $this->tableFactory->initialize($this->table);
     }
 
     /**
@@ -192,7 +175,9 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
      */
     public function handleGroupItem(string $class): void
     {
-        call_user_func([$class, 'configureTable'], $this->table, $this->context);
+        if ($this->table) {
+            call_user_func([$class, 'configureTable'], $this->table, $this->context);
+        }
     }
 
     /**
@@ -200,7 +185,13 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
      */
     public function finishGroup(string $groupKey, array $groupClasses): void
     {
-        dbge($this->tableDumper->dump($this->table));
-        dbge($this->table);
+        if ($this->table) {
+            $GLOBALS['TCA'][$groupKey] = $this->tableDumper->dump($this->table);
+        }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function finishHandler(): void { }
 }

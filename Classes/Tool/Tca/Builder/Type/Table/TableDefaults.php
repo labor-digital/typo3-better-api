@@ -25,14 +25,20 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
 
 class TableDefaults
 {
+    public const FIELD_TCA
+        = [
+            'exclude' => 1,
+            'sql'     => 'text',
+        ];
+
     public const TYPE_TCA
         = [
             'showitem' => '
-                --div--;betterApi.tab.general,
-                --div--;betterApi.tab.access,
+                --div--;t3ba.tab.general,
+                --div--;t3ba.tab.access,
                 --palette--;;hidden,
                 --palette--;;access,
-                --div--;betterApi.tab.language,
+                --div--;t3ba.tab.language,
                 --palette--;;language',
         ];
 

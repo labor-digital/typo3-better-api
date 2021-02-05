@@ -125,7 +125,7 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
 
         call_user_func_array([$i, $definition[1]], $arguments);
 
-        return $this;
+        return $this->field;
     }
 
 

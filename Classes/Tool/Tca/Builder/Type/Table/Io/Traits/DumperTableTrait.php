@@ -35,6 +35,6 @@ trait DumperTableTrait
      */
     protected function dumpSql(TcaTable $table, array &$tca): void
     {
-        $tca['@sql'] = $table->getContext()->cs()->sqlBuilder->getTableSql($table->getTableName());
+        $tca['ctrl']['sql'] = $table->getContext()->cs()->sqlBuilder->getTableSql($table->getTableName());
     }
 }

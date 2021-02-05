@@ -28,7 +28,7 @@ interface DataHookTypes
     /**
      * The key in the TCA of a table or a single field we use to resolve the hooks
      */
-    public const TCA_DATA_HOOK_KEY = '@DATA_HOOK';
+    public const TCA_DATA_HOOK_KEY = 'dataHooks';
 
     /**
      * Executed when the backend builds the form for a record using the form engine

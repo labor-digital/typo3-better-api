@@ -23,9 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits;
 
 
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 /**
  * Trait TypeAwareDataHookCollectorTrait
@@ -35,35 +33,20 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
  * @package LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits
  * @see     \LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait
  */
-trait TypeAwareDataHookCollectorTrait
+trait TcaDataHookCollectorAddonTrait
 {
-
-    /**
-     * @inheritDoc
-     */
     protected function getDataHookTableFieldConstraints(): array
     {
-        if ($this instanceof TcaField || $this instanceof TcaTableType) {
-            $typeCol = $this->getForm()->getForm()->getTypeColumn();
+        $typeCol = $this->getRoot()->getTypeColumn();
 
-            if (empty($typeCol)) {
-                return [];
-            }
-
-            return [$typeCol => $this->getForm()->getTypeName()];
+        if (empty($typeCol)) {
+            return [];
         }
 
-        return [];
-    }
-
-    protected function loadDataHooksBasedOnType(array &$tca): void
-    {
-        if (isset($tca[DataHookTypes::TCA_DATA_HOOK_KEY])) {
-            $definition = $tca[DataHookTypes::TCA_DATA_HOOK_KEY];
-            unset($tca[DataHookTypes::TCA_DATA_HOOK_KEY]);
-
-            dbge($definition);
-
-        }
+        return [
+            $typeCol => $this instanceof TcaField
+                ? $this->getType()->getTypeName()
+                : $this->getTypeName(),
+        ];
     }
 }

@@ -141,7 +141,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         // Build the eval string
         $eval = [];
         foreach (static::EVAL_TYPES as $type) {
-            if ((empty($evalFilter) || $options[$type] === true && in_array($type, $evalFilter, true))) {
+            if ($options[$type] === true && (empty($evalFilter) || in_array($type, $evalFilter, true))) {
                 $eval[] = $type;
             }
         }
@@ -556,7 +556,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         return false;
         throw new NotImplementedException();
 
-        return $this->field->getForm() instanceof FlexForm;
+        return $this->field->getType() instanceof FlexForm;
     }
 
     /**
@@ -580,13 +580,13 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     protected function getTcaTable(): TcaTable
     {
         if ($this->isFlexForm()) {
-            $form = $this->field->getForm()->getContainingField()->getForm();
+            $form = $this->field->getType()->getContainingField()->getForm();
         } else {
-            $form = $this->field->getForm();
+            $form = $this->field->getType();
         }
 
         if ($form instanceof TcaTableType) {
-            $form = $form->getForm();
+            $form = $form->getParent();
         }
 
         return $form;
@@ -601,7 +601,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     {
         if ($this->isFlexForm()) {
             /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return $this->field->getForm()->getContainingField();
+            return $this->field->getType()->getContainingField();
         }
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */

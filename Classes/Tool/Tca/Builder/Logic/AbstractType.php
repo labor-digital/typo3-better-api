@@ -26,12 +26,24 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
-abstract class AbstractForm
+abstract class AbstractType
 {
 
     /**
-     * The ext config context object that requires this form
+     * The parent instance that holds the information about all available types
      *
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList
+     */
+    protected $parent;
+
+    /**
+     * Holds the type key this instance represents
+     *
+     * @var string|int
+     */
+    protected $typeName;
+
+    /**
      * @var TcaBuilderContext
      */
     protected $context;
@@ -44,13 +56,6 @@ abstract class AbstractForm
     protected $tree;
 
     /**
-     * The raw configuration as an array
-     *
-     * @var array
-     */
-    protected $config = [];
-
-    /**
      * MUST return the name of the class that should be used as a default tab
      * if we can't find any other elements and have to create one.
      *
@@ -61,34 +66,81 @@ abstract class AbstractForm
     /**
      * AbstractForm constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext  $context
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList  $parent
+     * @param   string|int                                                  $typeName
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext       $context
      */
-    public function __construct(TcaBuilderContext $context)
+    public function __construct(AbstractTypeList $parent, $typeName, TcaBuilderContext $context)
     {
-        $this->context = $context;
-        $this->tree    = $context->cs()->di->getWithoutDi(
+        $this->parent   = $parent;
+        $this->typeName = $typeName;
+        $this->context  = $context;
+        $this->tree     = $context->cs()->di->getWithoutDi(
             Tree::class, [$this, $this->getTabClass()]
         );
     }
 
     /**
-     * Returns the instance of the parent form / parent table
-     *
-     * @return AbstractForm|TcaTable|TcaTableType|FlexForm
-     */
-    public function getForm()
-    {
-        return $this;
-    }
-
-    /**
-     * Returns the ext config context object that requires this form
+     * Returns the context object
      *
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext
      */
     public function getContext(): TcaBuilderContext
     {
         return $this->context;
+    }
+
+    /**
+     * Returns the instance of the parent form / parent table
+     *
+     * @return AbstractTypeList|TcaTable|FlexForm
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Alias of getParent()
+     *
+     * @return AbstractTypeList|FlexForm|TcaTable
+     */
+    public function getRoot()
+    {
+        return $this->getParent();
+    }
+
+    /**
+     * Returns the currently set name of the type represented by this object
+     *
+     * @return string|int
+     */
+    public function getTypeName()
+    {
+        return $this->typeName;
+    }
+
+    /**
+     * Allows you to override the name of this type -> be careful with this! Overwrites are handled without warning!
+     *
+     * @param   int|string  $typeName
+     *
+     * @return $this
+     */
+    public function setTypeName($typeName): AbstractType
+    {
+        $oldTypeName    = $this->typeName;
+        $this->typeName = $typeName;
+
+        // Update the parent
+        if ($this instanceof TcaTableType) {
+            $types = $this->parent->getLoadedTypes();
+            unset($types[$oldTypeName]);
+            $types[$typeName] = $this;
+            $this->parent->setLoadedTypes($types);
+        }
+
+        return $this;
     }
 
     /**
@@ -114,7 +166,7 @@ abstract class AbstractForm
      *                             narrow down the list of retrievable node
      *                             types.
      *
-     * @return AbstractField|AbstractContainer|AbstractTab|mixed|null
+     * @return AbstractField|AbstractContainer|AbstractTab|null
      */
     public function getChild($id, ?int $type = null)
     {
@@ -156,7 +208,6 @@ abstract class AbstractForm
      */
     public function clear(): void
     {
-        $this->config = [];
         $this->removeAllChildren();
     }
 
@@ -236,48 +287,6 @@ abstract class AbstractForm
     public function hasField(string $id): bool
     {
         return $this->tree->hasNode($id, Node::TYPE_FIELD);
-    }
-
-    /**
-     * Can be used to set raw config values, that are not implemented in this facade.
-     * Set either key => value pairs, or an Array of key => value pairs
-     *
-     * @param   array|string|int  $key    Either a key to set the given $value for, or an array of $key => $value pairs
-     * @param   null              $value  The value to set for the given $key (if $key is not an array)
-     *
-     * @return $this
-     */
-    public function setRaw($key, $value = null)
-    {
-        if (is_array($key)) {
-            $this->config = $key;
-        } else {
-            $this->config[$key] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Similar to setRaw() but will merge the given array of key/value pairs instead of
-     * overwriting the original configuration.
-     *
-     * This method supports TYPO3's syntax of removing values from the current config if __UNSET is set as key
-     *
-     * @param   array  $rawInput
-     *
-     * @return $this
-     */
-    abstract public function mergeRaw(array $rawInput);
-
-    /**
-     * Returns the raw configuration array for this object
-     *
-     * @return array
-     */
-    public function getRaw(): array
-    {
-        return $this->config;
     }
 
     /**

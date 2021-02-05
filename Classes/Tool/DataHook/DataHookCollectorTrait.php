@@ -56,7 +56,7 @@ trait DataHookCollectorTrait
     public function registerSaveHook(
         string $handlerClass,
         string $handlerMethodName = 'saveHook'
-    ): self {
+    ) {
         return $this->registerDataHook(DataHookTypes::TYPE_SAVE, $handlerClass, $handlerMethodName);
     }
 
@@ -76,7 +76,7 @@ trait DataHookCollectorTrait
     public function registerFormHook(
         string $handlerClass,
         string $handlerMethodName = 'formHook'
-    ): self {
+    ) {
         return $this->registerDataHook(DataHookTypes::TYPE_FORM, $handlerClass, $handlerMethodName);
     }
 
@@ -99,7 +99,7 @@ trait DataHookCollectorTrait
         string $type,
         string $handlerClass,
         string $handlerMethodName = 'dataHook'
-    ): self {
+    ) {
         $this->validateDataHookType($type);
         $options = ['constraints' => $this->getDataHookTableFieldConstraints()];
 
@@ -111,6 +111,18 @@ trait DataHookCollectorTrait
             [$handlerClass, $handlerMethodName],
             $options,
         ];
+
+        return $this;
+    }
+
+    /**
+     * Completely removes all registered data hooks
+     *
+     * @return $this
+     */
+    public function clearDataHooks()
+    {
+        $this->dataHooks = [];
 
         return $this;
     }
@@ -129,7 +141,7 @@ trait DataHookCollectorTrait
         string $type,
         string $handlerClass,
         string $handlerMethodName = 'dataHook'
-    ): self {
+    ) {
         $this->validateDataHookType($type);
         unset($this->dataHooks[$type][md5($handlerClass . '.' . $handlerMethodName)]);
 
@@ -144,6 +156,74 @@ trait DataHookCollectorTrait
     public function getRegisteredDataHooks(): array
     {
         return array_map('array_values', $this->dataHooks);
+    }
+
+    /**
+     * This helper allows to reset all registered hooks of this trait to the provided list.
+     * The hook list is automatically validated and only valid hooks are added back to the store
+     *
+     * @param   array  $source  The source configuration to find the data hooks on.
+     */
+    protected function loadDataHooks(array $source): void
+    {
+        if (empty($source[DataHookTypes::TCA_DATA_HOOK_KEY])
+            || ! is_array($source[DataHookTypes::TCA_DATA_HOOK_KEY])) {
+            return;
+        }
+
+        $this->dataHooks = [];
+
+        $constraint = $this->getDataHookTableFieldConstraints();
+
+        foreach ($source[DataHookTypes::TCA_DATA_HOOK_KEY] as $type => $hooks) {
+            if (! is_array($hooks) || ! is_string($type)) {
+                continue;
+            }
+
+            try {
+                $this->validateDataHookType($type);
+            } catch (InvalidArgumentException $e) {
+                continue;
+            }
+
+            foreach ($hooks as $def) {
+                if (! isset($def[0], $def[1], $def[1]['constraints'])
+                    || ! is_array($def)
+                    || ! is_array($def[0])
+                    || ! is_array($def[1])
+                    || ! is_array($def[1]['constraints'])
+                    || count($def[0]) !== 2) {
+                    continue;
+                }
+
+                /** @noinspection TypeUnsafeComparisonInspection */
+                if ($def[1]['constraints'] != $constraint) {
+                    // @todo We could add a "partial" validation here,
+                    // so only fields that are in the local constraints are evaluated
+                    // This would have the added benefit, that non-type-validations are simply ignored
+                    continue;
+                }
+
+                $this->dataHooks[$type][md5(implode('.', $def[0]))] = [
+                    array_values($def[0]),
+                    $def[1],
+                ];
+            }
+        }
+    }
+
+    /**
+     * Dumps the registered data hooks into the given $target array.
+     * The hooks will be stored at the DataHookTypes::TCA_DATA_HOOK_KEY key
+     *
+     * @param   array  $target
+     */
+    protected function dumpDataHooks(array &$target): void
+    {
+        $hooks = $this->getRegisteredDataHooks();
+        if (! empty($hooks)) {
+            $target[DataHookTypes::TCA_DATA_HOOK_KEY] = $hooks;
+        }
     }
 
     /**

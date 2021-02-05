@@ -89,7 +89,7 @@ trait DumperTypeGeneratorTrait
                 // Make sure dummy columns (like editlock and co don't get added to the main tca)
                 // They are not in the columns array because we don't configure them by default
                 // but they are "theoretically" there. So check if we have a field for the id first
-                if (! $table->hasField($id)) {
+                if (! $table->getType()->hasField($id)) {
                     $cols[$id] = $col;
                 } else {
                     // Add col completely as override

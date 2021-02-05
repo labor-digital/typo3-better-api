@@ -162,7 +162,13 @@ class BasicFieldPreset extends AbstractFieldPreset
      * Sets the current field as a simple select field.
      *
      * @param   array  $items    The items you want to set for this select field, as an array
-     *                           with the "value" as key and the "label" as value
+     *                           with the "value" as key and the "label" as value.
+     *
+     *                           NOTE: You can prove an array as "label" value to define two special cases.
+     *                           The first entry ($label[0]) MUST ALWAYS be the label to be displayed.
+     *                           The second entry ($label[1]) can be either one of these:
+     *                           A.) A string that provides an icon identifier
+     *                           B.) TRUE if you want to create an "option group" with this label as headline.
      * @param   array  $options  Additional options for this preset
      *                           - minItems int (0): The minimum number of items required to be valid
      *                           - maxItems int (1): The maximum number of items allowed in this field
@@ -199,17 +205,40 @@ class BasicFieldPreset extends AbstractFieldPreset
         // Convert the items array
         $itemsFiltered = [];
         foreach ($items as $k => $v) {
-            $itemsFiltered[] = [$v, $k];
+            if (is_array($v)) {
+                // Ignore invalid configuration
+                if (! isset($v[0]) || ! is_string($v[1]) || ! isset($v[1])) {
+                    continue;
+                }
+
+                // Handle specials
+                if ($v[1] === true) {
+                    // Handle an option group
+                    $v = [$v[0] ?? '', '--div--'];
+                } elseif (is_string($v[1])) {
+                    // Handle an icon identifier
+                    $v = [$v[0], $k, $v[1]];
+                } else {
+                    continue;
+                }
+            } else {
+                $v = [$v, $k];
+            }
+
+            $itemsFiltered[] = $v;
         }
 
         // Build the config
         $config = [
-            'type'          => 'select',
-            'renderType'    => $options['maxItems'] <= 1 ? 'selectSingle' : 'selectCheckBox',
-            'size'          => 1,
-            'items'         => $itemsFiltered,
-            'itemsProcFunc' => $options['userFunc'],
+            'type'       => 'select',
+            'renderType' => $options['maxItems'] <= 1 ? 'selectSingle' : 'selectCheckBox',
+            'size'       => 1,
+            'items'      => $itemsFiltered,
         ];
+
+        if (! empty($options['userFunc'])) {
+            $config['itemsProcFunc'] = $options['userFunc'];
+        }
 
         // Add additional config
         if (! is_null($options['default'])) {

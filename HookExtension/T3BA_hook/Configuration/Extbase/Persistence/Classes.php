@@ -14,25 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.01.27 at 13:15
+ * Last modified: 2021.02.02 at 10:37
  */
 
 declare(strict_types=1);
 
-
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
-
-
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable;
-
-interface TcaDumperInterface
-{
-    /**
-     * Dumps the given table into it's TCA array structure
-     *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\AbstractTcaTable  $table
-     *
-     * @return array
-     */
-    public function dump(AbstractTcaTable $table): array;
-}
+return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
+    new \LaborDigital\T3BA\Event\Configuration\ExtBasePersistenceRegistrationEvent())->getClasses();

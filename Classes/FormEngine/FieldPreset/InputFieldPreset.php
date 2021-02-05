@@ -64,7 +64,7 @@ class InputFieldPreset extends AbstractFieldPreset
         );
 
         // Prepare the config
-        $config = ['type' => 'input'];
+        $config = ['type' => 'input', 'size' => 39];
 
         // Apply defaults
         if (! empty($options['default'])) {

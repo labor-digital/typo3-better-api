@@ -54,11 +54,29 @@ class TcaTraverser extends AbstractTraverser
      */
     public function traverse(): void
     {
+        // Register data hooks on the table
         $this->registerHandlerDefinitions($this->definition->tableName, $this->definition->tca);
+
+        // Register data hooks on the types and fields
+        $this->traverseTypes();
         $this->traverseFields();
+
+        // Allow externals
         $this->eventBus->dispatch(new CustomDataHookTraverserEvent($this->definition, function () {
             $this->registerHandlerDefinitions(...func_get_args());
         }));
+    }
+
+    /**
+     * Traverses the type array of a TCA to find possible data hooks
+     */
+    protected function traverseTypes(): void
+    {
+        if (isset($this->definition->tca['types']) && is_array($this->definition->tca['types'])) {
+            foreach ($this->definition->tca['types'] as $type => $def) {
+                $this->registerHandlerDefinitions($this->definition->tableName, $def);
+            }
+        }
     }
 
     /**

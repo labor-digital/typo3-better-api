@@ -24,16 +24,18 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
 
 
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableSqlBuilder;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TypeAwareDataHookCollectorTrait;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
 
 class TcaField extends AbstractField
 {
     use LayoutMetaTrait;
-    use TypeAwareDataHookCollectorTrait;
+    use DataHookCollectorTrait;
+    use TcaDataHookCollectorAddonTrait;
 
     /**
      * Holds the flexForm configuration if there is one
@@ -49,7 +51,7 @@ class TcaField extends AbstractField
      */
     public function getTableName(): string
     {
-        return $this->getForm()->getTableName();
+        return $this->getType()->getTableName();
     }
 
     /**
@@ -161,35 +163,31 @@ class TcaField extends AbstractField
     /**
      * @inheritDoc
      */
-    public function setRaw($key, $value = null): self
+    public function setRaw(array $raw)
     {
-        $raw = is_array($key) ? $key : [$key => $value];
-
         // Store ds values to allow automatic config flushing
         $dsOld = json_encode(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
 
         // Inherit sql data
-        if (isset($raw['@sql'])) {
+        if (isset($raw['sql']) && is_string($raw['sql'])) {
             $this->getSqlBuilder()->setDefinitionFor(
-                $this->getTableName(), $this->getId(), $raw['@sql']
+                $this->getTableName(), $this->getId(), $raw['sql']
             );
-            unset($raw['@sql']);
+            unset($raw['sql']);
         }
 
         // Load flex form configuration
-        if ($this->config['config']['type'] === 'flex' && ! empty($this->flexForm)) {
-            $dsNew = json_encode(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
+        if ($raw['config']['type'] === 'flex' && ! empty($this->flexForm)) {
+            $dsNew = json_encode(Arrays::getPath($raw, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
             // Reset the flex configuration
             if ($dsNew !== $dsOld) {
                 $this->flexForm = null;
             }
         }
 
-        // Inherit data hooks
-        $this->loadDataHooksBasedOnType($raw);
-
-        return parent::setRaw($key, $value);
+        return parent::setRaw($raw);
     }
+
 
     /**
      * @inheritDoc
@@ -205,6 +203,21 @@ class TcaField extends AbstractField
         return parent::getRaw();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function inheritFrom(AbstractField $field)
+    {
+        parent::inheritFrom($field);
+
+        // Automatically inherit the SQL definition
+        $sqlBuilder = $this->getType()->getContext()->cs()->sqlBuilder;
+        $def        = $sqlBuilder->getDefinitionFor($field->getTableName(), $field->getId());
+        if (! empty($def)) {
+            $sqlBuilder->setDefinitionFor($this->getTableName(), $this->getId(), $def);
+        }
+    }
+
 
     /**
      * Internal access to the sql builder
@@ -213,6 +226,6 @@ class TcaField extends AbstractField
      */
     protected function getSqlBuilder(): TableSqlBuilder
     {
-        return $this->getForm()->getContext()->cs()->sqlBuilder;
+        return $this->getType()->getContext()->cs()->sqlBuilder;
     }
 }
