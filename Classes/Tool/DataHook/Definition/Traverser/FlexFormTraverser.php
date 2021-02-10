@@ -66,6 +66,8 @@ class FlexFormTraverser extends AbstractTraverser
             return;
         }
 
+        return;
+
         dbge($this->rootPath, $this->data, $this->definition);
         // @todo Implement this
         throw new NotImplementedException();

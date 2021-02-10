@@ -14,27 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.01.28 at 14:59
+ * Last modified: 2021.02.08 at 16:21
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
+namespace LaborDigital\T3BA\Tool\Sql;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\TextType;
 
-trait DumperTableTrait
+class FallbackType extends TextType
 {
     /**
-     * Dumps the sql definition for this table into the TCA
-     *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
-     * @param   array                                                    $tca
+     * @inheritDoc
      */
-    protected function dumpSql(TcaTable $table, array &$tca): void
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
     {
-        $tca['ctrl']['sql'] = $table->getContext()->cs()->sqlBuilder->getTableSql($table->getTableName());
+        return parent::getSQLDeclaration($column, $platform);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return SqlRegistry::FALLBACK_TYPE_NAME;
     }
 }

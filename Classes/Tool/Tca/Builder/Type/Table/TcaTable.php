@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
 
 
+use Doctrine\DBAL\Schema\Table;
 use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList;
@@ -99,7 +100,7 @@ class TcaTable extends AbstractTypeList
     {
         parent::clear();
         $this->config = [];
-        $this->context->cs()->sqlBuilder->removeTableDefinitions($this->getTableName());
+        $this->context->cs()->sqlRegistry->clearTable($this->tableName);
     }
 
     /**
@@ -145,6 +146,22 @@ class TcaTable extends AbstractTypeList
     }
 
     /**
+     * Returns the doctrine table that allows you to modify the table definition directly.
+     *
+     * Please note, that column SQL definitions are not part of the returned table,
+     * as they are located in your fields under $this->getField()->getColumn().
+     *
+     * You can use this to create indexes or foreign key constraints on a global level, that will be
+     * added to your sql when it is compiled.
+     *
+     * @return \Doctrine\DBAL\Schema\Table
+     */
+    public function getSchema(): Table
+    {
+        return $this->context->cs()->sqlRegistry->getTableOverride($this->getTableName());
+    }
+
+    /**
      * @inheritDoc
      */
     protected function loadType($typeName): AbstractType
@@ -153,14 +170,6 @@ class TcaTable extends AbstractTypeList
         $this->typeFactory->populate($type);
 
         return $type;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getDefinedTypeNames(): array
-    {
-        return array_keys($this->config['types'] ?? []);
     }
 
     /**

@@ -39,7 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
 
 use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
-use LaborDigital\T3BA\Event\Tca\SqlTableDefinitionFilterEvent;
+use LaborDigital\T3BA\Event\Tca\CreateTableStatementFilterEvent;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\EventBusInterface;
 use Neunerlei\Inflection\Inflector;
@@ -219,7 +219,7 @@ class TableSqlBuilder implements PublicServiceInterface
             ? Arrays::attach($this->getTableDefinitions($table), $this->getTableMeta($table))
             : [];
 
-        $this->eventBus->dispatch(($e = new SqlTableDefinitionFilterEvent($table, $definition)));
+        $this->eventBus->dispatch(($e = new CreateTableStatementFilterEvent($table, $definition)));
 
         return $e->getDefinition();
     }

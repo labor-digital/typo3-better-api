@@ -82,11 +82,13 @@ class TcaTableType extends AbstractType
     /**
      * Allows you to ignore all field id issues for this type
      *
+     * @param   bool  $state
+     *
      * @return $this
      */
-    public function ignoreFieldIdIssues(): self
+    public function ignoreFieldIdIssues(bool $state = true): self
     {
-        $this->ignoreFieldIdIssues = true;
+        $this->ignoreFieldIdIssues = $state;
 
         return $this;
     }
@@ -120,7 +122,10 @@ class TcaTableType extends AbstractType
         return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) use ($id, $ignoreFieldIdIssues) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField $i */
             $i = $this->context->cs()->di->getWithoutDi(
-                TcaField::class, [$node, $this]
+                TcaField::class, [
+                    $node,
+                    $this,
+                ]
             );
 
             // Inherit the configuration for a field
@@ -202,9 +207,9 @@ class TcaTableType extends AbstractType
     }
 
     /**
-     * Similar to getPalettes() but only returns the keys of the fields instead of the whole object
+     * Similar to getPalettes() but only returns the keys of the palettes instead of the whole object
      *
-     * @return array
+     * @return iterable
      */
     public function getPaletteKeys(): iterable
     {
@@ -250,14 +255,22 @@ class TcaTableType extends AbstractType
     {
         return $this->findOrCreateChild($id, Node::TYPE_TAB, function (Node $node) {
             return ($this->context->cs()->di->getWithoutDi(
-                TcaTab::class, [$node, $this]
+                $this->getTabClass(), [$node, $this]
             ))->setLabel('t3ba.tab.untitled');
         });
     }
 
     /**
-     * Return the list of all registered tab instances
-     *
+     * @inheritDoc
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab
+     */
+    public function getNewTab()
+    {
+        return parent::getNewTab();
+    }
+
+    /**
+     * @inheritDoc
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab[]
      */
     public function getTabs(): iterable

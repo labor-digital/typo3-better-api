@@ -23,10 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
 
 
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
-use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
+use Doctrine\DBAL\Schema\Column;
+use LaborDigital\T3BA\Tool\Sql\ColumnAdapter;
+use LaborDigital\T3BA\Tool\Sql\FallbackType;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableSqlBuilder;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
@@ -34,15 +34,14 @@ use Neunerlei\Arrays\Arrays;
 class TcaField extends AbstractField
 {
     use LayoutMetaTrait;
-    use DataHookCollectorTrait;
     use TcaDataHookCollectorAddonTrait;
 
     /**
      * Holds the flexForm configuration if there is one
      *
-     * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaFieldFlexForm
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaFieldFlexFormConfig
      */
-    protected $flexForm;
+    protected $flex;
 
     /**
      * Returns the database table name for the current field
@@ -51,7 +50,7 @@ class TcaField extends AbstractField
      */
     public function getTableName(): string
     {
-        return $this->getType()->getTableName();
+        return $this->getForm()->getTableName();
     }
 
     /**
@@ -65,79 +64,26 @@ class TcaField extends AbstractField
     }
 
     /**
-     * With this you can define the sql syntax of your database column.
-     *
-     * The $definition should look like "varchar(512) DEFAULT ''  NOT NULL", or "tinyint(4)"
-     * The $definition should NOT contain the table or the column name!
-     *
-     * @param   string  $definition  The column definition to set for this column
-     *
-     * @return $this
-     */
-    public function setSqlDefinition(string $definition): self
-    {
-        $this->getSqlBuilder()->setDefinitionFor($this->getTableName(), $this->getId(), $definition);
-
-        return $this;
-    }
-
-    /**
-     * Returns the sql configuration of this field, or an empty string if there is none
-     *
-     * @return string
-     */
-    public function getSqlDefinition(): string
-    {
-        return $this->getSqlBuilder()->getDefinitionFor($this->getTableName(), $this->getId());
-    }
-
-    /**
-     * Removes this field from the sql table.
-     * You should only use this if you have a display-only field that should not store any data for itself
-     *
-     * @return $this
-     */
-    public function useWithoutSqlField(): self
-    {
-        $this->getSqlBuilder()->removeDefinitionFor($this->getTableName(), $this->getId());
-
-        return $this;
-    }
-
-    /**
      * Returns the flex form configuration for this field.
      *
      * Attention: If you use this method your field will automatically converted into a flex field!
      * If you don't convert the field automatically, but check first: take a look at the hasFlexFormConfig() method.
      *
-     * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaFieldFlexForm
+     * @return TcaFieldFlexFormConfig
      */
-    public function getFlexFormConfig(): TcaFieldFlexForm
+    public function getFlexFormConfig(): TcaFieldFlexFormConfig
     {
-        throw new NotImplementedException();
         // Check if we already have a flex form config
-        if (isset($this->flexForm)) {
-            return $this->flexForm;
+        if (isset($this->flex)) {
+            return $this->flex;
         }
 
-        // Make sure we are rendering as flex form
-        $this->config['config']['type'] = 'flex';
-        unset($this->config['config']['renderType']);
-        $this->setSqlDefinition('mediumtext');
-
         // Create new flex form config
-        return $this->flexForm = $this->context->getInstanceOf(TcaFieldFlexForm::class,
-            [$this, $this->config, $this->context]);
-    }
+        $cs = $this->getRoot()->getContext()->cs();
 
-    /**
-     * Returns true if this field is configured using a flex form configuration object.
-     *
-     * @return bool
-     */
-    public function hasFlexFormConfig(): bool
-    {
-        return isset($this->flexForm) && $this->config['config']['type'] === 'flex';
+        return $this->flex = $cs->typoContext->di()->getWithoutDi(
+            TcaFieldFlexFormConfig::class, [$this, $this->config, $cs->flexFormFactory]
+        );
     }
 
     /**
@@ -147,17 +93,7 @@ class TcaField extends AbstractField
      */
     public function isFlexForm(): bool
     {
-        return $this->config['config']['type'] === 'flex';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function remove(): void
-    {
-        $this->useWithoutSqlField();
-
-        parent::remove();
+        return $this->flex || $this->config['config']['type'] === 'flex';
     }
 
     /**
@@ -168,39 +104,32 @@ class TcaField extends AbstractField
         // Store ds values to allow automatic config flushing
         $dsOld = json_encode(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
 
-        // Inherit sql data
-        if (isset($raw['sql']) && is_string($raw['sql'])) {
-            $this->getSqlBuilder()->setDefinitionFor(
-                $this->getTableName(), $this->getId(), $raw['sql']
-            );
-            unset($raw['sql']);
-        }
-
         // Load flex form configuration
-        if ($raw['config']['type'] === 'flex' && ! empty($this->flexForm)) {
+        if ($raw['config']['type'] === 'flex' && ! empty($this->flex)) {
             $dsNew = json_encode(Arrays::getPath($raw, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
             // Reset the flex configuration
             if ($dsNew !== $dsOld) {
-                $this->flexForm = null;
+                $this->flex = null;
             }
+        } elseif ($raw['config']['type'] !== 'flex') {
+            $this->flex = null;
         }
 
         return parent::setRaw($raw);
     }
-
 
     /**
      * @inheritDoc
      */
     public function getRaw(): array
     {
-        // Check if we have to build the flex form configuration
-        if ($this->flexForm && $this->isFlexForm()) {
-            $config       = $this->flexForm->__build();
-            $this->config = Arrays::merge($this->config, $config);
+        $raw = parent::getRaw();
+
+        if ($this->flex) {
+            $this->flex->dump($raw);
         }
 
-        return parent::getRaw();
+        return $raw;
     }
 
     /**
@@ -211,21 +140,33 @@ class TcaField extends AbstractField
         parent::inheritFrom($field);
 
         // Automatically inherit the SQL definition
-        $sqlBuilder = $this->getType()->getContext()->cs()->sqlBuilder;
-        $def        = $sqlBuilder->getDefinitionFor($field->getTableName(), $field->getId());
-        if (! empty($def)) {
-            $sqlBuilder->setDefinitionFor($this->getTableName(), $this->getId(), $def);
+        if (method_exists($field, 'getColumn')) {
+            ColumnAdapter::inheritConfig($this->getColumn(), $field->getColumn());
         }
     }
 
+    /**
+     * Returns the sql definition for this field
+     *
+     * @return \Doctrine\DBAL\Schema\Column
+     */
+    public function getColumn(): Column
+    {
+        return $this->getRoot()->getContext()->cs()->sqlRegistry->getColumn(
+            $this->getTableName(), $this->getForm()->getTypeName(), $this->getId()
+        );
+    }
 
     /**
-     * Internal access to the sql builder
+     * Removes this field from the sql table.
+     * You should only use this if you have a display-only field that should not store any data for itself
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableSqlBuilder
+     * @return $this
      */
-    protected function getSqlBuilder(): TableSqlBuilder
+    public function removeColumn(): self
     {
-        return $this->getType()->getContext()->cs()->sqlBuilder;
+        $this->getColumn()->setType(new FallbackType());
+
+        return $this;
     }
 }

@@ -45,7 +45,7 @@ trait TcaDataHookCollectorAddonTrait
 
         return [
             $typeCol => $this instanceof TcaField
-                ? $this->getType()->getTypeName()
+                ? $this->getForm()->getTypeName()
                 : $this->getTypeName(),
         ];
     }

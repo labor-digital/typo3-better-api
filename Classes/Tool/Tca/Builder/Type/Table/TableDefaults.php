@@ -28,7 +28,6 @@ class TableDefaults
     public const FIELD_TCA
         = [
             'exclude' => 1,
-            'sql'     => 'text',
         ];
 
     public const TYPE_TCA

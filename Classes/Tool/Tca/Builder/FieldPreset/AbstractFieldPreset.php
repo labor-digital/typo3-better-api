@@ -39,6 +39,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset;
 
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\StringType;
+use Doctrine\DBAL\Types\TextType;
 use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
@@ -426,9 +429,10 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         }
 
         // Add the mm table
-        $mmTableName = $this->context->cs()->sqlBuilder->addMmTableDefinition($this->getTcaTable()->getTableName(),
-            $fieldId, $options['mmTableName']);
-        $this->setSqlDefinitionForTcaField('int(11) DEFAULT \'0\'');
+        throw new NotImplementedException('This is not yet implemented');
+//        $mmTableName = $this->context->cs()->sqlBuilder->addMmTableDefinition($this->getTcaTable()->getTableName(),
+//            $fieldId, $options['mmTableName']);
+//        $this->configureSqlColumn('int(11) DEFAULT \'0\'');
 
         // Create the mm table configuration
         $config['MM']            = $mmTableName;
@@ -510,10 +514,15 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         }
 
         if ($addSqlStatement) {
-            // Make sure we don't create varChars that are too long...
-            $sqlType = (int)$options['maxLength'] <= 4096 ? 'varchar(' . $options['maxLength'] . ') DEFAULT \'\''
-                : 'text';
-            $this->setSqlDefinitionForTcaField($sqlType);
+            $this->configureSqlColumn(static function (Column $column) use ($options) {
+                if ((int)$options['maxLength'] <= 4096) {
+                    $column->setType(new StringType())
+                           ->setLength((int)$options['maxLength']);
+                } else {
+                    $column->setType(new TextType())
+                           ->setLength(null);
+                }
+            });
         }
 
         return $config;
@@ -556,7 +565,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         return false;
         throw new NotImplementedException();
 
-        return $this->field->getType() instanceof FlexForm;
+        return $this->field->getForm() instanceof FlexForm;
     }
 
     /**
@@ -580,9 +589,9 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     protected function getTcaTable(): TcaTable
     {
         if ($this->isFlexForm()) {
-            $form = $this->field->getType()->getContainingField()->getForm();
+            $form = $this->field->getForm()->getContainingField()->getForm();
         } else {
-            $form = $this->field->getType();
+            $form = $this->field->getForm();
         }
 
         if ($form instanceof TcaTableType) {
@@ -601,7 +610,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     {
         if ($this->isFlexForm()) {
             /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return $this->field->getType()->getContainingField();
+            return $this->field->getForm()->getContainingField();
         }
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
@@ -609,21 +618,20 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     }
 
     /**
-     * Internal helper to set the sql definition for a field. But only if said field is a tca field and not part of a
-     * flex form
+     * Helper method that executes the given callback if the current field has a "getColumn()" method
+     * meaning it can have a SQL definition.
      *
-     * @param   string  $definition
+     * @param   callable  $callback  The callback receives the column definition to configure
      *
      * @return void
+     * @see \Doctrine\DBAL\Schema\Column
      */
-    protected function setSqlDefinitionForTcaField(string $definition): void
+    protected function configureSqlColumn(callable $callback): void
     {
-        // Ignore on flex forms -> We don't require that
-        if ($this->isFlexForm()) {
-            return;
+        if (method_exists($this->field, 'getColumn')) {
+            /** @var Column $col */
+            $col = $this->field->getColumn();
+            $callback($col);
         }
-
-        // Get the tca field
-        $this->getTcaField()->setSqlDefinition($definition);
     }
 }

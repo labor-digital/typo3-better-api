@@ -21,18 +21,32 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Tree;
 
 use InvalidArgumentException;
+use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType;
 
 class Tree
 {
+    /**
+     * If this is set to true, the tree will also search for strings in tab ids.
+     * This is useful if you are working with flex form sheets
+     *
+     * @var bool
+     */
+    protected $allowTabIdStrings = false;
+
+    /**
+     * Defines the id that is used when the tree creates a new, default tab node.
+     *
+     * @var int|string
+     */
+    protected $defaultTabId = 0;
 
     /**
      * The form that is linked with this tree
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
      */
-    protected $type;
+    protected $form;
 
     /**
      * A list of form nodes by their type and their id for direct lookup
@@ -67,14 +81,14 @@ class Tree
     /**
      * FormTree constructor.
      *
-     * @param   AbstractType  $type
+     * @param   AbstractForm  $form
      * @param   string        $tabClass
      */
-    public function __construct(AbstractType $type, string $tabClass)
+    public function __construct(AbstractForm $form, string $tabClass)
     {
-        $this->type     = $type;
+        $this->form     = $form;
         $this->tabClass = $tabClass;
-        $this->root     = $type->getContext()->cs()
+        $this->root     = $form->getContext()->cs()
             ->di->getWithoutDi(
                 Node::class,
                 ['root', Node::TYPE_ROOT, $this]
@@ -84,11 +98,11 @@ class Tree
     /**
      * Returns the linked form instance
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
+     * @return AbstractForm
      */
-    public function getType(): AbstractType
+    public function getForm(): AbstractForm
     {
-        return $this->type;
+        return $this->form;
     }
 
     /**
@@ -103,7 +117,7 @@ class Tree
      */
     public function makeNewNode($id, int $type): Node
     {
-        $node = $this->type->getContext()->cs()
+        $node = $this->form->getContext()->cs()
             ->di->getWithoutDi(Node::class, [$id, $type, $this]);
 
         $parent = $type === Node::TYPE_TAB ? $this->root : $this->getDefaultNode();
@@ -169,6 +183,11 @@ class Tree
         // Check if we need to retrieve a line break
         if ($type !== Node::TYPE_CONTAINER && isset($this->nodes[Node::TYPE_NL][$id])) {
             return $this->nodes[Node::TYPE_NL][$id];
+        }
+
+        // Check if alphanumeric tab ids are allowed and we have one
+        if ($this->allowTabIdStrings && isset($this->nodes[Node::TYPE_TAB][$id])) {
+            return $this->nodes[Node::TYPE_TAB][$id];
         }
 
         // Numeric values -> this has to be a tab
@@ -401,9 +420,9 @@ class Tree
 
         // Make sure we have at least a single tab
         if (empty($this->nodes[Node::TYPE_TAB])) {
-            $node = $this->makeNewNode(0, Node::TYPE_TAB);
-            $tab  = $this->type->getContext()->cs()
-                ->di->getWithoutDi($this->tabClass, [$node, $this->type]);
+            $node = $this->makeNewNode($this->defaultTabId, Node::TYPE_TAB);
+            $tab  = $this->form->getContext()->cs()
+                ->di->getWithoutDi($this->tabClass, [$node, $this->form]);
 
             if ($tab instanceof AbstractTab) {
                 $tab->setLabel('betterApi.tab.general');
@@ -424,5 +443,54 @@ class Tree
     public function getRootNode(): Node
     {
         return $this->root;
+    }
+
+    /**
+     * Returns true if alpha numeric strings can be resolve to tab ids, false if only numeric tab ids are allowed
+     *
+     * @return bool
+     */
+    public function isAllowTabIdStrings(): bool
+    {
+        return $this->allowTabIdStrings;
+    }
+
+    /**
+     * Allows the outside world to change the tab id lookup behaviour. By default only numeric tab ids are allowed,
+     * if this is set to true alphanumeric strings are allowed to
+     *
+     * @param   bool  $allowTabIdStrings
+     *
+     * @return Tree
+     */
+    public function setAllowTabIdStrings(bool $allowTabIdStrings): Tree
+    {
+        $this->allowTabIdStrings = $allowTabIdStrings;
+
+        return $this;
+    }
+
+    /**
+     * Returns the tab id that is used when the tree is forced to create a new tab. Default: 0
+     *
+     * @return int|string
+     */
+    public function getDefaultTabId()
+    {
+        return $this->defaultTabId;
+    }
+
+    /**
+     * Allows you to modify the default tab id that is created when the tree needs to forcefully create an initial tab
+     *
+     * @param   int|string  $defaultTabId
+     *
+     * @return Tree
+     */
+    public function setDefaultTabId($defaultTabId)
+    {
+        $this->defaultTabId = $defaultTabId;
+
+        return $this;
     }
 }

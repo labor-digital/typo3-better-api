@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
 
 
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSheet;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractTypeList
@@ -71,7 +72,7 @@ abstract class AbstractTypeList
      *
      * @param   string|int|null  $typeName
      *
-     * @return TcaTableType
+     * @return AbstractType|TcaTableType
      */
     public function getType($typeName = null): AbstractType
     {
@@ -105,7 +106,7 @@ abstract class AbstractTypeList
      */
     public function getTypeNames(): array
     {
-        return array_unique(array_merge(array_keys($this->types), $this->getDefinedTypeNames()));
+        return array_keys($this->types);
     }
 
     /**
@@ -152,8 +153,8 @@ abstract class AbstractTypeList
     /**
      * Adds a new type to the list of loaded types
      *
-     * @param   int|string                                              $typeName
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType  $type
+     * @param   int|string    $typeName
+     * @param   AbstractType  $type
      *
      * @return $this
      */
@@ -165,9 +166,9 @@ abstract class AbstractTypeList
     }
 
     /**
-     * Returns the list of all types inside this table
+     * Returns the list of all types
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType[]
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType[]
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
      */
@@ -193,13 +194,4 @@ abstract class AbstractTypeList
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
      */
     abstract protected function loadType($typeName): AbstractType;
-
-    /**
-     * This method must be implemented by the child class and provide
-     * the list of all available type names. Newly defined typeNames will be added automatically
-     * and don't have to be handled by this method.
-     *
-     * @return array
-     */
-    abstract protected function getDefinedTypeNames(): array;
 }

@@ -1,0 +1,247 @@
+<?php
+/*
+ * Copyright 2021 LABOR.digital
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Last modified: 2021.02.08 at 14:47
+ */
+
+declare(strict_types=1);
+
+
+namespace LaborDigital\T3BA\Tool\Sql;
+
+
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
+use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\EventHandler\SqlEventHandler;
+use LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor;
+use LaborDigital\T3BA\Tool\Sql\Io\Dumper;
+use LaborDigital\T3BA\Tool\Sql\Io\TableAdapter;
+use TYPO3\CMS\Core\Database\Schema\SchemaMigrator;
+use TYPO3\CMS\Core\Database\Schema\SqlReader;
+use TYPO3\CMS\Core\SingletonInterface;
+
+class SqlRegistry implements SingletonInterface
+{
+    public const FALLBACK_TYPE_NAME       = 'sql_registry_fallback';
+    public const TABLE_OVERRIDE_TYPE_NAME = 'sql_registry_table_type';
+
+    use ContainerAwareTrait;
+
+    /**
+     * @var \TYPO3\CMS\Core\Database\Schema\SqlReader
+     */
+    protected $reader;
+
+    /**
+     * @var \TYPO3\CMS\Core\Database\Schema\SchemaMigrator
+     */
+    protected $migrator;
+
+    /**
+     * @var \LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor
+     */
+    protected $processor;
+
+    /**
+     * @var \LaborDigital\T3BA\Tool\Sql\Io\Dumper
+     */
+    protected $dumper;
+
+    /**
+     * @var \LaborDigital\T3BA\Tool\Sql\Definition
+     */
+    protected $definition;
+
+    /**
+     * Registry constructor.
+     *
+     * @param   \TYPO3\CMS\Core\Database\Schema\SqlReader           $reader
+     * @param   \TYPO3\CMS\Core\Database\Schema\SchemaMigrator      $migrator
+     * @param   \LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor  $processor
+     * @param   \LaborDigital\T3BA\Tool\Sql\Io\Dumper               $dumper
+     */
+    public function __construct(
+        SqlReader $reader,
+        SchemaMigrator $migrator,
+        DefinitionProcessor $processor,
+        Dumper $dumper
+    ) {
+        $this->reader    = $reader;
+        $this->migrator  = $migrator;
+        $this->processor = $processor;
+        $this->dumper    = $dumper;
+
+        // Register fallback if required
+        $reg = Type::getTypeRegistry();
+        if (! $reg->has(self::FALLBACK_TYPE_NAME)) {
+            $reg->register(self::FALLBACK_TYPE_NAME, new FallbackType());
+        }
+    }
+
+    /**
+     * Returns the doctrine schema object for a single database table
+     *
+     * @param   string  $tableName
+     *
+     * @return \Doctrine\DBAL\Schema\Table
+     */
+    public function getTable(string $tableName): Table
+    {
+        $this->loadDefinition();
+
+        if (! isset($this->definition->tables[$tableName])) {
+            $this->definition->newTableNames[]    = $tableName;
+            $this->definition->tables[$tableName] = $this->getWithoutDi(Table::class, [
+                $tableName,
+                [],
+                [],
+                [],
+                0,
+                [],
+            ]);
+        }
+
+        return $this->definition->tables[$tableName];
+    }
+
+    /**
+     * Returns the doctrine schema object for a single "type" of a table.
+     * This is mostly used in the TCA builder.
+     *
+     * Each table type (in TYPO3 terms) has it's own SQL representation by a clone of the
+     * default table definition that got loaded based on the ext_table.sql files of all loaded extensions.
+     *
+     * These types will then be merged (hopefully quite intelligently) back into a single table object
+     * that is used for the SQL statement generation.
+     *
+     * @param   string      $tableName
+     * @param   string|int  $typeName
+     *
+     * @return \Doctrine\DBAL\Schema\Table|mixed
+     */
+    public function getType(string $tableName, $typeName): Table
+    {
+        $this->loadDefinition();
+
+        if (! isset($this->definition->types[$tableName][$typeName])) {
+            if ($typeName === static::TABLE_OVERRIDE_TYPE_NAME) {
+                $table = $this->getTable($tableName);
+                $type  = new TableOverride($tableName, [], $table->getIndexes(), $table->getForeignKeys());
+            } else {
+                $type = clone $this->getTable($tableName);
+            }
+
+            $this->definition->types[$tableName][$typeName] = $type;
+        }
+
+        return $this->definition->types[$tableName][$typeName];
+    }
+
+    /**
+     * This is a TCA builder special case. The table object itself provides the author with the option
+     * to access the SQL table definition. This is useful to register indexes or foreign keys for the table,
+     * which is done on a global scale and not on a per-field basis.
+     *
+     * @param   string  $tableName
+     *
+     * @return \LaborDigital\T3BA\Tool\Sql\TableOverride
+     */
+    public function getTableOverride(string $tableName): TableOverride
+    {
+        return $this->getType($tableName, static::TABLE_OVERRIDE_TYPE_NAME);
+    }
+
+    /**
+     * Returns a single column object representing a unique column of a specified type
+     *
+     * @param   string  $tableName
+     * @param           $typeName
+     * @param   string  $fieldName
+     *
+     * @return \Doctrine\DBAL\Schema\Column
+     */
+    public function getColumn(string $tableName, $typeName, string $fieldName): Column
+    {
+        $type = $this->getType($tableName, $typeName);
+        if (! $type->hasColumn($fieldName)) {
+            $type->addColumn($fieldName, static::FALLBACK_TYPE_NAME);
+        }
+
+        return $type->getColumn($fieldName);
+    }
+
+    /**
+     * Dumps the collected TCA changes into a single SQL string.
+     * NOTE: This is a HEAVY operation that is not cached. Please use it with care!
+     *
+     * @return string
+     */
+    public function dump(): string
+    {
+        return $this->dumper->dump(
+            $this->processor->findTableDiff($this->definition)
+        );
+    }
+
+    /**
+     * Flushes the complete definition object and resets the registry
+     */
+    public function clear(): void
+    {
+        $this->definition = null;
+    }
+
+    /**
+     * Removes all changed sql definitions for a specific table.
+     * This will reset the table definition to the configuration loaded from the ext_tables.sql files
+     *
+     * @param   string  $tableName
+     */
+    public function clearTable(string $tableName): void
+    {
+        unset($this->definition->types[$tableName]);
+    }
+
+    /**
+     * Makes sure the definition object exists and is initialized.
+     * It will also load all sql strings and create table instances for them.
+     */
+    protected function loadDefinition(): void
+    {
+        if ($this->definition) {
+            return;
+        }
+
+        SqlEventHandler::$enabled = false;
+        $definition               = $this->reader->getTablesDefinitionString(false);
+        SqlEventHandler::$enabled = true;
+        $statements               = $this->reader->getStatementArray($definition);
+        $rawTables                = $this->migrator->parseCreateTableStatements($statements);
+
+        $tables = [];
+        foreach ($rawTables as $table) {
+            if (! isset($tables[$table->getName()])) {
+                $tables[$table->getName()] = $table;
+            } else {
+                TableAdapter::mergeTables($tables[$table->getName()], $table);
+            }
+        }
+
+        $this->definition = $this->getWithoutDi(Definition::class, [$tables]);
+    }
+}

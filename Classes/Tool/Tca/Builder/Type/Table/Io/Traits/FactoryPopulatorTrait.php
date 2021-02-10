@@ -163,7 +163,7 @@ trait FactoryPopulatorTrait
      * @param   array                                                                     $layoutMeta
      * @param   string                                                                    $id
      * @param   array                                                                     $cols
-     * @param   string                                                                    $config
+     * @param   string                                                                    $showItem
      */
     protected function populatePalette(
         TcaTableType $type,
@@ -171,9 +171,9 @@ trait FactoryPopulatorTrait
         array $layoutMeta,
         string $id,
         array $cols,
-        string $config
+        string $showItem
     ): void {
-        $target->addMultiple(function () use ($type, $id, $layoutMeta, $cols, $config) {
+        $target->addMultiple(function () use ($type, $id, $layoutMeta, $cols, $showItem) {
             $i = $type->getPalette($id);
             $i->setLayoutMeta($layoutMeta);
 
@@ -181,7 +181,7 @@ trait FactoryPopulatorTrait
                 $i->setLabel($layoutMeta[0]);
             }
 
-            foreach ($this->parseShowItemString($config) as $_layoutMeta) {
+            foreach ($this->parseShowItemString($showItem) as $_layoutMeta) {
                 $_id = reset($_layoutMeta);
 
                 // Handle non-configured fields
@@ -209,7 +209,7 @@ trait FactoryPopulatorTrait
     }
 
     /**
-     * Internal helper to create a new field in the table instance with the inherited config applied to it.
+     * Internal helper to create a new field in the table instance with the provided config applied to it.
      *
      * @param   TcaTableType                    $type
      * @param   FormElementContainingInterface  $target

@@ -32,10 +32,10 @@ use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
-use TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -82,7 +82,6 @@ class ConfigureTcaTableApplier extends AbstractExtConfigApplier
         $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(ExtTablesLoadedEvent::class, 'onExtTablesLoaded');
         $subscription->subscribe(ExtBasePersistenceRegistrationEvent::class, 'onPersistenceRegistration');
-        $subscription->subscribe(AlterTableDefinitionStatementsEvent::class, 'onSqlTableDefinitions');
     }
 
     /**
@@ -126,6 +125,7 @@ class ConfigureTcaTableApplier extends AbstractExtConfigApplier
      */
     public function onTcaLoad(): void
     {
+        $this->container->get(SqlRegistry::class)->clear();
         $this->loadTableConfig(false);
     }
 
@@ -142,11 +142,6 @@ class ConfigureTcaTableApplier extends AbstractExtConfigApplier
         $this->applyDefaults();
     }
 
-    public function onSqlTableDefinitions(AlterTableDefinitionStatementsEvent $e): void
-    {
-        $e->addSqlData($this->state->get('tca.meta.sql', ''));
-    }
-
     /**
      * Internal helper to load the tca definitions from the ext config classes
      *
@@ -154,7 +149,10 @@ class ConfigureTcaTableApplier extends AbstractExtConfigApplier
      */
     protected function loadTableConfig(bool $overrides): void
     {
-        $loader = $this->extConfigService->makeLoader($overrides ? 'TcaTables' : 'TcaTablesOverrides');
+        $loader = $this->extConfigService->makeLoader(
+            $overrides ? ExtConfigService::TCA_OVERRIDE_LOADER_KEY
+                : ExtConfigService::TCA_LOADER_KEY);
+
         $loader->clearHandlerLocations();
         $loader->setContainer($this->container);
         $loader->setCache(null);

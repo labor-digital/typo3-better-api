@@ -106,11 +106,11 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder;
 
 /**
- * ATTENTION: This a autocomplete helper! It will only be generated in a development environment!
+ * ATTENTION: This is a autocomplete helper! It will only be generated in a development environment!
  * It is also not autoloadable and therefore not considered part of the active code-base!
  * DON\'T USE THIS IN YOUR CODE!
  *
- * IF YOU TELL ME YOUR CODE BROKE BECAUSE YOU USED IT SOMEWHERE - I\'M GONNA LAUGH AT YOU!
+ * IF YOU TELL ME YOUR CODE BROKE, BECAUSE YOU USED IT SOMEWHERE - I\'M GONNA LAUGH AT YOU!
  */
 interface FieldPresetAutocompleteHelper {
 

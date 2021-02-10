@@ -239,12 +239,9 @@ class Node
      * Adds a given node as a child of this node
      *
      * @param   Node       $node            The node to add
-     * @param   int        $insertMode      One of FormNode::INSERT_MODE_ to
-     *                                      determine where to place the
-     *                                      $nodeToMove in relation to
-     *                                      $pivotNode
-     * @param   Node|null  $pivotNode       The node to use as relation for
-     *                                      $insertMode. This is optional.
+     * @param   int        $insertMode      One of Node::INSERT_MODE_ to determine where to place the
+     *                                      $nodeToMove in relation to $pivotNode
+     * @param   Node|null  $pivotNode       The node to use as relation for $insertMode. This is optional.
      */
     public function addChild(
         Node $node,
@@ -272,7 +269,7 @@ class Node
             $keys     = array_keys($this->children);
             $values   = $this->children;
             $position = array_search($pivotNode->getId(), $keys, true);
-            $position += static::INSERT_MODE_BEFORE ? 0 : 1;
+            $position += $insertMode === static::INSERT_MODE_BEFORE ? 0 : 1;
             array_splice($keys, $position, 0, $node->getId());
             array_splice($values, $position, 0, [$node]);
             $this->children = array_combine($keys, $values);

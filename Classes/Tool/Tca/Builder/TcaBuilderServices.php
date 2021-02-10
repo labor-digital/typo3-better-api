@@ -25,7 +25,9 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder;
 
 use LaborDigital\T3BA\Core\DependencyInjection\CommonServices;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableSqlBuilder;
+use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 
@@ -34,9 +36,11 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
  *
  * @package LaborDigital\T3BA\Tool\Tca\Builder
  *
- * @property ExtConfigContext                                                  $extConfigContext
- * @property DependencyInjectionFacet                                          $di
- * @property \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableSqlBuilder $sqlBuilder
+ * @property ExtConfigContext         $extConfigContext
+ * @property DependencyInjectionFacet $di
+ * @property SqlRegistry              $sqlRegistry
+ * @property Factory                  $flexFormFactory
+ * @property Dumper                   $flexFormDumper
  */
 class TcaBuilderServices extends CommonServices
 {
@@ -56,7 +60,9 @@ class TcaBuilderServices extends CommonServices
         // Register static instances
         $this->def['extConfigContext'] = [$extConfigContext];
         $this->def['di']               = [TypoContext::getInstance()->di()];
-        $this->def['sqlBuilder']       = [TableSqlBuilder::class];
+        $this->def['sqlRegistry']      = [SqlRegistry::class];
+        $this->def['flexFormFactory']  = [Factory::class];
+        $this->def['flexFormDumper']   = [Dumper::class];
     }
 
 

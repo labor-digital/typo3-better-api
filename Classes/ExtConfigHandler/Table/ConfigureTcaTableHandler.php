@@ -27,8 +27,10 @@ use LaborDigital\T3BA\ExtConfig\AbstractGroupExtConfigHandler;
 use LaborDigital\T3BA\ExtConfig\ExtConfigException;
 use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableDumper;
+use LaborDigital\T3BA\Tool\Sql\Io\Dumper as SqlDumper;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 
@@ -41,7 +43,7 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
     protected $tableFactory;
 
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableDumper
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper
      */
     protected $tableDumper;
 
@@ -65,11 +67,23 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
      * @var bool
      */
     protected $loadOverrides = false;
+    /**
+     * @var \LaborDigital\T3BA\Tool\Sql\Io\Dumper
+     */
+    protected $sqlDumper;
 
-    public function __construct(TableFactory $tableFactory, TableDumper $tableDumper)
+    /**
+     * ConfigureTcaTableHandler constructor.
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory  $tableFactory
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper        $tableDumper
+     * @param   \LaborDigital\T3BA\Tool\Sql\Io\Dumper                           $sqlDumper
+     */
+    public function __construct(TableFactory $tableFactory, Dumper $tableDumper, SqlDumper $sqlDumper)
     {
         $this->tableFactory = $tableFactory;
         $this->tableDumper  = $tableDumper;
+        $this->sqlDumper    = $sqlDumper;
     }
 
     /**
@@ -176,6 +190,12 @@ class ConfigureTcaTableHandler extends AbstractGroupExtConfigHandler implements 
     public function handleGroupItem(string $class): void
     {
         if ($this->table) {
+            // Make sure to reset the field id issue handling, so we throw an exception in the next configurator
+            array_map(
+                static function (TcaTableType $type) { $type->ignoreFieldIdIssues(false); },
+                $this->table->getLoadedTypes()
+            );
+
             call_user_func([$class, 'configureTable'], $this->table, $this->context);
         }
     }

@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\FormEngine\FieldPreset;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
 use Neunerlei\Arrays\Arrays;
@@ -131,7 +133,11 @@ class RelationPreset extends AbstractFieldPreset
         $GLOBALS['TCA'] = Arrays::setPath($GLOBALS, $path, $fieldList)['TCA'];
 
         // Set the sql
-        $this->setSqlDefinitionForTcaField('int(11) DEFAULT \'0\'');
+        $this->configureSqlColumn(static function (Column $column) {
+            $column->setType(new IntegerType())
+                   ->setLength(11)
+                   ->setDefault(0);
+        });
 
         // Set the field
         $this->field->addConfig($config);
@@ -366,7 +372,11 @@ class RelationPreset extends AbstractFieldPreset
             ]);
 
             // Set sql for field
-            $this->setSqlDefinitionForTcaField('int(11) DEFAULT \'0\'');
+            $this->configureSqlColumn(static function (Column $column) {
+                $column->setType(new IntegerType())
+                       ->setLength(11)
+                       ->setDefault(0);
+            });
         }
 
         // Add base dir if not empty

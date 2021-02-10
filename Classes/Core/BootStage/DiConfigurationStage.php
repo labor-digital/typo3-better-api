@@ -175,7 +175,7 @@ class DiConfigurationStage implements BootStageInterface
     {
         /** @var ExtConfigService $extConfigService */
         $extConfigService = $this->container->get(ExtConfigService::class);
-        $loader           = $extConfigService->makeLoader('di');
+        $loader           = $extConfigService->makeLoader(ExtConfigService::DI_LOADER_KEY);
         $loader->setContainer($this->container);
         $loader->clearHandlerLocations();
         $handler = new ConfigureDependencyInjectionHandler();

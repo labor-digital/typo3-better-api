@@ -22,6 +22,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\FormEngine\FieldPreset;
 
 use DateTime;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\DateTimeType;
+use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 use Neunerlei\TinyTimy\DateTimy;
@@ -116,11 +119,17 @@ class InputFieldPreset extends AbstractFieldPreset
         );
 
         // Set sql statement
-        $this->setSqlDefinitionForTcaField(
-            $options['asInt']
-                ? 'int(11) DEFAULT \'0\''
-                : 'datetime DEFAULT \'CURRENT_TIMESTAMP\''
-        );
+        $this->configureSqlColumn(static function (Column $column) use ($options) {
+            if ($options['asInt']) {
+                $column->setType(new IntegerType())
+                       ->setLength(10)
+                       ->setDefault(0);
+            } else {
+                $column
+                    ->setType(new DateTimeType())
+                    ->setDefault('CURRENT_TIMESTAMP');
+            }
+        });
 
         // Prepare the config
         $config = ['type' => 'input'];
@@ -304,7 +313,7 @@ class InputFieldPreset extends AbstractFieldPreset
             $config['renderType'] = 'betterApiPathSegmentSlug';
         }
         $config = $this->addEvalConfig($config, $options);
-        $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048]);
+        $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048], true);
 
         // Inject the field configuration
         $this->field->addConfig($config);

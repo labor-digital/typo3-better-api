@@ -94,7 +94,7 @@ class ClassOverrideGenerator
         static::$initDone = true;
 
         // Create local references
-        static::$fs          = TempFs::makeInstance('classOverrides');
+        static::$fs          = TempFs::makeInstance('ClassOverrides');
         static::$classLoader = $composerClassLoader;
 
         // Register autoload hook

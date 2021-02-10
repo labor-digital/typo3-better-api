@@ -35,6 +35,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExtConfigService implements SingletonInterface
 {
+    public const MAIN_LOADER_KEY         = 'ExtConfigMain';
+    public const EVENT_BUS_LOADER_KEY    = 'EventBus';
+    public const DI_LOADER_KEY           = 'Di';
+    public const TCA_LOADER_KEY          = 'Tca';
+    public const TCA_OVERRIDE_LOADER_KEY = 'TcaOverride';
+
     /**
      * The list of default handler locations to traverse.
      * This is a public "api" and can be extended if you need to

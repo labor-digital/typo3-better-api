@@ -36,9 +36,9 @@ abstract class AbstractField extends AbstractElement
     /**
      * @inheritDoc
      */
-    public function __construct(Node $node, AbstractType $type)
+    public function __construct(Node $node, AbstractForm $form)
     {
-        parent::__construct($node, $type);
+        parent::__construct($node, $form);
     }
 
     /**
@@ -191,7 +191,7 @@ abstract class AbstractField extends AbstractElement
      */
     public function applyPreset()
     {
-        $context = $this->type->getContext();
+        $context = $this->form->getContext();
         /** @var FieldPresetApplier $applier */
         $applier = $context->parent()->getTypoContext()->di()->getInstanceOf(FieldPresetApplier::class);
         $applier->configureField($this, $context);
@@ -219,7 +219,7 @@ abstract class AbstractField extends AbstractElement
 
         // Transform some keys into real typo3 translation keys
         // Because typo does not handle those elements using the default translation method...
-        $translator   = $this->type->getContext()->cs()->translator;
+        $translator   = $this->form->getContext()->cs()->translator;
         $raw['label'] = $translator->getLabelKey($this->getLabel());
         if (is_array($raw['config'])) {
             foreach (['default', 'placeholder'] as $k) {

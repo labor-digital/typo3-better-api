@@ -56,7 +56,7 @@ class EventHandlerRegistrationStage implements BootStageInterface
         // Run the event bus loader
         $container = $event->getContainer();
         $eventBus  = $container->get(TypoEventBus::class);
-        $loader    = $container->get(ExtConfigService::class)->makeLoader('eventBus');
+        $loader    = $container->get(ExtConfigService::class)->makeLoader(ExtConfigService::EVENT_BUS_LOADER_KEY);
         $loader->setContainer($container);
         $loader->clearHandlerLocations();
         $loader->registerHandler(new ConfigureEventSubscribersHandler($eventBus));

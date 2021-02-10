@@ -52,7 +52,7 @@ class TemplateRenderingService implements SingletonInterface
      */
     public function __construct()
     {
-        $this->fs = TempFs::makeInstance('templateRendering');
+        $this->fs = TempFs::makeInstance('TemplateRendering');
     }
 
     /**

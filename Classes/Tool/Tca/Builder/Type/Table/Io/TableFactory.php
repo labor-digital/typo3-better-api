@@ -28,6 +28,7 @@ use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
 use LaborDigital\T3BA\Event\Tca\TableDefaultTcaFilterEvent;
 use LaborDigital\T3BA\Event\Tca\TableFactoryTcaFilterEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
@@ -44,13 +45,20 @@ class TableFactory implements PublicServiceInterface
     protected $typeFactory;
 
     /**
+     * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
+     */
+    protected $sqlRegistry;
+
+    /**
      * TableFactory constructor.
      *
      * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory  $typeFactory
+     * @param   \LaborDigital\T3BA\Tool\Sql\SqlRegistry                        $sqlRegistry
      */
-    public function __construct(TypeFactory $typeFactory)
+    public function __construct(TypeFactory $typeFactory, SqlRegistry $sqlRegistry)
     {
         $this->typeFactory = $typeFactory;
+        $this->sqlRegistry = $sqlRegistry;
     }
 
     /**
@@ -89,6 +97,9 @@ class TableFactory implements PublicServiceInterface
         // ... or find the default tca
         if (empty($tca)) {
             $tca = $this->generateDefaultTca($table);
+
+            // Make sure new tables are registered in the SQL generation
+            $this->sqlRegistry->getTable($table->getTableName());
         }
 
         // Allow filtering
@@ -122,7 +133,11 @@ class TableFactory implements PublicServiceInterface
         $default['ctrl']['title'] = Inflector::toHuman(
             preg_replace('/^(.*?_domain_model_)/', '', $tableName)
         );
-        $ctx->cs()->typoContext->path()->getExtensionIconPath($ctx->parent()->getExtKey());
+
+        $default['ctrl']['iconfile']
+            = $this->cs()->typoContext->path()->getExtensionIconPath(
+            $ctx->parent()->getExtKey());
+
         $default['columns']['l10n_parent']['config']['foreign_table']       = $tableName;
         $default['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace(
             '{{table}}',

@@ -83,12 +83,10 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
      */
     public function onBeforeConfigLoad(BeforeConfigLoadEvent $event): void
     {
-        if ($this->configStateInjected || $event->getLoaderContext()->type !== 'ExtConfigMain') {
-            return;
+        if (! $this->configStateInjected && $event->getLoaderContext()->type === ExtConfigService::MAIN_LOADER_KEY) {
+            $this->configStateInjected = true;
+            $this->container->set(ConfigState::class, $event->getLoaderContext()->configContext->getState());
         }
-
-        $this->configStateInjected = true;
-        $this->container->set(ConfigState::class, $event->getLoaderContext()->configContext->getState());
     }
 
     /**
@@ -98,7 +96,7 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
      */
     public function onAfterConfigLoad(AfterConfigLoadEvent $event): void
     {
-        if ($event->getLoaderContext()->type === 'ExtConfigMain') {
+        if ($event->getLoaderContext()->type === ExtConfigService::MAIN_LOADER_KEY) {
             $this->container->set(ConfigState::class, $event->getState());
         }
     }
@@ -108,10 +106,9 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
      */
     public function onExtConfigLoaded(): void
     {
-        $loader = $this->configService->makeLoader('ExtConfigMain');
+        $loader = $this->configService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
         $loader->setHandlerFinder(new FilteredHandlerFinder([StandAloneHandlerInterface::class], []));
         $loader->setContainer($this->container);
-        $loader->setCache(null); // @todo remove this
         $loader->load();
     }
 

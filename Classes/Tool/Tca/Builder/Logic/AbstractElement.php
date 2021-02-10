@@ -39,9 +39,9 @@ abstract class AbstractElement
     /**
      * The form this element is part of
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
+     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
      */
-    protected $type;
+    protected $form;
 
     /**
      * Contains the label for the tab
@@ -54,12 +54,12 @@ abstract class AbstractElement
      * AbstractFormElement constructor.
      *
      * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node           $node
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType  $type
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm  $form
      */
-    public function __construct(Node $node, AbstractType $type)
+    public function __construct(Node $node, AbstractForm $form)
     {
         $this->node = $node;
-        $this->type = $type;
+        $this->form = $form;
     }
 
     /**
@@ -89,13 +89,13 @@ abstract class AbstractElement
      * Returns the parent element of this element.
      * Either the form, a tab or a container element.
      *
-     * @return AbstractType|AbstractElement
+     * @return AbstractForm|AbstractType|AbstractElement
      */
     public function getParent()
     {
         // Return the form if this element is a tab
         if ($this->node->isTab()) {
-            return $this->type;
+            return $this->form;
         }
 
         // Return the parent element
@@ -105,21 +105,21 @@ abstract class AbstractElement
     /**
      * Returns the instance of the type this element is part of
      *
-     * @return AbstractType|TcaTableType|FlexFormSheet
+     * @return AbstractForm|AbstractType|TcaTableType
      */
-    public function getType()
+    public function getForm()
     {
-        return $this->type;
+        return $this->form;
     }
 
     /**
      * Returns the instance of the root element that holds the elements type
      *
-     * @return AbstractTypeList|FlexForm|TcaTable
+     * @return AbstractTypeList|TcaTable
      */
     public function getRoot()
     {
-        return $this->type->getParent();
+        return $this->form->getRoot();
     }
 
     /**

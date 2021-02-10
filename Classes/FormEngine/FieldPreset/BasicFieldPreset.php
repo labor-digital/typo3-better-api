@@ -21,6 +21,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\FormEngine\FieldPreset;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\StringType;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 
@@ -78,7 +81,12 @@ class BasicFieldPreset extends AbstractFieldPreset
         }
 
         // Set sql config
-        $this->setSqlDefinitionForTcaField('tinyint(4) DEFAULT \'0\'');
+        $this->configureSqlColumn(static function (Column $column) {
+            $column
+                ->setType(new IntegerType())
+                ->setLength(4)
+                ->setDefault(0);
+        });
 
         // Done
         $this->field->addConfig($config);
@@ -246,7 +254,11 @@ class BasicFieldPreset extends AbstractFieldPreset
         }
         $config = $this->addMinMaxItemConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
-        $this->setSqlDefinitionForTcaField('varchar(1024) DEFAULT \'\'');
+        $this->configureSqlColumn(static function (Column $column) {
+            $column->setType(new StringType())
+                   ->setLength(1024)
+                   ->setDefault('');
+        });
 
         // Set the field
         $this->field->addConfig($config);

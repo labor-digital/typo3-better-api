@@ -28,15 +28,14 @@ use LaborDigital\T3BA\Event\Tca\TableDumperAfterBuildEvent;
 use LaborDigital\T3BA\Event\Tca\TableDumperBeforeBuildEvent;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperDataHookTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperGenericTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTableTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTypeGeneratorTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
-class TableDumper
+class Dumper
 {
     use DumperGenericTrait;
     use DumperTypeGeneratorTrait;
-    use DumperTableTrait;
     use DumperDataHookTrait;
 
     /**
@@ -54,9 +53,6 @@ class TableDumper
         $this->eventBus = $eventBus;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function dump(TcaTable $table): array
     {
         $this->eventBus->dispatch(new TableDumperBeforeBuildEvent($table));
@@ -75,6 +71,11 @@ class TableDumper
                 continue;
             }
 
+            // Ignore invalid types
+            if (! $type instanceof TcaTableType) {
+                continue;
+            }
+
             $typeName = $type->getTypeName();
             $typeTca  = $this->dumpTcaTypeVariant($type);
             $this->extractDataHooksFromTca($typeTca);
@@ -87,8 +88,6 @@ class TableDumper
         }
 
         $this->injectDataHooksIntoTca($tca);
-
-        $this->dumpSql($table, $tca);
 
         $this->eventBus->dispatch($e = new TableDumperAfterBuildEvent($tca, $table));
         $tca = $e->getTca();
