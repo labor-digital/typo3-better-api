@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\TypoScript;
 
 
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
 use SplFileInfo;
@@ -33,7 +33,7 @@ class DynamicTypoScriptRegistry implements SingletonInterface
 {
 
     /**
-     * @var \LaborDigital\T3BA\Core\TempFs\TempFs
+     * @var \LaborDigital\T3BA\Core\VarFs\VarFs
      */
     protected $fs;
 
@@ -48,10 +48,11 @@ class DynamicTypoScriptRegistry implements SingletonInterface
      * DynamicTypoScriptRegistry constructor.
      *
      * @param   \Neunerlei\Configuration\State\ConfigState  $configState
+     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs         $fs
      */
-    public function __construct(ConfigState $configState)
+    public function __construct(ConfigState $configState, VarFs $fs)
     {
-        $this->fs       = TempFs::makeInstance('DynamicTypoScript');
+        $this->fs       = $fs->getMount('DynamicTypoScript');
         $this->contents = (array)$configState->get('typo.typoScript.dynamicTypoScript', []);
     }
 

@@ -59,7 +59,7 @@ class ClassOverrideStage implements BootStageInterface
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
-        ClassOverrideGenerator::init($kernel->getClassLoader());
+        ClassOverrideGenerator::init($kernel->getClassLoader(), $kernel->getFs()->getMount('ClassOverrides'));
         $eventBus->addListener(KernelBootEvent::class, [$this, 'onKernelBoot']);
     }
 

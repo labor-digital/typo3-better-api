@@ -23,46 +23,37 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonServices;
+use LaborDigital\T3BA\Core\Di\CommonServices;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class TcaBuilderServices
  *
  * @package LaborDigital\T3BA\Tool\Tca\Builder
  *
- * @property ExtConfigContext         $extConfigContext
- * @property DependencyInjectionFacet $di
- * @property SqlRegistry              $sqlRegistry
- * @property Factory                  $flexFormFactory
- * @property Dumper                   $flexFormDumper
+ * @property ExtConfigContext $extConfigContext
+ * @property SqlRegistry      $sqlRegistry
+ * @property Factory          $flexFormFactory
+ * @property Dumper           $flexFormDumper
  */
 class TcaBuilderServices extends CommonServices
 {
     /**
      * @inheritDoc
      */
-    public function __construct(ExtConfigContext $extConfigContext)
+    public function __construct(ContainerInterface $container, ExtConfigContext $extConfigContext)
     {
-        parent::__construct();
-
-        // Allow static instance lookup
-        $generator       = $this->generator;
-        $this->generator = static function ($i, bool $new = false) use ($generator) {
-            return is_object($i) ? $i : $generator($i, $new);
-        };
+        parent::__construct($container);
 
         // Register static instances
-        $this->def['extConfigContext'] = [$extConfigContext];
-        $this->def['di']               = [TypoContext::getInstance()->di()];
-        $this->def['sqlRegistry']      = [SqlRegistry::class];
-        $this->def['flexFormFactory']  = [Factory::class];
-        $this->def['flexFormDumper']   = [Dumper::class];
+        $this->def['extConfigContext'] = $extConfigContext;
+        $this->def['sqlRegistry']      = SqlRegistry::class;
+        $this->def['flexFormFactory']  = Factory::class;
+        $this->def['flexFormDumper']   = Dumper::class;
     }
 
 

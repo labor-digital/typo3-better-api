@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Page;
 
-use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
@@ -62,12 +62,12 @@ class ExtendedRootLineUtility extends RootlineUtility
             ],
         ]);
 
-        $instance = static::getWithoutDi(
+        $instance = static::makeInstance(
             RootlineUtility::class,
             [
                 $pageId,
                 $options['mountPoint'],
-                static::getInstanceOf(TypoContext::class)->getRootContext(),
+                static::getService(TypoContext::class)->getRootContext(),
             ]
         );
 

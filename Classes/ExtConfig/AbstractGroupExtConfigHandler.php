@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use Neunerlei\Configuration\Handler\AbstractGroupConfigHandler;
 use Neunerlei\PathUtil\Path;
 

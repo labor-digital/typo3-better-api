@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Traits;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonServices;
+use LaborDigital\T3BA\Core\Di\CommonServices;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\GeneralUtilityAdapter;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException;

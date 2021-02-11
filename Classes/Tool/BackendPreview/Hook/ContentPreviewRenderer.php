@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\BackendPreview\Hook;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3BA\Tool\Translation\Translator;
@@ -87,7 +87,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
             return $this->event;
         }
 
-        $this->getInstanceOf(TypoEventBus::class)->dispatch($this->event = new PreviewRenderingEvent(
+        $this->getService(TypoEventBus::class)->dispatch($this->event = new PreviewRenderingEvent(
             $item, $this->makeUtilsInstance($item)
         ));
 
@@ -104,7 +104,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
      */
     protected function makeUtilsInstance(GridColumnItem $item): BackendPreviewUtils
     {
-        return $this->getWithoutDi(BackendPreviewUtils::class, [
+        return $this->makeInstance(BackendPreviewUtils::class, [
             [
                 'renderDefaultHeader'  => function () use ($item) {
                     return parent::renderPageModulePreviewHeader($item);
@@ -135,7 +135,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
      */
     protected function renderFieldList(GridColumnItem $item, array $fields): string
     {
-        $translator = $this->getInstanceOf(Translator::class);
+        $translator = $this->getService(Translator::class);
         $data       = $item->getRecord();
         $result     = [];
         foreach ($fields as $field) {

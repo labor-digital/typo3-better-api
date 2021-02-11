@@ -42,7 +42,7 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\StringType;
 use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;

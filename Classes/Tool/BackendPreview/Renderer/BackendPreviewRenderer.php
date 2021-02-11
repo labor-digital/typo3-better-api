@@ -81,7 +81,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         if (! class_exists($rendererClass)) {
             throw new BackendPreviewException('The given renderer class: ' . $rendererClass . ' does not exist!');
         }
-        $renderer = $this->getInstanceOf($rendererClass);
+        $renderer = $this->getService($rendererClass);
         if (! $renderer instanceof BackendPreviewRendererInterface) {
             throw new BackendPreviewException
             ('The given renderer class: ' . $rendererClass . ' has to implement the correct interface: '
@@ -93,19 +93,19 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         $row['settings'] = [];
         if (! empty($row['pi_flexform'])) {
             $row = array_merge($row,
-                $this->getWithoutDi(FlexFormService::class)
+                $this->makeInstance(FlexFormService::class)
                      ->convertFlexFormContentToArray($row['pi_flexform'])
             );
         }
 
         // Update the frontend language
         $languageUid = Arrays::getPath($row, ['sys_language_uid'], null);
-        $this->getSingletonOf(EnvironmentSimulator::class)->runWithEnvironment(
+        $this->getService(EnvironmentSimulator::class)->runWithEnvironment(
             ['bootTsfe' => false, 'language' => $languageUid],
             function () use ($renderer, $event, $row) {
                 try {
                     // Create the context and let the renderer run
-                    $context = $this->getWithoutDi(
+                    $context = $this->makeInstance(
                         BackendPreviewRendererContext::class,
                         [$event]
                     );

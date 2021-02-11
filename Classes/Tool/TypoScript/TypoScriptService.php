@@ -21,8 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoScript;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
@@ -182,7 +182,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function getExtBaseSettings(?string $extensionName = null, ?string $pluginName = null): array
     {
-        $cm       = $this->getSingletonOf(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $cm       = $this->getService(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
         $settings = $cm->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             $extensionName, $pluginName);
 
@@ -199,7 +199,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function parse(string $config): array
     {
-        $parser = $this->getSingletonOf(TypoScriptParser::class);
+        $parser = $this->getService(TypoScriptParser::class);
         $parser->parse($config);
 
         return $parser->setup;

@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Fal;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3BA\Tool\Fal\FileInfo\ProcessedFileAdapter;
 use Neunerlei\Arrays\Arrays;
@@ -58,7 +58,7 @@ class FalService implements SingletonInterface
      */
     public function getFileRepository(): FileRepository
     {
-        return $this->getSingletonOf(FileRepository::class);
+        return $this->getService(FileRepository::class);
     }
 
     /**
@@ -68,7 +68,7 @@ class FalService implements SingletonInterface
      */
     public function getResourceFactory(): ResourceFactory
     {
-        return $this->getSingletonOf(ResourceFactory::class);
+        return $this->getService(ResourceFactory::class);
     }
 
     /**
@@ -492,7 +492,7 @@ class FalService implements SingletonInterface
         }
 
         // Apply the processing
-        $processed = $this->getSingletonOf(ImageService::class)->applyProcessingInstructions($file, $options);
+        $processed = $this->getService(ImageService::class)->applyProcessingInstructions($file, $options);
 
         // Inject the file reference as property to use it in later processing steps
         if ($file instanceof FileReference) {

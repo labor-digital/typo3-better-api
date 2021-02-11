@@ -24,20 +24,20 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\DependencyInjection\FailsafeDelegateContainer;
-use LaborDigital\T3BA\Core\DependencyInjection\MiniContainer;
+use LaborDigital\T3BA\Core\Di\FailsafeDelegateContainer;
+use LaborDigital\T3BA\Core\Di\MiniContainer;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
 use LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent;
 use LaborDigital\T3BA\Event\Di\DiContainerFilterEvent;
 use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfigHandler\DependencyInjection\ConfigureDependencyInjectionHandler;
-use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\ConfigureEventSubscribersHandler;
+use LaborDigital\T3BA\ExtConfigHandler\Di\Handler;
+use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\Handler as EventSubHandler;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -98,7 +98,7 @@ class DiConfigurationStage implements BootStageInterface
     public function onDiContainerBeingBuild(DiContainerBeingBuildEvent $event): void
     {
         // Execute the di container builder configuration
-        $this->runDiConfigLoader(static function (ConfigureDependencyInjectionHandler $handler) use ($event) {
+        $this->runDiConfigLoader(static function (Handler $handler) use ($event) {
             $handler->configureForContainerBuilder($event->getContainerBuilder());
         });
     }
@@ -146,11 +146,11 @@ class DiConfigurationStage implements BootStageInterface
         $realContainer->set(TypoContext::class, $context);
 
         // Inject our early services into the container
+        $realContainer->set(VarFs::class, $this->container->get(VarFs::class));
         $realContainer->set(EventBusInterface::class, $eventBus);
         $realContainer->set(TypoEventBus::class, $eventBus);
         $realContainer->set(ExtConfigContext::class,
-            $this->container->get(ExtConfigContext::class)
-                            ->setTypoContext($context));
+            $this->container->get(ExtConfigContext::class)->setTypoContext($context));
         $realContainer->set(ExtConfigService::class, $this->container->get(ExtConfigService::class));
 
         // Provide the container to the general utility a bit early
@@ -158,7 +158,7 @@ class DiConfigurationStage implements BootStageInterface
         GeneralUtility::setContainer($realContainer);
 
         // Run the "runtime" container configuration
-        $this->runDiConfigLoader(static function (ConfigureDependencyInjectionHandler $handler) use ($realContainer) {
+        $this->runDiConfigLoader(static function (Handler $handler) use ($realContainer) {
             $handler->configureRuntimeContainer($realContainer);
         });
 
@@ -178,7 +178,7 @@ class DiConfigurationStage implements BootStageInterface
         $loader           = $extConfigService->makeLoader(ExtConfigService::DI_LOADER_KEY);
         $loader->setContainer($this->container);
         $loader->clearHandlerLocations();
-        $handler = new ConfigureDependencyInjectionHandler();
+        $handler = new Handler();
         $handlerConfigurator($handler);
         $loader->registerHandler($handler);
         $loader->load(true);
@@ -192,15 +192,17 @@ class DiConfigurationStage implements BootStageInterface
      */
     protected function initializeLocalContainer(PackageManager $packageManager): void
     {
-        $fs        = TempFs::makeInstance('ExtConfig');
+        $fs = $this->kernel->getFs();
+
         $container = new MiniContainer();
+        $container->set(VarFs::class, $fs);
         $container->set(Kernel::class, $this->kernel);
         $container->set(PackageManager::class, $packageManager);
         $container->set(TypoEventBus::class, $this->kernel->getEventBus());
         $container->set(CacheInterface::class, $fs->getCache());
         $container->set(ClassLoader::class, $this->kernel->getClassLoader());
-        $container->set(ConfigureEventSubscribersHandler::class, GeneralUtility::makeInstance(
-            ConfigureEventSubscribersHandler::class,
+        $container->set(EventSubHandler::class, GeneralUtility::makeInstance(
+            EventSubHandler::class,
             $this->kernel->getEventBus()
         ));
         $container->set(ExtConfigService::class, GeneralUtility::makeInstance(

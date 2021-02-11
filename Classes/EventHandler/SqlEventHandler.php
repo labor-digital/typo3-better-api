@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\EventHandler;
 
 
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
@@ -49,22 +49,22 @@ class SqlEventHandler implements LazyEventSubscriberInterface
     protected $registry;
 
     /**
-     * The file system storage for sql related data;
+     * The file system storage for sql related data
      *
-     * @var TempFs
+     * @var VarFs
      */
-    protected $fs;
+    protected $fsMount;
 
     /**
      * SqlEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Sql\SqlRegistry     $registry
-     * @param   \LaborDigital\T3BA\Core\TempFs\TempFs|null  $fs
+     * @param   \LaborDigital\T3BA\Tool\Sql\SqlRegistry  $registry
+     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs      $fs
      */
-    public function __construct(SqlRegistry $registry, ?TempFs $fs = null)
+    public function __construct(SqlRegistry $registry, VarFs $fs)
     {
         $this->registry = $registry;
-        $this->fs       = $fs ?? TempFs::makeInstance('Sql');
+        $this->fsMount  = $fs->getMount('Sql');
     }
 
     /**
@@ -78,15 +78,15 @@ class SqlEventHandler implements LazyEventSubscriberInterface
 
     public function onTcaLoaded(): void
     {
-        $this->fs->setFileContent(static::STORAGE_KEY, $this->registry->dump());
+        $this->fsMount->setFileContent(static::STORAGE_KEY, $this->registry->dump());
     }
 
     public function onSqlTableDefinitions(AlterTableDefinitionStatementsEvent $e): void
     {
-        if (! static::$enabled || ! $this->fs->hasFile(static::STORAGE_KEY)) {
+        if (! static::$enabled || ! $this->fsMount->hasFile(static::STORAGE_KEY)) {
             return;
         }
 
-        $e->addSqlData($this->fs->getFileContent(static::STORAGE_KEY));
+        $e->addSqlData($this->fsMount->getFileContent(static::STORAGE_KEY));
     }
 }

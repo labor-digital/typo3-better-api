@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\EventHandler;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent;
 use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3BA\Tool\BackendPreview\Renderer\BackendListLabelRenderer;
@@ -46,11 +46,11 @@ class BackendPreviewEventHandler implements LazyEventSubscriberInterface
 
     public function onListLabelRendering(ListLabelRenderingEvent $event): void
     {
-        $this->getSingletonOf(BackendListLabelRenderer::class)->render($event);
+        $this->getService(BackendListLabelRenderer::class)->render($event);
     }
 
     public function onPreviewRendering(PreviewRenderingEvent $event): void
     {
-        $this->getSingletonOf(BackendPreviewRenderer::class)->render($event);
+        $this->getService(BackendPreviewRenderer::class)->render($event);
     }
 }

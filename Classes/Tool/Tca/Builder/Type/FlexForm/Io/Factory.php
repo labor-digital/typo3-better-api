@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Traits\FactoryDefinitionResolverTrait;
@@ -49,7 +49,7 @@ class Factory implements PublicServiceInterface
     {
         $field = $field ?? $this->makeStandaloneField();
 
-        return $this->getWithoutDi(
+        return $this->makeInstance(
             Flex::class,
             [
                 $field,
@@ -81,8 +81,8 @@ class Factory implements PublicServiceInterface
      */
     protected function makeStandaloneField(): TcaField
     {
-        $tableFactory = $this->getWithoutDi(TableFactory::class);
-        $table        = $tableFactory->create('flex-form-dummy-table', $this->getInstanceOf(ExtConfigContext::class));
+        $tableFactory = $this->makeInstance(TableFactory::class);
+        $table        = $tableFactory->create('flex-form-dummy-table', $this->getService(ExtConfigContext::class));
 
         return $table->getType()->getField('flex');
     }

@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Page\PageService;
 use LaborDigital\T3BA\Tool\Simulation\SimulatedTypoScriptFrontendController;
 use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
@@ -91,7 +91,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
     {
         return $options['bootTsfe']
                || (
-                   ! $this->getInstanceOf(TsfeService::class)->hasTsfe()
+                   ! $this->getService(TsfeService::class)->hasTsfe()
                    || (
                        $options['pid'] !== null
                        && $this->getTypoContext()->pid()->getCurrent() !== $options['pid']
@@ -145,7 +145,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
             return $this->instanceCache[$key];
         }
 
-        $controller           = $this->getWithoutDi(
+        $controller           = $this->makeInstance(
             SimulatedTypoScriptFrontendController::class, [
                 null,
                 $pid,
@@ -158,8 +158,8 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $controller->page     = $this->pageService->getPageInfo($pid);
         $controller->getConfigArray();
         $controller->settingLanguage();
-        $controller->cObj    = $this->getWithoutDi(ContentObjectRenderer::class, [$controller, $this->getContainer()]);
-        $controller->fe_user = $this->getWithoutDi(FrontendUserAuthentication::class);
+        $controller->cObj    = $this->makeInstance(ContentObjectRenderer::class, [$controller, $this->getContainer()]);
+        $controller->fe_user = $this->makeInstance(FrontendUserAuthentication::class);
 
 
         return $this->instanceCache[$key] = $controller;

@@ -80,7 +80,7 @@ class BackendListLabelRenderer extends AbstractRenderer
                 throw new BackendPreviewException("The given renderer class: $rendererClass does not exist!");
             }
 
-            $renderer = $this->getInstanceOf($rendererClass);
+            $renderer = $this->getService($rendererClass);
 
             if (! $renderer instanceof BackendListLabelRendererInterface) {
                 throw new BackendPreviewException(

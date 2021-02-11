@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\DataHook\Definition\Traverser;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\DataHook\DataHookException;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
@@ -100,8 +100,7 @@ abstract class AbstractTraverser
                 continue;
             }
 
-            $handlerDefinition = $this->getWithoutDi(DataHookHandlerDefinition::class);
-            dbg($handler);
+            $handlerDefinition                 = $this->makeInstance(DataHookHandlerDefinition::class);
             $handlerDefinition->handler        = NamingUtil::resolveCallable($handler[0]);
             $handlerDefinition->key            = $nodeKey;
             $handlerDefinition->path           = $path;

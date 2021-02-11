@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
@@ -314,7 +314,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         }
 
         // Lazy load additional dependencies
-        $dbService = $this->getSingletonOf(DbService::class);
+        $dbService = $this->getService(DbService::class);
 
         // Iterate the configuration for the fields
         $resultsByField       = [];
@@ -335,7 +335,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             // Resolve the relations for every element
             foreach ($records as $result) {
                 // Create the relation handler
-                $relationHandler = $this->getWithoutDi(RelationHandler::class);
+                $relationHandler = $this->makeInstance(RelationHandler::class);
                 $relationHandler->setFetchAllFields(true);
                 $relationHandler->start(
                     empty($mmTable) ? $result[$currentField] : '',
@@ -378,7 +378,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                     if (! isset($relations[$item['table']][$item['id']])) {
                         continue;
                     }
-                    $relationList[] = $this->getWithoutDi(
+                    $relationList[] = $this->makeInstance(
                         RelatedRecordRow::class,
                         [
                             (int)$item['id'],
@@ -442,7 +442,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     {
         // Create page repository if required
         if (empty($this->pageRepository)) {
-            $this->pageRepository = $this->getInstanceOf(PageService::class)->getPageRepository();
+            $this->pageRepository = $this->getService(PageService::class)->getPageRepository();
         }
 
         // Apply the version overlay

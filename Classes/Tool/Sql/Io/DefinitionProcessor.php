@@ -31,7 +31,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\Sql\TableFilterEvent;
 use LaborDigital\T3BA\Tool\Sql\Definition;
 use LaborDigital\T3BA\Tool\Sql\FallbackType;
@@ -52,7 +52,7 @@ class DefinitionProcessor
      */
     public function __construct(?Comparator $comparator = null)
     {
-        $this->setLocalSingleton(Comparator::class, $comparator ?? new Comparator());
+        $this->setService(Comparator::class, $comparator ?? new Comparator());
     }
 
     /**
@@ -90,7 +90,7 @@ class DefinitionProcessor
     protected function applyDefaultSchema(array $newTables): void
     {
         if (! empty($newTables)) {
-            $defaultSchema = $this->getWithoutDi(DefaultTcaSchema::class);
+            $defaultSchema = $this->makeInstance(DefaultTcaSchema::class);
             $defaultSchema->enrich($newTables);
         }
     }
@@ -165,7 +165,7 @@ class DefinitionProcessor
                 continue;
             }
 
-            $diff = $this->getSingletonOf(Comparator::class)->diffTable($combined, $type);
+            $diff = $this->getService(Comparator::class)->diffTable($combined, $type);
 
             // Add new column
             foreach ($diff->addedColumns as $key => $column) {
@@ -217,7 +217,7 @@ class DefinitionProcessor
         $this->dropFallbackColumns($combined);
 
         // Build a merge sum based on the combined types and their diff to the currently configured table
-        $diff = $this->getSingletonOf(Comparator::class)->diffTable($initial, $combined);
+        $diff = $this->getService(Comparator::class)->diffTable($initial, $combined);
 
         // Check if there is nothing to do...
         if (! $diff) {

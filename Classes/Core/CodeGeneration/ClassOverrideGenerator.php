@@ -40,7 +40,7 @@ namespace LaborDigital\T3BA\Core\CodeGeneration;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\VarFs\Mount;
 use LaborDigital\T3BA\Event\ClassOverrideContentFilterEvent;
 use LaborDigital\T3BA\Event\ClassOverrideStackFilterEvent;
 use Neunerlei\FileSystem\Fs;
@@ -61,9 +61,9 @@ class ClassOverrideGenerator
     /**
      * The temporary file system to store the class copies in
      *
-     * @var TempFs
+     * @var Mount
      */
-    protected static $fs;
+    protected static $fsMount;
 
     /**
      * The instance of the we use to resolve the class file names with
@@ -83,9 +83,10 @@ class ClassOverrideGenerator
      * Called once in the better api init boot phase to populate the required properties
      * and to register our event handler
      *
-     * @param   \Composer\Autoload\ClassLoader  $composerClassLoader
+     * @param   \Composer\Autoload\ClassLoader       $composerClassLoader
+     * @param   \LaborDigital\T3BA\Core\VarFs\Mount  $fsMount
      */
-    public static function init(ClassLoader $composerClassLoader): void
+    public static function init(ClassLoader $composerClassLoader, Mount $fsMount): void
     {
         // Check if we already did the init process
         if (static::$initDone) {
@@ -94,7 +95,7 @@ class ClassOverrideGenerator
         static::$initDone = true;
 
         // Create local references
-        static::$fs          = TempFs::makeInstance('ClassOverrides');
+        static::$fsMount     = $fsMount;
         static::$classLoader = $composerClassLoader;
 
         // Register autoload hook
@@ -232,7 +233,7 @@ class ClassOverrideGenerator
             $filesToInclude[] = $aliasFilename;
 
             // Check if we have to create the override
-            if (! static::$fs->hasFile($aliasFilename) || ! static::$fs->hasFile($cloneFilename)) {
+            if (! static::$fsMount->hasFile($aliasFilename) || ! static::$fsMount->hasFile($cloneFilename)) {
                 // Make the class name
                 $namespace         = Path::classNamespace($classToOverride);
                 $copyClassName     = 'BetterApiClassOverrideCopy__' . Path::classBasename($classToOverride);
@@ -257,14 +258,14 @@ class ClassOverrideGenerator
                 $aliasContent = $e->getAliasContent();
 
                 // Dump the files
-                static::$fs->setFileContent($cloneFilename, $cloneContent);
-                static::$fs->setFileContent($aliasFilename, $aliasContent);
+                static::$fsMount->setFileContent($cloneFilename, $cloneContent);
+                static::$fsMount->setFileContent($aliasFilename, $aliasContent);
             }
         }
 
         // Include the files
         foreach ($filesToInclude as $aliasFilename) {
-            static::$fs->includeFile($aliasFilename);
+            static::$fsMount->includeFile($aliasFilename);
         }
 
         // Register alias map

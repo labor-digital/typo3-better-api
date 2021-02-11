@@ -519,7 +519,7 @@ trait TcaTableConfigTrait
      * @param   string|null  $columnName        The name of the database column
      * @param   array|null   $types             A list of types as $id => $label array. This follows the same logic as
      *                                          a select preset:
-     *                                          {@link \LaborDigital\T3BA\FormEngine\FieldPreset\BasicFieldPreset::applySelect()}
+     *                                          {@link \LaborDigital\T3BA\FormEngine\FieldPreset\Basics::applySelect()}
      * @param   array|null   $typeFieldOptions  Allows to provide additional options for the generated field. See
      *                                          the link above to learn more about the possible options
      *

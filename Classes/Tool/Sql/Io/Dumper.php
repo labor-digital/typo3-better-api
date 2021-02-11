@@ -25,7 +25,7 @@ namespace LaborDigital\T3BA\Tool\Sql\Io;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\Sql\CreateTableStatementFilterEvent;
 
 class Dumper
@@ -72,7 +72,7 @@ class Dumper
      */
     protected function generateSqlForTable(Table $table): ?string
     {
-        $schema = $this->getWithoutDi(Schema::class, [[$table]]);
+        $schema = $this->makeInstance(Schema::class, [[$table]]);
         $sql    = $schema->toSql($this->cs()->db->getConnection()->getDatabasePlatform());
         $sql    = $sql[0] ?? '';
 

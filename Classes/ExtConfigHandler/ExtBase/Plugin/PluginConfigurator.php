@@ -21,14 +21,14 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
+use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendListLabelRendererInterface;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
 use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-class PluginConfigurator extends AbstractElementConfigurator
+class PluginConfigurator extends AbstractConfigurator
 {
     use DataHookCollectorTrait;
 

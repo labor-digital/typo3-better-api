@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryDataHookTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryPopulatorTrait;
@@ -64,7 +64,7 @@ class TypeFactory implements PublicServiceInterface
      */
     public function create($typeName, TcaTable $table): TcaTableType
     {
-        return $this->getWithoutDi(
+        return $this->makeInstance(
             TcaTableType::class, [
                 $table,
                 $typeName,

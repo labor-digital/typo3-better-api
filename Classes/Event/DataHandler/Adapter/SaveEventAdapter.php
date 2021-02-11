@@ -116,7 +116,7 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
 
         if ($pObj->enableLogging) {
             $pObj->log('', 0, 0, 0, 1,
-                $this->TypoContext()->di()->getSingletonOf(Translator::class)->translate($e->getMessage()));
+                $this->TypoContext()->di()->getService(Translator::class)->translate($e->getMessage()));
         }
     }
 }

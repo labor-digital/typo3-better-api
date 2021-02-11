@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Simulation\AdminUserAuthentication;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
@@ -91,7 +91,7 @@ class AdminSimulationPass implements SimulatorPassInterface
         // Inject the admin user
         $GLOBALS['BE_USER'] = $adminUser;
         $this->getTypoContext()->getRootContext()->setAspect('backend.user',
-            $this->getWithoutDi(UserAspect::class, [$adminUser])
+            $this->makeInstance(UserAspect::class, [$adminUser])
         );
     }
 
@@ -117,7 +117,7 @@ class AdminSimulationPass implements SimulatorPassInterface
         }
 
         // Create a new instance
-        $this->adminUserAuth = $this->getInstanceOf(AdminUserAuthentication::class);
+        $this->adminUserAuth = $this->getService(AdminUserAuthentication::class);
         $this->adminUserAuth->start();
 
         return $this->adminUserAuth;

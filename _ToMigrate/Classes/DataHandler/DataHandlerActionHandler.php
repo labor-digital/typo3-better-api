@@ -36,7 +36,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionHandlerInterface
 {
-    
+
     /**
      * I leave this open if you want to add your own, custom mappings, feel free to do so...
      * The map from stack type to the context element class to generate
@@ -47,7 +47,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         = [
             'default' => DataHandlerActionContext::class,
         ];
-    
+
     /**
      * This is open for adjustments as well, as you will probably need it when you start adding new context types...
      * It is the map of a stack type to the tca config option to look for
@@ -61,7 +61,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
             'save'     => 'saveFilterHandlers',
             'saveLate' => 'saveLateFilterHandlers',
         ];
-    
+
     /**
      * Is used to store the generated context lists when we are running on the backendActionFilter and backendAction
      * hook. Otherwise we would needlessly create overhead, by loading the context list twice from the tca...
@@ -69,32 +69,32 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
      * @var array
      */
     protected $contextListCache = [];
-    
+
     /**
      * @var \Neunerlei\EventBus\EventBusInterface
      */
     protected $eventBus;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Container\TypoContainerInterface
      */
     protected $container;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\Domain\DbService\DbService
      */
     protected $dbService;
-    
+
     /**
      * @var FlexFormTools
      */
     protected $flexFormTools;
-    
+
     /**
      * @var \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService
      */
     protected $backendActionService;
-    
+
     /**
      * BackendActionHandler constructor.
      *
@@ -114,7 +114,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         $this->dbService     = $dbService;
         $this->flexFormTools = $flexFormTools;
     }
-    
+
     /**
      * Inject the backend action service
      *
@@ -124,7 +124,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
     {
         $this->backendActionService = $backendActionService;
     }
-    
+
     /**
      * This method can be used to traverse the TCA of a given table for a list of callable handlers.
      * It is in general agnostic to the type of handler it will execute. Use the $stackType argument in combination
@@ -166,12 +166,12 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         &$isDirty = false
     ): void {
         $isDirty = false;
-        
+
         // Backup the original row
         $givenRow = array_map(static function ($v) {
             return $v;
         }, $row);
-        
+
         // Make sure the row is not empty
         $rowType = '';
         if (empty($row) && is_numeric($uid) && Arrays::hasPath($GLOBALS, ['TCA', $tableName])) {
@@ -181,28 +181,28 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         } else {
             $rowType = BackendUtility::getTCAtypeValue($tableName, $row);
         }
-        
+
         // Backup the original row
         $rawRow = array_map(static function ($v) {
             return $v;
         }, $row);
-        
+
         // Load the tca for the table
         $tca        = Arrays::getPath($GLOBALS, ['TCA', $tableName], []);
         $tcaColumns = Arrays::getPath($tca, ['columns'], []);
-        
+
         // Merge type tca if required
         if (! empty($rowType)) {
             $typeColumns = Arrays::getPath($GLOBALS, ['TCA', $tableName, 'types', $rowType, 'columnsOverrides'], []);
             ArrayUtility::mergeRecursiveWithOverrule($tcaColumns, $typeColumns);
             $tca['columns'] = $tcaColumns;
         }
-        
+
         // Check if we can skip this whole ordeal...
         if ($this->hasContextEmptyListCacheFor($stackType, $uid, $tableName, $rowType)) {
             return;
         }
-        
+
         // Unpack all flex form fields
         $unpackedFlexFormFields = [];
         foreach ($row as $k => $v) {
@@ -222,18 +222,18 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
             }
             $row[$k] = $unpacked;
         }
-        
+
         // Get the context list
         $contextList = $this->readContextListForStack($stackType, $uid, $row, $tableName, $tca, $rowType);
-        
+
         // Be done if there are no contexts
         if (! empty($contextList)) {
             // Create the new context object
             $contextClass = static::$stackTypeContextMap[$stackType] ?? static::$stackTypeContextMap['default'];
-            
+
             // Prepare the action key
             $action = method_exists($event, 'getCommand') ? $event->getCommand() : $stackType;
-            
+
             // Call the methods of all contests
             foreach ($contextList as $contextConfig) {
                 // Finish the context config
@@ -242,14 +242,14 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 $contextConfig['uid']       = $uid;
                 $contextConfig['tableName'] = $tableName;
                 $contextConfig['action']    = $action;
-                
+
                 // Special handling if the key is empty -> Means the handler was registered on a table
                 $contextConfig['appliesToTable'] = empty($contextConfig['key']);
                 if ($contextConfig['appliesToTable']) {
                     $contextConfig['key']   = $tableName;
                     $contextConfig['value'] = $row;
                 }
-                
+
                 // Allow the outside world to change the context
                 $this->eventBus->dispatch(($e = new BackendFormActionContextFilterEvent(
                     $contextClass,
@@ -257,24 +257,24 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                     $stackType
                 )));
                 $contextClassLocal = $e->getContextClass();
-                
+
                 // Create the context
                 /** @var \LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionContext $contextObject */
                 $contextObject = $this->container->get($contextClassLocal);
                 $contextObject->__setContextArray($contextConfig);
-                
+
                 // Call the registered method
                 $i = $this->container->get($contextConfig['class']);
                 $i->{$contextConfig['method']}($contextObject);
-                
+
                 // Allow the outside world to interfere...
                 $this->eventBus->dispatch(new BackendFormActionPostProcessorEvent($contextObject, $i, $stackType));
-                
+
                 // Check if we have to update the value
                 if ($contextObject->isValueDirty()) {
                     // We are so dirty...
                     $isDirty = true;
-                    
+
                     // Update the whole row if it applies to a table
                     if ($contextConfig['appliesToTable']) {
                         $row = $contextObject->getValue();
@@ -282,13 +282,13 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                     else {
                         $row = Arrays::setPath($row, $contextObject->getPath(), $contextObject->getValue());
                     }
-                    
+
                     // Update the context row
                     $contextObject->__setContextArray(['row' => $row, 'valueDirty' => false]);
                 }
             }
         }
-        
+
         // Check if we have to repack some flex form fields
         if (! empty($unpackedFlexFormFields)) {
             foreach ($unpackedFlexFormFields as $field) {
@@ -297,7 +297,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 }
             }
         }
-        
+
         // Make sure to only update the changed values
         $rowChanged = $givenRow;
         foreach ($row as $k => $v) {
@@ -308,7 +308,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         }
         $row = $rowChanged;
     }
-    
+
     /**
      * Internal helper which returns true if we currently have a cached context list for the given values
      * but the context list is empty. If that is the case we can save a lot of work by ignoring the
@@ -325,10 +325,10 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
     protected function hasContextEmptyListCacheFor(string $stackType, $uid, string $tableName, string $type): bool
     {
         $cacheKey = md5($stackType . $uid . $tableName . $type);
-        
+
         return isset($this->contextListCache[$cacheKey]) && empty($this->contextListCache[$cacheKey]);
     }
-    
+
     /**
      * Traverses the given tca array in order to find possible contexts for the current stack type in it.
      * It will then return the list of all contexts it found back to the parent method.
@@ -356,15 +356,15 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         if (isset($this->contextListCache[$cacheKey])) {
             return $this->contextListCache[$cacheKey];
         }
-        
+
         // Prepare the context list
         $contexts = [];
-        
+
         // Check if the tca has any registered handlers
         if (is_array($tca['dataHandlerActions'])) {
             $contexts = $this->addContextsForStack($stackType, $tca, $contexts);
         }
-        
+
         // Run through all columns in the given row
         foreach ($row as $key => $value) {
             // Check if there is a field configuration for this key
@@ -372,18 +372,18 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 continue;
             }
             $tcaField = $tca['columns'][$key];
-            
+
             // Skip if there is no config
             if (! is_array($tcaField) || ! is_array($tcaField['config'])) {
                 continue;
             }
-            
+
             // Check if there is a config field in the field tca
             if (is_array($tcaField['dataHandlerActions'])) {
                 $contexts = $this->addContextsForStack($stackType, $tcaField, $contexts, [$key],
                     $key, $value);
             }
-            
+
             // Check if this is a flex form field
             // This is going to be a lot of work... isn't it?
             if ($tcaField['config']['type'] === 'flex') {
@@ -391,7 +391,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                     $this->readContextListFromFlexForm($stackType, $value, $tcaField, $tableName, $key, $row));
             }
         }
-        
+
         // Get the registered handlers from the backend service
         $handlers = $this->backendActionService->getHandlersFor($tableName, $stackType);
         if (! empty($handlers)) {
@@ -403,7 +403,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 }
                 $matchedHandlers[] = $handler['handler'];
             }
-            
+
             // Register the handlers as context
             if (! empty($matchedHandlers)) {
                 $contexts = $this->addContextsForStack('inject', [
@@ -414,14 +414,14 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 ], $contexts);
             }
         }
-        
+
         // Store the generated contexts
         $this->contextListCache[$cacheKey] = $contexts;
-        
+
         // Done
         return $contexts;
     }
-    
+
     /**
      * This is a sub method of readContextListForStack() which was stripped out of the main method, to keep it somewhat
      * readable. It is responsible for reading contexts out of flex form fields.
@@ -448,7 +448,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
     ): array {
         // Holds the list of all custom element handlers we found
         $contexts = [];
-        
+
         // Try to find the structure id
         try {
             $structureId    = $this->flexFormTools->getDataStructureIdentifier($tcaField, $tableName, $key, $row);
@@ -456,7 +456,8 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         } catch (Throwable $e) {
             return [];
         }
-        
+
+
         // To avoid complex recursions we flatten the structure and search in the resulting
         // one dimensional array for our marker keys and use the path's to extract the data we need
         foreach (Arrays::flatten($structureArray) as $k => $v) {
@@ -464,7 +465,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
             if (! strpos($k, '.dataHandlerActions.' . $configKey . '.')) {
                 continue;
             }
-            
+
             // Parse the path and get the parent element
             $path = Arrays::parsePath($k);
             if (end($path) !== '0') {
@@ -476,13 +477,13 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 continue;
             }
             array_pop($path);
-            
+
             // Store the config
             $configPath = $path;
             $config     = Arrays::getPath($structureArray, $configPath);
             array_pop($path);
             array_pop($path);
-            
+
             // Try to extract the real value out of the given list
             $pointer   = &$value;
             $valuePath = [];
@@ -491,7 +492,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 if (! is_array($pointer)) {
                     break;
                 }
-                
+
                 // Translate special keys
                 if (! isset($pointer[$part])) {
                     if ($part === 'sheets') {
@@ -500,13 +501,13 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                         $part = 'lDEF';
                     }
                 }
-                
+
                 // Link to the new pointer
                 if (isset($pointer[$part])) {
                     $pointer     = &$pointer[$part];
                     $valuePath[] = $part;
                 }
-                
+
                 // Check for an "el" => This means we are inside a section
                 if (is_array($pointer) && is_array($pointer['el'])) {
                     foreach ($pointer['el'] as $_k => $el) {
@@ -514,7 +515,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                         if (! is_array($el)) {
                             continue;
                         }
-                        
+
                         // Loop over items
                         $valuePath[] = 'el';
                         $valuePath[] = $_k;
@@ -525,11 +526,11 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                             }
                             $valuePath[] = $__k;
                             $valuePath[] = 'el';
-                            
+
                             // Loop over the remaining path
                             $remainingPath = array_slice($path, $partId + 4);
                             $requiredField = reset($remainingPath);
-                            
+
                             // Store the value
                             $fieldPath = ['el', $k, $__k, 'el', $requiredField, 'vDEF'];
                             if (Arrays::hasPath($pointer, $fieldPath)) {
@@ -537,7 +538,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                                 $contexts      = $this->addContextsForStack($configKey, $config, $contexts,
                                     $fullValuePath, $requiredField, Arrays::getPath($pointer, $fieldPath));
                             }
-                            
+
                             array_pop($valuePath);
                             array_pop($valuePath);
                         }
@@ -546,7 +547,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                     }
                 }
             }
-            
+
             // Store the value if it has a vDef as last element
             if (is_array($pointer) && isset($pointer['vDEF'])) {
                 $fullValuePath = Arrays::attach([$key], $valuePath, ['vDEF']);
@@ -554,11 +555,11 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                     end($valuePath), $pointer['vDEF']);
             }
         }
-        
+
         // Done
         return $contexts;
     }
-    
+
     /**
      * This internal helper is used to read the configuration in the TCA for the field that matches our
      * current config key. It will then add a new context for each handler it finds there and adds it to
@@ -593,7 +594,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
         if (empty($handlerConfig)) {
             return $contexts;
         }
-        
+
         // Loop over the stack of objects
         foreach ($handlerConfig as $handler) {
             // Prepare the handler
@@ -602,7 +603,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 continue;
             }
             $handler = array_values($handler);
-            
+
             // Create the new context
             $contexts[] = [
                 'key'       => $fieldName,
@@ -614,7 +615,7 @@ class DataHandlerActionHandler implements SingletonInterface, DataHandlerActionH
                 'method'    => $handler[1],
             ];
         }
-        
+
         // Done
         return $contexts;
     }

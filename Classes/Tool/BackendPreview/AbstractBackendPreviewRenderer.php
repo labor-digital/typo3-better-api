@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\BackendPreview;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 
 abstract class AbstractBackendPreviewRenderer implements BackendPreviewRendererInterface
 {

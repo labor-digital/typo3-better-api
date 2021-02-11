@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Tsfe;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
 use LaborDigital\T3BA\Tool\Simulation\SimulatedTypoScriptFrontendController;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
@@ -91,12 +91,12 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
 
         // Get the content object renderer from the config manager
         if (! $cObj instanceof ContentObjectRenderer && $this->getTypoContext()->env()->isFrontend()) {
-            $cObj = $this->getSingletonOf(ConfigurationManager::class)->getContentObject();
+            $cObj = $this->getService(ConfigurationManager::class)->getContentObject();
         }
 
         // Create it ourselves
         if (! $cObj instanceof ContentObjectRenderer) {
-            return $this->getSingletonOf(EnvironmentSimulator::class)->runWithEnvironment([], function () {
+            return $this->getService(EnvironmentSimulator::class)->runWithEnvironment([], function () {
                 return $this->getTsfe()->cObj;
             });
         }

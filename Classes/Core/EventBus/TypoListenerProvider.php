@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\EventBus;
 
-use LaborDigital\T3BA\Core\DependencyInjection\MiniContainer;
+use LaborDigital\T3BA\Core\Di\MiniContainer;
 use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventAdapterInterface;
 use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;

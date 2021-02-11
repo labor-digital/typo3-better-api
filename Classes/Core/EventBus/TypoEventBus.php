@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\EventBus;
 
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Core\Util\SingletonInstanceTrait;
 use Neunerlei\EventBus\EventBus;
 use TYPO3\CMS\Core\SingletonInterface;

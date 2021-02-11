@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection;
@@ -39,20 +39,20 @@ class Dumper implements PublicServiceInterface
     protected $tools;
 
     /**
-     * @var \LaborDigital\T3BA\Core\TempFs\TempFs|null
+     * @var \LaborDigital\T3BA\Core\VarFs\VarFs|null
      */
-    protected $fs;
+    protected $fsMount;
 
     /**
      * Dumper constructor.
      *
      * @param   \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools  $tools
-     * @param   \LaborDigital\T3BA\Core\TempFs\TempFs|null            $fs
+     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs|null              $fs
      */
-    public function __construct(FlexFormTools $tools, ?TempFs $fs = null)
+    public function __construct(FlexFormTools $tools, VarFs $fs)
     {
-        $this->tools = $tools;
-        $this->fs    = $fs ?? TempFs::makeInstance('FlexForm');
+        $this->tools   = $tools;
+        $this->fsMount = $fs->getMount('FlexForm');
     }
 
     /**
@@ -158,8 +158,8 @@ class Dumper implements PublicServiceInterface
     {
         $content  = $this->dumpAsString($flex);
         $filename = 'flexForm-' . md5($content) . '.xml';
-        $this->fs->setFileContent($filename, $content);
+        $this->fsMount->setFileContent($filename, $content);
 
-        return $this->fs->getFile($filename)->getPathname();
+        return $this->fsMount->getFile($filename)->getPathname();
     }
 }

@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextException;
 use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
@@ -81,11 +81,11 @@ class ConfigFacet implements FacetInterface
      */
     public function getConfigState(): ConfigState
     {
-        if (! isset($this->__localSingletons[ConfigState::class]) && ! $this->getContainer()->has(ConfigState::class)) {
+        if (! isset($this->caServices[ConfigState::class]) && ! $this->getContainer()->has(ConfigState::class)) {
             throw new TypoContextException('The ConfigState object was not built and injected, yet! You are to early in the lifecycle!');
         }
 
-        return $this->getSingletonOf(ConfigState::class);
+        return $this->getService(ConfigState::class);
     }
 
     /**
@@ -101,7 +101,7 @@ class ConfigFacet implements FacetInterface
      */
     public function getRegistryValue(string $key, $defaultValue = null, string $namespace = 'user_betterApi_config')
     {
-        return $this->getSingletonOf(Registry::class)->get($namespace, $key, $defaultValue);
+        return $this->getService(Registry::class)->get($namespace, $key, $defaultValue);
     }
 
     /**
@@ -119,9 +119,9 @@ class ConfigFacet implements FacetInterface
     public function setRegistryValue(string $key, $value, string $namespace = 'user_betterApi_config'): self
     {
         if ($value === null) {
-            $this->getSingletonOf(Registry::class)->remove($namespace, $key);
+            $this->getService(Registry::class)->remove($namespace, $key);
         } else {
-            $this->getSingletonOf(Registry::class)->set($namespace, $key, $value);
+            $this->getService(Registry::class)->set($namespace, $key, $value);
         }
 
         return $this;
@@ -221,7 +221,7 @@ class ConfigFacet implements FacetInterface
     {
         $path = Arrays::parsePath($key);
         try {
-            return $this->getSingletonOf(ExtensionConfiguration::class)->get($extensionName, implode('/', $path));
+            return $this->getService(ExtensionConfiguration::class)->get($extensionName, implode('/', $path));
         } catch (ExtensionConfigurationExtensionNotConfiguredException $e) {
             return $default;
         } catch (ExtensionConfigurationPathDoesNotExistException $e) {
@@ -239,7 +239,7 @@ class ConfigFacet implements FacetInterface
      */
     public function getExtBaseConfig(?string $extensionName = null, ?string $pluginName = null): array
     {
-        return $this->getSingletonOf(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
+        return $this->getService(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
     }
 
     /**
@@ -270,7 +270,7 @@ class ConfigFacet implements FacetInterface
             $options['default'] = $default;
         }
 
-        return $this->getSingletonOf(TypoScriptService::class)->get($path, $options);
+        return $this->getService(TypoScriptService::class)->get($path, $options);
     }
 
     /**
@@ -301,7 +301,7 @@ class ConfigFacet implements FacetInterface
             $options['default'] = $default;
         }
 
-        return $this->getSingletonOf(TypoScriptService::class)->getTsConfig($path, $options);
+        return $this->getService(TypoScriptService::class)->getTsConfig($path, $options);
     }
 }
 

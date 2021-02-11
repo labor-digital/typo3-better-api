@@ -180,7 +180,7 @@ class NamingUtil
                 // Resolve entity class
                 if (in_array(AbstractEntity::class, class_parents($selector), true)) {
                     return static::$resolvedTableNames[$selector]
-                        = TypoContext::getInstance()->di()->getInstanceOf(DataMapper::class)
+                        = TypoContext::getInstance()->di()->getService(DataMapper::class)
                                      ->getDataMap($selector)->getTableName();
                 }
             }
@@ -249,7 +249,7 @@ class NamingUtil
             // Check if we have to instantiate the class first
             if (! (new ReflectionMethod($callable[0], $callable[1]))->isStatic()) {
                 return [
-                    TypoContext::getInstance()->di()->getInstanceOf($callable[0]),
+                    TypoContext::getInstance()->di()->getService($callable[0]),
                     $callable[1],
                 ];
             }

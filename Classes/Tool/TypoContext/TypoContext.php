@@ -21,8 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Core\Util\SingletonInstanceTrait;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\BetterLanguageAspect;
 use LaborDigital\T3BA\Tool\TypoContext\Aspect\BetterVisibilityAspect;
@@ -214,7 +214,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
         if (empty($aspectClass)) {
             return $context->getAspect($aspectKey);
         }
-        $aspect = $this->getInstanceOf($aspectClass);
+        $aspect = $this->getService($aspectClass);
         $context->setAspect($aspectKey, $aspect);
 
         return $aspect;
@@ -238,8 +238,8 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
         if ($context->hasAspect($aspectKey)) {
             return $context->getAspect($aspectKey)->get('');
         }
-        $facet  = $this->getInstanceOf($facetClass);
-        $aspect = $this->getWithoutDi(FacetAspect::class, [$facet]);
+        $facet  = $this->getService($facetClass);
+        $aspect = $this->makeInstance(FacetAspect::class, [$facet]);
         $context->setAspect($aspectKey, $aspect);
 
         return $facet;

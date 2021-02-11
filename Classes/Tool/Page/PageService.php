@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Page;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\PageContentsGridConfigFilterEvent;
 use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
 use Neunerlei\Arrays\Arrays;
@@ -505,7 +505,7 @@ class PageService implements SingletonInterface
         }
 
         // Fallback to creating a new instance when the frontend did not serve us
-        return $this->getWithoutDi(PageRepository::class);
+        return $this->makeInstance(PageRepository::class);
     }
 
     /**

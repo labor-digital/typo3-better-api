@@ -25,7 +25,7 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\ConfigureEventSubscribersHandler;
+use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\Handler;
 
 class EventHandlerRegistrationStage implements BootStageInterface
 {
@@ -59,7 +59,7 @@ class EventHandlerRegistrationStage implements BootStageInterface
         $loader    = $container->get(ExtConfigService::class)->makeLoader(ExtConfigService::EVENT_BUS_LOADER_KEY);
         $loader->setContainer($container);
         $loader->clearHandlerLocations();
-        $loader->registerHandler(new ConfigureEventSubscribersHandler($eventBus));
+        $loader->registerHandler(new Handler($eventBus));
         $state = $loader->load();
 
         // Register lazy subscribers

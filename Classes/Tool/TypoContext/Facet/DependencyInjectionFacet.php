@@ -23,28 +23,15 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 
 class DependencyInjectionFacet implements FacetInterface
 {
     use ContainerAwareTrait {
         getContainer as public;
-        getInstanceOf as public;
-        getSingletonOf as public;
-        getWithoutDi as public;
+        getService as public;
+        makeInstance as public;
         getCommonServices as public;
         cs as public;
-    }
-
-    /**
-     * Returns the ext base object manager instance
-     *
-     * @todo I think this should be removed -> It's part of the common services api
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    public function getObjectManager(): ObjectManager
-    {
-        return $this->getWithoutDi(ObjectManager::class);
     }
 }

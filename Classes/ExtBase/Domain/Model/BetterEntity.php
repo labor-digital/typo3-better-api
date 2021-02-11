@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Domain\Model;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingTrait;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 

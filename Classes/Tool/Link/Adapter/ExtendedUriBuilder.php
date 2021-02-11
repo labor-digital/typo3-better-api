@@ -38,7 +38,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Link\Adapter;
 
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 

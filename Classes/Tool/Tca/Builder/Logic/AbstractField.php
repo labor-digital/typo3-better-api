@@ -193,7 +193,7 @@ abstract class AbstractField extends AbstractElement
     {
         $context = $this->form->getContext();
         /** @var FieldPresetApplier $applier */
-        $applier = $context->parent()->getTypoContext()->di()->getInstanceOf(FieldPresetApplier::class);
+        $applier = $context->parent()->getTypoContext()->di()->getService(FieldPresetApplier::class);
         $applier->configureField($this, $context);
 
         return $applier;

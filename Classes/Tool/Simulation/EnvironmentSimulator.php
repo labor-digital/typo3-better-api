@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Simulation;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Simulation\Pass\AdminSimulationPass;
 use LaborDigital\T3BA\Tool\Simulation\Pass\LanguageSimulationPass;
 use LaborDigital\T3BA\Tool\Simulation\Pass\SimulatorPassInterface;
@@ -251,7 +251,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         $optionDefinition = $this->getDefaultOptionDefinition();
         $passes           = [];
         foreach (static::$environmentSimulatorPasses as $passClass) {
-            $instance = $this->getInstanceOf($passClass);
+            $instance = $this->getService($passClass);
             if (! $instance instanceof SimulatorPassInterface) {
                 continue;
             }

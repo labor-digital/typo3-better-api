@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Link;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\Fal\FalService;
 use LaborDigital\T3BA\Tool\Link\Adapter\ExtendedUriBuilder;
 use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
@@ -94,7 +94,7 @@ class LinkContext implements SingletonInterface
     {
         $this->initializeIfRequired();
 
-        return $this->getSingletonOf(Request::class);
+        return $this->getService(Request::class);
     }
 
     /**
@@ -104,13 +104,13 @@ class LinkContext implements SingletonInterface
      */
     public function getContentObject(): ContentObjectRenderer
     {
-        if ($this->hasLocalSingleton(ContentObjectRenderer::class)) {
-            return $this->getSingletonOf(ContentObjectRenderer::class);
+        if ($this->hasService(ContentObjectRenderer::class)) {
+            return $this->getService(ContentObjectRenderer::class);
         }
 
         $this->initializeIfRequired();
-        $cObj = $this->getInstanceOf(TsfeService::class)->getContentObjectRenderer();
-        $this->setLocalSingleton(ContentObjectRenderer::class, $cObj);
+        $cObj = $this->getService(TsfeService::class)->getContentObjectRenderer();
+        $this->setService(ContentObjectRenderer::class, $cObj);
 
         return $cObj;
     }
@@ -124,17 +124,17 @@ class LinkContext implements SingletonInterface
      */
     public function getUriBuilder(): UriBuilder
     {
-        if ($this->hasLocalSingleton(UriBuilder::class)) {
-            return $this->getSingletonOf(UriBuilder::class);
+        if ($this->hasService(UriBuilder::class)) {
+            return $this->getService(UriBuilder::class);
         }
 
         $this->initializeIfRequired();
-        $builder = $this->getInstanceOf(ExtendedUriBuilder::class);
-        $this->setLocalSingleton(UriBuilder::class, $builder);
+        $builder = $this->getService(ExtendedUriBuilder::class);
+        $this->setService(UriBuilder::class, $builder);
         if (! $builder->hasContentObject()) {
             $builder->setContentObject($this->getContentObject());
         } else {
-            $this->setLocalSingleton(ContentObjectRenderer::class, $builder->getContentObject());
+            $this->setService(ContentObjectRenderer::class, $builder->getContentObject());
         }
 
         return $builder;
@@ -147,7 +147,7 @@ class LinkContext implements SingletonInterface
      */
     public function getBackendUriBuilder(): \TYPO3\CMS\Backend\Routing\UriBuilder
     {
-        return $this->getSingletonOf(\TYPO3\CMS\Backend\Routing\UriBuilder::class);
+        return $this->getService(\TYPO3\CMS\Backend\Routing\UriBuilder::class);
     }
 
     /**
@@ -157,7 +157,7 @@ class LinkContext implements SingletonInterface
      */
     public function getBackendRouter(): Router
     {
-        return $this->getSingletonOf(Router::class);
+        return $this->getService(Router::class);
     }
 
     /**
@@ -167,7 +167,7 @@ class LinkContext implements SingletonInterface
      */
     public function getFalService(): FalService
     {
-        return $this->getSingletonOf(FalService::class);
+        return $this->getService(FalService::class);
     }
 
     /**
@@ -177,7 +177,7 @@ class LinkContext implements SingletonInterface
      */
     public function ExtensionService(): ExtensionService
     {
-        return $this->getSingletonOf(ExtensionService::class);
+        return $this->getService(ExtensionService::class);
     }
 
     public function hasLinkSet(string $key): bool
@@ -211,9 +211,9 @@ class LinkContext implements SingletonInterface
         $baseUrl = Path::makeUri($baseUrl)->getHost();
 
         // Create a new request instance
-        $request = $this->getWithoutDi(Request::class);
+        $request = $this->makeInstance(Request::class);
         $request->setBaseUri($baseUrl);
-        $this->setLocalSingleton(Request::class, $request);
+        $this->setService(Request::class, $request);
 
         // Inject the base url if we are in cli context
         if ($this->typoContext->env()->isCli()) {

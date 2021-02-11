@@ -26,7 +26,6 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Inflection\Inflector;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaBuilderContext
 {
@@ -42,8 +41,7 @@ class TcaBuilderContext
      */
     public function __construct(ExtConfigContext $extConfigContext)
     {
-        $this->commonServices = GeneralUtility::makeInstance(
-            TcaBuilderServices::class, $extConfigContext);
+        $this->commonServices = $extConfigContext->getLoaderContext()->getInstance(TcaBuilderServices::class);
     }
 
     /**

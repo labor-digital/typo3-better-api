@@ -25,7 +25,6 @@ use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
 use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -88,13 +87,13 @@ trait ExtBaseBackendPreviewRendererTrait
             $signature = 'tx_' . $signature;
         }
         $typoContext = TypoContext::getInstance();
-        $typoScript  = $typoContext->di()->getSingletonOf(TypoScriptService::class);
+        $typoScript  = $typoContext->di()->cs()->ts;
         $viewConfig  = $typoScript->get([$configType, $signature, 'view'], ['default' => []]);
         $viewConfig  = $typoScript->removeDots($viewConfig);
 
         // Make and prepare the view instance
         $view = $typoContext->di()
-                            ->getSingletonOf(TemplateRenderingService::class)
+                            ->getService(TemplateRenderingService::class)
                             ->getFluidView($templateName, $viewConfig);
         $view->assign('settings', $row['settings']);
         $view->assign('data', $row);
@@ -117,7 +116,7 @@ trait ExtBaseBackendPreviewRendererTrait
      *
      * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
-    public function callBackendAction(string $actionName, array $options = []): ResponseInterface
+    public function simulateRequest(string $actionName, array $options = []): ResponseInterface
     {
         throw new NotImplementedException();
         $this->validateThatBePreviewTraitIsCalledInActionController();

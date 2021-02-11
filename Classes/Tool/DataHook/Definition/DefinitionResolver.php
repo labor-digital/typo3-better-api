@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\DataHook\Definition;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Tool\DataHook\DataHookException;
 use LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\TcaTraverser;
 use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FieldPackerInterface;
@@ -80,7 +80,7 @@ class DefinitionResolver
      */
     protected function resolveBasicDefinitionObject(string $type, string $tableName, array $data): DataHookDefinition
     {
-        $definition            = $this->getWithoutDi(DataHookDefinition::class);
+        $definition            = $this->makeInstance(DataHookDefinition::class);
         $definition->type      = $type;
         $definition->data      = $data;
         $definition->dataRaw   = $data;
@@ -115,7 +115,7 @@ class DefinitionResolver
                 throw new DataHookException('Invalid field packer class given: ' . $fieldPackerClass);
             }
             /** @var FieldPackerInterface $packer */
-            $packer                       = $this->getInstanceOf($fieldPackerClass);
+            $packer                       = $this->getService($fieldPackerClass);
             $definition->fieldPackers[]   = $packer;
             $definition->unpackedFields[] = $packer->unpackFields($definition);
         }

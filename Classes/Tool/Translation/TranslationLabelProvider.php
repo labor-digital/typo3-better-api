@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Translation;
 
-use LaborDigital\T3BA\Core\DependencyInjection\StaticContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
 
 class TranslationLabelProvider
 {
@@ -57,7 +57,7 @@ class TranslationLabelProvider
 
         // Resolve our label
         $inputRaw                   = $input;
-        $input                      = static::getSingletonOf(Translator::class)->getLabelKey($input);
+        $input                      = static::getService(Translator::class)->getLabelKey($input);
         static::$labelCache[$input] = $inputRaw === $input ? true : $input;
 
         // Do the translation

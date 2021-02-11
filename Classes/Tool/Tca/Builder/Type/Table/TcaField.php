@@ -81,7 +81,7 @@ class TcaField extends AbstractField
         // Create new flex form config
         $cs = $this->getRoot()->getContext()->cs();
 
-        return $this->flex = $cs->typoContext->di()->getWithoutDi(
+        return $this->flex = $cs->typoContext->di()->makeInstance(
             TcaFieldFlexFormConfig::class, [$this, $this->config, $cs->flexFormFactory]
         );
     }

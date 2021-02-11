@@ -121,7 +121,7 @@ class TcaTableType extends AbstractType
 
         return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) use ($id, $ignoreFieldIdIssues) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField $i */
-            $i = $this->context->cs()->di->getWithoutDi(
+            $i = $this->context->cs()->di->makeInstance(
                 TcaField::class, [
                     $node,
                     $this,
@@ -175,7 +175,7 @@ class TcaTableType extends AbstractType
     {
         return $this->findOrCreateChild($id, Node::TYPE_CONTAINER, function (Node $node) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaPalette $i */
-            $i = $this->context->cs()->di->getWithoutDi(
+            $i = $this->context->cs()->di->makeInstance(
                 TcaPalette::class, [$node, $this]
             );
             $i->setLabel('');
@@ -230,7 +230,7 @@ class TcaTableType extends AbstractType
         $id = 'lb-' . md5((string)microtime(true));
 
         $el = $this->findOrCreateChild($id, Node::TYPE_NL, function ($node) {
-            return ($this->context->cs()->di->getWithoutDi(
+            return ($this->context->cs()->di->makeInstance(
                 TcaPaletteLineBreak::class, [$node, $this]
             ));
         });
@@ -254,7 +254,7 @@ class TcaTableType extends AbstractType
     public function getTab(int $id): TcaTab
     {
         return $this->findOrCreateChild($id, Node::TYPE_TAB, function (Node $node) {
-            return ($this->context->cs()->di->getWithoutDi(
+            return ($this->context->cs()->di->makeInstance(
                 $this->getTabClass(), [$node, $this]
             ))->setLabel('t3ba.tab.untitled');
         });

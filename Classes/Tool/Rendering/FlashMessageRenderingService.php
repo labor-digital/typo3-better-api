@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Rendering;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
@@ -262,7 +262,7 @@ class FlashMessageRenderingService implements SingletonInterface
         ]);
 
         // Create the new message
-        $message = $this->getWithoutDi(
+        $message = $this->makeInstance(
             FlashMessage::class,
             [
                 $message,

@@ -89,7 +89,6 @@ class TableDefaults
                 ],
                 'l10n_parent'      => [
                     'displayCond' => 'FIELD:sys_language_uid:>:0',
-                    'exclude'     => true,
                     'label'       => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                     'config'      => [
                         'type'                => 'select',
@@ -179,11 +178,11 @@ class TableDefaults
                     'exclude' => true,
                     'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
                     'config'  => [
-                        'type'                             => 'select',
-                        'renderType'                       => 'selectMultipleSideBySide',
-                        'size'                             => 5,
-                        'maxitems'                         => 20,
-                        'items'                            =>
+                        'type'                => 'select',
+                        'renderType'          => 'selectMultipleSideBySide',
+                        'size'                => 5,
+                        'maxitems'            => 20,
+                        'items'               =>
                             [
                                 ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login', -1],
                                 ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.any_login', -2],
@@ -192,10 +191,9 @@ class TableDefaults
                                     '--div--',
                                 ],
                             ],
-                        'exclusiveKeys'                    => '-1,-2',
-                        'foreign_table'                    => 'fe_groups',
-                        'foreign_table_where'              => 'ORDER BY fe_groups.title',
-                        'enableMultiSelectFilterTextfield' => true,
+                        'exclusiveKeys'       => '-1,-2',
+                        'foreign_table'       => 'fe_groups',
+                        'foreign_table_where' => 'ORDER BY fe_groups.title',
                     ],
                 ],
                 't3_origuid'       => [

@@ -71,6 +71,6 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         }
 
         return static::$concreteQueryParser
-            = TypoContext::getInstance()->di()->getObjectManager()->get(Typo3DbQueryParser::class);
+            = TypoContext::getInstance()->di()->cs()->objectManager->get(Typo3DbQueryParser::class);
     }
 }

@@ -37,6 +37,7 @@ use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\Exception\KernelNotInitializedException;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\KernelBootEvent;
 
 class Kernel
@@ -77,6 +78,13 @@ class Kernel
     protected $eventBus;
 
     /**
+     * The file system we write our internal files with
+     *
+     * @var VarFs
+     */
+    protected $fs;
+
+    /**
      * Initializes the better api kernel and prepares the boot stages
      * to hook the extension into the TYPO3 core
      *
@@ -91,6 +99,7 @@ class Kernel
 
         // Create a new instance
         static::$instance = $i = new static();
+        $i->fs            = new VarFs();
         $i->classLoader   = $composerClassLoader;
         $i->eventBus      = $i->makeEventBus();
 
@@ -177,6 +186,16 @@ class Kernel
     public function getEventBus(): TypoEventBus
     {
         return $this->eventBus;
+    }
+
+    /**
+     * Returns the file system instance
+     *
+     * @return \LaborDigital\T3BA\Core\VarFs\VarFs
+     */
+    public function getFs(): VarFs
+    {
+        return $this->fs;
     }
 
     /**

@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Throwable;

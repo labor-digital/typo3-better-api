@@ -27,6 +27,7 @@ use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
 use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 
@@ -75,7 +76,7 @@ abstract class AbstractForm
     public function __construct(TcaBuilderContext $context)
     {
         $this->context = $context;
-        $this->tree    = $context->cs()->di->getWithoutDi(
+        $this->tree    = $context->cs()->di->makeInstance(
             Tree::class, [$this, $this->getTabClass()]
         );
     }
@@ -182,11 +183,21 @@ abstract class AbstractForm
 
         $highestTabId = 0;
         foreach ($this->getTabs() as $tab) {
+            if (! is_numeric($tab->getId())) {
+                $highestTabId++;
+                continue;
+            }
+
             if ($tab->getId() > $highestTabId) {
                 $highestTabId = ((int)$tab->getId());
             }
         }
 
+        if ($this instanceof Flex) {
+            return $this->getTab((string)($highestTabId + 1));
+        }
+
+        /** @noinspection PhpStrictTypeCheckingInspection */
         return $this->getTab($highestTabId + 1);
     }
 

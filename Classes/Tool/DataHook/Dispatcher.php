@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\DataHook;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\DataHook\PostProcessorEvent;
 use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
@@ -90,7 +90,7 @@ class Dispatcher implements PublicServiceInterface
                                             . ' The class has to extend the ' . DataHookContext::class . ' class!');
             }
             /** @var \LaborDigital\T3BA\Tool\DataHook\DataHookContext $context */
-            $context = $this->getWithoutDi($contextClass, [$definition, $handlerDefinition, $event]);
+            $context = $this->makeInstance($contextClass, [$definition, $handlerDefinition, $event]);
 
             // Execute the handler
             call_user_func($handlerDefinition->handler, $context);

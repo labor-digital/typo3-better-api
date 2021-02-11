@@ -89,7 +89,7 @@ class Tree
         $this->form     = $form;
         $this->tabClass = $tabClass;
         $this->root     = $form->getContext()->cs()
-            ->di->getWithoutDi(
+            ->di->makeInstance(
                 Node::class,
                 ['root', Node::TYPE_ROOT, $this]
             );
@@ -118,7 +118,7 @@ class Tree
     public function makeNewNode($id, int $type): Node
     {
         $node = $this->form->getContext()->cs()
-            ->di->getWithoutDi(Node::class, [$id, $type, $this]);
+            ->di->makeInstance(Node::class, [$id, $type, $this]);
 
         $parent = $type === Node::TYPE_TAB ? $this->root : $this->getDefaultNode();
 
@@ -422,7 +422,7 @@ class Tree
         if (empty($this->nodes[Node::TYPE_TAB])) {
             $node = $this->makeNewNode($this->defaultTabId, Node::TYPE_TAB);
             $tab  = $this->form->getContext()->cs()
-                ->di->getWithoutDi($this->tabClass, [$node, $this->form]);
+                ->di->makeInstance($this->tabClass, [$node, $this->form]);
 
             if ($tab instanceof AbstractTab) {
                 $tab->setLabel('betterApi.tab.general');

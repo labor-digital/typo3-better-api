@@ -24,7 +24,8 @@ namespace LaborDigital\T3BA\ExtConfig;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\VarFs\Mount;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\ConfigLoaderFilterEvent;
 use Neunerlei\Configuration\Loader\Loader;
 use Neunerlei\PathUtil\Path;
@@ -61,7 +62,7 @@ class ExtConfigService implements SingletonInterface
     protected $eventBus;
 
     /**
-     * @var \LaborDigital\T3BA\Core\TempFs\TempFs
+     * @var \LaborDigital\T3BA\Core\VarFs\VarFs
      */
     protected $fs;
 
@@ -84,9 +85,9 @@ class ExtConfigService implements SingletonInterface
      *
      * @param   \TYPO3\CMS\Core\Package\PackageManager         $packageManager
      * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
-     * @param   \LaborDigital\T3BA\Core\TempFs\TempFs          $fs
+     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs            $fs
      */
-    public function __construct(PackageManager $packageManager, TypoEventBus $eventBus, TempFs $fs)
+    public function __construct(PackageManager $packageManager, TypoEventBus $eventBus, VarFs $fs)
     {
         $this->packageManager = $packageManager;
         $this->eventBus       = $eventBus;
@@ -96,11 +97,21 @@ class ExtConfigService implements SingletonInterface
     /**
      * Returns the local storage filesystem instance
      *
-     * @return \LaborDigital\T3BA\Core\TempFs\TempFs
+     * @return \LaborDigital\T3BA\Core\VarFs\VarFs
      */
-    public function getFs(): TempFs
+    public function getFs(): VarFs
     {
         return $this->fs;
+    }
+
+    /**
+     * Returns the fs mount were ext config related data should be stored
+     *
+     * @return \LaborDigital\T3BA\Core\VarFs\Mount
+     */
+    public function getFsMount(): Mount
+    {
+        return $this->fs->getMount('ExtConfig');
     }
 
     /**

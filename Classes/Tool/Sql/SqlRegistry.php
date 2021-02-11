@@ -26,7 +26,7 @@ namespace LaborDigital\T3BA\Tool\Sql;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\EventHandler\SqlEventHandler;
 use LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor;
 use LaborDigital\T3BA\Tool\Sql\Io\Dumper;
@@ -106,7 +106,7 @@ class SqlRegistry implements SingletonInterface
 
         if (! isset($this->definition->tables[$tableName])) {
             $this->definition->newTableNames[]    = $tableName;
-            $this->definition->tables[$tableName] = $this->getWithoutDi(Table::class, [
+            $this->definition->tables[$tableName] = $this->makeInstance(Table::class, [
                 $tableName,
                 [],
                 [],
@@ -242,6 +242,6 @@ class SqlRegistry implements SingletonInterface
             }
         }
 
-        $this->definition = $this->getWithoutDi(Definition::class, [$tables]);
+        $this->definition = $this->makeInstance(Definition::class, [$tables]);
     }
 }

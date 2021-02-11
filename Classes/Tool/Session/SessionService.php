@@ -38,7 +38,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Session;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class SessionService implements SingletonInterface
@@ -52,7 +52,7 @@ class SessionService implements SingletonInterface
      */
     public function getFrontendSession(): SessionInterface
     {
-        return $this->getSingletonOf(FrontendSessionProvider::class);
+        return $this->getService(FrontendSessionProvider::class);
     }
 
     /**
@@ -62,6 +62,6 @@ class SessionService implements SingletonInterface
      */
     public function getBackendSession(): SessionInterface
     {
-        return $this->getSingletonOf(BackendSessionProvider::class);
+        return $this->getService(BackendSessionProvider::class);
     }
 }

@@ -22,9 +22,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
 
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
+use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
 
-class ModuleConfigurator extends AbstractElementConfigurator
+class ModuleConfigurator extends AbstractConfigurator
 {
 
     /**

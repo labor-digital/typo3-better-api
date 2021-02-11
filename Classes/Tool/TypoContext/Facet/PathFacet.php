@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
@@ -385,7 +385,7 @@ class PathFacet implements FacetInterface
 
         // Resolve the record
         if (is_numeric($recordOrUid)) {
-            $record = $this->getSingletonOf(DbServiceInterface::class)->getRecords($table, $recordOrUid);
+            $record = $this->getService(DbServiceInterface::class)->getRecords($table, $recordOrUid);
             $record = reset($record);
         } else {
             $record = $recordOrUid;
@@ -400,7 +400,7 @@ class PathFacet implements FacetInterface
         }
 
         // Create the slug using the slug helper
-        $slugHelper = $this->getInstanceOf(SlugHelper::class, [$table, $field, $fieldConfig]);
+        $slugHelper = $this->getService(SlugHelper::class, [$table, $field, $fieldConfig]);
 
         return $slugHelper->generate($record, empty($record['pid']) ? -1 : $record['pid']);
     }

@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\TypoContext;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\CommonServices;
+use LaborDigital\T3BA\Core\Di\CommonServices;
 use Psr\Container\ContainerInterface;
 
 trait TypoContextAwareTrait

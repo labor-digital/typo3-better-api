@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Controller;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Event\ExtBase\ActionController\MethodNameFilterEvent;
 use LaborDigital\T3BA\Event\ExtBase\ActionController\RequestFilterEvent;
 use LaborDigital\T3BA\Tool\Link\LinkService;
@@ -61,13 +61,13 @@ abstract class BetterActionController extends ActionController
         }
 
         // Inject the this controller's request into the links object
-        $this->setLocalSingleton(
+        $this->setService(
             LinkService::class, $this->cs()->links->makeControllerClone($request)
         );
 
         // Update the messaging service
-        $messagingService = $this->getInstanceOf(FlashMessageRenderingService::class);
-        $extensionService = $this->getInstanceOf(ExtensionService::class);
+        $messagingService = $this->getService(FlashMessageRenderingService::class);
+        $extensionService = $this->getService(ExtensionService::class);
         $messagingService->setDefaultQueueId(
             'extbase.flashmessages.' . $extensionService->getPluginNamespace(
                 $request->getControllerExtensionName(), $request->getPluginName())

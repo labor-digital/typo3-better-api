@@ -20,8 +20,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Rendering;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\TempFs\TempFs;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\VarFs\Mount;
+use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use LightnCandy\LightnCandy;
 use Neunerlei\Arrays\Arrays;
@@ -43,16 +44,18 @@ class TemplateRenderingService implements SingletonInterface
     protected static $renderers = [];
 
     /**
-     * @var \LaborDigital\T3BA\Core\TempFs\TempFs
+     * @var Mount
      */
-    protected $fs;
+    protected $fsMount;
 
     /**
      * TemplateRenderingService constructor.
+     *
+     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs  $fs
      */
-    public function __construct()
+    public function __construct(VarFs $fs)
     {
-        $this->fs = TempFs::makeInstance('TemplateRendering');
+        $this->fsMount = $fs->getMount('TemplateRendering');
     }
 
     /**
@@ -82,7 +85,7 @@ class TemplateRenderingService implements SingletonInterface
             $renderer = static::$renderers[$templateFile];
         } else {
             // Check if we have to compile the template
-            if (! $this->fs->hasFile($templateFile)) {
+            if (! $this->fsMount->hasFile($templateFile)) {
                 if (! isset($options['flags'])) {
                     $options['flags'] = LightnCandy::FLAG_BESTPERFORMANCE ^ LightnCandy::FLAG_ERROR_EXCEPTION
                                         ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL;
@@ -91,11 +94,11 @@ class TemplateRenderingService implements SingletonInterface
                 if (strpos(trim($php), '<?php') !== 0) {
                     $php = '<?php' . PHP_EOL . $php;
                 }
-                $this->fs->setFileContent($templateFile, $php);
+                $this->fsMount->setFileContent($templateFile, $php);
             }
 
             // Load the renderer from the compiled template
-            $renderer = static::$renderers[$templateFile] = $this->fs->includeFile($templateFile);
+            $renderer = static::$renderers[$templateFile] = $this->fsMount->includeFile($templateFile);
         }
 
         // Execute the renderer
@@ -147,7 +150,7 @@ class TemplateRenderingService implements SingletonInterface
         }
 
         // Build the instance
-        $instance = $this->getWithoutDi(StandaloneView::class);
+        $instance = $this->makeInstance(StandaloneView::class);
         $instance->setFormat($options['format']);
         if (! empty($options['templateRootPaths'])) {
             $instance->setTemplateRootPaths($options['templateRootPaths']);
@@ -185,10 +188,7 @@ class TemplateRenderingService implements SingletonInterface
                     }
 
                     return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
-                        ::getInstance()
-                        ->di()
-                        ->getSingletonOf(\LaborDigital\T3BA\Tool\Translation\Translator::class)
-                        ->translate($selector);
+                        ::getInstance()->di()->cs()->translator->translate($selector);
                 },
             ],
         ], $options);

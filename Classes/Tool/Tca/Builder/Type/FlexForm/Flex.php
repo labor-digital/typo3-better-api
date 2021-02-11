@@ -211,7 +211,7 @@ class Flex extends AbstractForm
     {
         return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) use ($id) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField $i */
-            return $this->context->cs()->di->getWithoutDi(
+            return $this->context->cs()->di->makeInstance(
                 FlexField::class, [
                     $node,
                     $this,
@@ -242,7 +242,7 @@ class Flex extends AbstractForm
     {
         return $this->findOrCreateChild($id, Node::TYPE_CONTAINER, function (Node $node) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection $i */
-            $i = $this->context->cs()->di->getWithoutDi(
+            $i = $this->context->cs()->di->makeInstance(
                 FlexSection::class, [$node, $this]
             );
             $i->setLabel('');
@@ -310,7 +310,7 @@ class Flex extends AbstractForm
         $id = $id ?? 'sDEF';
 
         return $this->findOrCreateChild($id, Node::TYPE_TAB, function (Node $node) {
-            return ($this->context->cs()->di->getWithoutDi(
+            return ($this->context->cs()->di->makeInstance(
                 $this->getTabClass(), [$node, $this]
             ))->setLabel('t3ba.tab.untitled');
         });
@@ -354,7 +354,14 @@ class Flex extends AbstractForm
         parent::clear();
     }
 
-
+    /**
+     * Internal helper that will resolve the given path by recursively looking up a node
+     *
+     * @param   string|int|array  $id
+     * @param   int|null          $type
+     *
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node|null
+     */
     protected function findNodeByPath($id, ?int $type = null): ?Node
     {
         $tree  = $this->tree;
@@ -364,7 +371,8 @@ class Flex extends AbstractForm
         foreach ($path as $k => $subId) {
             $node = $tree->getNode($subId, $lastK === $k ? $type : null);
         }
-        dbge($node);
+
+        return $node;
     }
 
     /**

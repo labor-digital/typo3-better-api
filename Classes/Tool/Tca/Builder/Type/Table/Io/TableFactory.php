@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
 
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Event\Tca\TableDefaultTcaFilterEvent;
 use LaborDigital\T3BA\Event\Tca\TableFactoryTcaFilterEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
@@ -71,10 +71,10 @@ class TableFactory implements PublicServiceInterface
      */
     public function create(string $tableName, ExtConfigContext $configContext): TcaTable
     {
-        return $this->getWithoutDi(
+        return $this->makeInstance(
             TcaTable::class, [
                 $tableName,
-                $this->getWithoutDi(TcaBuilderContext::class, [$configContext]),
+                $this->makeInstance(TcaBuilderContext::class, [$configContext]),
                 $this,
                 $this->typeFactory,
             ]

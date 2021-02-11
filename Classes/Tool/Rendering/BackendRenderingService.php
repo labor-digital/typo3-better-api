@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Rendering;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Backend\DbListQueryFilterEvent;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
@@ -99,7 +99,7 @@ class BackendRenderingService implements SingletonInterface
         $backendUser = $GLOBALS['BE_USER'];
 
         /** @var DatabaseRecordList $dbList */
-        $dbList                            = $this->getWithoutDi(DatabaseRecordList::class);
+        $dbList                            = $this->makeInstance(DatabaseRecordList::class);
         $dbList->script                    = GeneralUtility::getIndpEnv('REQUEST_URI');
         $dbList->thumbs                    = $backendUser->uc['thumbnailsByDefault'];
         $dbList->allFields                 = 1;
@@ -133,7 +133,7 @@ class BackendRenderingService implements SingletonInterface
             if (! $this->dbRecordFilterRegistered) {
                 $this->dbRecordFilterRegistered = true;
 
-                $this->getInstanceOf(TypoEventBus::class)->addListener(
+                $this->getService(TypoEventBus::class)->addListener(
                     DbListQueryFilterEvent::class, function (DbListQueryFilterEvent $event) {
                     // Skip if the event was already emitted
                     if ($this->dbRecordFilterTmp['emitted'] || empty($this->dbRecordFilterTmp['options'])) {

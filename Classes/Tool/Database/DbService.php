@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database;
 
-use LaborDigital\T3BA\Core\DependencyInjection\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\DependencyInjection\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
@@ -44,7 +44,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
      */
     public function persistAll(): void
     {
-        $this->getSingletonOf(PersistenceManagerInterface::class)->persistAll();
+        $this->getService(PersistenceManagerInterface::class)->persistAll();
     }
 
     /**
@@ -54,12 +54,12 @@ class DbService implements SingletonInterface, PublicServiceInterface
      */
     public function getConnectionPool(): ConnectionPool
     {
-        if ($this->hasLocalSingleton(ConnectionPool::class)) {
-            return $this->getSingletonOf(ConnectionPool::class);
+        if ($this->hasService(ConnectionPool::class)) {
+            return $this->getService(ConnectionPool::class);
         }
 
-        $connectionPool = $this->getWithoutDi(ConnectionPool::class);
-        $this->setLocalSingleton(ConnectionPool::class, $connectionPool);
+        $connectionPool = $this->makeInstance(ConnectionPool::class);
+        $this->setService(ConnectionPool::class, $connectionPool);
 
         return $connectionPool;
     }
@@ -110,13 +110,13 @@ class DbService implements SingletonInterface, PublicServiceInterface
             $tableName = NamingUtil::resolveTableName($tableName);
         }
 
-        $query = $this->getWithoutDi(
+        $query = $this->makeInstance(
             StandaloneBetterQuery::class, [
                 $tableName,
                 $this->getQueryBuilder($tableName),
-                $this->getTypoContext()->di()->getObjectManager()->get(QuerySettingsInterface::class),
+                $this->getTypoContext()->di()->cs()->objectManager->get(QuerySettingsInterface::class),
                 $this->getTypoContext(),
-                $this->getSingletonOf(Session::class),
+                $this->getService(Session::class),
             ]
         );
 

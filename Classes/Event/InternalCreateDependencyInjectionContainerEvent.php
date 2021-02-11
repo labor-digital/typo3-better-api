@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\Event;
 
 
 use Closure;
-use LaborDigital\T3BA\Core\DependencyInjection\FailsafeDelegateContainer;
+use LaborDigital\T3BA\Core\Di\FailsafeDelegateContainer;
 use LaborDigital\T3BA\Core\Util\FailsafeWrapper;
 use Psr\Container\ContainerInterface;
 
