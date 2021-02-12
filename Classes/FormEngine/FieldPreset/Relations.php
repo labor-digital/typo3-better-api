@@ -310,6 +310,9 @@ class Relations extends AbstractFieldPreset
      *                           - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
      *                           a simple folder name like folder-name that is always used/selected by default
      *                           if the object browser is opened
+     *                           - disableFalFields array: An optional list of sys_file_reference fields
+     *                           that should be disabled for this field. This allows you to remove some input
+     *                           options on the fly. This has no effect if the field is inside a flex form section!
      */
     public function applyRelationFile(array $options = []): void
     {
@@ -318,17 +321,21 @@ class Relations extends AbstractFieldPreset
             $this->addMinMaxItemOptions(
                 $this->addEvalOptions(
                     [
-                        'allowList' => [
+                        'allowList'        => [
                             'type'    => 'string',
                             'default' => '',
                         ],
-                        'blockList' => [
+                        'blockList'        => [
                             'type'    => 'string',
                             'default' => '',
                         ],
-                        'baseDir'   => [
+                        'baseDir'          => [
                             'type'    => 'string',
                             'default' => '',
+                        ],
+                        'disableFalFields' => [
+                            'type'    => 'array',
+                            'default' => [],
                         ],
                     ],
                     ['required']
@@ -370,6 +377,17 @@ class Relations extends AbstractFieldPreset
                     'showPossibleLocalizationRecords' => true,
                 ],
             ]);
+
+            // Remove all disabled fields
+            if (! empty($options['disableFalFields'])) {
+                foreach ($options['disableFalFields'] as $field) {
+                    if (! is_string($field)) {
+                        continue;
+                    }
+                    $config['overrideChildTca']['columns'][$field]['config']['type']       = 'passthrough';
+                    $config['overrideChildTca']['columns'][$field]['config']['renderType'] = 'passthrough';
+                }
+            }
 
             // Set sql for field
             $this->configureSqlColumn(static function (Column $column) {
@@ -443,7 +461,7 @@ class Relations extends AbstractFieldPreset
      *                           - maxItems int: The maximum number of items allowed in this field
      *                           - required bool (FALSE): If set to true, the field requires at least 1 item.
      *                           This is identical with setting minItems to 1
-     *                           - allowList string (jpg,jpeg,png,svg,webp,gif): A comma separated list of file
+     *                           - allowList string (same as: GFX.imagefile_ext): A comma separated list of file
      *                           extensions that are specifically ALLOWED to be uploaded, every other extension
      *                           will be blocked
      *                           - blockList string: A comma separated list of file extensions that are specifically
@@ -462,6 +480,9 @@ class Relations extends AbstractFieldPreset
      *                           - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
      *                           a simple folder name like folder-name that is always used/selected by default
      *                           if the object browser is opened
+     *                           - disableFalFields array: An optional list of sys_file_reference fields
+     *                           that should be disabled for this field. This allows you to remove some input
+     *                           options on the fly
      *
      * CropVariantsArray:
      *  "cropVariants" => [
@@ -567,10 +588,11 @@ class Relations extends AbstractFieldPreset
             // Build real crop variants array
             $cropVariants = [];
             foreach ($options['cropVariants'] as $k => $c) {
-                // Build aspect ratio list by converting the simple format to the Typo3 format
+                // Build aspect ratio list by converting the simple format to the TYPO3 format
                 if (! is_array($c['allowedAspectRatios'])) {
                     $c['allowedAspectRatios'] = [];
                 }
+
                 if (is_array($c['aspectRatios'])) {
                     foreach ($c['aspectRatios'] as $ratio => $label) {
                         if ($ratio === 'free') {
@@ -609,6 +631,16 @@ class Relations extends AbstractFieldPreset
                     ];
                 }
 
+                // Make sure we have a default crop variant
+                if (is_numeric($k)) {
+                    if (! isset($cropVariants['default']) && ! isset($options['cropVariants']['default'])) {
+                        $k = 'default';
+                    } else {
+                        throw new TcaBuilderException('Invalid crop variant list given. elements must have unique, non-numeric keys! Key: '
+                                                      . $k . ' is therefore invalid!');
+                    }
+                }
+
                 $cropVariants[$k] = $c;
             }
 
@@ -624,7 +656,6 @@ class Relations extends AbstractFieldPreset
             if (! empty($cropVariants)) {
                 $cropConfig['cropVariants'] = $cropVariants;
             }
-
 
             // Update the tca definition
             $this->field->addConfig([

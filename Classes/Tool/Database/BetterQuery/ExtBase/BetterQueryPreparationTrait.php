@@ -57,14 +57,15 @@ trait BetterQueryPreparationTrait
      * but it does not simply return an empty query object, no it can also take ext base plugin settings and a database
      * row to read additional information from to preconfigure your query with.
      *
-     * @param   array  $settings  The ext base $this->settings value of a controller class
-     * @param   array  $row       The row of a tt_content record containing the ext base plugin configuration.
+     * @param   array       $settings  The ext base $this->settings value of a controller class
+     * @param   array|null  $row       The row of a tt_content record containing the ext base plugin configuration.
      *
      * @return AbstractBetterQuery
      */
-    public function getPreparedQuery(array $settings, array $row = []): AbstractBetterQuery
+    public function getPreparedQuery(array $settings, ?array $row = null): AbstractBetterQuery
     {
         $query = $this->getQuery();
+        $row   = $row ?? [];
 
         // Fill default values
         if (! empty($settings['storagePid'])) {

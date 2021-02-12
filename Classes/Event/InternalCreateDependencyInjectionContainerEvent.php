@@ -155,8 +155,6 @@ class InternalCreateDependencyInjectionContainerEvent
                 return FailsafeWrapper::handleEither(function () {
                     return $this->makeFailsafeDelegateContainer();
                 }, function ($d) {
-                    dbge($d);
-
                     return $this->makeFailsafeContainer();
                 });
             }

@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigGenerator;
 use LaborDigital\T3BA\Tool\BackendPreview\Hook\ContentPreviewRenderer;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
@@ -82,6 +83,12 @@ class ConfigGenerator extends AbstractConfigGenerator
      */
     protected $dataHooks = [];
 
+    /**
+     * The list of all collected flex form registration arguments for the content elements
+     *
+     * @var array
+     */
+    protected $flexFormArgs = [];
 
     /**
      * Generates the required configuration to register the plugin defined in the given $configurator
@@ -97,8 +104,8 @@ class ConfigGenerator extends AbstractConfigGenerator
         $this->registerIconDefinition($configurator, $context);
         $this->registerNewCEWizardTsConfig($configurator, $context);
         $this->registerBackendPreviewAndListLabelRenderer($configurator, $context);
+        $this->registerFlexFormConfig($configurator, $context);
         $this->dataHooks = array_merge($this->dataHooks, $configurator->getRegisteredDataHooks());
-        // @todo flex form handling
     }
 
     /**
@@ -115,6 +122,7 @@ class ConfigGenerator extends AbstractConfigGenerator
             $this->setAsJson($state, 'iconArgs', $this->iconArgs);
             $this->setAsJson($state, 'dataHooks', $this->dataHooks);
             $this->setAsJson($state, 'backendPreviewHooks', $this->backendPreviewHooks);
+            $this->setAsJson($state, 'flexForms', $this->flexFormArgs);
         });
 
         $this->attachToStringValue($state, 'typo.typoScript.pageTsConfig', implode(PHP_EOL, $this->tsConfig));
@@ -277,6 +285,34 @@ class ConfigGenerator extends AbstractConfigGenerator
     }
 
     /**
+     * Builds and registers the arguments for the flex form definition of content elements and plugins
+     *
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
+     */
+    protected function registerFlexFormConfig(
+        PluginConfigurator $configurator,
+        ExtConfigContext $context
+    ): void {
+        if (! $configurator->hasFlexForm()) {
+            return;
+        }
+
+        $dumper       = $context->getTypoContext()->di()->getService(Dumper::class);
+        $flexFormFile = $dumper->dumpToFile($configurator->getFlexForm());
+
+        $this->flexFormArgs[] = [
+            'signature' => $configurator->getSignature(),
+            'args'      => array_values([
+                'piKeyToMatch' => $configurator->getSignature(),
+                'value'        => 'FILE:' . $flexFormFile,
+                'CTypeToMatch' => $configurator->getType() === 'plugin' ? 'list' : $configurator->getSignature(),
+            ]),
+        ];
+
+    }
+
+    /**
      * Internal helper to create the icon identifier for this plugin
      *
      * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator  $configurator
@@ -288,4 +324,5 @@ class ConfigGenerator extends AbstractConfigGenerator
     {
         return Inflector::toDashed($context->getExtKey() . '-' . $configurator->getPluginName());
     }
+
 }

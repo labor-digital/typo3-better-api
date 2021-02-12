@@ -111,6 +111,7 @@ class DefinitionProcessor
         $result = [];
 
         foreach ($tables as $k => $table) {
+            /** @noinspection ProperNullCoalescingOperatorUsageInspection */
             $types = $definition->types[$table->getName()] ?? [];
 
             $tableToDump = null;
@@ -243,6 +244,8 @@ class DefinitionProcessor
      */
     protected function dropFallbackColumns(Table $table): void
     {
+        TableAdapter::dropPrimaryKeyNameIfNoIndexExists($table);
+
         foreach ($table->getColumns() as $column) {
             if ($column->getType() instanceof FallbackType) {
                 $table->dropColumn($column->getName());

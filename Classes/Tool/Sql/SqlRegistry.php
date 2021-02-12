@@ -31,6 +31,7 @@ use LaborDigital\T3BA\EventHandler\SqlEventHandler;
 use LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor;
 use LaborDigital\T3BA\Tool\Sql\Io\Dumper;
 use LaborDigital\T3BA\Tool\Sql\Io\TableAdapter;
+use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Database\Schema\SchemaMigrator;
 use TYPO3\CMS\Core\Database\Schema\SqlReader;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -179,10 +180,58 @@ class SqlRegistry implements SingletonInterface
     {
         $type = $this->getType($tableName, $typeName);
         if (! $type->hasColumn($fieldName)) {
-            $type->addColumn($fieldName, static::FALLBACK_TYPE_NAME);
+            return $type->addColumn($fieldName, static::FALLBACK_TYPE_NAME);
         }
 
         return $type->getColumn($fieldName);
+    }
+
+    /**
+     * an be used to create a mm table definition in the sql file.
+     *
+     * @param   string       $tableName    The table name to create the mm table for
+     * @param   string       $fieldName    The field name of the given table we create the mm table for
+     * @param   string|null  $mmTableName  Optionally the manually provided name of the mm table
+     *
+     * @return string
+     */
+    public function registerMmTable(string $tableName, string $fieldName, ?string $mmTableName = null): string
+    {
+        // Make the name of the mm table
+        if (empty($mmTableName)) {
+            $mmTableName = str_replace('_domain_model_', '_', $tableName) . '_' . Inflector::toUnderscore($fieldName);
+
+            // Make sure the name does not get longer than 128 chars at max (125 + 3 for "_mm")
+            if (strlen($mmTableName) > 125) {
+                $mmNameHash  = md5($mmTableName);
+                $mmTableName = substr($mmTableName, 0, 125 - 32 - 1); // max length - md5 length - 1 for "_"
+                $mmTableName .= '_' . $mmNameHash;
+            }
+
+            $mmTableName .= '_mm';
+        }
+
+        // Already defined
+        if (isset($this->definition->tables[$mmTableName])) {
+            return $mmTableName;
+        }
+
+        // Define the table
+        $table = $this->getTable($mmTableName);
+
+        $table->addColumn('uid', 'integer', ['length' => 11, 'notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('uid_local', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
+        $table->addColumn('uid_foreign', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
+        $table->addColumn('tablenames', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
+        $table->addColumn('sorting', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
+        $table->addColumn('sorting_foreign', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
+        $table->addColumn('ident', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
+
+        $table->setPrimaryKey(['uid']);
+        $table->addIndex(['uid_local'], 'uid_local');
+        $table->addIndex(['uid_foreign'], 'uid_foreign');
+
+        return $mmTableName;
     }
 
     /**

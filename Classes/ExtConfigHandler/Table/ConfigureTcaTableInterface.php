@@ -40,5 +40,11 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 interface ConfigureTcaTableInterface
 {
 
+    /**
+     * Should be used to configure the table that is passed to it
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext            $context
+     */
     public static function configureTable(TcaTable $table, ExtConfigContext $context): void;
 }

@@ -33,6 +33,7 @@ use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 class Applier extends AbstractExtConfigApplier
@@ -61,6 +62,7 @@ class Applier extends AbstractExtConfigApplier
         $this->registerPlugins();
         $this->registerPluginDataHooks();
         $this->registerPluginBackendPreviewHooks();
+        $this->registerPluginFlexForms();
     }
 
     public function onExtLocalConfLoaded(): void
@@ -159,9 +161,35 @@ class Applier extends AbstractExtConfigApplier
             if (is_array($args['registerCType'])) {
                 $this->registerCTypesForElements($GLOBALS['TCA'], $args['registerCType']);
             }
-
         }
+    }
 
+    /**
+     * Adds the registered flex form configuration to the TCA
+     */
+    protected function registerPluginFlexForms(): void
+    {
+        $definition = $this->state->get('typo.extBase.plugin.flexForms');
+        if (! empty($definition)) {
+            foreach (Arrays::makeFromJson($definition) as $def) {
+                ExtensionManagementUtility::addPiFlexFormValue(...$def['args']);
+
+                $signature = $def['signature'];
+                $val       = $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$signature] ?? null;
+                if ($val !== null) {
+                    if (is_string($val) && stripos($val, 'pi_flexform') === false) {
+                        // A string exists, but pi_flexform is not part of it
+                        $val = rtrim($val, ', ') . ',pi_flexform';
+                    } else {
+                        continue;
+                    }
+                } else {
+                    $val = 'pi_flexform';
+                }
+
+                $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$signature] = $val;
+            }
+        }
     }
 
 }

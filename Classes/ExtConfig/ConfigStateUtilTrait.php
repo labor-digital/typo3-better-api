@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 
 trait ConfigStateUtilTrait
@@ -68,7 +69,7 @@ trait ConfigStateUtilTrait
      *                                    Otherwise NULL is written into the state. Set this to FALSE to force
      *                                    the method to write the value into the state even if it is empty
      */
-    protected function setAsJson(ConfigState $state, string $key, $value, bool $ifNotEmpty = true): void
+    protected function setAsJson(ConfigState $state, string $key, array $value, bool $ifNotEmpty = true): void
     {
         if (empty($value) && ! $ifNotEmpty) {
             $state->set($key, null);
@@ -76,6 +77,6 @@ trait ConfigStateUtilTrait
             return;
         }
 
-        $state->set($key, json_encode($value, JSON_THROW_ON_ERROR));
+        $state->set($key, Arrays::dumpToJson($value));
     }
 }

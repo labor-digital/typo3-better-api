@@ -27,11 +27,14 @@ use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use TYPO3\CMS\Extbase\Event\Mvc\BeforeActionCallEvent;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Dispatcher;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
 
 /**
  * Trait ExtBaseBackendPreviewRendererTrait
@@ -42,6 +45,11 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  */
 trait ExtBaseBackendPreviewRendererTrait
 {
+    /**
+     * Internal helper to move some stuff around
+     *
+     * @var array
+     */
     protected static $transfer = [];
 
     /**
@@ -63,7 +71,7 @@ trait ExtBaseBackendPreviewRendererTrait
      *
      * @param   BackendPreviewRendererContext  $context
      */
-    public function setContext(BackendPreviewRendererContext $context)
+    public function setContext(BackendPreviewRendererContext $context): void
     {
         $this->context = $context;
     }
@@ -118,7 +126,6 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     public function simulateRequest(string $actionName, array $options = []): ResponseInterface
     {
-        throw new NotImplementedException();
         $this->validateThatBePreviewTraitIsCalledInActionController();
         static::$transfer['context'] = $this->context;
 
@@ -138,7 +145,9 @@ trait ExtBaseBackendPreviewRendererTrait
         $objectManager = $this->objectManager;
         $row           = $this->context->getRow();
         $listType      = $row['list_type'];
-        $config        = $this->context->TypoScript->get(['plugin', 'tx_' . $listType], ['default' => []]);
+        $typoContext   = TypoContext::getInstance();
+        $typoScript    = $typoContext->di()->cs()->ts;
+        $config        = $typoScript->get(['plugin', 'tx_' . $listType], ['default' => []]);
 
         // Prepare the config manager
         /** @var ActionController $this */
@@ -146,16 +155,19 @@ trait ExtBaseBackendPreviewRendererTrait
         $configManager->setConfiguration($config);
 
         // Create a new request
-        $request = $objectManager->get(RequestInterface::class);
+        $controllerClass = get_called_class();
+        $request         = $objectManager->get(RequestInterface::class, $controllerClass);
         $request->setPluginName($this->context->getRow()['list_type']);
-        $request->setControllerObjectName(get_called_class());
+        $request->setControllerObjectName($controllerClass);
         $request->setControllerActionName($actionName);
         $request->setArguments(static::$transfer['options']['additionalArgs']);
         $request->setFormat('html');
 
+
         // Create a response and dispatcher
         $response   = $objectManager->get(ResponseInterface::class);
         $dispatcher = $objectManager->get(Dispatcher::class);
+        $this->registerEnvironmentSetup();
         $dispatcher->dispatch($request, $response);
 
         // Remove transfer
@@ -168,13 +180,53 @@ trait ExtBaseBackendPreviewRendererTrait
     /**
      * Internal helper to check if all our required properties exist
      *
-     * @throws \LaborDigital\Typo3BetterApi\BackendPreview\BackendPreviewException
+     * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
      */
     protected function validateThatBePreviewTraitIsCalledInActionController()
     {
         if (! $this instanceof ActionController) {
             throw new BackendPreviewException('To use this trait you have to call it in an ActionController action!');
         }
+    }
+
+    protected function registerEnvironmentSetup()
+    {
+        $eventDispatcher = $this->eventDispatcher;
+        $setup           = function () use ($eventDispatcher) {
+            $this->eventDispatcher = $eventDispatcher;
+
+            if (! empty(static::$transfer)) {
+                dbge('HERE 2');
+                $this->context  = static::$transfer['context'];
+                $this->data     = $this->context->getRow();
+                $this->settings = is_array($this->settings) ?
+                    Arrays::merge($this->settings, $this->data['settings']) : $this->data['settings'];
+                try {
+                    $this->view = $this->getFluidView(static::$transfer['options']['templateName']);
+                } catch (InvalidTemplateResourceException $e) {
+                    // Silence
+                }
+            }
+        };
+
+        $this->eventDispatcher = new class($eventDispatcher, $setup) implements EventDispatcherInterface {
+            protected $originalDispatcher;
+            protected $setup;
+
+            public function __construct(EventDispatcherInterface $originalDispatcher, \Closure $setup)
+            {
+                $this->originalDispatcher = $originalDispatcher;
+                $this->setup              = $setup;
+            }
+
+            public function dispatch(object $event)
+            {
+                if ($event instanceof BeforeActionCallEvent) {
+                    call_user_func($this->setup);
+                }
+                $this->originalDispatcher->dispatch($event);
+            }
+        };
     }
 
     /**

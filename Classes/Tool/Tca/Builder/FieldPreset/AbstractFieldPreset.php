@@ -40,13 +40,16 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset;
 
 
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\StringType;
 use Doctrine\DBAL\Types\TextType;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Tool\Sql\SqlFieldLength;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
@@ -408,9 +411,17 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     {
         // Skip if we should not use an mm table
         if ($options['mmTable'] === false) {
+            $this->configureSqlColumn(static function (Column $column) {
+                $column->setType(new TextType())->setLength(SqlFieldLength::TEXT)->setDefault('');
+            });
+
             return $config;
         }
+
+        // MM Tables are not supported in sections
         if ($this->isInFlexFormSection()) {
+            unset($config['MM']);
+
             return $config;
         }
 
@@ -420,21 +431,16 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
             $fieldId = 'flex_' . Inflector::toUnderscore($this->getTcaField()->getId()) . '_' . $fieldId;
         }
 
-        // Check if we are inside a section
-        if ($this->isInFlexFormSection()) {
-            // MM Tables are not supported in sections
-            unset($config['MM']);
+        $mmTableName = $this->context->cs()->sqlRegistry->registerMmTable(
+            $this->getTcaTable()->getTableName(),
+            $fieldId,
+            $options['mmTableName'] ?? null
+        );
 
-            return $config;
-        }
+        $this->configureSqlColumn(static function (Column $column) {
+            $column->setType(new IntegerType())->setLength(11)->setDefault(0);
+        });
 
-        // Add the mm table
-        throw new NotImplementedException('This is not yet implemented');
-//        $mmTableName = $this->context->cs()->sqlBuilder->addMmTableDefinition($this->getTcaTable()->getTableName(),
-//            $fieldId, $options['mmTableName']);
-//        $this->configureSqlColumn('int(11) DEFAULT \'0\'');
-
-        // Create the mm table configuration
         $config['MM']            = $mmTableName;
         $config['prepend_tname'] = true;
 
@@ -562,10 +568,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      */
     protected function isFlexForm(): bool
     {
-        return false;
-        throw new NotImplementedException();
-
-        return $this->field->getForm() instanceof FlexForm;
+        return $this->field->getForm() instanceof Flex;
     }
 
     /**
@@ -575,20 +578,18 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      */
     protected function isInFlexFormSection(): bool
     {
-        return false;
-        throw new NotImplementedException();
-
         return $this->isFlexForm() && $this->field->getParent() instanceof FlexSection;
     }
 
     /**
      * Returns the instance of the tca table, even if this field is part of a flex form
      *
-     * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable
      */
     protected function getTcaTable(): TcaTable
     {
         if ($this->isFlexForm()) {
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             $form = $this->field->getForm()->getContainingField()->getForm();
         } else {
             $form = $this->field->getForm();
@@ -604,12 +605,12 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     /**
      * Returns the tca field, even if the currently configured field is part of a flex form
      *
-     * @return \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaField
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField
      */
     protected function getTcaField(): TcaField
     {
         if ($this->isFlexForm()) {
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             return $this->field->getForm()->getContainingField();
         }
 

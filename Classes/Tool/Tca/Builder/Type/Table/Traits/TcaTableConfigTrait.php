@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ReturnTypeCanBeDeclaredInspection */
 /*
  * Copyright 2021 LABOR.digital
  *
@@ -48,13 +48,37 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setSortable(bool $sortable = true): self
+    public function setSortable(bool $sortable = true)
     {
         if ($sortable) {
             $this->config['ctrl']['sortby'] = 'sorting';
         } else {
             unset($this->config['ctrl']['sortby']);
         }
+
+        return $this;
+    }
+
+    /**
+     * Returns true if this table is hidden in record listings, especially the list module
+     *
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return (bool)($this->config['ctrl']['hideTable'] ?? true);
+    }
+
+    /**
+     * Allows you to define if this table is hidden in record listings, especially the list module
+     *
+     * @param   bool  $hidden
+     *
+     * @return $this
+     */
+    public function setHidden(bool $hidden = true)
+    {
+        $this->config['ctrl']['hideTable'] = $hidden;
 
         return $this;
     }
@@ -80,7 +104,7 @@ trait TcaTableConfigTrait
      * @see setSortable
      * @see isSortable
      */
-    public function setSortByColumn(?string $columnName): self
+    public function setSortByColumn(?string $columnName)
     {
         $this->config['ctrl']['sortby'] = $columnName;
 
@@ -104,7 +128,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setAllowOnStandardPages(bool $state = true): self
+    public function setAllowOnStandardPages(bool $state = true)
     {
         $this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] = $state;
 
@@ -161,7 +185,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setListPosition(string $otherTableName, bool $before = true): self
+    public function setListPosition(string $otherTableName, bool $before = true)
     {
         $this->config['ctrl'][ListPositionStep::CONFIG_KEY][$before ? 'before' : 'after'][]
             = $this->getContext()->getRealTableName($otherTableName);
@@ -190,7 +214,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setAdminOnly(bool $state = true): self
+    public function setAdminOnly(bool $state = true)
     {
         $this->config['ctrl']['adminOnly'] = $state;
 
@@ -220,7 +244,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setCreatedAtColumn(?string $columnName): self
+    public function setCreatedAtColumn(?string $columnName)
     {
         $this->config['ctrl']['crdate'] = $columnName;
 
@@ -249,7 +273,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setCreateUserColumn(?string $columnName): self
+    public function setCreateUserColumn(?string $columnName)
     {
         $this->config['ctrl']['cruser_id'] = $columnName;
 
@@ -286,7 +310,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setDeletedColumn(?string $columnName): self
+    public function setDeletedColumn(?string $columnName)
     {
         $this->config['ctrl']['delete'] = $columnName;
 
@@ -322,7 +346,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setDescriptionColumn(?string $columnName): self
+    public function setDescriptionColumn(?string $columnName)
     {
         $this->config['ctrl']['descriptionColumn'] = $columnName;
 
@@ -359,7 +383,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setEditLockColumn(?string $columnName): self
+    public function setEditLockColumn(?string $columnName)
     {
         $this->config['ctrl']['editlock'] = $columnName;
 
@@ -379,7 +403,7 @@ trait TcaTableConfigTrait
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#default-sortby
      */
-    public function setBackendSortColumns(?array $columns): self
+    public function setBackendSortColumns(?array $columns)
     {
         if (is_array($columns)) {
             $list = [];
@@ -443,7 +467,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setLabelColumn(?string $columnName): self
+    public function setLabelColumn(?string $columnName)
     {
         $this->config['ctrl']['label'] = $columnName;
 
@@ -477,7 +501,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setLabelAlternativeColumns($columns, bool $force = null): self
+    public function setLabelAlternativeColumns($columns, bool $force = null)
     {
         if (is_array($columns)) {
             $columns = implode(', ', $columns);
@@ -526,7 +550,7 @@ trait TcaTableConfigTrait
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#type
      */
-    public function setTypeColumn(?string $columnName, ?array $types = [], ?array $typeFieldOptions = []): self
+    public function setTypeColumn(?string $columnName, ?array $types = [], ?array $typeFieldOptions = [])
     {
         $this->config['ctrl']['type'] = $columnName;
 
@@ -568,7 +592,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setForceLabelAlternative(bool $state = true): self
+    public function setForceLabelAlternative(bool $state = true)
     {
         $this->config['ctrl']['label_alt_force'] = $state;
 
@@ -618,7 +642,7 @@ trait TcaTableConfigTrait
      *
      * @return $this
      */
-    public function setTitle(string $title): self
+    public function setTitle(string $title)
     {
         // Make sure we supply a real translation key for the table title
         // Because typo3 can't do some stuff if you don't use translation keys for a title...
@@ -639,7 +663,7 @@ trait TcaTableConfigTrait
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#searchfields
      */
-    public function setSearchColumns(array $columns): self
+    public function setSearchColumns(array $columns)
     {
         $searchFields                         = array_unique($columns);
         $this->config['ctrl']['searchFields'] = implode(',', $searchFields);
@@ -657,7 +681,7 @@ trait TcaTableConfigTrait
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#searchfields
      */
-    public function addSearchColumns(array $columns): self
+    public function addSearchColumns(array $columns)
     {
         return $this->setSearchColumns(array_merge($this->getSearchColumns(), $columns));
     }
@@ -686,7 +710,7 @@ trait TcaTableConfigTrait
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#iconfile
      */
-    public function setIconFile(string $filename): self
+    public function setIconFile(string $filename)
     {
         $this->config['ctrl']['iconfile'] = $filename;
 

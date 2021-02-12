@@ -25,6 +25,8 @@ use DateTime;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\DateTimeType;
 use Doctrine\DBAL\Types\IntegerType;
+use LaborDigital\T3BA\FormEngine\UserFunc\SlugPrefixProvider;
+use LaborDigital\T3BA\FormEngine\UserFunc\SlugPrefixProviderInterface;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 use Neunerlei\TinyTimy\DateTimy;
@@ -132,13 +134,20 @@ class InputFields extends AbstractFieldPreset
         });
 
         // Prepare the config
-        $config = ['type' => 'input'];
+        $config = [
+            'type'       => 'input',
+            'renderType' => 'inputDateTime',
+        ];
+
         if ($options['default'] !== null) {
             $date              = new DateTimy($options['default']);
             $config['default'] = $options['asInt'] ? $date->getTimestamp() : $date->formatSql();
         }
+
         $options[$options['withTime'] ? 'datetime' : 'date'] = true;
-        $config                                              = $this->addEvalConfig($config, $options);
+
+        $config = $this->addEvalConfig($config, $options);
+
         if (! $options['asInt']) {
             $config['dbType'] = 'datetime';
         }
@@ -266,34 +275,60 @@ class InputFields extends AbstractFieldPreset
      *                           with another character when the slug is generated. By default we remove all slashes
      *                           and turn them into dashes.
      *                           - default string: A default value for your input field
-     *                           - useNativeElement bool (FALSE): As stated above, we auto-apply a small
-     *                           visual fix to the slug element to make it more speaking for the editor.
-     *                           If you don't want that fix, set this flag to true.
      *                           - required, uniqueInSite bool: Any of these values can be passed
      *                           to define their matching "eval" rules
+     *                           - prefix string: Allows you to define a static prefix to be rendered
+     *                           in front of the actual slug part. This can be a string, or a translation label.
+     *                           If the (translated) value starts with a "/" the site base will automatically
+     *                           prepended to it. Note: This only works if you don't set prefixProvider!
+     *                           - prefixProvider string: Allows you to define a custom slug prefix provider class.
+     *                           The class must implement the SlugPrefixProviderInterface in order to work.
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Slug.html
+     * @see SlugPrefixProviderInterface
      */
     public function applySlug(array $fields, array $options = []): void
     {
         $options = Options::make(
             $options,
             $this->addEvalOptions([
-                'replacements'     => [
+                'replacements'   => [
                     'type'    => 'array',
                     'default' => ['/' => '-'],
                 ],
-                'default'          => [
+                'default'        => [
                     'type'    => ['string', 'number'],
                     'default' => '',
                 ],
-                'useNativeElement' => [
-                    'type'    => 'bool',
-                    'default' => false,
+                'prefix'         => [
+                    'type'    => 'string',
+                    'default' => '',
+                ],
+                'prefixProvider' => [
+                    'type'      => 'string',
+                    'default'   => SlugPrefixProvider::class,
+                    'validator' => static function (string $class) {
+                        if (! class_exists($class)) {
+                            return 'The given class: ' . $class . ' does not exist!';
+                        }
+
+                        if (! in_array(SlugPrefixProviderInterface::class, class_implements($class), true)) {
+                            return 'The given slug prefix provider: ' . $class
+                                   . ' must implement the required interface: ' . SlugPrefixProviderInterface::class;
+                        }
+
+                        return true;
+                    },
                 ],
             ], ['required', 'uniqueInSite'])
         );
 
+        // Sadly, TYPO3 sucks hard sometimes... The prefix provider does not get any information for
+        // which field it is generating the slug for. So we have to get our prefix there, somehow...
+        $prefixMethod = 'getPrefix';
+        if ($options['prefix'] !== '' && $options['prefixProvider'] === SlugPrefixProvider::class) {
+            $prefixMethod = 'pre_' . bin2hex($options['prefix']);
+        }
 
         // Build the configuration
         $config = [
@@ -304,14 +339,16 @@ class InputFields extends AbstractFieldPreset
                 'prefixParentPageSlug' => false,
                 'replacements'         => $options['replacements'],
             ],
+            'appearance'        => [
+                'prefix'       => $options['prefixProvider'] . '->' . $prefixMethod,
+                'staticPrefix' => $options['prefix'],
+            ],
             'prependSlash'      => false,
             'fallbackCharacter' => '-',
             'default'           => $options['default'],
             'size'              => 50,
         ];
-        if (! $options['useNativeElement']) {
-            $config['renderType'] = 'betterApiPathSegmentSlug';
-        }
+
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048], true);
 

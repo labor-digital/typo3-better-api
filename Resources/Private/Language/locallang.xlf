@@ -26,6 +26,9 @@
             <trans-unit id="formPreset.newRecord">
                 <source>New Record</source>
             </trans-unit>
+            <trans-unit id="formPreset.slugPrefix">
+                <source>slug/of/the/page/</source>
+            </trans-unit>
             <trans-unit id="tab.untitled">
                 <source>Untitled</source>
             </trans-unit>

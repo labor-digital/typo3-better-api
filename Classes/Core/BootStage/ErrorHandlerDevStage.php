@@ -28,9 +28,11 @@ use Error;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Event\Core\ErrorFilterEvent;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Exception\ConfigClassNotAutoloadableException;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Throwable;
 use TYPO3\CMS\Core\Core\Bootstrap;
@@ -68,12 +70,13 @@ class ErrorHandlerDevStage implements BootStageInterface
 
         // Flush the DI cache if a service was not defined, or changed
         $error = $event->getError();
-        if ($error instanceof ArgumentCountError
-            || $error instanceof ConfigClassNotAutoloadableException
+        if ($error instanceof ConfigClassNotAutoloadableException
             || $error instanceof InvalidArgumentException
             || ($error instanceof \InvalidArgumentException
                 && preg_match('~Event listener ".*?" is not callable~i', $error->getMessage()))
             || ($error instanceof Error && preg_match('~class \'.*?\' not found~i', $error->getMessage()))
+            || ($error instanceof ArgumentCountError
+                && in_array(Container::class, Arrays::getList(array_slice($error->getTrace(), 0, 6), 'class'), true))
         ) {
             $this->clearAllCaches();
         }

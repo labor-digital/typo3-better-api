@@ -90,4 +90,16 @@ class TableAdapter extends Table
 
         $target->_options = Arrays::merge($target->_options, $new->getOptions());
     }
+
+    /**
+     * Resets the _primaryKeyName property of $table if no "primary" index exists
+     *
+     * @param   \Doctrine\DBAL\Schema\Table  $table
+     */
+    public static function dropPrimaryKeyNameIfNoIndexExists(Table $table): void
+    {
+        if ($table->_primaryKeyName !== false && ! isset($table->_indexes['primary'])) {
+            $table->_primaryKeyName = false;
+        }
+    }
 }

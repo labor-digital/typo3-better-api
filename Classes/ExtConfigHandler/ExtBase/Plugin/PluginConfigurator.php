@@ -25,6 +25,9 @@ use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendListLabelRendererInterface;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
 use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
+use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
@@ -82,7 +85,7 @@ class PluginConfigurator extends AbstractConfigurator
      * Holds the flex form instance we use to configure the flex form for this plugin
      * If this is empty we don't have a flex form for this plugin
      *
-     * @var FlexForm|null
+     * @var Flex
      */
     protected $flexForm;
 
@@ -147,37 +150,31 @@ class PluginConfigurator extends AbstractConfigurator
      *
      * @return bool
      */
-    public function hasFlexFormConfig(): bool
+    public function hasFlexForm(): bool
     {
         return ! empty($this->flexForm);
     }
 
     /**
-     * Returns the flex form configuration object for this plugin.
+     * Returns the flex form structure object for this plugin.
      * You have to call this method at least once to register a flex form file for an element
      *
-     * @return \LaborDigital\Typo3BetterApi\BackendForms\FlexForms\FlexForm
-     * @throws \LaborDigital\Typo3BetterApi\BackendForms\BackendFormException
+     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex
      */
-    public function getFlexFormConfig(): FlexForm
+    public function getFlexForm(): Flex
     {
         // Return existing instance
         if (! empty($this->flexForm)) {
             return $this->flexForm;
         }
 
-        // Create new instance
-        $this->flexForm = FlexForm::makeStandaloneInstance($this->context, null, 'tt_content');
+        $this->flexForm = $this->getTypoContext()->di()->getService(Factory::class)->create();
 
         // Try to load the default definition
         try {
             $defaultDefinitionFile = 'file:' . Inflector::toCamelCase($this->pluginName) . '.xml';
             $this->flexForm->loadDefinition($defaultDefinitionFile);
-        } catch (BackendFormException $e) {
-            if ($e->getCode() !== 999) {
-                throw $e;
-            }
-            // Ignore if we could not load the file
+        } catch (MissingFlexFormFileException $e) {
         }
 
         // Done
