@@ -39,6 +39,7 @@ use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\Exception\KernelNotInitializedException;
 use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\KernelBootEvent;
+use Neunerlei\EventBus\Dispatcher\EventListenerListItem;
 
 class Kernel
 {
@@ -216,10 +217,10 @@ class Kernel
         $eventBus->setProviderAdapter(TypoListenerProvider::class, static function (
             TypoListenerProvider $provider,
             string $event,
-            callable $listener,
+            EventListenerListItem $item,
             array $options
         ) {
-            $provider->addCallableListener($event, $listener, $options);
+            $provider->addCallableListener($event, $item->listener, $options);
         });
 
         // Register low level events

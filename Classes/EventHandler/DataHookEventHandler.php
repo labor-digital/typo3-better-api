@@ -61,7 +61,7 @@ class DataHookEventHandler implements LazyEventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(SaveFilterEvent::class, 'onSaveFilter');
         $subscription->subscribe(SavePostProcessorEvent::class, 'onSavePostProcessor');

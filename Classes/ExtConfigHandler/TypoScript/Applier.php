@@ -36,7 +36,7 @@ class Applier extends AbstractExtConfigApplier
     /**
      * @inheritDoc
      */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaCompletelyLoaded');

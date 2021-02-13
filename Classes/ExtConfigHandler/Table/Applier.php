@@ -80,7 +80,7 @@ class Applier extends AbstractExtConfigApplier
     /**
      * @inheritDoc
      */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(TcaWithoutOverridesLoadedEvent::class, 'onTcaLoad');
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaLoadOverride');

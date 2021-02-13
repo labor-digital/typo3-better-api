@@ -32,7 +32,7 @@ class FormEngineEventHandler implements LazyEventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         // TODO: Implement subscribeToEvents() method.
     }

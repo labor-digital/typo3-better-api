@@ -70,7 +70,7 @@ class SqlEventHandler implements LazyEventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaLoaded', ['priority' => -5000]);
         $subscription->subscribe(AlterTableDefinitionStatementsEvent::class, 'onSqlTableDefinitions');

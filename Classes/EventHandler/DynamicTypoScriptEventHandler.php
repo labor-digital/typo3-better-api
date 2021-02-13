@@ -48,7 +48,7 @@ class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function subscribeToEvents(EventSubscriptionInterface $subscription)
+    public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(FileImportFilterEvent::class, 'onTypoScriptFileImport');
     }
