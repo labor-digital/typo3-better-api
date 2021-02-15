@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Sql\Io;
 
 
-use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
@@ -50,7 +50,7 @@ class Dumper
         foreach ($tables as $table) {
             try {
                 $statement = $this->generateSqlForTable($table);
-            } catch (Exception $e) {
+            } catch (DbalException $e) {
                 continue;
             }
 

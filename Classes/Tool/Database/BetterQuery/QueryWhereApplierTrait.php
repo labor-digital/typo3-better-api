@@ -85,10 +85,10 @@ trait QueryWhereApplierTrait
      * @param   array                 $query
      * @param   AbstractQueryAdapter  $adapter
      *
-     * @return \TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression
+     * @return mixed
      * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
      */
-    protected function whereConstraintBuilder(array $query, AbstractQueryAdapter $adapter): CompositeExpression
+    protected function whereConstraintBuilder(array $query, AbstractQueryAdapter $adapter)
     {
         $conditions = [];
 
@@ -239,9 +239,11 @@ trait QueryWhereApplierTrait
         if (! empty($whereGroups['or'])) {
             $orConstraints = $whereGroups['or'];
         }
+
         if (! empty($constraints)) {
             array_unshift($orConstraints, $constraints);
         }
+
         if (count($orConstraints) > 1) {
             $constraints = $adapter->makeOr($orConstraints);
         }

@@ -20,14 +20,15 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Link;
 
+use GuzzleHttp\Psr7\Query;
 use LaborDigital\T3BA\Tool\Link\Adapter\CacheHashCalculatorAdapter;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
-use function GuzzleHttp\Psr7\parse_query;
 
 /**
  * Class TypoLink
@@ -36,7 +37,7 @@ use function GuzzleHttp\Psr7\parse_query;
  *
  * @package LaborDigital\Typo3BetterApi\Links
  */
-class TypoLink
+class Link
 {
     /**
      * @var \LaborDigital\T3BA\Tool\Link\LinkContext
@@ -51,9 +52,24 @@ class TypoLink
     /**
      * The target page id
      *
-     * @var int
+     * @var int|string|null|array|callable
      */
     protected $pid;
+
+    /**
+     * The resolved, numeric target page id or null
+     *
+     * @var int|null
+     */
+    protected $resolvedPid;
+
+    /**
+     * The value of $pid that was used to resolve $resolvedPid with
+     * This is an internal marker to check when we have to resolve the pid again.
+     *
+     * @var mixed
+     */
+    protected $resolvedPidGenerator;
 
     /**
      * True if the current query string should be appended to the new url
@@ -86,6 +102,13 @@ class TypoLink
      * @var string|iterable|null
      */
     protected $fragment;
+
+    /**
+     * The fragment generator to be used instead of the $fragment property.
+     *
+     * @var array|null
+     */
+    protected $fragmentGenerator;
 
     /**
      * Optional The controller class to create the request for
@@ -153,9 +176,18 @@ class TypoLink
     protected $uriBuilder;
 
     /**
+     * The list of fragment and argument elements that are "required" to build the link.
+     * This is used when a linkSet was applied
+     *
+     * @var array
+     */
+    protected $requiredElements = [];
+
+    /**
      * Used if a link set was applied which requires specific arguments to be present
      *
      * @var array
+     * @deprecated will be removed in v10
      */
     protected $requiredArgs = [];
 
@@ -163,6 +195,7 @@ class TypoLink
      * Used if a link set was applied which requires specific fragments-arguments to be present
      *
      * @var array
+     * @deprecated will be removed in v10
      */
     protected $requiredFragmentArgs = [];
 
@@ -199,29 +232,85 @@ class TypoLink
     }
 
     /**
-     * Returns the target page id or null
+     * Returns the currently registered pid.
      *
-     * @return int|null
+     * @param   bool  $resolved  By default the resolved, numeric pid will be returned.
+     *                           If you set this to false, you retrieve the pid generator instead of the
+     *                           value back.
+     *
+     * @return int|string|null|array|callable
      */
-    public function getPid(): ?int
+    public function getPid(bool $resolved = true)
     {
+        if ($resolved) {
+            if ($this->pid !== $this->resolvedPidGenerator) {
+                $this->resolvedPid          = $this->resolvePid();
+                $this->resolvedPidGenerator = $this->pid;
+            }
+
+            return $this->resolvedPid;
+        }
+
         return $this->pid;
     }
 
     /**
      * Sets the target page id
      *
-     * @param   int|string  $pid
+     * You have multiple options to resolve the pid of a link:
+     * - numeric value: When you pass a numeric value like an int 34 or "556" the script takes
+     * that as the real id of the page you want to link to
+     * - string value: You can pass a Pid identifier like "@pid.page.something" which will be resolved
+     * based on your pid configuration.
+     * - null: If no pid is given, the link is resolved on the current page id (DEFAULT)
+     * - callable: Any kind of callable to resolve the pid dynamically based on current link object.
+     * The callable will receive the link object as parameter and should return a numeric value or
+     * pid identifier.
+     * - array (Variant a): If you provide an array containing a class and method name, that are not
+     * static (therefore are not callable): the script will instantiate the first item as an object
+     * through the container and call the second item as method. The method also receives the current link
+     * object and should behave in the same way a "callable" would.
+     * - array (Variant b): If your link contains exactly ONE argument, you can pass an array containing
+     * storage pids and their matching target pids as an array. For example you have records in a folder with pid 10
+     * that map to a detail plugin on the page 20, as well as records in folder with pid 11 that map to a detail plugin
+     * on the page 21 you can provide a map like: [10 => 20, 11 => 21].
+     * NOTE: This works only if you provide extbase domain models or objects that have a public "getPid()" method.
+     * If you are working with numeric values in your argument you have to provide a "table" key in the map,
+     * that is used to resolve the storage pid of the record uid: ['table' => 'tx_my_table', 10 => 20, 11 => 21].
+     * The 'table' can also be the class name of the extbase model we will map to a table name.
+     * NOTE 2: If you work with multiple arguments the first, given argument in the list is used for pid resolution.
+     * You can also specify the name of the argument by providing an "argument" key.
+     *
+     * As an example for arrays (Variant b):
+     * // This will work, because $myExtbaseModel contains an extbase model
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['model' => $myExtbaseModel])->build();
+     *
+     * // This will fail, because the link does not know how it should map the uid 2 to a storage pid
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
+     *
+     * // To make this work you have to do this:
+     * $link->withPid(['table' => 'tx_my_table', 10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
+     * // or:
+     * $link->withPid(['table' => MyExtBaseModel::class, 10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
+     *
+     * // This will fail, because there are multiple arguments present, and the first argument, "foo" is numeric
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['foo' => 123, 'model' => $myExtbaseModel, ])->build();
+     *
+     * // To make this work, either use 'model' as the first argument:
+     * $link->withPid(['argument' => 'model', 10 => 20, 11 => 21])
+     *      ->withArgs(['model' => $myExtbaseModel, 'foo' => 123, ])->build();
+     * // or define the argument which should be used for pid resolution:
+     * $link->withPid(['argument' => 'model', 10 => 20, 11 => 21])
+     *      ->withArgs(['foo' => 123, 'model' => $myExtbaseModel])->build();
+     *
+     * @param   int|string|null|array|callable  $pid
      *
      * @return $this
      */
     public function withPid($pid): self
     {
-        $clone = clone $this;
-        if (! is_numeric($pid)) {
-            $pid = $this->context->getTypoContext()->pid()->get($pid);
-        }
-        $clone->pid = (int)$pid;
+        $clone      = clone $this;
+        $clone->pid = $pid;
 
         return $clone;
     }
@@ -310,7 +399,7 @@ class TypoLink
      *
      * @param   bool  $keepQuery
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withKeepQuery(bool $keepQuery): self
     {
@@ -384,6 +473,39 @@ class TypoLink
     }
 
     /**
+     * Sometimes you want to create the fragment of the link dynamically based on certain rules.
+     * For this case you can provide a fragment generator. The generator will receive this link instance
+     * to build the fragment with.
+     *
+     * NOTE: Defining a generator will replace all other defined fragments.
+     * If you implement a generator it has to take care of the fragments itself.
+     *
+     * @param   string|null  $generatorClass  The name of a class that is used as generator
+     * @param   string       $method          The method to call on the generator class.
+     *                                        The method should return either an array or a string.
+     *                                        Basically the same as if you would set withFragment()
+     *
+     * @return $this
+     */
+    public function withFragmentGenerator(?string $generatorClass, string $method = 'generateFragment'): self
+    {
+        $clone                    = clone $this;
+        $clone->fragmentGenerator = $generatorClass === null ? null : [$generatorClass, $method];
+
+        return $clone;
+    }
+
+    /**
+     * Returns either the configured fragment generator callable, or null if there is none
+     *
+     * @return array|null
+     */
+    public function getFragmentGenerator(): ?array
+    {
+        return $this->fragmentGenerator;
+    }
+
+    /**
      * Returns the fragment/anchor tag of the link
      *
      * Can be either a string like: myFragment
@@ -405,7 +527,7 @@ class TypoLink
      *
      * @param   string|null|array  $fragment
      *
-     * @return TypoLink
+     * @return Link
      * @throws \LaborDigital\T3BA\Tool\Link\LinkException
      */
     public function withFragment($fragment): self
@@ -476,7 +598,7 @@ class TypoLink
      *
      * @param   string  $controllerClass
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withControllerClass(string $controllerClass): self
     {
@@ -506,7 +628,7 @@ class TypoLink
      *
      * @param   string  $controllerName
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withControllerName(string $controllerName): self
     {
@@ -536,7 +658,7 @@ class TypoLink
      *
      * @param   string  $controllerExtKey
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withControllerExtKey(string $controllerExtKey): self
     {
@@ -561,7 +683,7 @@ class TypoLink
      *
      * @param   string  $controllerAction
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withControllerAction(string $controllerAction): self
     {
@@ -586,7 +708,7 @@ class TypoLink
      *
      * @param   string  $pluginName
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withPluginName(string $pluginName): self
     {
@@ -636,7 +758,7 @@ class TypoLink
      *
      * @param   array  $args
      *
-     * @return TypoLink
+     * @return Link
      */
     public function withArgs(iterable $args): self
     {
@@ -735,7 +857,34 @@ class TypoLink
      */
     public function withSetApplied(string $setKey): self
     {
-        return $this->context->getLinkSet($setKey)->applyToLink($this);
+        return $this->context->getDefinitions($setKey)->applyToLink($this);
+    }
+
+    /**
+     * Internal method to set the list of argument and fragment keys that are required to build the link
+     * successfully. This is used internally to inject the elements from a link set.
+     *
+     * @param   array  $requiredElements
+     *
+     * @return $this
+     * @internal
+     */
+    public function withRequiredElements(array $requiredElements): self
+    {
+        $clone                   = clone $this;
+        $clone->requiredElements = $requiredElements;
+
+        return $clone;
+    }
+
+    /**
+     * Returns the list of element keys that have to be present to build the link
+     *
+     * @return array
+     */
+    public function getRequiredElements(): array
+    {
+        return $this->requiredElements;
     }
 
     /**
@@ -803,17 +952,8 @@ class TypoLink
         $backupRequest = $ub->getRequest();
         $ub->setRequest($request);
 
-        // Set config flags
-        if (! $options['relative']) {
-            $ub->setCreateAbsoluteUri(true);
-        }
-
-        // Page id
-        if (! empty($this->pid)) {
-            $ub->setTargetPageUid($this->pid);
-        } else {
-            $ub->setTargetPageUid($typoContext->pid()->getCurrent());
-        }
+        $ub->setCreateAbsoluteUri(! $options['relative']);
+        $ub->setTargetPageUid($this->getPid() ?? $typoContext->pid()->getCurrent());
 
         // Query string settings
         $ub->setAddQueryString($this->keepQuery);
@@ -821,7 +961,7 @@ class TypoLink
             if (! empty($this->deniedQueryArgs)) {
                 $excludedKeys = $this->deniedQueryArgs;
             } elseif (! empty($this->allowedQueryArgs)) {
-                $excludedKeys = array_keys(parse_query(Path::makeUri(true)->getQuery()));
+                $excludedKeys = array_keys(Query::parse(Path::makeUri(true)->getQuery()));
                 $excludedKeys = array_diff($excludedKeys, $this->allowedQueryArgs);
             }
             if (isset($excludedKeys)) {
@@ -844,15 +984,18 @@ class TypoLink
                 $request->setControllerName($this->controllerName);
                 $useUriFor = true;
             }
+
             if (! empty($this->controllerExtKey)) {
                 $request->setControllerExtensionName($this->controllerExtKey);
                 $useUriFor = true;
             }
         }
+
         if (! empty($this->controllerAction)) {
             $request->setControllerActionName($this->controllerAction);
             $useUriFor = true;
         }
+
         if (! empty($this->pluginName)) {
             $request->setPluginName($this->pluginName);
             $useUriFor = true;
@@ -861,7 +1004,7 @@ class TypoLink
         // Resolve $pid. lookups in our args
         $pidFacet = $typoContext->pid();
         foreach ($this->args as $k => $v) {
-            if (! $pidFacet->has($v)) {
+            if (! is_string($v) || ! $pidFacet->has($v)) {
                 continue;
             }
             $this->args[$k] = $pidFacet->get($v);
@@ -870,40 +1013,21 @@ class TypoLink
         // Inject the language into the args
         if (! empty($this->language)) {
             $this->args['L'] = $this->language->getLanguageId();
+        } else {
+            $this->args['L'] = $typoContext->language()->getCurrentFrontendLanguage()->getLanguageId();
         }
+
+        // Validate required elements
+        $requiredFragments = array_filter($this->getRequiredElements(), static function ($v) {
+            return strpos($v, 'fragment:') === 0;
+        });
+        $requiredArgs      = array_diff($this->getRequiredElements(), $requiredFragments);
 
         // Validate if we have all the required arguments
-        if (! empty($this->requiredArgs)) {
-            $missingArgs = [];
-            foreach ($this->requiredArgs as $arg) {
-                if (! array_key_exists($arg, $this->args)) {
-                    $missingArgs[] = $arg;
-                }
-            }
-            if (! empty($missingArgs)) {
-                throw new LinkException(
-                    'Could not build link, because it misses one or multiple arguments: ' .
-                    implode(', ', $missingArgs));
-            }
-        }
-
-        // Validate if we have all the required fragment-arguments
-        if (! empty($this->requiredFragmentArgs)) {
-            if (! is_iterable($this->fragment)) {
-                throw new LinkException(
-                    'Could not build link, the applied link set requires (iterable) fragment arguments, but the fragment was set to: '
-                    . gettype($this->fragment));
-            }
-            $missingArgs = [];
-            foreach ($this->requiredFragmentArgs as $arg) {
-                if (! array_key_exists($arg, (array)$this->fragment)) {
-                    $missingArgs[] = $arg;
-                }
-            }
-            if (! empty($missingArgs)) {
-                throw new LinkException('Could not build link, because it misses one or multiple fragment arguments: '
-                                        . implode(', ', $missingArgs));
-            }
+        $missingArgs = array_diff_key(array_fill_keys($requiredArgs, true), $this->args);
+        if (! empty($missingArgs)) {
+            throw new LinkException('Could not build link, because it misses one or multiple arguments: '
+                                    . implode(', ', $missingArgs));
         }
 
         // Execute uriFor if required
@@ -913,7 +1037,7 @@ class TypoLink
                 // Automatically find the plugin name if there is none
                 $plugin = $request->getPluginName();
                 if (empty($plugin)) {
-                    $plugin = $this->context->ExtensionService()->getPluginNameByAction(
+                    $plugin = $this->context->getExtensionService()->getPluginNameByAction(
                         $request->getControllerExtensionName(),
                         $request->getControllerName(),
                         $request->getControllerActionName()
@@ -924,7 +1048,7 @@ class TypoLink
                 // Automatically find pid if none is given
                 if ($ub->getTargetPageUid() === null) {
                     $ub->setTargetPageUid(
-                        $this->context->ExtensionService()->getTargetPidByPlugin(
+                        $this->context->getExtensionService()->getTargetPidByPlugin(
                             $request->getControllerExtensionName(),
                             $request->getPluginName()
                         )
@@ -975,11 +1099,14 @@ class TypoLink
         }
 
         // Build the fragment / anchor
-        if (! empty($this->fragment)) {
-            $fragment = $this->fragment;
-            if (is_iterable($this->fragment)) {
+        $fragment = $this->fragment;
+        if ($this->fragmentGenerator !== null) {
+            $fragment = call_user_func(NamingUtil::resolveCallable($this->fragmentGenerator), $this);
+        }
+        if (! empty($fragment)) {
+            if (is_iterable($fragment)) {
                 $fPath = [];
-                foreach ($this->fragment as $k => $v) {
+                foreach ($fragment as $k => $v) {
                     $fPath[] = rawurlencode($k) . '/' . rawurlencode($v);
                 }
                 $fragment = '/' . implode('/', $fPath);
@@ -1003,24 +1130,6 @@ class TypoLink
     }
 
     /**
-     * Internal helper to inject the required elements of a link when applying a link set
-     *
-     * @param   array  $requiredArgs
-     * @param   array  $requiredFragmentArgs
-     *
-     * @return $this
-     * @internal
-     */
-    public function defineRequiredElements(array $requiredArgs, array $requiredFragmentArgs): self
-    {
-        $clone                       = clone $this;
-        $clone->requiredArgs         = $requiredArgs;
-        $clone->requiredFragmentArgs = $requiredFragmentArgs;
-
-        return $clone;
-    }
-
-    /**
      * Automatically call the build method if we are converted to a string
      *
      * @return string
@@ -1028,5 +1137,83 @@ class TypoLink
     public function __toString()
     {
         return $this->build();
+    }
+
+    /**
+     * Internal helper to resolve the pid of the link into an actual, numeric value
+     *
+     * @return int|null
+     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     */
+    protected function resolvePid(): ?int
+    {
+        if (empty($this->pid) && $this->pid !== 0) {
+            return null;
+        }
+
+        $typoContext = $this->context->getTypoContext();
+
+        // Resolve callable
+        if (is_callable($this->pid)
+            || (is_array($this->pid) && class_exists((string)$this->pid[0])
+                || is_string($this->pid) && strpos($this->pid, '->') !== false)) {
+            $pid = call_user_func(NamingUtil::resolveCallable($this->pid), $this);
+        } elseif (is_array($this->pid)) {
+            // Translate the map keys into real pids so we can do a lookup for the correct value
+            $keys = array_map(static function ($k) use ($typoContext) {
+                if ($k === 'table' || $k === 'argument') {
+                    return $k;
+                }
+
+                return $typoContext->Pid()->get($k);
+            }, array_keys($this->pid));
+
+            $pids = array_combine($keys, array_values((array)$this->pid));
+
+            // Try to fetch the storage pid based on the given argument
+            $arg        = isset($pids['argument']) ? $this->args[$pids['argument']] : reset($this->args);
+            $storagePid = 0;
+
+            if (is_array($arg) && isset($arg['pid'])) {
+                $storagePid = $arg['pid'];
+            } elseif (is_object($arg) && method_exists($arg, 'getPid')) {
+                $storagePid = $arg->getPid();
+            } elseif (is_numeric($arg)) {
+                if (! isset($pids['table'])) {
+                    throw new LinkException(
+                        'Failed to map argument: ' . $arg
+                        . ' to a storage pid, because the "table" key is missing in the setPid() array of the link!');
+                }
+
+                // Resolve a model name to a table name
+                $table = $pids['table'];
+                if (class_exists($table)) {
+                    $table = NamingUtil::resolveTableName($table);
+                }
+
+                $storagePid = $typoContext->di()->cs()->db
+                                  ->getQuery($table)
+                                  ->withWhere(['uid' => is_array($arg) && isset($arg['uid']) ? $arg['uid'] : $arg])
+                                  ->getFirst(['pid'])['pid'] ?? 0;
+            }
+
+            if (isset($pids[$storagePid])) {
+                $pid = $pids[$storagePid];
+            } else {
+                $argString = is_object($arg) ? get_class($arg) : (string)$arg;
+                throw new LinkException('Failed to map argument value: "' . $argString .
+                                        '" (key: ' . array_search($arg, $this->args, true) . ')' .
+                                        ' with storage pid: ' . $storagePid . ' to a link pid!');
+            }
+
+        } else {
+            $pid = $this->pid;
+        }
+
+        if (! empty($pid) && ! is_numeric($pid)) {
+            $pid = $typoContext->pid()->get($pid);
+        }
+
+        return $pid;
     }
 }

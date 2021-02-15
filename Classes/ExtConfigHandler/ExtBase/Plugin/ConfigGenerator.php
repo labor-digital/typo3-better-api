@@ -91,6 +91,13 @@ class ConfigGenerator extends AbstractConfigGenerator
     protected $flexFormArgs = [];
 
     /**
+     * A list of all signatures and their matching variant names
+     *
+     * @var array
+     */
+    protected $variantMap = [];
+
+    /**
      * Generates the required configuration to register the plugin defined in the given $configurator
      *
      * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator  $configurator
@@ -98,14 +105,11 @@ class ConfigGenerator extends AbstractConfigGenerator
      */
     public function generate(PluginConfigurator $configurator, ExtConfigContext $context): void
     {
-        $this->registerTemplateDefinition('plugin', $configurator, $context);
-        $this->registerTypoScript($configurator);
-        $this->registerElementInTypoHooks($configurator, $context);
-        $this->registerIconDefinition($configurator, $context);
-        $this->registerNewCEWizardTsConfig($configurator, $context);
-        $this->registerBackendPreviewAndListLabelRenderer($configurator, $context);
-        $this->registerFlexFormConfig($configurator, $context);
-        $this->dataHooks = array_merge($this->dataHooks, $configurator->getRegisteredDataHooks());
+        $this->generateForSingleVariant($configurator, $context, null);
+
+        foreach ($configurator->getVariants() as $variantName => $variant) {
+            $this->generateForSingleVariant($variant, $context, $variantName);
+        }
     }
 
     /**
@@ -117,17 +121,44 @@ class ConfigGenerator extends AbstractConfigGenerator
     public function dump(ConfigState $state): void
     {
         $state->useNamespace('typo.extBase.plugin', function () use ($state) {
-            $this->setAsJson($state, 'args', $this->registrationArgs);
-            $this->setAsJson($state, 'configureArgs', $this->configureArgs);
-            $this->setAsJson($state, 'iconArgs', $this->iconArgs);
-            $this->setAsJson($state, 'dataHooks', $this->dataHooks);
-            $this->setAsJson($state, 'backendPreviewHooks', $this->backendPreviewHooks);
-            $this->setAsJson($state, 'flexForms', $this->flexFormArgs);
+            static::setAsJson($state, 'args', $this->registrationArgs);
+            static::setAsJson($state, 'configureArgs', $this->configureArgs);
+            static::setAsJson($state, 'iconArgs', $this->iconArgs);
+            static::setAsJson($state, 'dataHooks', $this->dataHooks);
+            static::setAsJson($state, 'backendPreviewHooks', $this->backendPreviewHooks);
+            static::setAsJson($state, 'flexForms', $this->flexFormArgs);
+            static::setAsJson($state, 'variants', $this->variantMap);
         });
 
-        $this->attachToStringValue($state, 'typo.typoScript.pageTsConfig', implode(PHP_EOL, $this->tsConfig));
-        $this->attachToStringValue($state, 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup',
+        static::attachToStringValue($state, 'typo.typoScript.pageTsConfig',
+            implode(PHP_EOL, $this->tsConfig));
+        static::attachToStringValue($state, 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup',
             implode(PHP_EOL, $this->typoScript));
+    }
+
+    /**
+     * Generates the required configuration for a single plugin variant
+     *
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
+     * @param   string|null                                                            $variantName
+     */
+    protected function generateForSingleVariant(
+        PluginConfigurator $configurator,
+        ExtConfigContext $context,
+        ?string $variantName
+    ): void {
+        $this->registerTemplateDefinition('plugin', $configurator, $context);
+        $this->registerTypoScript($configurator);
+        $this->registerElementInTypoHooks($configurator, $context);
+        $this->registerIconDefinition($configurator, $context);
+        $this->registerNewCEWizardTsConfig($configurator, $context);
+        $this->registerBackendPreviewAndListLabelRenderer($configurator, $context);
+        $this->registerFlexFormConfig($configurator, $context);
+
+        $this->dataHooks = array_merge($this->dataHooks, $configurator->getRegisteredDataHooks());
+
+        $this->variantMap[$configurator->getSignature()] = $variantName;
     }
 
     /**
@@ -263,7 +294,7 @@ class ConfigGenerator extends AbstractConfigGenerator
                     $constraints = ['CType' => $configurator->getSignature()];
                 }
 
-                $this->attachToArrayValue(
+                static::attachToArrayValue(
                     $context->getState(),
                     $key,
                     [$renderer, $constraints]

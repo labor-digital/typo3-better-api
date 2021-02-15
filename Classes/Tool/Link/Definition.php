@@ -20,9 +20,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Link;
 
+use Closure;
+use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBrowserHandler;
+use TypeError;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
-class LinkSetDefinition
+class Definition
 {
 
     /**
@@ -63,6 +66,13 @@ class LinkSetDefinition
      * @var string|iterable|null
      */
     protected $fragment;
+
+    /**
+     * The fragment generator to be used instead of the $fragment property.
+     *
+     * @var array|null
+     */
+    protected $fragmentGenerator;
 
     /**
      * Optional The controller class to create the request for
@@ -123,6 +133,13 @@ class LinkSetDefinition
     protected $language;
 
     /**
+     * Holds the setup for the link browser if it was given
+     *
+     * @var array|null
+     */
+    protected $linkBrowserConfig;
+
+    /**
      * Returns the target page id or null
      *
      * @return int|string|null
@@ -135,12 +152,20 @@ class LinkSetDefinition
     /**
      * Sets the target page id
      *
-     * @param   int|string  $pid
+     * @param   int|string|null|array|callable  $pid  A multitude of options. IMPORTANT: Closures or callbacks
+     *                                                with objects as target don't work in a link-set. Please
+     *                                                refer to the TYPO3 callback syntax, or provide a static callback
      *
      * @return $this
+     * @see \LaborDigital\T3BA\Tool\Link\Link::withPid() for the list of possible options that can
+     *                                                       be applied for $pid.
      */
     public function setPid($pid): self
     {
+        if ($pid instanceof Closure || is_array($pid) && is_object($pid[0])) {
+            throw new TypeError('$pid can not be a Closure or a callback using a object as target. Please refer to the TYPO3 callback syntax, or provide a static callback.');
+        }
+
         $this->pid = $pid;
 
         return $this;
@@ -162,7 +187,7 @@ class LinkSetDefinition
      *
      * @param   bool  $keepQuery
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setKeepQuery(bool $keepQuery): self
     {
@@ -233,6 +258,39 @@ class LinkSetDefinition
     }
 
     /**
+     * Sometimes you want to create the fragment of the link dynamically based on certain rules.
+     * For this case you can provide a fragment generator. The generator will receive this link instance
+     * to build the fragment with.
+     *
+     * NOTE: Defining a generator will replace all other defined fragments.
+     * If you implement a generator it has to take care of the fragments itself.
+     *
+     * @param   string|null  $generatorClass  The name of a class that is used as generator
+     * @param   string       $method          The method to call on the generator class.
+     *                                        The method should return either an array or a string.
+     *                                        Basically the same as if you would set withFragment()
+     *
+     * @return $this
+     */
+    public function setFragmentGenerator(?string $generatorClass, string $method = 'generateFragment'): self
+    {
+        $this->fragmentGenerator = $generatorClass === null ? null : [$generatorClass, $method];
+
+        return $this;
+    }
+
+    /**
+     * Returns either the configured fragment generator callable, or null if there is none
+     *
+     * @return array|null
+     */
+    public function getFragmentGenerator(): ?array
+    {
+        return $this->fragmentGenerator;
+    }
+
+
+    /**
      * Returns the fragment/anchor tag of the link
      *
      * Can be either a string like: myFragment
@@ -254,7 +312,7 @@ class LinkSetDefinition
      *
      * @param   string|null|array  $fragment
      *
-     * @return LinkSetDefinition
+     * @return Definition
      * @throws \LaborDigital\T3BA\Tool\Link\LinkException
      */
     public function setFragment($fragment): self
@@ -322,7 +380,7 @@ class LinkSetDefinition
      *
      * @param   string  $controllerClass
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setControllerClass(string $controllerClass): self
     {
@@ -351,7 +409,7 @@ class LinkSetDefinition
      *
      * @param   string  $controllerName
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setControllerName(string $controllerName): self
     {
@@ -380,7 +438,7 @@ class LinkSetDefinition
      *
      * @param   string  $controllerExtKey
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setControllerExtKey(string $controllerExtKey): self
     {
@@ -404,7 +462,7 @@ class LinkSetDefinition
      *
      * @param   string  $controllerAction
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setControllerAction(string $controllerAction): self
     {
@@ -428,7 +486,7 @@ class LinkSetDefinition
      *
      * @param   string  $pluginName
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setPluginName(string $pluginName): self
     {
@@ -479,13 +537,40 @@ class LinkSetDefinition
      *
      * @param   array  $args
      *
-     * @return LinkSetDefinition
+     * @return Definition
      */
     public function setArgs(iterable $args): self
     {
         $this->args = $args;
 
         return $this;
+    }
+
+    /**
+     * Returns the list of required argument and fragment elements that have to be set
+     * in order to build the link successfully
+     *
+     * @return array
+     */
+    public function getRequiredElements(): array
+    {
+        $required = [];
+
+        foreach ($this->args as $arg => $val) {
+            if ($val === '?') {
+                $required[] = $arg;
+            }
+        }
+
+        if (is_iterable($this->fragment)) {
+            foreach ($this->fragment as $arg => $val) {
+                if ($val === '?') {
+                    $required[] = 'fragment:' . $arg;
+                }
+            }
+        }
+
+        return $required;
     }
 
     /**
@@ -546,13 +631,67 @@ class LinkSetDefinition
     }
 
     /**
+     * This method allows you to register this link set as "selectable" in the TYPO3 link selector.
+     * That allows you to directly link to records in your TCA or other input fields.
+     *
+     * IMPORTANT: You can only add link sets to the link browser if they have exactly ONE required
+     * argument. This is, because we utilize the RecordLinkHandler under the hood to select a record
+     * in the backend.
+     *
+     * @param   string  $label             A label for the generated tab in the link browser. Can be a translation
+     *                                     label.
+     * @param   string  $tableOrModelName  A database table name which can also be a short code like '...something"
+     * @param   array   $options           Additional options for the setup
+     *                                     - basePid (string|int): an optional storage pid to force the link browser
+     *                                     to. This can be either a numeric value or a pid identifier.
+     *                                     - hidePageTree (bool) FALSE: If this is flag is set, the page tree will be
+     *                                     hidden when the link browser is rendered
+     *
+     * @return $this
+     * @see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/8.6/Feature-79626-IntegrateRecordLinkHandler.html
+     */
+    public function addToLinkBrowser(string $label, string $tableOrModelName, array $options = []): self
+    {
+        $this->linkBrowserConfig = [
+            'handler' => LinkBrowserHandler::class,
+            'label'   => $label,
+            'table'   => $tableOrModelName,
+            'options' => $options,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Removes the previously defined link browser configuration for this set
+     *
+     * @return $this
+     */
+    public function clearLinkBrowserConfig(): self
+    {
+        $this->linkBrowserConfig = null;
+
+        return $this;
+    }
+
+    /**
+     * Returns either the currently set link browser configuration, or null if there is none
+     *
+     * @return array|null
+     */
+    public function getLinkBrowserConfig(): ?array
+    {
+        return $this->linkBrowserConfig;
+    }
+
+    /**
      * Internal helper which is called by the link to create a new link instance with this link set applied to it
      *
-     * @param   \LaborDigital\T3BA\Tool\Link\TypoLink  $link
+     * @param   \LaborDigital\T3BA\Tool\Link\Link  $link
      *
-     * @return \LaborDigital\T3BA\Tool\Link\TypoLink
+     * @return \LaborDigital\T3BA\Tool\Link\Link
      */
-    public function applyToLink(TypoLink $link): TypoLink
+    public function applyToLink(Link $link): Link
     {
         // Inject all the properties
         if (! empty($this->pid)) {
@@ -588,17 +727,17 @@ class LinkSetDefinition
         if (! empty($this->language)) {
             $link = $link->withLanguage($this->language);
         }
+        if (! empty($this->fragmentGenerator)) {
+            $link = $link->withFragmentGenerator(...$this->fragmentGenerator);
+        }
 
-        // Build args and required args
-        $requiredArgs = $requiredFragmentArgs = [];
+        // Build args and fragment
         if (! empty($this->args)) {
             $args = [];
             foreach ($this->args as $k => $v) {
-                if (trim($v) === '?') {
-                    $requiredArgs[] = $k;
-                    continue;
+                if (trim($v) !== '?') {
+                    $args[$k] = $v;
                 }
-                $args[$k] = $v;
             }
             if (! empty($args)) {
                 $link = $link->withArgs($args);
@@ -609,21 +748,20 @@ class LinkSetDefinition
                 $link = $link->withFragment($this->fragment);
             } else {
                 $fragment = [];
+
                 foreach ($this->fragment as $k => $v) {
-                    if (trim($v) === '?') {
-                        $requiredFragmentArgs[] = $k;
-                        continue;
+                    if (trim($v) !== '?') {
+                        $fragment[$k] = $v;
                     }
-                    $fragment[$k] = $v;
                 }
+
                 if (! empty($fragment)) {
                     $link = $link->withFragment($fragment);
                 }
             }
         }
-        if (! empty($requiredArgs) || ! empty($requiredFragmentArgs)) {
-            $link = $link->defineRequiredElements($requiredArgs, $requiredFragmentArgs);
-        }
+
+        $link = $link->withRequiredElements($this->getRequiredElements());
 
         // Done
         return $link;

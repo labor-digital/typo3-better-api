@@ -23,13 +23,19 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Configuration\ExtConfig;
 
 
+use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfigHandler\Fluid\ConfigureFluidInterface;
+use LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
 use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
+use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBuilder;
+use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkHandler;
 use Neunerlei\Configuration\State\ConfigState;
 
-class Core implements ConfigureRawSettingsInterface
+class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface
 {
+    use ConfigStateUtilTrait;
 
     /**
      * @inheritDoc
@@ -37,15 +43,39 @@ class Core implements ConfigureRawSettingsInterface
     public static function configureRaw(ConfigState $state, ExtConfigContext $context): void
     {
         // Register the flex form field packer
-        $state->useNamespace('t3ba', static function () use ($state) {
-            $state->setMultiple([
-                'dataHook' => [
-                    'fieldPackers' => [
-                        FlexFormFieldPacker::class,
+        static::mergeIntoArrayValue($state, 't3ba', [
+            'dataHook' => [
+                'fieldPackers' => [
+                    FlexFormFieldPacker::class,
+                ],
+            ],
+        ]);
+
+        // Register globals configuration for the TYPO3 core api
+        static::mergeIntoArrayValue($state, 'typo.globals.TYPO3_CONF_VARS', [
+            'SYS' => [
+                'linkHandler' => [
+                    'linkSetRecord' => LinkHandler::class,
+                ],
+                'formEngine'  => [
+                    'linkHandler' => [
+                        'linkSetRecord' => LinkHandler::class,
                     ],
                 ],
-            ]);
-        });
+            ],
+            'FE'  => [
+                'typolinkBuilder' => [
+                    'linkSetRecord' => LinkBuilder::class,
+                ],
+            ],
+        ]);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public static function configureFluid(FluidConfigurator $configurator, ExtConfigContext $context): void
+    {
+        $configurator->registerViewHelpers();
+    }
 }

@@ -176,6 +176,6 @@ class Cache implements CacheInterface
         $hash         = md5((string)$key);
         $sanitizedKey = substr(Inflector::toFile($key), 0, 50) . '-' . $hash;
 
-        return 'Cache/' . $hash[0] . '/' . $hash[1] . '/' . $hash[2] . '/' . $sanitizedKey;
+        return $hash[0] . '/' . $hash[1] . '/' . $hash[2] . '/' . $sanitizedKey;
     }
 }

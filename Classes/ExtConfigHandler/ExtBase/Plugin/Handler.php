@@ -102,6 +102,4 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         $this->generator->generate($this->configurator, $this->context);
     }
-
-
 }

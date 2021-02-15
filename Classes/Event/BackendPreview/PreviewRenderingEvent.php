@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\BackendPreview;
 
-use LaborDigital\T3BA\Event\BackendPreview\Adapter\PreviewRenderingEventAdapter;
 use LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 
@@ -71,15 +70,24 @@ class PreviewRenderingEvent
     protected $footer;
 
     /**
+     * Either the signature of the plugin variant that is required or NULL if the default variant should be rendered
+     *
+     * @var string|null
+     */
+    protected $pluginVariant;
+
+    /**
      * BackendPreviewRenderingEvent constructor.
      *
      * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem        $item
      * @param   \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils  $utils
+     * @param   string|null                                                      $pluginVariant
      */
-    public function __construct(GridColumnItem $item, BackendPreviewUtils $utils)
+    public function __construct(GridColumnItem $item, BackendPreviewUtils $utils, ?string $pluginVariant)
     {
-        $this->item  = $item;
-        $this->utils = $utils;
+        $this->item          = $item;
+        $this->utils         = $utils;
+        $this->pluginVariant = $pluginVariant;
     }
 
     /**
@@ -90,6 +98,17 @@ class PreviewRenderingEvent
     public function getRow(): array
     {
         return (array)$this->item->getRecord();
+    }
+
+    /**
+     * Returns either the signature of the plugin variant that is required or NULL if the default variant should be
+     * rendered.
+     *
+     * @return string|null
+     */
+    public function getPluginVariant(): ?string
+    {
+        return $this->pluginVariant;
     }
 
     /**
@@ -183,6 +202,4 @@ class PreviewRenderingEvent
     {
         return $this->utils;
     }
-
-
 }

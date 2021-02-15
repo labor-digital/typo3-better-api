@@ -21,10 +21,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfig\ExtConfigException;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendListLabelRendererInterface;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
 use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException;
@@ -127,7 +129,6 @@ class PluginConfigurator extends AbstractConfigurator
      */
     protected $additionalTypoScript = '';
 
-
     /**
      * The section label of this element when it is rendered in the cType select box
      *
@@ -136,13 +137,32 @@ class PluginConfigurator extends AbstractConfigurator
     protected $cTypeSection;
 
     /**
+     * The list of registered variants to create for this plugin
+     *
+     * @var self[]
+     */
+    protected $variants = [];
+
+    /**
+     * True if this configurator defines a variant.
+     *
+     * @var bool
+     */
+    protected $isVariant;
+
+    /**
      * @inheritDoc
      */
-    public function __construct(string $signature, string $pluginName, ExtConfigContext $context)
-    {
+    public function __construct(
+        string $signature,
+        string $pluginName,
+        ExtConfigContext $context,
+        bool $isVariant = false
+    ) {
         parent::__construct($signature, $pluginName, $context);
 
-        $this->title = Inflector::toHuman($context->getExtKey()) . ': ' . Inflector::toHuman($pluginName);
+        $this->title     = Inflector::toHuman($context->getExtKey()) . ': ' . Inflector::toHuman($pluginName);
+        $this->isVariant = $isVariant;
     }
 
     /**
@@ -475,6 +495,44 @@ class PluginConfigurator extends AbstractConfigurator
     public function getAdditionalTypoScript(): string
     {
         return $this->additionalTypoScript;
+    }
+
+    public function getVariant(string $name): PluginConfigurator
+    {
+        if ($this->isVariant) {
+            throw new ExtConfigException('A variant can\'t currently have variants itself!');
+        }
+
+        if (isset($this->variants[$name])) {
+            return $this->variants[$name];
+        }
+
+        $lcName = NamingUtil::flattenExtKey($name);
+
+        $v = new self(
+            $this->getSignature() . $lcName,
+            $this->getPluginName() . Inflector::toCamelCase($name),
+            $this->context,
+            true
+        );
+
+        $v->setControllerClass($this->controllerClass);
+
+        if (method_exists($this->controllerClass, $name . 'Action')) {
+            $v->setActions([$name]);
+        }
+
+        return $this->variants[$name] = $v;
+    }
+
+    /**
+     * Returns the list of all registered variants for this
+     *
+     * @return \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator[]
+     */
+    public function getVariants(): array
+    {
+        return $this->variants;
     }
 
     /**

@@ -24,11 +24,14 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Fluid;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
-use LaborDigital\Typo3BetterApi\ExtConfig\Option\Fluid\FluidConfigOption;
+use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
+use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
 
 class FluidConfigurator extends AbstractExtConfigConfigurator
 {
+    use ConfigStateUtilTrait;
+
     /**
      * The list of registered view helper namespaces
      *
@@ -68,4 +71,11 @@ class FluidConfigurator extends AbstractExtConfigConfigurator
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function finish(ConfigState $state): void
+    {
+        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.SYS.fluid.namespaces', $this->viewHelpers);
+    }
 }

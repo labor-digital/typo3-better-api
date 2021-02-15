@@ -26,6 +26,12 @@ namespace LaborDigital\T3BA\ExtConfig;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 
+/**
+ * Trait ConfigStateUtilTrait
+ *
+ * @package LaborDigital\T3BA\ExtConfig
+ * @todo    make this a core feature of the configuration library
+ */
 trait ConfigStateUtilTrait
 {
 
@@ -36,7 +42,7 @@ trait ConfigStateUtilTrait
      * @param   string       $key    The storage key to store the value at
      * @param   string       $value  The value to add
      */
-    protected function attachToStringValue(ConfigState $state, string $key, string $value): void
+    protected static function attachToStringValue(ConfigState $state, string $key, string $value): void
     {
         $v = (string)$state->get($key, '');
         $state->set($key, $v . $value);
@@ -50,10 +56,29 @@ trait ConfigStateUtilTrait
      * @param   string       $key    The storage key to store the value at
      * @param   mixed        $value  The value to add
      */
-    protected function attachToArrayValue(ConfigState $state, string $key, $value): void
+    protected static function attachToArrayValue(ConfigState $state, string $key, $value): void
     {
         $v   = (array)$state->get($key, []);
         $v[] = $value;
+        $state->set($key, $v);
+    }
+
+    /**
+     * Helper to merge the given value into an existing array. If the given key is not yet an array,
+     * it will be converted into one. Numeric keys will not be overwritten!
+     *
+     * @param   ConfigState  $state  The state object to add the value to
+     * @param   string       $key    The storage key to store the value at
+     * @param   array        $value  The value to merge into the existing array
+     */
+    protected static function mergeIntoArrayValue(ConfigState $state, string $key, array $value): void
+    {
+        if (empty($value)) {
+            return;
+        }
+
+        $v = (array)$state->get($key, []);
+        $v = Arrays::merge($v, $value, 'nn');
         $state->set($key, $v);
     }
 
@@ -69,7 +94,7 @@ trait ConfigStateUtilTrait
      *                                    Otherwise NULL is written into the state. Set this to FALSE to force
      *                                    the method to write the value into the state even if it is empty
      */
-    protected function setAsJson(ConfigState $state, string $key, array $value, bool $ifNotEmpty = true): void
+    protected static function setAsJson(ConfigState $state, string $key, array $value, bool $ifNotEmpty = true): void
     {
         if (empty($value) && ! $ifNotEmpty) {
             $state->set($key, null);

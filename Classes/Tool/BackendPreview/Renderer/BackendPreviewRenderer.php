@@ -172,6 +172,13 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                . htmlentities($error) . '</div>';
     }
 
+    /**
+     * Renders the element description based on the given row
+     *
+     * @param   array  $row
+     *
+     * @return string
+     */
     protected function renderDescription(array $row): string
     {
         // Load the type descriptions from ts config

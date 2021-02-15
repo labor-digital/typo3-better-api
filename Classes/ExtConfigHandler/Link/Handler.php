@@ -20,22 +20,24 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\LinkSet;
+namespace LaborDigital\T3BA\ExtConfigHandler\Link;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3BA\ExtConfigHandler\Pid\Handler as PidHandler;
+use LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler as TsHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler
 {
-    protected $configureMethod = 'configureLinkSets';
+    protected $configureMethod = 'configureLinks';
 
     /**
      * @inheritDoc
      */
     protected function getConfiguratorClass(): string
     {
-        return LinkSetCollector::class;
+        return DefinitionCollector::class;
     }
 
     /**
@@ -52,7 +54,9 @@ class Handler extends AbstractSimpleExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->registerInterface(ConfigureLinkSetsInterface::class);
+        $configurator->registerInterface(ConfigureLinksInterface::class);
+        $configurator->executeThisHandlerAfter(TsHandler::class);
+        $configurator->executeThisHandlerAfter(PidHandler::class);
     }
 
 }

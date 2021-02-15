@@ -14,26 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.09.04 at 16:29
+ * Last modified: 2020.10.06 at 13:23
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\LinkSet;
+namespace LaborDigital\T3BA\Tool\Link\LinkBrowser;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use TYPO3\CMS\Backend\Form\Element\InputLinkElement;
 
-interface ConfigureLinkSetsInterface
+class InputLinkElementAdapter extends InputLinkElement
 {
     /**
-     * Is used to collect the link sets this configuration provides
+     * Used to forward the link explanation request to another url.
+     * This is highly specific and will probably never be used elsewhere
      *
-     * @param   LinkSetCollector  $collector
-     * @param   ExtConfigContext  $context
+     * @param   \TYPO3\CMS\Backend\Form\Element\InputLinkElement  $element
+     * @param   string                                            $url
      *
-     * @return mixed
+     * @return array
      */
-    public static function configureLinkSets(LinkSetCollector $collector, ExtConfigContext $context);
+    public static function extractLinkExplanation(InputLinkElement $element, string $url): array
+    {
+        return $element->getLinkExplanation($url);
+    }
 }

@@ -53,7 +53,8 @@ abstract class AbstractConfigGenerator
 
         // Build the typoScript
         $signature = $configurator->getSignature();
-        $this->attachToStringValue($context->getState(), 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup', '
+        static::attachToStringValue($context->getState(),
+            'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup', '
 		# Register template for ' . $signature . '
 		' . $type . '.tx_' . $signature . ' {
 			view {

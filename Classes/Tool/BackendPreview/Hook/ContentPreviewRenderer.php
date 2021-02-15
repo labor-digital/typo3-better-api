@@ -31,6 +31,7 @@ use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
+use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Class ContentPreviewRenderer
@@ -41,7 +42,7 @@ use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
  *
  * @package LaborDigital\T3BA\Tool\BackendPreview\Hook
  */
-class ContentPreviewRenderer extends StandardContentPreviewRenderer
+class ContentPreviewRenderer extends StandardContentPreviewRenderer implements SingletonInterface
 {
     use ContainerAwareTrait;
 
@@ -49,6 +50,18 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
      * @var PreviewRenderingEvent
      */
     protected $event;
+
+    /**
+     * @var GridColumnItem
+     */
+    protected $item;
+
+    /**
+     * Contains the plugin variant map after it was loaded once
+     *
+     * @var array
+     */
+    protected $pluginVariantMap;
 
     /**
      * @inheritDoc
@@ -83,12 +96,14 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
      */
     protected function getEvent(GridColumnItem $item): PreviewRenderingEvent
     {
-        if (isset($this->event)) {
+        if (isset($this->event) && $this->item === $item) {
             return $this->event;
         }
 
+        $this->item = $item;
+
         $this->getService(TypoEventBus::class)->dispatch($this->event = new PreviewRenderingEvent(
-            $item, $this->makeUtilsInstance($item)
+            $item, $this->makeUtilsInstance($item), $this->getPluginVariant($item)
         ));
 
         return $this->event;
@@ -152,5 +167,30 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
         }
 
         return '<ul><li>' . implode('</li><li>', $result) . '</li></ul>';
+    }
+
+    /**
+     * Resolves the plugin/content element variant that was registered for this item.
+     * It will return null if the default variant is used or no variant was found -> meaning the same
+     *
+     * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem  $item
+     *
+     * @return string|null
+     */
+    protected function getPluginVariant(GridColumnItem $item): ?string
+    {
+        $data = $item->getRecord();
+
+        if (! isset($this->pluginVariantMap)) {
+            $variants = $this->cs()->typoContext->config()->getConfigValue('typo.extBase.plugin.variants');
+            if (! empty($variants)) {
+                $variants = Arrays::makeFromJson($variants);
+            }
+            $this->pluginVariantMap = $variants ?? [];
+        }
+
+        return $this->pluginVariantMap[$data['list_type'] ?? '-1']
+               ?? $this->pluginVariantMap[$data['CType']]
+                  ?? null;
     }
 }

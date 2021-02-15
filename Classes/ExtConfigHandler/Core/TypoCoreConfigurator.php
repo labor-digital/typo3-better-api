@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
 use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
+use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
 use LaborDigital\T3BA\Tool\Log\BetterFileWriter;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
@@ -34,6 +35,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
 {
     use TypoContextAwareTrait;
     use LogConfigTrait;
+    use ConfigStateUtilTrait;
 
     /**
      * The list of registered x classes
@@ -60,7 +62,9 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      */
     public function registerXClass(string $classToOverride, string $classToOverrideWith): self
     {
-        $this->xClasses[$classToOverride] = $classToOverrideWith;
+        $this->xClasses[$classToOverride] = [
+            'className' => $classToOverrideWith,
+        ];
 
         return $this;
     }
@@ -200,11 +204,14 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      */
     public function finish(ConfigState $state): void
     {
-        $state->set('xClass', $this->xClasses);
-        $state->set('cache', $this->cacheConfigurations);
-
-        $state->set('log', array_reduce($this->logConfigurations, function (array $target, array $item) {
-            return Arrays::merge($target, $item);
-        }, []));
+        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.SYS.Objects', $this->xClasses);
+        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.SYS.caching.cacheConfigurations',
+            $this->cacheConfigurations);
+        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.LOG', array_reduce(
+            $this->logConfigurations,
+            static function (array $target, array $item) {
+                return Arrays::merge($target, $item);
+            },
+            []));
     }
 }

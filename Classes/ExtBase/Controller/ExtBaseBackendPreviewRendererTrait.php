@@ -20,14 +20,15 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Controller;
 
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
 use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
+use TypeError;
 use TYPO3\CMS\Extbase\Event\Mvc\BeforeActionCallEvent;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Dispatcher;
@@ -127,7 +128,9 @@ trait ExtBaseBackendPreviewRendererTrait
     public function simulateRequest(string $actionName, array $options = []): ResponseInterface
     {
         $this->validateThatBePreviewTraitIsCalledInActionController();
-        static::$transfer['context'] = $this->context;
+        static::$transfer['context']  = $this->context;
+        static::$transfer['settings'] = isset($this->settings) && is_array($this->settings) ? $this->settings : [];
+        static::$transfer['data']     = isset($this->data) && is_array($this->data) ? $this->data : [];
 
         // Prepare the options
         static::$transfer['options'] = Options::make($options, [
@@ -163,7 +166,6 @@ trait ExtBaseBackendPreviewRendererTrait
         $request->setArguments(static::$transfer['options']['additionalArgs']);
         $request->setFormat('html');
 
-
         // Create a response and dispatcher
         $response   = $objectManager->get(ResponseInterface::class);
         $dispatcher = $objectManager->get(Dispatcher::class);
@@ -178,82 +180,98 @@ trait ExtBaseBackendPreviewRendererTrait
     }
 
     /**
+     * Similar to simulateRequest() but allows you to provide a map of plugin variants and their action methods,
+     * instead of a single, static action name.
+     *
+     * @param   array  $variantActionMap  An associative array of "variantName" => "actionName" that defines
+     *                                    which action should be triggered if a certain variant of a plugin is used.
+     *                                    "default" is used as a protected key that points to the default plugin
+     *                                    configuration.
+     * @param   array  $options           The same options you can pass for {@link simulateRequest()}
+     *
+     * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
+     * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
+     */
+    protected function simulateVariantRequest(array $variantActionMap, array $options = []): ResponseInterface
+    {
+        $variant = $this->context->getPluginVariant();
+        $action  = $variantActionMap[$variant] ?? $variantActionMap['default'] ?? null;
+
+        if ($action === null) {
+            if ($variant === null) {
+                throw new BackendPreviewException('Could not resolve a action for the "default" variant.');
+            }
+            throw new BackendPreviewException('Could not resolve a action for variant: ' . $variant);
+        }
+
+        if (! is_string($action)) {
+            throw new TypeError(
+                'Invalid $variantActionMap configuration! Only a single action can be mapped for a variant request! ' .
+                'The value for variant: ' . $variant . ' was resolved to a value of type: ' . gettype($action));
+        }
+
+        if ($variant !== null && empty($options['templateName'])) {
+            $options['templateName'] = 'BackendPreview' . ucfirst($variant);
+        }
+
+        return $this->simulateRequest($action, $options);
+    }
+
+    /**
      * Internal helper to check if all our required properties exist
      *
      * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
      */
-    protected function validateThatBePreviewTraitIsCalledInActionController()
+    protected function validateThatBePreviewTraitIsCalledInActionController(): void
     {
         if (! $this instanceof ActionController) {
             throw new BackendPreviewException('To use this trait you have to call it in an ActionController action!');
         }
     }
 
-    protected function registerEnvironmentSetup()
-    {
-        $eventDispatcher = $this->eventDispatcher;
-        $setup           = function () use ($eventDispatcher) {
-            $this->eventDispatcher = $eventDispatcher;
-
-            if (! empty(static::$transfer)) {
-                dbge('HERE 2');
-                $this->context  = static::$transfer['context'];
-                $this->data     = $this->context->getRow();
-                $this->settings = is_array($this->settings) ?
-                    Arrays::merge($this->settings, $this->data['settings']) : $this->data['settings'];
-                try {
-                    $this->view = $this->getFluidView(static::$transfer['options']['templateName']);
-                } catch (InvalidTemplateResourceException $e) {
-                    // Silence
-                }
-            }
-        };
-
-        $this->eventDispatcher = new class($eventDispatcher, $setup) implements EventDispatcherInterface {
-            protected $originalDispatcher;
-            protected $setup;
-
-            public function __construct(EventDispatcherInterface $originalDispatcher, \Closure $setup)
-            {
-                $this->originalDispatcher = $originalDispatcher;
-                $this->setup              = $setup;
-            }
-
-            public function dispatch(object $event)
-            {
-                if ($event instanceof BeforeActionCallEvent) {
-                    call_user_func($this->setup);
-                }
-                $this->originalDispatcher->dispatch($event);
-            }
-        };
-    }
-
     /**
      * We use this method to override the basic controller properties.
      * Also provides the required environment properties to create a "mostly" real ext-base controller experience.
-     *
-     * @param   array  $preparedArguments
-     *
-     * @return \TYPO3\CMS\Extbase\Mvc\View\ViewInterface|\TYPO3\CMS\Fluid\View\StandaloneView
      */
-    protected function emitBeforeCallActionMethodSignal(array $preparedArguments)
+    protected function registerEnvironmentSetup(): void
     {
-        throw new NotImplementedException();
-        if (! empty(static::$transfer)) {
-            $this->context  = static::$transfer['context'];
-            $this->data     = $this->context->getRow();
-            $this->settings = is_array($this->settings) ?
-                Arrays::merge($this->settings, $this->data['settings']) : $this->data['settings'];
-            try {
-                $this->view = $this->getFluidView(static::$transfer['options']['templateName']);
-            } catch (InvalidTemplateResourceException $e) {
-                // Silence
+        TypoEventBus::getInstance()->addListener(BeforeActionCallEvent::class, static function () {
+            if (empty(static::$transfer)) {
+                return;
             }
-        }
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return parent::emitBeforeCallActionMethodSignal($preparedArguments);
+            $registered = false;
+
+            // We have to use this hack to get the instance of the controller,
+            // because someone was clever enough to not include that instance into the event -.-
+            foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 6) as $call) {
+                if (isset($call['object']) && $call['object'] instanceof self) {
+                    /** @var self $controller */
+                    $controller          = $call['object'];
+                    $controller->context = static::$transfer['context'];
+
+                    if (property_exists($controller, 'data')) {
+                        $controller->data = static::$transfer['data'];
+                    }
+
+                    $controller->settings = is_array($controller->settings)
+                        ? Arrays::merge($controller->settings, static::$transfer['settings'])
+                        : $controller->data['settings'];
+
+                    try {
+                        $controller->view = $controller->getFluidView(static::$transfer['options']['templateName']);
+                    } catch (InvalidTemplateResourceException $e) {
+                        // Silence
+                    }
+
+                    $registered = true;
+                    break;
+                }
+            }
+
+            if (! $registered) {
+                throw new RuntimeException('Failed to locate the target controller for the simulated request!');
+            }
+        }, ['once']);
     }
-
 }

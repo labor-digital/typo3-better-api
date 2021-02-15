@@ -25,6 +25,7 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\PathUtil\Path;
+use RuntimeException;
 use Throwable;
 use function GuzzleHttp\Psr7\parse_query;
 
@@ -136,6 +137,10 @@ class PidFacet implements FacetInterface
         if (! is_string($key)) {
             throw new InvalidPidException(
                 'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
+        }
+
+        if (! is_array($this->pids)) {
+            throw new RuntimeException('You are requiring the PIDs to early! They have not yet been registered!');
         }
 
         $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);

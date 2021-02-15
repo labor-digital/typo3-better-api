@@ -52,7 +52,7 @@ class Handler extends AbstractSimpleExtConfigHandler
      */
     protected function getStateNamespace(): string
     {
-        return 'typo.fluid';
+        return 'typo.globals';
     }
 
 }

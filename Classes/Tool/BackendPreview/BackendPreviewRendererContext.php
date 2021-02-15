@@ -82,6 +82,17 @@ class BackendPreviewRendererContext
     }
 
     /**
+     * Returns either the signature of the plugin variant that is required or NULL if the default variant should be
+     * rendered.
+     *
+     * @return string|null
+     */
+    public function getPluginVariant(): ?string
+    {
+        return $this->event->getPluginVariant();
+    }
+
+    /**
      * Returns the row of data that was given to this element
      *
      * @return array
@@ -223,7 +234,7 @@ class BackendPreviewRendererContext
      *
      * @return BackendPreviewRendererContext
      */
-    public function setShowDescription(bool $showDescription): BackendPreviewRendererContext
+    public function setShowDescription(bool $showDescription = true): BackendPreviewRendererContext
     {
         $this->showDescription = $showDescription;
 

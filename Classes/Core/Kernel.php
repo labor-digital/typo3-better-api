@@ -221,7 +221,7 @@ class Kernel
             array $options
         ) {
             $provider->addCallableListener($event, $item->listener, $options);
-        });
+        }, true);
 
         // Register low level events
         foreach (static::$lowLevelListeners as $listener) {

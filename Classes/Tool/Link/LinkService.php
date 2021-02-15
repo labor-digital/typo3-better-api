@@ -60,28 +60,42 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     }
 
     /**
+     * Returns true if a link definition with the given key exists.
+     * Definitions can be configured using the ConfigureLinksInterface
+     *
+     * @param   string  $key  The key/name of the link definition to check for
+     *
+     * @return bool
+     * @see \LaborDigital\T3BA\ExtConfigHandler\Link\ConfigureLinksInterface
+     */
+    public function hasDefinition(string $key): bool
+    {
+        return $this->context->hasDefinition($key);
+    }
+
+    /**
      * Creates a new link instance which is a better version of the typo3 extbase query builder.
      * You can use this method anywhere, no matter if you are in an extbase controller, the cli
      * or somewhere in a hook you can always create links. For that we forcefully instantiate
      * the typo3 frontend if required.
      *
-     * @param   string|null    $linkSet       Defines the link set which was previously defined in typoscript,
-     *                                        or using the LinkSetRepository in your php code. The set will
+     * @param   string|null    $definition    Allows you to provide the key of a link definition, which was
+     *                                        configured using the ConfigureLinksInterface. The definition will
      *                                        automatically be applied to the new link instance
-     * @param   iterable|null  $args          If you have a linkSet specified you can use this parameter to supply
+     * @param   iterable|null  $args          If you have a definition specified, you can use this parameter to supply
      *                                        additional arguments to the created link instance directly
-     * @param   iterable|null  $fragmentArgs  If you have a linkSet specified you can use this parameter to supply
+     * @param   iterable|null  $fragmentArgs  If you have a definition specified, you can use this parameter to supply
      *                                        arguments to your fragment of the created link instance directly
      *
-     * @return \LaborDigital\T3BA\Tool\Link\TypoLink
+     * @return \LaborDigital\T3BA\Tool\Link\Link
      */
-    public function getLink(?string $linkSet = null, ?iterable $args = [], ?iterable $fragmentArgs = []): TypoLink
+    public function getLink(?string $definition = null, ?iterable $args = [], ?iterable $fragmentArgs = []): Link
     {
-        $link = GeneralUtility::makeInstance(TypoLink::class, $this->context, $this->controllerRequest);
+        $link = GeneralUtility::makeInstance(Link::class, $this->context, $this->controllerRequest);
 
         // Inject link set and args if given
-        if (! empty($linkSet)) {
-            $link = $link->withSetApplied($linkSet);
+        if (! empty($definition)) {
+            $link = $link->withSetApplied($definition);
         }
         if (! empty($args)) {
             foreach ($args as $k => $v) {

@@ -28,6 +28,7 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Backend\Routing\Router;
+use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Request;
@@ -62,7 +63,7 @@ class LinkContext implements SingletonInterface
      *
      * @var array
      */
-    protected $linkSets;
+    protected $definitions;
 
     /**
      * LinkContext constructor.
@@ -72,7 +73,10 @@ class LinkContext implements SingletonInterface
     public function __construct(TypoContext $typoContext)
     {
         $this->typoContext = $typoContext;
-        $this->registerCachedProperty('linkSets', 't3ba.link.sets', $typoContext->config()->getConfigState());
+        $this->registerCachedProperty(
+            'definitions',
+            't3ba.link.definitions',
+            $typoContext->config()->getConfigState());
     }
 
     /**
@@ -131,6 +135,7 @@ class LinkContext implements SingletonInterface
         $this->initializeIfRequired();
         $builder = $this->getService(ExtendedUriBuilder::class);
         $this->setService(UriBuilder::class, $builder);
+
         if (! $builder->hasContentObject()) {
             $builder->setContentObject($this->getContentObject());
         } else {
@@ -143,11 +148,11 @@ class LinkContext implements SingletonInterface
     /**
      * Returns the instance of the TYPO3 backend uri builder
      *
-     * @return \TYPO3\CMS\Backend\Routing\UriBuilder
+     * @return BackendUriBuilder
      */
-    public function getBackendUriBuilder(): \TYPO3\CMS\Backend\Routing\UriBuilder
+    public function getBackendUriBuilder(): BackendUriBuilder
     {
-        return $this->getService(\TYPO3\CMS\Backend\Routing\UriBuilder::class);
+        return $this->getService(BackendUriBuilder::class);
     }
 
     /**
@@ -175,19 +180,43 @@ class LinkContext implements SingletonInterface
      *
      * @return \TYPO3\CMS\Extbase\Service\ExtensionService
      */
-    public function ExtensionService(): ExtensionService
+    public function getExtensionService(): ExtensionService
     {
         return $this->getService(ExtensionService::class);
     }
 
-    public function hasLinkSet(string $key): bool
+    /**
+     * Returns true if a link definition with the given key exists.
+     * Definitions can be configured using the ConfigureLinksInterface
+     *
+     * @param   string  $key  The key/name of the link definition to check for
+     *
+     * @return bool
+     * @see \LaborDigital\T3BA\ExtConfigHandler\Link\ConfigureLinksInterface
+     */
+    public function hasDefinition(string $key): bool
     {
-        return isset($this->linkSets[$key]);
+        return isset($this->definitions[$key]);
     }
 
-    public function getLinkSet(string $key): LinkSetDefinition
+    /**
+     * Returns the configuration for a certain link definition if it exists.
+     * Definitions can be configured using the ConfigureLinksInterface
+     *
+     * @param   string  $key  The key/name of the link definition to retrieve
+     *
+     * @return \LaborDigital\T3BA\Tool\Link\Definition
+     * @throws \LaborDigital\T3BA\Tool\Link\DefinitionNotFoundException
+     * @see \LaborDigital\T3BA\ExtConfigHandler\Link\ConfigureLinksInterface
+     */
+    public function getDefinitions(string $key): Definition
     {
-        dbge($this->linkSets[$key]);
+        if (! isset($this->definitions[$key])) {
+            throw new DefinitionNotFoundException('The requested link definition with key: "' . $key
+                                                  . '" was not found!');
+        }
+
+        return unserialize($this->definitions[$key], ['allowed_classes' => [Definition::class]]);
     }
 
     /**

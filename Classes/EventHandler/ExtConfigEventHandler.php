@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\EventHandler;
 use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Event\AfterConfigLoadEvent;
 use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
 use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
@@ -109,7 +110,10 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
         $loader = $this->configService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
         $loader->setHandlerFinder(new FilteredHandlerFinder([StandAloneHandlerInterface::class], []));
         $loader->setContainer($this->container);
-        $loader->load();
+        $state = $loader->load();
+
+        // Inject the core configuration
+        $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
     }
 
 }
