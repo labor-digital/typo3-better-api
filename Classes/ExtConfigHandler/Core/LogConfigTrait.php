@@ -98,8 +98,10 @@ trait LogConfigTrait
      * Adds the log config option to the stack
      *
      * @param   array  $options
+     *
+     * @return $this
      */
-    protected function pushLogConfig(array $options): self
+    protected function pushLogConfig(array $options)
     {
         $config = [
             'writerConfiguration'    => [

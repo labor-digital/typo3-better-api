@@ -22,10 +22,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Link;
 
 
-use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
-use LaborDigital\T3BA\ExtConfig\ExtConfigConfiguratorInterface;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContextAwareInterface;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContextAwareTrait;
+use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
+use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
+use LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextAwareTrait;
 use LaborDigital\T3BA\Tool\Link\Definition;
 use LaborDigital\T3BA\Tool\Link\LinkException;
 use Neunerlei\Configuration\State\ConfigState;
@@ -33,7 +32,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigContextAwareInterface
 {
-    use ConfigStateUtilTrait;
     use ExtConfigContextAwareTrait;
 
     /**
@@ -97,8 +95,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
         $state->set('definitions', array_map('serialize', $this->definitions));
 
         $state->useNamespace(null, function (ConfigState $state) {
-            static::attachToStringValue($state, 'typo.typoScript.pageTsConfig',
-                $this->generateLinkBrowserTsConfig());
+            $state->attachToString('typo.typoScript.pageTsConfig', $this->generateLinkBrowserTsConfig(), true);
         });
     }
 
@@ -111,7 +108,6 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
     protected function generateLinkBrowserTsConfig(): string
     {
         $tsConfig = [];
-        $pid      = $this->context->getTypoContext()->pid();
         foreach ($this->definitions as $key => $linkSet) {
             if ($linkSet->getLinkBrowserConfig() === null) {
                 continue;
@@ -129,7 +125,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
 
             $basePid = '';
             if (! empty($options['basePid'])) {
-                $basePid = 'storagePid = ' . $pid->get($options['basePid'], (int)$options['basePid']) . PHP_EOL;
+                $basePid = 'storagePid = ' . $this->context->resolvePids($options['basePid']) . PHP_EOL;
             }
 
             $hidePageTree = '';

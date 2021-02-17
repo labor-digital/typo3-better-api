@@ -1,6 +1,5 @@
-<?php
-/*
- * Copyright 2020 LABOR.digital
+<?php /*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 22:06
+ * Last modified: 2021.01.13 at 18:57
  */
-
+/** @noinspection TraitsPropertiesConflictsInspection */
 declare(strict_types=1);
 
+namespace LaborDigital\T3BA\ExtConfig\Traits;
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Http;
+use Neunerlei\Configuration\Util\ConfigContextAwareTrait;
 
-
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator;
-
-interface ConfigureHttpInterface
+trait ExtConfigContextAwareTrait
 {
+    use ConfigContextAwareTrait;
 
-    public static function configureHttp(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
+    /**
+     * The config context
+     *
+     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     */
+    protected $context;
 
 }

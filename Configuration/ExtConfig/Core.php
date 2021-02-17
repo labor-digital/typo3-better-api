@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Configuration\ExtConfig;
 
 
-use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\Fluid\ConfigureFluidInterface;
 use LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator;
@@ -35,7 +34,6 @@ use Neunerlei\Configuration\State\ConfigState;
 
 class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface
 {
-    use ConfigStateUtilTrait;
 
     /**
      * @inheritDoc
@@ -43,7 +41,7 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface
     public static function configureRaw(ConfigState $state, ExtConfigContext $context): void
     {
         // Register the flex form field packer
-        static::mergeIntoArrayValue($state, 't3ba', [
+        $state->mergeIntoArray('t3ba', [
             'dataHook' => [
                 'fieldPackers' => [
                     FlexFormFieldPacker::class,
@@ -52,7 +50,7 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface
         ]);
 
         // Register globals configuration for the TYPO3 core api
-        static::mergeIntoArrayValue($state, 'typo.globals.TYPO3_CONF_VARS', [
+        $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS', [
             'SYS' => [
                 'linkHandler' => [
                     'linkSetRecord' => LinkHandler::class,

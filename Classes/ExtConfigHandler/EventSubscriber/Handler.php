@@ -24,8 +24,8 @@ namespace LaborDigital\T3BA\ExtConfigHandler\EventSubscriber;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Interfaces\StandAloneHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;

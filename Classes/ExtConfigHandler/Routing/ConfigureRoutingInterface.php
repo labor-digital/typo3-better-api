@@ -14,23 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.25 at 12:47
+ * Last modified: 2020.08.24 at 22:06
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
 
 
-use Neunerlei\Configuration\State\ConfigState;
+use LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext;
 
-interface ExtConfigConfiguratorInterface
+interface ConfigureRoutingInterface
 {
+
     /**
-     * Internal helper to store the configuration on the config state
+     * Allows you to configure the site aware routing options. Currently, this is mostly the configuration
+     * of route enhancers on a specific side in your sites.yml
      *
-     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\Routing\RoutingConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext         $context
      */
-    public function finish(ConfigState $state): void;
+    public static function configureRouting(RoutingConfigurator $configurator, SiteConfigContext $context): void;
+
 }

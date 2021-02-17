@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.09.09 at 01:12
+ * Last modified: 2021.02.10 at 21:27
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig\Abstracts;
 
 
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3BA\ExtConfig\Interfaces\ElementKeyProviderInterface;
+use LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextTrait;
 use Neunerlei\Configuration\Handler\AbstractGroupConfigHandler;
 use Neunerlei\PathUtil\Path;
 
@@ -43,7 +45,7 @@ abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler 
      *                                           be used
      *
      * @return string
-     * @see \LaborDigital\T3BA\ExtConfig\ElementKeyProviderInterface
+     * @see \LaborDigital\T3BA\ExtConfig\Interfaces\ElementKeyProviderInterface
      */
     protected function getElementKeyForClass(
         string $class,

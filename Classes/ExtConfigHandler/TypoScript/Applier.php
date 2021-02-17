@@ -25,7 +25,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
 
 use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
 use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;

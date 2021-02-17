@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
 
 
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use Neunerlei\PathUtil\Path;
 
 /**
  * Trait SignaturePluginNameMapTrait
@@ -50,7 +51,7 @@ trait SignaturePluginNameMapTrait
         // @todo are we sure that $class is always the correct controller class?
         // The configurator could also specify another controller class, or am I mistaken?
         return $this->getElementKeyForClass($class, function (string $classBaseName): string {
-            $name      = NamingUtil::pluginNameFromControllerClass($classBaseName);
+            $name      = preg_replace('/Controller$/i', '', Path::classBasename($classBaseName));
             $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
 
             $this->signaturePluginNameMap[$signature] = $name;

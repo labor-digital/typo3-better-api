@@ -23,13 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\SqlDefinitionStep;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use Psr\Container\ContainerInterface;
 
 /**
  * Class TcaPostProcessor
@@ -43,8 +42,10 @@ use Psr\Container\ContainerInterface;
  *
  * @package LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor
  */
-class TcaPostProcessor implements PublicServiceInterface
+class TcaPostProcessor
 {
+    use ContainerAwareTrait;
+
     /**
      * Public API to register additional steps if you like. All steps have to be defined as class name.
      * Every class has to implement the TcaPostProcessorStepInterface
@@ -57,23 +58,7 @@ class TcaPostProcessor implements PublicServiceInterface
             DomainModelMapStep::class,
             ListPositionStep::class,
             TablesOnStandardPagesStep::class,
-            SqlDefinitionStep::class,
         ];
-
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * TcaPostProcessor constructor.
-     *
-     * @param   \Psr\Container\ContainerInterface  $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
 
     /**
      * Executes all existing steps for the database tables
@@ -88,10 +73,12 @@ class TcaPostProcessor implements PublicServiceInterface
         // Create the steps
         $steps = [];
         foreach (static::$steps as $stepClass) {
-            $step = $this->container->get($stepClass);
+            $step = $this->hasService($stepClass) ? $this->getService($stepClass) : $this->makeInstance($stepClass);
+
             if (! $step instanceof TcaPostProcessorStepInterface) {
                 continue;
             }
+
             $steps[] = $step;
         }
 

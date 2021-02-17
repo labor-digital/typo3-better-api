@@ -24,47 +24,25 @@ namespace LaborDigital\T3BA\EventHandler;
 
 
 use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
-use Neunerlei\Arrays\Arrays;
-use Neunerlei\Configuration\Event\AfterConfigLoadEvent;
-use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
-use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
-use Neunerlei\Configuration\State\ConfigState;
+use LaborDigital\T3BA\ExtConfig\MainLoader;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
-use Psr\Container\ContainerInterface;
 
 class ExtConfigEventHandler implements LazyEventSubscriberInterface
 {
-
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
+     * @var \LaborDigital\T3BA\ExtConfig\MainLoader
      */
-    protected $configService;
-
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * True when the config state was injected into the container
-     *
-     * @var bool
-     */
-    protected $configStateInjected = false;
+    protected $loader;
 
     /**
      * ExtConfigEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigService  $configService
-     * @param   \Psr\Container\ContainerInterface              $container
+     * @param   \LaborDigital\T3BA\ExtConfig\MainLoader  $loader
      */
-    public function __construct(ExtConfigService $configService, ContainerInterface $container)
+    public function __construct(MainLoader $loader)
     {
-        $this->configService = $configService;
-        $this->container     = $container;
+        $this->loader = $loader;
     }
 
     /**
@@ -73,33 +51,6 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(ExtConfigLoadedEvent::class, 'onExtConfigLoaded', ['priority' => 100]);
-        $subscription->subscribe(BeforeConfigLoadEvent::class, 'onBeforeConfigLoad', ['priority' => 100]);
-        $subscription->subscribe(AfterConfigLoadEvent::class, 'onAfterConfigLoad', ['priority' => 100]);
-    }
-
-    /**
-     * Provides the ext config main configuration state to the container instance
-     *
-     * @param   \Neunerlei\Configuration\Event\BeforeConfigLoadEvent  $event
-     */
-    public function onBeforeConfigLoad(BeforeConfigLoadEvent $event): void
-    {
-        if (! $this->configStateInjected && $event->getLoaderContext()->type === ExtConfigService::MAIN_LOADER_KEY) {
-            $this->configStateInjected = true;
-            $this->container->set(ConfigState::class, $event->getLoaderContext()->configContext->getState());
-        }
-    }
-
-    /**
-     * Inject the state into the container after we have initialized it
-     *
-     * @param   \Neunerlei\Configuration\Event\AfterConfigLoadEvent  $event
-     */
-    public function onAfterConfigLoad(AfterConfigLoadEvent $event): void
-    {
-        if ($event->getLoaderContext()->type === ExtConfigService::MAIN_LOADER_KEY) {
-            $this->container->set(ConfigState::class, $event->getState());
-        }
     }
 
     /**
@@ -107,13 +58,7 @@ class ExtConfigEventHandler implements LazyEventSubscriberInterface
      */
     public function onExtConfigLoaded(): void
     {
-        $loader = $this->configService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
-        $loader->setHandlerFinder(new FilteredHandlerFinder([StandAloneHandlerInterface::class], []));
-        $loader->setContainer($this->container);
-        $state = $loader->load();
-
-        // Inject the core configuration
-        $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
+        $this->loader->load();
     }
 
 }

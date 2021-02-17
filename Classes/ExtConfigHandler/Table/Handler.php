@@ -23,82 +23,28 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Table;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractGroupExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3BA\ExtConfig\ExtConfigException;
-use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\Sql\Io\Dumper as SqlDumper;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 
-class Handler extends AbstractGroupExtConfigHandler implements StandAloneHandlerInterface
+class Handler extends AbstractExtConfigHandler
 {
-
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
-     */
-    protected $tableFactory;
-
-    /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper
-     */
-    protected $tableDumper;
-
-    /**
-     * A list of tca configuration class names and their matching db table names
+     * The collected table definitions for the table loader
      *
      * @var array
      */
-    protected $classNameTableMap = [];
+    protected $loadableTables = [];
 
     /**
-     * The object representation of the currently configured table
+     * The list of generated table class -> table name mappings, that should be injected into
+     * NamingUtil::$tcaTableClassNameMap at runtime.
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable|null
+     * @var array
      */
-    protected $table;
-
-    /**
-     * If true the finder will load table overrides instead of the normal table configurations
-     *
-     * @var bool
-     */
-    protected $loadOverrides = false;
-    /**
-     * @var \LaborDigital\T3BA\Tool\Sql\Io\Dumper
-     */
-    protected $sqlDumper;
-
-    /**
-     * ConfigureTcaTableHandler constructor.
-     *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory  $tableFactory
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper        $tableDumper
-     * @param   \LaborDigital\T3BA\Tool\Sql\Io\Dumper                           $sqlDumper
-     */
-    public function __construct(TableFactory $tableFactory, Dumper $tableDumper, SqlDumper $sqlDumper)
-    {
-        $this->tableFactory = $tableFactory;
-        $this->tableDumper  = $tableDumper;
-        $this->sqlDumper    = $sqlDumper;
-    }
-
-    /**
-     * Allows you to toggle if the finder will load table overrides instead of the normal table configurations
-     *
-     * @param   bool  $state
-     *
-     * @return $this
-     */
-    public function setLoadOverrides(bool $state): self
-    {
-        $this->loadOverrides = $state;
-
-        return $this;
-    }
+    protected $storedTableNameMap = [];
 
     /**
      * @inheritDoc
@@ -115,21 +61,57 @@ class Handler extends AbstractGroupExtConfigHandler implements StandAloneHandler
     /**
      * @inheritDoc
      */
-    protected function getGroupKeyOfClass(string $class): string
-    {
-        // Filter the tables based on our override status
-        if ($this->definition->isOverride($class) !== $this->loadOverrides) {
-            return '';
-        }
+    public function prepare(): void { }
 
+    /**
+     * @inheritDoc
+     */
+    public function handle(string $class): void
+    {
+        $tableName = $this->getTableNameForClassName($class);
+
+        NamingUtil::$tcaTableClassNameMap[$class] = $tableName;
+        $this->storedTableNameMap[$class]         = $tableName;
+
+        $listKey = $this->definition->isOverride($class) ? 'override' : 'default';
+
+        $this->loadableTables[$listKey][$tableName][] = [
+            'className' => $class,
+            'namespace' => $this->context->getNamespace(),
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function finish(): void
+    {
+        $this->context->getState()
+                      ->setAsJson('tca.loadableTables', $this->loadableTables)
+                      ->mergeIntoArray('tca.meta.classNameMap', $this->storedTableNameMap);
+    }
+
+
+    /**
+     * Receives the absolute class name and either uses getTableName() if the class implements,
+     * TcaTableNameProviderInterface or inflects the name of the table based on the convention.
+     *
+     * @param   string  $class
+     *
+     * @return string
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     */
+    protected function getTableNameForClassName(string $class): string
+    {
         // Shortcut if the class has a specific name provided
         if (in_array(TcaTableNameProviderInterface::class, class_implements($class), true)) {
-            return $this->classNameTableMap[$class] = call_user_func([$class, 'getTableName']);
+            return call_user_func([$class, 'getTableName']);
         }
 
-        // Remove the unwanted prefix from the namespace
+        // Remove the unwanted prefixes from the namespace
+        $extName        = NamingUtil::extensionNameFromExtKey($this->context->getExtKey());
         $pattern        = '(?:\\\\)?' . preg_quote($this->context->getVendor(), '~') . '\\\\' .
-                          preg_quote(Inflector::toCamelCase($this->context->getExtKey()), '~') . '\\\\' .
+                          preg_quote($extName, '~') . '\\\\' .
                           'Configuration\\\\Table\\\\' .
                           '(?:Overrides?\\\\)?';
         $pattern        = '~' . $pattern . '~';
@@ -139,79 +121,25 @@ class Handler extends AbstractGroupExtConfigHandler implements StandAloneHandler
         if ($tableNamespace === $class) {
             throw new ExtConfigException(
                 'The TCA table config class ' . $class . ' MUST start with the following PHP namespace: '
-                . $this->context->getVendor() . '\\' . Inflector::toCamelCase($this->context->getExtKey()) . '\\'
+                . $this->context->getVendor() . '\\' . $extName . '\\'
                 . 'Configuration\\Table\\...');
         }
 
+        // Remove optional "table" suffix
+        if (substr($tableNamespace, -5) === 'Table') {
+            $tableNamespace = substr($tableNamespace, 0, -5);
+        }
+
         // Compile table name
-        $tableName = implode('_', array_filter(
-            array_merge([
-                'tx',
-                NamingUtil::flattenExtKey($this->context->getExtKey()),
-                'domain',
-                'model',
-            ],
-                array_map(static function (string $part) {
-                    return strtolower(Inflector::toCamelBack($part));
-                }, explode('\\', $tableNamespace)))
-        ));
-
-        return $this->classNameTableMap[$class] = $tableName;
+        return $this->context->resolveTableName(
+            '...' . implode('_',
+                array_map(
+                    static function (string $part) {
+                        return strtolower(Inflector::toCamelBack($part));
+                    },
+                    explode('\\', $tableNamespace)
+                )
+            )
+        );
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function prepareHandler(): void
-    {
-        // Link the class name table map to the naming utility so we can use it as we learn about the tables
-        $this->classNameTableMap = &NamingUtil::$tcaTableClassNameMap;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function prepareGroup(string $groupKey, array $groupClasses): void
-    {
-        // Ignore disabled
-        if ($groupKey === '') {
-            $this->table = null;
-
-            return;
-        }
-
-        $this->table = $this->tableFactory->create($groupKey, $this->context);
-        $this->tableFactory->initialize($this->table);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function handleGroupItem(string $class): void
-    {
-        if ($this->table) {
-            // Make sure to reset the field id issue handling, so we throw an exception in the next configurator
-            array_map(
-                static function (TcaTableType $type) { $type->ignoreFieldIdIssues(false); },
-                $this->table->getLoadedTypes()
-            );
-
-            call_user_func([$class, 'configureTable'], $this->table, $this->context);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function finishGroup(string $groupKey, array $groupClasses): void
-    {
-        if ($this->table) {
-            $GLOBALS['TCA'][$groupKey] = $this->tableDumper->dump($this->table);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function finishHandler(): void { }
 }

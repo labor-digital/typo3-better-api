@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\StandAloneHandlerInterface;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Interfaces\StandAloneHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Container;

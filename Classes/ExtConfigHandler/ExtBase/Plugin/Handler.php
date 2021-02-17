@@ -23,9 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractGroupExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler as TsHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractGroupExtConfigHandler
@@ -58,7 +57,8 @@ class Handler extends AbstractGroupExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $configurator->registerLocation('Classes/Controller');
-        $configurator->executeThisHandlerAfter(TsHandler::class);
+        $configurator->executeThisHandlerAfter(\LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler::class);
+        $configurator->executeThisHandlerAfter(\LaborDigital\T3BA\ExtConfigHandler\Table\Handler::class);
         $configurator->registerInterface(ConfigurePluginInterface::class);
     }
 

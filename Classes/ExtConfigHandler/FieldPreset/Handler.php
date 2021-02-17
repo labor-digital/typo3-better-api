@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\FieldPreset;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.09.09 at 01:03
+ * Last modified: 2020.08.24 at 21:44
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Modifier\ExtKey;
+namespace LaborDigital\T3BA\ExtConfig\Abstracts;
 
 
-interface ModifyExtKeyInterface
+use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigApplierInterface;
+use Neunerlei\Configuration\State\ConfigState;
+
+abstract class AbstractExtConfigApplier implements ExtConfigApplierInterface
 {
+
     /**
-     * Must return the ext key that should be used instead of the default ext key
-     *
-     * @return string
+     * @var ConfigState
      */
-    public static function getExtKey(): string;
+    protected $state;
+
+    /**
+     * @inheritDoc
+     */
+    public function injectState(ConfigState $state): void
+    {
+        $this->state = $state;
+    }
+
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.09.09 at 01:11
+ * Last modified: 2021.02.16 at 12:15
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfigHandler\Routing\Exceptions;
 
 
-interface ElementKeyProviderInterface
+use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+
+class NotFoundException extends ExtConfigException
 {
-    /**
-     * Must return the key for an element, this can be the plugin key,
-     * the module key, or some other key that makes sense based on the current configuration.
-     *
-     * @return string
-     */
-    public static function getElementKey(): string;
+
 }

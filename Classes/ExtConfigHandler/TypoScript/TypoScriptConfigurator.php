@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use Neunerlei\Inflection\Inflector;
 
 class TypoScriptConfigurator extends AbstractExtConfigConfigurator

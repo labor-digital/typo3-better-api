@@ -24,12 +24,13 @@ use InvalidArgumentException;
 use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
 use LaborDigital\T3BA\ExtConfigHandler\Table\ConfigureTcaTableInterface;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use Neunerlei\PathUtil\Path;
 use ReflectionMethod;
+use RuntimeException;
 use TYPO3\CMS\Core\Utility\ClassNamingUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 class NamingUtil
 {
@@ -49,17 +50,70 @@ class NamingUtil
     protected static $resolvedTableNames = [];
 
     /**
-     * Receives the class of a plugin / module controller and returns the matching plugin name
+     * Generates an ext base extension name from the given ext key
+     *
+     * @param   string  $extKey
+     *
+     * @return string
+     */
+    public static function extensionNameFromExtKey(string $extKey): string
+    {
+        return str_replace(' ', '', ucwords(str_replace('_', ' ', $extKey)));
+    }
+
+    /**
+     * Generates the extbase controller alias based on the given controller class name
      *
      * @param   string  $controllerClass
      *
      * @return string
      */
-    public static function pluginNameFromControllerClass(string $controllerClass): string
+    public static function controllerAliasFromClass(string $controllerClass): string
     {
-        $pluginName = Path::classBasename($controllerClass);
+        return ExtensionUtility::resolveControllerAliasFromControllerClassName($controllerClass);
+    }
 
-        return preg_replace('/Controller$/i', '', $pluginName);
+    /**
+     * Receives the class of a plugin / module controller and returns the matching plugin name
+     *
+     * If no matching plugin was found, or if more than one plugin matches and the current plugin is
+     * not configured to handle the action, an Exception will be thrown
+     *
+     * @param   string  $controllerClass  The name of the controller class
+     * @param   string  $actionName       The name of the action (without the Action-suffix)
+     *
+     * @return string
+     * @see \TYPO3\CMS\Extbase\Service\ExtensionService::getPluginNameByAction() as a reference
+     */
+    public static function pluginNameFromControllerAction(string $controllerClass, string $actionName): string
+    {
+        foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions'] as $extensionName => $config) {
+            if (! is_array($config['plugins'] ?? null)) {
+                continue;
+            }
+
+            $pluginNames = [];
+            foreach ($config['plugins'] as $pluginName => $pluginConfiguration) {
+                $actions = $pluginConfiguration['controllers'][$controllerClass]['actions'] ?? [];
+
+                if (! empty($actions) && in_array($actionName, $actions, true)) {
+                    $pluginNames[] = $pluginName;
+                }
+            }
+        }
+
+        if (empty($pluginNames)) {
+            throw new RuntimeException('No plugin name could be found for this controller, and action combination: "'
+                                       . $controllerClass . '::' . $actionName . '"!');
+        }
+
+        if (count($pluginNames) > 1) {
+            throw new RuntimeException(
+                'More than one plugins use the combination of: "'
+                . $controllerClass . '::' . $actionName . '"! Possible options are: ' . implode(', ', $pluginNames));
+        }
+
+        return reset($pluginNames);
     }
 
     /**

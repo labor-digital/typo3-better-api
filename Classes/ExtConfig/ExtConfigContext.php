@@ -23,8 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
 use Neunerlei\Configuration\Loader\ConfigContext;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
@@ -167,6 +169,61 @@ class ExtConfigContext extends ConfigContext
         }
 
         return $raw;
+    }
+
+    /**
+     * This helper allows you to resolve either a single pid entry or a list of multiple pids at once.
+     * It will also take replaceMarkers into account before requesting the pids
+     *
+     * @param   string|int|array  $keys      Either the single key or an array of keys to retrieve
+     * @param   int               $fallback  A fallback to use if the pid was not found.
+     *                                       If not given, the method will throw an exception on a missing pid
+     *
+     * @return array|int
+     * @see \LaborDigital\T3BA\Tool\TypoContext\Facet\PidFacet::get()
+     */
+    public function resolvePids($keys, int $fallback = -1)
+    {
+        if (empty($keys)) {
+            return $keys;
+        }
+
+        $keys = $this->replaceMarkers($keys);
+
+        if (is_array($keys)) {
+            return $this->getTypoContext()->pid()->getMultiple($keys, $fallback);
+        }
+
+        return $this->getTypoContext()->pid()->get($keys, $fallback);
+    }
+
+    /**
+     * Helper to resolve either a single or an array of table names into their real table name.
+     * It will unfold "..." prefixed table names to a valid ext base table name, or convert
+     * table/model class names to their table name using NamingUtil
+     *
+     * @param   array|string|object  $tableName
+     *
+     * @return array|string
+     * @see NamingUtil::resolveTableName()
+     */
+    public function resolveTableName($tableName)
+    {
+        if (is_array($tableName)) {
+            return array_map([$this, 'resolveTableName'], $tableName);
+        }
+
+        if (is_string($tableName) && strpos($tableName, '...') === 0) {
+            return implode('_', array_filter([
+                'tx',
+                NamingUtil::flattenExtKey($this->getExtKey()),
+                'domain',
+                'model',
+                substr($tableName, 3),
+            ]));
+        }
+
+        return NamingUtil::resolveTableName($tableName);
     }
 
     /**

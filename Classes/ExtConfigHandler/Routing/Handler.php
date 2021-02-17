@@ -20,19 +20,24 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Http;
+namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
 
 
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class Handler
+class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
 {
+    protected $configureMethod = 'configureRouting';
+
     /**
      * @inheritDoc
      */
     public function configure(HandlerConfigurator $configurator): void
     {
-        // TODO: Implement configure() method.
+        $this->registerDefaultLocation($configurator);
+        $configurator->registerInterface(ConfigureRoutingInterface::class);
     }
 
     /**
@@ -40,23 +45,31 @@ class Handler
      */
     public function prepare(): void
     {
-        // TODO: Implement prepare() method.
+        $this->configurator = $this->getInstanceWithoutDi(
+            RoutingConfigurator::class,
+            [
+                $this->getInstanceWithoutDi(
+                    RouteEnhancerGenerator::class,
+                    [$this->context]
+                ),
+                $this->context->getSite(),
+            ]
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function handle(string $class): void
+    protected function getConfiguratorClass(): string
     {
-        // TODO: Implement handle() method.
+        return '';
     }
 
     /**
      * @inheritDoc
      */
-    public function finish(): void
+    protected function getStateNamespace(): string
     {
-        // TODO: Implement finish() method.
+        return '';
     }
-
 }

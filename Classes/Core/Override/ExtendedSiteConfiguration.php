@@ -38,8 +38,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\Event\Events\SiteConfigFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Core\SiteConfigFilterEvent;
+use LaborDigital\T3BA\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
 use TYPO3\CMS\Core\Configuration\BetterApiClassOverrideCopy__SiteConfiguration;
 
 class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfiguration
@@ -47,12 +48,17 @@ class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfigur
     /**
      * @inheritDoc
      */
-    public function getAllSiteConfigurationFromFiles(): array
+    public function getAllSiteConfigurationFromFiles(bool $useCache = true): array
     {
         // Create the configuration if it is not yet cached
-        $isCached   = ! empty($this->getCache()->get($this->cacheIdentifier));
-        $siteConfig = parent::getAllSiteConfigurationFromFiles();
+        $isCached   = $useCache && ! empty($this->getCache()->get($this->cacheIdentifier));
+        $siteConfig = parent::getAllSiteConfigurationFromFiles($useCache);
         if ($isCached) {
+            return $siteConfig;
+        }
+
+        // Special switch if we load the configuration early
+        if ($this instanceof CachelessSiteConfigurationAdapter) {
             return $siteConfig;
         }
 
@@ -61,7 +67,9 @@ class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfigur
         $siteConfig = $e->getConfig();
 
         // Update the cached value
-        $this->getCache()->set($this->cacheIdentifier, json_encode($siteConfig, JSON_THROW_ON_ERROR));
+        if ($useCache) {
+            $this->getCache()->set($this->cacheIdentifier, 'return ' . var_export($siteConfig, true) . ';');
+        }
 
         // Done
         return $siteConfig;

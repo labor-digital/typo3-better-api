@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 17:36
+ * Last modified: 2020.08.23 at 23:23
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\Typo3BetterApi\Event\Events;
+namespace LaborDigital\T3BA\Event\Core;
 
 /**
  * Class SiteConfigFilterEvent
@@ -37,7 +37,7 @@ class SiteConfigFilterEvent
      * @var array
      */
     protected $config;
-    
+
     /**
      * SiteConfigFilterEvent constructor.
      *
@@ -47,7 +47,7 @@ class SiteConfigFilterEvent
     {
         $this->config = $config;
     }
-    
+
     /**
      * Returns the site configuration array
      *
@@ -57,7 +57,7 @@ class SiteConfigFilterEvent
     {
         return $this->config;
     }
-    
+
     /**
      * Used to update the site configuration array
      *
@@ -68,7 +68,7 @@ class SiteConfigFilterEvent
     public function setConfig(array $config): SiteConfigFilterEvent
     {
         $this->config = $config;
-        
+
         return $this;
     }
 }

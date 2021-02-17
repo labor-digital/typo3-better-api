@@ -26,11 +26,14 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigGenerator;
 use LaborDigital\T3BA\Tool\BackendPreview\Hook\ContentPreviewRenderer;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 class ConfigGenerator extends AbstractConfigGenerator
 {
@@ -121,19 +124,19 @@ class ConfigGenerator extends AbstractConfigGenerator
     public function dump(ConfigState $state): void
     {
         $state->useNamespace('typo.extBase.plugin', function () use ($state) {
-            static::setAsJson($state, 'args', $this->registrationArgs);
-            static::setAsJson($state, 'configureArgs', $this->configureArgs);
-            static::setAsJson($state, 'iconArgs', $this->iconArgs);
-            static::setAsJson($state, 'dataHooks', $this->dataHooks);
-            static::setAsJson($state, 'backendPreviewHooks', $this->backendPreviewHooks);
-            static::setAsJson($state, 'flexForms', $this->flexFormArgs);
-            static::setAsJson($state, 'variants', $this->variantMap);
+            $state->setAsJson('args', $this->registrationArgs);
+            $state->set('configureArgs', $this->configureArgs);
+            $state->setAsJson('iconArgs', $this->iconArgs);
+            $state->setAsJson('dataHooks', $this->dataHooks);
+            $state->setAsJson('backendPreviewHooks', $this->backendPreviewHooks);
+            $state->setAsJson('flexForms', $this->flexFormArgs);
+            $state->setAsJson('variants', $this->variantMap);
         });
 
-        static::attachToStringValue($state, 'typo.typoScript.pageTsConfig',
-            implode(PHP_EOL, $this->tsConfig));
-        static::attachToStringValue($state, 'typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup',
-            implode(PHP_EOL, $this->typoScript));
+        $state->attachToString('typo.typoScript.pageTsConfig',
+            implode(PHP_EOL, $this->tsConfig), true);
+        $state->attachToString('typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup',
+            implode(PHP_EOL, $this->tsConfig), true);
     }
 
     /**
@@ -183,21 +186,38 @@ class ConfigGenerator extends AbstractConfigGenerator
      */
     protected function registerElementInTypoHooks(PluginConfigurator $configurator, ExtConfigContext $context): void
     {
-        // Configure Plugin
+        $extensionName = NamingUtil::extensionNameFromExtKey($context->getExtKey());
+
         /** @see \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin() */
         $this->configureArgs[] = array_values([
-            'extensionName'                 => $context->getExtKey(),
+            'extensionName'                 => $extensionName,
             'pluginName'                    => $configurator->getPluginName(),
             'controllerActions'             => $configurator->getActions(),
             'nonCacheableControllerActions' => $configurator->getNoCacheActions(),
             'pluginType'                    => $configurator->getExtensionUtilityType(),
         ]);
 
+        // We simulate a bit of ExtensionUtility::configurePlugin() here,
+        // because NamingUtil::pluginNameFromControllerAction relies on the information
+        // about plugins to be available in the globals array. To use the method inside the extConfig
+        // runtime we have to forcefully inject the information into the globals, even if the data
+        // will be overwritten later, when configurePlugin() is executed.
+        // This is only a runtime fix while the config is gathered and has no effect after the config was cached.
+        foreach ($configurator->getActions() as $controllerClass => $actions) {
+            $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions'][$extensionName]
+            ['plugins'][$configurator->getPluginName()]['controllers'][$controllerClass]
+                = [
+                'className' => $controllerClass,
+                'alias'     => ExtensionUtility::resolveControllerAliasFromControllerClassName($controllerClass),
+                'actions'   => Arrays::makeFromStringList($actions),
+            ];
+        }
+
         if ($configurator->getType() === 'plugin') {
             // Register a plugin
             /** @see \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin() */
             $this->registrationArgs['registerPlugin'][] = array_values([
-                'extensionName'             => $context->getExtKey(),
+                'extensionName'             => $extensionName,
                 'pluginName'                => $configurator->getPluginName(),
                 'pluginTitle'               => $configurator->getTitle(),
                 'pluginIconPathAndFilename' => $this->makeIconIdentifier($configurator, $context),
@@ -294,11 +314,7 @@ class ConfigGenerator extends AbstractConfigGenerator
                     $constraints = ['CType' => $configurator->getSignature()];
                 }
 
-                static::attachToArrayValue(
-                    $context->getState(),
-                    $key,
-                    [$renderer, $constraints]
-                );
+                $context->getState()->attachToArray($key, [$renderer, $constraints]);
             }
         }
 

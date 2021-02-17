@@ -28,7 +28,7 @@ use LaborDigital\T3BA\Core\Util\CTypeRegistrationTrait;
 use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
 use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
 use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigApplier;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
@@ -133,8 +133,8 @@ class Applier extends AbstractExtConfigApplier
     protected function configurePlugins(): void
     {
         $argDefinition = $this->state->get('typo.extBase.plugin.configureArgs');
-        if (! empty($argDefinition)) {
-            foreach (Arrays::makeFromJson($argDefinition) as $args) {
+        if (is_array($argDefinition)) {
+            foreach ($argDefinition as $args) {
                 ExtensionUtility::configurePlugin(...$args);
             }
         }

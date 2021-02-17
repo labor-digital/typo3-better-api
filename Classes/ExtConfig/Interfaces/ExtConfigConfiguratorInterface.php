@@ -1,5 +1,6 @@
-<?php /*
- * Copyright 2020 LABOR.digital
+<?php
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 20:17
+ * Last modified: 2020.08.25 at 12:47
  */
-/** @noinspection TraitsPropertiesConflictsInspection */
+
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtConfig;
 
-use Neunerlei\Configuration\Util\ConfigContextAwareTrait;
+namespace LaborDigital\T3BA\ExtConfig\Interfaces;
 
-trait ExtConfigContextAwareTrait
+
+use Neunerlei\Configuration\State\ConfigState;
+
+interface ExtConfigConfiguratorInterface
 {
-    use ConfigContextAwareTrait;
-
     /**
-     * The config context
+     * Internal helper to store the configuration on the config state
      *
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @param   \Neunerlei\Configuration\State\ConfigState  $state
      */
-    protected $context;
-
+    public function finish(ConfigState $state): void;
 }

@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractGroupExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
 use LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler as TsHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;

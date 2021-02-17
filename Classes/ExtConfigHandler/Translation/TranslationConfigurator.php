@@ -23,7 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Translation;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use Neunerlei\Configuration\State\ConfigState;
 
 class TranslationConfigurator extends AbstractExtConfigConfigurator
 {
@@ -91,12 +92,10 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
         string $override,
         string $lang = 'en'
     ): self {
-        $this->overrideFiles[] = [
-            'language'     => $lang,
-            'originalFile' => $this->context->replaceMarkers($original),
-            'overrideFile' => $this->context->replaceMarkers($override),
-            'hash'         => md5($this->context->replaceMarkers($override)),
-        ];
+        $this->overrideFiles[$lang]
+        [$this->context->replaceMarkers($original)]
+        [md5($this->context->replaceMarkers($override))]
+            = $this->context->replaceMarkers($override);
 
         return $this;
     }
@@ -136,5 +135,17 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function finish(ConfigState $state): void
+    {
+        $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS.SYS.locallangXMLOverride', $this->overrideFiles);
+        $this->overrideFiles = null;
+
+        parent::finish($state);
+    }
+
 
 }

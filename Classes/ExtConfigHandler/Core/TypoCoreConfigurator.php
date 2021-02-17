@@ -23,8 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractExtConfigConfigurator;
-use LaborDigital\T3BA\ExtConfig\ConfigStateUtilTrait;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use LaborDigital\T3BA\Tool\Log\BetterFileWriter;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
@@ -35,7 +34,6 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
 {
     use TypoContextAwareTrait;
     use LogConfigTrait;
-    use ConfigStateUtilTrait;
 
     /**
      * The list of registered x classes
@@ -101,7 +99,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
                         return is_array($v) ? $v : [$v];
                     },
                     'default'   => [],
-                    'validator' => function ($v) {
+                    'validator' => static function ($v) {
                         if (! empty(array_filter($v, static function ($v) {
                             return in_array($v, ['all', 'system', 'pages'], true);
                         }))) {
@@ -144,10 +142,11 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      *                            - filesToKeep int (5): If logRotation is enabled, this defines how many
      *                            files will be kept before they are deleted
      *
-     * @see \TYPO3\CMS\Core\Log\LogLevel
+     * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
+     * @see \TYPO3\CMS\Core\Log\LogLevel
      */
-    public function registerFileLog(array $options = [])
+    public function registerFileLog(array $options = []): self
     {
         $additionalDefinition = [
             'logRotation' => [
@@ -204,10 +203,9 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      */
     public function finish(ConfigState $state): void
     {
-        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.SYS.Objects', $this->xClasses);
-        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.SYS.caching.cacheConfigurations',
-            $this->cacheConfigurations);
-        static::mergeIntoArrayValue($state, 'TYPO3_CONF_VARS.LOG', array_reduce(
+        $state->mergeIntoArray('TYPO3_CONF_VARS.SYS.Objects', $this->xClasses);
+        $state->mergeIntoArray('TYPO3_CONF_VARS.SYS.caching.cacheConfigurations', $this->cacheConfigurations);
+        $state->mergeIntoArray('TYPO3_CONF_VARS.LOG', array_reduce(
             $this->logConfigurations,
             static function (array $target, array $item) {
                 return Arrays::merge($target, $item);

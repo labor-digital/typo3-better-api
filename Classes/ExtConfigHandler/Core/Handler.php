@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
-use LaborDigital\T3BA\ExtConfig\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler

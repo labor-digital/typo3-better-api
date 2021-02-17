@@ -29,7 +29,6 @@ use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\ExtConfig\ExtConfigApplierInterface;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\Di\ConfigureDiInterface;
@@ -74,7 +73,8 @@ class Di implements ConfigureDiInterface
         $containerBuilder->addCompilerPass(new EventBusListenerProviderPass(), PassConfig::TYPE_OPTIMIZE, -500);
 
         // PUBLIC EVENT SUBSCRIBER
-        $containerBuilder->registerForAutoconfiguration(ExtConfigApplierInterface::class)->addTag('t3ba.public');
+        $containerBuilder->registerForAutoconfiguration(\LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigApplierInterface::class)
+                         ->addTag('t3ba.public');
         $containerBuilder->registerForAutoconfiguration(LazyEventSubscriberInterface::class)->addTag('t3ba.public');
         $containerBuilder->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('t3ba.public');
 

@@ -1014,7 +1014,7 @@ class Link
         if (! empty($this->language)) {
             $this->args['L'] = $this->language->getLanguageId();
         } else {
-            $this->args['L'] = $typoContext->language()->getCurrentFrontendLanguage()->getLanguageId();
+//            $this->args['L'] = $typoContext->language()->getCurrentFrontendLanguage()->getLanguageId();
         }
 
         // Validate required elements

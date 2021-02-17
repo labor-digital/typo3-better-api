@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 21:32
+ * Last modified: 2020.08.24 at 21:42
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig\Interfaces;
 
 
 use Neunerlei\Configuration\State\ConfigState;

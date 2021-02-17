@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
+use GuzzleHttp\Psr7\Query;
 use LaborDigital\T3BA\Tool\Exception\InvalidPidException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
@@ -27,7 +28,6 @@ use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\PathUtil\Path;
 use RuntimeException;
 use Throwable;
-use function GuzzleHttp\Psr7\parse_query;
 
 class PidFacet implements FacetInterface
 {
@@ -139,6 +139,11 @@ class PidFacet implements FacetInterface
                 'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
         }
 
+        // Numeric as string -> directly convertible to integer
+        if ((int)$key . '' === $key) {
+            return (int)$key;
+        }
+
         if (! is_array($this->pids)) {
             throw new RuntimeException('You are requiring the PIDs to early! They have not yet been registered!');
         }
@@ -156,6 +161,46 @@ class PidFacet implements FacetInterface
         }
 
         return $pid;
+    }
+
+    /**
+     * Similar to get() but returns multiple pids at once, instead of a single one
+     *
+     * @param   array  $keys               An array of pid keys to retrieve
+     * @param   int    $fallback           An optional fallback which will be returned, if the required pid was not
+     *                                     found NOTE: If no fallback is defined (-1) the method will throw an
+     *                                     exception if the pid was not found in the registry
+     *
+     * @return array
+     * @see get()
+     */
+    public function getMultiple(array $keys, int $fallback = -1): array
+    {
+        foreach ($keys as $k => $key) {
+            $keys[$k] = $this->get($key, $fallback);
+        }
+
+        return $keys;
+    }
+
+    /**
+     * Returns a subset of pids. A subset is a list of pids that are stored in the same "path".
+     * For example "page.foo", "page.boo" and "page.bar" all live in the same subset of "page".
+     * So you can request the subset key "page" to retrieve the list of all pids.
+     *
+     * @param   string  $key  The key of a subset to retrieve, use a typical path to retrieve nested subsets
+     *
+     * @return array
+     * @throws \LaborDigital\T3BA\Tool\Exception\InvalidPidException
+     */
+    public function getSubSet(string $key): array
+    {
+        $list = Arrays::getPath($this->pids, $this->stripPrefix($key), []);
+        if (! is_array($list)) {
+            throw new InvalidPidException('There given key : ' . $key . ' did not resolve to a pid subset!');
+        }
+
+        return $list;
     }
 
     /**
@@ -196,7 +241,7 @@ class PidFacet implements FacetInterface
             }
             // Try to parse return url
             if ($requestFacet->hasGet('returnUrl')) {
-                $query = parse_query(
+                $query = Query::parse(
                     Path::makeUri(
                         'http://www.foo.bar' . $requestFacet->getGet('returnUrl')
                     )->getQuery()

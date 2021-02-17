@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.25 at 12:45
+ * Last modified: 2021.02.15 at 13:32
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig\Abstracts;
+
+use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
+use LaborDigital\T3BA\ExtConfig\InvalidConfiguratorException;
 
 /**
  * Class AbstractSimpleExtConfigHandler
@@ -32,7 +35,7 @@ namespace LaborDigital\T3BA\ExtConfig;
 abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
 {
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigConfiguratorInterface
+     * @var \LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
      */
     protected $configurator;
 
@@ -79,7 +82,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
      * The class has to implement the ExtConfigConfiguratorInterface!
      *
      * @return string
-     * @see \LaborDigital\T3BA\ExtConfig\ExtConfigConfiguratorInterface
+     * @see \LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
      */
     abstract protected function getConfiguratorClass(): string;
 

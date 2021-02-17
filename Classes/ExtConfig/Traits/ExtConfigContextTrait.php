@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.10.19 at 15:03
+ * Last modified: 2021.01.13 at 18:57
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig\Traits;
 
 
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
+use Neunerlei\Configuration\Util\ConfigContextAwareInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 trait ExtConfigContextTrait
@@ -46,7 +47,13 @@ trait ExtConfigContextTrait
      */
     protected function getInstanceWithoutDi(string $class, array $constructorArgs = [])
     {
-        return GeneralUtility::makeInstance($class, ...$constructorArgs);
+        $i = GeneralUtility::makeInstance($class, ...$constructorArgs);
+
+        if (isset($this->context) && $i instanceof ConfigContextAwareInterface) {
+            $i->setConfigContext($this->context);
+        }
+
+        return $i;
     }
 
     /**

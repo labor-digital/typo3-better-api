@@ -14,31 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 21:41
+ * Last modified: 2020.09.09 at 01:11
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3BA\ExtConfig\Interfaces;
 
 
-use Neunerlei\Configuration\State\ConfigState;
-
-abstract class AbstractExtConfigApplier implements ExtConfigApplierInterface
+interface ElementKeyProviderInterface
 {
-
     /**
-     * @var ConfigState
+     * Must return the key for an element, this can be the plugin key,
+     * the module key, or some other key that makes sense based on the current configuration.
+     *
+     * @return string
      */
-    protected $state;
-
-    /**
-     * @inheritDoc
-     */
-    public function injectState(ConfigState $state): void
-    {
-        $this->state = $state;
-    }
-
+    public static function getElementKey(): string;
 }

@@ -274,6 +274,8 @@ class InputFields extends AbstractFieldPreset
      *                           - replacements array (["/" => "-"]): A list of characters that should be replaced
      *                           with another character when the slug is generated. By default we remove all slashes
      *                           and turn them into dashes.
+     *                           - separator string (/): Used to separate the values of certain fields
+     *                           from one another.
      *                           - default string: A default value for your input field
      *                           - required, uniqueInSite bool: Any of these values can be passed
      *                           to define their matching "eval" rules
@@ -292,6 +294,10 @@ class InputFields extends AbstractFieldPreset
         $options = Options::make(
             $options,
             $this->addEvalOptions([
+                'separator'      => [
+                    'type'    => 'string',
+                    'default' => '/',
+                ],
                 'replacements'   => [
                     'type'    => 'array',
                     'default' => ['/' => '-'],
@@ -329,13 +335,13 @@ class InputFields extends AbstractFieldPreset
         if ($options['prefix'] !== '' && $options['prefixProvider'] === SlugPrefixProvider::class) {
             $prefixMethod = 'pre_' . bin2hex($options['prefix']);
         }
-
+        
         // Build the configuration
         $config = [
             'type'              => 'slug',
             'generatorOptions'  => [
                 'fields'               => $fields,
-                'fieldSeparator'       => '/',
+                'fieldSeparator'       => $options['separator'],
                 'prefixParentPageSlug' => false,
                 'replacements'         => $options['replacements'],
             ],
@@ -348,6 +354,10 @@ class InputFields extends AbstractFieldPreset
             'default'           => $options['default'],
             'size'              => 50,
         ];
+
+        if ($this->field->isReadOnly()) {
+            $config['renderType'] = 'input';
+        }
 
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048], true);
