@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.28.2](https://github.com/labor-digital/typo3-better-api/compare/v9.28.1...v9.28.2) (2021-02-18)
+
+
+### Bug Fixes
+
+* **LinkSetDefinition:** fix documentation issue ([de4b903](https://github.com/labor-digital/typo3-better-api/commit/de4b903cc2d524845446481c587b0c97e0a9dbbe))
+
 ### [9.28.1](https://github.com/labor-digital/typo3-better-api/compare/v9.28.0...v9.28.1) (2021-02-03)
 
 
