@@ -675,7 +675,7 @@ class LinkSetDefinition
      *                                     label.
      * @param   string  $tableOrModelName  A database table name which can also be a short code like '...something"
      * @param   array   $options           Additional options for the setup
-     *                                     - storagePid (string|int): an optional storage pid to force the link browser
+     *                                     - basePid (string|int): an optional storage pid to force the link browser
      *                                     to. This can be either a numeric value or a pid identifier.
      *                                     - hidePageTree (bool) FALSE: If this is flag is set, the page tree will be
      *                                     hidden when the link browser is rendered
