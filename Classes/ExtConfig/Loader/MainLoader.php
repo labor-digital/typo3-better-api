@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.02.15 at 20:05
+ * Last modified: 2021.02.16 at 19:44
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
-
+namespace LaborDigital\T3BA\ExtConfig\Loader;
 
 use Closure;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
+use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use LaborDigital\T3BA\ExtConfig\Interfaces\StandAloneHandlerInterface;
 use LaborDigital\T3BA\ExtConfig\SiteBased\ConfigFinder;

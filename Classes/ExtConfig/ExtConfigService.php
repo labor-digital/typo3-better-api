@@ -27,8 +27,11 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\VarFs\Mount;
 use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\ConfigLoaderFilterEvent;
+use LaborDigital\T3BA\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
 use Neunerlei\Configuration\Loader\Loader;
 use Neunerlei\PathUtil\Path;
+use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -39,7 +42,8 @@ class ExtConfigService implements SingletonInterface
     public const MAIN_LOADER_KEY       = 'Main';
     public const SITE_BASED_LOADER_KEY = 'SiteBased';
     public const EVENT_BUS_LOADER_KEY  = 'EventBus';
-    public const DI_LOADER_KEY         = 'Di';
+    public const DI_BUILD_LOADER_KEY   = 'DiBuild';
+    public const DI_RUN_LOADER_KEY     = 'DiRun';
 
     /**
      * The list of default handler locations to traverse.
@@ -80,17 +84,44 @@ class ExtConfigService implements SingletonInterface
     protected $classNamespaceCache = [];
 
     /**
+     * The list of instantiated loader objects
+     *
+     * @var mixed[]
+     */
+    protected $loaders = [];
+
+    /**
+     * The config context we use as a singleton on all loaders
+     *
+     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     */
+    protected $context;
+
+    /**
+     * The dependency injection container if we have one
+     *
+     * @var null|\Psr\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
      * ExtConfigService constructor.
      *
      * @param   \TYPO3\CMS\Core\Package\PackageManager         $packageManager
      * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
      * @param   \LaborDigital\T3BA\Core\VarFs\VarFs            $fs
+     * @param   \Psr\Container\ContainerInterface              $container
      */
-    public function __construct(PackageManager $packageManager, TypoEventBus $eventBus, VarFs $fs)
-    {
+    public function __construct(
+        PackageManager $packageManager,
+        TypoEventBus $eventBus,
+        VarFs $fs,
+        ContainerInterface $container
+    ) {
         $this->packageManager = $packageManager;
         $this->eventBus       = $eventBus;
         $this->fs             = $fs;
+        $this->container      = $container;
     }
 
     /**
@@ -114,6 +145,62 @@ class ExtConfigService implements SingletonInterface
     }
 
     /**
+     * Allows external sources to change the container instance
+     *
+     * @param   \Psr\Container\ContainerInterface  $container
+     */
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * Returns the dependency injection continainer
+     *
+     * @return \Psr\Container\ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
+
+    /**
+     * Returns the singleton of the ext config context object
+     *
+     * @return \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     */
+    public function getContext(): ExtConfigContext
+    {
+        return $this->context ?? $this->context = GeneralUtility::makeInstance(
+                ExtConfigContext::class, $this
+            );
+    }
+
+    /**
+     * Returns the loader instance that runs when the di container is build and/or instantiated
+     *
+     * @return \LaborDigital\T3BA\ExtConfig\Loader\DiLoader
+     */
+    public function getDiLoader(): DiLoader
+    {
+        return $this->loaders[static::DI_BUILD_LOADER_KEY] ??
+               $this->loaders[static::DI_BUILD_LOADER_KEY]
+                   = GeneralUtility::makeInstance(DiLoader::class, $this);
+    }
+
+    /**
+     * Returns the loader instance that loads the main ext config files after ext_localconf.php has been loaded
+     *
+     * @return \LaborDigital\T3BA\ExtConfig\Loader\MainLoader
+     */
+    public function getMainLoader(): MainLoader
+    {
+        return $this->loaders[static::MAIN_LOADER_KEY] ??
+               $this->loaders[static::MAIN_LOADER_KEY]
+                   = GeneralUtility::makeInstance(MainLoader::class, $this, $this->eventBus);
+    }
+
+    /**
      * Creates the new, preconfigured instance of an ext config loader
      *
      * @param   string  $type
@@ -127,9 +214,12 @@ class ExtConfigService implements SingletonInterface
         $loader->setEventDispatcher($this->eventBus);
         $loader->setConfigContextClass(ExtConfigContext::class);
         $loader->setCache($this->fs->getCache());
+        $loader->setContainer($this->container);
+
         foreach ($this->getRootLocations() as $rootLocation) {
             $loader->registerRootLocation(...$rootLocation);
         }
+
         foreach (static::$handlerLocations as $handlerLocation) {
             $loader->registerHandlerLocation($handlerLocation);
         }

@@ -20,8 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Http\Aspect;
-
+namespace LaborDigital\T3BA\Tool\Http\Routing\Aspect;
 
 use TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression;
 use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
@@ -33,17 +32,17 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
      * @var array
      */
     protected $storagePids;
-    
+
     /**
      * StoragePidQueryRestriction constructor.
      *
-     * @param   array  $storagePids  The list of numeric pid's top limit the query to
+     * @param   array  $storagePids  The list of numeric pids to limit the query to
      */
     public function __construct($storagePids = [])
     {
         $this->storagePids = $storagePids;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -51,17 +50,17 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
     {
         // Ignore if there are no configured storage pids
         if (empty($this->storagePids)) {
-            $queriedTables = [];
+            return $expressionBuilder->andX();
         }
-        
+
         // Build constraint list
         $constraints = [];
         $pids        = array_map('intval', $this->storagePids);
         foreach ($queriedTables as $tableAlias => $tableName) {
             $constraints[] = $expressionBuilder->in($tableAlias . '.pid', $pids);
         }
-        
+
         return $expressionBuilder->andX(...$constraints);
     }
-    
+
 }

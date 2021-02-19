@@ -14,30 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 22:06
+ * Last modified: 2020.08.23 at 16:43
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
+namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
-
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\SiteBasedHandlerInterface;
+use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\Interfaces\DiRunTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
+class RunTimeHandler extends AbstractExtConfigHandler implements DiRunTimeHandlerInterface
 {
-    protected $configureMethod = 'configureRouting';
-
     /**
      * @inheritDoc
      */
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->registerInterface(ConfigureRoutingInterface::class);
+        $configurator->registerInterface(ConfigureDiInterface::class);
     }
 
     /**
@@ -45,22 +42,23 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
      */
     public function prepare(): void
     {
-        $this->configurator = $this->getInstanceWithoutDi(RoutingConfigurator::class, [$this->context->getSite()]);
     }
 
     /**
      * @inheritDoc
      */
-    protected function getConfiguratorClass(): string
+    public function handle(string $class): void
     {
-        return '';
+        call_user_func([$class, 'configureRuntime'],
+            $this->context->getExtConfigService()->getContainer(),
+            $this->context);
     }
 
     /**
      * @inheritDoc
      */
-    protected function getStateNamespace(): string
+    public function finish(): void
     {
-        return '';
     }
+
 }

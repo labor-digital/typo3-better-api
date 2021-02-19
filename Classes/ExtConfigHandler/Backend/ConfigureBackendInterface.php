@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.02.10 at 22:00
+ * Last modified: 2021.02.19 at 14:21
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
 
 
-interface NotSharedServiceInterface
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+
+interface ConfigureBackendInterface
 {
-
+    /**
+     * Allows you to configure TYPO3 backend related options
+     *
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\Backend\BackendConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                    $context
+     */
+    public static function configureBackend(BackendConfigurator $configurator, ExtConfigContext $context): void;
 }

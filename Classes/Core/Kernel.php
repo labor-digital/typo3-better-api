@@ -31,7 +31,6 @@ use LaborDigital\T3BA\Core\BootStage\DiConfigurationStage;
 use LaborDigital\T3BA\Core\BootStage\EnsureExtLocalConfOnTcaLoadStage;
 use LaborDigital\T3BA\Core\BootStage\ErrorHandlerAdapterRegistrationStage;
 use LaborDigital\T3BA\Core\BootStage\ErrorHandlerDevStage;
-use LaborDigital\T3BA\Core\BootStage\EventHandlerRegistrationStage;
 use LaborDigital\T3BA\Core\BootStage\FailsafeWrapperPreparationStage;
 use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
@@ -114,7 +113,6 @@ class Kernel
             new DiConfigurationStage(),
             new ErrorHandlerAdapterRegistrationStage(),
             new ErrorHandlerDevStage(),
-            new EventHandlerRegistrationStage(),
         ];
 
         // Prepare the boot stages

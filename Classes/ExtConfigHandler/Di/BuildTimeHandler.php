@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.23 at 16:43
+ * Last modified: 2021.02.19 at 18:35
  */
 
 declare(strict_types=1);
@@ -22,53 +22,16 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
+
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\StandAloneHandlerInterface;
+use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInterface
+class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInterface
 {
-    /**
-     * @var \Symfony\Component\DependencyInjection\ContainerBuilder
-     */
-    protected $containerBuilder;
-
-    /**
-     * @var \Symfony\Component\DependencyInjection\Container
-     */
-    protected $container;
-
-    /**
-     * Configures the handler to process the container builder configuration
-     *
-     * @param   \Symfony\Component\DependencyInjection\ContainerBuilder  $containerBuilder
-     *
-     * @return $this
-     */
-    public function configureForContainerBuilder(ContainerBuilder $containerBuilder): self
-    {
-        $this->containerBuilder = $containerBuilder;
-
-        return $this;
-    }
-
-    /**
-     * Configures the handler to process the runtime container configuration
-     *
-     * @param   \Symfony\Component\DependencyInjection\Container  $container
-     *
-     * @return $this
-     */
-    public function configureRuntimeContainer(Container $container): self
-    {
-        $this->container = $container;
-
-        return $this;
-    }
 
     /**
      * @inheritDoc
@@ -80,33 +43,24 @@ class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInter
     }
 
     /**
-     * @inheritDoc
-     */
-    public function handle(string $class): void
-    {
-        if (isset($this->containerBuilder)) {
-            $this->handleContainerBuilder($class);
-        } else {
-            $this->handleRuntimeContainer($class);
-        }
-    }
-
-    /**
      * Handles the container builder configuration
      *
      * @param   string  $class
      */
-    protected function handleContainerBuilder(string $class): void
+    public function handle(string $class): void
     {
         $packagePath = $this->context->getPackage()->getPackagePath();
         $context     = $this->context;
-        $loader      = new ExtConfigLoader($this->containerBuilder, new FileLocator($packagePath));
+        $loader      = new ExtConfigLoader(
+            $this->getInstance(ContainerBuilder::class),
+            new FileLocator($packagePath)
+        );
 
         $loader->load(static function (
             ContainerConfigurator $configurator,
             ContainerBuilder $containerBuilder
         ) use ($class, $context) {
-            // Apply the default configuration, if the
+            // Apply the default configuration
             if (method_exists($class, 'setAutoWiringDependencies')) {
                 call_user_func([$class, 'setAutoWiringDependencies'], $configurator, $context);
             }
@@ -115,16 +69,6 @@ class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInter
             call_user_func([$class, 'configure'], $configurator, $containerBuilder, $context);
 
         }, $this->context->getPackage()->getPackagePath());
-    }
-
-    /**
-     * Handles the runtime container configuration
-     *
-     * @param   string  $class
-     */
-    protected function handleRuntimeContainer(string $class): void
-    {
-        call_user_func([$class, 'configureRuntime'], $this->container, $this->context);
     }
 
     /**
@@ -140,5 +84,4 @@ class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInter
     public function finish(): void
     {
     }
-
 }

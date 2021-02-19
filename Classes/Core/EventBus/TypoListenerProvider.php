@@ -81,6 +81,7 @@ class TypoListenerProvider extends ListenerProvider
             'service' => $service,
             'method'  => $method,
         ];
+
         $this->registerCoreHookEventIfRequired($event);
 
         $this->concreteListenerProvider->addListener($event, function ($e) use ($service, $method) {

@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 
 use Composer\Autoload\ClassLoader;
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Di\FailsafeDelegateContainer;
 use LaborDigital\T3BA\Core\Di\MiniContainer;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
@@ -36,23 +37,20 @@ use LaborDigital\T3BA\Event\Di\DiContainerFilterEvent;
 use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfigHandler\Di\Handler;
-use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\Handler as EventSubHandler;
+use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\EventSubscriberBridge;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DiConfigurationStage implements BootStageInterface
 {
-    /**
-     * @var MiniContainer
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * @var Kernel
@@ -97,10 +95,8 @@ class DiConfigurationStage implements BootStageInterface
      */
     public function onDiContainerBeingBuild(DiContainerBeingBuildEvent $event): void
     {
-        // Execute the di container builder configuration
-        $this->runDiConfigLoader(static function (Handler $handler) use ($event) {
-            $handler->configureForContainerBuilder($event->getContainerBuilder());
-        });
+        $this->getContainer()->set(ContainerBuilder::class, $event->getContainerBuilder());
+        $this->getService(ExtConfigService::class)->getDiLoader()->loadForBuildTime();
     }
 
     /**
@@ -118,70 +114,50 @@ class DiConfigurationStage implements BootStageInterface
             return;
         }
 
-        // Try to extract the inner container
         $realContainer = $event->getContainer();
         if ($realContainer instanceof FailsafeDelegateContainer) {
             $realContainer = $realContainer->getContainer();
         }
+
         if (! $realContainer instanceof Container) {
             return;
         }
 
-        // Inject the container into the event bus
-        /** @var TypoEventBus $eventBus */
-        $eventBus = $this->container->get(TypoEventBus::class);
+        // Provide the container to the general utility a bit earlier that it normally would
+        $this->symfonyContainer = $realContainer;
+        GeneralUtility::setContainer($realContainer);
+
+        $eventBus = $this->getService(TypoEventBus::class);
         $eventBus->setContainer($realContainer);
+
+        $realContainer->set(VarFs::class, $this->getService(VarFs::class));
+        $realContainer->set(EventBusInterface::class, $eventBus);
+        $realContainer->set(TypoEventBus::class, $eventBus);
+
         /** @var TypoListenerProvider $listenerProvider */
         $listenerProvider = $eventBus->getConcreteListenerProvider();
         $listenerProvider->setContainer($realContainer);
-
-        // Inject the listener provider into the container
         $realContainer->set(ListenerProviderInterface::class, $listenerProvider);
         $realContainer->set(TypoListenerProvider::class, $listenerProvider);
-        $realContainer->get(ListenerProvider::class);
 
-        // Prepare the Typo context instance
         $context = TypoContext::setInstance(new TypoContext());
         $context->setContainer($realContainer);
         $realContainer->set(TypoContext::class, $context);
 
-        // Inject our early services into the container
-        $realContainer->set(VarFs::class, $this->container->get(VarFs::class));
-        $realContainer->set(EventBusInterface::class, $eventBus);
-        $realContainer->set(TypoEventBus::class, $eventBus);
-        $realContainer->set(ExtConfigContext::class,
-            $this->container->get(ExtConfigContext::class)->setTypoContext($context));
-        $realContainer->set(ExtConfigService::class, $this->container->get(ExtConfigService::class));
+        // This is required to link the new event bus into the TYPO3 core and to load the registered event handlers
+        // This MUST be executed after the typo context class is set up correctly
+        $realContainer->get(ListenerProvider::class);
+        $realContainer->get(EventSubscriberBridge::class);
 
-        // Provide the container to the general utility a bit early
-        $this->symfonyContainer = $realContainer;
-        GeneralUtility::setContainer($realContainer);
+        $extConfigService = $this->getService(ExtConfigService::class);
+        $realContainer->set(ExtConfigService::class, $extConfigService);
+        $extConfigService->getContext()->setTypoContext($context);
+        $extConfigService->setContainer($realContainer);
+        $extConfigService->getDiLoader()->loadForRuntime();
 
-        // Run the "runtime" container configuration
-        $this->runDiConfigLoader(static function (Handler $handler) use ($realContainer) {
-            $handler->configureRuntimeContainer($realContainer);
-        });
-
-        // Allow global filtering
         $eventBus->dispatch(new DiContainerFilterEvent($realContainer));
-    }
 
-    /**
-     * Creates a configuration loader instance for the dependency injection
-     *
-     * @param   callable  $handlerConfigurator  A configurator to prepare the handler instance for the current usecase
-     */
-    protected function runDiConfigLoader(callable $handlerConfigurator): void
-    {
-        /** @var ExtConfigService $extConfigService */
-        $extConfigService = $this->container->get(ExtConfigService::class);
-        $loader           = $extConfigService->makeLoader(ExtConfigService::DI_LOADER_KEY);
-        $loader->setContainer($this->container);
-        $loader->clearHandlerLocations();
-        $handler = new Handler();
-        $handlerConfigurator($handler);
-        $loader->registerHandler($handler);
-        $loader->load(true);
+        $this->caServices = [];
     }
 
     /**
@@ -192,31 +168,23 @@ class DiConfigurationStage implements BootStageInterface
      */
     protected function initializeLocalContainer(PackageManager $packageManager): void
     {
-        $fs = $this->kernel->getFs();
+        $container = new MiniContainer([
+            Kernel::class         => $this->kernel,
+            VarFs::class          => $this->kernel->getFs(),
+            PackageManager::class => $packageManager,
+            TypoEventBus::class   => $this->kernel->getEventBus(),
+            CacheInterface::class => $this->kernel->getFs()->getCache(),
+            ClassLoader::class    => $this->kernel->getClassLoader(),
+        ]);
 
-        $container = new MiniContainer();
-        $container->set(VarFs::class, $fs);
-        $container->set(Kernel::class, $this->kernel);
-        $container->set(PackageManager::class, $packageManager);
-        $container->set(TypoEventBus::class, $this->kernel->getEventBus());
-        $container->set(CacheInterface::class, $fs->getCache());
-        $container->set(ClassLoader::class, $this->kernel->getClassLoader());
-        $container->set(EventSubHandler::class, GeneralUtility::makeInstance(
-            EventSubHandler::class,
-            $this->kernel->getEventBus()
-        ));
-        $container->set(ExtConfigService::class, GeneralUtility::makeInstance(
+        $configService = $this->makeInstance(
             ExtConfigService::class,
-            $packageManager,
-            $this->kernel->getEventBus(),
-            $fs
-        ));
-        $container->set(ExtConfigContext::class, GeneralUtility::makeInstance(
-            ExtConfigContext::class,
-            $container->get(ExtConfigService::class)
-        ));
+            [$packageManager, $this->kernel->getEventBus(), $this->kernel->getFs(), $container]
+        );
+        $container->set(ExtConfigService::class, $configService);
+        $container->set(ExtConfigContext::class, $configService->getContext());
 
-        $this->container = $container;
+        $this->setContainer($container);
     }
 
     /**
@@ -224,10 +192,8 @@ class DiConfigurationStage implements BootStageInterface
      */
     protected function registerConfigAutoloader(): void
     {
-        /** @var ExtConfigService $extConfigService */
-        $extConfigService = $this->container->get(ExtConfigService::class);
-        $classLoader      = $this->kernel->getClassLoader();
-        foreach ($extConfigService->getAutoloaderMap() as $namespace => $directory) {
+        $classLoader = $this->kernel->getClassLoader();
+        foreach ($this->getService(ExtConfigService::class)->getAutoloaderMap() as $namespace => $directory) {
             $classLoader->setPsr4($namespace, $directory);
         }
     }

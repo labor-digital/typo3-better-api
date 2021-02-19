@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.24 at 22:06
+ * Last modified: 2021.02.19 at 11:35
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
+namespace LaborDigital\T3BA\ExtConfigHandler\Http;
 
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
+class Handler extends AbstractSimpleExtConfigHandler
 {
-    protected $configureMethod = 'configureRouting';
+    protected $configureMethod = 'configureHttp';
 
     /**
      * @inheritDoc
@@ -37,15 +36,7 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->registerInterface(ConfigureRoutingInterface::class);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function prepare(): void
-    {
-        $this->configurator = $this->getInstanceWithoutDi(RoutingConfigurator::class, [$this->context->getSite()]);
+        $configurator->registerInterface(ConfigureHttpInterface::class);
     }
 
     /**
@@ -53,7 +44,7 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
      */
     protected function getConfiguratorClass(): string
     {
-        return '';
+        return HttpConfigurator::class;
     }
 
     /**
@@ -61,6 +52,6 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
      */
     protected function getStateNamespace(): string
     {
-        return '';
+        return 'typo';
     }
 }

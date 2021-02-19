@@ -25,13 +25,16 @@ namespace LaborDigital\T3BA\ExtConfigHandler\EventSubscriber;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\StandAloneHandlerInterface;
+use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInterface
+class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInterface
 {
     /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\CompiledEventSubscription
@@ -44,21 +47,6 @@ class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInter
      * @var array
      */
     protected $runtimeSubscribers = [];
-
-    /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
-     */
-    protected $eventBus;
-
-    /**
-     * ConfigureEventSubscribersHandler constructor.
-     *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
-     */
-    public function __construct(TypoEventBus $eventBus)
-    {
-        $this->eventBus = $eventBus;
-    }
 
     /**
      * @inheritDoc
@@ -97,9 +85,22 @@ class Handler extends AbstractExtConfigHandler implements StandAloneHandlerInter
      */
     public function finish(): void
     {
-        $this->context->getState()
-                      ->set('subscribers.lazy', $this->lazySubscription->getSubscribers())
-                      ->set('subscribers.runtime', $this->runtimeSubscribers);
+        /** @var ContainerBuilder $containerBuilder */
+        $containerBuilder = $this->context->getExtConfigService()->getContainer()->get(ContainerBuilder::class);
+
+        $def = new Definition(EventSubscriberBridge::class);
+        $def->setShared(false)->setPublic(true);
+        $def->addArgument(new Reference(TypoEventBus::class));
+
+        foreach ($this->lazySubscription->getSubscribers() as $subscriber) {
+            $def->addMethodCall('addListener', $subscriber);
+        }
+
+        foreach ($this->runtimeSubscribers as $subscriber) {
+            $def->addMethodCall('addSubscriber', [new Reference($subscriber)]);
+        }
+
+        $containerBuilder->setDefinition(EventSubscriberBridge::class, $def);
     }
 
 }

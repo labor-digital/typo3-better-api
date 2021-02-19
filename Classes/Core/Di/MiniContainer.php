@@ -34,6 +34,16 @@ class MiniContainer implements ContainerInterface
     protected $instances = [];
 
     /**
+     * MiniContainer constructor.
+     *
+     * @param   array  $instances  Optional instances to be loaded from the start
+     */
+    public function __construct(array $instances = [])
+    {
+        $this->instances = $instances;
+    }
+
+    /**
      * Sets a specific instance for an id
      *
      * @param   string  $id

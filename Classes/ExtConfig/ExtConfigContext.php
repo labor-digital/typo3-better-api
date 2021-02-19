@@ -23,15 +23,15 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
 use Neunerlei\Configuration\Loader\ConfigContext;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
 
-class ExtConfigContext extends ConfigContext
+class ExtConfigContext extends ConfigContext implements PublicServiceInterface
 {
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService

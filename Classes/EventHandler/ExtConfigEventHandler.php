@@ -24,21 +24,21 @@ namespace LaborDigital\T3BA\EventHandler;
 
 
 use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\MainLoader;
+use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
 class ExtConfigEventHandler implements LazyEventSubscriberInterface
 {
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\MainLoader
+     * @var \LaborDigital\T3BA\ExtConfig\Loader\MainLoader
      */
     protected $loader;
 
     /**
      * ExtConfigEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfig\MainLoader  $loader
+     * @param   \LaborDigital\T3BA\ExtConfig\Loader\MainLoader  $loader
      */
     public function __construct(MainLoader $loader)
     {

@@ -1,8 +1,6 @@
 <?php
-declare(strict_types=1);
-
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +14,16 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.18 at 18:39
+ * Last modified: 2021.02.19 at 18:58
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\Configuration\CommandRegistrationEvent())->getCommands();
+declare(strict_types=1);
+
+
+namespace LaborDigital\T3BA\ExtConfigHandler\Command;
+
+
+interface ConfigureCliCommandInterface
+{
+
+}

@@ -76,7 +76,7 @@ trait DiAutoConfigTrait
             try {
                 $defaults
                     ->load($namespace, $dir . '/*')
-                    ->exclude(array_merge([$dir . '/{Tests,Test}'], $excludePaths));
+                    ->exclude(array_merge([$dir . '/Event', '{Tests,Test}'], $excludePaths));
             } catch (FileLocatorFileNotFoundException $e) {
             }
         }

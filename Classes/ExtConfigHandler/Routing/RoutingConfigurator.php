@@ -25,16 +25,18 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Routing\Exceptions\NotFoundException;
+use LaborDigital\T3BA\ExtConfigHandler\Routing\Traits\RouteEnhancerConfigTrait;
+use LaborDigital\T3BA\ExtConfigHandler\Routing\Traits\RouteEnhancerSchemaTrait;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
 class RoutingConfigurator extends AbstractExtConfigConfigurator
 {
-
-    /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\Routing\RouteEnhancerGenerator
-     */
-    protected $enhancerGenerator;
+    use RouteEnhancerSchemaTrait;
+    use RouteEnhancerConfigTrait;
 
     /**
      * @var \TYPO3\CMS\Core\Site\Entity\Site
@@ -51,14 +53,12 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     /**
      * HttpConfigurator constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\Routing\RouteEnhancerGenerator  $enhancerGenerator
-     * @param   \TYPO3\CMS\Core\Site\Entity\Site                                    $site
+     * @param   \TYPO3\CMS\Core\Site\Entity\Site  $site
      */
-    public function __construct(RouteEnhancerGenerator $enhancerGenerator, Site $site)
+    public function __construct(Site $site)
     {
-        $this->site              = $site;
-        $this->routeEnhancers    = $site->getConfiguration()['routeEnhancers'] ?? [];
-        $this->enhancerGenerator = $enhancerGenerator;
+        $this->site           = $site;
+        $this->routeEnhancers = $site->getConfiguration()['routeEnhancers'] ?? [];
     }
 
     /**
@@ -150,8 +150,29 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     public function registerPagination(string $key, array $pids, array $options = []): self
     {
         $this->routeEnhancers[$this->context->replaceMarkers($key)]
-            = $this->enhancerGenerator->makePaginationConfig(
-            array_merge($options, ['pids' => $pids])
+            = $this->mergeConfig(
+            [
+                'routePath'    => '/{page}',
+                'requirements' => [
+                    'page' => '\\d+',
+                ],
+                'defaults'     => [
+                    'page' => '1',
+                ],
+                'aspects'      => [
+                    'page' => [
+                        'type'  => 'StaticRangeMapper',
+                        'start' => '1',
+                        'end'   => '999',
+                    ],
+                ],
+            ],
+            Options::make(
+                $this->context->replaceMarkers(
+                    array_merge($options, ['pids' => $pids])
+                ),
+                $this->getDefaultSchema()
+            )
         );
 
         return $this;
@@ -188,13 +209,58 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         array $pids,
         array $options = []
     ): self {
-        $this->routeEnhancers[$this->context->replaceMarkers($key)]
-            = $this->enhancerGenerator->makeExtBasePaginationConfig(
-            array_merge($options, [
-                'pids'       => $pids,
-                'controller' => $controllerClass,
-                'action'     => $actionName,
+        $options = Options::make(
+            $this->context->replaceMarkers(
+                array_merge($options, [
+                    'pids'       => $pids,
+                    'controller' => $controllerClass,
+                    'action'     => $actionName,
+                ])
+            ),
+            $this->getExtBaseSchema([
+                'routePath'    => [
+                    'default' => '/page/{page}',
+                ],
+                'additional'   => '__UNSET',
+                'arguments'    => [
+                    'default' => ['page' => 'page'],
+                ],
+                'requirements' => [
+                    'default' => ['page' => '\\d+'],
+                ],
             ])
+        );
+
+        $key = $this->context->replaceMarkers($key);
+
+        $this->registerExtbasePlugin(
+            $key,
+            $options['routePath'],
+            $options['controller'], $options['action'],
+            $options['pids'],
+            array_merge(
+                $options,
+                [
+                    'rawOverride' => [],
+                    'additional'  => [
+                        // We abuse the "pagination" feature of the additional route option here
+                        // We will remove the second route again below
+                        [$options['routePath'], $options['arguments']],
+                    ],
+                    'arguments'   => [],
+                ]
+            )
+        );
+
+        $c = &$this->routeEnhancers[$key]['routes'];
+
+        $c[0]['_arguments'] = $c[1]['_arguments'];
+        array_pop($c);
+
+        $this->routeEnhancers[$key] = Arrays::merge(
+            $this->routeEnhancers[$key],
+            $options['rawOverride'],
+            'nn', 'r'
         );
 
         return $this;
@@ -253,10 +319,16 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         array $pids,
         array $options = []
     ): self {
-        $this->routeEnhancers[$this->context->replaceMarkers($key)]
-            = $this->enhancerGenerator->makeValueConfig(
-            array_merge($options, ['pids' => $pids, 'routePath' => $routePath])
+        $options = Options::make(
+            $this->context->replaceMarkers(
+                array_merge($options, ['pids' => $pids, 'routePath' => $routePath])
+            ), $this->getRoutePathSchema()
         );
+
+        $this->routeEnhancers[$this->context->replaceMarkers($key)] = $this->mergeConfig([
+            'routePath'    => $options['routePath'],
+            'requirements' => $options['requirements'],
+        ], $options);
 
         return $this;
     }
@@ -337,15 +409,66 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         array $pids,
         array $options = []
     ): self {
-        $this->routeEnhancers[$this->context->replaceMarkers($key)]
-            = $this->enhancerGenerator->makeExtbaseConfig(
-            array_merge($options, [
-                'pids'       => $pids,
-                'routePath'  => $routePath,
-                'controller' => $controllerClass,
-                'action'     => $actionName,
-            ])
+        $options = Options::make(
+            $this->context->replaceMarkers(
+                array_merge($options, [
+                    'pids'       => $pids,
+                    'routePath'  => $routePath,
+                    'controller' => $controllerClass,
+                    'action'     => $actionName,
+                ])
+            ), $this->getExtBaseSchema()
         );
+
+        $controllerDefinition = NamingUtil::controllerAliasFromClass($options['controller'])
+                                . '::' . $options['action'];
+
+        $config = [
+            'type'              => 'Extbase',
+            'extension'         => $options['extension'],
+            'plugin'            => $options['plugin'],
+            'requirements'      => $options['requirements'],
+            'routes'            => [
+                array_filter([
+                    'routePath'   => $options['routePath'],
+                    '_controller' => $controllerDefinition,
+                    '_arguments'  => $options['arguments'],
+                ]),
+            ],
+            'defaultController' => $controllerDefinition,
+        ];
+
+        if (! empty($options['additional'])) {
+            foreach ($options['additional'] as $route) {
+                $isPaginatorRoute = isset($route[1]['page']);
+
+                if ($isPaginatorRoute) {
+                    $options['defaults']['page']     = $options['defaults']['page'] ?? 0;
+                    $options['requirements']['page'] = $options['requirements']['page'] ?? '\\d+';
+
+                    if ($route[1]['page'] === 'page') {
+                        $route[1]['page'] = '@widget_0/currentPage';
+                    }
+
+                    if (! isset($config['aspects']['page'])) {
+                        $config['aspects']['page'] = [
+                            'type'  => 'StaticRangeMapper',
+                            'start' => '1',
+                            'end'   => '999',
+                        ];
+                    }
+                }
+
+                $realRoutePath      = rtrim($options['routePath'], '/ ') . '/' . trim($route[0], '/ ');
+                $config['routes'][] = array_filter([
+                    'routePath'   => $realRoutePath,
+                    '_controller' => $controllerDefinition,
+                    '_arguments'  => array_merge($options['arguments'], $route[1]),
+                ]);
+            }
+        }
+
+        $this->routeEnhancers[$this->context->replaceMarkers($key)] = $this->mergeConfig($config, $options);;
 
         return $this;
     }

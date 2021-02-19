@@ -26,13 +26,17 @@ namespace LaborDigital\T3BA\Configuration\ExtConfig;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\Fluid\ConfigureFluidInterface;
 use LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator;
+use LaborDigital\T3BA\ExtConfigHandler\Http\ConfigureHttpInterface;
+use LaborDigital\T3BA\ExtConfigHandler\Http\HttpConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
+use LaborDigital\T3BA\Middleware\RequestCollectorMiddleware;
 use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
+use LaborDigital\T3BA\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapper;
 use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBuilder;
 use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkHandler;
 use Neunerlei\Configuration\State\ConfigState;
 
-class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface
+class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureHttpInterface
 {
 
     /**
@@ -75,5 +79,26 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface
     public static function configureFluid(FluidConfigurator $configurator, ExtConfigContext $context): void
     {
         $configurator->registerViewHelpers();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function configureHttp(HttpConfigurator $configurator, ExtConfigContext $context): void
+    {
+        $configurator->registerRouteAspectHandler(
+            'BetterApiStoragePidAwarePersistedAliasMapper',
+            StoragePidAwarePersistedAliasMapper::class
+        );
+
+        $configurator
+            ->registerMiddleware(RequestCollectorMiddleware::class, [
+                'after'  => 'typo3/cms-frontend/site',
+                'before' => 'typo3/cms-frontend/base-redirect-resolver',
+            ])
+            ->registerMiddleware(RequestCollectorMiddleware::class, [
+                'stack' => 'backend',
+                'after' => 'typo3/cms-backend/site-resolver',
+            ]);
     }
 }

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Http\Aspect;
+namespace LaborDigital\T3BA\Tool\Http\Routing\Aspect;
 
 
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -29,20 +29,28 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class StoragePidAwarePersistedAliasMapper extends PersistedAliasMapper
 {
-    
+    /**
+     * Extends the default query builder with an additional storage pid restriction
+     *
+     * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
+     */
     protected function createQueryBuilder(): QueryBuilder
     {
         $qb = parent::createQueryBuilder();
         if (empty($this->settings['storagePids'])) {
             return $qb;
         }
-        
+
         // Add additional restrictions
         $restrictions = $qb->getRestrictions();
-        $restrictions->add(GeneralUtility::makeInstance(StoragePidQueryRestriction::class,
-            $this->settings['storagePids']));
-        
+        $restrictions->add(
+            GeneralUtility::makeInstance(
+                StoragePidQueryRestriction::class,
+                $this->settings['storagePids']
+            )
+        );
+
         return $qb;
     }
-    
+
 }

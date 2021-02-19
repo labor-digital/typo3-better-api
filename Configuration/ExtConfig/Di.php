@@ -26,11 +26,14 @@ namespace LaborDigital\T3BA\Configuration\ExtConfig;
 use LaborDigital\T3BA\Core\Di\CompilerPass\ContainerAwareTraitPass;
 use LaborDigital\T3BA\Core\Di\CompilerPass\EventBusListenerProviderPass;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3BA\Core\Di\ServiceFactory;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
+use LaborDigital\T3BA\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
 use LaborDigital\T3BA\ExtConfigHandler\Di\ConfigureDiInterface;
 use LaborDigital\T3BA\ExtConfigHandler\Di\DiAutoConfigTrait;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
@@ -63,13 +66,8 @@ class Di implements ConfigureDiInterface
             'Classes/**/functions.php',
         ]);
 
-        // CONTAINER AWARE TRAIT
+        // CUSTOM COMPILER PATHS
         $containerBuilder->addCompilerPass(new ContainerAwareTraitPass());
-
-        // LISTENER PROVIDER
-        $containerBuilder->getDefinition(TypoListenerProvider::class)
-                         ->setPublic(true)
-                         ->setSynthetic(true);
         $containerBuilder->addCompilerPass(new EventBusListenerProviderPass(), PassConfig::TYPE_OPTIMIZE, -500);
 
         // PUBLIC EVENT SUBSCRIBER
@@ -85,18 +83,30 @@ class Di implements ConfigureDiInterface
         // ALIASES
         $containerBuilder->setAlias(EventBusInterface::class, TypoEventBus::class)->setPublic(true);
 
-        // SERVICES
-        $containerBuilder->findDefinition(ExtConfigContext::class)
-                         ->setPublic(true)->setSynthetic(true);
-        $containerBuilder->setDefinition(ExtConfigService::class, new Definition(ExtConfigService::class))
-                         ->setPublic(true)->setSynthetic(true);
-        $containerBuilder->setDefinition(ConfigState::class, new Definition(ConfigState::class))
-                         ->setPublic(true)->setSynthetic(true);
-        $containerBuilder->setDefinition(VarFs::class, new Definition(VarFs::class))
-                         ->setPublic(true)->setSynthetic(true);
-        $containerBuilder->findDefinition(TypoContext::class)
-                         ->setPublic(true)->setSynthetic(true);
+        // FACTORIES
+        foreach (
+            [
+                MainLoader::class       => [ServiceFactory::class, 'getMainExtConfigLoader'],
+                DiLoader::class         => [ServiceFactory::class, 'getDiConfigLoader'],
+                ExtConfigContext::class => [ServiceFactory::class, 'getExtConfigContext'],
+            ] as $id => $factory
+        ) {
+            $containerBuilder->findDefinition($id)->setFactory($factory);
+        }
 
+        // SYNTHETICS
+        foreach (
+            [
+                ExtConfigService::class,
+                ConfigState::class,
+                VarFs::class,
+                TypoContext::class,
+                TypoListenerProvider::class,
+            ] as $service
+        ) {
+            $containerBuilder->removeDefinition($service);
+            $containerBuilder->setDefinition($service, new Definition($service))->setPublic(true)->setSynthetic(true);
+        }
     }
 
     /**
@@ -105,4 +115,5 @@ class Di implements ConfigureDiInterface
     public static function configureRuntime(Container $container, ExtConfigContext $context): void
     {
     }
+
 }
