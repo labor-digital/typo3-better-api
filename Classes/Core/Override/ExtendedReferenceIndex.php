@@ -38,8 +38,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\Event\Events\RefIndexRecordDataFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Core\RefIndexRecordDataFilterEvent;
 use TYPO3\CMS\Core\Database\BetterApiClassOverrideCopy__ReferenceIndex;
 
 class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex
@@ -69,7 +69,9 @@ class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex
         if (! $hasRow) {
             $row = [];
         }
-        TypoEventBus::getInstance()->dispatch(($e = new RefIndexRecordDataFilterEvent($tableName, $uid, $row)));
+
+        $e = TypoEventBus::getInstance()->dispatch(new RefIndexRecordDataFilterEvent($tableName, $uid, $row));
+
         if ($hasRow) {
             $this->recordCache[$id] = $e->getRow();
         }

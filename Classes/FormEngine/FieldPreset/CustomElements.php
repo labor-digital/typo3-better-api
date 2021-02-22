@@ -21,12 +21,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\FormEngine\FieldPreset;
 
+use LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldPresetTrait;
+use LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard\CustomWizardPresetTrait;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 
 class CustomElements extends AbstractFieldPreset
 {
-//    use CustomElementPresetTrait;
-//    use CustomWizardPresetTrait;
+    use CustomFieldPresetTrait;
+    use CustomWizardPresetTrait;
 
     /**
      * Can be used to configure a generic, custom form element.
@@ -35,9 +37,9 @@ class CustomElements extends AbstractFieldPreset
      *                                     The class has to implement the CustomElementInterface interface
      * @param   array   $options           Any options you want to specify for your custom element
      */
-    public function applyCustomElement(string $formElementClass, array $options = []): void
+    public function applyCustomField(string $formElementClass, array $options = []): void
     {
-        $this->applyCustomElementPreset($this->field, $this->context, $formElementClass, $options);
+        $this->applyCustomElementPreset($formElementClass, $options);
     }
 
     /**
@@ -47,14 +49,15 @@ class CustomElements extends AbstractFieldPreset
      *                                The class has to implement the CustomWizardInterface interface
      * @param   array   $options      Any options you want to specify for your custom wizard
      *                                Generic options on all wizards are:
-     *                                - position string ("right"): Can be set to "top", "left", "right",
-     *                                "bottom" and determines the position where the wizard should be rendered.
-     *                                NOTE: This affects all wizards of this field.
+     *                                - before array|string: A list of other wizards that should be
+     *                                displayed after this wizard
+     *                                - after array|string: A list of other wizards that should be
+     *                                displayed before this wizard
      *                                - wizardId string: Can be used to manually set the wizard id.
      *                                If left empty the id will be automatically created.
      */
     public function applyCustomWizard(string $wizardClass, array $options = []): void
     {
-        $this->applyCustomWizardPreset($this->field, $this->context, $wizardClass, $options);
+        $this->applyCustomWizardPreset($wizardClass, $options);
     }
 }

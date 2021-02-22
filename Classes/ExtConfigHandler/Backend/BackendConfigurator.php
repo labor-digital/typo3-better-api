@@ -24,8 +24,226 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
 
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\Options\Options;
+use Neunerlei\PathUtil\Path;
 
 class BackendConfigurator extends AbstractExtConfigConfigurator
 {
+    use RteConfigTrait;
+
+    /**
+     * The list of backend assets to register
+     *
+     * @var array
+     */
+    protected $assets = [];
+
+    /**
+     * The list of registered rte configuration arrays
+     *
+     * @var array
+     */
+    protected $rteConfig = [];
+
+    /**
+     * A list of rte configuration files by their preset name to load
+     *
+     * @var array
+     */
+    protected $rteConfigFiles = [];
+
+    /**
+     * TYPO3 core options in the $GLOBALS array
+     *
+     * @var array
+     */
+    protected $globals = [];
+
+    /**
+     * Registers a new css file to the backend renderer.
+     *
+     * @param   string  $cssFile  Use something like EXT:ext_key/Resources/Public/Styles/style.css
+     *                            You can use fully qualified urls as well.
+     *
+     * @return $this
+     */
+    public function registerCss(string $cssFile): self
+    {
+        return $this->addAssetInternal('addCssFile', [$cssFile, 'stylesheet', 'all', '', false], 0);
+    }
+
+    /**
+     * Registers a new js file to the backend renderer.
+     *
+     * @param   string  $jsFile       Use something like EXT:ext_key/Resources/Public/Scripts/script.js
+     *                                You can use fully qualified urls as well.
+     * @param   bool    $atTheFooter  By default the script will be added to the page head. If you want to add it to the
+     *                                footer of the page, set this to true
+     *
+     * @return $this
+     */
+    public function registerJs(string $jsFile, bool $atTheFooter = false): self
+    {
+        return $this->addAssetInternal(
+            $atTheFooter ? 'addJsFile' : 'addJsFooterFile',
+            [$jsFile, 'text/javascript', false, false, '', true],
+            0
+        );
+    }
+
+    /**
+     * Use this method to register your custom RTE configuration for the Typo3 backend.
+     *
+     * @param   array  $config   The part you would normally write under default.editor.config
+     *                           Alternatively: If you provide a "config" key in your array,
+     *                           it will automatically be moved to editor.config, all other
+     *                           options will be moved to the root preset. This is useful for
+     *                           defining "processing" information or similar cases.
+     *                           If you don't want a "magic" restructuring of your configuration
+     *                           and keep it as you defined it start with an 'editor' => ['config' => []]
+     *                           array, which will disable all of our internal restructuring.
+     * @param   array  $options  Additional options for the configuration
+     *                           - preset string (default): A speaking name/key for the preset you are configuring.
+     *                           By default all configuration will be done to the "default" preset
+     *                           - useDefaultImports bool (TRUE): By default the Processing.yaml, Base.yaml and
+     *                           Plugins.yaml will be auto-imported in your configuration. Set this to false to disable
+     *                           this feature
+     *                           - imports array: Additional imports that will be added to the generated preset file
+     *
+     * @return $this
+     * @see https://docs.typo3.org/c/typo3/cms-rte-ckeditor/master/en-us/Configuration/Examples.html
+     */
+    public function registerRteConfig(array $config, array $options = []): self
+    {
+        $options = Options::make($options, [
+            'preset'            => [
+                'type'    => 'string',
+                'default' => 'default',
+            ],
+            'useDefaultImports' => [
+                'type'    => 'bool',
+                'default' => true,
+            ],
+            'imports'           => [
+                'type'     => 'array',
+                'default'  => [],
+                'children' => [
+                    '*' => [
+                        'type' => 'string',
+                    ],
+                ],
+            ],
+        ]);
+        $options = $this->context->replaceMarkers($options);
+
+        unset($this->rteConfigFiles[$options['preset']]);
+        $this->rteConfig[$options['preset']] = $this->makeRteConfig(
+            $this->context->replaceMarkers($config),
+            $options
+        );
+
+        return $this;
+    }
+
+    /**
+     * Returns a registered rte config ur null if it was not defined
+     *
+     * @param   string  $presetName  The name/key of the preset to retrieve
+     *
+     * @return array|null
+     */
+    public function getRteConfig(string $presetName): ?array
+    {
+        return $this->rteConfig[$this->context->replaceMarkers($presetName)] ?? null;
+    }
+
+    /**
+     * Used to set the raw configuration array for an rte configuration.
+     * Unlike registerRteConfig() this method does not apply any additional logic to your configuration
+     *
+     * @param   string  $presetName  The name/key of the preset to set the configuration for
+     * @param   array   $config      The raw RTE configuration array to applied for the preset name
+     *
+     * @return $this
+     */
+    public function setRteConfig(string $presetName, array $config): self
+    {
+        $this->rteConfig[$this->context->replaceMarkers($presetName)] = $config;
+
+        return $this;
+    }
+
+    /**
+     * Allows you to register a new, static editor configuration yml file
+     *
+     * @param   string  $presetName  The name/key of the preset to set the configuration file for
+     * @param   string  $fileName    The path of the file relative to EXT:yourExt...
+     *
+     * @return $this
+     */
+    public function registerRteConfigFile(string $presetName, string $fileName): self
+    {
+        $presetName = $this->context->replaceMarkers($presetName);
+        unset($this->rteConfig[$presetName]);
+        $this->rteConfigFiles[$presetName] = $this->context->replaceMarkers($fileName);
+
+        return $this;
+    }
+
+    /**
+     * Internal helper to register a new asset registration on the page renderer
+     *
+     * @param   string    $method         The method of the page renderer to use as target for the registered asset
+     * @param   array     $args           The arguments to pass to the given method in order to register the asset
+     * @param   int|null  $assetArgIndex  Optional index of the asset url inside of $args, which will be
+     *                                    parsed for TYPO3 path definitions
+     *
+     * @return $this
+     */
+    protected function addAssetInternal(string $method, array $args, ?int $assetArgIndex): self
+    {
+        $args = $this->context->replaceMarkers($args);
+
+        if ($assetArgIndex !== null) {
+            $assetUrl = $args[$assetArgIndex];
+
+            if (! (bool)filter_var($assetUrl, FILTER_VALIDATE_URL)) {
+                $p        = $this->context->getTypoContext()->path();
+                $assetUrl = $p->typoPathToRealPath($assetUrl);
+                $assetUrl = Path::makeRelative($assetUrl, $p->getPublicPath());
+
+                if (! empty($assetUrl) && ! in_array($assetUrl[0], ['/', '.'], true)) {
+                    $assetUrl = '/' . $assetUrl;
+                }
+
+                $args[$assetArgIndex] = $assetUrl;
+            }
+        }
+
+        $this->assets[md5($method . '.' . json_encode($args))] = [$method, $args];
+
+        return $this;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function finish(ConfigState $state): void
+    {
+        $state->setAsJson('assets', $this->assets);
+
+        $state->useNamespace(null, function (ConfigState $state) {
+            if (! empty($this->rteConfig)) {
+                $mount = $this->context->getExtConfigService()->getFsMount();
+                foreach ($this->rteConfig as $key => $config) {
+                    $this->rteConfigFiles[$key] = $this->dumpRteConfigFile($mount, $key, $config);
+                }
+            }
+            $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS.RTE.Presets', $this->rteConfigFiles);
+        });
+    }
+
 
 }

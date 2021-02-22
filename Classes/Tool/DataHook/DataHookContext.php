@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\DataHook;
 
+use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
 use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
 use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookHandlerDefinition;
 
@@ -119,11 +120,26 @@ class DataHookContext
         if (method_exists($this->event, 'getId')) {
             return $this->event->getId();
         }
+
         if (method_exists($this->event, 'getUid')) {
             return $this->event->getUid();
         }
 
+        if ($this->event instanceof FormFilterEvent) {
+            return $this->event->getData()['databaseRow']['uid'];
+        }
+
         return $this->handlerDefinition->data['uid'] ?? 0;
+    }
+
+    /**
+     * Returns true if this is a new record, false if it is already persisted in the database
+     *
+     * @return bool
+     */
+    public function isNew(): bool
+    {
+        return ! is_numeric($this->getUid());
     }
 
     /**

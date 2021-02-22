@@ -21,6 +21,9 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\DataHandler;
 
+use Closure;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+
 /**
  * Class DataHandlerRecordInfoFilterEvent
  *

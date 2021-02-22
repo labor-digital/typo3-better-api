@@ -27,7 +27,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\EventHandler\SqlEventHandler;
+use LaborDigital\T3BA\EventHandler\Sql;
 use LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor;
 use LaborDigital\T3BA\Tool\Sql\Io\Dumper;
 use LaborDigital\T3BA\Tool\Sql\Io\TableAdapter;
@@ -276,10 +276,10 @@ class SqlRegistry implements SingletonInterface
             return;
         }
 
-        SqlEventHandler::$enabled = false;
-        $definition               = $this->reader->getTablesDefinitionString(false);
-        SqlEventHandler::$enabled = true;
-        $statements               = $this->reader->getStatementArray($definition);
+        Sql::$enabled = false;
+        $definition   = $this->reader->getTablesDefinitionString(false);
+        Sql::$enabled = true;
+        $statements   = $this->reader->getStatementArray($definition);
         $rawTables                = $this->migrator->parseCreateTableStatements($statements);
 
         $tables = [];

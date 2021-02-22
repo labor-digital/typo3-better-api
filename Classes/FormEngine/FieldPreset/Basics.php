@@ -55,20 +55,20 @@ class Basics extends AbstractFieldPreset
     public function applyCheckbox(array $options = []): void
     {
         // Prepare the options
-        $options = Options::make($options, [
-            'default'  => [
-                'type'    => 'bool',
-                'default' => false,
-            ],
-            'toggle'   => [
-                'type'    => 'bool',
-                'default' => false,
-            ],
-            'inverted' => [
-                'type'    => 'bool',
-                'default' => false,
-            ],
-        ]);
+        $options = Options::make($options,
+            $this->addDefaultOptions(
+                [
+                    'toggle'   => [
+                        'type'    => 'bool',
+                        'default' => false,
+                    ],
+                    'inverted' => [
+                        'type'    => 'bool',
+                        'default' => false,
+                    ],
+                ], ['bool'], false
+            )
+        );
 
         // Prepare the config
         $config            = ['type' => 'check'];
@@ -115,44 +115,40 @@ class Basics extends AbstractFieldPreset
             $options,
             $this->addEvalOptions(
                 $this->addMinMaxLengthOptions(
-                    [
-                        'default'   => [
-                            'type'    => 'string',
-                            'default' => '',
-                        ],
-                        'cols'      => [
-                            'type'    => 'int',
-                            'default' => 42,
-                        ],
-                        'rows'      => [
-                            'type'    => 'int',
-                            'default' => 5,
-                        ],
-                        'rte'       => [
-                            'type'    => 'bool',
-                            'default' => false,
-                        ],
-                        'rteConfig' => [
-                            'type'    => 'string',
-                            'default' => '',
-                        ],
-                    ],
+                    $this->addDefaultOptions(
+                        [
+                            'cols'      => [
+                                'type'    => 'int',
+                                'default' => 42,
+                            ],
+                            'rows'      => [
+                                'type'    => 'int',
+                                'default' => 5,
+                            ],
+                            'rte'       => [
+                                'type'    => 'bool',
+                                'default' => false,
+                            ],
+                            'rteConfig' => [
+                                'type'    => 'string',
+                                'default' => '',
+                            ],
+                        ]
+                    ),
                     60000
                 )
             )
         );
 
-        // Prepare the config
-        $config = ['type' => 'text'];
+        $config = [
+            'type' => 'text',
+            'rows' => $options['rows'],
+            'cols' => $options['cols'],
+        ];
 
-        // Apply defaults
-        if (! empty($options['default'])) {
-            $config['default'] = $options['default'];
-        }
-        $config['rows'] = $options['rows'];
-        $config['cols'] = $options['cols'];
-        $config         = $this->addEvalConfig($config, $options);
-        $config         = $this->addMaxLengthConfig($config, $options, true);
+        $config = $this->addDefaultConfig($config, $options);
+        $config = $this->addEvalConfig($config, $options);
+        $config = $this->addMaxLengthConfig($config, $options, true);
 
         // Add rte config
         if ($options['rte']) {
@@ -194,17 +190,14 @@ class Basics extends AbstractFieldPreset
             $options,
             $this->addEvalOptions(
                 $this->addMinMaxItemOptions(
-                    [
-                        'userFunc' => [
-                            'type'    => 'string',
-                            'default' => '',
-                        ],
-                        'default'  => [
-                            'type'    => ['string', 'number', 'null'],
-                            'default' => null,
-                        ],
-                    ],
-                    ['maxItems' => 1]
+                    $this->addDefaultOptions(
+                        [
+                            'userFunc' => [
+                                'type'    => 'string',
+                                'default' => '',
+                            ],
+                        ], ['string', 'number', 'null'], null
+                    ), ['maxItems' => 1]
                 ),
                 ['required']
             )
@@ -248,10 +241,7 @@ class Basics extends AbstractFieldPreset
             $config['itemsProcFunc'] = $options['userFunc'];
         }
 
-        // Add additional config
-        if (! is_null($options['default'])) {
-            $config['default'] = $options['default'];
-        }
+        $config = $this->addDefaultConfig($config, $options);
         $config = $this->addMinMaxItemConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $this->configureSqlColumn(static function (Column $column) {

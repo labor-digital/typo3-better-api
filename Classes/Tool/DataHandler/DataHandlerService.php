@@ -25,6 +25,7 @@ namespace LaborDigital\T3BA\Tool\DataHandler;
 
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Throwable;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -53,7 +54,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
     public function getRecordDataHandler(string $tableName): RecordDataHandler
     {
         return GeneralUtility::makeInstance(
-            RecordDataHandler::class, $tableName, $this
+            RecordDataHandler::class, NamingUtil::resolveTableName($tableName), $this
         );
     }
 

@@ -21,8 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\FormEngine;
 
-use Neunerlei\Arrays\Arrays;
-
 /**
  * Class BackendFormNodeDataFilterEvent
  *
@@ -82,7 +80,7 @@ class BackendFormNodeDataFilterEvent
      */
     public function getType(): ?string
     {
-        return Arrays::getPath($this->data, 'parameterArray.fieldConf.config.type');
+        return $this->data['parameterArray']['fieldConf']['config']['type'] ?? null;
     }
 
     /**

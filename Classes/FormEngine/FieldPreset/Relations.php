@@ -113,8 +113,7 @@ class Relations extends AbstractFieldPreset
 
         // Convert the render type if required
         if ($options['sideBySide']) {
-            $config['renderType']                       = 'selectMultipleSideBySide';
-            $config['enableMultiSelectFilterTextfield'] = true;
+            $config['renderType'] = 'selectMultipleSideBySide';
         }
 
         // Register opposite references for the foreign side of a relation

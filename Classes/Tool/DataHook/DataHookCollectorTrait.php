@@ -90,21 +90,22 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      * @see \LaborDigital\T3BA\Tool\DataHook\DataHookTypes
-     *
      */
     public function registerDataHook(
         string $type,
         string $handlerClass,
-        string $handlerMethodName = 'dataHook'
+        string $handlerMethodName = 'dataHook',
+        array $options = []
     ) {
         $this->validateDataHookType($type);
-        $options = ['constraints' => $this->getDataHookTableFieldConstraints()];
+        $options['constraints'] = $this->getDataHookTableFieldConstraints();
 
         if (method_exists($this, 'additionalDataHookOptions')) {
-            $options = array_merge($options, $this->additionalDataHookOptions());
+            $options = array_merge($this->additionalDataHookOptions(), $options);
         }
 
         $this->dataHooks[$type][md5($handlerClass . '.' . $handlerMethodName)] = [

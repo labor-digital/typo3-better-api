@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Sql;
 
 
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 
@@ -55,7 +56,13 @@ class TableOverride extends Table
     {
         $this->ensureColumnsExist($columnNames);
 
-        return parent::addIndex($columnNames, $indexName, $flags, $options);
+        try {
+            return parent::addIndex($columnNames, $indexName, $flags, $options);
+        } catch (SchemaException $e) {
+            // Ignore if index exists
+        }
+
+        return $this;
     }
 
     /**
@@ -65,7 +72,13 @@ class TableOverride extends Table
     {
         $this->ensureColumnsExist($columnNames);
 
-        return parent::addUniqueIndex($columnNames, $indexName, $options);
+        try {
+            return parent::addUniqueIndex($columnNames, $indexName, $options);
+        } catch (SchemaException $e) {
+            // Ignore if index exists
+        }
+
+        return $this;
     }
 
     /**
@@ -80,8 +93,14 @@ class TableOverride extends Table
     ) {
         $this->ensureColumnsExist($localColumnNames);
 
-        return parent::addForeignKeyConstraint(
-            $foreignTable, $localColumnNames, $foreignColumnNames, $options, $constraintName);
+        try {
+            return parent::addForeignKeyConstraint(
+                $foreignTable, $localColumnNames, $foreignColumnNames, $options, $constraintName);
+        } catch (SchemaException $e) {
+            // Ignore if constraint exists
+        }
+
+        return $this;
     }
 
     /**

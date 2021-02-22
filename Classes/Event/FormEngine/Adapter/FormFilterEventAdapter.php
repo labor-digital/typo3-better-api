@@ -54,8 +54,10 @@ class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements For
         if (! isset($result['tableName'])) {
             return $result;
         }
-        static::$bus->dispatch(($e = new FormFilterEvent($result['tableName'], $result)));
 
-        return $e->getData();
+        return static::$bus->dispatch(
+            new FormFilterEvent($result['tableName'], $result)
+        )->getData();
+
     }
 }

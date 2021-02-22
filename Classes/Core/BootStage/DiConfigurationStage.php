@@ -157,7 +157,9 @@ class DiConfigurationStage implements BootStageInterface
 
         $eventBus->dispatch(new DiContainerFilterEvent($realContainer));
 
-        $this->caServices = [];
+        if (! $event->isFailsafe()) {
+            $this->caServices = [];
+        }
     }
 
     /**

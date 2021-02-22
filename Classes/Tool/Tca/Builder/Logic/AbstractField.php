@@ -34,6 +34,13 @@ abstract class AbstractField extends AbstractElement
     use DisplayConditionTrait;
 
     /**
+     * Additional configuration for the data hook registration
+     *
+     * @var array
+     */
+    protected $dataHookOptions = [];
+
+    /**
      * @inheritDoc
      */
     public function __construct(Node $node, AbstractForm $form)
@@ -258,10 +265,44 @@ abstract class AbstractField extends AbstractElement
     }
 
     /**
+     * Returns the currently set, additional options for the data hook registration.
+     *
+     * @return array
+     */
+    public function getDataHookOptions(): array
+    {
+        return $this->dataHookOptions;
+    }
+
+    /**
+     * Allows to set additional options for the data hook registration.
+     *
+     * @param   array  $dataHookOptions
+     *
+     * @return AbstractField
+     */
+    public function setDataHookOptions(array $dataHookOptions): AbstractField
+    {
+        $this->dataHookOptions = $dataHookOptions;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     protected function getDataHookTableFieldConstraints(): array
     {
         return [];
+    }
+
+    /**
+     * Provides the currently set additional data hook options
+     *
+     * @return array
+     */
+    protected function additionalDataHookOptions(): array
+    {
+        return $this->dataHookOptions;
     }
 }

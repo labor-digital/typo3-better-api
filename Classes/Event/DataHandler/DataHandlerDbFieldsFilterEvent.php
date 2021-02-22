@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\DataHandler;
 
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+
 /**
  * Class DataHandlerDbFieldsFilterEvent
  *

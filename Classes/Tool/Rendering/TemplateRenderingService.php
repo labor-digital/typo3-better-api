@@ -60,8 +60,7 @@ class TemplateRenderingService implements SingletonInterface
 
     /**
      * This method allows you to render a mustache or handlebars template into a string.
-     * As engine we use LightNCandy internally, but we use typo3's caching framework to store the compiled templates,
-     * for a faster execution of the same templates.
+     * As engine we use LightNCandy internally with compiled templates for a faster execution of the same variants.
      *
      * @param   string  $template  Either a mustache template as string, or a path like FILE:EXT:...
      * @param   array   $data      The view data to use for the renderer object
@@ -90,10 +89,13 @@ class TemplateRenderingService implements SingletonInterface
                     $options['flags'] = LightnCandy::FLAG_BESTPERFORMANCE ^ LightnCandy::FLAG_ERROR_EXCEPTION
                                         ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL;
                 }
+
                 $php = LightnCandy::compile($template, $this->injectMustacheViewHelpers($options));
+
                 if (strpos(trim($php), '<?php') !== 0) {
                     $php = '<?php' . PHP_EOL . $php;
                 }
+
                 $this->fsMount->setFileContent($templateFile, $php);
             }
 
@@ -152,15 +154,19 @@ class TemplateRenderingService implements SingletonInterface
         // Build the instance
         $instance = $this->makeInstance(StandaloneView::class);
         $instance->setFormat($options['format']);
+
         if (! empty($options['templateRootPaths'])) {
             $instance->setTemplateRootPaths($options['templateRootPaths']);
         }
+
         if (! empty($options['partialRootPaths'])) {
             $instance->setPartialRootPaths($options['partialRootPaths']);
         }
+
         if (! empty($options['layoutRootPaths'])) {
             $instance->setLayoutRootPaths($options['layoutRootPaths']);
         }
+
         empty($options['templateRootPaths']) ? $instance->setTemplatePathAndFilename($filename)
             : $instance->setTemplate($templateName);
 

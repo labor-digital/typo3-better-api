@@ -302,8 +302,11 @@ class NamingUtil
 
             // Check if we have to instantiate the class first
             if (! (new ReflectionMethod($callable[0], $callable[1]))->isStatic()) {
+                $di        = TypoContext::getInstance()->di();
+                $container = $di->getContainer();
+
                 return [
-                    TypoContext::getInstance()->di()->getService($callable[0]),
+                    $container->has($callable[0]) ? $container->get($callable[0]) : $di->makeInstance($callable[0]),
                     $callable[1],
                 ];
             }

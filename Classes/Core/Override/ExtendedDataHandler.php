@@ -38,9 +38,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\Event\Events\DataHandlerDbFieldsFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\Events\DataHandlerRecordInfoFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
+use LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent;
+use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
 use TYPO3\CMS\Core\DataHandling\BetterApiClassOverrideCopy__DataHandler;
 
 class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
@@ -51,7 +52,7 @@ class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
     public function recordInfo($table, $id, $fieldList)
     {
         /** @noinspection PhpParamsInspection */
-        TypoEventBus::getInstance()->dispatch(($e = new DataHandlerRecordInfoFilterEvent(
+        $e = TypoEventBus::getInstance()->dispatch(new DataHandlerRecordInfoFilterEvent(
             $table,
             $id,
             $fieldList,
@@ -59,7 +60,7 @@ class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
             function ($fieldList) use ($table, $id) {
                 return parent::recordInfo($table, $id, $fieldList);
             }
-        )));
+        ));
 
         return call_user_func($e->getConcreteInfoProvider(), $e->getFieldList());
     }
@@ -67,17 +68,30 @@ class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
     /**
      * @inheritDoc
      */
+    public function newFieldArray($table)
+    {
+        /** @noinspection PhpParamsInspection */
+        return TypoEventBus::getInstance()->dispatch(new DataHandlerDefaultFilterEvent(
+            $table, parent::newFieldArray($table), $this
+        ))->getRow();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function updateDB($table, $id, $fieldArray)
     {
         /** @noinspection PhpParamsInspection */
-        TypoEventBus::getInstance()->dispatch(($e = new DataHandlerDbFieldsFilterEvent(
+        $e = TypoEventBus::getInstance()->dispatch(new DataHandlerDbFieldsFilterEvent(
             'update',
             $table,
             $fieldArray,
             $id,
             $this
-        )));
-        parent::updateDB($e->getTableName(), $e->getId(), $e->getRow());
+        ));
+
+        return parent::updateDB($e->getTableName(), $e->getId(), $e->getRow());
     }
 
     /**
@@ -92,7 +106,7 @@ class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
         $dontSetNewIdIndex = false
     ) {
         /** @noinspection PhpParamsInspection */
-        TypoEventBus::getInstance()->dispatch(($e = new DataHandlerDbFieldsFilterEvent(
+        $e = TypoEventBus::getInstance()->dispatch(new DataHandlerDbFieldsFilterEvent(
             'insert',
             $table,
             $fieldArray,
@@ -103,9 +117,15 @@ class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
                 'suggestedUid'      => $suggestedUid,
                 'dontSetNewIdIndex' => $dontSetNewIdIndex,
             ]
-        )));
+        ));
 
-        return parent::insertDB($e->getTableName(), $e->getId(), $e->getRow(), $newVersion, $suggestedUid,
-            $dontSetNewIdIndex);
+        return parent::insertDB(
+            $e->getTableName(),
+            $e->getId(),
+            $e->getRow(),
+            $newVersion,
+            $suggestedUid,
+            $dontSetNewIdIndex
+        );
     }
 }

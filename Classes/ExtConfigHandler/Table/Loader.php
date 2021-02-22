@@ -39,6 +39,14 @@ class Loader implements PublicServiceInterface
     use TypoContextAwareTrait;
 
     /**
+     * The state of the loaded tca types to prevent double loading in the install tool
+     *
+     * @todo can we flush this array reliably at some point in time, to save some memory?
+     * @var array
+     */
+    protected $loaded = [];
+
+    /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor
      */
     protected $postProcessor;
@@ -87,7 +95,7 @@ class Loader implements PublicServiceInterface
      */
     public function loadTables(): void
     {
-        $this->executeLoad(false);
+        $this->executeLoad('default');
     }
 
     /**
@@ -95,7 +103,7 @@ class Loader implements PublicServiceInterface
      */
     public function loadTableOverrides(): void
     {
-        $this->executeLoad(true);
+        $this->executeLoad('override');
     }
 
     /**
@@ -113,11 +121,20 @@ class Loader implements PublicServiceInterface
      * Internal handler to load the registered set of table configuration classes
      * and inject the configuration result into the "TCA" array
      *
-     * @param   bool  $override  True to load the table overrides false for the default table definition
+     * @param   string  $definitionKey  "override" or "default" to define which table definitions to load
      */
-    protected function executeLoad(bool $override): void
+    protected function executeLoad(string $definitionKey): void
     {
-        $definition = $this->getLoadableTables()[$override ? 'override' : 'default'];
+        // Fix for the install tool where the tca gets loaded twice
+        if (isset($this->loaded[$definitionKey])) {
+            foreach ($this->loaded[$definitionKey] as $tableName => $tca) {
+                $GLOBALS['TCA'][$tableName] = $tca;
+            }
+
+            return;
+        }
+
+        $definition = $this->getLoadableTables()[$definitionKey] ?? [];
 
         foreach ($definition as $tableName => $configList) {
             $table = null;
@@ -147,7 +164,9 @@ class Loader implements PublicServiceInterface
             }
 
             if ($table !== null) {
-                $GLOBALS['TCA'][$tableName] = $this->tableDumper->dump($table);
+                $GLOBALS['TCA'][$tableName]
+                    = $this->loaded[$definitionKey][$tableName]
+                    = $this->tableDumper->dump($table);
             }
         }
     }

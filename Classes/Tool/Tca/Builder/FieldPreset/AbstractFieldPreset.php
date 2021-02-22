@@ -328,22 +328,19 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      */
     protected function addBasePidOptions(array $optionDefinition, bool $withMapping = false): array
     {
-        // Helper to convert a pid string identifier into a number value
-        $pid               = $this->context->cs()->typoContext->pid();
-        $pidValueConverter = static function ($value) use ($pid) {
-            return $pid->has($value) ? $pid->get($value) : $value;
-        };
+        $pid = $this->context->cs()->typoContext->pid();
 
         if ($withMapping) {
             $optionDefinition['basePid'] = [
                 'type'    => ['int', 'null', 'string', 'array'],
                 'default' => null,
-                'filter'  => function ($v) use ($pidValueConverter) {
-                    if ($v === null) {
+                'filter'  => function ($v) use ($pid) {
+                    if ($v === null || is_int($v)) {
                         return $v;
                     }
+
                     if (! is_array($v)) {
-                        return $pidValueConverter($v);
+                        return $pid->get($v);
                     }
 
                     // Generate the table names for all keys
@@ -352,23 +349,15 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
                         $keys[$i] = $this->context->getRealTableName($table);
                     }
 
-                    // Translate the values to pid numbers
-                    $values = array_values($v);
-                    $values = array_map($pidValueConverter, $values);
-
-                    return array_combine($keys, $values);
+                    return array_combine($keys, array_values($pid->getMultiple($v)));
                 },
             ];
         } else {
             $optionDefinition['basePid'] = [
                 'type'    => ['int', 'null', 'string'],
                 'default' => null,
-                'filter'  => static function ($v) use ($pidValueConverter) {
-                    if ($v === null) {
-                        return $v;
-                    }
-
-                    return $pidValueConverter($v);
+                'filter'  => static function ($v) use ($pid) {
+                    return $v === null ? $v : $pid->get($v);
                 },
             ];
         }
@@ -448,6 +437,57 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         return $config;
     }
 
+    /**
+     * Provides the option definition for the "default" configuration
+     *
+     * @param   array       $optionDefinition
+     * @param   array|null  $type
+     * @param   string      $default
+     *
+     * @return array
+     */
+    protected function addDefaultOptions(array $optionDefinition, ?array $type = null, $default = ''): array
+    {
+        $optionDefinition['default'] = [
+            'type'      => $type ?? 'string',
+            'preFilter' => static function ($v) {
+                if (is_array($v) && count($v) === 2 && is_string($v[0] ?? null) && is_string($v[1] ?? null)) {
+                    return '@callback:' . $v[0] . '->' . $v[1];
+                }
+
+                return $v;
+            },
+            'default'   => $default,
+        ];
+
+        return $optionDefinition;
+    }
+
+    /**
+     * Adds the default configuration based on the given options
+     *
+     * @param   array  $config
+     * @param   array  $options
+     *
+     * @return array
+     */
+    protected function addDefaultConfig(array $config, array $options): array
+    {
+        if ($options['default'] !== null && $options['default'] !== '') {
+            $config['default'] = $options['default'];
+        }
+
+        return $config;
+    }
+
+    /**
+     * Provides the option definition for the minItems and maxItems options
+     *
+     * @param   array  $optionDefinition
+     * @param   array  $options
+     *
+     * @return array
+     */
     protected function addMinMaxItemOptions(array $optionDefinition, array $options = []): array
     {
         $optionDefinition['minItems'] = [

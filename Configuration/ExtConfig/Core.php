@@ -29,8 +29,11 @@ use LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Http\ConfigureHttpInterface;
 use LaborDigital\T3BA\ExtConfigHandler\Http\HttpConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
+use LaborDigital\T3BA\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3BA\Middleware\RequestCollectorMiddleware;
 use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
+use LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldNode;
+use LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard\CustomWizardNode;
 use LaborDigital\T3BA\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapper;
 use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBuilder;
 use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkHandler;
@@ -55,19 +58,38 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
 
         // Register globals configuration for the TYPO3 core api
         $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS', [
-            'SYS' => [
+            'SYS'        => [
                 'linkHandler' => [
                     'linkSetRecord' => LinkHandler::class,
                 ],
                 'formEngine'  => [
-                    'linkHandler' => [
+                    'linkHandler'  => [
                         'linkSetRecord' => LinkHandler::class,
+                    ],
+                    'nodeRegistry' => [
+                        't3baField'  => [
+                            'nodeName' => 't3baField',
+                            'priority' => 40,
+                            'class'    => CustomFieldNode::class,
+                        ],
+                        't3baWizard' => [
+                            'nodeName' => 't3baWizard',
+                            'priority' => 40,
+                            'class'    => CustomWizardNode::class,
+                        ],
                     ],
                 ],
             ],
-            'FE'  => [
+            'FE'         => [
                 'typolinkBuilder' => [
                     'linkSetRecord' => LinkBuilder::class,
+                ],
+            ],
+            'SC_OPTIONS' => [
+                't3lib/class.t3lib_userauthgroup.php' => [
+                    'getDefaultUploadFolder' => [
+                        FalFileBaseDir::class => FalFileBaseDir::class . '->applyConfiguredFalFolders',
+                    ],
                 ],
             ],
         ]);

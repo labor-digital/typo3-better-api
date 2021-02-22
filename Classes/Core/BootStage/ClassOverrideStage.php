@@ -29,14 +29,20 @@ use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
 use LaborDigital\T3BA\Core\Override\ExtendedCacheManager;
 use LaborDigital\T3BA\Core\Override\ExtendedContainerBuilder;
+use LaborDigital\T3BA\Core\Override\ExtendedDataHandler;
 use LaborDigital\T3BA\Core\Override\ExtendedLanguageService;
 use LaborDigital\T3BA\Core\Override\ExtendedLocalizationUtility;
+use LaborDigital\T3BA\Core\Override\ExtendedNodeFactory;
+use LaborDigital\T3BA\Core\Override\ExtendedReferenceIndex;
 use LaborDigital\T3BA\Core\Override\ExtendedSiteConfiguration;
 use LaborDigital\T3BA\Core\Override\ExtendedTypoScriptParser;
 use LaborDigital\T3BA\Event\KernelBootEvent;
+use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Database\ReferenceIndex;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
@@ -53,7 +59,10 @@ class ClassOverrideStage implements BootStageInterface
             TypoScriptParser::class    => ExtendedTypoScriptParser::class,
             LocalizationUtility::class => ExtendedLocalizationUtility::class,
             LanguageService::class     => ExtendedLanguageService::class,
-            SiteConfiguration::class   => ExtendedSiteConfiguration::class
+            SiteConfiguration::class   => ExtendedSiteConfiguration::class,
+            NodeFactory::class         => ExtendedNodeFactory::class,
+            DataHandler::class         => ExtendedDataHandler::class,
+            ReferenceIndex::class      => ExtendedReferenceIndex::class
             //            DataHandler::class         => ExtendedDataHandler::class,
         ];
 

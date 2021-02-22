@@ -66,7 +66,15 @@ class DataHandlerException extends BetterApiException
      */
     public static function makeNewInstance(DataHandler $handler, ?Throwable $previous): self
     {
-        $i          = new static('There were errors while running the data handler!', 1599580792, $previous);
+        $message = 'There were errors while running the data handler!';
+        if (! empty($handler->errorLog)) {
+            $message .= ' Errors: ';
+            foreach ($handler->errorLog as $error) {
+                $message .= PHP_EOL . $error;
+            }
+        };
+
+        $i          = new static($message, 1599580792, $previous);
         $i->handler = $handler;
 
         return $i;

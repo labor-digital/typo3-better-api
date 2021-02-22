@@ -38,9 +38,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\BackendForms\Addon\FormNodeEventProxy;
-use LaborDigital\Typo3BetterApi\Event\Events\BackendFormNodeDataFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeDataFilterEvent;
+use LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy;
 use TYPO3\CMS\Backend\Form\BetterApiClassOverrideCopy__NodeFactory;
 
 class ExtendedNodeFactory extends BetterApiClassOverrideCopy__NodeFactory
@@ -51,8 +52,10 @@ class ExtendedNodeFactory extends BetterApiClassOverrideCopy__NodeFactory
      */
     public function create(array $data)
     {
-        TypoEventBus::getInstance()->dispatch(($e = new BackendFormNodeDataFilterEvent($data)));
+        $eventBus = TypoEventBus::getInstance();
 
-        return FormNodeEventProxy::makeInstance(parent::create($e->getData()));
+        $data = $eventBus->dispatch(new BackendFormNodeDataFilterEvent($data))->getData();
+
+        return FormNodeEventProxy::makeInstance($eventBus, $this, parent::create($data));
     }
 }

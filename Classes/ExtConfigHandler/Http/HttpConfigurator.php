@@ -196,6 +196,6 @@ class HttpConfigurator extends AbstractExtConfigConfigurator
     {
         $state->setAsJson('middleware.list', $this->middlewares);
         $state->setAsJson('middleware.disabled', $this->disabledMiddlewares);
-        $state->attachToArray('globals', $this->globals);
+        $state->mergeIntoArray('globals', $this->globals);
     }
 }

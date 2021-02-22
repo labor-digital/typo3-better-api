@@ -38,7 +38,8 @@ class InputFields extends AbstractFieldPreset
      * Configures the current field as a simple input element
      *
      * @param   array  $options  Additional options for this preset
-     *                           - default string: A default value for your input field
+     *                           - default string|array: A default value for your input field. Can be a callback
+     *                           in form of an array like [class, method] as well.
      *                           - required, trim, lower, int, email, password, unique, null bool: Any of these values
      *                           can be passed to define their matching "eval" rules
      *                           - maxLength int (2048): The max length of a input (also affects the length of the db
@@ -56,12 +57,7 @@ class InputFields extends AbstractFieldPreset
                 $this->addMinMaxLengthOptions(
                     $this->addReadOnlyOptions(
                         $this->addPlaceholderOption(
-                            [
-                                'default' => [
-                                    'type'    => 'string',
-                                    'default' => '',
-                                ],
-                            ]
+                            $this->addDefaultOptions([])
                         )
                     )
                 )
@@ -71,10 +67,7 @@ class InputFields extends AbstractFieldPreset
         // Prepare the config
         $config = ['type' => 'input', 'size' => 39];
 
-        // Apply defaults
-        if (! empty($options['default'])) {
-            $config['default'] = $options['default'];
-        }
+        $config = $this->addDefaultConfig($config, $options);
         $config = $this->addReadOnlyConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
@@ -104,20 +97,19 @@ class InputFields extends AbstractFieldPreset
         // Prepare options
         $options = Options::make(
             $options,
-            $this->addEvalOptions([
-                'withTime' => [
-                    'type'    => 'bool',
-                    'default' => false,
-                ],
-                'asInt'    => [
-                    'type'    => 'bool',
-                    'default' => false,
-                ],
-                'default'  => [
-                    'type'    => ['null', 'string', 'number', DateTime::class, DateTimy::class],
-                    'default' => null,
-                ],
-            ], ['required', 'trim'])
+            $this->addEvalOptions(
+                $this->addDefaultOptions([
+                    'withTime' => [
+                        'type'    => 'bool',
+                        'default' => false,
+                    ],
+                    'asInt'    => [
+                        'type'    => 'bool',
+                        'default' => false,
+                    ],
+                ], ['null', 'string', 'number', DateTime::class, DateTimy::class], null)
+                , ['required', 'trim']
+            )
         );
 
         // Set sql statement
@@ -181,37 +173,34 @@ class InputFields extends AbstractFieldPreset
             $options,
             $this->addEvalOptions(
                 $this->addMinMaxLengthOptions(
-                    [
-                        'allowFiles'    => [
-                            'type'    => 'bool',
-                            'default' => false,
-                        ],
-                        'allowExternal' => [
-                            'type'    => 'bool',
-                            'default' => true,
-                        ],
-                        'allowPages'    => [
-                            'type'    => 'bool',
-                            'default' => true,
-                        ],
-                        'allowMail'     => [
-                            'type'    => 'bool',
-                            'default' => false,
-                        ],
-                        'allowFolder'   => [
-                            'type'    => 'bool',
-                            'default' => false,
-                        ],
-                        'default'       => [
-                            'type'    => 'string',
-                            'default' => '',
-                        ],
-                        'hideClutter'   => [
-                            'type'    => 'bool',
-                            'default' => true,
-                        ],
-                    ],
-                    2048
+                    $this->addDefaultOptions(
+                        [
+                            'allowFiles'    => [
+                                'type'    => 'bool',
+                                'default' => false,
+                            ],
+                            'allowExternal' => [
+                                'type'    => 'bool',
+                                'default' => true,
+                            ],
+                            'allowPages'    => [
+                                'type'    => 'bool',
+                                'default' => true,
+                            ],
+                            'allowMail'     => [
+                                'type'    => 'bool',
+                                'default' => false,
+                            ],
+                            'allowFolder'   => [
+                                'type'    => 'bool',
+                                'default' => false,
+                            ],
+                            'hideClutter'   => [
+                                'type'    => 'bool',
+                                'default' => true,
+                            ],
+                        ]
+                    ), 2048
                 ),
                 ['required', 'trim'],
                 ['trim' => true]
@@ -252,10 +241,7 @@ class InputFields extends AbstractFieldPreset
             ],
         ];
 
-        // Apply defaults
-        if (! empty($options['default'])) {
-            $config['default'] = $options['default'];
-        }
+        $config = $this->addDefaultConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
 
@@ -293,40 +279,40 @@ class InputFields extends AbstractFieldPreset
     {
         $options = Options::make(
             $options,
-            $this->addEvalOptions([
-                'separator'      => [
-                    'type'    => 'string',
-                    'default' => '/',
-                ],
-                'replacements'   => [
-                    'type'    => 'array',
-                    'default' => ['/' => '-'],
-                ],
-                'default'        => [
-                    'type'    => ['string', 'number'],
-                    'default' => '',
-                ],
-                'prefix'         => [
-                    'type'    => 'string',
-                    'default' => '',
-                ],
-                'prefixProvider' => [
-                    'type'      => 'string',
-                    'default'   => SlugPrefixProvider::class,
-                    'validator' => static function (string $class) {
-                        if (! class_exists($class)) {
-                            return 'The given class: ' . $class . ' does not exist!';
-                        }
+            $this->addEvalOptions(
+                $this->addDefaultOptions(
+                    [
+                        'separator'      => [
+                            'type'    => 'string',
+                            'default' => '/',
+                        ],
+                        'replacements'   => [
+                            'type'    => 'array',
+                            'default' => ['/' => '-'],
+                        ],
+                        'prefix'         => [
+                            'type'    => 'string',
+                            'default' => '',
+                        ],
+                        'prefixProvider' => [
+                            'type'      => 'string',
+                            'default'   => SlugPrefixProvider::class,
+                            'validator' => static function (string $class) {
+                                if (! class_exists($class)) {
+                                    return 'The given class: ' . $class . ' does not exist!';
+                                }
 
-                        if (! in_array(SlugPrefixProviderInterface::class, class_implements($class), true)) {
-                            return 'The given slug prefix provider: ' . $class
-                                   . ' must implement the required interface: ' . SlugPrefixProviderInterface::class;
-                        }
+                                if (! in_array(SlugPrefixProviderInterface::class, class_implements($class), true)) {
+                                    return 'The given slug prefix provider: ' . $class
+                                           . ' must implement the required interface: '
+                                           . SlugPrefixProviderInterface::class;
+                                }
 
-                        return true;
-                    },
-                ],
-            ], ['required', 'uniqueInSite'])
+                                return true;
+                            },
+                        ],
+                    ], ['string', 'number']
+                ), ['required', 'uniqueInSite'])
         );
 
         // Sadly, TYPO3 sucks hard sometimes... The prefix provider does not get any information for
@@ -335,7 +321,7 @@ class InputFields extends AbstractFieldPreset
         if ($options['prefix'] !== '' && $options['prefixProvider'] === SlugPrefixProvider::class) {
             $prefixMethod = 'pre_' . bin2hex($options['prefix']);
         }
-        
+
         // Build the configuration
         $config = [
             'type'              => 'slug',
@@ -351,7 +337,6 @@ class InputFields extends AbstractFieldPreset
             ],
             'prependSlash'      => false,
             'fallbackCharacter' => '-',
-            'default'           => $options['default'],
             'size'              => 50,
         ];
 
@@ -359,6 +344,7 @@ class InputFields extends AbstractFieldPreset
             $config['renderType'] = 'input';
         }
 
+        $config = $this->addDefaultConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048], true);
 
