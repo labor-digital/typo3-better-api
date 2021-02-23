@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Fal;
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class FalException extends BetterApiException
+class FalException extends T3BAException
 {
 }

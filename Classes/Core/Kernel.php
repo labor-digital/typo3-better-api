@@ -172,7 +172,7 @@ class Kernel
     public static function getInstance(): self
     {
         if (! static::$instance instanceof static) {
-            throw new KernelNotInitializedException('The better api kernel was not correctly initialized!');
+            throw new KernelNotInitializedException('The T3BA kernel was not correctly initialized!');
         }
 
         return static::$instance;

@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Page;
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class PageServiceException extends BetterApiException
+class PageServiceException extends T3BAException
 {
 }

@@ -29,7 +29,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Makes any class container aware even if your class was loaded without dependency injection
  * the Container() method will return the container instance!
  *
- * @package LaborDigital\Typo3BetterApi\Container
+ * @package LaborDigital\T3BA\Core\Di
  */
 trait ContainerAwareTrait
 {

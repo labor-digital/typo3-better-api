@@ -28,7 +28,7 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  * This is a last minute hook to modify the field configuration before the node factory
  * creates the renderer object
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\FormEngine
  */
 class BackendFormNodeDataFilterEvent
 {

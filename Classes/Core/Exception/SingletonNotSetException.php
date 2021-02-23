@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Exception;
 
-class SingletonNotSetException extends BetterApiException
+class SingletonNotSetException extends T3BAException
 {
 
 }

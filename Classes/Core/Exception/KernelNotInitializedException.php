@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Exception;
 
 
-class KernelNotInitializedException extends BetterApiException
+class KernelNotInitializedException extends T3BAException
 {
 
 }

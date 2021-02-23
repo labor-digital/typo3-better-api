@@ -37,7 +37,7 @@ use Psr\SimpleCache\CacheInterface;
  * Therefore all data that is dynamically generated is now stored in a separate
  * temporary directory tree, which is abstracted by this class.
  *
- * @package LaborDigital\Typo3BetterApi\FileAndFolder
+ * @package LaborDigital\T3BA\Core\VarFs
  */
 class VarFs
 {

@@ -26,7 +26,7 @@ namespace LaborDigital\T3BA\Event\Core;
  * Emitted when the ref index class requests a record from the database to resolve the references for
  * This process is cached, so the event is only emitted once per call!
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Core
  */
 class RefIndexRecordDataFilterEvent
 {

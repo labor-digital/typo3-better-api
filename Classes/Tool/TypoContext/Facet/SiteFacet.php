@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 /**
  * Class SiteFacet
  *
- * @package LaborDigital\Typo3BetterApi\TypoContext\Facet
+ * @package LaborDigital\T3BA\Tool\TypoContext\Facet
  */
 class SiteFacet implements FacetInterface
 {

@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  * This event is emitted once for every backend form node before it is rendered.
  * It allows to modify the renderer instance or to render a node replacement directly.
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\FormEngine
  */
 class BackendFormNodeFilterEvent
 {

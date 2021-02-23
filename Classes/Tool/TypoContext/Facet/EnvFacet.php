@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
@@ -83,7 +83,7 @@ class EnvFacet implements FacetInterface
      *                                        The final statement will be read as: $typo3Version $operator $yourVersion
      *
      * @return bool
-     * @throws BetterApiException
+     * @throws T3BAException
      * @noinspection TypeUnsafeComparisonInspection
      */
     public function isVersion($version, string $operator = '='): bool
@@ -127,7 +127,7 @@ class EnvFacet implements FacetInterface
                 $this->versionComparisons[$key] = $versionInt <= $givenInt;
                 break;
             default:
-                throw new BetterApiException("Invalid operator \"$operator\" given! Only =, !=, <, >, <= or >= are supported!");
+                throw new T3BAException("Invalid operator \"$operator\" given! Only =, !=, <, >, <= or >= are supported!");
         }
 
         // Done

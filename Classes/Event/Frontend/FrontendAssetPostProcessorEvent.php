@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
  *
  * Is triggered, after typo3 compiled the assets for the FRONTEND, before the page renderer builds the html
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Frontend;
  */
 class FrontendAssetPostProcessorEvent implements CoreHookEventInterface
 {

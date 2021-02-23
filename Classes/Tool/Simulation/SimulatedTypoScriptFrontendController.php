@@ -30,7 +30,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  *
  * The internal frontend controller to load instead of the default one if the simulator creates a new frontend instance
  *
- * @package LaborDigital\Typo3BetterApi\Simulation
+ * @package LaborDigital\T3BA\Tool\Simulation
  */
 class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
 {

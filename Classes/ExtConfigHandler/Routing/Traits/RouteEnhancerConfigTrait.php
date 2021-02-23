@@ -124,7 +124,7 @@ trait RouteEnhancerConfigTrait
 
             $config['aspects'][$field] = [
                 'type'           => $storagePids === null ?
-                    'PersistedAliasMapper' : 'BetterApiStoragePidAwarePersistedAliasMapper',
+                    'PersistedAliasMapper' : 'T3BAStoragePidAwarePersistedAliasMapper',
                 'tableName'      => $tableName,
                 'routeFieldName' => $tableField,
                 'storagePids'    => $storagePids,

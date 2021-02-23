@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  *
  * Emitted when the data handler writes or updates a row into the database
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\DataHandler
  */
 class DataHandlerDbFieldsFilterEvent
 {

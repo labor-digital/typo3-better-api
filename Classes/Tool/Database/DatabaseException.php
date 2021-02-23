@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Database;
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class DatabaseException extends BetterApiException
+class DatabaseException extends T3BAException
 {
 }

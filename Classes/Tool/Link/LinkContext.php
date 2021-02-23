@@ -36,11 +36,6 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
-/**
- * Class LinkContext
- *
- * @package LaborDigital\Typo3BetterApi\Links
- */
 class LinkContext implements SingletonInterface
 {
     use ContainerAwareTrait;

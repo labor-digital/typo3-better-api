@@ -23,11 +23,11 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\DataHandler;
 
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 use Throwable;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
-class DataHandlerException extends BetterApiException
+class DataHandlerException extends T3BAException
 {
     /**
      * The data handler that threw the exception

@@ -27,7 +27,7 @@ use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
  *
  * A facet is basically an aspect without the stupid "get()" method
  *
- * @package LaborDigital\Typo3BetterApi\TypoContext
+ * @package LaborDigital\T3BA\Tool\TypoContext\Facet
  */
 interface FacetInterface extends PublicServiceInterface
 {

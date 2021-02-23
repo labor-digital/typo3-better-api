@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2020 LABOR.digital
  *
@@ -26,7 +27,7 @@ use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
  *
  * Can be used to handle extremely simple extbase plugins that don't require a real controller for themselves.
  *
- * @package LaborDigital\Typo3BetterApi\BetterControllers
+ * @package LaborDigital\T3BA\ExtBase\Controller
  */
 abstract class SimpleDefaultActionController extends BetterActionController implements BackendPreviewRendererInterface
 {
@@ -45,6 +46,7 @@ abstract class SimpleDefaultActionController extends BetterActionController impl
             if (empty($this->data[$field])) {
                 continue;
             }
+
             $this->view->assign($field,
                 $this->Fal()->getFile($this->data['uid'], 'tt_content', $field, $field !== 'media'));
         }

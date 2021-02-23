@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  * This event is emitted once for every backend form node after it was rendered.
  * You can use this to modify or replace the result of the renderer dynamically
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\FormEngine
  */
 class BackendFormNodePostProcessorEvent
 {

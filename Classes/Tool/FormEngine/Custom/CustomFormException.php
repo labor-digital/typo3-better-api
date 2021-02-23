@@ -23,9 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\FormEngine\Custom;
 
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class CustomFormException extends BetterApiException
+class CustomFormException extends T3BAException
 {
 
 }

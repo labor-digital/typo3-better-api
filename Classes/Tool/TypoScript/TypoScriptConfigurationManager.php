@@ -30,7 +30,7 @@ use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager;
  *
  * Extends the default configuration manager to make the pid publicly changeable for our API to work correctly.
  *
- * @package LaborDigital\Typo3BetterApi\Typoscript
+ * @package LaborDigital\T3BA\Tool\TypoScript
  */
 class TypoScriptConfigurationManager extends BackendConfigurationManager
 {

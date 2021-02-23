@@ -136,7 +136,7 @@ class ClassOverrideGenerator
     /**
      * Registers a new class override. The override will completely replace the original source class.
      * The overwritten class will be copied and is available in the same namespace but with the
-     * "BetterApiClassOverrideCopy__" prefix in front of it's class name. The overwritten class has all it's private
+     * "T3BA__Copy__" prefix in front of it's class name. The overwritten class has all it's private
      * properties and function changed to protected for easier overrides.
      *
      * This method throws an exception if the class is already overwritten by another class
@@ -236,7 +236,7 @@ class ClassOverrideGenerator
             if (! static::$fsMount->hasFile($aliasFilename) || ! static::$fsMount->hasFile($cloneFilename)) {
                 // Make the class name
                 $namespace         = Path::classNamespace($classToOverride);
-                $copyClassName     = 'BetterApiClassOverrideCopy__' . Path::classBasename($classToOverride);
+                $copyClassName     = 'T3BA__Copy__' . Path::classBasename($classToOverride);
                 $copyClassFullName = ltrim($namespace . '\\' . $copyClassName, '\\');
 
                 // Create content
@@ -395,7 +395,7 @@ if(!class_exists('\\$classToOverride', false)) {
                 $sourceParsed[] = ' * Which normally resides in: ' . realpath($overrideSourceFile) . PHP_EOL;
                 $sourceParsed[] = ' * ' . PHP_EOL;
                 $sourceParsed[]
-                                = ' * It was created by the LABOR Typo3BetterApi extension in order to extend core functionality.'
+                                = ' * It was created by the T3BA extension in order to extend core functionality.'
                                   . PHP_EOL;
                 $sourceParsed[] = ' * NEVER, EVER EDIT THIS FILE MANUALLY - YOUR CHANGES WILL VANISH!' . PHP_EOL;
                 $sourceParsed[] = ' * ' . PHP_EOL;

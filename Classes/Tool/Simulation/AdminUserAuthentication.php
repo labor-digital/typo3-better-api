@@ -22,14 +22,14 @@ namespace LaborDigital\T3BA\Tool\Simulation;
 
 
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 use LaborDigital\T3BA\Tool\Database\DbService;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 
 class AdminUserAuthentication extends BackendUserAuthentication implements PublicServiceInterface
 {
-    public const ADMIN_USERNAME = '_betterApi_adminUser_';
+    public const ADMIN_USERNAME = '_t3ba_adminUser_';
 
     /**
      * @var \LaborDigital\T3BA\Tool\Database\DbService
@@ -86,7 +86,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     }
 
     /**
-     * @throws \LaborDigital\T3BA\Core\Exception\BetterApiException
+     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
      */
     protected function loginUser(): void
     {
@@ -108,7 +108,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
             // Failed ?
             /** @noinspection NotOptimalIfConditionsInspection */
             if (empty($this->user['uid'])) {
-                throw new BetterApiException('Could not automatically create an admin user for you to use!');
+                throw new T3BAException('Could not automatically create an admin user for you to use!');
             }
         }
 

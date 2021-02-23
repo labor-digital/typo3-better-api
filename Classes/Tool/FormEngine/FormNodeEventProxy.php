@@ -34,7 +34,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This proxy is wrapped around every form node that is created by our extended node factory.
  * It is used to allow filtering of the form node before it is rendered.
  *
- * @package LaborDigital\Typo3BetterApi\BackendForms\Addons
+ * @package LaborDigital\T3BA\Tool\FormEngine
  */
 class FormNodeEventProxy extends AbstractNode
 {

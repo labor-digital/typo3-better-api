@@ -141,6 +141,7 @@ abstract class BetterRepository extends Repository
         if ($repository instanceof self) {
             return $repository;
         }
+        // @todo migrate this away from objectManager
         $wrapper = TypoContext::getInstance()->di()->cs()->objectManager->get(RepositoryWrapper::class);
         $wrapper->initialize($repository);
 

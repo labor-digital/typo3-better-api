@@ -23,8 +23,8 @@ namespace LaborDigital\T3BA\Tool\TypoScript;
 
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
@@ -260,14 +260,14 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      * @param   string|array  $selector  The access path where to find the content element in typoScript
      *
      * @return string
-     * @throws BetterApiException
+     * @throws T3BAException
      */
     public function renderContentObjectWith($selector): string
     {
         $type   = $this->get($selector, ['getType']);
         $config = $this->get($selector);
         if (empty($type) || empty($config)) {
-            throw new BetterApiException("The given selector $selector is not a valid cObject");
+            throw new T3BAException("The given selector $selector is not a valid cObject");
         }
 
         return $this->renderContentObject($type, $config);

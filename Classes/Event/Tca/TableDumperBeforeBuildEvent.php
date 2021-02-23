@@ -28,7 +28,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  *
  * Emitted before the a table instance is converted into the tca array
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Tca
  */
 class TableDumperBeforeBuildEvent
 {

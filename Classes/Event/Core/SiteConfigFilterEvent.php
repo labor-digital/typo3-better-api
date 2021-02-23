@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\Core;
  * Dispatched when TYPO3 builds it's site configuration and before it is passed down
  * to other core internals.
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Core
  */
 class SiteConfigFilterEvent
 {

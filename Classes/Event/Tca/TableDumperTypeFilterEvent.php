@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
  * Dispatched when a tca table instance is converted into it's array form
  * Can be used to filter the raw type tca before it is merged with the table defaults
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Tca
  */
 class TableDumperTypeFilterEvent
 {

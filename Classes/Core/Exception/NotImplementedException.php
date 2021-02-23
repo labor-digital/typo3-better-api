@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Exception;
 
 
-class NotImplementedException extends BetterApiException
+class NotImplementedException extends T3BAException
 {
 
 }

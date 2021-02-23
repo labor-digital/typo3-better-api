@@ -112,7 +112,7 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
         $constantsTs = [];
         foreach (Arrays::flatten($this->pids) as $k => $pid) {
             $key           = 'config.t3ba.pid.' . $k;
-            $constantsTs[] = '#cat=betterApi/pid; type=int+; label=Page ID ' . Inflector::toHuman($k);
+            $constantsTs[] = '#cat=T3BA/pid; type=int+; label=Page ID ' . Inflector::toHuman($k);
             $constantsTs[] = $key . '=' . $pid;
         }
 

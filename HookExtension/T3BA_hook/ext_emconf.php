@@ -2,7 +2,7 @@
 declare(strict_types=1);
 /** @var string $_EXTKEY */
 $EM_CONF[$_EXTKEY] = [
-    'title'            => 'Better API Hook Adapter',
+    'title'            => 'T3BA Hook Adapter',
     'description'      => 'Internal hook extension you should normally never see',
     'author'           => 'Martin Neundorfer',
     'author_email'     => 'm.neundorfer@labor.digital',

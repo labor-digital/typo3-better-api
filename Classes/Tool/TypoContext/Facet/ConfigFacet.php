@@ -93,13 +93,13 @@ class ConfigFacet implements FacetInterface
      *
      * @param   string  $key           Key of the entry to return
      * @param   null    $defaultValue  Optional default value to use if this entry has never been set. Defaults to NULL.
-     * @param   string  $namespace     optional extension key of extension otherwise "user_betterApi_config" is used
+     * @param   string  $namespace     optional extension key of extension otherwise "user_t3ba_config" is used
      *
      * @return mixed
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/SystemRegistry/Index.html
      * @see Registry::get()
      */
-    public function getRegistryValue(string $key, $defaultValue = null, string $namespace = 'user_betterApi_config')
+    public function getRegistryValue(string $key, $defaultValue = null, string $namespace = 'user_t3ba_config')
     {
         return $this->getService(Registry::class)->get($namespace, $key, $defaultValue);
     }
@@ -110,13 +110,13 @@ class ConfigFacet implements FacetInterface
      *
      * @param   string  $key        The key of the entry to set.
      * @param   mixed   $value      The value to set. This can be any PHP data type; The value has to be serializable!
-     * @param   string  $namespace  optional extension key of extension otherwise "user_betterApi_config" is used
+     * @param   string  $namespace  optional extension key of extension otherwise "user_t3ba_config" is used
      *
      * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/SystemRegistry/Index.html
      * @see Registry::get()
      */
-    public function setRegistryValue(string $key, $value, string $namespace = 'user_betterApi_config'): self
+    public function setRegistryValue(string $key, $value, string $namespace = 'user_t3ba_config'): self
     {
         if ($value === null) {
             $this->getService(Registry::class)->remove($namespace, $key);

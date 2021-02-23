@@ -425,7 +425,7 @@ class Tree
                 ->di->makeInstance($this->tabClass, [$node, $this->form]);
 
             if ($tab instanceof AbstractTab) {
-                $tab->setLabel('betterApi.tab.general');
+                $tab->setLabel('t3ba.tab.general');
             }
 
             $node->setEl($tab);

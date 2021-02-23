@@ -45,10 +45,10 @@ use LaborDigital\T3BA\Event\BootstrapInitializesErrorHandlingEvent;
 use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Core\BetterApiClassOverrideCopy__Bootstrap;
+use TYPO3\CMS\Core\Core\T3BA__Copy__Bootstrap;
 use TYPO3\CMS\Core\Package\PackageManager;
 
-class ExtendedBootstrap extends BetterApiClassOverrideCopy__Bootstrap
+class ExtendedBootstrap extends T3BA__Copy__Bootstrap
 {
     /**
      * @inheritDoc

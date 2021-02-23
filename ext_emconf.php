@@ -18,33 +18,33 @@
  */
 /** @var $_EXTKEY string */
 $EM_CONF[$_EXTKEY] = [
-	"title"            => "Better API",
-	"description"      => "A package that overhauls the way you work with TYPO3 providing you with a new, better core API",
-	"author"           => "Martin Neundorfer",
-	"author_email"     => "m.neundorfer@labor.digital",
-	"category"         => "misc",
-	"author_company"   => "LABOR.digital",
-	"shy"              => "",
-	"conflicts"        => "",
-	"priority"         => "",
-	"module"           => "",
-	"state"            => "alpha",
-	"internal"         => "",
-	"uploadfolder"     => 0,
-	"createDirs"       => "",
-	"modify_tables"    => "",
-	"clearCacheOnLoad" => 1,
-	"lockType"         => "",
-	"version"          => "10.0.0",
-	"constraints"      => [
-		"depends"   => [
-			"typo3" => "10.0.0-10.99.99",
-		],
-		"conflicts" => [
-		],
-		"suggests"  => [
-		],
-	],
-	"suggests"         => [
-	],
+    "title"            => "T3BA",
+    "description"      => "A package that overhauls the way you work with TYPO3 providing you with a new, better core API",
+    "author"           => "Martin Neundorfer",
+    "author_email"     => "m.neundorfer@labor.digital",
+    "category"         => "misc",
+    "author_company"   => "LABOR.digital",
+    "shy"              => "",
+    "conflicts"        => "",
+    "priority"         => "",
+    "module"           => "",
+    "state"            => "alpha",
+    "internal"         => "",
+    "uploadfolder"     => 0,
+    "createDirs"       => "",
+    "modify_tables"    => "",
+    "clearCacheOnLoad" => 1,
+    "lockType"         => "",
+    "version"          => "10.0.0",
+    "constraints"      => [
+        "depends"   => [
+            "typo3" => "10.0.0-10.99.99",
+        ],
+        "conflicts" => [
+        ],
+        "suggests"  => [
+        ],
+    ],
+    "suggests"         => [
+    ],
 ];

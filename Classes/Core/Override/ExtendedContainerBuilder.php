@@ -27,10 +27,10 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\CreateDiContainerEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\DependencyInjection\BetterApiClassOverrideCopy__ContainerBuilder;
+use TYPO3\CMS\Core\DependencyInjection\T3BA__Copy__ContainerBuilder;
 use TYPO3\CMS\Core\Package\PackageManager;
 
-class ExtendedContainerBuilder extends BetterApiClassOverrideCopy__ContainerBuilder
+class ExtendedContainerBuilder extends T3BA__Copy__ContainerBuilder
 {
     /**
      * @inheritDoc

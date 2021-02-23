@@ -34,7 +34,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  *
  * NOTE: This class is immutable! If you extend it keep in mind that your extension should be immutable as well!
  *
- * @package LaborDigital\Typo3BetterApi\Domain\BetterQuery
+ * @package LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase
  */
 class ExtBaseBetterQuery extends AbstractBetterQuery
 {

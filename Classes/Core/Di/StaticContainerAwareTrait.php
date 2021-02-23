@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * The same as ContainerAwareTrait, but for static classes
  *
- * @package LaborDigital\Typo3BetterApi\Container
+ * @package LaborDigital\T3BA\Core\Di
  */
 trait StaticContainerAwareTrait
 {

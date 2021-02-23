@@ -508,11 +508,11 @@ $fs->includeFile("myPhp.php"); // prints: hello world
 ```
 
 ### getBaseDirectoryPath()
-Returns the configured base directory, either as absolute, or as relative path (relative to the typo3_better_api
+Returns the configured base directory, either as absolute, or as relative path (relative to the t3ba
 root directory)
 
 ::: details Arguments
-- $relative Set this to true if you want to retrieve the relative path based on the better api extension.
+- $relative Set this to true if you want to retrieve the relative path based on the T3ba extension.
 Useful for compiling typoscript or flexform files
 :::
 

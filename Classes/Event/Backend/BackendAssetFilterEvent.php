@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
  *
  * Is triggered when the assets (css/js) of typo3 are compiled in the BACKEND
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Backend
  */
 class BackendAssetFilterEvent implements CoreHookEventInterface
 {

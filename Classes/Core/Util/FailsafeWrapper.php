@@ -28,7 +28,7 @@ use Throwable;
  * This wrapper is used to allow failsafe execution of the core system
  * without us breaking the code with exceptions...
  *
- * @package LaborDigital\Typo3BetterApi\CoreModding
+ * @package LaborDigital\T3BA\Core\Util
  */
 class FailsafeWrapper
 {

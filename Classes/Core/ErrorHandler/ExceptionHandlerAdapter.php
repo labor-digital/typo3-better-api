@@ -23,7 +23,7 @@ namespace LaborDigital\T3BA\Core\ErrorHandler;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 use LaborDigital\T3BA\Event\Core\ErrorFilterEvent;
 use Throwable;
 use TYPO3\CMS\Core\Error\ExceptionHandlerInterface;
@@ -52,7 +52,7 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
     public function __construct()
     {
         if (empty(static::$defaultExceptionHandler)) {
-            throw new BetterApiException(
+            throw new T3BAException(
                 'Could not create instance of: ' . get_called_class()
                 . ' because no default exception handler was registered!');
         }

@@ -40,9 +40,9 @@ namespace LaborDigital\T3BA\Core\Override;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Core\CacheClearedEvent;
-use TYPO3\CMS\Core\Cache\BetterApiClassOverrideCopy__CacheManager;
+use TYPO3\CMS\Core\Cache\T3BA__Copy__CacheManager;
 
-class ExtendedCacheManager extends BetterApiClassOverrideCopy__CacheManager
+class ExtendedCacheManager extends T3BA__Copy__CacheManager
 {
 
     /**

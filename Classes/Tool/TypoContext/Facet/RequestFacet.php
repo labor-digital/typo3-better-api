@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Class RequestFacet
  *
- * @package LaborDigital\Typo3BetterApi\TypoContext\Facet
+ * @package LaborDigital\T3BA\Tool\TypoContext\Facet
  */
 class RequestFacet implements FacetInterface
 {

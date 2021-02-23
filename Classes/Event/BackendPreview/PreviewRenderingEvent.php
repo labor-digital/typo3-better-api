@@ -30,7 +30,7 @@ use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
  * Is called when the backend tries to draw a preview for a single content element.
  * Mostly for use in the backend preview renderer
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\BackendPreview
  */
 class PreviewRenderingEvent
 {

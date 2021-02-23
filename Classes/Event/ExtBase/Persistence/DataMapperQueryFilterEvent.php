@@ -29,7 +29,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  *
  * Emitted when the extBase dataMapper generated a "prepared" query object
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\ExtBase\Persistence
  */
 class DataMapperQueryFilterEvent
 {

@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * Dispatched when the data handler requests information about a record from the database
  * Can be used to modify the requested fields or table name
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\DataHandler
  */
 class DataHandlerRecordInfoFilterEvent
 {

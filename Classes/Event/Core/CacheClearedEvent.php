@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\Cache\CacheManager;
  * There are multiple variants of this event, basically one for each vanilla cache group, they are called in
  * addition to the main event, which is called every time the cache is cleared.
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Core
  */
 class CacheClearedEvent
 {

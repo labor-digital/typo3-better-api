@@ -31,7 +31,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
  *
  * The default result when StandaloneBetterQuery::findRelated() is used to find related rows
  *
- * @package LaborDigital\Typo3BetterApi\Domain\BetterQuery
+ * @package LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone
  */
 class RelatedRecordRow
 {

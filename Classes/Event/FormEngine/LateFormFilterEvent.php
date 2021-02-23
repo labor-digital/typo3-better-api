@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Event\FormEngine;
 
 use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
-use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\LateFormFilterEventAdapter;
+use LaborDigital\T3BA\Event\FormEngine\Adapter\LateFormFilterEventAdapter;
 
 /**
  * Class LateFormFilterEvent
@@ -30,7 +30,6 @@ use LaborDigital\Typo3BetterApi\Event\Events\CoreHookAdapter\LateFormFilterEvent
  * Behaves exactly the same as FormFilterEvent but is called between InlineOverrideChildTca and
  * TcaColumnsRemoveUnused. It is the latest possible place we can call the event (as far as I could see when
  * writing this adapter).
- *
  */
 class LateFormFilterEvent implements CoreHookEventInterface
 {

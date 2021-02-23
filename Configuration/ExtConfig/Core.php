@@ -109,7 +109,7 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
     public static function configureHttp(HttpConfigurator $configurator, ExtConfigContext $context): void
     {
         $configurator->registerRouteAspectHandler(
-            'BetterApiStoragePidAwarePersistedAliasMapper',
+            'T3BAStoragePidAwarePersistedAliasMapper',
             StoragePidAwarePersistedAliasMapper::class
         );
 

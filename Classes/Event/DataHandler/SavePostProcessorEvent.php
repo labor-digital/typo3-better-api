@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\DataHandler;
  * Is triggered when the Typo3 backend saves any kind of record to the database using the data handler.
  * Can be used to handle data after the record was stored in the database
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\DataHandler
  */
 class SavePostProcessorEvent extends AbstractLateSaveEvent
 {

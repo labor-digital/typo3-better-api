@@ -47,7 +47,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  *
  * A wrapper which allows us to manually inject a content object renderer if non is present
  *
- * @package LaborDigital\Typo3BetterApi\LinkService
+ * @package LaborDigital\T3BA\Tool\Link\Adapter
  */
 class ExtendedUriBuilder extends UriBuilder implements PublicServiceInterface
 {

@@ -41,9 +41,9 @@ namespace LaborDigital\T3BA\Core\Override;
 use LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\BetterApiClassOverrideCopy__DataMapper;
+use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\T3BA__Copy__DataMapper;
 
-class ExtendedDataMapper extends BetterApiClassOverrideCopy__DataMapper
+class ExtendedDataMapper extends T3BA__Copy__DataMapper
 {
 
     /**

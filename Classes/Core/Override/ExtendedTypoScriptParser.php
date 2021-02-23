@@ -25,9 +25,9 @@ namespace LaborDigital\T3BA\Core\Override;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\TypoScript\FileImportFilterEvent;
-use TYPO3\CMS\Core\TypoScript\Parser\BetterApiClassOverrideCopy__TypoScriptParser;
+use TYPO3\CMS\Core\TypoScript\Parser\T3BA__Copy__TypoScriptParser;
 
-class ExtendedTypoScriptParser extends BetterApiClassOverrideCopy__TypoScriptParser
+class ExtendedTypoScriptParser extends T3BA__Copy__TypoScriptParser
 {
     /**
      * @inheritDoc

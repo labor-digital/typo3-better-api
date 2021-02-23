@@ -42,7 +42,7 @@ use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
  *
  * This trait helps you to render the backend preview in extbase controllers
  *
- * @package LaborDigital\Typo3BetterApi\BackendPreview
+ * @package LaborDigital\T3BA\ExtBase\Controller
  */
 trait ExtBaseBackendPreviewRendererTrait
 {
@@ -86,7 +86,7 @@ trait ExtBaseBackendPreviewRendererTrait
      *
      * @return \TYPO3\CMS\Fluid\View\StandaloneView
      */
-    public function getFluidView(string $templateName = 'BackendPreview'): StandaloneView
+    protected function getFluidView(string $templateName = 'BackendPreview'): StandaloneView
     {
         // Load the view configuration from typoScript
         $row        = $this->context->getRow();
@@ -125,7 +125,7 @@ trait ExtBaseBackendPreviewRendererTrait
      *
      * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
-    public function simulateRequest(string $actionName, array $options = []): ResponseInterface
+    protected function simulateRequest(string $actionName, array $options = []): ResponseInterface
     {
         $this->validateThatBePreviewTraitIsCalledInActionController();
         static::$transfer['context']  = $this->context;

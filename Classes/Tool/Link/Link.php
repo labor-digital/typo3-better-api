@@ -35,7 +35,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  *
  * Please note that this class is immutable!
  *
- * @package LaborDigital\Typo3BetterApi\Links
+ * @package LaborDigital\T3BA\Tool\Link
  */
 class Link
 {
@@ -940,7 +940,7 @@ class Link
 
         // Check if for me can be used
         if ($options['forMe'] && $request === null) {
-            throw new LinkException('The "forMe" flag can only be used if you are inside a better api extbase controller, or if you manually supplied a Request object using setRequest()!');
+            throw new LinkException('The "forMe" flag can only be used if you are inside a T3BA extbase controller, or if you manually supplied a Request object using setRequest()!');
         }
 
         // Get our context's request object if nothing was supplied

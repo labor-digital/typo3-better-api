@@ -40,9 +40,9 @@ namespace LaborDigital\T3BA\Core\Override;
 
 
 use LaborDigital\T3BA\Tool\Translation\TranslationLabelProvider;
-use TYPO3\CMS\Extbase\Utility\BetterApiClassOverrideCopy__LocalizationUtility;
+use TYPO3\CMS\Extbase\Utility\T3BA__Copy__LocalizationUtility;
 
-class ExtendedLocalizationUtility extends BetterApiClassOverrideCopy__LocalizationUtility
+class ExtendedLocalizationUtility extends T3BA__Copy__LocalizationUtility
 {
     /**
      * @inheritDoc

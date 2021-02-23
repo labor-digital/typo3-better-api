@@ -29,7 +29,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  * Dispatched after a table instance was converted into it's array form.
  * Can be used to apply last-minute changes to the generated tca before it is cached
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\Tca
  */
 class TableDumperAfterBuildEvent
 {

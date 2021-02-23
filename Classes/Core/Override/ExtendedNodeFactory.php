@@ -42,9 +42,9 @@ namespace LaborDigital\T3BA\Core\Override;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeDataFilterEvent;
 use LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy;
-use TYPO3\CMS\Backend\Form\BetterApiClassOverrideCopy__NodeFactory;
+use TYPO3\CMS\Backend\Form\T3BA__Copy__NodeFactory;
 
-class ExtendedNodeFactory extends BetterApiClassOverrideCopy__NodeFactory
+class ExtendedNodeFactory extends T3BA__Copy__NodeFactory
 {
 
     /**

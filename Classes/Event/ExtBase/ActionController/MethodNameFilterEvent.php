@@ -31,7 +31,7 @@ use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
  * Emitted when a "Better action controller" extbase action controller is executed.
  * Can be used to filter the action method name before it is invoked.
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\ExtBase\ActionController
  */
 class MethodNameFilterEvent
 {

@@ -144,7 +144,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
      *
      * This works in the Frontend, in the Backend in the CLI and wherever else.
      *
-     * It will create a new backend user called _betterApi_adminUser_ for you which is used as user object
+     * It will create a new backend user called _t3ba_adminUser_ for you which is used as user object
      * inside the closure. Every action performed, and logged will be executed as this user; except you are
      * already logged in as an administrator, in that case we just use your account!
      *
@@ -223,7 +223,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
      *
      * This works in the Frontend, in the Backend in the CLI and wherever else.
      *
-     * It will create a new backend user called _betterApi_adminUser_ for you which is used as user object
+     * It will create a new backend user called _t3ba_adminUser_ for you which is used as user object
      * inside the closure. Every action performed, and logged will be executed as this user; except you are
      * already logged in as an administrator, in that case we just use your account!
      *

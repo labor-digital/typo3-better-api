@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * Is triggered when the Typo3 backend saves any kind of record to the database using the data handler.
  * Can be used to prepare the data before it is handled by the data handler
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\DataHandler
  */
 class SaveFilterEvent implements CoreHookEventInterface
 {

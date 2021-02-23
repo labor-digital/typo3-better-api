@@ -17,7 +17,7 @@
   -->
 
 <xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" date="2019-10-30T17:39:36Z" product-name="typo3_better_api">
+    <file source-language="en" datatype="plaintext" original="messages" date="2019-10-30T17:39:36Z" product-name="t3ba">
         <header/>
         <body>
             <trans-unit id="formPreset.editRecord">

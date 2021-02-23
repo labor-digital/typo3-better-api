@@ -21,8 +21,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Translation;
 
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class TranslationException extends BetterApiException
+class TranslationException extends T3BAException
 {
 }

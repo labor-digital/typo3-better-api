@@ -22,8 +22,8 @@ namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
@@ -39,7 +39,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 /**
  * Class PathFacet
  *
- * @package LaborDigital\Typo3BetterApi\TypoContext\Facet
+ * @package LaborDigital\T3BA\Tool\TypoContext\Facet
  */
 class PathFacet implements FacetInterface
 {
@@ -289,7 +289,7 @@ class PathFacet implements FacetInterface
      *
      * @return string
      * @throws \JsonException
-     * @throws \LaborDigital\T3BA\Core\Exception\BetterApiException
+     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
      */
     public function realPathToTypoExt(string $path): string
     {
@@ -337,7 +337,7 @@ class PathFacet implements FacetInterface
             }
 
             // Try to find the path by looking
-            throw new BetterApiException('Could not resolve path: ' . $path . ' to a relative EXT: path!');
+            throw new T3BAException('Could not resolve path: ' . $path . ' to a relative EXT: path!');
         }
 
         // Looking inside the ext directory

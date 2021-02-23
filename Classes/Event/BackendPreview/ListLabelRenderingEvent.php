@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
  * Called when the backend tries to render the label of a list entry of a tt_content element.
  * Mostly for use in the backend preview renderer
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\BackendPreview
  */
 class ListLabelRenderingEvent implements CoreHookEventInterface
 {

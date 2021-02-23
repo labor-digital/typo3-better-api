@@ -40,9 +40,9 @@ namespace LaborDigital\T3BA\Core\Override;
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Core\RefIndexRecordDataFilterEvent;
-use TYPO3\CMS\Core\Database\BetterApiClassOverrideCopy__ReferenceIndex;
+use TYPO3\CMS\Core\Database\T3BA__Copy__ReferenceIndex;
 
-class ExtendedReferenceIndex extends BetterApiClassOverrideCopy__ReferenceIndex
+class ExtendedReferenceIndex extends T3BA__Copy__ReferenceIndex
 {
 
     /**

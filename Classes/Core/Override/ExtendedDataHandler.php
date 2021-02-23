@@ -42,9 +42,9 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
 use LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent;
 use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
-use TYPO3\CMS\Core\DataHandling\BetterApiClassOverrideCopy__DataHandler;
+use TYPO3\CMS\Core\DataHandling\T3BA__Copy__DataHandler;
 
-class ExtendedDataHandler extends BetterApiClassOverrideCopy__DataHandler
+class ExtendedDataHandler extends T3BA__Copy__DataHandler
 {
     /**
      * @inheritDoc

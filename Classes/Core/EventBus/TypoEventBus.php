@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * The extended event bus instance to use the TYPO3 singleton interface
  *
- * @package LaborDigital\Typo3BetterApi\Event
+ * @package LaborDigital\T3BA\Core\EventBus
  */
 class TypoEventBus extends EventBus implements SingletonInterface, PublicServiceInterface
 {

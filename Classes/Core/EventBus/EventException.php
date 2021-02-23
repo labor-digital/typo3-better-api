@@ -21,8 +21,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\EventBus;
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class EventException extends BetterApiException
+class EventException extends T3BAException
 {
 }

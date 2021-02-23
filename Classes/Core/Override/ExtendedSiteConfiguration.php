@@ -41,9 +41,9 @@ namespace LaborDigital\T3BA\Core\Override;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Core\SiteConfigFilterEvent;
 use LaborDigital\T3BA\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
-use TYPO3\CMS\Core\Configuration\BetterApiClassOverrideCopy__SiteConfiguration;
+use TYPO3\CMS\Core\Configuration\T3BA__Copy__SiteConfiguration;
 
-class ExtendedSiteConfiguration extends BetterApiClassOverrideCopy__SiteConfiguration
+class ExtendedSiteConfiguration extends T3BA__Copy__SiteConfiguration
 {
     /**
      * @inheritDoc

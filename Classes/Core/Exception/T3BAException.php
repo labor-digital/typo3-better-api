@@ -25,7 +25,7 @@ namespace LaborDigital\T3BA\Core\Exception;
 
 use Exception;
 
-class BetterApiException extends Exception
+class T3BAException extends Exception
 {
 
 }

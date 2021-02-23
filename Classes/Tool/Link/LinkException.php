@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Link;
 
-use LaborDigital\T3BA\Core\Exception\BetterApiException;
+use LaborDigital\T3BA\Core\Exception\T3BAException;
 
-class LinkException extends BetterApiException
+class LinkException extends T3BAException
 {
 }

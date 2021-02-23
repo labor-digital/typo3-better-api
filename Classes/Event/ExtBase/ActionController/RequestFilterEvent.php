@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
  *
  * Called twice. Once before and once after the request was processed.
  *
- * @package LaborDigital\Typo3BetterApi\Event\Events
+ * @package LaborDigital\T3BA\Event\ExtBase\ActionController
  */
 class RequestFilterEvent
 {

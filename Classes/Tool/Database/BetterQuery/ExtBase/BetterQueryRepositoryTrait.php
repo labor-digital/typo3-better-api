@@ -28,7 +28,7 @@ trait BetterQueryRepositoryTrait
 {
 
     /**
-     * @var \LaborDigital\Typo3BetterApi\Domain\Repository\RepositoryWrapper
+     * @var BetterRepository
      */
     protected $__repositoryWrapper;
 

@@ -231,7 +231,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         $config['fieldControl']['editPopup'] = [
             'disabled' => false,
             'options'  => [
-                'title' => 'betterApi.formPreset.editRecord',
+                'title' => 't3ba.formPreset.editRecord',
             ],
         ];
 
@@ -272,7 +272,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
         $config['fieldControl']['addRecord'] = [
             'disabled' => false,
             'options'  => [
-                'title'    => 'betterApi.formPreset.newRecord',
+                'title'    => 't3ba.formPreset.newRecord',
                 'setValue' => 'append',
                 'pid'      => '###CURRENT_PID###',
             ],
