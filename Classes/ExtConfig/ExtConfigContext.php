@@ -23,11 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig;
 
 
+use LaborDigital\T3BA\Core\Di\DelegateContainer;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\Loader\ConfigContext;
+use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
 
@@ -254,6 +256,16 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         return $this->getLoaderContext()
                     ->getInstance(PackageManager::class)
                     ->getPackage($this->getExtKey());
+    }
+
+    /**
+     * Returns the instance of the dependency injection container
+     *
+     * @return \Psr\Container\ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return DelegateContainer::getInstance();
     }
 
     /**

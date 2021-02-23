@@ -119,6 +119,9 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
         $definition = $this->presets[$name] ?? null;
 
         /** @var \LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface $i */
+        if (! $this->getContainer()->has($definition[0])) {
+            dbge('missing', $definition[0], $this->getContainer());
+        }
         $i = $this->getService($definition[0]);
         $i->setContext($this->context);
         $i->setField($this->field);

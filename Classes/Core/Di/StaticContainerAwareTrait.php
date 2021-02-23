@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Di;
 
-use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -42,18 +41,6 @@ trait StaticContainerAwareTrait
      * @var array
      */
     protected static $caServices = [];
-
-    /**
-     * Injects the container instance if possible
-     *
-     * NOTE: We can't use "injectContainer" here, because otherwise the ExtBase dependency injection will break -.-...
-     *
-     * @param   \Psr\Container\ContainerInterface  $container
-     */
-    public static function setContainer(ContainerInterface $container): void
-    {
-        static::$caServices[ContainerInterface::class] = $container;
-    }
 
     /**
      * Allows you to manually inject a service instance. Every time you use "getService" with $classOrInterfaceName
@@ -102,13 +89,12 @@ trait StaticContainerAwareTrait
     /**
      * Returns the instance of the container
      *
-     * @return \Psr\Container\ContainerInterface
+     * @return \LaborDigital\T3BA\Core\Di\DelegateContainer
      */
-    protected static function getContainer(): ContainerInterface
+    protected static function getContainer(): DelegateContainer
     {
-        return static::$caServices[ContainerInterface::class] ??
-               static::$caServices[ContainerInterface::class]
-                   = GeneralUtility::getContainer();
+        return static::$caServices['delegate'] ??
+               static::$caServices['delegate'] = DelegateContainer::getInstance();
     }
 
     /**

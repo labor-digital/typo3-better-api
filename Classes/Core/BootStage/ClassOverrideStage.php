@@ -62,8 +62,7 @@ class ClassOverrideStage implements BootStageInterface
             SiteConfiguration::class   => ExtendedSiteConfiguration::class,
             NodeFactory::class         => ExtendedNodeFactory::class,
             DataHandler::class         => ExtendedDataHandler::class,
-            ReferenceIndex::class      => ExtendedReferenceIndex::class
-            //            DataHandler::class         => ExtendedDataHandler::class,
+            ReferenceIndex::class      => ExtendedReferenceIndex::class,
         ];
 
     /**

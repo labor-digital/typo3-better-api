@@ -33,12 +33,15 @@ use LaborDigital\T3BA\Core\BootStage\ErrorHandlerAdapterRegistrationStage;
 use LaborDigital\T3BA\Core\BootStage\ErrorHandlerDevStage;
 use LaborDigital\T3BA\Core\BootStage\FailsafeWrapperPreparationStage;
 use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
+use LaborDigital\T3BA\Core\Di\DelegateContainer;
+use LaborDigital\T3BA\Core\Di\MiniContainer;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\Exception\KernelNotInitializedException;
 use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\KernelBootEvent;
 use Neunerlei\EventBus\Dispatcher\EventListenerListItem;
+use Psr\SimpleCache\CacheInterface;
 
 class Kernel
 {
@@ -64,13 +67,6 @@ class Kernel
     protected static $bootStages = [];
 
     /**
-     * The composer class loader instance
-     *
-     * @var ClassLoader
-     */
-    protected $classLoader;
-
-    /**
      * The event bus instance
      *
      * @var TypoEventBus
@@ -83,6 +79,13 @@ class Kernel
      * @var VarFs
      */
     protected $fs;
+
+    /**
+     * The internal, delegate container that holds the early services
+     *
+     * @var DelegateContainer
+     */
+    protected $container;
 
     /**
      * Initializes the better api kernel and prepares the boot stages
@@ -99,9 +102,15 @@ class Kernel
 
         // Create a new instance
         static::$instance = $i = new static();
-        $i->fs            = new VarFs();
-        $i->classLoader   = $composerClassLoader;
-        $i->eventBus      = $i->makeEventBus();
+
+        // Build our internal container
+        $container = $i->container = DelegateContainer::setInstance(new DelegateContainer());
+        $container->setContainer('internal', new MiniContainer());
+        $container->set(VarFs::class, $i->fs = new VarFs());
+        $container->set(CacheInterface::class, $i->fs->getCache());
+        $container->set(static::class, $i);
+        $container->set(ClassLoader::class, $composerClassLoader);
+        $container->set(TypoEventBus::class, $i->eventBus = $i->makeEventBus());
 
         // Create the default boot stages
         $defaultBootStages = [
@@ -120,6 +129,8 @@ class Kernel
             /** @var BootStageInterface $bootStage */
             $bootStage->prepare($i->eventBus, $i);
         }
+
+        $container->set('@listenerProviderBackup', clone $i->eventBus->getConcreteListenerProvider());
 
         // Dispatch the boot event
         $i->eventBus->dispatch(new KernelBootEvent($i));
@@ -174,7 +185,7 @@ class Kernel
      */
     public function getClassLoader(): ClassLoader
     {
-        return $this->classLoader;
+        return $this->container->get(ClassLoader::class);
     }
 
     /**
@@ -198,6 +209,16 @@ class Kernel
     }
 
     /**
+     * Returns the delegate container that is shared in this application
+     *
+     * @return \LaborDigital\T3BA\Core\Di\DelegateContainer
+     */
+    public function getContainer(): DelegateContainer
+    {
+        return $this->container;
+    }
+
+    /**
      * Creates the typo event bus instance
      *
      * @return \LaborDigital\T3BA\Core\EventBus\TypoEventBus
@@ -211,6 +232,8 @@ class Kernel
         // Create the eventbus instance
         $eventBus         = TypoEventBus::setInstance(new TypoEventBus());
         $listenerProvider = new TypoListenerProvider();
+        $listenerProvider->setContainer($this->container);
+        $eventBus->setContainer($this->container);
         $eventBus->setConcreteListenerProvider($listenerProvider);
         $eventBus->setProviderAdapter(TypoListenerProvider::class, static function (
             TypoListenerProvider $provider,

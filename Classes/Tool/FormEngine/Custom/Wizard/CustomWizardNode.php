@@ -64,10 +64,6 @@ class CustomWizardNode extends AbstractFormElement
 
         $i->setContext($context);
 
-        if ($i instanceof AbstractCustomWizard) {
-            $i->setContainer($this->getContainer());
-        }
-
         $resultArray         = $this->initializeResultArray();
         $resultArray['html'] = $i->render();
 

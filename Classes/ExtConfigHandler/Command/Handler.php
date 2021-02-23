@@ -92,7 +92,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
         }
 
         /** @var ContainerBuilder $containerBuilder */
-        $containerBuilder = $this->context->getExtConfigService()->getContainer()->get(ContainerBuilder::class);
+        $containerBuilder = $this->context->getContainer()->get(ContainerBuilder::class);
         foreach ($this->commands as $name => $class) {
             try {
                 $containerBuilder->findDefinition($class)->addTag('console.command', ['command' => $name]);

@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Configuration\ExtConfig;
 
 
-use LaborDigital\T3BA\Core\Di\CompilerPass\ContainerAwareTraitPass;
 use LaborDigital\T3BA\Core\Di\CompilerPass\EventBusListenerProviderPass;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Core\Di\ServiceFactory;
@@ -67,7 +66,6 @@ class Di implements ConfigureDiInterface
         ]);
 
         // CUSTOM COMPILER PATHS
-        $containerBuilder->addCompilerPass(new ContainerAwareTraitPass());
         $containerBuilder->addCompilerPass(new EventBusListenerProviderPass(), PassConfig::TYPE_OPTIMIZE, -500);
 
         // PUBLIC EVENT SUBSCRIBER

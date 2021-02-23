@@ -77,10 +77,6 @@ class CustomFieldNode extends AbstractFormElement
                 . CustomFieldInterface::class . ' interface!');
         }
 
-        if ($i instanceof AbstractCustomField) {
-            $i->setContainer($this->getContainer());
-        }
-
         $i->setContext($this->context);
 
         // Initialize the result

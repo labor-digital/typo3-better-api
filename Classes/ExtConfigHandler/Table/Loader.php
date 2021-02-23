@@ -188,6 +188,6 @@ class Loader implements PublicServiceInterface
             return Arrays::makeFromJson($list);
         }
 
-        throw new \RuntimeException('Could not unpack the loadable tables, because they are not registered in the config state!');
+        return [];
     }
 }

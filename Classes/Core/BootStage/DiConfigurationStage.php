@@ -24,24 +24,21 @@ namespace LaborDigital\T3BA\Core\BootStage;
 
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\FailsafeDelegateContainer;
-use LaborDigital\T3BA\Core\Di\MiniContainer;
+use LaborDigital\T3BA\Core\Di\DelegateContainer;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\VarFs\VarFs;
 use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
+use LaborDigital\T3BA\Event\CreateDiContainerEvent;
 use LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent;
 use LaborDigital\T3BA\Event\Di\DiContainerFilterEvent;
-use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\EventSubscriberBridge;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
@@ -50,30 +47,26 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DiConfigurationStage implements BootStageInterface
 {
-    use ContainerAwareTrait;
+    protected const STAGE_CONTAINER_BUILD       = 1;
+    protected const STAGE_CONTAINER_INSTANTIATE = 2;
+
+    protected $stage = 0;
 
     /**
-     * @var Kernel
+     * @var DelegateContainer
      */
-    protected $kernel;
-
-    /**
-     * @var Container
-     */
-    protected $symfonyContainer;
+    protected $delegate;
 
     /**
      * @inheritDoc
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
-        $this->kernel = $kernel;
+        $this->delegate = $kernel->getContainer();
 
-        // Register local event listeners
         $eventBus->addListener(PackageManagerCreatedEvent::class, [$this, 'onPackageManagerCreated']);
         $eventBus->addListener(DiContainerBeingBuildEvent::class, [$this, 'onDiContainerBeingBuild']);
-        $eventBus->addListener(InternalCreateDependencyInjectionContainerEvent::class,
-            [$this, 'onDiContainerBeingInstantiated']);
+        $eventBus->addListener(CreateDiContainerEvent::class, [$this, 'onDiContainerBeingInstantiated']);
     }
 
     /**
@@ -84,8 +77,9 @@ class DiConfigurationStage implements BootStageInterface
      */
     public function onPackageManagerCreated(PackageManagerCreatedEvent $event): void
     {
-        $this->initializeLocalContainer($event->getPackageManager());
-        $this->registerConfigAutoloader();
+        $this->delegate->set(PackageManager::class, $event->getPackageManager());
+        $this->initializeExtConfigService();
+        $this->registerConfigNamespace();
     }
 
     /**
@@ -95,108 +89,141 @@ class DiConfigurationStage implements BootStageInterface
      */
     public function onDiContainerBeingBuild(DiContainerBeingBuildEvent $event): void
     {
-        $this->getContainer()->set(ContainerBuilder::class, $event->getContainerBuilder());
-        $this->getService(ExtConfigService::class)->getDiLoader()->loadForBuildTime();
+        $this->setStage(static::STAGE_CONTAINER_BUILD);
+        $this->delegate->set(ContainerBuilder::class, $event->getContainerBuilder());
+
+        $extConfigService = $this->delegate->get(ExtConfigService::class);
+        $extConfigService->getFsMount()->flush();
+        $extConfigService->getDiLoader()->loadForBuildTime();
     }
 
     /**
      * Injects the early dependencies into the real di container instance
      * and runs the "runtime" container configuration handler
      *
-     * @param   \LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent  $event
+     * @param   \LaborDigital\T3BA\Event\CreateDiContainerEvent  $event
      */
-    public function onDiContainerBeingInstantiated(InternalCreateDependencyInjectionContainerEvent $event): void
+    public function onDiContainerBeingInstantiated(CreateDiContainerEvent $event): void
     {
-        // Skip if the failsafe container is required and we have already a prepared one in store
-        if (isset($this->symfonyContainer) && $event->isFailsafe()) {
-            $event->setNormalContainer($this->symfonyContainer);
+        if ($event->isFailsafe()) {
+            $this->delegate->setContainer('failsafe', $event->getContainer());
 
             return;
         }
 
-        $realContainer = $event->getContainer();
-        if ($realContainer instanceof FailsafeDelegateContainer) {
-            $realContainer = $realContainer->getContainer();
-        }
+        $this->setStage(static::STAGE_CONTAINER_INSTANTIATE);
 
-        if (! $realContainer instanceof Container) {
+        $symfony = $event->getContainer();
+        if (! $symfony instanceof Container) {
             return;
         }
 
-        // Provide the container to the general utility a bit earlier that it normally would
-        $this->symfonyContainer = $realContainer;
-        GeneralUtility::setContainer($realContainer);
+        $miniContainer = $this->delegate->getInternal();
+        $this->delegate->setContainer('symfony', $symfony);
 
-        $eventBus = $this->getService(TypoEventBus::class);
-        $eventBus->setContainer($realContainer);
+        $symfony->set(VarFs::class, $miniContainer->get(VarFs::class));
 
-        $realContainer->set(VarFs::class, $this->getService(VarFs::class));
-        $realContainer->set(EventBusInterface::class, $eventBus);
-        $realContainer->set(TypoEventBus::class, $eventBus);
+        $eventBus = $miniContainer->get(TypoEventBus::class);
+        $symfony->set(EventBusInterface::class, $eventBus);
+        $symfony->set(TypoEventBus::class, $eventBus);
 
         /** @var TypoListenerProvider $listenerProvider */
-        $listenerProvider = $eventBus->getConcreteListenerProvider();
-        $listenerProvider->setContainer($realContainer);
-        $realContainer->set(ListenerProviderInterface::class, $listenerProvider);
-        $realContainer->set(TypoListenerProvider::class, $listenerProvider);
+        $listenerProvider = clone $miniContainer->get('@listenerProviderBackup');
+        $eventBus->setConcreteListenerProvider($listenerProvider);
+        $symfony->set(ListenerProviderInterface::class, $listenerProvider);
+        $symfony->set(TypoListenerProvider::class, $listenerProvider);
 
         $context = TypoContext::setInstance(new TypoContext());
-        $context->setContainer($realContainer);
-        $realContainer->set(TypoContext::class, $context);
+        $symfony->set(TypoContext::class, $context);
 
         // This is required to link the new event bus into the TYPO3 core and to load the registered event handlers
         // This MUST be executed after the typo context class is set up correctly
-        $realContainer->get(ListenerProvider::class);
-        $realContainer->get(EventSubscriberBridge::class);
+        $symfony->get(ListenerProvider::class);
+        $symfony->get(EventSubscriberBridge::class);
 
-        $extConfigService = $this->getService(ExtConfigService::class);
-        $realContainer->set(ExtConfigService::class, $extConfigService);
+        $extConfigService = $miniContainer->get(ExtConfigService::class);
+        $symfony->set(ExtConfigService::class, $extConfigService);
         $extConfigService->getContext()->setTypoContext($context);
-        $extConfigService->setContainer($realContainer);
         $extConfigService->getDiLoader()->loadForRuntime();
 
-        $eventBus->dispatch(new DiContainerFilterEvent($realContainer));
-
-        if (! $event->isFailsafe()) {
-            $this->caServices = [];
-        }
+        $eventBus->dispatch(new DiContainerFilterEvent($symfony));
     }
 
     /**
-     * Creates the local, mini container instance that is used until the real TYPO3 container
-     * is up and running.
+     * Helper to detect degeneration in the state and automatically re-register the configuration namespace
      *
-     * @param   \TYPO3\CMS\Core\Package\PackageManager  $packageManager
+     * @param   int  $stage
      */
-    protected function initializeLocalContainer(PackageManager $packageManager): void
+    protected function setStage(int $stage): void
     {
-        $container = new MiniContainer([
-            Kernel::class         => $this->kernel,
-            VarFs::class          => $this->kernel->getFs(),
-            PackageManager::class => $packageManager,
-            TypoEventBus::class   => $this->kernel->getEventBus(),
-            CacheInterface::class => $this->kernel->getFs()->getCache(),
-            ClassLoader::class    => $this->kernel->getClassLoader(),
-        ]);
-
-        $configService = $this->makeInstance(
-            ExtConfigService::class,
-            [$packageManager, $this->kernel->getEventBus(), $this->kernel->getFs(), $container]
-        );
-        $container->set(ExtConfigService::class, $configService);
-        $container->set(ExtConfigContext::class, $configService->getContext());
-
-        $this->setContainer($container);
+        if ($stage < $this->stage) {
+            $this->registerConfigNamespace();
+        }
+        $this->stage = $stage;
     }
 
     /**
-     *  Register config auto-loaders for all packages
+     * Initializes and registers a new and empty instance of the ext config service
+     *
+     * @return void
      */
-    protected function registerConfigAutoloader(): void
+    protected function initializeExtConfigService(): void
     {
-        $classLoader = $this->kernel->getClassLoader();
-        foreach ($this->getService(ExtConfigService::class)->getAutoloaderMap() as $namespace => $directory) {
+        $configService = GeneralUtility::makeInstance(
+            ExtConfigService::class,
+            $this->delegate->get(PackageManager::class),
+            $this->delegate->get(TypoEventBus::class),
+            $this->delegate->get(VarFs::class),
+            $this->delegate
+        );
+
+        $this->delegate->set(ExtConfigService::class, $configService);
+        $this->delegate->set(ExtConfigContext::class, $configService->getContext());
+    }
+
+    protected function registerConfigNamespace(): void
+    {
+        $configService = $this->delegate->get(ExtConfigService::class);
+        $classLoader   = $this->delegate->get(ClassLoader::class);
+        $configService->reset();
+        foreach ($configService->getAutoloaderMap() as $namespace => $directory) {
             $classLoader->setPsr4($namespace, $directory);
         }
     }
+
+//    /**
+//     * Creates the local, mini container instance that is used until the real TYPO3 container
+//     * is up and running.
+//     *
+//     * @param   \TYPO3\CMS\Core\Package\PackageManager  $packageManager
+//     */
+//    protected function initializeLocalContainer(PackageManager $packageManager): void
+//    {
+//        $this->services = new MiniContainer([
+//            Kernel::class         => $this->kernel,
+//            VarFs::class          => $this->kernel->getFs(),
+//            PackageManager::class => $packageManager,
+//            TypoEventBus::class   => $this->kernel->getEventBus(),
+//            CacheInterface::class => $this->kernel->getFs()->getCache(),
+//            ClassLoader::class    => $this->kernel->getClassLoader(),
+//        ]);
+//
+//        $configService = GeneralUtility::makeInstance(
+//            ExtConfigService::class,
+//            $packageManager, $this->kernel->getEventBus(), $this->kernel->getFs(), $this->services
+//        );
+//
+//        $configService = $this->makeInstance(
+//            ExtConfigService::class,
+//            [$packageManager, $this->kernel->getEventBus(), $this->kernel->getFs(), $this->services]
+//        );
+//        $container->set(ExtConfigService::class, $configService);
+//        $container->set(ExtConfigContext::class, $configService->getContext());
+//
+//        $this->delegate = new DelegateContainer();
+//        $this->delegate->add($container);
+//
+//        $this->setContainer($this->delegate);
+//    }
+
 }

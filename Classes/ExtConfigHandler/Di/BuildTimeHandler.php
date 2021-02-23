@@ -74,14 +74,10 @@ class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHa
     /**
      * @inheritDoc
      */
-    public function prepare(): void
-    {
-    }
+    public function prepare(): void { }
 
     /**
      * @inheritDoc
      */
-    public function finish(): void
-    {
-    }
+    public function finish(): void { }
 }

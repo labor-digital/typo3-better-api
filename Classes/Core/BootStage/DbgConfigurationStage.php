@@ -31,6 +31,7 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
 use LaborDigital\T3BA\Core\Kint\LazyLoadingPlugin;
 use LaborDigital\T3BA\Core\Kint\TypoInstanceTypePlugin;
+use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Throwable;
@@ -57,12 +58,16 @@ class DbgConfigurationStage implements BootStageInterface
         Kint::$plugins[] = LazyLoadingPlugin::class;
         Kint::$plugins[] = TypoInstanceTypePlugin::class;
 
+        // Redirect the logs into the TYPO log directory
+        dbgConfig('logDir', Path::unifyPath(BETTER_API_TYPO3_VAR_PATH, '/') . 'log');
+
         // Register pre hook to fix broken typo3 iframe
         $recursion = false;
-        dbgConfig('postHooks', static function () use (&$recursion) {
-            if ($recursion) {
+        dbgConfig('postHooks', static function ($type, $function) use (&$recursion) {
+            if (! str_starts_with($function, 'dbg') || $recursion) {
                 return;
             }
+
             $recursion = true;
             try {
                 if ((defined('TYPO3_MODE') && TYPO3_MODE === 'BE') && PHP_SAPI !== 'cli') {

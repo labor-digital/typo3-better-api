@@ -61,7 +61,10 @@ class Handler extends AbstractExtConfigHandler
     /**
      * @inheritDoc
      */
-    public function prepare(): void { }
+    public function prepare(): void
+    {
+        logFile($this->definition->getConfigClasses());
+    }
 
     /**
      * @inheritDoc

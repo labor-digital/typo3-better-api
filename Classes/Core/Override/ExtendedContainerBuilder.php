@@ -24,7 +24,7 @@ namespace LaborDigital\T3BA\Core\Override;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\InternalCreateDependencyInjectionContainerEvent;
+use LaborDigital\T3BA\Event\CreateDiContainerEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\DependencyInjection\BetterApiClassOverrideCopy__ContainerBuilder;
@@ -49,17 +49,13 @@ class ExtendedContainerBuilder extends BetterApiClassOverrideCopy__ContainerBuil
         FrontendInterface $cache,
         bool $failsafe = false
     ): ContainerInterface {
-        TypoEventBus::getInstance()->dispatch(
-            $e = new InternalCreateDependencyInjectionContainerEvent(
+        return TypoEventBus::getInstance()->dispatch(
+            new CreateDiContainerEvent(
                 $failsafe,
-                func_get_args(),
-                function (...$args) {
-                    return parent::createDependencyInjectionContainer(...$args);
-                }
+                $packageManager,
+                parent::createDependencyInjectionContainer($packageManager, $cache, $failsafe)
             )
-        );
-
-        return $e->getContainer();
+        )->getContainer();
     }
 
 

@@ -59,7 +59,7 @@ class VarFs implements LazyEventSubscriberInterface
      */
     public function onCacheClear(CacheClearedEvent $event): void
     {
-        if ($event->getGroup() !== 'all') {
+        if (! in_array($event->getGroup(), ['all', 'system'], false)) {
             return;
         }
 

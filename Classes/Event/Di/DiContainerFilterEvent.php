@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Event\Di;
 
-use Symfony\Component\DependencyInjection\Container;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class DiContainerFilterEvent
@@ -37,16 +37,16 @@ class DiContainerFilterEvent
     /**
      * The container instance that was instantiated
      *
-     * @var \Symfony\Component\DependencyInjection\Container
+     * @var ContainerInterface
      */
     protected $container;
 
     /**
      * DiContainerFilterEvent constructor.
      *
-     * @param   \Symfony\Component\DependencyInjection\Container  $container
+     * @param   \Psr\Container\ContainerInterface  $container
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -54,9 +54,9 @@ class DiContainerFilterEvent
     /**
      * Returns the container instance that was instantiated
      *
-     * @return \Symfony\Component\DependencyInjection\Container
+     * @return ContainerInterface
      */
-    public function getContainer(): Container
+    public function getContainer(): ContainerInterface
     {
         return $this->container;
     }

@@ -242,6 +242,10 @@ class SqlRegistry implements SingletonInterface
      */
     public function dump(): string
     {
+        if (! isset($this->definition)) {
+            return '';
+        }
+
         return $this->dumper->dump(
             $this->processor->findTableDiff($this->definition)
         );
@@ -280,7 +284,7 @@ class SqlRegistry implements SingletonInterface
         $definition   = $this->reader->getTablesDefinitionString(false);
         Sql::$enabled = true;
         $statements   = $this->reader->getStatementArray($definition);
-        $rawTables                = $this->migrator->parseCreateTableStatements($statements);
+        $rawTables    = $this->migrator->parseCreateTableStatements($statements);
 
         $tables = [];
         foreach ($rawTables as $table) {

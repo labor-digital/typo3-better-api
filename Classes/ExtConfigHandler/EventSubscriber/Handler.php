@@ -86,7 +86,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
     public function finish(): void
     {
         /** @var ContainerBuilder $containerBuilder */
-        $containerBuilder = $this->context->getExtConfigService()->getContainer()->get(ContainerBuilder::class);
+        $containerBuilder = $this->context->getContainer()->get(ContainerBuilder::class);
 
         $def = new Definition(EventSubscriberBridge::class);
         $def->setShared(false)->setPublic(true);

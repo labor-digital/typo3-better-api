@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
+use LaborDigital\T3BA\Core\Di\DelegateContainer;
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3BA\ExtConfig\Interfaces\DiRunTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
@@ -49,9 +50,12 @@ class RunTimeHandler extends AbstractExtConfigHandler implements DiRunTimeHandle
      */
     public function handle(string $class): void
     {
-        call_user_func([$class, 'configureRuntime'],
-            $this->context->getExtConfigService()->getContainer(),
-            $this->context);
+        $container = $this->context->getContainer();
+        if ($container instanceof DelegateContainer && $container->getSymfony()) {
+            $container = $container->getSymfony();
+        }
+
+        call_user_func([$class, 'configureRuntime'], $container, $this->context);
     }
 
     /**

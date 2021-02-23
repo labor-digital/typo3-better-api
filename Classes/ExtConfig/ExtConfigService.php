@@ -34,10 +34,9 @@ use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Package\PackageManager;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ExtConfigService implements SingletonInterface
+class ExtConfigService
 {
     public const MAIN_LOADER_KEY       = 'Main';
     public const SITE_BASED_LOADER_KEY = 'SiteBased';
@@ -142,26 +141,6 @@ class ExtConfigService implements SingletonInterface
     public function getFsMount(): Mount
     {
         return $this->fs->getMount('ExtConfig');
-    }
-
-    /**
-     * Allows external sources to change the container instance
-     *
-     * @param   \Psr\Container\ContainerInterface  $container
-     */
-    public function setContainer(ContainerInterface $container): void
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * Returns the dependency injection continainer
-     *
-     * @return \Psr\Container\ContainerInterface
-     */
-    public function getContainer(): ContainerInterface
-    {
-        return $this->container;
     }
 
     /**
@@ -282,7 +261,15 @@ class ExtConfigService implements SingletonInterface
             ];
         }
 
+        logFile('root locations', $rootLocations);
+
         return $this->rootLocations = $rootLocations;
+    }
+
+    public function reset(): void
+    {
+        $this->rootLocations = null;
+        $this->loaders       = [];
     }
 
     /**
