@@ -255,7 +255,7 @@ class LogConfigOption extends AbstractExtConfigOption
 
             $this->flushLogManager('');
         } else {
-            $config                     = [
+            $config = [
                 'writerConfiguration'    => [
                     $options['logLevel'] => $options['writer'],
                 ],
@@ -263,11 +263,11 @@ class LogConfigOption extends AbstractExtConfigOption
                     $options['logLevel'] => $options['processor'],
                 ],
             ];
-            $GLOBALS['TYPO3_CONF_VARS'] = Arrays::setPath(
-                $GLOBALS,
-                Arrays::mergePaths(['TYPO3_CONF_VARS', 'LOG'], $options['namespace']),
-                $config
-            )['TYPO3_CONF_VARS'];
+
+            $path = Arrays::mergePaths(['LOG'], $options['namespace']);
+            $temp = Arrays::setPath([], $path, $config);
+
+            $GLOBALS['TYPO3_CONF_VARS'] = Arrays::merge($GLOBALS['TYPO3_CONF_VARS'], $temp);
             $this->flushLogManager(implode('.', $options['namespace']));
         }
     }
