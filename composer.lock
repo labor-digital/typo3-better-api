@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "2bd65c8475520c1b0fc5a76897a5205f",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -1142,16 +1142,16 @@
         },
         {
             "name": "neunerlei/options",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Neunerlei/options-php.git",
-                "reference": "8fc61beb3a2ec114eed2a76603e9daa8e2984d7e"
+                "reference": "6a457eb0742480188bfcb2c9f97336b247106a23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Neunerlei/options-php/zipball/8fc61beb3a2ec114eed2a76603e9daa8e2984d7e",
-                "reference": "8fc61beb3a2ec114eed2a76603e9daa8e2984d7e",
+                "url": "https://api.github.com/repos/Neunerlei/options-php/zipball/6a457eb0742480188bfcb2c9f97336b247106a23",
+                "reference": "6a457eb0742480188bfcb2c9f97336b247106a23",
                 "shasum": ""
             },
             "require": {
@@ -1186,7 +1186,7 @@
                 }
             ],
             "description": "A little helper which can be used to apply a schema to any given array",
-            "time": "2020-05-23T08:55:30+00:00"
+            "time": "2020-07-02T17:08:06+00:00"
         },
         {
             "name": "neunerlei/path-util",
@@ -4988,6 +4988,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6506,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6559,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.28.2"
+    "plugin-api-version": "1.1.0"
 }
