@@ -25,9 +25,10 @@ use LaborDigital\Typo3BetterApi\Pid\InvalidPidException;
 use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\PathUtil\Path;
+use TYPO3\CMS\Core\SingletonInterface;
 use function GuzzleHttp\Psr7\parse_query;
 
-class PidFacet implements FacetInterface
+class PidFacet implements FacetInterface, SingletonInterface
 {
     /**
      * The pid storage list

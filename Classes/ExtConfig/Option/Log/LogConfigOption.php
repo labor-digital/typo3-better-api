@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Log;
 
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption;
+use LaborDigital\Typo3BetterApi\Log\BeLogWriter;
 use LaborDigital\Typo3BetterApi\Log\BetterFileWriter;
 use LaborDigital\Typo3BetterApi\Log\StreamWriter;
 use Neunerlei\Arrays\Arrays;
@@ -49,7 +50,6 @@ class LogConfigOption extends AbstractExtConfigOption
      *                            string is given the configuration is applied globally
      *                            - global bool: If this flag is set the writer is set as a global "default",
      *                            this will disable the "namespace" and "processor" options, tho!
-     *                            - writer array: the writer configuration array for the configured loglevel
      *                            - processor array: the processor configuration array for the configured loglevel
      *                            - logRotation bool (TRUE): By default the log files will be rotated once a day.
      *                            If you want to disable the log rotation set this option to false.
@@ -59,7 +59,7 @@ class LogConfigOption extends AbstractExtConfigOption
      * @see \TYPO3\CMS\Core\Log\LogLevel
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
      */
-    public function registerFileLog(string $name, array $options = [])
+    public function registerFileLog(string $name, array $options = []): self
     {
         $options           = $this->prepareLogOptions($options, [
             'logRotation' => [
@@ -79,6 +79,8 @@ class LogConfigOption extends AbstractExtConfigOption
             ],
         ];
         $this->applyLogConfiguration($options);
+
+        return $this;
     }
 
     /**
@@ -98,11 +100,10 @@ class LogConfigOption extends AbstractExtConfigOption
      *                            string is given the configuration is applied globally
      *                            - global bool: If this flag is set the writer is set as a global "default",
      *                            this will disable the "namespace" and "processor" options, tho!
-     *                            - writer array: the writer configuration array for the configured loglevel
      *                            - processor array: the processor configuration array for the configured loglevel
      *                            - stream string (php://stdout): Allows you to configure the stream to write to.
      */
-    public function registerStreamLogger(array $options)
+    public function registerStreamLogger(array $options): self
     {
         $options           = $this->prepareLogOptions($options, [
             'stream' => [
@@ -116,6 +117,39 @@ class LogConfigOption extends AbstractExtConfigOption
             ],
         ];
         $this->applyLogConfiguration($options);
+
+        return $this;
+    }
+
+    /**
+     * Registers a new backend log logger in the system. This type of logger is basically a hybrid of the
+     * DatabaseWriter in the PSR-3 logging implementation, and the old-school $GLOBALS['BE_USER']->writelog() logger.
+     * It writes the log entries always in the sys_log table, but fills the field sets of both implementations, while
+     * doing so.
+     *
+     * @param   array  $options   Additional log configuration options
+     *                            - logLevel int: This is equivalent with one of the LogLevel constants.
+     *                            Default:
+     *                            -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                            a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                            or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                            -- LogLevel::ERROR in all other cases
+     *                            - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                            This can be either a class name or a part of a php namespace. If an empty
+     *                            string is given the configuration is applied globally
+     *                            - global bool: If this flag is set the writer is set as a global "default",
+     *                            this will disable the "namespace" and "processor" options, tho!
+     *                            - processor array: the processor configuration array for the configured loglevel
+     */
+    public function registerBeLogLogger(array $options): self
+    {
+        $options           = $this->prepareLogOptions($options);
+        $options['writer'] = [
+            BeLogWriter::class => [],
+        ];
+        $this->applyLogConfiguration($options);
+
+        return $this;
     }
 
     /**
@@ -139,10 +173,12 @@ class LogConfigOption extends AbstractExtConfigOption
      * @see \TYPO3\CMS\Core\Log\LogLevel
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
      */
-    public function registerLogConfig(array $options)
+    public function registerLogConfig(array $options): self
     {
         $options = $this->prepareLogOptions($options);
         $this->applyLogConfiguration($options);
+
+        return $this;
     }
 
     /**
