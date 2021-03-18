@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -21,26 +22,33 @@ namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Log;
 
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption;
 use LaborDigital\Typo3BetterApi\Log\BetterFileWriter;
+use LaborDigital\Typo3BetterApi\Log\StreamWriter;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Core\Log\LogManager;
 
 class LogConfigOption extends AbstractExtConfigOption
 {
-    
+
     /**
      * Registers a new logfile writer in the system. It utilizes our internal
      * better file writer that has built-in log rotation capabilities.
      *
      * @param   string  $name     A speaking name for your log -> used only for the file name generation
      * @param   array   $options  Additional log configuration options
-     *                            - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
-     *                            It defines the minimal viable severity that should be logged, all levels with a higher
-     *                            number that the given level will be be ignored
+     *                            - logLevel int: This is equivalent with one of the LogLevel constants.
+     *                            Default:
+     *                            -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                            a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                            or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                            -- LogLevel::ERROR in all other cases
      *                            - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
      *                            This can be either a class name or a part of a php namespace. If an empty
      *                            string is given the configuration is applied globally
+     *                            - global bool: If this flag is set the writer is set as a global "default",
+     *                            this will disable the "namespace" and "processor" options, tho!
      *                            - writer array: the writer configuration array for the configured loglevel
      *                            - processor array: the processor configuration array for the configured loglevel
      *                            - logRotation bool (TRUE): By default the log files will be rotated once a day.
@@ -72,17 +80,59 @@ class LogConfigOption extends AbstractExtConfigOption
         ];
         $this->applyLogConfiguration($options);
     }
-    
+
+    /**
+     * Registers a new stream logger the system. It works quite similar to the syslog writer that is available in the
+     * TYPO3 core, but allows you to define the stream to write to. By default it will write to php://stdout which
+     * means it is perfect for logging inside of docker containers.
+     *
+     * @param   array  $options   Additional log configuration options
+     *                            - logLevel int: This is equivalent with one of the LogLevel constants.
+     *                            Default:
+     *                            -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                            a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                            or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                            -- LogLevel::ERROR in all other cases
+     *                            - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                            This can be either a class name or a part of a php namespace. If an empty
+     *                            string is given the configuration is applied globally
+     *                            - global bool: If this flag is set the writer is set as a global "default",
+     *                            this will disable the "namespace" and "processor" options, tho!
+     *                            - writer array: the writer configuration array for the configured loglevel
+     *                            - processor array: the processor configuration array for the configured loglevel
+     *                            - stream string (php://stdout): Allows you to configure the stream to write to.
+     */
+    public function registerStreamLogger(array $options)
+    {
+        $options           = $this->prepareLogOptions($options, [
+            'stream' => [
+                'type'    => ['null', 'string'],
+                'default' => null,
+            ],
+        ]);
+        $options['writer'] = [
+            StreamWriter::class => [
+                'stream' => $options['stream'],
+            ],
+        ];
+        $this->applyLogConfiguration($options);
+    }
+
     /**
      * Registers any kind of log configuration based on your input.
      *
      * @param   array  $options  The options for your log configuration
      *                           - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
-     *                           It defines the minimal viable severity that should be logged, all levels with a higher
-     *                           number that the given level will be be ignored
+     *                           Default:
+     *                           -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                           a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                           or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                           -- LogLevel::ERROR in all other cases
      *                           - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
      *                           This can be either a class name or a part of a php namespace. If an empty
      *                           string is given the configuration is applied globally
+     *                           - global bool: If this flag is set the writer is set as a global "default",
+     *                           this will disable the "namespace" and "processor" options, tho!
      *                           - writer array: the writer configuration array for the configured loglevel
      *                           - processor array: the processor configuration array for the configured loglevel
      *
@@ -94,7 +144,7 @@ class LogConfigOption extends AbstractExtConfigOption
         $options = $this->prepareLogOptions($options);
         $this->applyLogConfiguration($options);
     }
-    
+
     /**
      * Internal helper to build the options array based on the given input.
      * Allows to add additional config definitions to be used for different log type
@@ -106,10 +156,15 @@ class LogConfigOption extends AbstractExtConfigOption
      */
     protected function prepareLogOptions(array $options, array $additionalDefinition = []): array
     {
+        $env     = $this->context->TypoContext->Env();
+        $isDebug = $env->isDev() || $env->isFrontend() && $env->isFeDebug()
+                   || ! $env->isFrontend()
+                      && $env->isBeDebug();
+
         return Options::make($options, Arrays::merge([
             'logLevel'  => [
                 'type'    => ['string', 'int'],
-                'default' => $this->context->TypoContext->getEnvAspect()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
+                'default' => $isDebug ? LogLevel::INFO : LogLevel::ERROR,
                 'values'  => [
                     LogLevel::EMERGENCY,
                     LogLevel::ERROR,
@@ -144,9 +199,13 @@ class LogConfigOption extends AbstractExtConfigOption
                 'type'    => 'array',
                 'default' => [],
             ],
+            'global'    => [
+                'type'    => 'bool',
+                'default' => false,
+            ],
         ], $additionalDefinition));
     }
-    
+
     /**
      * Injects the options into the globals super array
      *
@@ -154,18 +213,44 @@ class LogConfigOption extends AbstractExtConfigOption
      */
     protected function applyLogConfiguration(array $options): void
     {
-        $config                     = [
-            'writerConfiguration'    => [
-                $options['logLevel'] => $options['writer'],
-            ],
-            'processorConfiguration' => [
-                $options['logLevel'] => $options['processor'],
-            ],
-        ];
-        $GLOBALS['TYPO3_CONF_VARS'] = Arrays::setPath(
-            $GLOBALS,
-            Arrays::mergePaths(['TYPO3_CONF_VARS', 'LOG'], $options['namespace']),
-            $config
-        )['TYPO3_CONF_VARS'];
+        if ($options['global']) {
+            $GLOBALS['TYPO3_CONF_VARS']['LOG']['writerConfiguration'][$options['logLevel']][key($options['writer'])]
+                = reset($options['writer']);
+
+            $this->flushLogManager('');
+        } else {
+            $config                     = [
+                'writerConfiguration'    => [
+                    $options['logLevel'] => $options['writer'],
+                ],
+                'processorConfiguration' => [
+                    $options['logLevel'] => $options['processor'],
+                ],
+            ];
+            $GLOBALS['TYPO3_CONF_VARS'] = Arrays::setPath(
+                $GLOBALS,
+                Arrays::mergePaths(['TYPO3_CONF_VARS', 'LOG'], $options['namespace']),
+                $config
+            )['TYPO3_CONF_VARS'];
+            $this->flushLogManager(implode('.', $options['namespace']));
+        }
+    }
+
+    /**
+     * Helper to reset the log manager when we updated the log config
+     * NOTE: This is a temporary workaround and should be fixed in v10
+     *
+     * @param   string|null  $loggerName
+     *
+     * @deprecated
+     */
+    protected function flushLogManager(?string $loggerName = null): void
+    {
+        $manager = $this->context->getInstanceOf(LogManager::class);
+        if ($loggerName) {
+            $manager->registerLogger($loggerName);
+        } else {
+            $manager->reset();
+        }
     }
 }
