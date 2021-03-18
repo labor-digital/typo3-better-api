@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.29.1](https://github.com/labor-digital/typo3-better-api/compare/v9.29.0...v9.29.1) (2021-03-18)
+
+## [9.29.0](https://github.com/labor-digital/typo3-better-api/compare/v9.28.2...v9.29.0) (2021-03-18)
+
+
+### Features
+
+* **Log:** implement BeLogWriter ([b436706](https://github.com/labor-digital/typo3-better-api/commit/b4367066e20a61d27d5304740f901cfc9084822e))
+* **Log:** implement StreamWriter + global logging option ([f437237](https://github.com/labor-digital/typo3-better-api/commit/f437237985e40ad2503cc3e4ed5f1de41ccb3e56))
+
 ### [9.28.2](https://github.com/labor-digital/typo3-better-api/compare/v9.28.1...v9.28.2) (2021-02-18)
 
 
