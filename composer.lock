@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "2bd65c8475520c1b0fc5a76897a5205f",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -3654,25 +3654,24 @@
         },
         {
             "name": "whitecube/lingua",
-            "version": "1.0.4",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/whitecube/lingua.git",
-                "reference": "61a72faa21caa0f2ec6ec85c1899793f3eb42cc6"
+                "reference": "a1c8df7a1beffe1c5fb29d55432fa7f2119227f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/whitecube/lingua/zipball/61a72faa21caa0f2ec6ec85c1899793f3eb42cc6",
-                "reference": "61a72faa21caa0f2ec6ec85c1899793f3eb42cc6",
+                "url": "https://api.github.com/repos/whitecube/lingua/zipball/a1c8df7a1beffe1c5fb29d55432fa7f2119227f4",
+                "reference": "a1c8df7a1beffe1c5fb29d55432fa7f2119227f4",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": "^7.0"
+                "php": "^7.0|^8.0"
             },
             "require-dev": {
-                "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": "^6.1"
+                "phpunit/phpunit": "^9.3"
             },
             "type": "library",
             "autoload": {
@@ -3702,7 +3701,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "A PHP-7 language codes converter, from and to the most common formats (ISO, W3C, PHP and human-readable names).",
+            "description": "A PHP language codes converter, from and to the most common formats (ISO, W3C, PHP and human-readable names).",
             "keywords": [
                 "BCP-47",
                 "codes",
@@ -3714,7 +3713,13 @@
                 "translate",
                 "translation"
             ],
-            "time": "2020-02-06T15:01:22+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/whitecube",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-28T11:27:27+00:00"
         },
         {
             "name": "zordius/lightncandy",
@@ -4988,6 +4993,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6511,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6564,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.28.2"
+    "plugin-api-version": "1.1.0"
 }
