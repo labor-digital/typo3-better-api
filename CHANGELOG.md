@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.29.4](https://github.com/labor-digital/typo3-better-api/compare/v9.29.3...v9.29.4) (2021-04-13)
+
+
+### Bug Fixes
+
+* **BeLogWriter:** ensure that %s gets not removed in be output ([2a216c7](https://github.com/labor-digital/typo3-better-api/commit/2a216c7eb08fa5b6a24babee7c2c59a7cf7de591))
+
 ### [9.29.3](https://github.com/labor-digital/typo3-better-api/compare/v9.29.2...v9.29.3) (2021-04-13)
 
 
