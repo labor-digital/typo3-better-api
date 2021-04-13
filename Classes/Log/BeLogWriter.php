@@ -132,8 +132,6 @@ class BeLogWriter extends AbstractWriter
             }
         }
 
-        $legacy['log_data'] = serialize($recordData);
-
         return array_merge($psr3, $legacy);
     }
 
