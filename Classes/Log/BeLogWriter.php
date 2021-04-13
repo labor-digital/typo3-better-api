@@ -78,7 +78,7 @@ class BeLogWriter extends AbstractWriter
             if (isset($recordData['exception']) && $recordData['exception'] instanceof Throwable) {
                 $recordData['exception'] = (string)$recordData['exception'];
             }
-            $data = '- ' . json_encode($recordData);
+            $data = json_encode($recordData);
         }
 
         $psr3 = [
