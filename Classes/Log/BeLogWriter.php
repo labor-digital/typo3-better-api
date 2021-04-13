@@ -105,7 +105,7 @@ class BeLogWriter extends AbstractWriter
             'type'       => 4,
             'action'     => 0,
             'details_nr' => 0,
-            'details'    => $record->getMessage(),
+            'details'    => str_replace('%', '&percnt;', $record->getMessage()),
         ];
 
         if ($recordData['tablename']) {
