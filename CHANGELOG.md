@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.29.3](https://github.com/labor-digital/typo3-better-api/compare/v9.29.2...v9.29.3) (2021-04-13)
+
+
+### Bug Fixes
+
+* **BeLogWriter:** don't add data in the "log_data" field ([ee38e04](https://github.com/labor-digital/typo3-better-api/commit/ee38e04f86f68d5c5e6b5f64454841c8668e7fe9))
+* **BeLogWriter:** remove prepending dash in "data" field ([c234cb2](https://github.com/labor-digital/typo3-better-api/commit/c234cb239878a93d115c59253b6935315d9ed7c6))
+
 ### [9.29.2](https://github.com/labor-digital/typo3-better-api/compare/v9.29.1...v9.29.2) (2021-03-18)
 
 
