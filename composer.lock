@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "9436df49b5adc17483f134471136e58d",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -992,16 +992,16 @@
         },
         {
             "name": "neunerlei/event-bus",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Neunerlei/event-bus-php.git",
-                "reference": "29ada49eed2460655748af6cfbbcef570766cd3f"
+                "reference": "8c1312192b27350e302d2c036875f3ad4e03bcca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Neunerlei/event-bus-php/zipball/29ada49eed2460655748af6cfbbcef570766cd3f",
-                "reference": "29ada49eed2460655748af6cfbbcef570766cd3f",
+                "url": "https://api.github.com/repos/Neunerlei/event-bus-php/zipball/8c1312192b27350e302d2c036875f3ad4e03bcca",
+                "reference": "8c1312192b27350e302d2c036875f3ad4e03bcca",
                 "shasum": ""
             },
             "require": {
@@ -1012,8 +1012,8 @@
             },
             "require-dev": {
                 "crell/tukio": "^1.1",
-                "neunerlei/dbg": "^1.8",
-                "phpunit/phpunit": "^9.0"
+                "neunerlei/dbg": "^1.9",
+                "phpunit/phpunit": "^9.2.5"
             },
             "type": "library",
             "autoload": {
@@ -1027,20 +1027,14 @@
             ],
             "authors": [
                 {
-                    "name": "LABOR.digital",
-                    "email": "info@labor.tools",
-                    "homepage": "https://www.labor.digital",
-                    "role": "Company"
-                },
-                {
                     "name": "Martin Neundorfer",
                     "email": "code@neunerlei.eu",
                     "homepage": "https://www.neunerlei.eu",
                     "role": "Developer"
                 }
             ],
-            "description": "PSR-14 compatible, implementation agnostic event bus facade that uses crell/tukio as default",
-            "time": "2020-05-21T19:23:56+00:00"
+            "description": "This package contains a PSR-14 compliant event dispatcher facade, which aims to bring the listener provider and dispatcher objects closer together.",
+            "time": "2021-02-13T11:25:25+00:00"
         },
         {
             "name": "neunerlei/filesystem",
@@ -4988,6 +4982,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6500,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6553,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.29.4"
+    "plugin-api-version": "1.1.0"
 }
