@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "b40118ad01bdd62aa33123ede3096d80",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -896,23 +896,22 @@
         },
         {
             "name": "neunerlei/arrays",
-            "version": "1.1.8",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Neunerlei/arrays.git",
-                "reference": "84efab897fb27a370fb53b1ae6f877f99288d18f"
+                "reference": "7c0e293ab304e461f188cf3cf0bc342455bb57e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Neunerlei/arrays/zipball/84efab897fb27a370fb53b1ae6f877f99288d18f",
-                "reference": "84efab897fb27a370fb53b1ae6f877f99288d18f",
+                "url": "https://api.github.com/repos/Neunerlei/arrays/zipball/7c0e293ab304e461f188cf3cf0bc342455bb57e5",
+                "reference": "7c0e293ab304e461f188cf3cf0bc342455bb57e5",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-simplexml": "*",
-                "neunerlei/options": "^1.0",
                 "php": "^7.3"
             },
             "require-dev": {
@@ -944,7 +943,7 @@
                 }
             ],
             "description": "A package that provides a multitude of tools to traverse, sort and modify arrays in your daily routine",
-            "time": "2020-03-11T13:39:40+00:00"
+            "time": "2021-02-12T14:56:36+00:00"
         },
         {
             "name": "neunerlei/container-autowiring-declaration",
@@ -4988,6 +4987,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6505,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6558,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.29.4"
+    "plugin-api-version": "1.1.0"
 }
