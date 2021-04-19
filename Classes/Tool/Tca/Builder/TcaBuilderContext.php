@@ -49,7 +49,7 @@ class TcaBuilderContext
      *
      * @return \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
-    public function parent(): ExtConfigContext
+    public function getParent(): ExtConfigContext
     {
         return $this->commonServices->extConfigContext;
     }
@@ -95,7 +95,7 @@ class TcaBuilderContext
 
         return implode('_', array_filter([
             'tx',
-            NamingUtil::flattenExtKey($this->parent()->getExtKey()),
+            NamingUtil::flattenExtKey($this->getParent()->getExtKey()),
             'domain',
             'model',
             strtolower(Inflector::toCamelBack(substr(trim($tableName), 3))),

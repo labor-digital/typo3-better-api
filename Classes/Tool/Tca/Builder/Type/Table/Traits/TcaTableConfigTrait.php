@@ -704,7 +704,9 @@ trait TcaTableConfigTrait
      * Pointing to the icon file to use for the table. Icons should be square SVGs. In case you cannot supply a SVG you
      * can still use a PNG file of 64x64 pixels in dimension.
      *
-     * @param   string  $filename
+     * @param   string  $filename  Either an absolute filename, or one of the following options:
+     *                             EXT:{{extKey}}/Resources/Public/Icons/icon.svg
+     *                             ./Resources/Public/Icons/icon.svg <- for the current extension
      *
      * @return $this
      *
@@ -712,7 +714,12 @@ trait TcaTableConfigTrait
      */
     public function setIconFile(string $filename)
     {
-        $this->config['ctrl']['iconfile'] = $filename;
+        if (str_starts_with($filename, './')) {
+            $filename = 'EXT:{{extKey}}' . substr($filename, 1);
+        }
+
+        $this->config['ctrl']['iconfile']
+            = $this->getContext()->getParent()->replaceMarkers($filename);
 
         return $this;
     }

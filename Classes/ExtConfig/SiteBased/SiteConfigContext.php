@@ -51,7 +51,7 @@ class SiteConfigContext extends ExtConfigContext implements PublicServiceInterfa
     public function __construct(ExtConfigService $extConfigService, TypoContext $typoContext)
     {
         parent::__construct($extConfigService);
-        $this->typoContext = $typoContext;
+        $this->parentContext = $typoContext;
     }
 
     /**

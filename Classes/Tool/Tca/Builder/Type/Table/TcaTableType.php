@@ -108,7 +108,7 @@ class TcaTableType extends AbstractType
         // Special validation for $id names -> this a human failsafe.
         if ($this->ignoreFieldIdIssues !== true && $ignoreFieldIdIssues !== true
             && $id !== Inflector::toDatabase($id)
-            && $this->context->parent()->getTypoContext()->env()->isDev()) {
+            && $this->context->getParent()->getParentContext()->env()->isDev()) {
             throw new InvalidFieldIdException(
                 'Your field: "' . $id . '" of table: "' . $this->getTableName() . '" (type: ' . $this->getTypeName() .
                 ') will probably not be mapped correctly when you work with ext base domain models. ' .

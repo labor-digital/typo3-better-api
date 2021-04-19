@@ -209,7 +209,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
             $assetUrl = $args[$assetArgIndex];
 
             if (! (bool)filter_var($assetUrl, FILTER_VALIDATE_URL)) {
-                $p        = $this->context->getTypoContext()->path();
+                $p        = $this->context->getParentContext()->path();
                 $assetUrl = $p->typoPathToRealPath($assetUrl);
                 $assetUrl = Path::makeRelative($assetUrl, $p->getPublicPath());
 

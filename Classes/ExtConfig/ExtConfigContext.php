@@ -43,7 +43,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * @var TypoContext
      */
-    protected $typoContext;
+    protected $parentContext;
 
     /**
      * Holds the cached namespace to ext key and vendor value map
@@ -68,28 +68,13 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
-    public function getTypoContext(): TypoContext
+    public function getParentContext(): TypoContext
     {
-        if (! $this->typoContext) {
+        if (! $this->parentContext) {
             throw new ExtConfigException('You can\'t access the TypoContext object here, because it is to early in the lifecycle!');
         }
 
-        return $this->typoContext;
-    }
-
-    /**
-     * Returns multiple environment related constraint helpers
-     *
-     * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet
-     */
-    public function env(): EnvFacet
-    {
-        if ($this->typoContext) {
-            return $this->typoContext->env();
-        }
-
-        // Fallback if used to early in the lifecycle
-        return new EnvFacet();
+        return $this->parentContext;
     }
 
     /**
@@ -99,11 +84,26 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      *
      * @return $this
      */
-    public function setTypoContext(TypoContext $typoContext): self
+    public function setParentContext(TypoContext $typoContext): self
     {
-        $this->typoContext = $typoContext;
+        $this->parentContext = $typoContext;
 
         return $this;
+    }
+
+    /**
+     * Returns multiple environment related constraint helpers
+     *
+     * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet
+     */
+    public function env(): EnvFacet
+    {
+        if ($this->parentContext) {
+            return $this->parentContext->env();
+        }
+
+        // Fallback if used to early in the lifecycle
+        return new EnvFacet();
     }
 
     /**
@@ -193,10 +193,10 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         $keys = $this->replaceMarkers($keys);
 
         if (is_array($keys)) {
-            return $this->getTypoContext()->pid()->getMultiple($keys, $fallback);
+            return $this->getParentContext()->pid()->getMultiple($keys, $fallback);
         }
 
-        return $this->getTypoContext()->pid()->get($keys, $fallback);
+        return $this->getParentContext()->pid()->get($keys, $fallback);
     }
 
     /**

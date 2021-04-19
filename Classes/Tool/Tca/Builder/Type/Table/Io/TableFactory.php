@@ -136,7 +136,7 @@ class TableFactory implements PublicServiceInterface
 
         $default['ctrl']['iconfile']
             = $this->cs()->typoContext->path()->getExtensionIconPath(
-            $ctx->parent()->getExtKey());
+            $ctx->getParent()->getExtKey());
 
         $default['columns']['l10n_parent']['config']['foreign_table']       = $tableName;
         $default['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace(

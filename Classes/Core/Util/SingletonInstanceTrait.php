@@ -52,6 +52,7 @@ trait SingletonInstanceTrait
      *
      * @param   self  $instance
      *
+     * @return $this
      * @internal
      */
     public static function setInstance(self $instance): self

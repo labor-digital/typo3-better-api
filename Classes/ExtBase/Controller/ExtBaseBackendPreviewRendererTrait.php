@@ -149,8 +149,8 @@ trait ExtBaseBackendPreviewRendererTrait
         $row           = $this->context->getRow();
         $listType      = $row['list_type'];
         $typoContext   = TypoContext::getInstance();
-        $typoScript    = $typoContext->di()->cs()->ts;
-        $config        = $typoScript->get(['plugin', 'tx_' . $listType], ['default' => []]);
+        $config        = $typoContext->di()->cs()->ts
+            ->get(['plugin', 'tx_' . $listType], ['default' => []]);
 
         // Prepare the config manager
         /** @var ActionController $this */
@@ -246,7 +246,6 @@ trait ExtBaseBackendPreviewRendererTrait
             // because someone was clever enough to not include that instance into the event -.-
             foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 6) as $call) {
                 if (isset($call['object']) && $call['object'] instanceof self) {
-                    /** @var self $controller */
                     $controller          = $call['object'];
                     $controller->context = static::$transfer['context'];
 

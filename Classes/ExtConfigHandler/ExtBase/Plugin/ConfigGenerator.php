@@ -345,7 +345,7 @@ class ConfigGenerator extends AbstractConfigGenerator
             return;
         }
 
-        $dumper       = $context->getTypoContext()->di()->getService(Dumper::class);
+        $dumper       = $context->getParentContext()->di()->getService(Dumper::class);
         $flexFormFile = $dumper->dumpToFile($configurator->getFlexForm());
 
         $this->flexFormArgs[] = [
