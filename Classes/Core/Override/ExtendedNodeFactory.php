@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2021.04.20 at 11:02
  */
 
 declare(strict_types=1);
@@ -42,9 +42,9 @@ namespace LaborDigital\T3BA\Core\Override;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeDataFilterEvent;
 use LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy;
-use TYPO3\CMS\Backend\Form\BetterApiClassOverrideCopy__NodeFactory;
+use TYPO3\CMS\Backend\Form\T3BA__Copy__NodeFactory;
 
-class ExtendedNodeFactory extends BetterApiClassOverrideCopy__NodeFactory
+class ExtendedNodeFactory extends T3BA__Copy__NodeFactory
 {
 
     /**
