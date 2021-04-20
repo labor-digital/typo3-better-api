@@ -43,7 +43,7 @@ trait ExtConfigContextTrait
      * @param   string  $class            The class to instantiate
      * @param   array   $constructorArgs  A optional list of arguments to pass to the constructor
      *
-     * @return object|\Psr\Log\LoggerAwareInterface|string|\TYPO3\CMS\Core\SingletonInterface
+     * @return mixed
      */
     protected function getInstanceWithoutDi(string $class, array $constructorArgs = [])
     {

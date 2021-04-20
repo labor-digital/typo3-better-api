@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 LABOR.digital
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.09.09 at 18:46
+ * Last modified: 2021.04.20 at 11:02
  */
 
 declare(strict_types=1);
@@ -54,15 +54,15 @@ class Applier extends AbstractExtConfigApplier
     public function onExtTablesLoaded(): void
     {
         $this->registerModules();
-        $this->registerPluginIcons();
+        $this->registerElementIcons();
     }
 
     public function onTcaCompletelyLoaded(): void
     {
-        $this->registerPlugins();
-        $this->registerPluginDataHooks();
-        $this->registerPluginBackendPreviewHooks();
-        $this->registerPluginFlexForms();
+        $this->registerElements();
+        $this->registerElementDataHooks();
+        $this->registerElementBackendPreviewHooks();
+        $this->registerElementFlexForms();
     }
 
     public function onExtLocalConfLoaded(): void
@@ -86,9 +86,9 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Registers the plugin icons into the icon registry
      */
-    protected function registerPluginIcons(): void
+    protected function registerElementIcons(): void
     {
-        $argDefinition = $this->state->get('typo.extBase.plugin.iconArgs');
+        $argDefinition = $this->state->get('typo.extBase.element.iconArgs');
         if (! empty($argDefinition)) {
             $iconRegistry = $this->getService(IconRegistry::class);
             foreach (Arrays::makeFromJson($argDefinition) as $args) {
@@ -100,9 +100,9 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Registers the configured data hooks in the tt_content table by merging them into the table's TCA
      */
-    protected function registerPluginDataHooks(): void
+    protected function registerElementDataHooks(): void
     {
-        $hookDefinition = $this->state->get('typo.extBase.plugin.dataHooks');
+        $hookDefinition = $this->state->get('typo.extBase.element.dataHooks');
         if (! empty($hookDefinition)) {
             $dataHooks      = Arrays::makeFromJson($hookDefinition);
             $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
@@ -116,9 +116,9 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Registers the backend preview rendering hooks into the tca
      */
-    protected function registerPluginBackendPreviewHooks(): void
+    protected function registerElementBackendPreviewHooks(): void
     {
-        $hookDefinition = $this->state->get('typo.extBase.plugin.backendPreviewHooks');
+        $hookDefinition = $this->state->get('typo.extBase.element.backendPreviewHooks');
         if (! empty($hookDefinition)) {
             $hooks          = Arrays::makeFromJson($hookDefinition);
             $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
@@ -132,7 +132,7 @@ class Applier extends AbstractExtConfigApplier
      */
     protected function configurePlugins(): void
     {
-        $argDefinition = $this->state->get('typo.extBase.plugin.configureArgs');
+        $argDefinition = $this->state->get('typo.extBase.element.configureArgs');
         if (is_array($argDefinition)) {
             foreach ($argDefinition as $args) {
                 ExtensionUtility::configurePlugin(...$args);
@@ -143,23 +143,23 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Registers the plugins / content elements in the TYPO3 backend
      */
-    protected function registerPlugins(): void
+    protected function registerElements(): void
     {
         // Register the plugins in the TYPO3 api
-        $argDefinition = $this->state->get('typo.extBase.plugin.args');
+        $argDefinition = $this->state->get('typo.extBase.element.args');
         if (! empty($argDefinition)) {
             $args = Arrays::makeFromJson($argDefinition);
 
             // Plugin registration
-            if (is_array($args['registerPlugin'])) {
-                foreach ($args['registerPlugin'] as $args) {
+            if (is_array($args['plugin'])) {
+                foreach ($args['plugin'] as $args) {
                     ExtensionUtility::registerPlugin(...$args);
                 }
             }
 
             // Content element registration
-            if (is_array($args['registerCType'])) {
-                $this->registerCTypesForElements($GLOBALS['TCA'], $args['registerCType']);
+            if (is_array($args['ce'])) {
+                $this->registerCTypesForElements($GLOBALS['TCA'], $args['ce']);
             }
         }
     }
@@ -167,9 +167,9 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Adds the registered flex form configuration to the TCA
      */
-    protected function registerPluginFlexForms(): void
+    protected function registerElementFlexForms(): void
     {
-        $definition = $this->state->get('typo.extBase.plugin.flexForms');
+        $definition = $this->state->get('typo.extBase.element.flexForms');
         if (! empty($definition)) {
             foreach (Arrays::makeFromJson($definition) as $def) {
                 ExtensionManagementUtility::addPiFlexFormValue(...$def['args']);
@@ -186,7 +186,6 @@ class Applier extends AbstractExtConfigApplier
                 } else {
                     $val = 'pi_flexform';
                 }
-
                 $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$signature] = $val;
             }
         }

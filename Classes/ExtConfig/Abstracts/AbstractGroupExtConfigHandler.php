@@ -53,7 +53,7 @@ abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler 
         bool $useOnlyBaseName = true
     ): string {
         if (in_array(ElementKeyProviderInterface::class, class_implements($class), true)) {
-            return $class('getElementKey');
+            return call_user_func([$class, 'getElementKey']);
         }
 
         if ($useOnlyBaseName) {

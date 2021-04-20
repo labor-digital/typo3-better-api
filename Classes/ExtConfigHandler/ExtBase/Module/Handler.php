@@ -33,6 +33,14 @@ class Handler extends AbstractGroupExtConfigHandler
     use SignaturePluginNameMapTrait;
 
     /**
+     * @inheritDoc
+     */
+    protected function getGroupKeyOfClass(string $class): string
+    {
+        return $this->getElementKeyForClass($class, [$this, 'getSignatureFromClass']);
+    }
+
+    /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ConfigGenerator
      */
     protected $generator;

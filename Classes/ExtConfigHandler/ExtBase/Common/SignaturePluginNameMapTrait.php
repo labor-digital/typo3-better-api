@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
 
 
+use InvalidArgumentException;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\PathUtil\Path;
 
@@ -44,20 +45,20 @@ trait SignaturePluginNameMapTrait
     protected $signaturePluginNameMap = [];
 
     /**
-     * @inheritDoc
+     * Helper to generate an extbase signature out of a given controller class name
+     *
+     * @param   string  $classBaseName
+     *
+     * @return string
      */
-    protected function getGroupKeyOfClass(string $class): string
+    protected function getSignatureFromClass(string $classBaseName): string
     {
-        // @todo are we sure that $class is always the correct controller class?
-        // The configurator could also specify another controller class, or am I mistaken?
-        return $this->getElementKeyForClass($class, function (string $classBaseName): string {
-            $name      = preg_replace('/Controller$/i', '', Path::classBasename($classBaseName));
-            $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
+        $name      = preg_replace('/Controller$/i', '', Path::classBasename($classBaseName));
+        $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
 
-            $this->signaturePluginNameMap[$signature] = $name;
+        $this->signaturePluginNameMap[$signature] = $name;
 
-            return $signature;
-        });
+        return $signature;
     }
 
     /**
@@ -70,8 +71,8 @@ trait SignaturePluginNameMapTrait
     protected function getPluginNameForSignature(string $signature): string
     {
         if (! isset($this->signaturePluginNameMap[$signature])) {
-            throw new \InvalidArgumentException('There is no plugin name for signature: ' . $signature
-                                                . ' registered!');
+            throw new InvalidArgumentException('There is no plugin name for signature: ' . $signature
+                                               . ' registered!');
         }
 
         return $this->signaturePluginNameMap[$signature];

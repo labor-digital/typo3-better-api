@@ -20,20 +20,20 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
+namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement;
 
 
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigGenerator;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
-use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 class ConfigGenerator extends AbstractElementConfigGenerator
 {
     protected function getExtensionUtilityType(): string
     {
-        return ExtensionUtility::PLUGIN_TYPE_PLUGIN;
+        return ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT;
     }
 
     protected function setRegistrationArgs(
@@ -42,31 +42,32 @@ class ConfigGenerator extends AbstractElementConfigGenerator
         ExtConfigContext $context,
         AbstractElementConfigurator $configurator
     ): void {
-        $list['plugin'][] = array_values([
-            'extensionName'             => $extensionName,
-            'pluginName'                => $configurator->getPluginName(),
-            'pluginTitle'               => $configurator->getTitle(),
-            'pluginIconPathAndFilename' => $this->makeIconIdentifier($configurator, $context),
+        if (! $configurator instanceof ContentElementConfigurator) {
+            return;
+        }
+
+        $list['ce'][] = array_values([
+            'sectionLabel' => empty($configurator->getCTypeSection()) ?
+                Inflector::toHuman($context->getExtKey()) : $configurator->getCTypeSection(),
+            'title'        => $configurator->getTitle(),
+            'signature'    => $configurator->getSignature(),
+            'icon'         => $configurator->getIcon(),
+            // @todo can we use $this->makeIconIdentifier($configurator, $context) here?
         ]);
     }
 
     protected function getCeWizardValues(string $signature): string
     {
-        return 'CType = list' . PHP_EOL . 'list_type = ' . $signature;
+        return 'CType = ' . $signature;
     }
 
     protected function setPreviewHooks(array &$list, string $signature, string $class): void
     {
-        $list['list']['previewRenderer'][$signature] = $class;
+        $list[$signature]['previewRenderer'] = $class;
     }
 
     protected function getFlexFormCType(string $signature): string
     {
-        return 'plugin';
+        return $signature;
     }
-
-    protected function dumpForType(ConfigState $state): void
-    {
-    }
-
 }
