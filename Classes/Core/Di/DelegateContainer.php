@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.02.22 at 21:00
+ * Last modified: 2021.04.20 at 11:02
  */
 
 declare(strict_types=1);
@@ -146,17 +146,17 @@ class DelegateContainer implements ContainerInterface
      */
     public function has($id)
     {
-        if (isset($this->failsafe)) {
-            return $this->failsafe->has($id);
+        if (isset($this->failsafe) && $this->failsafe->has($id)) {
+            return true;
         }
 
         $symfony = $this->getSymfony();
-        if ($symfony) {
-            return $symfony->has($id);
+        if ($symfony && $symfony->has($id)) {
+            return true;
         }
 
-        if (isset($this->internal)) {
-            return $this->internal->has($id);
+        if (isset($this->internal) && $this->internal->has($id)) {
+            return true;
         }
 
         return false;
