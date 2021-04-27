@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 /**
  * Class DataHandlerRecordInfoFilterEvent
  *
- * Dispatched when the data handler requests information about a record from the database
+ * Dispatched when the data handler requests information about a record from the database (recordInfo())
  * Can be used to modify the requested fields or table name
  *
  * @package LaborDigital\T3BA\Event\DataHandler

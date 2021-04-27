@@ -74,6 +74,10 @@ class DataHandlerException extends T3BAException
             }
         };
 
+        if ($previous !== null) {
+            $message .= PHP_EOL . $previous->getMessage();
+        }
+
         $i          = new static($message, 1599580792, $previous);
         $i->handler = $handler;
 

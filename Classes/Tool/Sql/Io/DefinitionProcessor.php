@@ -110,7 +110,7 @@ class DefinitionProcessor
     {
         $result = [];
 
-        foreach ($tables as $k => $table) {
+        foreach ($tables as $table) {
             /** @noinspection ProperNullCoalescingOperatorUsageInspection */
             $types = $definition->types[$table->getName()] ?? [];
 
@@ -167,6 +167,9 @@ class DefinitionProcessor
             }
 
             $diff = $this->getService(Comparator::class)->diffTable($combined, $type);
+            if (! $diff) {
+                continue;
+            }
 
             // Add new column
             foreach ($diff->addedColumns as $key => $column) {

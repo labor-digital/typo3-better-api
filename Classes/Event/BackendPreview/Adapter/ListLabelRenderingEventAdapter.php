@@ -25,6 +25,7 @@ namespace LaborDigital\T3BA\Event\BackendPreview\Adapter;
 use LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent;
 use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
 {
@@ -45,9 +46,17 @@ class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
      */
     public function emit(array &$args)
     {
+        $row = empty($args['row']) || ! is_array($args['row']) ? [] : $args['row'];
+
+        // The TcaSelectItems converts all select fields into arrays, which we don't want
+        // we have to re-fetch the record from the database. TYPO3 sucks so hard...
+        if (is_numeric($row['uid'] ?? null)) {
+            $row = BackendUtility::getRecord($args['table'], $row['uid']);
+        }
+
         $e = new ListLabelRenderingEvent(
             $args['table'],
-            empty($args['row']) ? [] : $args['row'],
+            $row,
             $args['title'],
             $args['options']
         );

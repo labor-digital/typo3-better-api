@@ -66,8 +66,7 @@ class Dumper
         // Dump types
         foreach ($table->getLoadedTypes() as $typeName => $type) {
             // Ignore the default type -> as is is already part of the $tca
-            /** @noinspection TypeUnsafeComparisonInspection */
-            if ($defaultTypeName == $typeName) {
+            if ((string)$defaultTypeName === (string)$typeName) {
                 continue;
             }
 

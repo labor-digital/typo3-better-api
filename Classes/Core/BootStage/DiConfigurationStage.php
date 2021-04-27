@@ -93,7 +93,6 @@ class DiConfigurationStage implements BootStageInterface
         $this->delegate->set(ContainerBuilder::class, $event->getContainerBuilder());
 
         $extConfigService = $this->delegate->get(ExtConfigService::class);
-        $extConfigService->getFsMount()->flush();
         $extConfigService->getDiLoader()->loadForBuildTime();
     }
 

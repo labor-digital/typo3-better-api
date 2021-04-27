@@ -41,7 +41,7 @@ trait CTypeRegistrationTrait
         // Build the section list from all entries
         $sectionList = [];
         $options     = [];
-        foreach (array_reverse($itemList) as $k => $item) {
+        foreach (array_reverse($itemList) as $item) {
             if ($item[1] === '--div--') {
                 $sectionId               = Inflector::toUuid($item[0]);
                 $sectionList[$sectionId] = [
@@ -69,6 +69,8 @@ trait CTypeRegistrationTrait
                     'item'    => [
                         $sectionLabel,
                         '--div--',
+                        null,
+                        $sectionId,
                     ],
                     'options' => [],
                 ];

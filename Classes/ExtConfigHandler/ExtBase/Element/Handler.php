@@ -25,6 +25,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element;
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
 use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator as CeGenerator;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ConfigureContentElementInterface;
@@ -33,10 +34,12 @@ use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator as PluginG
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\ConfigurePluginInterface;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
+use Neunerlei\PathUtil\Path;
 
 class Handler extends AbstractGroupExtConfigHandler
 {
     use SignaturePluginNameMapTrait;
+    use DelayedConfigExecutionTrait;
 
     /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig
@@ -71,11 +74,25 @@ class Handler extends AbstractGroupExtConfigHandler
     protected $types = [];
 
     /**
+     * The collected form definitions for the TCA form loader (this is only used for content elements)
+     *
+     * @var array
+     */
+    protected $ceFormClasses = [];
+
+    /**
      * Internal flag that defines which configuration method to use on the configuration class
      *
      * @var string
      */
     protected $configMethod;
+
+    /**
+     * This is true if we currently handle the items of a content element
+     *
+     * @var bool
+     */
+    protected $isContentElement = false;
 
     /**
      * ExtBasePluginConfigHandler constructor.
@@ -109,13 +126,17 @@ class Handler extends AbstractGroupExtConfigHandler
      */
     public function prepareHandler(): void { }
 
-
     /**
      * @inheritDoc
      */
     public function finishHandler(): void
     {
-        $this->config->dump($this->context->getState());
+        $state = $this->context->getState();
+        $this->config->dump($state);
+
+        if (! empty($this->ceFormClasses)) {
+            $state->setAsJson('typo.extBase.element.ceFormClasses', $this->ceFormClasses);
+        }
     }
 
     /**
@@ -157,11 +178,12 @@ class Handler extends AbstractGroupExtConfigHandler
      */
     public function prepareGroup(string $signature, array $groupClasses): void
     {
-        $isContentElement   = $this->types[$signature] === 'ce';
-        $confClass          = $isContentElement ? ContentElementConfigurator::class : PluginConfigurator::class;
-        $this->configMethod = $isContentElement ? 'configureContentElement' : 'configurePlugin';
-        $this->generator    = $isContentElement ? $this->ceGenerator : $this->pluginGenerator;
-        $this->configurator = $this->getInstanceWithoutDi($confClass, [
+        $isContentElement       = $this->types[$signature] === 'ce';
+        $this->isContentElement = $isContentElement;
+        $confClass              = $isContentElement ? ContentElementConfigurator::class : PluginConfigurator::class;
+        $this->configMethod     = $isContentElement ? 'configureContentElement' : 'configurePlugin';
+        $this->generator        = $isContentElement ? $this->ceGenerator : $this->pluginGenerator;
+        $this->configurator     = $this->getInstanceWithoutDi($confClass, [
             $signature,
             $this->getPluginNameForSignature($signature),
             $this->context,
@@ -174,6 +196,18 @@ class Handler extends AbstractGroupExtConfigHandler
     public function handleGroupItem(string $class): void
     {
         call_user_func([$class, $this->configMethod], $this->configurator, $this->context);
+
+        // The TCA form gets processed independently so we simply store the value for
+        // the content elements for when the TCA gets build
+        if ($this->isContentElement) {
+            $this->saveDelayedConfig(
+                $this->context,
+                'tca.contentTypes',
+                $class,
+                $this->configurator->getSignature(),
+                ['modelSuggestion' => $this->makeContentModelClassSuggestion($class)]
+            );
+        }
     }
 
     /**
@@ -182,5 +216,20 @@ class Handler extends AbstractGroupExtConfigHandler
     public function finishGroup(string $groupKey, array $groupClasses): void
     {
         $this->generator->generate($this->configurator, $this->context);
+    }
+
+    /**
+     * Tries to inflect a sensible model class name from the given controller class name
+     *
+     * @param   string  $className
+     *
+     * @return string
+     */
+    protected function makeContentModelClassSuggestion(string $className): string
+    {
+        $baseName  = preg_replace('/Controller$/i', '', Path::classBasename($className));
+        $namespace = preg_replace('~(\\\Controller\\\.*?)$~', '', $className);
+
+        return $namespace . '\\Domain\\DataModel\\' . $baseName;
     }
 }

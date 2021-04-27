@@ -24,8 +24,9 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement;
 
 
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfigHandler\Table\ContentType\ContentTypeConfigInterface;
 
-interface ConfigureContentElementInterface
+interface ConfigureContentElementInterface extends ContentTypeConfigInterface
 {
 
     /**

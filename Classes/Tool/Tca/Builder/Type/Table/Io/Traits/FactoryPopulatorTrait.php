@@ -93,7 +93,7 @@ trait FactoryPopulatorTrait
 
             // If we don't have a target, this is wrong!
             if ($target === null) {
-                throw new TcaBuilderException('Invalid TCA! Fields have to be wrapped in a tab or container!');
+                $target = $this->populateTab($type, [], $tabCounter++);
             }
 
             // Ignore the field if we don't have a configuration for it

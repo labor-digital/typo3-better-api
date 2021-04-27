@@ -44,6 +44,7 @@ trait DumperGenericTrait
      */
     protected function dumpRootTca(TcaTable $table): array
     {
+        /** @noinspection UnserializeExploitsInspection */
         $tca                                   = unserialize(serialize($table->getRaw(true)));
         $tca[DataHookTypes::TCA_DATA_HOOK_KEY] = $table->getRegisteredDataHooks();
 
@@ -119,7 +120,7 @@ trait DumperGenericTrait
             }
 
             if ($child instanceof TcaPalette) {
-                $meta      = $o = $child->getLayoutMeta();
+                $meta      = $child->getLayoutMeta();
                 $meta[0]   = $child->hasLabel() ? $child->getLabel() : '';
                 $meta[1]   = $currentPalette = substr($child->getId(), 1);
                 $pointer[] = '--palette--;' . implode(';', $meta);
@@ -132,9 +133,10 @@ trait DumperGenericTrait
 
             // This marks the end of a container/palette
             if ($child === null) {
-                $palettes[$currentPalette]['showitem'] = implode(',', $paletteShowItem);
-                $currentPalette                        = null;
-                $pointer                               = &$showItem;
+                $palettes[$currentPalette]['showitem']
+                                = empty($paletteShowItem) ? null : implode(',', $paletteShowItem);
+                $currentPalette = null;
+                $pointer        = &$showItem;
                 continue;
             }
 
@@ -152,7 +154,9 @@ trait DumperGenericTrait
             }
         }
 
-        $tca['types'][$type->getTypeName()]['showitem'] = implode(',', $showItem);
-        $tca['palettes']                                = $palettes;
+        if (! empty($showItem)) {
+            $tca['types'][$type->getTypeName()]['showitem'] = implode(',', $showItem);
+        }
+        $tca['palettes'] = $palettes;
     }
 }

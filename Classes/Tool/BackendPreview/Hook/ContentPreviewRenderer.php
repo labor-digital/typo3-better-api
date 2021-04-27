@@ -26,10 +26,9 @@ namespace LaborDigital\T3BA\Tool\BackendPreview\Hook;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
-use LaborDigital\T3BA\Tool\Translation\Translator;
+use LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldListRenderer;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -130,43 +129,16 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
                 'renderDefaultFooter'  => function () use ($item) {
                     return parent::renderPageModulePreviewFooter($item);
                 },
-                'renderFieldList'      => function (array $fields) use ($item) {
-                    return $this->renderFieldList($item, $fields);
+                'renderFieldList'      => function (array $fields, ?string $tableName) use ($item) {
+                    return $this->getService(FieldListRenderer::class)->render(
+                        $tableName ?? 'tt_content', $item->getRecord(), $fields
+                    );
                 },
                 'wrapWithEditLink'     => function ($linkText) use ($item) {
                     return $this->linkEditContent($linkText, $item->getRecord());
                 },
             ],
         ]);
-    }
-
-    /**
-     * Renders the given list of fields based on the item record
-     *
-     * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem  $item
-     * @param   array                                                      $fields
-     *
-     * @return string
-     */
-    protected function renderFieldList(GridColumnItem $item, array $fields): string
-    {
-        $translator = $this->getService(Translator::class);
-        $data       = $item->getRecord();
-        $result     = [];
-        foreach ($fields as $field) {
-            if (empty($data[$field]) && $data[$field] !== 0) {
-                continue;
-            }
-
-            $label = Arrays::getPath($GLOBALS, ['TCA', 'tt_content', 'columns', $field, 'label'], $fields);
-            // @todo switch this to translateBe when it was implemented
-            $label     = $translator->translate($label);
-            $processed = BackendUtility::getProcessedValue('tt_content', $field, $data[$field]);
-            $result[]  = '<strong>' . htmlspecialchars($translator->translate($label)) . ': </strong> '
-                         . htmlspecialchars(empty($processed) ? (string)$data[$field] : $processed);
-        }
-
-        return '<ul><li>' . implode('</li><li>', $result) . '</li></ul>';
     }
 
     /**

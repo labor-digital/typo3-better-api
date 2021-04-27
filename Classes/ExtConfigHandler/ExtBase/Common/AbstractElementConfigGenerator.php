@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigException;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig;
+use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
 use LaborDigital\T3BA\Tool\BackendPreview\Hook\ContentPreviewRenderer;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
@@ -303,7 +304,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context
     ): void {
-        if (! $configurator->hasFlexForm()) {
+        if (! $configurator instanceof PluginConfigurator || ! $configurator->hasFlexForm()) {
             return;
         }
 

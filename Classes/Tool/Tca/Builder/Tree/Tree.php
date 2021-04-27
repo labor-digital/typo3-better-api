@@ -214,9 +214,7 @@ class Tree
     {
         switch ($type) {
             case Node::TYPE_TAB:
-                foreach ($this->root->getChildren() as $tabNode) {
-                    yield $tabNode;
-                }
+                yield from $this->root->getChildren();
                 break;
             case Node::TYPE_CONTAINER:
                 foreach ($this->root->getChildren() as $tab) {
@@ -236,7 +234,9 @@ class Tree
                             continue;
                         }
                         foreach ($child->getChildren() as $field) {
-                            yield $field;
+                            if ($child->getType() === $type) {
+                                yield $field;
+                            }
                         }
                     }
                 }

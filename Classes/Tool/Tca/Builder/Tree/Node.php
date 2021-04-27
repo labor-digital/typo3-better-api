@@ -287,6 +287,26 @@ class Node
     }
 
     /**
+     * Allows you to rename the id of a child node to something else.
+     *
+     * @param   string  $currentId  The id the child currently has
+     * @param   string  $newId      The id the child should be given instead
+     */
+    public function renameChild(string $currentId, string $newId): void
+    {
+        $children = [];
+        foreach ($this->children as $childId => $child) {
+            if ($currentId === $childId) {
+                $child->id        = $newId;
+                $children[$newId] = $child;
+            } else {
+                $children[$childId] = $child;
+            }
+        }
+        $this->children = $children;
+    }
+
+    /**
      * Returns the lift of all children contained by this node
      *
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[]

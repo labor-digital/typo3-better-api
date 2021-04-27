@@ -112,7 +112,7 @@ class TableFactory implements PublicServiceInterface
         // the registered data hooks correctly. I have hoped not to rely on this,
         // because it causes a lot of, potentially unnecessary, overhead.
         // So, if there is a better solution for handling the dataHooks tell me, please!
-        foreach ($table->getTypeNames() as $typeName) {
+        foreach (array_keys($tca['types'] ?? []) as $typeName) {
             $table->getType($typeName);
         }
     }

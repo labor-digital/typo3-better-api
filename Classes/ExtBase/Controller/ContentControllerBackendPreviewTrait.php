@@ -44,7 +44,7 @@ use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
  *
  * @package LaborDigital\T3BA\ExtBase\Controller
  */
-trait ExtBaseBackendPreviewRendererTrait
+trait ContentControllerBackendPreviewTrait
 {
     /**
      * Internal helper to move some stuff around
@@ -58,23 +58,16 @@ trait ExtBaseBackendPreviewRendererTrait
      *
      * @var BackendPreviewRendererContext
      */
-    protected $context;
-
-    /**
-     * Holds the data if the backend action is executed
-     *
-     * @var array|null
-     */
-    protected $data = [];
+    protected $previewRendererContext;
 
     /**
      * Injects the context when the renderer is instantiated
      *
      * @param   BackendPreviewRendererContext  $context
      */
-    public function setContext(BackendPreviewRendererContext $context): void
+    public function setBackendPreviewRendererContext(BackendPreviewRendererContext $context): void
     {
-        $this->context = $context;
+        $this->previewRendererContext = $context;
     }
 
     /**
@@ -89,7 +82,7 @@ trait ExtBaseBackendPreviewRendererTrait
     protected function getFluidView(string $templateName = 'BackendPreview'): StandaloneView
     {
         // Load the view configuration from typoScript
-        $row        = $this->context->getRow();
+        $row        = $this->previewRendererContext->getRow();
         $signature  = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
         $configType = $row['CType'] === 'list' ? 'plugin' : 'contentElement';
         if (strpos($signature, 'tx_') !== 0) {
@@ -127,10 +120,10 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     protected function simulateRequest(string $actionName, array $options = []): ResponseInterface
     {
-        $this->validateThatBePreviewTraitIsCalledInActionController();
-        static::$transfer['context']  = $this->context;
+        ControllerUtil::requireActionController($this);
+
+        static::$transfer['context']  = $this->previewRendererContext;
         static::$transfer['settings'] = isset($this->settings) && is_array($this->settings) ? $this->settings : [];
-        static::$transfer['data']     = isset($this->data) && is_array($this->data) ? $this->data : [];
 
         // Prepare the options
         static::$transfer['options'] = Options::make($options, [
@@ -146,11 +139,10 @@ trait ExtBaseBackendPreviewRendererTrait
 
         /** @var ActionController $this */
         $objectManager = $this->objectManager;
-        $row           = $this->context->getRow();
+        $row           = $this->previewRendererContext->getRow();
         $listType      = $row['list_type'];
         $typoContext   = TypoContext::getInstance();
-        $config        = $typoContext->di()->cs()->ts
-            ->get(['plugin', 'tx_' . $listType], ['default' => []]);
+        $config        = $typoContext->di()->cs()->ts->get(['plugin', 'tx_' . $listType], ['default' => []]);
 
         // Prepare the config manager
         /** @var ActionController $this */
@@ -159,8 +151,9 @@ trait ExtBaseBackendPreviewRendererTrait
 
         // Create a new request
         $controllerClass = get_called_class();
-        $request         = $objectManager->get(RequestInterface::class, $controllerClass);
-        $request->setPluginName($this->context->getRow()['list_type']);
+        /** @noinspection PhpParamsInspection */
+        $request = $objectManager->get(RequestInterface::class, $controllerClass);
+        $request->setPluginName($this->previewRendererContext->getRow()['list_type']);
         $request->setControllerObjectName($controllerClass);
         $request->setControllerActionName($actionName);
         $request->setArguments(static::$transfer['options']['additionalArgs']);
@@ -194,7 +187,9 @@ trait ExtBaseBackendPreviewRendererTrait
      */
     protected function simulateVariantRequest(array $variantActionMap, array $options = []): ResponseInterface
     {
-        $variant = $this->context->getPluginVariant();
+        ControllerUtil::requireActionController($this);
+
+        $variant = $this->previewRendererContext->getPluginVariant();
         $action  = $variantActionMap[$variant] ?? $variantActionMap['default'] ?? null;
 
         if ($action === null) {
@@ -218,20 +213,10 @@ trait ExtBaseBackendPreviewRendererTrait
     }
 
     /**
-     * Internal helper to check if all our required properties exist
-     *
-     * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
-     */
-    protected function validateThatBePreviewTraitIsCalledInActionController(): void
-    {
-        if (! $this instanceof ActionController) {
-            throw new BackendPreviewException('To use this trait you have to call it in an ActionController action!');
-        }
-    }
-
-    /**
      * We use this method to override the basic controller properties.
      * Also provides the required environment properties to create a "mostly" real ext-base controller experience.
+     *
+     * @internal
      */
     protected function registerEnvironmentSetup(): void
     {
@@ -246,16 +231,11 @@ trait ExtBaseBackendPreviewRendererTrait
             // because someone was clever enough to not include that instance into the event -.-
             foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 6) as $call) {
                 if (isset($call['object']) && $call['object'] instanceof self) {
-                    $controller          = $call['object'];
-                    $controller->context = static::$transfer['context'];
-
-                    if (property_exists($controller, 'data')) {
-                        $controller->data = static::$transfer['data'];
-                    }
+                    $controller                         = $call['object'];
+                    $controller->previewRendererContext = static::$transfer['context'];
 
                     $controller->settings = is_array($controller->settings)
-                        ? Arrays::merge($controller->settings, static::$transfer['settings'])
-                        : $controller->data['settings'];
+                        ? Arrays::merge($controller->settings, static::$transfer['settings']) : [];
 
                     try {
                         $controller->view = $controller->getFluidView(static::$transfer['options']['templateName']);

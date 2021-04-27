@@ -39,7 +39,6 @@ class ContentElementConfigurator extends AbstractElementConfigurator
 
     /**
      * Returns the currently set section label of this element when it is rendered in the cType select box.
-     * This of course only works if you set the type to "contentElement".
      *
      * @return string
      */
@@ -51,7 +50,6 @@ class ContentElementConfigurator extends AbstractElementConfigurator
     /**
      * Is used to set the section label of this element when it is rendered in the cType select box.
      * If this is not defined, a label is automatically generated using the extension key
-     * This of course only works if you set the type to "contentElement".
      *
      * @param   string  $cTypeSection
      *

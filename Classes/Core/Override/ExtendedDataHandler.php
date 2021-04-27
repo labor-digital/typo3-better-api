@@ -42,6 +42,7 @@ use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
 use LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent;
 use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
+use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoWithPermsFilterEvent;
 use TYPO3\CMS\Core\DataHandling\T3BA__Copy__DataHandler;
 
 class ExtendedDataHandler extends T3BA__Copy__DataHandler
@@ -57,12 +58,12 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $id,
             $fieldList,
             $this,
-            function ($fieldList) use ($table, $id) {
+            function ($fieldList, $table, $id) {
                 return parent::recordInfo($table, $id, $fieldList);
             }
         ));
 
-        return call_user_func($e->getConcreteInfoProvider(), $e->getFieldList());
+        return call_user_func($e->getConcreteInfoProvider(), $e->getFieldList(), $table, $id);
     }
 
     /**
@@ -91,7 +92,7 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $this
         ));
 
-        return parent::updateDB($e->getTableName(), $e->getId(), $e->getRow());
+        parent::updateDB($e->getTableName(), $e->getId(), $e->getRow());
     }
 
     /**
@@ -127,5 +128,18 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $suggestedUid,
             $dontSetNewIdIndex
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function recordInfoWithPermissionCheck(string $table, int $id, $perms, string $fieldList = '*')
+    {
+        $result = parent::recordInfoWithPermissionCheck($table, $id, $perms, $fieldList);
+
+        /** @noinspection PhpParamsInspection */
+        return TypoEventBus::getInstance()->dispatch(new DataHandlerRecordInfoWithPermsFilterEvent(
+            $table, $id, $fieldList, $this, $result, $perms
+        ))->getResult();
     }
 }

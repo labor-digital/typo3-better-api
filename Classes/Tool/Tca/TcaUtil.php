@@ -104,7 +104,7 @@ class TcaUtil
         $tableName = NamingUtil::resolveTableName($table);
         $rowType   = static::getRecordType($row, $tableName);
 
-        $tcaBackup = Arrays::getPath($GLOBALS, ['TCA', $tableName, 'columns'], []);
+        $tcaBackup = $GLOBALS['TCA'][$tableName]['columns'] ?? [];
         $key       = $tableName . '_' . $rowType;
 
         try {
@@ -116,7 +116,7 @@ class TcaUtil
                     unset(static::$resolvedTypeTca[$key]);
                     static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
                 } else {
-                    $typeTca = Arrays::getPath($GLOBALS, ['TCA', $tableName, 'types', $rowType], []);
+                    $typeTca = $GLOBALS['TCA'][$tableName]['types'][$rowType] ?? [];
 
                     $GLOBALS['TCA'][$tableName]['columns'] = static::applyColumnOverrides($tcaBackup, $typeTca);
 
@@ -133,4 +133,5 @@ class TcaUtil
             $GLOBALS['TCA'][$tableName]['columns'] = $tcaBackup;
         }
     }
+
 }

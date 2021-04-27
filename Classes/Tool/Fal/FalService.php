@@ -165,13 +165,10 @@ class FalService implements SingletonInterface
             $file = $this->getFileRepository()->findByRelation($table, $field, $uid);
 
             if (! empty($file)) {
-                $file = $onlyFirst ? reset($file) : $file;
-            } else {
-                $file = null;
+                return $onlyFirst ? reset($file) : $file;
             }
 
-            // Done
-            return $file;
+            return $onlyFirst ? null : [];
         } catch (Throwable $e) {
             return null;
         }

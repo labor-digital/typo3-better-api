@@ -152,8 +152,8 @@ class Applier extends AbstractExtConfigApplier
 
             // Plugin registration
             if (is_array($args['plugin'])) {
-                foreach ($args['plugin'] as $args) {
-                    ExtensionUtility::registerPlugin(...$args);
+                foreach ($args['plugin'] as $pluginArgs) {
+                    ExtensionUtility::registerPlugin(...$pluginArgs);
                 }
             }
 

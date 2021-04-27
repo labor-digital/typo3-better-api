@@ -25,18 +25,14 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Table;
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 
 class Handler extends AbstractExtConfigHandler
 {
-    /**
-     * The collected table definitions for the table loader
-     *
-     * @var array
-     */
-    protected $loadableTables = [];
+    use DelayedConfigExecutionTrait;
 
     /**
      * The list of generated table class -> table name mappings, that should be injected into
@@ -61,10 +57,7 @@ class Handler extends AbstractExtConfigHandler
     /**
      * @inheritDoc
      */
-    public function prepare(): void
-    {
-        logFile($this->definition->getConfigClasses());
-    }
+    public function prepare(): void { }
 
     /**
      * @inheritDoc
@@ -78,10 +71,7 @@ class Handler extends AbstractExtConfigHandler
 
         $listKey = $this->definition->isOverride($class) ? 'override' : 'default';
 
-        $this->loadableTables[$listKey][$tableName][] = [
-            'className' => $class,
-            'namespace' => $this->context->getNamespace(),
-        ];
+        $this->saveDelayedConfig($this->context, 'tca.loadableTables.' . $listKey, $class, $tableName);
     }
 
     /**
@@ -89,11 +79,8 @@ class Handler extends AbstractExtConfigHandler
      */
     public function finish(): void
     {
-        $this->context->getState()
-                      ->setAsJson('tca.loadableTables', $this->loadableTables)
-                      ->mergeIntoArray('tca.meta.classNameMap', $this->storedTableNameMap);
+        $this->context->getState()->mergeIntoArray('tca.meta.classNameMap', $this->storedTableNameMap);
     }
-
 
     /**
      * Receives the absolute class name and either uses getTableName() if the class implements,

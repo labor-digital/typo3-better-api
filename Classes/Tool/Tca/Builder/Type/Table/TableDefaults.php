@@ -226,4 +226,19 @@ class TableDefaults
                 ],
             ],
         ];
+
+    public const CONTENT_TYPE_TCA
+        = [
+            'showitem' => '
+                    --div--;t3ba.tab.general,
+					--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,
+					--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
+					layout;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:layout_formlabel,
+                    --div--;t3ba.tab.language,
+					--palette--;;language,
+                    --div--;t3ba.tab.access,
+					--palette--;;hidden,
+					--palette--;;access,
+					--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.extended,',
+        ];
 }

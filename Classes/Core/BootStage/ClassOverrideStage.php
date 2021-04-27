@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\Core\BootStage;
 use LaborDigital\T3BA\Core\CodeGeneration\ClassOverrideGenerator;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Core\Kernel;
+use LaborDigital\T3BA\Core\Override\ExtendedBackendUtility;
 use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
 use LaborDigital\T3BA\Core\Override\ExtendedCacheManager;
 use LaborDigital\T3BA\Core\Override\ExtendedContainerBuilder;
@@ -38,6 +39,7 @@ use LaborDigital\T3BA\Core\Override\ExtendedSiteConfiguration;
 use LaborDigital\T3BA\Core\Override\ExtendedTypoScriptParser;
 use LaborDigital\T3BA\Event\KernelBootEvent;
 use TYPO3\CMS\Backend\Form\NodeFactory;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Core\Bootstrap;
@@ -53,6 +55,7 @@ class ClassOverrideStage implements BootStageInterface
 
     public const OVERRIDE_MAP
         = [
+            BackendUtility::class      => ExtendedBackendUtility::class,
             Bootstrap::class           => ExtendedBootstrap::class,
             ContainerBuilder::class    => ExtendedContainerBuilder::class,
             CacheManager::class        => ExtendedCacheManager::class,

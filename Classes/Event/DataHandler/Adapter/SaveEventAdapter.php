@@ -90,6 +90,7 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
     public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, DataHandler $pObj): void
     {
         try {
+            $id = $pObj->substNEWwithIDs[$id];
             $this->EventBus()->dispatch(($e = new SaveAfterDbOperationsEvent(
                 $status,
                 $table,

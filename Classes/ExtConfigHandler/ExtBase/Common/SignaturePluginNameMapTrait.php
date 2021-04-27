@@ -71,8 +71,8 @@ trait SignaturePluginNameMapTrait
     protected function getPluginNameForSignature(string $signature): string
     {
         if (! isset($this->signaturePluginNameMap[$signature])) {
-            throw new InvalidArgumentException('There is no plugin name for signature: ' . $signature
-                                               . ' registered!');
+            throw new InvalidArgumentException(
+                'There is no plugin name for signature: ' . $signature . ' registered!');
         }
 
         return $this->signaturePluginNameMap[$signature];

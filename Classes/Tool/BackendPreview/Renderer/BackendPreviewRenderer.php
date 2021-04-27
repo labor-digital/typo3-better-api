@@ -27,6 +27,7 @@ use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
+use LaborDigital\T3BA\Tool\BackendPreview\ContextAwareBackendPreviewRendererInterface;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
 use Neunerlei\Arrays\Arrays;
 use Throwable;
@@ -110,8 +111,9 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                         [$event]
                     );
 
-                    if (method_exists($renderer, 'setContext')) {
-                        $renderer->setContext($context);
+                    if ($renderer instanceof ContextAwareBackendPreviewRendererInterface
+                        || method_exists($renderer, 'setBackendPreviewRendererContext')) {
+                        $renderer->setBackendPreviewRendererContext($context);
                     }
 
                     $context->setHeader(empty($event->getHeader())

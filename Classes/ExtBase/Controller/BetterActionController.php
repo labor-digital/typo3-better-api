@@ -37,13 +37,6 @@ abstract class BetterActionController extends ActionController
     use ContainerAwareTrait;
 
     /**
-     * The list of the raw content object data
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
      * Implements new hooks, catches a weired TYPO3 exception if a dbal entry was not found
      * and provides additional data attribute, containing the raw content element data
      *

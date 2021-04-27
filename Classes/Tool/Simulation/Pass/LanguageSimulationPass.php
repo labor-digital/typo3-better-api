@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Simulation\Pass;
 
 
+use GuzzleHttp\Psr7\Uri;
 use InvalidArgumentException;
 use LaborDigital\T3BA\Tool\Translation\Translator;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
@@ -109,6 +110,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
         $storage['request'] = $this->typoContext->config()->getRequestAttribute('language');
         $storage['service'] = $GLOBALS['LANG'];
         $storage['aspect']  = $this->typoContext->getRootContext()->getAspect('language');
+        $storage['locale']  = setlocale(LC_ALL, 0);
 
         // Update the language
         $languageObject = $this->resolveLanguageObject($options['language'], $options['fallbackLanguage']);
@@ -132,7 +134,8 @@ class LanguageSimulationPass implements SimulatorPassInterface
 
         $this->typoContext->getRootContext()->setAspect('language', $storage['aspect']);
         $this->typoContext->config()->setRequestAttribute('language', $storage['request']);
-        Locales::setSystemLocaleFromSiteLanguage($storage['request']);
+        $localeLang = $storage['request'] ?? new SiteLanguage(1, $storage['locale'], new Uri(), []);
+        Locales::setSystemLocaleFromSiteLanguage($localeLang);
     }
 
     /**

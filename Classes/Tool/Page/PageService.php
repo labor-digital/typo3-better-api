@@ -100,7 +100,7 @@ class PageService implements SingletonInterface
             $row['title'] = $options['title'];
         }
 
-        return $this->recordHandler->makeNew($row, $parentPid, $options['force']);
+        return $this->recordHandler->save($row, $parentPid, $options['force']);
     }
 
     /**

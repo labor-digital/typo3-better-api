@@ -118,7 +118,7 @@ trait TcaTableConfigTrait
      */
     public function isAllowedOnStandardPages(): bool
     {
-        return (bool)$this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] ?? false;
+        return (bool)$this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY];
     }
 
     /**

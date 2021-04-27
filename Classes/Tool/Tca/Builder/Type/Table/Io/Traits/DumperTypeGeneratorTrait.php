@@ -165,13 +165,15 @@ trait DumperTypeGeneratorTrait
             // Update type's show item...
             // Yay for string manipulation \o/...
             $typeShowitem = preg_replace(
-                '/(--palette--;[^;,]*;)' . preg_quote($k) . '(,|$)/si',
+                '/(--palette--;[^;,]*;)' . preg_quote($k, '/') . '(,|$)/si',
                 '${1}' . $newK . ',',
                 $typeShowitem);
         }
 
-        $tca['types'][$typeName]['showitem'] = $typeShowitem;
-        $tca['palettes']                     = $palettes;
+        if (! empty($typeShowitem)) {
+            $tca['types'][$typeName]['showitem'] = $typeShowitem;
+        }
+        $tca['palettes'] = $palettes;
     }
 
 

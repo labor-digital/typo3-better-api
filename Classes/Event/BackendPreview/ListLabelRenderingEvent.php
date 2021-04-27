@@ -109,20 +109,6 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     }
 
     /**
-     * Updates the database row of the record to render the the label for
-     *
-     * @param   array  $row
-     *
-     * @return $this
-     */
-    public function setRow(array $row): self
-    {
-        $this->row = $row;
-
-        return $this;
-    }
-
-    /**
      * Returns additional options for the label
      *
      * @return array

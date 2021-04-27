@@ -36,23 +36,17 @@ use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 
 class TypeFactory implements PublicServiceInterface
 {
+    /**
+     * The class name of the type instances that get generated in the create() method
+     *
+     * @var string
+     */
+    public static $typeClass = TcaTableType::class;
+
     use ContainerAwareTrait;
     use FactoryTypeLoaderTrait;
     use FactoryPopulatorTrait;
     use FactoryDataHookTrait;
-
-    /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
-     */
-    protected $tableFactory;
-
-    /**
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory  $tableFactory
-     */
-    public function injectTableFactory(TableFactory $tableFactory): void
-    {
-        $this->tableFactory = $tableFactory;
-    }
 
     /**
      * Creates a new, empty instance for a certain TCA table type
@@ -65,7 +59,7 @@ class TypeFactory implements PublicServiceInterface
     public function create($typeName, TcaTable $table): TcaTableType
     {
         return $this->makeInstance(
-            TcaTableType::class, [
+            static::$typeClass, [
                 $table,
                 $typeName,
                 $table->getContext(),
@@ -90,8 +84,9 @@ class TypeFactory implements PublicServiceInterface
         );
 
         // Inherit the data hooks from the table
-        if (! isset($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY])
-            || ! is_array($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY])) {
+        if (isset($tca[DataHookTypes::TCA_DATA_HOOK_KEY])
+            && (! isset($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY])
+                || ! is_array($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY]))) {
             $typeTca[DataHookTypes::TCA_DATA_HOOK_KEY] = $tca[DataHookTypes::TCA_DATA_HOOK_KEY];
         }
 

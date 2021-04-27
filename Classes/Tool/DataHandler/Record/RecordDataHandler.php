@@ -81,18 +81,31 @@ class RecordDataHandler
      *
      * @return int The uid of the new record
      */
-    public function makeNew(array $data, ?int $pid = null, bool $force = false): int
+    public function save(array $data, ?int $pid = null, bool $force = false): int
     {
         if ($pid !== null) {
             $data['pid'] = $pid;
         }
 
-        return $this->forceWrapper(function () use ($data) {
+        $isNew = false;
+        if (! isset($data['uid']) || ! is_numeric($data['uid'])) {
+            $isNew       = true;
+            $data['uid'] = 'NEW_1';
+        }
+
+        return $this->forceWrapper(function () use ($data, $isNew) {
+            $uid = $data['uid'];
+            unset($data['uid']);
+
             $handler = $this->handlerService->processData([
                 $this->tableName => [
-                    'NEW_1' => $data,
+                    $uid => $data,
                 ],
             ]);
+
+            if (! $isNew) {
+                return $uid;
+            }
 
             return reset($handler->substNEWwithIDs);
         }, $force);

@@ -31,12 +31,15 @@ use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
 use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3BA\Event\Core\TcaWithoutOverridesLoadedEvent;
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3BA\ExtConfigHandler\Table\ContentType\Loader as ContentTypeLoader;
+use LaborDigital\T3BA\ExtConfigHandler\Table\Loader as TableLoader;
+use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-class Applier extends AbstractExtConfigApplier
+class TableApplier extends AbstractExtConfigApplier
 {
     use ContainerAwareTrait;
 
@@ -74,7 +77,7 @@ class Applier extends AbstractExtConfigApplier
      */
     public function onExtLocalConfLoaded(): void
     {
-        $this->applyDefaults();
+        $this->applyMeta();
     }
 
     /**
@@ -100,7 +103,7 @@ class Applier extends AbstractExtConfigApplier
      */
     public function onTcaLoad(): void
     {
-        $this->getService(Loader::class)->loadTables();
+        $this->getService(TableLoader::class)->loadTables();
     }
 
     /**
@@ -108,10 +111,12 @@ class Applier extends AbstractExtConfigApplier
      */
     public function onTcaLoadOverride(): void
     {
-        $loader = $this->getService(Loader::class);
-        $loader->loadTableOverrides();
-        $this->cache->set(static::TCA_META_CACHE_KEY, $loader->loadTableMeta());
-        $this->applyDefaults();
+        $this->getService(TableLoader::class)->loadTableOverrides();
+        $this->getService(ContentTypeLoader::class)->load();
+        $this->cache->set(static::TCA_META_CACHE_KEY,
+            $this->getService(TcaPostProcessor::class)->process()
+        );
+        $this->applyMeta();
     }
 
     /**
@@ -132,9 +137,9 @@ class Applier extends AbstractExtConfigApplier
     }
 
     /**
-     * Applies the
+     * Applies meta information that was generated alongside the TCA to services that can handle them
      */
-    protected function applyDefaults(): void
+    protected function applyMeta(): void
     {
         // Injects the tca.meta node into the global configuration object
         $this->state->mergeIntoArray('tca.meta', $this->cache->get(static::TCA_META_CACHE_KEY, []));
@@ -144,5 +149,10 @@ class Applier extends AbstractExtConfigApplier
         if (is_array($list)) {
             NamingUtil::$tcaTableClassNameMap = array_merge(NamingUtil::$tcaTableClassNameMap, $list);
         }
+    }
+
+    protected function getTableLoader(): Loader
+    {
+        return $this->getService(Loader::class);
     }
 }

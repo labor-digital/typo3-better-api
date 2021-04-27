@@ -75,13 +75,14 @@ class BackendPreviewUtils
     /**
      * Renders a list of fields as a nice html with both the value and the translated label
      *
-     * @param   array  $fields  The list of db fields that should be rendered
+     * @param   array        $fields     The list of db fields that should be rendered
+     * @param   string|null  $tableName  The name of the table to render the fields for
      *
      * @return string
      */
-    public function renderFieldList(array $fields): string
+    public function renderFieldList(array $fields, ?string $tableName = null): string
     {
-        return call_user_func($this->links[__FUNCTION__], $fields);
+        return call_user_func($this->links[__FUNCTION__], $fields, $tableName);
     }
 
     /**

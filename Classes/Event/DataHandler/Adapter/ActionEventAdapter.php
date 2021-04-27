@@ -61,7 +61,7 @@ class ActionEventAdapter extends AbstractCoreHookEventAdapter
     ): void {
         // Make sure to extract the new uid when a record was copied
         $newElementId = -1;
-        if ($command === 'copy') {
+        if ($command === 'copy' || $command === 'copyToLanguage') {
             $newElementId = Arrays::getPath($parent->copyMappingArray, [$table, $id], $newElementId);
         }
 

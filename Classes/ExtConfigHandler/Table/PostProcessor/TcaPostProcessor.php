@@ -24,9 +24,9 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor;
 
 
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\SqlDefinitionStep;
 use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 
@@ -42,7 +42,7 @@ use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
  *
  * @package LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor
  */
-class TcaPostProcessor
+class TcaPostProcessor implements PublicServiceInterface
 {
     use ContainerAwareTrait;
 

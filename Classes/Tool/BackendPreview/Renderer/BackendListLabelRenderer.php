@@ -26,11 +26,34 @@ namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
 use LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendListLabelRendererInterface;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
+use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeUtil;
+use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository;
+use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 use Throwable;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 class BackendListLabelRenderer extends AbstractRenderer
 {
+    /**
+     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository
+     */
+    protected $contentRepository;
+
+    /**
+     * @var \LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldRenderer
+     */
+    protected $fieldRenderer;
+
+    /**
+     * BackendListLabelRenderer constructor.
+     *
+     * @param   \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository  $contentRepository
+     */
+    public function __construct(ContentRepository $contentRepository, FieldRenderer $fieldRenderer)
+    {
+        $this->contentRepository = $contentRepository;
+        $this->fieldRenderer     = $fieldRenderer;
+    }
+
     /**
      * Tries to render the backend list label of a specific content element based on the data provided
      * in the given preview rendering event
@@ -39,30 +62,34 @@ class BackendListLabelRenderer extends AbstractRenderer
      */
     public function render(ListLabelRenderingEvent $event): void
     {
-        $title      = $this->findDefaultHeader($event->getRow());
-        $foundLabel = false;
-        foreach (
-            $this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.listLabelRenderers', []) as $def
-        ) {
-            [$handler, $constraints] = $def;
+        TcaUtil::runWithResolvedTypeTca($event->getRow(), $event->getTableName(), function () use ($event) {
+            $row        = $event->getRow();
+            $title      = $this->findDefaultHeader($row);
+            $foundLabel = false;
 
-            // Non-empty constraints in form of an array that don't match the row -> skip
-            if (! empty($constraints) && is_array($constraints)
-                && count(array_intersect_assoc($constraints, $event->getRow())) !== count($constraints)) {
-                continue;
+            foreach (
+                $this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.listLabelRenderers', []) as $def
+            ) {
+                [$handler, $constraints] = $def;
+
+                // Non-empty constraints in form of an array that don't match the row -> skip
+                if (! empty($constraints) && is_array($constraints)
+                    && count(array_intersect_assoc($constraints, $row)) !== count($constraints)) {
+                    continue;
+                }
+
+                $foundLabel = true;
+                $title      .= is_array($handler)
+                    ? $this->renderColumns($handler, $event)
+                    : $this->callConcreteRenderer($handler, $event);
             }
 
-            $foundLabel = true;
-            $title      .= is_array($handler)
-                ? $this->renderColumns($handler, $event->getRow())
-                : $this->callConcreteRenderer($handler, $event);
-        }
+            if (! $foundLabel) {
+                $title .= $this->renderFallbackLabel($row);
+            }
 
-        if (! $foundLabel) {
-            $title .= $this->renderFallbackLabel($event->getRow());
-        }
-
-        $event->setTitle($title);
+            $event->setTitle($title);
+        });
     }
 
     /**
@@ -88,7 +115,13 @@ class BackendListLabelRenderer extends AbstractRenderer
                     . BackendListLabelRendererInterface::class);
             }
 
-            return ' | ' . $renderer->renderBackendListLabel($event->getRow(), $event->getOptions());
+            return ContentTypeUtil::runWithRemappedTca($event->getRow(), function () use ($renderer, $event) {
+                return ' | ' . $renderer->renderBackendListLabel(
+                        $this->contentRepository->getExtendedRow($event->getRow()),
+                        $event->getOptions()
+                    );
+            });
+
         } catch (Throwable $e) {
             return '[ERROR]: ' . $this->stringifyThrowable($e);
         }
@@ -105,34 +138,48 @@ class BackendListLabelRenderer extends AbstractRenderer
      *
      * @return string
      */
-    protected function renderColumns(array $columns, array $row, ?callable $additionalFilter = null): string
-    {
-        $result = [];
-        foreach ($columns as $column) {
-            $value = trim(strip_tags((string)$row[$column] ?? ''));
+    protected function renderColumns(
+        array $columns,
+        ListLabelRenderingEvent $event,
+        ?callable $additionalFilter = null
+    ): string {
+        $row = $this->contentRepository->getExtendedRow($event->getRow());
 
-            if ($additionalFilter !== null && ! $additionalFilter($value) || empty($value)) {
-                continue;
-            }
+        return ContentTypeUtil::runWithRemappedTca($row, function () use ($columns, $row, $additionalFilter, $event) {
+            $result = [];
+            foreach ($columns as $column) {
+                $value = trim(strip_tags((string)$row[$column]));
 
-            if ($column === 'tstamp' || $column === 'crdate') {
-                try {
-                    $value = BackendUtility::date($value);
-                } catch (Throwable $e) {
-                    // Silence
+                if (($additionalFilter !== null && ! $additionalFilter($value)) || empty($value)) {
+                    continue;
                 }
-            } else {
-                $value = BackendUtility::getProcessedValue('tt_content', $column, $value);
+
+                $result[] = $this->sliceFieldContent(
+                    $this->fieldRenderer->render($event->getTableName(), $column, $row, true) ?? ''
+                );
+//
+//                if ($column === 'tstamp' || $column === 'crdate') {
+//                    try {
+//                        $value = BackendUtility::date($value);
+//                    } catch (Throwable $e) {
+//                        // Silence
+//                    }
+//                } else {
+//                    $value = BackendUtility::getProcessedValue('tt_content', $column, $value);
+//                }
+//
+//                $result[] = $this->sliceFieldContent($value ?? '');
+            }
+            $result = array_filter($result);
+
+            if (empty($result)) {
+                return '';
             }
 
-            $result[] = $this->sliceFieldContent($value);
-        }
+            return ' | ' . implode(' | ', $result);
+        });
 
-        if (empty($result)) {
-            return '';
-        }
 
-        return ' | ' . implode(' | ', $result);
     }
 
     /**
@@ -152,7 +199,7 @@ class BackendListLabelRenderer extends AbstractRenderer
                     return false;
                 }
 
-                return $isRendered = ! empty($value) && ! is_numeric($value);
+                return $isRendered = (! empty($value) && ! is_numeric($value));
             });
     }
 
