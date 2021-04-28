@@ -25,17 +25,16 @@ use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
 use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use RuntimeException;
 use TypeError;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Event\Mvc\BeforeActionCallEvent;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Dispatcher;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
 
 /**
  * Trait ExtBaseBackendPreviewRendererTrait
@@ -81,27 +80,19 @@ trait ContentControllerBackendPreviewTrait
      */
     protected function getFluidView(string $templateName = 'BackendPreview'): StandaloneView
     {
-        // Load the view configuration from typoScript
-        $row        = $this->previewRendererContext->getRow();
-        $signature  = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
-        $configType = $row['CType'] === 'list' ? 'plugin' : 'contentElement';
-        if (strpos($signature, 'tx_') !== 0) {
-            $signature = 'tx_' . $signature;
-        }
+        ControllerUtil::requireActionController($this);
+        /** @var ActionController $this */
+
+        $config      = $this->configurationManager
+            ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
         $typoContext = TypoContext::getInstance();
         $typoScript  = $typoContext->di()->cs()->ts;
-        $viewConfig  = $typoScript->get([$configType, $signature, 'view'], ['default' => []]);
-        $viewConfig  = $typoScript->removeDots($viewConfig);
+        $viewConfig  = $typoScript->removeDots($config['view'] ?? []);
 
         // Make and prepare the view instance
-        $view = $typoContext->di()
-                            ->getService(TemplateRenderingService::class)
-                            ->getFluidView($templateName, $viewConfig);
-        $view->assign('settings', $row['settings']);
-        $view->assign('data', $row);
-
-        // Done
-        return $view;
+        return $typoContext->di()
+                           ->getService(TemplateRenderingService::class)
+                           ->getFluidView($templateName, $viewConfig);
     }
 
     /**
@@ -122,8 +113,8 @@ trait ContentControllerBackendPreviewTrait
     {
         ControllerUtil::requireActionController($this);
 
-        static::$transfer['context']  = $this->previewRendererContext;
-        static::$transfer['settings'] = isset($this->settings) && is_array($this->settings) ? $this->settings : [];
+        static::$transfer['context'] = $this->previewRendererContext;
+        /** @var ActionController $this */
 
         // Prepare the options
         static::$transfer['options'] = Options::make($options, [
@@ -137,24 +128,12 @@ trait ContentControllerBackendPreviewTrait
             ],
         ]);
 
-        /** @var ActionController $this */
-        $objectManager = $this->objectManager;
-        $row           = $this->previewRendererContext->getRow();
-        $listType      = $row['list_type'];
-        $typoContext   = TypoContext::getInstance();
-        $config        = $typoContext->di()->cs()->ts->get(['plugin', 'tx_' . $listType], ['default' => []]);
-
-        // Prepare the config manager
-        /** @var ActionController $this */
-        $configManager = $this->configurationManager;
-        $configManager->setConfiguration($config);
-
         // Create a new request
-        $controllerClass = get_called_class();
+        $objectManager = $this->objectManager;
         /** @noinspection PhpParamsInspection */
-        $request = $objectManager->get(RequestInterface::class, $controllerClass);
+        $request = $objectManager->get(RequestInterface::class, static::class);
         $request->setPluginName($this->previewRendererContext->getRow()['list_type']);
-        $request->setControllerObjectName($controllerClass);
+        $request->setControllerObjectName(static::class);
         $request->setControllerActionName($actionName);
         $request->setArguments(static::$transfer['options']['additionalArgs']);
         $request->setFormat('html');
@@ -180,6 +159,8 @@ trait ContentControllerBackendPreviewTrait
      *                                    which action should be triggered if a certain variant of a plugin is used.
      *                                    "default" is used as a protected key that points to the default plugin
      *                                    configuration.
+     *                                    Instead of an "actionName" you could also provide a boolean false,
+     *                                    which will disable the simulation request for a specific variant.
      * @param   array  $options           The same options you can pass for {@link simulateRequest()}
      *
      * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
@@ -197,6 +178,14 @@ trait ContentControllerBackendPreviewTrait
                 throw new BackendPreviewException('Could not resolve a action for the "default" variant.');
             }
             throw new BackendPreviewException('Could not resolve a action for variant: ' . $variant);
+        }
+
+        if ($action === false) {
+            /** @var ActionController $this */
+            $response = $this->objectManager->get(ResponseInterface::class);
+            $response->setContent('');
+
+            return $response;
         }
 
         if (! is_string($action)) {
@@ -234,12 +223,9 @@ trait ContentControllerBackendPreviewTrait
                     $controller                         = $call['object'];
                     $controller->previewRendererContext = static::$transfer['context'];
 
-                    $controller->settings = is_array($controller->settings)
-                        ? Arrays::merge($controller->settings, static::$transfer['settings']) : [];
-
                     try {
                         $controller->view = $controller->getFluidView(static::$transfer['options']['templateName']);
-                    } catch (InvalidTemplateResourceException $e) {
+                    } catch (\Throwable $e) {
                         // Silence
                     }
 

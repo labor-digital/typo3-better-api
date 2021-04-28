@@ -154,7 +154,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
         $data = $item->getRecord();
 
         if (! isset($this->pluginVariantMap)) {
-            $variants = $this->cs()->typoContext->config()->getConfigValue('typo.extBase.plugin.variants');
+            $variants = $this->cs()->typoContext->config()->getConfigValue('typo.extBase.element.variants');
             if (! empty($variants)) {
                 $variants = Arrays::makeFromJson($variants);
             }

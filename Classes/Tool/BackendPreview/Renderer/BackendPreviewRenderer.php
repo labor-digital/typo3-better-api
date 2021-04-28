@@ -29,12 +29,14 @@ use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
 use LaborDigital\T3BA\Tool\BackendPreview\ContextAwareBackendPreviewRendererInterface;
 use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
 use Throwable;
-use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Response;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterface
 {
@@ -82,81 +84,96 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         if (! class_exists($rendererClass)) {
             throw new BackendPreviewException('The given renderer class: ' . $rendererClass . ' does not exist!');
         }
-        $renderer = $this->getService($rendererClass);
-        if (! $renderer instanceof BackendPreviewRendererInterface) {
-            throw new BackendPreviewException
-            ('The given renderer class: ' . $rendererClass . ' has to implement the correct interface: '
-             . BackendPreviewRendererInterface::class);
-        }
 
-        // Prepare the row
-        $row             = $event->getRow();
-        $row['settings'] = [];
-        if (! empty($row['pi_flexform'])) {
-            $row = array_merge($row,
-                $this->makeInstance(FlexFormService::class)
-                     ->convertFlexFormContentToArray($row['pi_flexform'])
-            );
-        }
+        $objectManager = $this->makeInstance(ObjectManager::class);
+        $configManager = $objectManager->get(ConfigurationManagerInterface::class);
 
-        // Update the frontend language
-        $languageUid = Arrays::getPath($row, ['sys_language_uid'], null);
-        $this->getService(EnvironmentSimulator::class)->runWithEnvironment(
-            ['bootTsfe' => false, 'language' => $languageUid],
-            function () use ($renderer, $event, $row) {
-                try {
-                    // Create the context and let the renderer run
-                    $context = $this->makeInstance(
-                        BackendPreviewRendererContext::class,
-                        [$event]
-                    );
+        ConfigurationManagerAdapter::runWithFrontendManager(
+            $configManager,
+            function () use ($rendererClass, $event, $configManager) {
+                $row = $event->getRow();
 
-                    if ($renderer instanceof ContextAwareBackendPreviewRendererInterface
-                        || method_exists($renderer, 'setBackendPreviewRendererContext')) {
-                        $renderer->setBackendPreviewRendererContext($context);
+                $languageUid = $row['sys_language_uid'] ?? null;
+                $this->getService(EnvironmentSimulator::class)->runWithEnvironment(
+                    ['bootTsfe' => false, 'language' => $languageUid],
+                    function () use ($rendererClass, $configManager, $event, $row) {
+                        try {
+                            // When we have an action controller we perform additional setup
+                            // this allows the ContentControllerBackendPreviewTrait to directly access
+                            // the settings through the configuration manager
+                            if (in_array(ActionController::class, class_parents($rendererClass), true)) {
+                                $signature  = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
+                                $signature  = strpos($signature, 'tx_') === 0 ? $signature : 'tx_' . $signature;
+                                $configType = $row['CType'] === 'list' ? 'plugin' : 'contentElement';
+                                $config     = $this->cs()->ts->get([$configType, $signature], ['default' => []]);
+                                $cObj       = $this->getService(TsfeService::class)->getContentObjectRenderer();
+                                $cObj->data = $row;
+                                $configManager->setConfiguration($config);
+                                $configManager->setContentObject($cObj);
+                            }
+
+                            $renderer = $this->getService($rendererClass);
+                            if (! $renderer instanceof BackendPreviewRendererInterface) {
+                                throw new BackendPreviewException
+                                ('The given renderer class: ' . $rendererClass
+                                 . ' has to implement the correct interface: '
+                                 . BackendPreviewRendererInterface::class);
+                            }
+
+                            // Create the context and let the renderer run
+                            $context = $this->makeInstance(
+                                BackendPreviewRendererContext::class,
+                                [$event]
+                            );
+
+                            if ($renderer instanceof ContextAwareBackendPreviewRendererInterface
+                                || method_exists($renderer, 'setBackendPreviewRendererContext')) {
+                                $renderer->setBackendPreviewRendererContext($context);
+                            }
+
+                            $context->setHeader(empty($event->getHeader())
+                                ? '<b>' . $this->findDefaultHeader($row) . '</b>'
+                                : (string)$event->getHeader());
+                            $context->setFooter(empty($event->getFooter())
+                                ? $event->getUtils()->renderDefaultFooter()
+                                : (string)$event->getFooter());
+                            $context->setBody((string)$event->getBody());
+                            $context->setLinkPreview(empty($event->getBody()));
+
+                            $result = $renderer->renderBackendPreview($context);
+
+                            if ($result instanceof ViewInterface) {
+                                $result = $result->render();
+                            } elseif ($result instanceof Response) {
+                                $result = $result->getContent();
+                            }
+
+                            if (is_string($result)) {
+                                $context->setBody($result);
+                            }
+
+                            // Add the description if required
+                            $body = $context->getBody();
+                            if ($context->showDescription()) {
+                                $body = $this->renderDescription($event->getRow()) . $body;
+                            }
+
+                            // Check if we have to link the content
+                            if (! empty($body) && $context->isLinkPreview()) {
+                                $body = $event->getUtils()->wrapWithEditLink($body);
+                            }
+
+                            // Update event
+                            $event->setBody($body);
+                            $event->setFooter($context->getFooter());
+                            $event->setHeader($context->getHeader());
+                        } catch (Throwable $e) {
+                            $event->setBody(
+                                $this->renderErrorMessage($this->stringifyThrowable($e))
+                            );
+                        }
                     }
-
-                    $context->setHeader(empty($event->getHeader())
-                        ? '<b>' . $this->findDefaultHeader($row) . '</b>'
-                        : (string)$event->getHeader());
-                    $context->setFooter(empty($event->getFooter())
-                        ? $event->getUtils()->renderDefaultFooter()
-                        : (string)$event->getFooter());
-                    $context->setBody((string)$event->getBody());
-                    $context->setLinkPreview(empty($event->getBody()));
-
-                    $result = $renderer->renderBackendPreview($context);
-
-                    if ($result instanceof ViewInterface) {
-                        $result = $result->render();
-                    } elseif ($result instanceof Response) {
-                        $result = $result->getContent();
-                    }
-
-                    if (is_string($result)) {
-                        $context->setBody($result);
-                    }
-
-                    // Add the description if required
-                    $body = $context->getBody();
-                    if ($context->showDescription()) {
-                        $body = $this->renderDescription($event->getRow()) . $body;
-                    }
-
-                    // Check if we have to link the content
-                    if (! empty($body) && $context->isLinkPreview()) {
-                        $body = $event->getUtils()->wrapWithEditLink($body);
-                    }
-
-                    // Update event
-                    $event->setBody($body);
-                    $event->setFooter($context->getFooter());
-                    $event->setHeader($context->getHeader());
-                } catch (Throwable $e) {
-                    $event->setBody(
-                        $this->renderErrorMessage($this->stringifyThrowable($e))
-                    );
-                }
+                );
             }
         );
     }

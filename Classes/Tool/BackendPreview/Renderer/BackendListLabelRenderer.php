@@ -85,7 +85,7 @@ class BackendListLabelRenderer extends AbstractRenderer
             }
 
             if (! $foundLabel) {
-                $title .= $this->renderFallbackLabel($row);
+                $title .= $this->renderFallbackLabel($event);
             }
 
             $event->setTitle($title);
@@ -157,18 +157,7 @@ class BackendListLabelRenderer extends AbstractRenderer
                 $result[] = $this->sliceFieldContent(
                     $this->fieldRenderer->render($event->getTableName(), $column, $row, true) ?? ''
                 );
-//
-//                if ($column === 'tstamp' || $column === 'crdate') {
-//                    try {
-//                        $value = BackendUtility::date($value);
-//                    } catch (Throwable $e) {
-//                        // Silence
-//                    }
-//                } else {
-//                    $value = BackendUtility::getProcessedValue('tt_content', $column, $value);
-//                }
-//
-//                $result[] = $this->sliceFieldContent($value ?? '');
+
             }
             $result = array_filter($result);
 
@@ -185,16 +174,16 @@ class BackendListLabelRenderer extends AbstractRenderer
     /**
      * Renders an automatic fallback label based on the most commonly used columns of the tt_content table
      *
-     * @param   array  $row
+     * @param   \LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent  $event
      *
      * @return string
      */
-    protected function renderFallbackLabel(array $row): string
+    protected function renderFallbackLabel(ListLabelRenderingEvent $event): string
     {
         $isRendered = false;
 
         return $this->renderColumns(['headline', 'title', 'header', 'bodytext', 'content', 'description', 'desc'],
-            $row, static function (string $value) use (&$isRendered) {
+            $event, static function (string $value) use (&$isRendered) {
                 if ($isRendered) {
                     return false;
                 }
