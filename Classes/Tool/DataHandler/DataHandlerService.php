@@ -23,16 +23,18 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\DataHandler;
 
 
+use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Throwable;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DataHandlerService implements PublicServiceInterface, SingletonInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * Returns a new, empty data handler instance
      *
@@ -40,7 +42,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      */
     public function getEmptyDataHandler(): DataHandler
     {
-        return GeneralUtility::makeInstance(DataHandler::class);
+        return $this->makeInstance(DataHandler::class);
     }
 
     /**
@@ -53,8 +55,8 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      */
     public function getRecordDataHandler(string $tableName): RecordDataHandler
     {
-        return GeneralUtility::makeInstance(
-            RecordDataHandler::class, NamingUtil::resolveTableName($tableName), $this
+        return $this->makeInstance(
+            RecordDataHandler::class, [NamingUtil::resolveTableName($tableName), $this]
         );
     }
 
@@ -69,9 +71,9 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @see DataHandler::process_datamap()
      */
-    public function processData(array $data, array $commands = []): DataHandler
+    public function processData(array $data, array $commands = [], ?bool $force = null): DataHandler
     {
-        return $this->doProcessing($data, $commands, true);
+        return $this->doProcessing($data, $commands, true, $force);
     }
 
     /**
@@ -85,9 +87,9 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @see DataHandler::process_cmdmap()
      */
-    public function processCommands(array $commands, array $data = []): DataHandler
+    public function processCommands(array $commands, array $data = [], ?bool $force = null): DataHandler
     {
-        return $this->doProcessing($data, $commands, false);
+        return $this->doProcessing($data, $commands, false, $force);
     }
 
     /**
@@ -100,26 +102,52 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @throws \LaborDigital\T3BA\Tool\DataHandler\DataHandlerException
      */
-    protected function doProcessing(array $data, array $commands, bool $handleData): DataHandler
+    protected function doProcessing(array $data, array $commands, bool $handleData, ?bool $force = null): DataHandler
     {
-        $handler = $this->getEmptyDataHandler();
-        try {
-            $handler->errorLog = [];
-            $handler->start($data, $commands);
-            if ($handleData) {
-                $handler->process_datamap();
-            } else {
-                $handler->process_cmdmap();
+        // This is a hotfix, to automatically initialize the backend user if we are running in
+        // cli mode, otherwise the user has to do that for every command class.
+        $context = $this->cs()->typoContext;
+        if ($context->env()->isCli() && empty($context->beUser()->getUser()->user)) {
+            $context->beUser()->getUser()->backendCheckLogin();
+        }
+
+        return $this->forceWrapper(function () use ($data, $commands, $handleData) {
+            $handler = $this->getEmptyDataHandler();
+            try {
+                $handler->errorLog = [];
+                $handler->start($data, $commands);
+                if ($handleData) {
+                    $handler->process_datamap();
+                } else {
+                    $handler->process_cmdmap();
+                }
+            } catch (Throwable $e) {
+                throw DataHandlerException::makeNewInstance($handler, $e);
             }
-        } catch (Throwable $e) {
-            throw DataHandlerException::makeNewInstance($handler, $e);
+
+            if (! empty($handler->errorLog)) {
+                throw DataHandlerException::makeNewInstance($handler, null);
+            }
+
+            return $handler;
+        }, (bool)$force);
+    }
+
+    /**
+     * Internal helper to run the given callback either as forced user or as the current user
+     *
+     * @param   callable  $callback  The callback to execute
+     * @param   bool      $force     True to run as a forced admin user
+     *
+     * @return mixed
+     */
+    protected function forceWrapper(callable $callback, bool $force)
+    {
+        if (! $force) {
+            return $callback();
         }
 
-        if (! empty($handler->errorLog)) {
-            throw DataHandlerException::makeNewInstance($handler, null);
-        }
-
-        return $handler;
+        return $this->cs()->simulator->runWithEnvironment(['asAdmin'], $callback);
     }
 
 }

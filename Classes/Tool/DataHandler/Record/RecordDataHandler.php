@@ -24,8 +24,6 @@ namespace LaborDigital\T3BA\Tool\DataHandler\Record;
 
 
 use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
-use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class RecordDataHandler
@@ -93,22 +91,20 @@ class RecordDataHandler
             $data['uid'] = 'NEW_1';
         }
 
-        return $this->forceWrapper(function () use ($data, $isNew) {
-            $uid = $data['uid'];
-            unset($data['uid']);
+        $uid = $data['uid'];
+        unset($data['uid']);
 
-            $handler = $this->handlerService->processData([
-                $this->tableName => [
-                    $uid => $data,
-                ],
-            ]);
+        $handler = $this->handlerService->processData([
+            $this->tableName => [
+                $uid => $data,
+            ],
+        ], [], $force);
 
-            if (! $isNew) {
-                return $uid;
-            }
+        if (! $isNew) {
+            return $uid;
+        }
 
-            return reset($handler->substNEWwithIDs);
-        }, $force);
+        return reset($handler->substNEWwithIDs);
     }
 
     /**
@@ -125,17 +121,15 @@ class RecordDataHandler
      */
     public function copy(int $uid, ?int $targetPid = null, bool $force = false): int
     {
-        return $this->forceWrapper(function () use ($uid, $targetPid) {
-            $handler = $this->handlerService->processCommands([
-                $this->tableName => [
-                    $uid => [
-                        'copy' => $targetPid ?? -$uid,
-                    ],
+        $handler = $this->handlerService->processCommands([
+            $this->tableName => [
+                $uid => [
+                    'copy' => $targetPid ?? -$uid,
                 ],
-            ]);
+            ],
+        ], [], $force);
 
-            return $handler->copyMappingArray[$this->tableName][$uid];
-        }, $force);
+        return $handler->copyMappingArray[$this->tableName][$uid];
     }
 
     /**
@@ -150,15 +144,13 @@ class RecordDataHandler
      */
     public function move(int $uid, int $targetPid, bool $force = false): void
     {
-        $this->forceWrapper(function () use ($uid, $targetPid) {
-            $this->handlerService->processCommands([
-                $this->tableName => [
-                    $uid => [
-                        'move' => $targetPid,
-                    ],
+        $this->handlerService->processCommands([
+            $this->tableName => [
+                $uid => [
+                    'move' => $targetPid,
                 ],
-            ]);
-        }, $force);
+            ],
+        ], [], $force);
     }
 
     /**
@@ -170,15 +162,13 @@ class RecordDataHandler
      */
     public function delete(int $uid, bool $force = false): void
     {
-        $this->forceWrapper(function () use ($uid) {
-            $this->handlerService->processCommands([
-                $this->tableName => [
-                    $uid => [
-                        'delete' => 1,
-                    ],
+        $this->handlerService->processCommands([
+            $this->tableName => [
+                $uid => [
+                    'delete' => 1,
                 ],
-            ]);
-        }, $force);
+            ],
+        ], [], $force);
     }
 
     /**
@@ -190,33 +180,12 @@ class RecordDataHandler
      */
     public function restore(int $uid, bool $force = false): void
     {
-        $this->forceWrapper(function () use ($uid) {
-            $this->handlerService->processCommands([
-                $this->tableName => [
-                    $uid => [
-                        'undelete' => 0,
-                    ],
+        $this->handlerService->processCommands([
+            $this->tableName => [
+                $uid => [
+                    'undelete' => 0,
                 ],
-            ]);
-        }, $force);
-    }
-
-    /**
-     * Internal helper to run the given callback either as forced user or as the current user
-     *
-     * @param   callable  $callback  The callback to execute
-     * @param   bool      $force     True to run as a forced admin user
-     *
-     * @return mixed
-     */
-    protected function forceWrapper(callable $callback, bool $force)
-    {
-        if (! $force) {
-            return $callback();
-        }
-
-        return GeneralUtility::getContainer()
-                             ->get(EnvironmentSimulator::class)
-                             ->runWithEnvironment(['asAdmin'], $callback);
+            ],
+        ], [], $force);
     }
 }
