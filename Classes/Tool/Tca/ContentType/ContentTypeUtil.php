@@ -170,6 +170,10 @@ class ContentTypeUtil
             $cType = $rowOrCType;
         } elseif (is_array($rowOrCType)) {
             $cType = $rowOrCType['CType'] ?? '';
+            // In BackendListLabelRenderer cType is an array we have to resolve specially.
+            if (is_array($cType)) {
+                $cType = reset($cType);
+            }
         } else {
             $cType = '';
         }
