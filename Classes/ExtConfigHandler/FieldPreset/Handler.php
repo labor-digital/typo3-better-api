@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\FieldPreset;
 
 
+use LaborDigital\T3BA\Event\ExtConfig\FieldPresetFilterEvent;
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
@@ -75,7 +76,9 @@ class Handler extends AbstractExtConfigHandler
         // Store the presets
         $presets = $this->listGenerator->getPresets();
 
-        // @todo an event to filter the presets would be nice here...
+        $presets = $this->context->getParentContext()->di()->cs()->eventBus
+            ->dispatch(new FieldPresetFilterEvent($presets, $this->context))
+            ->getPresets();
 
         $this->context->getState()->set('tca.fieldPresets', $presets);
 
