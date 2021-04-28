@@ -719,7 +719,7 @@ trait TcaTableConfigTrait
         }
 
         $this->config['ctrl']['iconfile']
-            = $this->getContext()->getParent()->replaceMarkers($filename);
+            = $this->getContext()->getExtConfigContext()->replaceMarkers($filename);
 
         return $this;
     }

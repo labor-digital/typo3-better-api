@@ -76,7 +76,7 @@ class Handler extends AbstractExtConfigHandler
         // Store the presets
         $presets = $this->listGenerator->getPresets();
 
-        $presets = $this->context->getParentContext()->di()->cs()->eventBus
+        $presets = $this->context->getTypoContext()->di()->cs()->eventBus
             ->dispatch(new FieldPresetFilterEvent($presets, $this->context))
             ->getPresets();
 

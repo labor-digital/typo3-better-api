@@ -23,13 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfig\SiteBased;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
-class SiteConfigContext extends ExtConfigContext implements PublicServiceInterface
+class SiteConfigContext extends ExtConfigContext
 {
     /**
      * The key of the site that currently gets configured
@@ -51,7 +50,7 @@ class SiteConfigContext extends ExtConfigContext implements PublicServiceInterfa
     public function __construct(ExtConfigService $extConfigService, TypoContext $typoContext)
     {
         parent::__construct($extConfigService);
-        $this->parentContext = $typoContext;
+        $this->typoContext = $typoContext;
     }
 
     /**

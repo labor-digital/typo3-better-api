@@ -69,7 +69,7 @@ class Factory implements PublicServiceInterface
     {
         $flex->clear();
 
-        $def = $this->resolveDefinitionToArray($definition, $flex->getContext()->getParent());
+        $def = $this->resolveDefinitionToArray($definition, $flex->getContext()->getExtConfigContext());
 
         $this->populateElements($flex, $def);
     }

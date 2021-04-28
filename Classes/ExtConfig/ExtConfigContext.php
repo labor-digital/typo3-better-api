@@ -43,7 +43,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * @var TypoContext
      */
-    protected $parentContext;
+    protected $typoContext;
 
     /**
      * Holds the cached namespace to ext key and vendor value map
@@ -68,13 +68,13 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
-    public function getParentContext(): TypoContext
+    public function getTypoContext(): TypoContext
     {
-        if (! $this->parentContext) {
+        if (! $this->typoContext) {
             throw new ExtConfigException('You can\'t access the TypoContext object here, because it is to early in the lifecycle!');
         }
 
-        return $this->parentContext;
+        return $this->typoContext;
     }
 
     /**
@@ -84,9 +84,9 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      *
      * @return $this
      */
-    public function setParentContext(TypoContext $typoContext): self
+    public function setTypoContext(TypoContext $typoContext): self
     {
-        $this->parentContext = $typoContext;
+        $this->typoContext = $typoContext;
 
         return $this;
     }
@@ -98,8 +98,8 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      */
     public function env(): EnvFacet
     {
-        if ($this->parentContext) {
-            return $this->parentContext->env();
+        if ($this->typoContext) {
+            return $this->typoContext->env();
         }
 
         // Fallback if used to early in the lifecycle
@@ -193,10 +193,10 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         $keys = $this->replaceMarkers($keys);
 
         if (is_array($keys)) {
-            return $this->getParentContext()->pid()->getMultiple($keys, $fallback);
+            return $this->getTypoContext()->pid()->getMultiple($keys, $fallback);
         }
 
-        return $this->getParentContext()->pid()->get($keys, $fallback);
+        return $this->getTypoContext()->pid()->get($keys, $fallback);
     }
 
     /**

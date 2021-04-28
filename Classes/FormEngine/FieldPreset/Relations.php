@@ -92,7 +92,7 @@ class Relations extends AbstractFieldPreset
             }
 
             if (is_string($options['limitToPids'])
-                && ! empty($tmp = $this->context->getParent()->getParentContext()->pid()
+                && ! empty($tmp = $this->context->getExtConfigContext()->getTypoContext()->pid()
                                                 ->get($options['limitToPids'], 0))) {
                 $pidSelector = ' = ' . $tmp;
             }

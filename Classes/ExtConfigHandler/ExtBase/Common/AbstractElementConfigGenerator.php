@@ -310,7 +310,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
             return;
         }
 
-        $flexFormFile = $context->getParentContext()->di()->getService(Dumper::class)
+        $flexFormFile = $context->getTypoContext()->di()->getService(Dumper::class)
                                 ->dumpToFile($configurator->getFlexForm());
 
         $this->config->flexFormArgs[] = [

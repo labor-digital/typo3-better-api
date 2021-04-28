@@ -142,7 +142,7 @@ class DiConfigurationStage implements BootStageInterface
 
         $extConfigService = $miniContainer->get(ExtConfigService::class);
         $symfony->set(ExtConfigService::class, $extConfigService);
-        $extConfigService->getContext()->setParentContext($context);
+        $extConfigService->getContext()->setTypoContext($context);
         $extConfigService->getDiLoader()->loadForRuntime();
 
         $eventBus->dispatch(new DiContainerFilterEvent($symfony));
