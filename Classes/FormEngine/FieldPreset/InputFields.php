@@ -152,6 +152,9 @@ class InputFields extends AbstractFieldPreset
      * Configures the current field as a link selection.
      *
      * @param   array  $options  Additional config options for this preset
+     *                           - allowLinkSets bool|array (FALSE): True to allow all link sets that were added
+     *                           to the link browser, false to disable all link sets (default), or an array
+     *                           of specific link sets that should be allowed for this field
      *                           - allowFiles bool (FALSE): True to allow file links
      *                           - allowExternal bool (TRUE): True to allow external URL links
      *                           - allowPages bool (TRUE): True to allow links to pages
@@ -175,6 +178,10 @@ class InputFields extends AbstractFieldPreset
                 $this->addMinMaxLengthOptions(
                     $this->addDefaultOptions(
                         [
+                            'allowLinkSets' => [
+                                'type'    => ['bool', 'array'],
+                                'default' => false,
+                            ],
                             'allowFiles'    => [
                                 'type'    => 'bool',
                                 'default' => false,
@@ -224,7 +231,9 @@ class InputFields extends AbstractFieldPreset
         if (! $options['allowFolder']) {
             $blindFields[] = 'folder';
         }
-        $blindFields = implode(',', $blindFields);
+
+        $blindFields[] = '@linkSets:' . urlencode(\GuzzleHttp\json_encode($options['allowLinkSets']));
+        $blindFields   = implode(',', $blindFields);
 
         // Prepare the config
         $config = [

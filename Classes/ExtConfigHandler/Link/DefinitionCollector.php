@@ -129,7 +129,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
             }
 
             $hidePageTree = '';
-            if (isset($options['hidePageTree']) && $options['hidePageTree'] === true
+            if ((isset($options['hidePageTree']) && $options['hidePageTree'] === true)
                 || in_array('hidePageTree', $options, true)) {
                 $hidePageTree = 'hidePageTree = 1' . PHP_EOL;
             }
