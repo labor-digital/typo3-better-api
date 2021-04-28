@@ -234,7 +234,7 @@ class Tree
                             continue;
                         }
                         foreach ($child->getChildren() as $field) {
-                            if ($child->getType() === $type) {
+                            if ($field->getType() === $type) {
                                 yield $field;
                             }
                         }
