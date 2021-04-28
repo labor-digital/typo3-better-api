@@ -109,6 +109,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      *
      * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     *
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
     public function generate(AbstractElementConfigurator $configurator, ExtConfigContext $context): void
     {
@@ -143,7 +145,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
         $this->registerBackendPreviewAndListLabelRenderer($configurator, $context);
         $this->registerFlexFormConfig($configurator, $context);
 
-        $this->dataHooks = array_merge($this->config->dataHooks, $configurator->getRegisteredDataHooks());
+        $this->config->dataHooks = array_merge($this->config->dataHooks, $configurator->getRegisteredDataHooks());
 
         $this->config->variantMap[$configurator->getSignature()] = $variantName;
     }

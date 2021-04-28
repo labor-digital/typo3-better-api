@@ -26,7 +26,6 @@ namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigGenerator;
 use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
-use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 class ConfigGenerator extends AbstractElementConfigGenerator
@@ -62,11 +61,7 @@ class ConfigGenerator extends AbstractElementConfigGenerator
 
     protected function getFlexFormCType(string $signature): string
     {
-        return 'plugin';
-    }
-
-    protected function dumpForType(ConfigState $state): void
-    {
+        return 'list';
     }
 
 }
