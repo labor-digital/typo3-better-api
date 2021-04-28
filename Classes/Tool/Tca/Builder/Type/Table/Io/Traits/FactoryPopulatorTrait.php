@@ -48,6 +48,10 @@ trait FactoryPopulatorTrait
         // Load the showitem string
         $showItem = $this->parseShowItemString($tca['types'][$type->getTypeName()]['showitem'] ?? '');
 
+        if (empty($showItem)) {
+            return;
+        }
+
         $tabCounter = 0;
         $target     = null;
         foreach ($showItem as $layoutMeta) {

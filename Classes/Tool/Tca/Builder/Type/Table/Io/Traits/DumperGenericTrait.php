@@ -104,11 +104,12 @@ trait DumperGenericTrait
      */
     protected function dumpTypeShowItemAndPalettes(array &$tca, TcaTableType $type): void
     {
-        $showItem        = [];
-        $palettes        = [];
-        $currentPalette  = null;
-        $paletteShowItem = [];
-        $pointer         = &$showItem;
+        $showItem           = [];
+        $palettes           = [];
+        $currentPalette     = null;
+        $paletteShowItem    = [];
+        $pointer            = &$showItem;
+        $hasFieldsOrPallets = false;
 
         foreach ($type->getAllChildren() as $child) {
             if ($child instanceof TcaTab) {
@@ -120,10 +121,11 @@ trait DumperGenericTrait
             }
 
             if ($child instanceof TcaPalette) {
-                $meta      = $child->getLayoutMeta();
-                $meta[0]   = $child->hasLabel() ? $child->getLabel() : '';
-                $meta[1]   = $currentPalette = substr($child->getId(), 1);
-                $pointer[] = '--palette--;' . implode(';', $meta);
+                $hasFieldsOrPallets = true;
+                $meta               = $child->getLayoutMeta();
+                $meta[0]            = $child->hasLabel() ? $child->getLabel() : '';
+                $meta[1]            = $currentPalette = substr($child->getId(), 1);
+                $pointer[]          = '--palette--;' . implode(';', $meta);
 
                 $paletteShowItem = [];
                 $pointer         = &$paletteShowItem;
@@ -147,14 +149,15 @@ trait DumperGenericTrait
             }
 
             if ($child instanceof TcaField) {
-                $meta      = $child->getLayoutMeta();
-                $meta[0]   = $child->getId();
-                $meta[1]   = $child->hasLabel() ? $child->getLabel() : '';
-                $pointer[] = rtrim(implode(';', $meta), ';');
+                $hasFieldsOrPallets = true;
+                $meta               = $child->getLayoutMeta();
+                $meta[0]            = $child->getId();
+                $meta[1]            = $child->hasLabel() ? $child->getLabel() : '';
+                $pointer[]          = rtrim(implode(';', $meta), ';');
             }
         }
 
-        if (! empty($showItem)) {
+        if (! empty($showItem) && $hasFieldsOrPallets) {
             $tca['types'][$type->getTypeName()]['showitem'] = implode(',', $showItem);
         }
         $tca['palettes'] = $palettes;

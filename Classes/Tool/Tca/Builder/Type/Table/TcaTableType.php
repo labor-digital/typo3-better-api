@@ -152,7 +152,6 @@ class TcaTableType extends AbstractType
         });
     }
 
-
     /**
      * Returns the list of all registered fields that are currently inside the layout
      *
