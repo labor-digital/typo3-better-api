@@ -26,6 +26,7 @@ namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\Translation\Translator;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -116,9 +117,12 @@ class FieldRenderer implements PublicServiceInterface
 
             $info = $this->falService->getFileInfo($file);
             if ($info->isImage()) {
+                $width     = $info->getImageInfo() ? min(max($info->getImageInfo()->getWidth(), 50), 200) : 200;
                 $content[] = '<img src="' .
-                             $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => 200])) .
-                             '" style="width:100%; max-width:200px"/>';
+                             $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width])) .
+                             '" style="width:100%; max-width:' . $width . 'px"' .
+                             ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
+                             ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
             } else {
                 $content[] = $this->htmlEncode($info->getFileName());
             }
@@ -210,12 +214,29 @@ class FieldRenderer implements PublicServiceInterface
 
                 return $value;
             case LinkService::TYPE_RECORD:
-//                $this->getService(TypoScriptService::class)->getTsConfig()
-                dbge($linkData);
-                break;
+            case 'linkSetRecord':
+                $tableName = $this->cs()->ts->getTsConfig([
+                    'TCEMAIN',
+                    'linkHandler',
+                    $linkData['identifier'] ?? '',
+                    'configuration',
+                    'table',
+                ]);
+                if (! empty($tableName)) {
+                    $tableName = NamingUtil::resolveTableName($tableName);
+                    $record    = BackendUtility::getRecord($tableName, $linkData['uid']);
+                    if ($record) {
+                        $recordTitle = BackendUtility::getRecordTitle($tableName, $record);
+                        $tableTitle  = $this->translator->translate($GLOBALS['TCA'][$tableName]['ctrl']['title'] ??
+                                                                    $tableName);
+
+                        return sprintf('%s [%s:%d]', $recordTitle, $tableTitle, $linkData['uid']);
+                    }
+                }
+
+                return $value;
             case LinkService::TYPE_TELEPHONE:
                 return $linkData['telephone'] ?? $value;
-
         }
 
         return $value;
