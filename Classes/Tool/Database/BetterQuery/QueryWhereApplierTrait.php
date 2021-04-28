@@ -26,7 +26,6 @@ use Closure;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseQueryAdapter;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\DoctrineQueryAdapter;
 use Neunerlei\Arrays\Arrays;
-use TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression;
 
 /**
  * Trait QueryWhereApplierTrait
@@ -54,13 +53,13 @@ trait QueryWhereApplierTrait
      * @param   \Closure              $constraintGenerator
      * @param   AbstractQueryAdapter  $adapter
      *
-     * @return \TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression
+     * @return mixed
      */
     protected function whereUidSpecialConstraintWrapper(
         $key,
         Closure $constraintGenerator,
         AbstractQueryAdapter $adapter
-    ): CompositeExpression {
+    ) {
         // Load TCA configuration
         $parentUidField = Arrays::getPath(
             $GLOBALS,
