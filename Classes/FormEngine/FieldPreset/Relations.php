@@ -188,12 +188,7 @@ class Relations extends AbstractFieldPreset
      *                                       LEGACY SUPPORT
      *                                       - mmTableName string: When given this table name is set as mm table name
      *                                       instead of the automatically generated one. Useful for legacy codebase.
-     *
-     *                                       DEPRECATED (removed in v10)
-     *                                       - limitToBasePid bool (FALSE): If set to true the "select window" will
-     *                                       only show the records on the configured "basePid"
-     *
-     *
+     *                                        *
      */
     public function applyRelationGroup($foreignTable, array $options = []): void
     {
@@ -740,11 +735,7 @@ class Relations extends AbstractFieldPreset
                                 'default' => static function ($field, $given) {
                                     // Automatically disable the mm table
                                     /** @noinspection TypeUnsafeComparisonInspection */
-                                    if ($given['maxItems'] == 1) {
-                                        return false;
-                                    }
-
-                                    return true;
+                                    return ! ($given['maxItems'] == 1);
                                 },
                             ],
                             'mmTableName' => [
@@ -759,7 +750,7 @@ class Relations extends AbstractFieldPreset
         );
 
         // Check if we got a multi selector and extend the options
-        if (empty($options['maxItems']) || is_numeric($options['maxItems']) && $options['maxItems'] > 1) {
+        if (empty($options['maxItems']) || (is_numeric($options['maxItems']) && $options['maxItems'] > 1)) {
             $optionDefinition = $this->addAllowEditOptions(
                 $this->addAllowNewOptions(
                     $optionDefinition
@@ -769,8 +760,8 @@ class Relations extends AbstractFieldPreset
         $options = Options::make($options, $optionDefinition);
 
         // Prepare table name
-        $foreignTable = $this->generateTableNameList($foreignTable);
-        $foreignTable = reset($foreignTable);
+        $foreignTableList = $this->generateTableNameList($foreignTable);
+        $foreignTable     = (string)reset($foreignTableList);
 
         // Prepare the where clause
         if (empty($options['where']) && ! empty($options['basePid'])) {

@@ -45,8 +45,8 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     protected $allowedTabs;
 
     /**
-     * (?)
-     * @todo what is this, I just get it from the hook object
+     * The parsed parts of the currently selected link
+     *
      * @var array
      */
     protected $currentLinkParts;
@@ -121,7 +121,7 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     }
 
     /**
-     * Returns something... I don't know what... but it might be important /o\
+     * Returns the parsed parts of the currently selected link
      *
      * @return array
      */

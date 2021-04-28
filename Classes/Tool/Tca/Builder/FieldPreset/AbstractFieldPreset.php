@@ -349,7 +349,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
                         $keys[$i] = $this->context->getRealTableName($table);
                     }
 
-                    return array_combine($keys, array_values($pid->getMultiple($v)));
+                    return array_combine($keys, $pid->getMultiple($v));
                 },
             ];
         } else {
@@ -361,12 +361,6 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
                 },
             ];
         }
-
-        // @todo remove deprecated option
-        // @todo is this really deprecated?
-        $optionDefinition['limitToBasePid'] = [
-            'default' => null,
-        ];
 
         return $optionDefinition;
     }

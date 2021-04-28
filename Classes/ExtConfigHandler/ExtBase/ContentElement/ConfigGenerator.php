@@ -51,8 +51,7 @@ class ConfigGenerator extends AbstractElementConfigGenerator
                 Inflector::toHuman($context->getExtKey()) : $configurator->getCTypeSection(),
             'title'        => $configurator->getTitle(),
             'signature'    => $configurator->getSignature(),
-            'icon'         => $configurator->getIcon(),
-            // @todo can we use $this->makeIconIdentifier($configurator, $context) here?
+            'icon'         => $this->makeIconIdentifier($configurator, $context),
         ]);
     }
 

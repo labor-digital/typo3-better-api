@@ -28,7 +28,7 @@ class DbBaseId
 {
 
     /**
-     * This element adds the basePid and limitToBasePid constraints to the javascript of the element browser
+     * This element adds the basePid constraints to the javascript of the element browser
      *
      * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
      */

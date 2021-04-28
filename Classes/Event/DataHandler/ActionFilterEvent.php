@@ -103,17 +103,4 @@ class ActionFilterEvent extends AbstractActionEvent
 
         return $this;
     }
-
-    /**
-     * (?) @param   mixed  $value
-     *
-     * @return ActionFilterEvent
-     * @todo investigate
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-
-        return $this;
-    }
 }
