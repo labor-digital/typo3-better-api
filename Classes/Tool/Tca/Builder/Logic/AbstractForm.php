@@ -170,6 +170,33 @@ abstract class AbstractForm
     }
 
     /**
+     * Allows you to remove multiple children of the form at once.
+     * Provide an array of id's in the following schema:
+     * - Numeric: Tabs
+     * - someName: Fields
+     * - _someName: Container (Palette or Section)
+     *
+     * @param   array  $childIds
+     */
+    public function removeChildren(array $childIds): void
+    {
+        $lists = [
+            $this->findAllChildrenByType(Node::TYPE_TAB),
+            $this->findAllChildrenByType(Node::TYPE_CONTAINER),
+            $this->findAllChildrenByType(Node::TYPE_FIELD),
+        ];
+
+        foreach ($lists as $list) {
+            foreach ($list as $item) {
+                /** @var AbstractTab|AbstractField|AbstractContainer */
+                if (in_array($item->getId(), $childIds, true)) {
+                    $item->remove();
+                }
+            }
+        }
+    }
+
+    /**
      * Similar to "getTab()" but always returns a new tab with a new id added to it
      *
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab|mixed
