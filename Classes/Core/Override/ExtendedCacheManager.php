@@ -69,7 +69,16 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
     public function flushCachesInGroupByTag($groupIdentifier, $tag): void
     {
         parent::flushCachesInGroupByTag($groupIdentifier, $tag);
-        $this->emitFlushEvent(__FUNCTION__, $groupIdentifier, $tag);
+        $this->emitFlushEvent(__FUNCTION__, $groupIdentifier, [$tag]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesInGroupByTags($groupIdentifier, array $tags): void
+    {
+        parent::flushCachesInGroupByTag($groupIdentifier, $tags);
+        $this->emitFlushEvent(__FUNCTION__, $groupIdentifier, $tags);
     }
 
     /**
@@ -78,7 +87,16 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
     public function flushCachesByTag($tag): void
     {
         parent::flushCachesByTag($tag);
-        $this->emitFlushEvent(__FUNCTION__, null, $tag);
+        $this->emitFlushEvent(__FUNCTION__, null, [$tag]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function flushCachesByTags(array $tags): void
+    {
+        parent::flushCachesByTags($tags);
+        $this->emitFlushEvent(__FUNCTION__, null, $tags);
     }
 
     /**
@@ -86,15 +104,15 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
      *
      * @param   string       $caller
      * @param   string|null  $group
-     * @param   string|null  $tag
+     * @param   array|null   $tags
      */
-    protected function emitFlushEvent(string $caller, ?string $group = null, ?string $tag = null): void
+    protected function emitFlushEvent(string $caller, ?string $group = null, ?array $tags = null): void
     {
         /** @noinspection PhpParamsInspection */
         TypoEventBus::getInstance()->dispatch(new CacheClearedEvent(
             $caller,
             empty($group) ? 'all' : $group,
-            $tag,
+            $tags ?? [],
             $this
         ));
     }
