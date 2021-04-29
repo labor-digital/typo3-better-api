@@ -127,14 +127,14 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $this->getTypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
     }
 
-
     /**
      * Internal helper that is used to create a new tsfe instance
      *
      * It is not fully initialized and also not available on $GLOBALS['TSFE'],
      * but should do the trick for most of your needs
      *
-     * @param   int  $pid  The pid to create the controller instance with
+     * @param   int    $pid  The pid to create the controller instance with
+     * @param   array  $storage
      *
      * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
      */
