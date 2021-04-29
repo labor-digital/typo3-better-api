@@ -71,8 +71,6 @@ class FlexFormTraverser extends AbstractTraverser
     
     /**
      * Iterates the flex form data structure to find registered data hook handlers to process
-     *
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
     public function traverse(): void
     {
