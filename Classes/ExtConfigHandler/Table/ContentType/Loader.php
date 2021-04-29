@@ -30,7 +30,6 @@ use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
 use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Dumper;
 use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Factory;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
-use Neunerlei\Arrays\Arrays;
 
 class Loader implements PublicServiceInterface
 {
@@ -87,8 +86,16 @@ class Loader implements PublicServiceInterface
      */
     public function load(): void
     {
+        if (isset($this->loaded)) {
+            foreach ($this->loaded as $tableName => $config) {
+                $GLOBALS['TCA'][$tableName] = $config;
+            }
+
+            return;
+        }
+
         // Extract the default type tca
-        $defaultTca = Arrays::getPath($GLOBALS, ['TCA', 'tt_content', 'types', static::EXT_CONTENT_DEFAULT_TYPE]);
+        $defaultTca = $GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE] ?? [];
         unset($GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE]);
         if (! empty($defaultTca) && is_array($defaultTca)) {
             $this->factory->setDefaultTypeTca($defaultTca);
@@ -131,7 +138,10 @@ class Loader implements PublicServiceInterface
             }
         );
 
-        $GLOBALS['TCA'] = $this->dumper->dump($GLOBALS['TCA'], $this->configContext);
+        $this->loaded = $this->dumper->dump($GLOBALS['TCA'], $this->configContext);
+        foreach ($this->loaded as $tableName => $config) {
+            $GLOBALS['TCA'][$tableName] = $config;
+        }
 
     }
 

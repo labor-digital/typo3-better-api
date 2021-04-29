@@ -77,7 +77,7 @@ class Dumper
     }
 
     /**
-     * Dumps the registered types by extending the given $tca with the generated data.
+     * Dumps an array of modified tca tables
      *
      * @param   array             $tca
      * @param   ExtConfigContext  $context
@@ -94,6 +94,7 @@ class Dumper
         $table = $this->tableFactory->create('tt_content', $context);
         $this->tableFactory->initialize($table);
 
+        $result      = [];
         $tables      = [];
         $columns     = [];
         $typeColumns = [];
@@ -108,8 +109,8 @@ class Dumper
             $typeColumns[$cType] = $columnNameMap;
             $columns[]           = $columnNameMap;
             if ($tableName) {
-                $tca[$tableName] = $this->generateExtensionTca($tableName, $cType, $sqlColumns);
-                $tables[$cType]  = $tableName;
+                $result[$tableName] = $this->generateExtensionTca($tableName, $cType, $sqlColumns);
+                $tables[$cType]     = $tableName;
             }
             $table->setLoadedType($cType, $type);
         }
@@ -126,9 +127,9 @@ class Dumper
             'typeModels'  => $models,
         ];
         $tableTca                        = $this->registerModelClasses($tableTca, $models, $typeColumns);
-        $tca['tt_content']               = $this->processContentTca($tableTca, $tables);
+        $result['tt_content']            = $this->processContentTca($tableTca, $tables);
 
-        return $tca;
+        return $result;
     }
 
     protected function renameExtensionColumns(array $tca, ContentType $type): array
