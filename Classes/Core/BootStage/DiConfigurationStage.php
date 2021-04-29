@@ -37,6 +37,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
 use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\EventSubscriberBridge;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
@@ -142,6 +143,7 @@ class DiConfigurationStage implements BootStageInterface
 
         $extConfigService = $miniContainer->get(ExtConfigService::class);
         $symfony->set(ExtConfigService::class, $extConfigService);
+        $symfony->set(ConfigState::class, new ConfigState([]));
         $extConfigService->getContext()->setTypoContext($context);
         $extConfigService->getDiLoader()->loadForRuntime();
 
