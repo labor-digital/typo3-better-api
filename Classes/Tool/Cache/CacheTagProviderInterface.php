@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 Martin Neundorfer (Neunerlei)
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.08.09 at 14:49
+ * Last modified: 2021.04.29 at 17:40
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Tests\BackendForms;
+namespace LaborDigital\T3BA\Tool\Cache;
 
 
-use LaborDigital\Typo3BetterApi\Container\TypoContainer;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
-use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
-
-class LogicTest extends UnitTestCase
+interface CacheTagProviderInterface
 {
-
-    public function testGeneric()
-    {
-
-        dbge(TypoContainer::getInstance()->get(TypoContext::class));
-    }
-
-
+    /**
+     * MUST return an array of cache tags to add to add when the class is used as cache tag
+     *
+     * @return array
+     */
+    public function getCacheTags(): array;
 }

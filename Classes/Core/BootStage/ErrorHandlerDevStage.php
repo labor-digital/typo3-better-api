@@ -71,6 +71,7 @@ class ErrorHandlerDevStage implements BootStageInterface
         // Flush the DI cache if a service was not defined, or changed
         $error = $event->getError();
         if ($error instanceof ConfigClassNotAutoloadableException
+            || $error instanceof \LaborDigital\T3BA\Tool\Cache\InvalidArgumentException
             || $error instanceof InvalidArgumentException
             || ($error instanceof \InvalidArgumentException
                 && preg_match('~Event listener ".*?" is not callable~i', $error->getMessage()))

@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2021.04.28 at 13:35
  */
 
-namespace LaborDigital\Typo3BetterApi\Cache;
+declare(strict_types=1);
 
-class FrontendCache extends AbstractCache
+
+namespace LaborDigital\T3BA\Tool\Cache;
+
+
+class InvalidArgumentException extends \InvalidArgumentException
+    implements \Psr\Cache\InvalidArgumentException, \Psr\SimpleCache\InvalidArgumentException
 {
-    protected $cacheConfigKey = 'ba_cache_frontend';
-    
-    /**
-     * @inheritDoc
-     */
-    protected function prepareKey($key): string
-    {
-        $key = parent::prepareKey($key);
-        
-        return $key . 'fe-' . $this->typoContext->getLanguageAspect()->getCurrentFrontendLanguage()->getLanguageId();
-    }
+
 }

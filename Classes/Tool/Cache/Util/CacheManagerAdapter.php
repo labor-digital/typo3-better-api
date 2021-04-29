@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2021.04.29 at 15:50
  */
 
-namespace LaborDigital\Typo3BetterApi;
+declare(strict_types=1);
 
-use Exception;
 
-class BetterApiException extends Exception
+namespace LaborDigital\T3BA\Tool\Cache\Util;
+
+
+use TYPO3\CMS\Core\Cache\CacheManager;
+
+class CacheManagerAdapter extends CacheManager
 {
+    /**
+     * Extracts the list of all cache identifiers
+     *
+     * @param   \TYPO3\CMS\Core\Cache\CacheManager  $cacheManager
+     *
+     * @return array
+     */
+    public static function getAllCacheIdentifiers(CacheManager $cacheManager): array
+    {
+        return array_keys($cacheManager->cacheConfigurations);
+    }
 }

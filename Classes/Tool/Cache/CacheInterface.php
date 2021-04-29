@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +14,16 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.24 at 11:35
+ * Last modified: 2021.04.29 at 12:22
  */
 
-namespace LaborDigital\T3BA\ExtConfig\BackendForm\Logic;
+declare(strict_types=1);
 
-abstract class AbstractFormContainer extends AbstractFormElement
+
+namespace LaborDigital\T3BA\Tool\Cache;
+
+// @todo pull up members
+interface CacheInterface extends \Psr\SimpleCache\CacheInterface
 {
-    use FormElementContainingTrait;
-    use FormElementContainingTrait;
+
 }

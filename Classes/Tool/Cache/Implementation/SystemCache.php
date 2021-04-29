@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.16 at 18:42
+ * Last modified: 2021.04.29 at 10:51
  */
 
-namespace LaborDigital\Typo3BetterApi\Cache;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\BetterApiException;
 
-class CacheException extends BetterApiException
+namespace LaborDigital\T3BA\Tool\Cache\Implementation;
+
+/**
+ * Class SystemCache
+ *
+ * Static system cache, that is NOT aware of the environment.
+ *
+ * @package LaborDigital\T3BA\Tool\Cache\Implementation
+ */
+class SystemCache extends AbstractExtendedCache
 {
+    /**
+     * @inheritDoc
+     */
+    protected function useEnvironment(): bool
+    {
+        return false;
+    }
 }

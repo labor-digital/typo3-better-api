@@ -43,6 +43,7 @@ use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\T3BA__Copy__DataMapper;
 
+// @todo implement this
 class ExtendedDataMapper extends T3BA__Copy__DataMapper
 {
 

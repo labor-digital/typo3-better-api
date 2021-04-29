@@ -24,6 +24,8 @@ namespace LaborDigital\T3BA\Configuration\ExtConfig;
 
 
 use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfigHandler\Core\ConfigureTypoCoreInterface;
+use LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Fluid\ConfigureFluidInterface;
 use LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator;
 use LaborDigital\T3BA\ExtConfigHandler\Http\ConfigureHttpInterface;
@@ -38,8 +40,11 @@ use LaborDigital\T3BA\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapp
 use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBuilder;
 use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkHandler;
 use Neunerlei\Configuration\State\ConfigState;
+use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
-class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureHttpInterface
+class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureHttpInterface,
+                      ConfigureTypoCoreInterface
 {
 
     /**
@@ -91,6 +96,28 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
                         FalFileBaseDir::class => FalFileBaseDir::class . '->applyConfiguredFalFolders',
                     ],
                 ],
+            ],
+        ]);
+
+
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function configureCore(TypoCoreConfigurator $configurator, ExtConfigContext $context): void
+    {
+        // Register our cache service cache
+        $configurator->registerCache('t3ba_frontend', VariableFrontend::class, Typo3DatabaseBackend::class, [
+            'groups'  => 'pages',
+            'options' => [
+                'compression' => true,
+            ],
+        ]);
+        $configurator->registerCache('t3ba_system', VariableFrontend::class, Typo3DatabaseBackend::class, [
+            'groups'  => 'system',
+            'options' => [
+                'compression' => true,
             ],
         ]);
     }

@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +14,16 @@ declare(strict_types=1);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.05.24 at 18:10
+ * Last modified: 2021.04.29 at 12:12
  */
 
-namespace LaborDigital\T3BA\ExtConfig\BackendForm\Tree;
+declare(strict_types=1);
 
-use LaborDigital\T3BA\ExtConfig\BackendForm\BackendFormException;
 
-class NonUniqueIdException extends BackendFormException
+namespace LaborDigital\T3BA\Tool\Cache;
+
+
+interface CacheConsumerInterface
 {
+
 }
