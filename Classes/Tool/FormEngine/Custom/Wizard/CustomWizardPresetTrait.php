@@ -28,7 +28,7 @@ use Neunerlei\Options\Options;
 
 trait CustomWizardPresetTrait
 {
-
+    
     /**
      * This helper is quite similar to the CustomElementPresetTrait class but is used
      * to create custom wizard definitions for your own wizards.
@@ -58,20 +58,21 @@ trait CustomWizardPresetTrait
         ?array $options = null,
         ?AbstractField $field = null,
         ?TcaBuilderContext $context = null
-    ): void {
+    ): void
+    {
         $options = $options ?? [];
         if ($this instanceof AbstractFieldPreset) {
-            $field   = $field ?? $this->field;
+            $field = $field ?? $this->field;
             $context = $context ?? $this->context;
         }
-
+        
         // Validate if the class exists
         if (! class_exists($wizardClass)) {
             throw new TcaBuilderException(
                 'Could not configure your field: ' . $field->getId()
                 . ' to use the custom wizard with class: ' . $wizardClass . '. Because the class does not exist!');
         }
-
+        
         if (! in_array(CustomWizardInterface::class,
             class_implements($wizardClass), true)) {
             throw new TcaBuilderException(
@@ -81,38 +82,38 @@ trait CustomWizardPresetTrait
                 . CustomWizardInterface::class . ' interface!'
             );
         }
-
+        
         $beforeAfterDefinition = [
-            'type'    => ['string', 'array'],
+            'type' => ['string', 'array'],
             'default' => [],
-            'filter'  => static function ($v) { return is_array($v) ? $v : [$v]; },
+            'filter' => static function ($v) { return is_array($v) ? $v : [$v]; },
         ];
-        $options               = Options::make($options, [
+        $options = Options::make($options, [
             'wizardId' => [
-                'type'    => 'string',
+                'type' => 'string',
                 'default' => Inflector::toDashed(str_replace('\\', '-', $wizardClass)),
             ],
-            'before'   => $beforeAfterDefinition,
-            'after'    => $beforeAfterDefinition,
+            'before' => $beforeAfterDefinition,
+            'after' => $beforeAfterDefinition,
         ]);
-
+        
         // Build the wizard configuration
         $config = [
             'fieldWizard' => [
                 $options['wizardId'] => [
-                    'type'       => 't3baWizard',
+                    'type' => 't3baWizard',
                     'renderType' => 't3baWizard',
-                    'options'    => [
+                    'options' => [
                         'className' => $wizardClass,
                         'fieldName' => $field->getId(),
                     ],
-                    'before'     => $options['before'],
-                    'after'      => $options['after'],
+                    'before' => $options['before'],
+                    'after' => $options['after'],
                 ],
             ],
         ];
         $field->addConfig($config);
-
+        
         // Run the field configuration
         call_user_func([$wizardClass, 'configureField'], $field, $options, $context);
     }

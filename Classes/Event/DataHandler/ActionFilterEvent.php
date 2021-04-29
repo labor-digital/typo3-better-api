@@ -53,15 +53,16 @@ class ActionFilterEvent extends AbstractActionEvent
         $value,
         $pasteSpecialData,
         DataHandler $dataHandler
-    ) {
-        $this->command          = $command;
-        $this->tableName        = $tableName;
-        $this->id               = $id;
-        $this->value            = $value;
+    )
+    {
+        $this->command = $command;
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->value = $value;
         $this->pasteSpecialData = $pasteSpecialData;
-        $this->dataHandler      = $dataHandler;
+        $this->dataHandler = $dataHandler;
     }
-
+    
     /**
      * Can be used to update the data handler command that is currently processed
      *
@@ -72,10 +73,10 @@ class ActionFilterEvent extends AbstractActionEvent
     public function setCommand(string $command): ActionFilterEvent
     {
         $this->command = $command;
-
+        
         return $this;
     }
-
+    
     /**
      * Updates the name of the table that is currently processed
      *
@@ -86,10 +87,10 @@ class ActionFilterEvent extends AbstractActionEvent
     public function setTableName(string $tableName): ActionFilterEvent
     {
         $this->tableName = $tableName;
-
+        
         return $this;
     }
-
+    
     /**
      * Updates the id of the record that is currently processed
      *
@@ -100,7 +101,7 @@ class ActionFilterEvent extends AbstractActionEvent
     public function setId($id)
     {
         $this->id = $id;
-
+        
         return $this;
     }
 }

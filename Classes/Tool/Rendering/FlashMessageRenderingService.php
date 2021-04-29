@@ -32,26 +32,26 @@ use TYPO3\CMS\Core\SingletonInterface;
 class FlashMessageRenderingService implements SingletonInterface
 {
     use ContainerAwareTrait;
-
+    
     public const DEFAULT_QUEUE = 'core.template.flashMessages';
-
+    
     /**
      * Holds the default queue id that is used when a message is added without a specific id
      *
      * @var string
      */
     protected $defaultQueueId = self::DEFAULT_QUEUE;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Messaging\FlashMessageService
      */
     protected $flashMessageService;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Messaging\FlashMessageRendererResolver
      */
     protected $rendererResolver;
-
+    
     /**
      * FlashMessageRenderingService constructor.
      *
@@ -61,11 +61,12 @@ class FlashMessageRenderingService implements SingletonInterface
     public function __construct(
         FlashMessageService $flashMessageService,
         FlashMessageRendererResolver $rendererResolver
-    ) {
+    )
+    {
         $this->flashMessageService = $flashMessageService;
-        $this->rendererResolver    = $rendererResolver;
+        $this->rendererResolver = $rendererResolver;
     }
-
+    
     /**
      * Returns the queue id which is used if none was specifically defined
      *
@@ -75,7 +76,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->defaultQueueId;
     }
-
+    
     /**
      * Allows you to override the default queue id
      *
@@ -86,10 +87,10 @@ class FlashMessageRenderingService implements SingletonInterface
     public function setDefaultQueueId(string $id): self
     {
         $this->defaultQueueId = $id;
-
+        
         return $this;
     }
-
+    
     /**
      * Resets the default queue id back to the value of DEFAULT_QUEUE
      *
@@ -98,10 +99,10 @@ class FlashMessageRenderingService implements SingletonInterface
     public function resetDefaultQueueId(): self
     {
         $this->defaultQueueId = static::DEFAULT_QUEUE;
-
+        
         return $this;
     }
-
+    
     /**
      * Adds a new flash message of type "NOTICE" to the stack
      *
@@ -120,7 +121,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->addMessageInternal(FlashMessage::NOTICE, $message, $header, $options);
     }
-
+    
     /**
      * Adds a new flash message of type "WARNING" to the stack
      *
@@ -139,7 +140,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->addMessageInternal(FlashMessage::WARNING, $message, $header, $options);
     }
-
+    
     /**
      * Adds a new flash message of type "OK" to the stack
      *
@@ -158,7 +159,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->addMessageInternal(FlashMessage::OK, $message, $header, $options);
     }
-
+    
     /**
      * Adds a new flash message of type "INFO" to the stack
      *
@@ -177,7 +178,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->addMessageInternal(FlashMessage::INFO, $message, $header, $options);
     }
-
+    
     /**
      * Adds a new flash message of type "ERROR" to the stack
      *
@@ -196,7 +197,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->addMessageInternal(FlashMessage::ERROR, $message, $header, $options);
     }
-
+    
     /**
      * Can be used to render the stack of flash messages to a variable.
      *
@@ -207,10 +208,10 @@ class FlashMessageRenderingService implements SingletonInterface
     public function renderMessages(?string $queueId = null): string
     {
         $queue = $this->flashMessageService->getMessageQueueByIdentifier($queueId ?? $this->defaultQueueId);
-
+        
         return $this->rendererResolver->resolve()->render($queue->getAllMessagesAndFlush());
     }
-
+    
     /**
      * Returns true if there are currently messages in the queue false if not
      *
@@ -223,7 +224,7 @@ class FlashMessageRenderingService implements SingletonInterface
         // ->count() will always return 0 here, which does not help us in any way...
         return count($this->getQueue($queueId)->getAllMessages()) > 0;
     }
-
+    
     /**
      * Returns the queue object for either a selected queue id or the default queue
      *
@@ -235,7 +236,7 @@ class FlashMessageRenderingService implements SingletonInterface
     {
         return $this->flashMessageService->getMessageQueueByIdentifier($queueId ?? $this->defaultQueueId);
     }
-
+    
     /**
      * Internal helper which is used to validate the given options and to create the message instance on a certain
      * stack.
@@ -252,15 +253,15 @@ class FlashMessageRenderingService implements SingletonInterface
         // Prepare the options
         $options = Options::make($options, [
             'storeInSession' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => false,
             ],
-            'queueId'        => [
-                'type'    => 'string',
+            'queueId' => [
+                'type' => 'string',
                 'default' => $this->defaultQueueId,
             ],
         ]);
-
+        
         // Create the new message
         $message = $this->makeInstance(
             FlashMessage::class,
@@ -271,11 +272,11 @@ class FlashMessageRenderingService implements SingletonInterface
                 $options['storeInSession'],
             ]
         );
-
+        
         // Get the stack
         $stack = $this->flashMessageService->getMessageQueueByIdentifier($options['queueId']);
         $stack->addMessage($message);
-
+        
         // Done
         return $this;
     }

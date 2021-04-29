@@ -29,7 +29,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ConfigArrayPostProcEventAdapter extends AbstractCoreHookEventAdapter
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -38,7 +38,7 @@ class ConfigArrayPostProcEventAdapter extends AbstractCoreHookEventAdapter
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['configArrayPostProc'][static::class]
             = static::class . '->handle';
     }
-
+    
     public function handle(array $params, TypoScriptFrontendController $tsfe): void
     {
         $this->EventBus()->dispatch($e = new ConfigArrayPostProcEvent($params['config'], $tsfe));

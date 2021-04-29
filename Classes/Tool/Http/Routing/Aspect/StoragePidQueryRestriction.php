@@ -32,7 +32,7 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
      * @var array
      */
     protected $storagePids;
-
+    
     /**
      * StoragePidQueryRestriction constructor.
      *
@@ -42,7 +42,7 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
     {
         $this->storagePids = $storagePids;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -52,15 +52,15 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
         if (empty($this->storagePids)) {
             return $expressionBuilder->andX();
         }
-
+        
         // Build constraint list
         $constraints = [];
-        $pids        = array_map('intval', $this->storagePids);
+        $pids = array_map('intval', $this->storagePids);
         foreach ($queriedTables as $tableAlias => $tableName) {
             $constraints[] = $expressionBuilder->in($tableAlias . '.pid', $pids);
         }
-
+        
         return $expressionBuilder->andX(...$constraints);
     }
-
+    
 }

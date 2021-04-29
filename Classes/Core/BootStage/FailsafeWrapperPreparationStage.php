@@ -40,5 +40,5 @@ class FailsafeWrapperPreparationStage implements BootStageInterface
                 FailsafeWrapper::$isFailsafe = $event->isFailsafe();
             });
     }
-
+    
 }

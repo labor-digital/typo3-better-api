@@ -30,7 +30,7 @@ interface SessionInterface
      * @return bool
      */
     public function has(string $path): bool;
-
+    
     /**
      * Returns either the value for the given path or null, if it does not exist
      * Will return the whole session data if null is given as path
@@ -41,7 +41,7 @@ interface SessionInterface
      * @return mixed|null
      */
     public function get(string $path = null, $default = null);
-
+    
     /**
      * Sets the given value for the path
      *
@@ -51,7 +51,7 @@ interface SessionInterface
      * @return $this
      */
     public function set(string $path, $value);
-
+    
     /**
      * Removes a given path from the session.
      *

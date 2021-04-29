@@ -40,26 +40,26 @@ class LinkContext implements SingletonInterface
 {
     use ContainerAwareTrait;
     use LocallyCachedStatePropertyTrait;
-
+    
     /**
      * True when we initialized both the request and are sure the typoScript frontend is initialized correctly
      *
      * @var bool
      */
     protected $initialized = false;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $typoContext;
-
+    
     /**
      * The list of existing link sets
      *
      * @var array
      */
     protected $definitions;
-
+    
     /**
      * LinkContext constructor.
      *
@@ -73,7 +73,7 @@ class LinkContext implements SingletonInterface
             't3ba.link.definitions',
             $typoContext->config()->getConfigState());
     }
-
+    
     /**
      * Returns the instance of the typo context
      *
@@ -83,7 +83,7 @@ class LinkContext implements SingletonInterface
     {
         return $this->typoContext;
     }
-
+    
     /**
      * Returns the basic ext base request object
      *
@@ -92,10 +92,10 @@ class LinkContext implements SingletonInterface
     public function getRequest(): Request
     {
         $this->initializeIfRequired();
-
+        
         return $this->getService(Request::class);
     }
-
+    
     /**
      * Returns the content object renderer and makes sure it is configured correctly, even if not in frontend context
      *
@@ -106,14 +106,14 @@ class LinkContext implements SingletonInterface
         if ($this->hasService(ContentObjectRenderer::class)) {
             return $this->getService(ContentObjectRenderer::class);
         }
-
+        
         $this->initializeIfRequired();
         $cObj = $this->getService(TsfeService::class)->getContentObjectRenderer();
         $this->setService(ContentObjectRenderer::class, $cObj);
-
+        
         return $cObj;
     }
-
+    
     /**
      * Returns the instance of the TYPO3 extBase uri builder.
      *
@@ -126,20 +126,20 @@ class LinkContext implements SingletonInterface
         if ($this->hasService(UriBuilder::class)) {
             return $this->getService(UriBuilder::class);
         }
-
+        
         $this->initializeIfRequired();
         $builder = $this->getService(ExtendedUriBuilder::class);
         $this->setService(UriBuilder::class, $builder);
-
+        
         if (! $builder->hasContentObject()) {
             $builder->setContentObject($this->getContentObject());
         } else {
             $this->setService(ContentObjectRenderer::class, $builder->getContentObject());
         }
-
+        
         return $builder;
     }
-
+    
     /**
      * Returns the instance of the TYPO3 backend uri builder
      *
@@ -149,7 +149,7 @@ class LinkContext implements SingletonInterface
     {
         return $this->getService(BackendUriBuilder::class);
     }
-
+    
     /**
      * Returns the instance of the TYPO3 backend router
      *
@@ -159,7 +159,7 @@ class LinkContext implements SingletonInterface
     {
         return $this->getService(Router::class);
     }
-
+    
     /**
      * Returns the instance of the FAL service to generate file urls with
      *
@@ -169,7 +169,7 @@ class LinkContext implements SingletonInterface
     {
         return $this->getService(FalService::class);
     }
-
+    
     /**
      * Returns the instance of the extbase extension service
      *
@@ -179,7 +179,7 @@ class LinkContext implements SingletonInterface
     {
         return $this->getService(ExtensionService::class);
     }
-
+    
     /**
      * Returns true if a link definition with the given key exists.
      * Definitions can be configured using the ConfigureLinksInterface
@@ -193,7 +193,7 @@ class LinkContext implements SingletonInterface
     {
         return isset($this->definitions[$key]);
     }
-
+    
     /**
      * Returns the configuration for a certain link definition if it exists.
      * Definitions can be configured using the ConfigureLinksInterface
@@ -210,10 +210,10 @@ class LinkContext implements SingletonInterface
             throw new DefinitionNotFoundException('The requested link definition with key: "' . $key
                                                   . '" was not found!');
         }
-
+        
         return unserialize($this->definitions[$key], ['allowed_classes' => [Definition::class]]);
     }
-
+    
     /**
      * Internal helper which is used to initialize the typoScript frontend controller
      * if it is not existing, yet. This is needed for the uri builder to function correctly.
@@ -226,25 +226,25 @@ class LinkContext implements SingletonInterface
             return;
         }
         $this->initialized = true;
-
+        
         // Read the base url
         $baseUrl = $this->typoContext->config()->getTypoScriptValue('config.baseURL');
         if ($baseUrl === null) {
             $baseUrl = $this->typoContext->request()->getHost();
         }
         $baseUrl = Path::makeUri($baseUrl)->getHost();
-
+        
         // Create a new request instance
         $request = $this->makeInstance(Request::class);
         $request->setBaseUri($baseUrl);
         $this->setService(Request::class, $request);
-
+        
         // Inject the base url if we are in cli context
         if ($this->typoContext->env()->isCli()) {
             // Fix for external cli tools
-            $_SERVER['SCRIPT_NAME']     = '/index.php';
+            $_SERVER['SCRIPT_NAME'] = '/index.php';
             $_SERVER['SCRIPT_FILENAME'] = '/index.php';
-
+            
             // Update TYPO3 internal caches
             /** @noinspection HostnameSubstitutionInspection */
             $_SERVER['HTTP_HOST'] = $baseUrl;

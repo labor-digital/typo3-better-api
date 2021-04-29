@@ -31,49 +31,50 @@ abstract class AbstractBackendUtilityRecordEvent
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The unique id of the record which is retrieved
      *
      * @var int
      */
     protected $uid;
-
+    
     /**
      * A comma separated list of fields/columns that should be resolved
      *
      * @var string
      */
     protected $fieldsList;
-
+    
     /**
      * Additional WHERE clause, eg. ' AND some_field = 0'
      *
      * @var string
      */
     protected $where;
-
+    
     /**
      * Use the deleteClause to check if a record is deleted (default TRUE)
      *
      * @var bool
      */
     protected $useDeleteClause;
-
+    
     public function __construct(
         string $tableName,
         int $uid,
         string $fields,
         string $where,
         bool $useDeleteClause
-    ) {
-        $this->tableName       = $tableName;
-        $this->uid             = $uid;
-        $this->fieldsList      = $fields;
-        $this->where           = $where;
+    )
+    {
+        $this->tableName = $tableName;
+        $this->uid = $uid;
+        $this->fieldsList = $fields;
+        $this->where = $where;
         $this->useDeleteClause = $useDeleteClause;
     }
-
+    
     /**
      * Returns table name present in $GLOBALS['TCA']
      *
@@ -83,7 +84,7 @@ abstract class AbstractBackendUtilityRecordEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the unique id of the record which is retrieved
      *
@@ -93,7 +94,7 @@ abstract class AbstractBackendUtilityRecordEvent
     {
         return $this->uid;
     }
-
+    
     /**
      * Returns a comma separated list of fields/columns that should be resolved
      *
@@ -103,7 +104,7 @@ abstract class AbstractBackendUtilityRecordEvent
     {
         return $this->fieldsList;
     }
-
+    
     /**
      * Returns an optional additional WHERE clause, eg. ' AND some_field = 0'
      *
@@ -113,7 +114,7 @@ abstract class AbstractBackendUtilityRecordEvent
     {
         return $this->where;
     }
-
+    
     /**
      * Returns the deleteClause state to check if a record is deleted (default TRUE)
      *

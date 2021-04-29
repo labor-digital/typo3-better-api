@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpMissingStrictTypesDeclarationInspection */
+
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,9 +18,13 @@
  * Last modified: 2020.03.19 at 11:25
  */
 
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
+use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
+
 (function () {
-    $bus = \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance();
-    $bus->dispatch(new \LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent());
-    $bus->dispatch(new \LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent());
+    $bus = TypoEventBus::getInstance();
+    $bus->dispatch(new ExtConfigLoadedEvent());
+    $bus->dispatch(new ExtLocalConfLoadedEvent());
 })();
 

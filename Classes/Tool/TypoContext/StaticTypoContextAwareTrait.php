@@ -31,7 +31,7 @@ trait StaticTypoContextAwareTrait
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected static $__typoContext;
-
+    
     /**
      * Injects the typo context instance
      *
@@ -41,7 +41,7 @@ trait StaticTypoContextAwareTrait
     {
         static::$__typoContext = $typoContext;
     }
-
+    
     /**
      * Returns the typo context instance
      *
@@ -52,7 +52,7 @@ trait StaticTypoContextAwareTrait
         if (isset(static::$__typoContext)) {
             return static::$__typoContext;
         }
-
+        
         if (method_exists(static::class, 'Container')) {
             /** @noinspection PhpUndefinedMethodInspection */
             $container = static::Container();
@@ -60,7 +60,7 @@ trait StaticTypoContextAwareTrait
                 return static::$__typoContext = $container->get(TypoContext::class);
             }
         }
-
+        
         return static::$__typoContext = TypoContext::getInstance();
     }
 }

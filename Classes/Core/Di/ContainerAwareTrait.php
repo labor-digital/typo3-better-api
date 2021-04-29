@@ -39,7 +39,7 @@ trait ContainerAwareTrait
      * @var array
      */
     protected $caServices = [];
-
+    
     /**
      * Allows you to manually inject a service instance. Every time you use "getService" with $classOrInterfaceName
      * the matching instance will be returned
@@ -53,7 +53,7 @@ trait ContainerAwareTrait
     {
         $this->caServices[$classOrInterfaceName] = $instance;
     }
-
+    
     /**
      * Returns true if the object already has an instance of the given class or interface in store,
      * false if not.
@@ -66,7 +66,7 @@ trait ContainerAwareTrait
     {
         return isset($this->caServices[$classOrInterfaceName]);
     }
-
+    
     /**
      * You can use this method if you want to lazy load an object using the container instance.
      *
@@ -83,7 +83,7 @@ trait ContainerAwareTrait
     {
         return $this->caServices[$class] ?? $this->getContainer()->get($class);
     }
-
+    
     /**
      * Returns the instance of the container
      *
@@ -94,7 +94,7 @@ trait ContainerAwareTrait
         return $this->caServices['delegate'] ??
                $this->caServices['delegate'] = DelegateContainer::getInstance();
     }
-
+    
     /**
      * Allows you to create a new object instance without dependency injection.
      * This is currently only a wrapper around GeneralUtility::makeInstance()
@@ -110,7 +110,7 @@ trait ContainerAwareTrait
     {
         return GeneralUtility::makeInstance($class, ...$constructorArguments);
     }
-
+    
     /**
      * Returns a list of commonly used services as a "lazy" lookup method.
      *
@@ -121,7 +121,7 @@ trait ContainerAwareTrait
     {
         return $this->cs();
     }
-
+    
     /**
      * Shorthand alias of: getCommonServices()
      * Returns a list of commonly used services as a "lazy" lookup method.

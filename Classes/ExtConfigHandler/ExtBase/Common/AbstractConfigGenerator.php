@@ -25,7 +25,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 abstract class AbstractConfigGenerator
 {
-
+    
     /**
      * Internal helper to build the typoScript, template definition for a extbase plugin/module
      *
@@ -38,17 +38,18 @@ abstract class AbstractConfigGenerator
         string $type,
         AbstractConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         // Template path helper
         $pathHelper = static function (Iterator $stack): string {
             $paths = [];
             foreach ($stack as $k => $path) {
                 $paths[$path] = (((int)$k) * 10 + 10) . ' = ' . $path;
             }
-
+            
             return implode(PHP_EOL . '					', array_reverse($paths));
         };
-
+        
         // Build the typoScript
         $signature = $configurator->getSignature();
         $context->getState()->attachToString(

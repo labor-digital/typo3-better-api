@@ -25,14 +25,14 @@ use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormElementTrait;
 abstract class AbstractCustomWizard implements CustomWizardInterface
 {
     use CustomFormElementTrait;
-
+    
     /**
      * The context object to work with
      *
      * @var CustomWizardContext
      */
     protected $context;
-
+    
     /**
      * @inheritDoc
      */

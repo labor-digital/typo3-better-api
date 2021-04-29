@@ -37,7 +37,7 @@ class Factory implements PublicServiceInterface
     use ContainerAwareTrait;
     use FactoryDefinitionResolverTrait;
     use FactoryPopulatorTrait;
-
+    
     /**
      * Creates a new, empty flex form data structure representation
      *
@@ -48,7 +48,7 @@ class Factory implements PublicServiceInterface
     public function create(?TcaField $field = null): Flex
     {
         $field = $field ?? $this->makeStandaloneField();
-
+        
         return $this->makeInstance(
             Flex::class,
             [
@@ -58,7 +58,7 @@ class Factory implements PublicServiceInterface
             ]
         );
     }
-
+    
     /**
      * Initializes the flex form structure based on the provided definition
      *
@@ -68,12 +68,12 @@ class Factory implements PublicServiceInterface
     public function initialize(Flex $flex, string $definition): void
     {
         $flex->clear();
-
+        
         $def = $this->resolveDefinitionToArray($definition, $flex->getContext()->getExtConfigContext());
-
+        
         $this->populateElements($flex, $def);
     }
-
+    
     /**
      * If no field was provided we create a dummy table with a field that will never be used anywhere.
      *
@@ -82,9 +82,9 @@ class Factory implements PublicServiceInterface
     protected function makeStandaloneField(): TcaField
     {
         $tableFactory = $this->makeInstance(TableFactory::class);
-        $table        = $tableFactory->create('flex-form-dummy-table', $this->getService(ExtConfigContext::class));
-
+        $table = $tableFactory->create('flex-form-dummy-table', $this->getService(ExtConfigContext::class));
+        
         return $table->getType()->getField('flex');
     }
-
+    
 }

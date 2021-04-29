@@ -38,17 +38,17 @@ use Neunerlei\Inflection\Inflector;
 class TableFactory implements PublicServiceInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
      */
     protected $sqlRegistry;
-
+    
     /**
      * TableFactory constructor.
      *
@@ -60,7 +60,7 @@ class TableFactory implements PublicServiceInterface
         $this->typeFactory = $typeFactory;
         $this->sqlRegistry = $sqlRegistry;
     }
-
+    
     /**
      * Creates a new, empty instance for a certain TCA table
      *
@@ -80,7 +80,7 @@ class TableFactory implements PublicServiceInterface
             ]
         );
     }
-
+    
     /**
      * Either loads the tca for the given tca table from the global configuration or creates,
      * a new, default configuration for it.
@@ -93,21 +93,21 @@ class TableFactory implements PublicServiceInterface
     {
         // Load the tca from globals...
         $tca = Arrays::getPath($GLOBALS, ['TCA', $table->getTableName()], []);
-
+        
         // ... or find the default tca
         if (empty($tca)) {
             $tca = $this->generateDefaultTca($table);
-
+            
             // Make sure new tables are registered in the SQL generation
             $this->sqlRegistry->getTable($table->getTableName());
         }
-
+        
         // Allow filtering
         $table->getContext()->cs()->eventBus->dispatch(($e = new TableFactoryTcaFilterEvent($tca, $table)));
-
+        
         // Update the raw tca
         $table->setRaw($e->getTca());
-
+        
         // We have to make sure that all types are loaded, so we can calculate
         // the registered data hooks correctly. I have hoped not to rely on this,
         // because it causes a lot of, potentially unnecessary, overhead.
@@ -116,7 +116,7 @@ class TableFactory implements PublicServiceInterface
             $table->getType($typeName);
         }
     }
-
+    
     /**
      * Internal helper to generate a blank "default" TCA for a new table.
      *
@@ -126,28 +126,28 @@ class TableFactory implements PublicServiceInterface
      */
     protected function generateDefaultTca(TcaTable $table): array
     {
-        $ctx       = $table->getContext();
+        $ctx = $table->getContext();
         $tableName = $table->getTableName();
-
-        $default                  = TableDefaults::TABLE_TCA;
+        
+        $default = TableDefaults::TABLE_TCA;
         $default['ctrl']['title'] = Inflector::toHuman(
             preg_replace('/^(.*?_domain_model_)/', '', $tableName)
         );
-
+        
         $default['ctrl']['iconfile']
             = $this->cs()->typoContext->path()->getExtensionIconPath(
             $ctx->getExtConfigContext()->getExtKey());
-
-        $default['columns']['l10n_parent']['config']['foreign_table']       = $tableName;
+        
+        $default['columns']['l10n_parent']['config']['foreign_table'] = $tableName;
         $default['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace(
             '{{table}}',
             $tableName,
             $default['columns']['l10n_parent']['config']['foreign_table_where']
         );
-
+        
         // Allow filtering
         $ctx->cs()->eventBus->dispatch(($e = new TableDefaultTcaFilterEvent($default, $table)));
-
+        
         return $e->getDefaultTca();
     }
 }

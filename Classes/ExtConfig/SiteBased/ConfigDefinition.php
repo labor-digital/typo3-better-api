@@ -34,14 +34,15 @@ class ConfigDefinition extends DefaultConfigDefinition
      * @var \TYPO3\CMS\Core\Site\Entity\Site[]
      */
     protected $sites;
-
+    
     /**
      * @inheritDoc
      */
     public function __construct(
         DefaultConfigDefinition $baseDefinition,
         array $sites
-    ) {
+    )
+    {
         parent::__construct(
             $baseDefinition->handlerDefinition,
             $baseDefinition->configContext,
@@ -51,7 +52,7 @@ class ConfigDefinition extends DefaultConfigDefinition
         );
         $this->sites = $sites;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -66,7 +67,7 @@ class ConfigDefinition extends DefaultConfigDefinition
             );
         }
     }
-
+    
     /**
      * Internal helper to run the "process" method for a single site
      *
@@ -77,17 +78,17 @@ class ConfigDefinition extends DefaultConfigDefinition
     protected function runWithSiteBasedDefinition(string $siteKey, Site $site, callable $callback): void
     {
         $clone = clone $this;
-
+        
         if ($this->configContext instanceof SiteConfigContext) {
             $this->configContext->initializeSite($siteKey, $site);
         }
-
-        $state     = $this->configContext->getState();
+        
+        $state = $this->configContext->getState();
         $siteState = new ConfigState([]);
-
+        
         $this->configContext->initialize($this->configContext->getLoaderContext(), $siteState);
-
-        $siteKeys          = array_keys($this->sites);
+        
+        $siteKeys = array_keys($this->sites);
         $siteConfigClasses = [];
         foreach ($this->configClasses as $class) {
             // Allow filtering of the configuration based on a site key
@@ -97,41 +98,41 @@ class ConfigDefinition extends DefaultConfigDefinition
                     continue;
                 }
             }
-
+            
             $siteConfigClasses[] = $class;
         }
-
+        
         $filter = static function (array $value) use ($siteConfigClasses) {
             return array_filter($value, static function ($key) use ($siteConfigClasses) {
                 return in_array($key, $siteConfigClasses, true);
             }, ARRAY_FILTER_USE_KEY);
         };
-
-        $this->configClasses         = $siteConfigClasses;
+        
+        $this->configClasses = $siteConfigClasses;
         $this->overrideConfigClasses = $filter($this->overrideConfigClasses);
-        $this->classNamespaceMap     = $filter($this->classNamespaceMap);
-
+        $this->classNamespaceMap = $filter($this->classNamespaceMap);
+        
         try {
             $callback();
         } finally {
             // Revert the context back to the initial state
             $this->configContext->initialize($this->configContext->getLoaderContext(), $state);
-            $this->configClasses         = $clone->configClasses;
+            $this->configClasses = $clone->configClasses;
             $this->overrideConfigClasses = $clone->overrideConfigClasses;
-            $this->classNamespaceMap     = $clone->classNamespaceMap;
+            $this->classNamespaceMap = $clone->classNamespaceMap;
         }
-
+        
         // Inject the site state into the main state object
         $data = $siteState->getAll();
-
+        
         // Special handling for the "root" node -> this allows to configure non-site-based configuration
         if (isset($data['root']) && is_array($data['root'])) {
             $state->importFrom(new ConfigState($data['root']));
             unset($data['root']);
         }
-
+        
         $state->set('typo.site.' . $siteKey, $data);
     }
-
-
+    
+    
 }

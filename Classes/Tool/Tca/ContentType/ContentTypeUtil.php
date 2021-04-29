@@ -36,7 +36,7 @@ class ContentTypeUtil
     {
         return $GLOBALS['TCA']['tt_content']['ctrl']['contentType']['tables'] ?? [];
     }
-
+    
     /**
      * Returns the mapping of all extension fields and their given field name
      *
@@ -46,7 +46,7 @@ class ContentTypeUtil
     {
         return $GLOBALS['TCA']['tt_content']['ctrl']['contentType']['columns'] ?? [];
     }
-
+    
     /**
      * Returns the mapping of the extension fields to their given name, but only on a requested cType
      *
@@ -58,7 +58,7 @@ class ContentTypeUtil
     {
         return $GLOBALS['TCA']['tt_content']['ctrl']['contentType']['typeColumns'][$cType] ?? [];
     }
-
+    
     /**
      * Returns the configured model class for the given cType, or the default model class name,
      * if no concrete model class was registered for the type.
@@ -71,7 +71,7 @@ class ContentTypeUtil
     {
         return $GLOBALS['TCA']['tt_content']['ctrl']['contentType']['typeModels'][$cType] ?? DefaultDataModel::class;
     }
-
+    
     /**
      * Retrieves the raw child row and re-maps the registered columns to their given column names.
      * The returned array then can be directly merged into the parent row
@@ -83,15 +83,15 @@ class ContentTypeUtil
      */
     public static function convertChildForParent(array $childRow, string $cType): array
     {
-        $map     = static::getTypeColumnMap($cType);
+        $map = static::getTypeColumnMap($cType);
         $columns = [];
         foreach (array_flip($map) as $childColumn => $parentColumn) {
             $columns[$parentColumn] = $childRow[$childColumn] ?? null;
         }
-
+        
         return $columns;
     }
-
+    
     /**
      * Receives the parent row, that includes the extension columns in their named space form.
      * It will extract all extension columns and return them in a remapped form ready to be inserted
@@ -108,7 +108,7 @@ class ContentTypeUtil
         if (empty($map)) {
             return [];
         }
-
+        
         $childRow = [];
         foreach ($map as $parentColumn => $childColumn) {
             if (isset($row[$parentColumn])) {
@@ -116,10 +116,10 @@ class ContentTypeUtil
             }
             unset($row[$parentColumn]);
         }
-
+        
         return $childRow;
     }
-
+    
     /**
      * Returns true if an extension table was registered for the ctype
      *
@@ -131,7 +131,7 @@ class ContentTypeUtil
     {
         return isset(static::getTableMap()[$cType]);
     }
-
+    
     /**
      * Removes all registered extension column values from the given row
      *
@@ -141,7 +141,7 @@ class ContentTypeUtil
      */
     public static function removeAllExtensionColumns(array $row): array
     {
-        $clean            = [];
+        $clean = [];
         $extensionColumns = static::getColumnMap();
         foreach ($row as $k => $v) {
             if (isset($extensionColumns[$k])) {
@@ -149,10 +149,10 @@ class ContentTypeUtil
             }
             $clean[$k] = $v;
         }
-
+        
         return $clean;
     }
-
+    
     /**
      * For the most part the content type columns work out of the box, however when resolving file references in the
      * backend, or creating extbase objects there are issues where typo3 expects the "mapped" column names to exist in
@@ -177,25 +177,25 @@ class ContentTypeUtil
         } else {
             $cType = '';
         }
-
+        
         if (! static::hasExtensionTable($cType)) {
             return $wrapper();
         }
-
+        
         $columnBackup = $GLOBALS['TCA']['tt_content']['columns'] ?? [];
-
+        
         try {
             foreach (static::getTypeColumnMap($cType) as $nsColumnName => $columnName) {
                 $GLOBALS['TCA']['tt_content']['columns'][$columnName]
                     = $GLOBALS['TCA']['tt_content']['columns'][$nsColumnName] ?? [];
             }
-
+            
             return $wrapper();
         } finally {
             $GLOBALS['TCA']['tt_content']['columns'] = $columnBackup;
         }
     }
-
+    
     /**
      * Retrieves a row, that contains the main record, as well as the child fields,
      * and remaps the existing extension fields from their namespaced name like ct_cType_... to the
@@ -211,14 +211,14 @@ class ContentTypeUtil
         if (! static::hasExtensionTable($cType)) {
             return $row;
         }
-
+        
         foreach (static::getTypeColumnMap($cType) as $nsColumnName => $columnName) {
             if (array_key_exists($nsColumnName, $row)) {
                 $row[$columnName] = $row[$nsColumnName];
                 unset($row[$nsColumnName]);
             }
         }
-
+        
         return $row;
     }
 }

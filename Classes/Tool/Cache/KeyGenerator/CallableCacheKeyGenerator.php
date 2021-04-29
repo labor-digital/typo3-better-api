@@ -26,12 +26,12 @@ use LaborDigital\T3BA\Tool\OddsAndEnds\ReflectionUtil;
 
 class CallableCacheKeyGenerator implements CacheKeyGeneratorInterface
 {
-
+    
     /**
      * @var callable
      */
     protected $callable;
-
+    
     /**
      * CallableCacheKeyGenerator constructor.
      *
@@ -41,14 +41,14 @@ class CallableCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $this->callable = $callable;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function makeCacheKey(): string
     {
         $ref = ReflectionUtil::makeReflectionForCallable($this->callable);
-
+        
         return md5($ref->getFileName() . '_' . $ref->getStartLine() . '_' . $ref->getEndLine());
     }
 }

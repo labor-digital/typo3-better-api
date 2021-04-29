@@ -43,12 +43,12 @@ class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
         if (! isset($GLOBALS['LANG'])) {
             return parent::settingLanguage();
         }
-
+        
         // Link the language into the existing service
         /** @var \TYPO3\CMS\Core\Localization\LanguageService $lang */
-        $lang                               = $GLOBALS['LANG'];
+        $lang = $GLOBALS['LANG'];
         $this->config['config']['language'] = $lang->lang;
-
+        
         return parent::settingLanguage($request);
     }
 }

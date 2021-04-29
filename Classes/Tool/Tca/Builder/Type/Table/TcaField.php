@@ -35,14 +35,14 @@ class TcaField extends AbstractField
 {
     use LayoutMetaTrait;
     use TcaDataHookCollectorAddonTrait;
-
+    
     /**
      * Holds the flexForm configuration if there is one
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaFieldFlexFormConfig
      */
     protected $flex;
-
+    
     /**
      * Returns the database table name for the current field
      *
@@ -52,7 +52,7 @@ class TcaField extends AbstractField
     {
         return $this->getForm()->getTableName();
     }
-
+    
     /**
      * Returns the database name of the current field
      *
@@ -62,7 +62,7 @@ class TcaField extends AbstractField
     {
         return $this->getId();
     }
-
+    
     /**
      * Returns the flex form configuration for this field.
      *
@@ -77,15 +77,15 @@ class TcaField extends AbstractField
         if (isset($this->flex)) {
             return $this->flex;
         }
-
+        
         // Create new flex form config
         $cs = $this->getRoot()->getContext()->cs();
-
+        
         return $this->flex = $cs->typoContext->di()->makeInstance(
             TcaFieldFlexFormConfig::class, [$this, $this->config, $cs->flexFormFactory]
         );
     }
-
+    
     /**
      * Returns true if the current field is considered a "flexForm" field, false if not
      *
@@ -95,7 +95,7 @@ class TcaField extends AbstractField
     {
         return $this->flex || $this->config['config']['type'] === 'flex';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -103,7 +103,7 @@ class TcaField extends AbstractField
     {
         // Store ds values to allow automatic config flushing
         $dsOld = json_encode(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
-
+        
         // Load flex form configuration
         if ($raw['config']['type'] === 'flex' && ! empty($this->flex)) {
             $dsNew = json_encode(Arrays::getPath($raw, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
@@ -114,37 +114,37 @@ class TcaField extends AbstractField
         } elseif ($raw['config']['type'] !== 'flex') {
             $this->flex = null;
         }
-
+        
         return parent::setRaw($raw);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function getRaw(): array
     {
         $raw = parent::getRaw();
-
+        
         if ($this->flex) {
             $this->flex->dump($raw);
         }
-
+        
         return $raw;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function inheritFrom(AbstractField $field)
     {
         parent::inheritFrom($field);
-
+        
         // Automatically inherit the SQL definition
         if (method_exists($field, 'getColumn')) {
             ColumnAdapter::inheritConfig($this->getColumn(), $field->getColumn());
         }
     }
-
+    
     /**
      * Returns the sql definition for this field
      *
@@ -156,7 +156,7 @@ class TcaField extends AbstractField
             $this->getTableName(), $this->getForm()->getTypeName(), $this->getId()
         );
     }
-
+    
     /**
      * Removes this field from the sql table.
      * You should only use this if you have a display-only field that should not store any data for itself
@@ -166,7 +166,7 @@ class TcaField extends AbstractField
     public function removeColumn(): self
     {
         $this->getColumn()->setType(new FallbackType());
-
+        
         return $this;
     }
 }

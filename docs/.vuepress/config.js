@@ -17,13 +17,13 @@
  */
 
 module.exports = {
-	title: "TYPO3 - Better API by LABOR.digital",
-	themeConfig: {
-		sidebarDepth: 4,
-		sidebar: [
-			"/",
-			"/guide/FilesAndFolders.md",
-			"/guide/CoreModification.md"
-		]
-	}
+    title: 'TYPO3 - Better API by LABOR.digital',
+    themeConfig: {
+        sidebarDepth: 4,
+        sidebar: [
+            '/',
+            '/guide/FilesAndFolders.md',
+            '/guide/CoreModification.md'
+        ]
+    }
 };

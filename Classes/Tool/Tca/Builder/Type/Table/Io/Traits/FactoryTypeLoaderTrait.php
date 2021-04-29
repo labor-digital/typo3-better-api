@@ -41,13 +41,13 @@ trait FactoryTypeLoaderTrait
             if (! is_array($v)) {
                 continue;
             }
-
+            
             $types[(string)$k] = $v;
         }
-
+        
         return $types;
     }
-
+    
     /**
      * Returns the typeName of the default type in the TCA. The default type will be
      * represented by the table object itself
@@ -63,7 +63,7 @@ trait FactoryTypeLoaderTrait
         if (empty($types)) {
             return '1';
         }
-
+        
         return (string)key($types);
     }
 }

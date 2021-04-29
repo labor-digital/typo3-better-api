@@ -35,19 +35,19 @@ class TemplateRenderingService implements SingletonInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * The list of mustache renderers
      *
      * @var \Closure[]
      */
     protected static $renderers = [];
-
+    
     /**
      * @var Mount
      */
     protected $fsMount;
-
+    
     /**
      * TemplateRenderingService constructor.
      *
@@ -57,7 +57,7 @@ class TemplateRenderingService implements SingletonInterface
     {
         $this->fsMount = $fs->getMount('TemplateRendering');
     }
-
+    
     /**
      * This method allows you to render a mustache or handlebars template into a string.
      * As engine we use LightNCandy internally with compiled templates for a faster execution of the same variants.
@@ -75,9 +75,9 @@ class TemplateRenderingService implements SingletonInterface
         // Check if we have to load a template file
         if (stripos($template, 'file:') === 0) {
             $templateFile = $this->getTypoContext()->path()->typoPathToRealPath($template);
-            $template     = Fs::readFile($templateFile);
+            $template = Fs::readFile($templateFile);
         }
-
+        
         // Check if we already know the renderer
         $templateFile = 'template-' . md5($template) . '.php';
         if (isset(static::$renderers[$templateFile])) {
@@ -89,24 +89,24 @@ class TemplateRenderingService implements SingletonInterface
                     $options['flags'] = LightnCandy::FLAG_BESTPERFORMANCE ^ LightnCandy::FLAG_ERROR_EXCEPTION
                                         ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL;
                 }
-
+                
                 $php = LightnCandy::compile($template, $this->injectMustacheViewHelpers($options));
-
+                
                 if (strpos(trim($php), '<?php') !== 0) {
                     $php = '<?php' . PHP_EOL . $php;
                 }
-
+                
                 $this->fsMount->setFileContent($templateFile, $php);
             }
-
+            
             // Load the renderer from the compiled template
             $renderer = static::$renderers[$templateFile] = $this->fsMount->includeFile($templateFile);
         }
-
+        
         // Execute the renderer
         return $renderer($data);
     }
-
+    
     /**
      * Returns a fluid template view instance.
      *
@@ -128,52 +128,52 @@ class TemplateRenderingService implements SingletonInterface
         // Prepare the options
         $options = Options::make($options, [
             'templateRootPaths' => [
-                'type'    => 'array',
+                'type' => 'array',
                 'default' => [],
             ],
-            'partialRootPaths'  => [
-                'type'    => 'array',
+            'partialRootPaths' => [
+                'type' => 'array',
                 'default' => [],
             ],
-            'layoutRootPaths'   => [
-                'type'    => 'array',
+            'layoutRootPaths' => [
+                'type' => 'array',
                 'default' => [],
             ],
-            'format'            => [
-                'type'    => 'string',
+            'format' => [
+                'type' => 'string',
                 'default' => 'html',
             ],
         ]);
-
+        
         // Prepare the template name
         $filename = $this->getTypoContext()->path()->typoPathToRealPath($templateName);
         if (strpos(substr($filename, -6), '.') === false) {
             $filename .= '.html';
         }
-
+        
         // Build the instance
         $instance = $this->makeInstance(StandaloneView::class);
         $instance->setFormat($options['format']);
-
+        
         if (! empty($options['templateRootPaths'])) {
             $instance->setTemplateRootPaths($options['templateRootPaths']);
         }
-
+        
         if (! empty($options['partialRootPaths'])) {
             $instance->setPartialRootPaths($options['partialRootPaths']);
         }
-
+        
         if (! empty($options['layoutRootPaths'])) {
             $instance->setLayoutRootPaths($options['layoutRootPaths']);
         }
-
+        
         empty($options['templateRootPaths']) ? $instance->setTemplatePathAndFilename($filename)
             : $instance->setTemplate($templateName);
-
+        
         // Done
         return $instance;
     }
-
+    
     /**
      * Internal helper to inject some quite useful view helpers into the mustache landscape...
      *
@@ -192,7 +192,7 @@ class TemplateRenderingService implements SingletonInterface
                     if (! is_string($selector)) {
                         return '';
                     }
-
+                    
                     return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
                         ::getInstance()->di()->cs()->translator->translate($selector);
                 },

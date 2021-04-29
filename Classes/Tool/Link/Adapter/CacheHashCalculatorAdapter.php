@@ -36,7 +36,7 @@ class CacheHashCalculatorAdapter extends CacheHashCalculator
     {
         return GeneralUtility::makeInstance(CacheHashCalculator::class);
     }
-
+    
     /**
      * Returns the list of excluded parameters for a cache hash calculator instance
      *
@@ -47,10 +47,10 @@ class CacheHashCalculatorAdapter extends CacheHashCalculator
     public static function getExcludedParameters(CacheHashCalculator $calculator): array
     {
         dbge($calculator->configuration);
-
+        
         return $calculator->excludedParameters;
     }
-
+    
     /**
      * Updates the list of excluded parameters for a given calculator instance
      *

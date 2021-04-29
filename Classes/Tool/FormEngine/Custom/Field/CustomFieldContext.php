@@ -26,42 +26,42 @@ use Neunerlei\Arrays\Arrays;
 class CustomFieldContext
 {
     use CustomAssetTrait;
-
+    
     /**
      * The raw data, stored on the root node element
      *
      * @var array
      */
     protected $rawData;
-
+    
     /**
      * The real node in the form engine, that serves as a wrapper for our easier interface to form elements
      *
      * @var \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldNode
      */
     protected $rootNode;
-
+    
     /**
      * Default width value for a couple of elements like text
      *
      * @var int
      */
     protected $defaultInputWidth = 30;
-
+    
     /**
      * Minimum width value for a couple of elements like text
      *
      * @var int
      */
     protected $minInputWidth = 10;
-
+    
     /**
      * Maximum width value for a couple of elements like text
      *
      * @var int
      */
     protected $maxInputWidth = 50;
-
+    
     /**
      * If this is set to false, the outer html elements around the form element,
      * including the field wizards will not be added to the result string!
@@ -69,7 +69,7 @@ class CustomFieldContext
      * @var bool
      */
     protected $applyOuterWrap = true;
-
+    
     /**
      * CustomFormElementContext constructor.
      *
@@ -83,7 +83,7 @@ class CustomFieldContext
             }
         }
     }
-
+    
     /**
      * Returns the raw data received by the root node
      *
@@ -93,7 +93,7 @@ class CustomFieldContext
     {
         return $this->rawData;
     }
-
+    
     /**
      * Can be used to update the raw data of the rendering root node
      *
@@ -104,10 +104,10 @@ class CustomFieldContext
     public function setRawData(array $rawData): self
     {
         $this->rawData = $rawData;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the form factory node, that serves as a wrapper for your field node
      *
@@ -117,7 +117,7 @@ class CustomFieldContext
     {
         return $this->rootNode;
     }
-
+    
     /**
      * Returns the default width value for a couple of elements like text
      *
@@ -127,7 +127,7 @@ class CustomFieldContext
     {
         return $this->defaultInputWidth;
     }
-
+    
     /**
      * Returns the minimum width value for a couple of elements like text
      *
@@ -137,7 +137,7 @@ class CustomFieldContext
     {
         return $this->minInputWidth;
     }
-
+    
     /**
      * Returns the maximum width value for a couple of elements like text
      *
@@ -147,7 +147,7 @@ class CustomFieldContext
     {
         return $this->maxInputWidth;
     }
-
+    
     /**
      * Returns the UID of the record this field is part of
      *
@@ -157,7 +157,7 @@ class CustomFieldContext
     {
         return (int)($this->rawData['vanillaUid'] ?? 0);
     }
-
+    
     /**
      * Returns the page id of the record this field is part of
      *
@@ -167,7 +167,7 @@ class CustomFieldContext
     {
         return (int)($this->rawData['effectivePid'] ?? 0);
     }
-
+    
     /**
      * Returns the currently set value for this field
      *
@@ -177,7 +177,7 @@ class CustomFieldContext
     {
         return $this->rawData['parameterArray']['itemFormElValue'] ?? null;
     }
-
+    
     /**
      * Returns the complete database record this field is part of
      *
@@ -187,7 +187,7 @@ class CustomFieldContext
     {
         return $this->rawData['databaseRow'] ?? [];
     }
-
+    
     /**
      * Returns the name of the database table this field is part of
      *
@@ -197,7 +197,7 @@ class CustomFieldContext
     {
         return $this->rawData['tableName'] ?? '';
     }
-
+    
     /**
      * Returns the name of the database field in the record
      *
@@ -207,7 +207,7 @@ class CustomFieldContext
     {
         return $this->rawData['fieldName'] ?? '';
     }
-
+    
     /**
      * Returns the field name that should be put as "name" attribute of the HTML tag,
      * representing this field
@@ -218,7 +218,7 @@ class CustomFieldContext
     {
         return $this->rawData['parameterArray']['itemFormElName'] ?? '';
     }
-
+    
     /**
      * The HTML ID that should be set for this field
      *
@@ -228,7 +228,7 @@ class CustomFieldContext
     {
         return $this->rawData['parameterArray']['itemFormElID'] ?? '';
     }
-
+    
     /**
      * Returns the prepared TCA configuration for this field
      *
@@ -238,7 +238,7 @@ class CustomFieldContext
     {
         return $this->rawData['parameterArray']['fieldConf'] ?? [];
     }
-
+    
     /**
      * Returns the list of additional options that were passed when the field
      * was applied using the fieldPreset applier.
@@ -249,7 +249,7 @@ class CustomFieldContext
     {
         return $this->rawData['parameterArray']['fieldConf']['config']['t3ba'] ?? [];
     }
-
+    
     /**
      * Can be used to return a single option, or returns the default value
      *
@@ -263,7 +263,7 @@ class CustomFieldContext
     {
         return Arrays::getPath($this->getOptions(), $path, $default);
     }
-
+    
     /**
      * Returns the registered class to handle the rendering for this field.
      * If this returns an empty string, the space-time-continuum will explode in around 30 seconds...
@@ -274,7 +274,7 @@ class CustomFieldContext
     {
         return $this->rawData['parameterArray']['fieldConf']['config']['t3baClass'] ?? '';
     }
-
+    
     /**
      * Returns true if the outer html wrap around your form field will be rendered, false if not
      *
@@ -284,7 +284,7 @@ class CustomFieldContext
     {
         return $this->applyOuterWrap;
     }
-
+    
     /**
      * Sets if the outer html wrap around your form field will be rendered or not
      *
@@ -295,10 +295,10 @@ class CustomFieldContext
     public function setApplyOuterWrap(bool $applyOuterWrap): self
     {
         $this->applyOuterWrap = $applyOuterWrap;
-
+        
         return $this;
     }
-
+    
     /**
      * Calling this method disables the outer html wrap around your form field
      *
@@ -307,8 +307,8 @@ class CustomFieldContext
     public function disableOuterWrap(): self
     {
         $this->applyOuterWrap = false;
-
+        
         return $this;
     }
-
+    
 }

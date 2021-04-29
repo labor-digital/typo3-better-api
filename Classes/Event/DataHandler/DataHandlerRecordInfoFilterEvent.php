@@ -34,35 +34,35 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  */
 class DataHandlerRecordInfoFilterEvent
 {
-
+    
     /**
      * The name of the table to request the information from
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * UID of the record from $tableName or NEW... for a new record
      *
      * @var int|string
      */
     protected $id;
-
+    
     /**
      * The field list for the SELECT query, eg. "*" or "uid,pid,...
      *
      * @var string
      */
     protected $fieldList;
-
+    
     /**
      * The currently executed data handler instance
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * The closure that is used to request the record information from the database
      * Can be modified to change the lookup method
@@ -70,7 +70,7 @@ class DataHandlerRecordInfoFilterEvent
      * @var \Closure
      */
     protected $concreteInfoProvider;
-
+    
     /**
      * DataHandlerRecordInfoFilterEvent constructor.
      *
@@ -86,14 +86,15 @@ class DataHandlerRecordInfoFilterEvent
         string $fieldList,
         DataHandler $dataHandler,
         Closure $concreteInfoProvider
-    ) {
-        $this->tableName            = $tableName;
-        $this->id                   = $id;
-        $this->fieldList            = $fieldList;
-        $this->dataHandler          = $dataHandler;
+    )
+    {
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->fieldList = $fieldList;
+        $this->dataHandler = $dataHandler;
         $this->concreteInfoProvider = $concreteInfoProvider;
     }
-
+    
     /**
      * Returns the id of the entry that is requested
      *
@@ -103,7 +104,7 @@ class DataHandlerRecordInfoFilterEvent
     {
         return $this->id;
     }
-
+    
     /**
      * Returns the name of the table that is currently requested
      *
@@ -113,7 +114,7 @@ class DataHandlerRecordInfoFilterEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the currently executed data handler instance
      *
@@ -123,7 +124,7 @@ class DataHandlerRecordInfoFilterEvent
     {
         return $this->dataHandler;
     }
-
+    
     /**
      * Returns the field list for the SELECT query, eg. "*" or "uid,pid,...
      *
@@ -133,7 +134,7 @@ class DataHandlerRecordInfoFilterEvent
     {
         return $this->fieldList;
     }
-
+    
     /**
      * Updates the field list for the SELECT query, eg. "*" or "uid,pid,...
      *
@@ -144,10 +145,10 @@ class DataHandlerRecordInfoFilterEvent
     public function setFieldList(string $fieldList): DataHandlerRecordInfoFilterEvent
     {
         $this->fieldList = $fieldList;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the closure that is used to request the record information from the database
      *
@@ -157,7 +158,7 @@ class DataHandlerRecordInfoFilterEvent
     {
         return $this->concreteInfoProvider;
     }
-
+    
     /**
      * Updates the closure that is used to request the record information from the database
      *
@@ -168,7 +169,7 @@ class DataHandlerRecordInfoFilterEvent
     public function setConcreteInfoProvider(Closure $concreteInfoProvider): DataHandlerRecordInfoFilterEvent
     {
         $this->concreteInfoProvider = $concreteInfoProvider;
-
+        
         return $this;
     }
 }

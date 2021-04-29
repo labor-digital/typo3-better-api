@@ -27,7 +27,7 @@ use Doctrine\DBAL\Schema\Column;
 
 class ColumnAdapter extends Column
 {
-
+    
     /**
      * Helper to inherit the configuration from the $new column into the $target column.
      * name and namespace will be preserved!

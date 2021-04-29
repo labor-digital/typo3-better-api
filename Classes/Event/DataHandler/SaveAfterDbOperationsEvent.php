@@ -38,7 +38,7 @@ class SaveAfterDbOperationsEvent extends AbstractLateSaveEvent
      * @var int
      */
     protected $id;
-
+    
     /**
      * Returns the id of the entry that is saved
      *

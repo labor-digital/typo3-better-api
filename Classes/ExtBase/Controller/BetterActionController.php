@@ -35,7 +35,7 @@ use TYPO3\CMS\Extbase\Service\ExtensionService;
 abstract class BetterActionController extends ActionController
 {
     use ContainerAwareTrait;
-
+    
     /**
      * Implements new hooks, catches a weired TYPO3 exception if a dbal entry was not found
      * and provides additional data attribute, containing the raw content element data
@@ -52,12 +52,12 @@ abstract class BetterActionController extends ActionController
         if (empty($this->data)) {
             $this->data = $this->configurationManager->getContentObject()->data;
         }
-
+        
         // Inject the this controller's request into the links object
         $this->setService(
             LinkService::class, $this->cs()->links->makeControllerClone($request)
         );
-
+        
         // Update the messaging service
         $messagingService = $this->getService(FlashMessageRenderingService::class);
         $extensionService = $this->getService(ExtensionService::class);
@@ -65,11 +65,11 @@ abstract class BetterActionController extends ActionController
             'extbase.flashmessages.' . $extensionService->getPluginNamespace(
                 $request->getControllerExtensionName(), $request->getPluginName())
         );
-
+        
         // Allow filtering
         $eventBus = $this->cs()->eventBus;
         $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, true));
-
+        
         // Do the default stuff
         try {
             parent::processRequest($request, $response);
@@ -78,11 +78,11 @@ abstract class BetterActionController extends ActionController
         } finally {
             $messagingService->setDefaultQueueId(FlashMessageRenderingService::DEFAULT_QUEUE);
         }
-
+        
         // Allow filtering
         $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, false));
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -94,7 +94,7 @@ abstract class BetterActionController extends ActionController
             $this->response,
             $this
         )));
-
+        
         return $e->getActionMethodName();
     }
 }

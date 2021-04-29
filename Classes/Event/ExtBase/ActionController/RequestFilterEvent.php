@@ -37,35 +37,35 @@ use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
  */
 class RequestFilterEvent
 {
-
+    
     /**
      * The ext base request object to handle
      *
      * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
      */
     protected $request;
-
+    
     /**
      * The ext base response object to dump the contents into
      *
      * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
     protected $response;
-
+    
     /**
      * The controller to handle the request
      *
      * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     protected $controller;
-
+    
     /**
      * True if the event is emitted before and false if emitted after the processRequest() method of the controller
      *
      * @var bool
      */
     protected $beforeProcessing;
-
+    
     /**
      * RequestFilterEvent constructor.
      *
@@ -79,13 +79,14 @@ class RequestFilterEvent
         ResponseInterface $response,
         ActionController $controller,
         bool $beforeProcessing
-    ) {
-        $this->request          = $request;
-        $this->response         = $response;
-        $this->controller       = $controller;
+    )
+    {
+        $this->request = $request;
+        $this->response = $response;
+        $this->controller = $controller;
         $this->beforeProcessing = $beforeProcessing;
     }
-
+    
     /**
      * Returns the extbase request object to handle
      *
@@ -95,7 +96,7 @@ class RequestFilterEvent
     {
         return $this->request;
     }
-
+    
     /**
      * Returns the ext base response object to dump the contents into
      *
@@ -105,7 +106,7 @@ class RequestFilterEvent
     {
         return $this->response;
     }
-
+    
     /**
      * Returns the controller to handle the request
      *
@@ -115,7 +116,7 @@ class RequestFilterEvent
     {
         return $this->controller;
     }
-
+    
     /**
      * Returns true if the event is emitted before and false if emitted after the processRequest() method of the
      * controller

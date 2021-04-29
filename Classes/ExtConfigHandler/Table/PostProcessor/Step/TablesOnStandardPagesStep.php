@@ -35,7 +35,7 @@ use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepI
 class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface
 {
     public const CONFIG_KEY = 'allowOnStandardPages';
-
+    
     /**
      * @inheritDoc
      */
@@ -44,8 +44,8 @@ class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface
         if (isset($config['ctrl'][static::CONFIG_KEY]) && $config['ctrl'][static::CONFIG_KEY]) {
             $meta['onStandardPages'][] = $tableName;
         }
-
+        
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
-
+    
 }

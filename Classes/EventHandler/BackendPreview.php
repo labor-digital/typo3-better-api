@@ -34,7 +34,7 @@ use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 class BackendPreview implements LazyEventSubscriberInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -43,12 +43,12 @@ class BackendPreview implements LazyEventSubscriberInterface
         $subscription->subscribe(ListLabelRenderingEvent::class, 'onListLabelRendering');
         $subscription->subscribe(PreviewRenderingEvent::class, 'onPreviewRendering');
     }
-
+    
     public function onListLabelRendering(ListLabelRenderingEvent $event): void
     {
         $this->getService(BackendListLabelRenderer::class)->render($event);
     }
-
+    
     public function onPreviewRendering(PreviewRenderingEvent $event): void
     {
         $this->getService(BackendPreviewRenderer::class)->render($event);

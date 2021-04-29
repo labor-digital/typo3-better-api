@@ -39,7 +39,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 abstract class DefaultDiConfig implements ConfigureDiInterface
 {
     use DiAutoConfigTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -47,10 +47,11 @@ abstract class DefaultDiConfig implements ConfigureDiInterface
         ContainerConfigurator $configurator,
         ContainerBuilder $containerBuilder,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         static::autoWire();
     }
-
+    
     /**
      * @inheritDoc
      */

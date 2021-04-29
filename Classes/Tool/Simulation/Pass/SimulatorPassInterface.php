@@ -35,7 +35,7 @@ interface SimulatorPassInterface extends PublicServiceInterface
      * @return array
      */
     public function addOptionDefinition(array $options): array;
-
+    
     /**
      * Receives the prepared options and should check if simulation is required
      *
@@ -45,7 +45,7 @@ interface SimulatorPassInterface extends PublicServiceInterface
      * @return bool
      */
     public function requireSimulation(array $options, array &$storage): bool;
-
+    
     /**
      * Sets up the simulation
      *
@@ -53,7 +53,7 @@ interface SimulatorPassInterface extends PublicServiceInterface
      * @param   array  $storage  A storage array to store potential backups for the rollBack method on
      */
     public function setup(array $options, array &$storage): void;
-
+    
     /**
      * Rolls back the simulation to the original state
      *

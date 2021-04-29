@@ -30,7 +30,7 @@ use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 class TableOverride extends Table
 {
     protected $locked = true;
-
+    
     /**
      * Unlocks the safety exceptions on some methods
      */
@@ -38,49 +38,49 @@ class TableOverride extends Table
     {
         $this->locked = false;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function setPrimaryKey(array $columnNames, $indexName = false)
     {
         $this->ensureColumnsExist($columnNames);
-
+        
         return parent::setPrimaryKey($columnNames, $indexName);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function addIndex(array $columnNames, $indexName = null, array $flags = [], array $options = [])
     {
         $this->ensureColumnsExist($columnNames);
-
+        
         try {
             return parent::addIndex($columnNames, $indexName, $flags, $options);
         } catch (SchemaException $e) {
             // Ignore if index exists
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function addUniqueIndex(array $columnNames, $indexName = null, array $options = [])
     {
         $this->ensureColumnsExist($columnNames);
-
+        
         try {
             return parent::addUniqueIndex($columnNames, $indexName, $options);
         } catch (SchemaException $e) {
             // Ignore if index exists
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -90,19 +90,20 @@ class TableOverride extends Table
         array $foreignColumnNames,
         array $options = [],
         $constraintName = null
-    ) {
+    )
+    {
         $this->ensureColumnsExist($localColumnNames);
-
+        
         try {
             return parent::addForeignKeyConstraint(
                 $foreignTable, $localColumnNames, $foreignColumnNames, $options, $constraintName);
         } catch (SchemaException $e) {
             // Ignore if constraint exists
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -110,7 +111,7 @@ class TableOverride extends Table
     {
         throw new NotImplementedException('This method is unreliable here! Please don\'t use it!');
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -119,10 +120,10 @@ class TableOverride extends Table
         if ($this->locked) {
             throw new NotImplementedException('This method is unreliable here! Please don\'t use it!');
         }
-
+        
         return parent::dropColumn($name);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -131,10 +132,10 @@ class TableOverride extends Table
         if ($this->locked && ! $useAnyway) {
             throw new NotImplementedException('This method is unreliable here! The column might be reconfigured in the TCA builder. I recommend not using this method here! If you know what you are doing, set the second parameter to TRUE, to access it anyway!');
         }
-
+        
         return parent::getColumn($name);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -143,14 +144,14 @@ class TableOverride extends Table
         if (parent::hasColumn($name)) {
             return true;
         }
-
+        
         if ($this->locked && ! $useAnyway) {
             throw new NotImplementedException('This method is unreliable here! The column might be defined in the TCA builder, so it COULD be true even if this method returns false. I recommend not using this method here! If you know what you are doing, set the second parameter to TRUE, to access it anyway!');
         }
-
+        
         return false;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -159,10 +160,10 @@ class TableOverride extends Table
         if ($this->locked && ! $useAnyway) {
             throw new NotImplementedException('This method is unreliable here! The column definition is based on the TCA builder, so this will NEVER return the correct value! Pass TRUE to the method to use it anyway.');
         }
-
+        
         return parent::getColumns();
     }
-
+    
     /**
      * Internal workaround to make sure the logic does not crash even if a field is not defined
      * -> meaning it will probably be created in the TCA object

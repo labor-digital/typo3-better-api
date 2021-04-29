@@ -33,7 +33,7 @@ class VarFs implements LazyEventSubscriberInterface
      * @var \LaborDigital\T3BA\Core\VarFs\VarFs
      */
     protected $fs;
-
+    
     /**
      * VarFsEventHandler constructor.
      *
@@ -43,7 +43,7 @@ class VarFs implements LazyEventSubscriberInterface
     {
         $this->fs = $fs;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -51,7 +51,7 @@ class VarFs implements LazyEventSubscriberInterface
     {
         $subscription->subscribe(CacheClearedEvent::class, 'onCacheClear');
     }
-
+    
     /**
      * Flushes all temp fs data from the drive when all caches were cleared
      *
@@ -62,7 +62,7 @@ class VarFs implements LazyEventSubscriberInterface
         if (! in_array($event->getGroup(), ['all', 'system'], false)) {
             return;
         }
-
+        
         $this->fs->flush();
     }
 }

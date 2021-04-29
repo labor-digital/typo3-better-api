@@ -35,14 +35,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class RequestFacet implements FacetInterface
 {
     use TypoContextAwareTrait;
-
+    
     /**
      * A cache to store resolved hosts on
      *
      * @var array
      */
     protected $hostCache = [];
-
+    
     /**
      * Returns the http request object that was passed through the middleware stack.
      * Note that this method returns null if there was no request object found, like in CLI context.
@@ -59,10 +59,10 @@ class RequestFacet implements FacetInterface
             && $GLOBALS['TYPO3_REQUEST_FALLBACK'] instanceof ServerRequestInterface) {
             return $GLOBALS['TYPO3_REQUEST_FALLBACK'];
         }
-
+        
         return null;
     }
-
+    
     /**
      * Allows you to update the root typo3 server request for the current execution context
      *
@@ -72,12 +72,12 @@ class RequestFacet implements FacetInterface
      */
     public function setRootRequest(ServerRequestInterface $request): RequestFacet
     {
-        $GLOBALS['TYPO3_REQUEST']          = $request;
+        $GLOBALS['TYPO3_REQUEST'] = $request;
         $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the get value based on the given path of typo's "GeneralUtility::_GET()" method
      *
@@ -88,15 +88,15 @@ class RequestFacet implements FacetInterface
      */
     public function getGet($path = null, $default = null)
     {
-        $params  = $_GET;
+        $params = $_GET;
         $request = $this->getRootRequest();
         if ($request !== null) {
             $params = $request->getQueryParams();
         }
-
+        
         return is_null($path) ? $params : Arrays::getPath($params, $path, $default);
     }
-
+    
     /**
      * Returns the post value based on the given path of typo's "GeneralUtility::_POST()" method
      *
@@ -107,7 +107,7 @@ class RequestFacet implements FacetInterface
      */
     public function getPost($path = null, $default = null)
     {
-        $params  = $_POST;
+        $params = $_POST;
         $request = $this->getRootRequest();
         if ($request !== null) {
             $params = $request->getParsedBody();
@@ -115,10 +115,10 @@ class RequestFacet implements FacetInterface
         if (! is_array($params)) {
             $params = [];
         }
-
+        
         return is_null($path) ? $params : Arrays::getPath($params, $path, $default);
     }
-
+    
     /**
      * Returns true if typo's "GeneralUtility::_POST()" method returns a value for $path
      *
@@ -128,7 +128,7 @@ class RequestFacet implements FacetInterface
      */
     public function hasPost($path): bool
     {
-        $params  = $_POST;
+        $params = $_POST;
         $request = $this->getRootRequest();
         if (! is_array($params)) {
             $params = [];
@@ -136,10 +136,10 @@ class RequestFacet implements FacetInterface
         if ($request !== null) {
             $params = $request->getParsedBody();
         }
-
+        
         return Arrays::hasPath($params, $path);
     }
-
+    
     /**
      * Returns true if typo's "GeneralUtility::_GET()" method returns a value for $path
      *
@@ -149,15 +149,15 @@ class RequestFacet implements FacetInterface
      */
     public function hasGet($path): bool
     {
-        $params  = $_GET;
+        $params = $_GET;
         $request = $this->getRootRequest();
         if ($request !== null) {
             $params = $request->getQueryParams();
         }
-
+        
         return Arrays::hasPath($params, $path);
     }
-
+    
     /**
      * Returns the currently defined hostname
      *
@@ -168,11 +168,11 @@ class RequestFacet implements FacetInterface
     public function getHost(bool $withProtocol = true): string
     {
         $typoContext = $this->getTypoContext();
-        $pid         = $typoContext->pid()->getCurrent();
-
+        $pid = $typoContext->pid()->getCurrent();
+        
         if (! isset($this->hostCache[$pid])) {
             try {
-                $site                  = $typoContext->site()->getForPid($pid);
+                $site = $typoContext->site()->getForPid($pid);
                 $this->hostCache[$pid] = [
                     $site->getBase()->getHost(),
                     $site->getBase()->getScheme() . '://' . $site->getBase()->getHost(),
@@ -184,10 +184,10 @@ class RequestFacet implements FacetInterface
                 ];
             }
         }
-
+        
         return $this->hostCache[$pid][(int)$withProtocol];
     }
-
+    
     /**
      * Returns the given referer/origin of the executed request
      *
@@ -196,7 +196,7 @@ class RequestFacet implements FacetInterface
     public function getReferer(): string
     {
         $referer = $_SERVER['HTTP_REFERER'] ?? null;
-
+        
         $request = $this->getRootRequest();
         if ($request !== null) {
             $referer = $request->getHeaderLine('referer');
@@ -204,7 +204,7 @@ class RequestFacet implements FacetInterface
                 $referer = $request->getHeaderLine('origin');
             }
         }
-
+        
         return $referer;
     }
 }

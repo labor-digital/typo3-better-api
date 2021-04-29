@@ -34,7 +34,7 @@ use Neunerlei\PathUtil\Path;
 trait FactoryDefinitionResolverTrait
 {
     abstract protected function cs(): CommonServices;
-
+    
     /**
      * Helper to resolve the string into a flex form definition array.
      * The given $definition can either be a full flex form definition (you would normally write in an .xml file),
@@ -52,16 +52,16 @@ trait FactoryDefinitionResolverTrait
     {
         $definition = trim($definition);
         $definition = $this->resolveFlexFormFileContent($definition, $context);
-        $def        = GeneralUtilityAdapter::xml2arrayWithoutCache($definition);
-
+        $def = GeneralUtilityAdapter::xml2arrayWithoutCache($definition);
+        
         if (! is_array($def)) {
             throw new InvalidFlexFormException('Error while parsing flex form definition: "' .
                                                substr($definition, 0, 50) . '...". Error: ' . $def);
         }
-
+        
         return $this->resolveSheetsArray($def);
     }
-
+    
     /**
      * Internal helper to resolve a file definition into an actual flex form definition string.
      *
@@ -77,11 +77,11 @@ trait FactoryDefinitionResolverTrait
         if (stripos($definition, 'file:') !== 0) {
             return $definition;
         }
-
-        $path     = $this->cs()->typoContext->path();
+        
+        $path = $this->cs()->typoContext->path();
         $filePath = substr($definition, 5);
-        $extKey   = $context->getExtKey();
-
+        $extKey = $context->getExtKey();
+        
         // We try multiple locations where the file could be located
         $pathsToTry = [
             $filePath,
@@ -93,19 +93,19 @@ trait FactoryDefinitionResolverTrait
             'FILE:EXT:' . Path::join($extKey, '/Configuration/FlexForm/', basename($filePath)),
         ];
         unset($filePath);
-
+        
         foreach ($pathsToTry as $filePath) {
             $filePath = $path->typoPathToRealPath($filePath);
             if (Fs::exists($filePath)) {
                 return Fs::readFile($filePath);
             }
         }
-
+        
         throw new MissingFlexFormFileException(
             'Could not load the flex form file at: ' . $definition . ', because the file does not exist. I tried: '
             . implode(', ', $pathsToTry));
     }
-
+    
     /**
      * Makes sure the "sheets" master array exists and tries to handle malformed flex-form definitions
      * on the fly.
@@ -120,16 +120,16 @@ trait FactoryDefinitionResolverTrait
         if (isset($def['sheets']) && is_array($def['sheets'])) {
             return $def;
         }
-
+        
         if (isset($def['sDEF']) && is_array($def['sDEF'])) {
             return array_merge($def, ['sheets' => [$def], 'sDEF' => null]);
         }
-
+        
         if (isset($def['ROOT']) && is_array($def['ROOT'])) {
             return array_merge($def, ['sheets' => ['sDEF' => $def], 'ROOT' => null]);
         }
-
+        
         throw new InvalidFlexFormException('Could not load flex form, as it does not define any "sheets".');
-
+        
     }
 }

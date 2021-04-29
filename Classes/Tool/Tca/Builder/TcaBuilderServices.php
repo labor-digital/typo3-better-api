@@ -48,13 +48,13 @@ class TcaBuilderServices extends CommonServices
     public function __construct(ContainerInterface $container, ExtConfigContext $extConfigContext)
     {
         parent::__construct($container);
-
+        
         // Register static instances
         $this->def['extConfigContext'] = $extConfigContext;
-        $this->def['sqlRegistry']      = SqlRegistry::class;
-        $this->def['flexFormFactory']  = Factory::class;
-        $this->def['flexFormDumper']   = Dumper::class;
+        $this->def['sqlRegistry'] = SqlRegistry::class;
+        $this->def['flexFormFactory'] = Factory::class;
+        $this->def['flexFormDumper'] = Dumper::class;
     }
-
-
+    
+    
 }

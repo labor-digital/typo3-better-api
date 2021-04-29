@@ -34,14 +34,14 @@ use TYPO3\CMS\Core\Context\AspectInterface;
  */
 class FacetAspect implements AspectInterface
 {
-
+    
     /**
      * The linked facet
      *
      * @var FacetInterface
      */
     protected $facet;
-
+    
     /**
      * FacetAspect constructor.
      *
@@ -51,7 +51,7 @@ class FacetAspect implements AspectInterface
     {
         $this->facet = $facet;
     }
-
+    
     /**
      * @inheritDoc
      */

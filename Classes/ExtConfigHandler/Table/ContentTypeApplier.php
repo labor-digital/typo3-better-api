@@ -47,32 +47,32 @@ class ContentTypeApplier extends AbstractExtConfigApplier
      * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ExtensionRowRepository
      */
     protected $repository;
-
+    
     /**
      * @var DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * Lazy high level caching to avoid multiple db requests on the child row if possible.
      *
      * @var array|null
      */
     protected $childRowCache;
-
+    
     /**
      * Used only if a new record is created in tt_content
      *
      * @var int|null
      */
     protected $delayedChildRelation;
-
+    
     public function __construct(ExtensionRowRepository $repository, DataHandlerService $dataHandlerService)
     {
-        $this->repository  = $repository;
+        $this->repository = $repository;
         $this->dataHandler = $dataHandlerService->getEmptyDataHandler();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -90,7 +90,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         $subscription->subscribe(RefIndexRecordDataFilterEvent::class, 'onRefIndexFilter', $priorityOptions);
         $subscription->subscribe(FormFilterEvent::class, 'onFormFilter', $priorityOptions);
     }
-
+    
     /**
      * Makes sure that the internal cache gets cleared when we start to save a new tt_content record
      *
@@ -101,20 +101,20 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-
+        
         $this->flushInternalCache();
     }
-
+    
     public function onAction(ActionFilterEvent $event): void
     {
         $this->handleDeleteAndRestore($event->getTableName(), $event->getId(), $event->getCommand(), 'undelete');
     }
-
+    
     public function onActionPostProcessor(ActionPostProcessorEvent $event): void
     {
         $this->handleDeleteAndRestore($event->getTableName(), $event->getId(), $event->getCommand(), 'delete');
     }
-
+    
     public function onBeRecordLoad(BackendUtilityRecordFilterEvent $event): void
     {
         $event->setRow(
@@ -126,7 +126,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             )
         );
     }
-
+    
     public function onRecordInfoWithPermsFilter(DataHandlerRecordInfoWithPermsFilterEvent $event): void
     {
         $event->setResult(
@@ -138,7 +138,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             )
         );
     }
-
+    
     /**
      * Is used to block database requests to virtual columns when the data handler processes the record
      *
@@ -149,23 +149,23 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-
+        
         // Ignore if there are multiple fields
         $fields = $event->getFieldList();
         if ($fields === '*' || strpos($fields, ',') !== false) {
             return;
         }
-
+        
         $columns = ContentTypeUtil::getColumnMap();
         if (! isset($columns[$fields])) {
             return;
         }
-
+        
         $event->setConcreteInfoProvider(function (string $field, string $table, $id) {
             return [$field => $this->getChildRow($id)[$field] ?? null];
         });
     }
-
+    
     /**
      * Executed when the data handler writes the database rows using the insertDB() method.
      * This method will extract our extension columns from the main table and instead write
@@ -178,48 +178,48 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-
+        
         $row = $event->getRow();
         // Row must not always include a uid, therefore we have to "simulate" the uid here
         $rowWithUid = array_merge(['uid' => $event->getId()], $event->getRow());
-        $cType      = $this->resolveColumnValue('CType', $rowWithUid);
-
+        $cType = $this->resolveColumnValue('CType', $rowWithUid);
+        
         // If we can't resolve a cType we are not needed...
         if (! is_string($cType)) {
             return;
         }
-
+        
         // Clean up after ourselves if the cType of a row previously HAD an extension
         // but now has none, OR the CType was changed, we drop everything
         $hasExtensionTable = ContentTypeUtil::hasExtensionTable($cType);
-        $oldCType          = $this->resolveColumnValue('CType', ['uid' => $event->getId()]);
+        $oldCType = $this->resolveColumnValue('CType', ['uid' => $event->getId()]);
         if (is_string($oldCType) && $oldCType !== $cType && $hasExtensionTable) {
-            $row             = ContentTypeUtil::removeAllExtensionColumns($row);
+            $row = ContentTypeUtil::removeAllExtensionColumns($row);
             $row['ct_child'] = '';
             $event->setRow($row);
             $this->repository->deleteChildRow($oldCType, $event->getId());
-
+            
             return;
         }
-
+        
         $childRow = ContentTypeUtil::extractChildFromParent($row, $cType);
-
+        
         // No child row -> go on
         if (! $hasExtensionTable) {
             return;
         }
-
+        
         // A new record is created -> Delay the child row generation until we have a uid for our record
         $parentId = $event->getId();
         if (! is_int($event->getId())) {
             $parentId = -1;
         }
-
-        $childRow['pid']              = $this->resolveColumnValue('pid', $rowWithUid);
+        
+        $childRow['pid'] = $this->resolveColumnValue('pid', $rowWithUid);
         $childRow['sys_language_uid'] = $this->resolveColumnValue('sys_language_uid', $rowWithUid);
-        $row['ct_child']              = $this->repository->saveChildRow($cType, $parentId, $childRow);
+        $row['ct_child'] = $this->repository->saveChildRow($cType, $parentId, $childRow);
         $event->setRow($row);
-
+        
         if ($parentId === -1) {
             $this->delayedChildRelation = $row['ct_child'];
         } else {
@@ -231,7 +231,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             );
         }
     }
-
+    
     /**
      * When a new record is created we need to wait for the new uid, therefore
      * the onDbFieldFilter() can delay the relation creation between the table and the extension table.
@@ -244,20 +244,20 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-
+        
         if (empty($this->delayedChildRelation)) {
             return;
         }
-
+        
         $row = $event->getRow();
         $this->repository->saveChildRow($row['CType'], $event->getId(), [
             'uid' => $this->delayedChildRelation,
             'pid' => $row['pid'],
         ]);
-
+        
         $this->delayedChildRelation = null;
     }
-
+    
     /**
      * Makes sure the ref-index has access to all our extension columns in addition to the default tt_content columns
      *
@@ -268,10 +268,10 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-
+        
         $event->setRow($this->mergeChildIntoParent($event->getRow()));
     }
-
+    
     /**
      * Injects the extension fields into the database row when the form engine builds the backend form
      * of the tt_content table
@@ -283,14 +283,14 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-
+        
         $this->flushInternalCache();
-
-        $data                = $event->getData();
+        
+        $data = $event->getData();
         $data['databaseRow'] = $this->mergeChildIntoParent($data['databaseRow']);
         $event->setData($data);
     }
-
+    
     /**
      * Handler to toggle the deleted state for a child table row
      *
@@ -304,23 +304,23 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($tableName !== 'tt_content') {
             return;
         }
-
+        
         $cType = $this->resolveColumnValue('CType', ['uid' => $parentUid]);
         if (! ContentTypeUtil::hasExtensionTable($cType)) {
             return;
         }
-
+        
         if ($command === 'delete' && $targetCommand === $command) {
             $this->repository->deleteChildRow($cType, $parentUid);
-
+            
             return;
         }
-
+        
         if ($command === 'undelete' && $targetCommand === $command) {
             $this->repository->restoreChildRow($cType, $parentUid);
         }
     }
-
+    
     /**
      * Handler implementation that is used to enrich the given row by a child row, when possible.
      *
@@ -336,26 +336,26 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if (! is_int($parentUid)) {
             return $row;
         }
-
+        
         if ($tableName !== 'tt_content') {
             return $row;
         }
-
+        
         if ($fieldList !== '*') {
             return $row;
         }
-
+        
         if (! is_array($row) || empty($row['CType']) || $row['CType'] === 'list') {
             return $row;
         }
-
+        
         if (ContentTypeUtil::hasExtensionTable($row['CType'])) {
             $row = $this->mergeChildIntoParent($row);
         }
-
+        
         return $row;
     }
-
+    
     /**
      * Internal helper to resolve the value of a single column, either on the given row
      * or by retrieving the value from the database
@@ -370,14 +370,14 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if (isset($row[$columnName])) {
             return $row[$columnName];
         }
-
+        
         if (! is_numeric($row['uid'])) {
             return null;
         }
-
+        
         return $this->dataHandler->recordInfo('tt_content', $row['uid'], $columnName)[$columnName] ?? null;
     }
-
+    
     /**
      * Internal wrapper around the content type repository that applies a small first-level cache
      * to avoid multiple queries to achieve the same on different locations.
@@ -389,28 +389,28 @@ class ContentTypeApplier extends AbstractExtConfigApplier
     protected function getChildRow($uidOrRow): array
     {
         $uid = $this->resolveUid($uidOrRow);
-
+        
         if ($uid === null) {
             return [];
         }
-
+        
         if (($this->childRowCache['id'] ?? null) === $uid) {
             return $this->childRowCache['row'];
         }
-
+        
         $lookupRow = is_array($uidOrRow) ? array_merge(['uid' => $uid], $uidOrRow) : ['uid' => $uid];
-        $child     = $this->repository->getChildRow(
+        $child = $this->repository->getChildRow(
             $this->resolveColumnValue('CType', $lookupRow), $uid
         );
-
+        
         $this->childRowCache = [
-            'id'  => $uid,
+            'id' => $uid,
             'row' => $child,
         ];
-
+        
         return $child;
     }
-
+    
     /**
      * Internal helper to resolve a uid from either a numeric value or a row
      *
@@ -423,18 +423,18 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if (is_array($uidOrRow) && is_numeric($uidOrRow['uid'] ?? null)) {
             $uidOrRow = $uidOrRow['uid'];
         }
-
+        
         if (is_numeric($uidOrRow)) {
             $uidOrRow = (int)$uidOrRow;
         }
-
+        
         if (! is_int($uidOrRow)) {
             return null;
         }
-
+        
         return $uidOrRow;
     }
-
+    
     /**
      * Internal helper that will resolve a potential child row and automatically merge
      * it into the given row, before returning the merged result.
@@ -449,18 +449,18 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if (empty($childRow)) {
             return $parentRow;
         }
-
+        
         $cType = $this->resolveColumnValue('CType', $parentRow);
         if (! is_string($cType)) {
             return $parentRow;
         }
-
+        
         return array_merge(
             $parentRow,
             ContentTypeUtil::convertChildForParent($childRow, $cType)
         );
     }
-
+    
     /**
      * Clears the internal child row cache
      */

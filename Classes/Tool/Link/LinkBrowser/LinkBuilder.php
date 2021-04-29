@@ -32,7 +32,7 @@ use TYPO3\CMS\Frontend\Typolink\UnableToLinkException;
 class LinkBuilder extends AbstractTypolinkBuilder
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -40,7 +40,7 @@ class LinkBuilder extends AbstractTypolinkBuilder
     {
         $config = $this->cs()->typoContext->Config()->getTsConfigValue(
             'TCEMAIN.linkHandler.' . $linkDetails['identifier'] . '.configuration');
-
+        
         try {
             $link = $this->getService(LinkService::class)
                          ->getLink(substr($linkDetails['identifier'], 8), [$config['arg'] => $linkDetails['uid']])
@@ -53,7 +53,7 @@ class LinkBuilder extends AbstractTypolinkBuilder
                 $linkText
             );
         }
-
+        
         return [
             $link,
             $linkText,
@@ -62,5 +62,5 @@ class LinkBuilder extends AbstractTypolinkBuilder
                 $this->getTypoScriptFrontendController()->extTarget),
         ];
     }
-
+    
 }

@@ -38,26 +38,26 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  */
 class ExtBaseBetterQuery extends AbstractBetterQuery
 {
-
+    
     /**
      * @var BetterRepository
      */
     protected $repository;
-
+    
     /**
      * The configuration for the inclusion of hidden children using the extended relation service
      *
      * @var mixed
      */
     protected $includeHiddenChildren;
-
+    
     /**
      * The configuration for the inclusion of deleted children using the extended relation service
      *
      * @var mixed
      */
     protected $includeDeletedChildren;
-
+    
     /**
      * @inheritDoc
      */
@@ -66,7 +66,8 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         QueryInterface $query,
         TypoContext $typoContext,
         Session $session
-    ) {
+    )
+    {
         parent::__construct(
             new ExtBaseQueryAdapter($repository->getTableName(), $query, $typoContext),
             $typoContext,
@@ -74,7 +75,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         );
         $this->repository = $repository;
     }
-
+    
     /**
      * This method can be used to include hidden child-relations in the resolved query result.
      *
@@ -97,10 +98,10 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         } else {
             $clone->includeHiddenChildren = $settings;
         }
-
+        
         return $clone;
     }
-
+    
     /**
      * This method can be used to include deleted child-relations in the resolved query result.
      *
@@ -123,10 +124,10 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         } else {
             $clone->includeDeletedChildren = $settings;
         }
-
+        
         return $clone;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -135,7 +136,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         return BetterQueryTypo3DbQueryParserAdapter::getConcreteQueryParser()
                                                    ->convertQueryToDoctrineQueryBuilder($this->getQuery());
     }
-
+    
     /**
      * Returns the preconfigured query object.
      *
@@ -143,14 +144,14 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
      */
     public function getQuery(): QueryInterface
     {
-        $orgAdapter    = $this->adapter;
+        $orgAdapter = $this->adapter;
         $this->adapter = $clone = clone $orgAdapter;
         $this->applyWhere($clone);
         $this->adapter = $orgAdapter;
-
+        
         return $clone->getQuery();
     }
-
+    
     /**
      * Executes the currently configured query and returns the results
      *
@@ -169,16 +170,16 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
                 ExtendedRelationQueryResult::class,
                 $this->getQuery(),
                 [
-                    'hidden'  => $this->includeHiddenChildren,
+                    'hidden' => $this->includeHiddenChildren,
                     'deleted' => $this->includeDeletedChildren,
                 ]
             );
         }
-
+        
         // Perform a normal query
         return $this->getQuery()->execute($returnAsArray);
     }
-
+    
     /**
      * Returns the first element from the queries result set that matches your criteria
      *
@@ -190,13 +191,13 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
     {
         if ($returnAsArray) {
             $result = $this->getAll(true);
-
+            
             return reset($result);
         }
-
+        
         return $this->getAll(false)->getFirst();
     }
-
+    
     /**
      * @inheritDoc
      */

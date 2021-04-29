@@ -33,42 +33,42 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  */
 class DataMapperQueryFilterEvent
 {
-
+    
     /**
      * The database query that is currently filtered
      *
      * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     protected $query;
-
+    
     /**
      * The domain object for which the relation is created
      *
      * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
     protected $parentObject;
-
+    
     /**
      * The name of the property for which the relation is created
      *
      * @var string
      */
     protected $propertyName;
-
+    
     /**
      * The value of the field that should be filtered
      *
      * @var mixed
      */
     protected $fieldValue;
-
+    
     /**
      * The class name of the related object that should be resolved
      *
      * @var string
      */
     protected $propertyType;
-
+    
     /**
      * DataMapperQueryFilterEvent constructor.
      *
@@ -84,14 +84,15 @@ class DataMapperQueryFilterEvent
         string $propertyName,
         $fieldValue,
         string $propertyType
-    ) {
-        $this->query        = $query;
+    )
+    {
+        $this->query = $query;
         $this->parentObject = $parentObject;
         $this->propertyName = $propertyName;
-        $this->fieldValue   = $fieldValue;
+        $this->fieldValue = $fieldValue;
         $this->propertyType = $propertyType;
     }
-
+    
     /**
      * Returns the database query that is currently filtered
      *
@@ -101,7 +102,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->query;
     }
-
+    
     /**
      * Updates the database query that is currently filtered
      *
@@ -112,10 +113,10 @@ class DataMapperQueryFilterEvent
     public function setQuery(QueryInterface $query): DataMapperQueryFilterEvent
     {
         $this->query = $query;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the domain object for which the relation is created
      *
@@ -125,7 +126,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->parentObject;
     }
-
+    
     /**
      * Returns the name of the property for which the relation is created
      *
@@ -135,7 +136,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->propertyName;
     }
-
+    
     /**
      * Returns the value of the field that should be filtered
      *
@@ -145,7 +146,7 @@ class DataMapperQueryFilterEvent
     {
         return $this->fieldValue;
     }
-
+    
     /**
      * Returns the class name of the related object that should be resolved
      *

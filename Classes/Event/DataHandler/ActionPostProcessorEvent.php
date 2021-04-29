@@ -42,14 +42,14 @@ class ActionPostProcessorEvent extends AbstractActionEvent
      * @var int|string
      */
     protected $newId;
-
+    
     /**
      * Contains the table data map when a record is copied and pasted to a new position
      *
      * @var mixed
      */
     protected $pasteDataMap;
-
+    
     /**
      * DataHandlerActionFilterEvent constructor.
      *
@@ -71,17 +71,18 @@ class ActionPostProcessorEvent extends AbstractActionEvent
         $pasteSpecialData,
         $pasteDataMap,
         DataHandler $dataHandler
-    ) {
-        $this->command          = $command;
-        $this->tableName        = $tableName;
-        $this->id               = $id;
-        $this->value            = $value;
+    )
+    {
+        $this->command = $command;
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->value = $value;
         $this->pasteSpecialData = $pasteSpecialData;
-        $this->dataHandler      = $dataHandler;
-        $this->newId            = $newId;
-        $this->pasteDataMap     = $pasteDataMap;
+        $this->dataHandler = $dataHandler;
+        $this->newId = $newId;
+        $this->pasteDataMap = $pasteDataMap;
     }
-
+    
     /**
      * Returns the new id of the record that is currently processed if it was copied
      *
@@ -91,7 +92,7 @@ class ActionPostProcessorEvent extends AbstractActionEvent
     {
         return $this->newId;
     }
-
+    
     /**
      * Returns the table data map when a record is copied and pasted to a new position
      *
@@ -101,7 +102,7 @@ class ActionPostProcessorEvent extends AbstractActionEvent
     {
         return $this->pasteDataMap;
     }
-
+    
     /**
      * Allows you to update the table data map when a record is copied and pasted to a new position
      *
@@ -112,7 +113,7 @@ class ActionPostProcessorEvent extends AbstractActionEvent
     public function setPasteDataMap($pasteDataMap)
     {
         $this->pasteDataMap = $pasteDataMap;
-
+        
         return $this;
     }
 }

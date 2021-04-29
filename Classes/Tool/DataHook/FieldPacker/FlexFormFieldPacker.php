@@ -40,15 +40,15 @@ class FlexFormFieldPacker implements FieldPackerInterface
                 || Arrays::getPath($definition->tca, ['columns', $field, 'config', 'type']) !== 'flex') {
                 continue;
             }
-
-            $value                    = empty($value) ? [] : GeneralUtility::xml2array($value);
+            
+            $value = empty($value) ? [] : GeneralUtility::xml2array($value);
             $definition->data[$field] = is_array($value) ? $value : [];
-            $flexFields[]             = $field;
+            $flexFields[] = $field;
         }
-
+        
         return $flexFields;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -57,5 +57,5 @@ class FlexFormFieldPacker implements FieldPackerInterface
         dbge('REPACK!');
         // TODO: Implement packFields() method.
     }
-
+    
 }

@@ -25,35 +25,35 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task;
 
 class TaskConfigurator
 {
-
+    
     /**
      * The name of the task class
      *
      * @var string
      */
     protected $className;
-
+    
     /**
      * A speaking title for the task
      *
      * @var string
      */
     protected $title;
-
+    
     /**
      * An optional description for your task
      *
      * @var string
      */
     protected $description;
-
+    
     /**
      * Additional configuration options as you would normally define them in the typo3 array.
      *
      * @var array
      */
     protected $options = [];
-
+    
     /**
      * TaskConfigurator constructor.
      *
@@ -62,10 +62,10 @@ class TaskConfigurator
      */
     public function __construct(string $title, string $className)
     {
-        $this->title     = $title;
+        $this->title = $title;
         $this->className = $className;
     }
-
+    
     /**
      * Returns either the set speaking title for the task, or a automatically generated one
      *
@@ -75,7 +75,7 @@ class TaskConfigurator
     {
         return $this->title;
     }
-
+    
     /**
      * Allows you to define a speaking title for the task
      *
@@ -86,10 +86,10 @@ class TaskConfigurator
     public function setTitle(string $title): TaskConfigurator
     {
         $this->title = $title;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns an optional description for your task, or null
      *
@@ -99,7 +99,7 @@ class TaskConfigurator
     {
         return $this->description;
     }
-
+    
     /**
      * @param   string  $description
      *
@@ -108,10 +108,10 @@ class TaskConfigurator
     public function setDescription(string $description): TaskConfigurator
     {
         $this->description = $description;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns additional configuration options as you would normally define them in the typo3 array
      *
@@ -121,7 +121,7 @@ class TaskConfigurator
     {
         return $this->options;
     }
-
+    
     /**
      * Allows you to set additional configuration options as you would normally define them in the typo3 array
      *
@@ -132,7 +132,7 @@ class TaskConfigurator
     public function setOptions(array $options): TaskConfigurator
     {
         $this->options = $options;
-
+        
         return $this;
     }
 }

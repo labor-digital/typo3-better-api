@@ -42,14 +42,14 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 class TableApplier extends AbstractExtConfigApplier
 {
     use ContainerAwareTrait;
-
+    
     protected const TCA_META_CACHE_KEY = 'extConfig.tca.meta';
-
+    
     /**
      * @var \Psr\SimpleCache\CacheInterface
      */
     protected $cache;
-
+    
     /**
      * ConfigureTcaTableApplier constructor.
      *
@@ -59,7 +59,7 @@ class TableApplier extends AbstractExtConfigApplier
     {
         $this->cache = $fs->getCache();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -71,7 +71,7 @@ class TableApplier extends AbstractExtConfigApplier
         $subscription->subscribe(ExtTablesLoadedEvent::class, 'onExtTablesLoaded');
         $subscription->subscribe(ExtBasePersistenceRegistrationEvent::class, 'onPersistenceRegistration');
     }
-
+    
     /**
      * Applies default configuration if the ext local conf files have been loaded
      */
@@ -79,7 +79,7 @@ class TableApplier extends AbstractExtConfigApplier
     {
         $this->applyMeta();
     }
-
+    
     /**
      * Applies the tca meta information to the system after the ext_tables.php files have been loaded
      */
@@ -90,14 +90,14 @@ class TableApplier extends AbstractExtConfigApplier
         if (is_string($def)) {
             ExtensionManagementUtility::addPageTSConfig($def);
         }
-
+        
         // Apply tables on standard pages
         $list = $this->state->get('tca.meta.onStandardPages');
         if (is_array($list)) {
             array_map([ExtensionManagementUtility::class, 'allowTableOnStandardPages'], $list);
         }
     }
-
+    
     /**
      * The first pass of table loading is done after TYPO3 loaded all TCA/yourTable.php files
      */
@@ -105,7 +105,7 @@ class TableApplier extends AbstractExtConfigApplier
     {
         $this->getService(TableLoader::class)->loadTables();
     }
-
+    
     /**
      * The second pass of table loading is done after TYPO3 loaded all TCA/Overrides/yourTable.php files
      */
@@ -118,7 +118,7 @@ class TableApplier extends AbstractExtConfigApplier
         );
         $this->applyMeta();
     }
-
+    
     /**
      * Injects the persistence configuration into the extbase domain mapper
      *
@@ -127,7 +127,7 @@ class TableApplier extends AbstractExtConfigApplier
     public function onPersistenceRegistration(ExtBasePersistenceRegistrationEvent $event): void
     {
         $classes = $event->getClasses();
-        $list    = $this->state->get('tca.meta.extbase.persistence');
+        $list = $this->state->get('tca.meta.extbase.persistence');
         if (is_array($list)) {
             foreach ($list as $class => $def) {
                 $classes[$class] = Arrays::merge($classes[$class] ?? [], $def, 'nn');
@@ -135,7 +135,7 @@ class TableApplier extends AbstractExtConfigApplier
         }
         $event->setClasses($classes);
     }
-
+    
     /**
      * Applies meta information that was generated alongside the TCA to services that can handle them
      */
@@ -143,14 +143,14 @@ class TableApplier extends AbstractExtConfigApplier
     {
         // Injects the tca.meta node into the global configuration object
         $this->state->mergeIntoArray('tca.meta', $this->cache->get(static::TCA_META_CACHE_KEY, []));
-
+        
         // Prepares the NamingUtil class by injecting our stored class map into the the class->table map
         $list = $this->state->get('tca.meta.classNameMap');
         if (is_array($list)) {
             NamingUtil::$tcaTableClassNameMap = array_merge(NamingUtil::$tcaTableClassNameMap, $list);
         }
     }
-
+    
     protected function getTableLoader(): Loader
     {
         return $this->getService(Loader::class);

@@ -37,7 +37,7 @@ use LaborDigital\T3BA\Event\FormEngine\Adapter\FormFilterEventAdapter;
 class FormFilterEvent implements CoreHookEventInterface
 {
     use FormFilterEventTrait;
-
+    
     /**
      * @inheritDoc
      */

@@ -40,35 +40,35 @@ class DataHandlerRecordInfoWithPermsFilterEvent
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * UID of the record from $tableName or NEW... for a new record
      *
      * @var int|string
      */
     protected $id;
-
+    
     /**
      * The field list for the SELECT query, eg. "*" or "uid,pid,...
      *
      * @var string
      */
     protected $fieldList;
-
+    
     /**
      * The currently executed data handler instance
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * The row that was resolved by the parent method, or false if it failed
      *
      * @var array|false
      */
     protected $result;
-
+    
     /**
      * Permission restrictions to observe: Either an integer that will be bitwise AND'ed or a string, which points to a
      * key in the ->pMap array. With TYPO3 v11, only integers are allowed
@@ -76,7 +76,7 @@ class DataHandlerRecordInfoWithPermsFilterEvent
      * @var int|string
      */
     protected $perms;
-
+    
     /**
      * DataHandlerRecordInfoFilterEvent constructor.
      *
@@ -94,15 +94,16 @@ class DataHandlerRecordInfoWithPermsFilterEvent
         DataHandler $dataHandler,
         $result,
         $perms
-    ) {
-        $this->tableName   = $tableName;
-        $this->id          = $id;
-        $this->fieldList   = $fieldList;
+    )
+    {
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->fieldList = $fieldList;
         $this->dataHandler = $dataHandler;
-        $this->result      = $result;
-        $this->perms       = $perms;
+        $this->result = $result;
+        $this->perms = $perms;
     }
-
+    
     /**
      * Returns the id of the entry that is requested
      *
@@ -112,7 +113,7 @@ class DataHandlerRecordInfoWithPermsFilterEvent
     {
         return $this->id;
     }
-
+    
     /**
      * Returns the name of the table that is currently requested
      *
@@ -122,7 +123,7 @@ class DataHandlerRecordInfoWithPermsFilterEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the currently executed data handler instance
      *
@@ -132,7 +133,7 @@ class DataHandlerRecordInfoWithPermsFilterEvent
     {
         return $this->dataHandler;
     }
-
+    
     /**
      * Returns the field list for the SELECT query, eg. "*" or "uid,pid,...
      *
@@ -142,7 +143,7 @@ class DataHandlerRecordInfoWithPermsFilterEvent
     {
         return $this->fieldList;
     }
-
+    
     /**
      * Returns the result that was resolved for the record info
      *
@@ -152,7 +153,7 @@ class DataHandlerRecordInfoWithPermsFilterEvent
     {
         return $this->result;
     }
-
+    
     /**
      * Allows you to update the result to return back to the datahandler
      *
@@ -163,8 +164,8 @@ class DataHandlerRecordInfoWithPermsFilterEvent
     public function setResult($result)
     {
         $this->result = $result;
-
+        
         return $this;
     }
-
+    
 }

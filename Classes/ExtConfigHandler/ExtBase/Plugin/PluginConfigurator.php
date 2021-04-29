@@ -46,7 +46,7 @@ use Neunerlei\Inflection\Inflector;
 
 class PluginConfigurator extends AbstractElementConfigurator
 {
-
+    
     /**
      * Holds the flex form instance we use to configure the flex form for this plugin
      * If this is empty we don't have a flex form for this plugin
@@ -54,7 +54,7 @@ class PluginConfigurator extends AbstractElementConfigurator
      * @var Flex
      */
     protected $flexForm;
-
+    
     /**
      * Returns true if this plugin has a flex form configuration
      *
@@ -64,7 +64,7 @@ class PluginConfigurator extends AbstractElementConfigurator
     {
         return ! empty($this->flexForm);
     }
-
+    
     /**
      * Returns the flex form structure object for this plugin.
      * You have to call this method at least once to register a flex form file for an element
@@ -77,20 +77,20 @@ class PluginConfigurator extends AbstractElementConfigurator
         if (! empty($this->flexForm)) {
             return $this->flexForm;
         }
-
+        
         $this->flexForm = $this->getTypoContext()->di()->getService(Factory::class)->create();
-
+        
         // Try to load the default definition
         try {
             $defaultDefinitionFile = 'file:' . Inflector::toCamelCase($this->pluginName) . '.xml';
             $this->flexForm->loadDefinition($defaultDefinitionFile);
         } catch (MissingFlexFormFileException $e) {
         }
-
+        
         // Done
         return $this->flexForm;
     }
-
+    
     /**
      * @inheritDoc
      */

@@ -43,14 +43,14 @@ class ConfigArrayPostProcEvent implements CoreHookEventInterface
      * @var array
      */
     protected $config;
-
+    
     /**
      * The typoScript frontend controller to process the data for
      *
      * @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
      */
     protected $tsfe;
-
+    
     /**
      * TypoScriptConfigArrayPostProcEvent constructor.
      *
@@ -60,9 +60,9 @@ class ConfigArrayPostProcEvent implements CoreHookEventInterface
     public function __construct(array $config, TypoScriptFrontendController $tsfe)
     {
         $this->config = $config;
-        $this->tsfe   = $tsfe;
+        $this->tsfe = $tsfe;
     }
-
+    
     /**
      * Returns the loaded configuration array to post process
      *
@@ -72,7 +72,7 @@ class ConfigArrayPostProcEvent implements CoreHookEventInterface
     {
         return $this->config;
     }
-
+    
     /**
      * Updates the loaded configuration array to post process
      *
@@ -83,10 +83,10 @@ class ConfigArrayPostProcEvent implements CoreHookEventInterface
     public function setConfig(array $config): self
     {
         $this->config = $config;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the typoScript frontend controller to process the data for
      *
@@ -96,7 +96,7 @@ class ConfigArrayPostProcEvent implements CoreHookEventInterface
     {
         return $this->tsfe;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -104,5 +104,5 @@ class ConfigArrayPostProcEvent implements CoreHookEventInterface
     {
         return ConfigArrayPostProcEventAdapter::class;
     }
-
+    
 }

@@ -38,12 +38,12 @@ class CustomDataHookTraverserEvent
      * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
      */
     protected $definition;
-
+    
     /**
      * @var callable
      */
     protected $registerHook;
-
+    
     /**
      * CustomDataHookTraverserEvent constructor.
      *
@@ -52,10 +52,10 @@ class CustomDataHookTraverserEvent
      */
     public function __construct(DataHookDefinition $definition, callable $registerHook)
     {
-        $this->definition   = $definition;
+        $this->definition = $definition;
         $this->registerHook = $registerHook;
     }
-
+    
     /**
      * Returns the definition of the data hook we should traverse the TCA for
      *
@@ -65,7 +65,7 @@ class CustomDataHookTraverserEvent
     {
         return $this->definition;
     }
-
+    
     /**
      * Registers all matching handler definitions for the given node on the hook definition.
      *

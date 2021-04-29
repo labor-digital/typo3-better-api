@@ -34,7 +34,7 @@ use LaborDigital\T3BA\Event\FormEngine\Adapter\LateFormFilterEventAdapter;
 class LateFormFilterEvent implements CoreHookEventInterface
 {
     use FormFilterEventTrait;
-
+    
     /**
      * @inheritDoc
      */

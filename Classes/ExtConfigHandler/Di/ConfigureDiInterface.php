@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 interface ConfigureDiInterface
 {
-
+    
     /**
      * Basically the Services.php api of the TYPO3 core, but neatly packed into a class interface
      *
@@ -46,7 +46,7 @@ interface ConfigureDiInterface
         ContainerBuilder $containerBuilder,
         ExtConfigContext $context
     ): void;
-
+    
     /**
      * Allows you to configure the container instance at runtime
      * This method is executed every time when TYPO3 boots, and allows you to inject
@@ -56,5 +56,5 @@ interface ConfigureDiInterface
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext     $context
      */
     public static function configureRuntime(Container $container, ExtConfigContext $context): void;
-
+    
 }

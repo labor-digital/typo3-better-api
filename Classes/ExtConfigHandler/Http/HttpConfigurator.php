@@ -35,32 +35,32 @@ class HttpConfigurator extends AbstractExtConfigConfigurator
 {
     protected const MIDDLEWARE_STACK_SCHEMA
         = [
-            'type'    => 'string',
+            'type' => 'string',
             'default' => 'frontend',
-            'values'  => ['frontend', 'backend'],
+            'values' => ['frontend', 'backend'],
         ];
-
+    
     /**
      * The list of registered middleware configurations, sorted by "frontend" and "backend" stack
      *
      * @var array[]
      */
     protected $middlewares = [];
-
+    
     /**
      * The list of disabled middleware identifiers, sorted by "frontend" and "backend" stack
      *
      * @var array
      */
     protected $disabledMiddlewares = [];
-
+    
     /**
      * Additional global configuration options
      *
      * @var array
      */
     protected $globals = [];
-
+    
     /**
      * Registers a new middleware class to the stack.
      *
@@ -81,51 +81,52 @@ class HttpConfigurator extends AbstractExtConfigConfigurator
     public function registerMiddleware(
         string $middlewareClass,
         array $options = []
-    ): self {
+    ): self
+    {
         if (! class_exists($middlewareClass)) {
             throw new InvalidArgumentException('The given middleware class: ' . $middlewareClass . ' does not exist!');
         }
-
+        
         if (! in_array(MiddlewareInterface::class, class_implements($middlewareClass), true)) {
             throw new InvalidArgumentException(
                 'The given middleware class: ' . $middlewareClass
                 . ' does not implement the required interface: ' . MiddlewareInterface::class . '!');
         }
-
+        
         $beforeAfterDefinition = [
-            'type'      => 'array',
-            'default'   => [],
+            'type' => 'array',
+            'default' => [],
             'preFilter' => static function ($v) { return is_string($v) ? [$v] : $v; },
         ];
-
+        
         $options = Options::make($options, [
             'identifier' => [
-                'type'    => 'string',
+                'type' => 'string',
                 'default' => function () use ($middlewareClass) {
                     return $this->makeMiddlewareIdentifier($middlewareClass);
                 },
             ],
-            'stack'      => static::MIDDLEWARE_STACK_SCHEMA,
-            'before'     => $beforeAfterDefinition,
-            'after'      => $beforeAfterDefinition,
+            'stack' => static::MIDDLEWARE_STACK_SCHEMA,
+            'before' => $beforeAfterDefinition,
+            'after' => $beforeAfterDefinition,
         ]);
-
-        $stack      = $options['stack'];
+        
+        $stack = $options['stack'];
         $identifier = $options['identifier'];
-
+        
         if (isset($this->disabledMiddlewares[$stack][$identifier])) {
             return $this;
         }
-
+        
         $this->middlewares[$stack][$identifier] = [
             'target' => $middlewareClass,
             'before' => $options['before'],
-            'after'  => $options['after'],
+            'after' => $options['after'],
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Can be used to disable a previously registered middleware.
      *
@@ -138,18 +139,19 @@ class HttpConfigurator extends AbstractExtConfigConfigurator
     public function disableMiddleware(
         string $middlewareClassOrIdentifier,
         ?string $stack = null
-    ): self {
+    ): self
+    {
         $stack = Options::makeSingle('stack', $stack, static::MIDDLEWARE_STACK_SCHEMA);
-
+        
         if (class_exists($middlewareClassOrIdentifier)) {
             $middlewareClassOrIdentifier = $this->makeMiddlewareIdentifier($middlewareClassOrIdentifier);
         }
-
+        
         $this->disabledMiddlewares[$stack][$middlewareClassOrIdentifier] = true;
-
+        
         return $this;
     }
-
+    
     /**
      * Registers a new route aspect handler
      *
@@ -164,12 +166,12 @@ class HttpConfigurator extends AbstractExtConfigConfigurator
             throw new InvalidArgumentException(
                 'The given route aspect handler ' . $className . ' class does not exist!');
         }
-
+        
         $this->globals['TYPO3_CONF_VARS']['SYS']['routing']['aspects'][$key] = $className;
-
+        
         return $this;
     }
-
+    
     /**
      * Builds an automatic middleware identifier out of the given class name and the extension key
      *
@@ -188,7 +190,7 @@ class HttpConfigurator extends AbstractExtConfigConfigurator
             ]
         );
     }
-
+    
     /**
      * @inheritDoc
      */

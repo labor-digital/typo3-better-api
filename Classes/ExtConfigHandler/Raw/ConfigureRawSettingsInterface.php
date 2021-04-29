@@ -28,7 +28,7 @@ use Neunerlei\Configuration\State\ConfigState;
 
 interface ConfigureRawSettingsInterface
 {
-
+    
     /**
      * Allows you to apply raw configuration settings.
      * This is useful for project configuration or other settings you don't need more than once or twice in a decade.
@@ -37,5 +37,5 @@ interface ConfigureRawSettingsInterface
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
      */
     public static function configureRaw(ConfigState $state, ExtConfigContext $context): void;
-
+    
 }

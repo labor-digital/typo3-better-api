@@ -43,9 +43,9 @@ class ConfigurationManagerAdapter extends ConfigurationManager
             if (! $concreteBackup instanceof FrontendConfigurationManager) {
                 $objectManager = $configurationManager->objectManager;
                 $configurationManager->concreteConfigurationManager
-                               = $objectManager->get(FrontendConfigurationManager::class);
+                    = $objectManager->get(FrontendConfigurationManager::class);
             }
-
+            
             return $callback();
         } finally {
             $configurationManager->concreteConfigurationManager = $concreteBackup;

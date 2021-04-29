@@ -25,19 +25,19 @@ use LaborDigital\T3BA\Tool\Fal\FalService;
 
 class ImageFileInfo
 {
-
+    
     /**
      * The file info object that represents this image file
      *
      * @var FileInfo
      */
     protected $parent;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Fal\FalService
      */
     protected $falService;
-
+    
     /**
      * ImageFileInfo constructor.
      *
@@ -46,10 +46,10 @@ class ImageFileInfo
      */
     public function __construct(FileInfo $parent, FalService $falFileService)
     {
-        $this->parent     = $parent;
+        $this->parent = $parent;
         $this->falService = $falFileService;
     }
-
+    
     /**
      * Returns the alternative text to this image or an empty string
      *
@@ -60,7 +60,7 @@ class ImageFileInfo
         return $this->parent->getFileReference() !== null
             ? (string)$this->parent->getFileReference()->getAlternative() : '';
     }
-
+    
     /**
      * Returns the title text to this image or an empty string
      *
@@ -71,7 +71,7 @@ class ImageFileInfo
         return $this->parent->getFileReference() !== null
             ? (string)$this->parent->getFileReference()->getTitle() : '';
     }
-
+    
     /**
      * Returns the description text to this file or an empty string
      *
@@ -82,7 +82,7 @@ class ImageFileInfo
         return $this->parent->getFileReference() !== null
             ? (string)$this->parent->getFileReference()->getDescription() : '';
     }
-
+    
     /**
      * Returns the width of the image in pixels
      *
@@ -92,7 +92,7 @@ class ImageFileInfo
     {
         return (int)$this->parent->getFile()->getProperty('width');
     }
-
+    
     /**
      * Returns the height of the image in pixels
      *
@@ -102,7 +102,7 @@ class ImageFileInfo
     {
         return (int)$this->parent->getFile()->getProperty('height');
     }
-
+    
     /**
      * Returns the image alignment if it the matching field was registered in the sys_file_reference tca.
      * The field should be called "image_alignment"
@@ -114,20 +114,20 @@ class ImageFileInfo
         if (! $this->parent->isFileReference()) {
             return 'cc';
         }
-
+        
         try {
             $ref = $this->parent->getFileReference();
             if ($ref === null) {
                 return 'cc';
             }
-
+            
             return $ref->getReferenceProperty('image_alignment');
         } catch (InvalidArgumentException $e) {
         }
-
+        
         return 'cc';
     }
-
+    
     /**
      * Returns the registered crop variants for this image by their key
      *
@@ -140,16 +140,16 @@ class ImageFileInfo
             if ($ref === null) {
                 return [];
             }
-
+            
             $crop = $ref->getReferenceProperty('crop');
-
+            
             return \GuzzleHttp\json_decode($crop, true);
         } catch (InvalidArgumentException $e) {
         }
-
+        
         return [];
     }
-
+    
     /**
      * Returns the url of a variant of this image that was cropped based on the given type.
      * If the image couldn't been cropped or the variant with $type was not found, the original url will be returned
@@ -163,12 +163,12 @@ class ImageFileInfo
         if (! $this->parent->isFileReference()) {
             return $this->parent->getUrl();
         }
-
+        
         $variants = $this->getCropVariants();
         if (! isset($variants[$type])) {
             return $this->parent->getUrl();
         }
-
+        
         return $this->falService->getResizedImageUrl($this->parent, ['crop' => $type]);
     }
 }

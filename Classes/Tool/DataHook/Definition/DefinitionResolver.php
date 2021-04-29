@@ -33,12 +33,12 @@ class DefinitionResolver
 {
     use TypoContextAwareTrait;
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\TcaTraverser
      */
     protected $traverser;
-
+    
     /**
      * DefinitionResolver constructor.
      *
@@ -48,7 +48,7 @@ class DefinitionResolver
     {
         $this->traverser = $traverser;
     }
-
+    
     /**
      * Resolves the hook definition, including it's handler definitions based on the given table name and data
      * by traversing the TCA and extracting the included configuration.
@@ -64,10 +64,10 @@ class DefinitionResolver
         $definition = $this->resolveBasicDefinitionObject($type, $tableName, $data);
         $this->applyFieldPackers($definition);
         $this->resolveHandlerDefinitions($definition);
-
+        
         return $definition;
     }
-
+    
     /**
      * Builds the basic definition object and loads the tca array
      *
@@ -80,24 +80,24 @@ class DefinitionResolver
      */
     protected function resolveBasicDefinitionObject(string $type, string $tableName, array $data): DataHookDefinition
     {
-        $definition            = $this->makeInstance(DataHookDefinition::class);
-        $definition->type      = $type;
-        $definition->data      = $data;
-        $definition->dataRaw   = $data;
+        $definition = $this->makeInstance(DataHookDefinition::class);
+        $definition->type = $type;
+        $definition->data = $data;
+        $definition->dataRaw = $data;
         $definition->tableName = $tableName;
-
+        
         if (! Arrays::hasPath($GLOBALS, ['TCA', $tableName])) {
             throw new DataHookException('Failed to execute data hook on: ' . $tableName
                                         . ' because the table is not defined in the TCA!');
         }
-
+        
         TcaUtil::runWithResolvedTypeTca($data, $tableName, static function (array $typeTca) use ($definition) {
             $definition->tca = $typeTca;
         });
-
+        
         return $definition;
     }
-
+    
     /**
      * Resolves the field packer classes and instantiates them on the definition object.
      * It also executes the unpacking of the given data
@@ -115,12 +115,12 @@ class DefinitionResolver
                 throw new DataHookException('Invalid field packer class given: ' . $fieldPackerClass);
             }
             /** @var FieldPackerInterface $packer */
-            $packer                       = $this->getService($fieldPackerClass);
-            $definition->fieldPackers[]   = $packer;
+            $packer = $this->getService($fieldPackerClass);
+            $definition->fieldPackers[] = $packer;
             $definition->unpackedFields[] = $packer->unpackFields($definition);
         }
     }
-
+    
     /**
      * Resolves the definition, containing the handler instances for the current data hook
      *

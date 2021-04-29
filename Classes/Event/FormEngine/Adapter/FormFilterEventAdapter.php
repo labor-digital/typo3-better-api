@@ -36,16 +36,16 @@ class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements For
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class]  = [
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class] = [
             'depends' => [DatabaseRowInitializeNew::class],
-            'before'  => [TcaGroup::class, TcaColumnsRemoveUnused::class],
+            'before' => [TcaGroup::class, TcaColumnsRemoveUnused::class],
         ];
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['inlineParentRecord'][static::class] = [
             'depends' => [InlineOverrideChildTca::class],
-            'before'  => [TcaColumnsRemoveUnused::class],
+            'before' => [TcaColumnsRemoveUnused::class],
         ];
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -54,10 +54,10 @@ class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements For
         if (! isset($result['tableName'])) {
             return $result;
         }
-
+        
         return static::$bus->dispatch(
             new FormFilterEvent($result['tableName'], $result)
         )->getData();
-
+        
     }
 }

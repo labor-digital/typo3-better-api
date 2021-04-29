@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpMissingStrictTypesDeclarationInspection */
+
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -17,5 +18,8 @@
  * Last modified: 2020.03.18 at 18:40
  */
 
-\LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent());
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
+
+TypoEventBus::getInstance()->dispatch(
+    new ExtTablesLoadedEvent());

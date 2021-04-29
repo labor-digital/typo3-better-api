@@ -31,7 +31,7 @@ trait SingletonInstanceTrait
      * @var self
      */
     protected static $instance;
-
+    
     /**
      * Returns the singleton instance for the class using this trait
      *
@@ -43,10 +43,10 @@ trait SingletonInstanceTrait
         if (empty(static::$instance)) {
             throw new SingletonNotSetException('The singleton instance was not injected using setInstance()');
         }
-
+        
         return static::$instance;
     }
-
+    
     /**
      * Internal helper to inject the instance into the class using this trait
      *
@@ -58,7 +58,7 @@ trait SingletonInstanceTrait
     public static function setInstance(self $instance): self
     {
         static::$instance = $instance;
-
+        
         return $instance;
     }
 }

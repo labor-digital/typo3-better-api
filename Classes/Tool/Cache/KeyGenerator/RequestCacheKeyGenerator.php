@@ -35,12 +35,12 @@ class RequestCacheKeyGenerator implements CacheKeyGeneratorInterface
      * @var array
      */
     public static $trackedHeaders = [];
-
+    
     /**
      * @var \Psr\Http\Message\ServerRequestInterface
      */
     protected $request;
-
+    
     /**
      * RequestCacheKeyGenerator constructor.
      *
@@ -50,7 +50,7 @@ class RequestCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $this->request = $request;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -58,14 +58,14 @@ class RequestCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $params = Arrays::flatten($this->request->getQueryParams());
         ksort($params);
-
+        
         $headers = [];
         foreach (static::$trackedHeaders as $header) {
             $headers[$header] = $this->request->getHeaderLine($header);
         }
-
+        
         $typoContext = TypoContext::getInstance();
-
+        
         return md5(implode('-', [
             \GuzzleHttp\json_encode($params),
             \GuzzleHttp\json_encode($headers),
@@ -76,5 +76,5 @@ class RequestCacheKeyGenerator implements CacheKeyGeneratorInterface
             $typoContext->Site()->getCurrent()->getIdentifier(),
         ]));
     }
-
+    
 }

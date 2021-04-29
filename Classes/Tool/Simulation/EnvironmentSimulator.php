@@ -35,7 +35,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * The list of simulation pass classes with the option of extension.
      * All classes registered MUST implement the SimulatorPassInterface!
@@ -53,40 +53,40 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
             LanguageSimulationPass::class,
             TsfeSimulationPass::class,
         ];
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tsfe\TsfeService
      */
     protected $tsfeService;
-
+    
     /**
      * This is true when we are currently running inside a transformation
      *
      * @var bool
      */
     protected $isInSimulation = false;
-
+    
     /**
      * True if child simulations should be ignored
      *
      * @var bool
      */
     protected $childSimulationsIgnored = false;
-
+    
     /**
      * The list of instantiated passes
      *
      * @var SimulatorPassInterface[]
      */
     protected $passes;
-
+    
     /**
      * The compiles option definition of all simulation passes
      *
      * @var array
      */
     protected $optionDefinition;
-
+    
     /**
      * EnvironmentSimulator constructor.
      *
@@ -96,7 +96,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     {
         $this->tsfeService = $tsfeService;
     }
-
+    
     /**
      * Can be used to run a function in a different environment.
      * You can use this method to render frontend content's in the backend or in the CLI,
@@ -168,19 +168,19 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         ) {
             return $handler();
         }
-
+        
         // Prepare the simulation
         $this->initialize();
         $options = Options::make($options, $this->optionDefinition);
-
+        
         // Backup the old ignore child simulation state
         $parentIgnoresChildSimulations = $this->childSimulationsIgnored;
         $this->childSimulationsIgnored = $options['ignoreChildSimulations'];
-        $parentIsInSimulation          = $this->isInSimulation;
-
+        $parentIsInSimulation = $this->isInSimulation;
+        
         // Set up the simulation
         $rollBackPasses = [];
-        $result         = null;
+        $result = null;
         try {
             foreach ($this->passes as $pass) {
                 $storage = [];
@@ -189,29 +189,29 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
                     $rollBackPasses[] = [$pass, $storage];
                 }
             }
-
+            
             // Update the simulation state
             $this->isInSimulation = $this->isInSimulation || ! empty($rollBackPasses);
-
+            
             // Run the handler
             $result = $handler();
-
+            
         } finally {
             // Roll back
             foreach (array_reverse($rollBackPasses) as $args) {
                 $args[0]->rollBack($args[1]);
                 unset($args[1], $args);
             }
-
+            
             // Restore parent state
             $this->childSimulationsIgnored = $parentIgnoresChildSimulations;
-            $this->isInSimulation          = $parentIsInSimulation;
+            $this->isInSimulation = $parentIsInSimulation;
         }
-
+        
         // Done
         return $result;
     }
-
+    
     /**
      * ATTENTION: This method is extremely powerful and you should really consider twice if you want to use it
      * for whatever you want to achieve.
@@ -238,7 +238,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     {
         return $this->runWithEnvironment(['asAdmin'], $handler);
     }
-
+    
     /**
      * Initializes the instance by creating the pass instances and preparing the option definition
      */
@@ -247,22 +247,22 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         if (isset($this->passes)) {
             return;
         }
-
+        
         $optionDefinition = $this->getDefaultOptionDefinition();
-        $passes           = [];
+        $passes = [];
         foreach (static::$environmentSimulatorPasses as $passClass) {
             $instance = $this->getService($passClass);
             if (! $instance instanceof SimulatorPassInterface) {
                 continue;
             }
             $optionDefinition = $instance->addOptionDefinition($optionDefinition);
-            $passes[]         = $instance;
+            $passes[] = $instance;
         }
-
-        $this->passes           = $passes;
+        
+        $this->passes = $passes;
         $this->optionDefinition = $optionDefinition;
     }
-
+    
     /**
      * Returns the default option definition
      *
@@ -272,15 +272,15 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     {
         return [
             'ignoreChildSimulations' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => $this->childSimulationsIgnored,
             ],
-            'ignoreInSimulations'    => [
-                'type'    => 'bool',
+            'ignoreInSimulations' => [
+                'type' => 'bool',
                 'default' => false,
             ],
             'ignoreIfFrontendExists' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => false,
             ],
         ];

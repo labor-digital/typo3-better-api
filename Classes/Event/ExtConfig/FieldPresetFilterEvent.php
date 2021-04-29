@@ -40,18 +40,18 @@ class FieldPresetFilterEvent
      * @var array
      */
     protected $presets;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $context;
-
+    
     public function __construct(array $presets, ExtConfigContext $context)
     {
         $this->presets = $presets;
         $this->context = $context;
     }
-
+    
     /**
      * Returns the resolved list of field presets as an array like: ["presetName" => ["className", "methodName"]]
      *
@@ -61,7 +61,7 @@ class FieldPresetFilterEvent
     {
         return $this->presets;
     }
-
+    
     /**
      * Allows you to override the resolved list of field presets as an array like: ["presetName" => ["className",
      * "methodName"]]
@@ -73,10 +73,10 @@ class FieldPresetFilterEvent
     public function setPresets(array $presets): FieldPresetFilterEvent
     {
         $this->presets = $presets;
-
+        
         return $this;
     }
-
+    
     /**
      * Allows you to add a new preset to the list
      *
@@ -89,10 +89,10 @@ class FieldPresetFilterEvent
     public function addPreset(string $presetName, string $className, string $methodName): self
     {
         $this->presets[$presetName] = [$className, $methodName];
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently active ext config context instance
      *

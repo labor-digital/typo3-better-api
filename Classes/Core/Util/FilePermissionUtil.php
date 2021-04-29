@@ -25,7 +25,7 @@ use Neunerlei\FileSystem\Fs;
 
 class FilePermissionUtil
 {
-
+    
     /**
      * This helper works quite similar like GeneralUtility::fixPermissions() but without depending
      * on the existence of the PATH_site constant.
@@ -46,12 +46,12 @@ class FilePermissionUtil
         if (PHP_OS_FAMILY === 'Windows') {
             return true;
         }
-
+        
         // Check if we can access the given file
         if (! file_exists($filename) || ! is_writable($filename)) {
             return false;
         }
-
+        
         // Make sure we have values
         $inheritMode = ! empty($mode);
         if ($mode === null) {
@@ -66,7 +66,7 @@ class FilePermissionUtil
             if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['createGroup'])) {
                 $group = $GLOBALS['TYPO3_CONF_VARS']['SYS']['createGroup'];
             }
-
+            
             // Try to get the group from the parent directory
             try {
                 if (empty($group)) {
@@ -75,7 +75,7 @@ class FilePermissionUtil
             } catch (Exception $exception) {
             }
         }
-
+        
         // Make sure the mode has the correct integer value
         if (is_string($mode)) {
             if (strlen($mode) === 4 && $mode[0] !== '0') {
@@ -87,7 +87,7 @@ class FilePermissionUtil
                 $mode = octdec($mode);
             }
         }
-
+        
         // Check if this is a directory
         if (is_dir($filename)) {
             // Update the directory recursively
@@ -103,7 +103,7 @@ class FilePermissionUtil
                 return false;
             }
         }
-
+        
         // Update a file
         try {
             Fs::setPermissions($filename, $mode);
@@ -113,7 +113,7 @@ class FilePermissionUtil
         } catch (Exception $e) {
             return false;
         }
-
+        
         return true;
     }
 }

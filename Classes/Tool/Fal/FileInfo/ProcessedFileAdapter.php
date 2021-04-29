@@ -25,7 +25,7 @@ use TYPO3\CMS\Core\Resource\ProcessedFile;
 
 class ProcessedFileAdapter extends ProcessedFile
 {
-
+    
     /**
      * Internal helper to inject additional properties into processed files
      *
@@ -37,7 +37,7 @@ class ProcessedFileAdapter extends ProcessedFile
     {
         $file->properties[$key] = $value;
     }
-
+    
     /**
      * Extracts a single property from a processed file ignoring the original file completely
      *

@@ -40,7 +40,7 @@ interface FieldPackerInterface extends PublicServiceInterface
      * @return array
      */
     public function unpackFields(DataHookDefinition $definition): array;
-
+    
     /**
      * Receives the data hook definition and must do the reverse of unpackFields().
      * It should re-serialize the data for the database, to JSON, xml or some other source.

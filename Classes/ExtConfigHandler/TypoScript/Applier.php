@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Applier extends AbstractExtConfigApplier
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -41,19 +41,19 @@ class Applier extends AbstractExtConfigApplier
         $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaCompletelyLoaded');
     }
-
+    
     public function onExtLocalConfLoaded(): void
     {
         $this->applyUserTsConfig();
         $this->applyPageTsConfig();
     }
-
+    
     public function onTcaCompletelyLoaded(): void
     {
         $this->applyStaticDirectoryRegistration();
         $this->applyTcaPageTsConfig();
     }
-
+    
     /**
      * Registers the user ts configuration
      */
@@ -61,7 +61,7 @@ class Applier extends AbstractExtConfigApplier
     {
         ExtensionManagementUtility::addUserTSConfig($this->state->get('typo.typoScript.userTsConfig', ''));
     }
-
+    
     /**
      * Registers the page ts configuration
      */
@@ -69,7 +69,7 @@ class Applier extends AbstractExtConfigApplier
     {
         ExtensionManagementUtility::addPageTSConfig($this->state->get('typo.typoScript.pageTsConfig', ''));
     }
-
+    
     /**
      * Registers the registered, selectable page ts files
      */
@@ -79,7 +79,7 @@ class Applier extends AbstractExtConfigApplier
             ExtensionManagementUtility::registerPageTSConfigFile(...$file);
         }
     }
-
+    
     /**
      * Registers static typo script directories
      */

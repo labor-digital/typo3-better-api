@@ -36,41 +36,42 @@ class Loader implements PublicServiceInterface
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
     use DelayedConfigExecutionTrait;
-
+    
     protected const EXT_CONTENT_DEFAULT_TYPE = '__extContentDefaultType__';
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Factory
      */
     protected $factory;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $configContext;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Dumper
      */
     protected $dumper;
-
+    
     /**
      * The state of the loaded tca types to prevent double loading in the install tool
      *
      * @var array
      */
     protected $loaded;
-
+    
     public function __construct(
         Factory $factory,
         Dumper $dumper,
         ExtConfigContext $configContext
-    ) {
-        $this->factory       = $factory;
-        $this->dumper        = $dumper;
+    )
+    {
+        $this->factory = $factory;
+        $this->dumper = $dumper;
         $this->configContext = $configContext;
     }
-
+    
     /**
      * Provides a dummy default type to the tt_content table, to ensure that the ext content forms
      * can benefit when a TCA override registers new elements on all tt_content types.
@@ -80,7 +81,7 @@ class Loader implements PublicServiceInterface
         $GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE]
             = $this->factory->getDefaultTypeTca();
     }
-
+    
     /**
      * Iterates all registered content type configuration classes and builds the TCA extension for them.
      */
@@ -90,26 +91,26 @@ class Loader implements PublicServiceInterface
             foreach ($this->loaded as $tableName => $config) {
                 $GLOBALS['TCA'][$tableName] = $config;
             }
-
+            
             return;
         }
-
+        
         // Extract the default type tca
         $defaultTca = $GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE] ?? [];
         unset($GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE]);
         if (! empty($defaultTca) && is_array($defaultTca)) {
             $this->factory->setDefaultTypeTca($defaultTca);
         }
-
+        
         // Fix for the install tool where the tca gets loaded twice
         if (isset($this->loaded)) {
             foreach ($this->loaded as $signature => $config) {
                 $GLOBALS['TCA']['tt_content']['types'][$signature] = $config;
             }
-
+            
             return;
         }
-
+        
         $type = null;
         $this->runDelayedConfig(
             $this->getTypoContext()->config()->getConfigState(),
@@ -118,7 +119,7 @@ class Loader implements PublicServiceInterface
             function (string $className, string $signature, $_, $additionalData) use (&$type) {
                 if ($type === null) {
                     $type = $this->factory->getType($signature);
-
+                    
                     // Allow the registering class to provide us with a suggested model class name.
                     // This is useful to inflect the model class based on the controller name
                     if (is_array($additionalData) && is_string($additionalData['modelSuggestion'])
@@ -126,23 +127,23 @@ class Loader implements PublicServiceInterface
                         $type->setModelClass($additionalData['modelSuggestion']);
                     }
                 }
-
+                
                 call_user_func([$className, 'configureContentType'], $type, $this->configContext);
-
+                
                 $this->dumper->registerType($type);
-
+                
                 $type->ignoreFieldIdIssues(false);
             },
             function () use (&$type) {
                 $type = null;
             }
         );
-
+        
         $this->loaded = $this->dumper->dump($GLOBALS['TCA'], $this->configContext);
         foreach ($this->loaded as $tableName => $config) {
             $GLOBALS['TCA'][$tableName] = $config;
         }
-
+        
     }
-
+    
 }

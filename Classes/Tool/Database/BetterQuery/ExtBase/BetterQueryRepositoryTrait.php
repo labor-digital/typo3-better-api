@@ -26,12 +26,12 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 trait BetterQueryRepositoryTrait
 {
-
+    
     /**
      * @var BetterRepository
      */
     protected $__repositoryWrapper;
-
+    
     /**
      * Returns a "BetterQuery" object. This object is intended to be lightweight and easy to use.
      * It does NOT implement all the features of the typo3 extBase query builder. But it's syntax is short,
@@ -55,7 +55,7 @@ trait BetterQueryRepositoryTrait
         if (! isset($this->__repositoryWrapper)) {
             $this->__repositoryWrapper = BetterRepository::getWrapper($this);
         }
-
+        
         return $this->__repositoryWrapper->getQuery();
     }
 }

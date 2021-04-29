@@ -33,7 +33,7 @@ use Neunerlei\Inflection\Inflector;
 class Handler extends AbstractExtConfigHandler
 {
     use DelayedConfigExecutionTrait;
-
+    
     /**
      * The list of generated table class -> table name mappings, that should be injected into
      * NamingUtil::$tcaTableClassNameMap at runtime.
@@ -41,7 +41,7 @@ class Handler extends AbstractExtConfigHandler
      * @var array
      */
     protected $storedTableNameMap = [];
-
+    
     /**
      * @inheritDoc
      */
@@ -53,27 +53,27 @@ class Handler extends AbstractExtConfigHandler
         $configurator->registerOverrideLocation('Overrides');
         $configurator->registerInterface(ConfigureTcaTableInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void { }
-
+    
     /**
      * @inheritDoc
      */
     public function handle(string $class): void
     {
         $tableName = $this->getTableNameForClassName($class);
-
+        
         NamingUtil::$tcaTableClassNameMap[$class] = $tableName;
-        $this->storedTableNameMap[$class]         = $tableName;
-
+        $this->storedTableNameMap[$class] = $tableName;
+        
         $listKey = $this->definition->isOverride($class) ? 'override' : 'default';
-
+        
         $this->saveDelayedConfig($this->context, 'tca.loadableTables.' . $listKey, $class, $tableName);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -81,7 +81,7 @@ class Handler extends AbstractExtConfigHandler
     {
         $this->context->getState()->mergeIntoArray('tca.meta.classNameMap', $this->storedTableNameMap);
     }
-
+    
     /**
      * Receives the absolute class name and either uses getTableName() if the class implements,
      * TcaTableNameProviderInterface or inflects the name of the table based on the convention.
@@ -97,16 +97,16 @@ class Handler extends AbstractExtConfigHandler
         if (in_array(TcaTableNameProviderInterface::class, class_implements($class), true)) {
             return call_user_func([$class, 'getTableName']);
         }
-
+        
         // Remove the unwanted prefixes from the namespace
-        $extName        = NamingUtil::extensionNameFromExtKey($this->context->getExtKey());
-        $pattern        = '(?:\\\\)?' . preg_quote($this->context->getVendor(), '~') . '\\\\' .
-                          preg_quote($extName, '~') . '\\\\' .
-                          'Configuration\\\\Table\\\\' .
-                          '(?:Overrides?\\\\)?';
-        $pattern        = '~' . $pattern . '~';
+        $extName = NamingUtil::extensionNameFromExtKey($this->context->getExtKey());
+        $pattern = '(?:\\\\)?' . preg_quote($this->context->getVendor(), '~') . '\\\\' .
+                   preg_quote($extName, '~') . '\\\\' .
+                   'Configuration\\\\Table\\\\' .
+                   '(?:Overrides?\\\\)?';
+        $pattern = '~' . $pattern . '~';
         $tableNamespace = preg_replace($pattern, '', $class);
-
+        
         // Check if the transformation was successful
         if ($tableNamespace === $class) {
             throw new ExtConfigException(
@@ -114,12 +114,12 @@ class Handler extends AbstractExtConfigHandler
                 . $this->context->getVendor() . '\\' . $extName . '\\'
                 . 'Configuration\\Table\\...');
         }
-
+        
         // Remove optional "table" suffix
         if (substr($tableNamespace, -5) === 'Table') {
             $tableNamespace = substr($tableNamespace, 0, -5);
         }
-
+        
         // Compile table name
         return $this->context->resolveTableName(
             '...' . implode('_',

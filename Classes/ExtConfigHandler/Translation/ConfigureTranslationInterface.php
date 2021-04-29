@@ -27,7 +27,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigureTranslationInterface
 {
-
+    
     /**
      * Allows you to provide translation related configuration, like namespace registration and label overrides
      *

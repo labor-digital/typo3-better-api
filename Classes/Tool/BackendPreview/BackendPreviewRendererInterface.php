@@ -25,7 +25,7 @@ use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 
 interface BackendPreviewRendererInterface extends PublicServiceInterface
 {
-
+    
     /**
      * Should use the given context object to render the backend preview.
      * The body of the preview can either be set into the $context or returned directly as a string.

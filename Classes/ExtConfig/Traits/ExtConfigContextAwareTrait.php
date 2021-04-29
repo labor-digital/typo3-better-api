@@ -25,12 +25,12 @@ use Neunerlei\Configuration\Util\ConfigContextAwareTrait;
 trait ExtConfigContextAwareTrait
 {
     use ConfigContextAwareTrait;
-
+    
     /**
      * The config context
      *
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $context;
-
+    
 }

@@ -35,7 +35,7 @@ use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepI
 class DomainModelMapStep implements TcaPostProcessorStepInterface
 {
     public const CONFIG_KEY = 'domainModelClasses';
-
+    
     /**
      * @inheritDoc
      */
@@ -44,22 +44,22 @@ class DomainModelMapStep implements TcaPostProcessorStepInterface
         if (! isset($config['ctrl'][static::CONFIG_KEY]) || ! is_array($config['ctrl'][static::CONFIG_KEY])) {
             return;
         }
-
+        
         foreach ($config['ctrl'][static::CONFIG_KEY] as $className => $columns) {
             $definition = [
-                'tableName'  => $tableName,
+                'tableName' => $tableName,
                 'properties' => [],
             ];
-
+            
             foreach ($columns as $field => $property) {
                 $definition['properties'][$property]['fieldName'] = $field;
             }
-
+            
             $meta['extbase']['persistence'][$className] = $definition;
-            $meta['classNameMap'][$className]           = $tableName;
+            $meta['classNameMap'][$className] = $tableName;
         }
-
+        
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
-
+    
 }

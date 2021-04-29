@@ -37,7 +37,7 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInterface
 {
     protected $commands = [];
-
+    
     /**
      * @inheritDoc
      */
@@ -48,14 +48,14 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
         $configurator->setAllowOverride(false);
         $configurator->executeThisHandlerAfter(BuildTimeHandler::class);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void
     {
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -66,10 +66,10 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
                 'Invalid command configuration class: ' . $class
                 . ' a command has to extend the symfony command class: ' . Command::class);
         }
-
+        
         /** @var \Symfony\Component\Console\Command\Command $c */
         $c = new $class();
-
+        
         $name = $c->getName();
         if ($name === null) {
             $name = Inflector::toCamelBack($this->context->getExtKey()) . ':'
@@ -78,10 +78,10 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
                 $name = substr($name, 0, -7);
             }
         }
-
+        
         $this->commands[$name] = $class;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -90,7 +90,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
         if (empty($this->commands)) {
             return;
         }
-
+        
         /** @var ContainerBuilder $containerBuilder */
         $containerBuilder = $this->context->getContainer()->get(ContainerBuilder::class);
         foreach ($this->commands as $name => $class) {
@@ -100,5 +100,5 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
             }
         }
     }
-
+    
 }

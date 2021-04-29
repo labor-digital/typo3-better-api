@@ -37,7 +37,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * Persists all current database changes
      * Simple wrapper around the extBase persistence manager
@@ -46,7 +46,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
     {
         $this->getService(PersistenceManagerInterface::class)->persistAll();
     }
-
+    
     /**
      * Returns the instance of the database connection pool
      *
@@ -57,13 +57,13 @@ class DbService implements SingletonInterface, PublicServiceInterface
         if ($this->hasService(ConnectionPool::class)) {
             return $this->getService(ConnectionPool::class);
         }
-
+        
         $connectionPool = $this->makeInstance(ConnectionPool::class);
         $this->setService(ConnectionPool::class, $connectionPool);
-
+        
         return $connectionPool;
     }
-
+    
     /**
      * Creates a new query builder instance either for a table or a connection name.
      * If the table name is given the connection name will be ignored.
@@ -81,15 +81,15 @@ class DbService implements SingletonInterface, PublicServiceInterface
         } else {
             $connection = $this->getConnection($connectionName);
         }
-
+        
         $qb = $connection->createQueryBuilder();
         if (! empty($tableName)) {
             $qb->from($tableName);
         }
-
+        
         return $qb;
     }
-
+    
     /**
      * Creates a new instance of a better query object for the given table name.
      * Better Query is a simplified, speaking wrapper around the doctrine query builder fused with the
@@ -109,7 +109,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
         if (class_exists($tableName)) {
             $tableName = NamingUtil::resolveTableName($tableName);
         }
-
+        
         $query = $this->makeInstance(
             StandaloneBetterQuery::class, [
                 $tableName,
@@ -119,14 +119,14 @@ class DbService implements SingletonInterface, PublicServiceInterface
                 $this->getService(Session::class),
             ]
         );
-
+        
         if ($disableDefaultConstraints) {
             $query = $query->withIncludeHidden()->withIncludeDeleted()->withLanguage(false);
         }
-
+        
         return $query;
     }
-
+    
     /**
      * Returns the instance of a database connection
      * BE CAREFUL WITH THIS!

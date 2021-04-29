@@ -33,21 +33,21 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  */
 class TableDefaultTcaFilterEvent
 {
-
+    
     /**
      * The default TCA array to apply to the table
      *
      * @var array
      */
     protected $defaultTca;
-
+    
     /**
      * The table instance the default should be applied to
      *
      * @var TcaTable
      */
     protected $table;
-
+    
     /**
      * TableDefaultTcaFilterEvent constructor.
      *
@@ -57,9 +57,9 @@ class TableDefaultTcaFilterEvent
     public function __construct(array $defaultTca, TcaTable $table)
     {
         $this->defaultTca = $defaultTca;
-        $this->table      = $table;
+        $this->table = $table;
     }
-
+    
     /**
      * Returns the table instance the default should be applied to
      *
@@ -69,7 +69,7 @@ class TableDefaultTcaFilterEvent
     {
         return $this->table;
     }
-
+    
     /**
      * Returns the default TCA array to apply to the table
      *
@@ -79,7 +79,7 @@ class TableDefaultTcaFilterEvent
     {
         return $this->defaultTca;
     }
-
+    
     /**
      * Updates the default TCA array to apply to the table
      *
@@ -90,7 +90,7 @@ class TableDefaultTcaFilterEvent
     public function setDefaultTca(array $defaultTca): TableDefaultTcaFilterEvent
     {
         $this->defaultTca = $defaultTca;
-
+        
         return $this;
     }
 }

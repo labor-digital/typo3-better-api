@@ -27,7 +27,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
 
 trait ElementContainingTrait
 {
-
+    
     /**
      * Returns the fields/containers inside this container/tab
      *
@@ -41,7 +41,7 @@ trait ElementContainingTrait
             yield $child->getEl();
         }
     }
-
+    
     /**
      * Returns a single child (field / container) inside the container
      *
@@ -55,18 +55,18 @@ trait ElementContainingTrait
     public function getChild(string $id)
     {
         /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node $node */
-        $node     = $this->node;
+        $node = $this->node;
         $children = $node->getChildren();
-        $child    = $children[$id] ?? $children['_' . $id] ?? null;
+        $child = $children[$id] ?? $children['_' . $id] ?? null;
         if (is_null($child)) {
             throw new TcaBuilderException(
                 'Could not find the element with ID: ' . $id . ', inside the element with id: ' . $this->getId()
             );
         }
-
+        
         return $child;
     }
-
+    
     /**
      * Checks if this child has a specific, other child inside of itself
      *
@@ -83,10 +83,10 @@ trait ElementContainingTrait
         } catch (TcaBuilderException $e) {
             return false;
         }
-
+        
         return true;
     }
-
+    
     /**
      * Removes a child with the given id from this container
      *
@@ -102,10 +102,10 @@ trait ElementContainingTrait
             $this->getChild($id)->remove();
         } catch (TcaBuilderException $e) {
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Can be used to group multiple elements inside this container.
      * This is quite useful as you can avoid using moveTo()... over and over again..
@@ -119,17 +119,17 @@ trait ElementContainingTrait
         /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node $node */
         $node = $this->node;
         $tree = $node->getTree();
-
+        
         // Store the current default node
         $defaultNodeBackup = $tree->hasConfiguredDefaultNode() ? $tree->getDefaultNode() : null;
-
+        
         // Run the definition with this node as default node
         $tree->setDefaultNode($node);
         $definition($this);
-
+        
         // Restore the default node
         $tree->setDefaultNode($defaultNodeBackup);
-
+        
         // Done
         return $this;
     }

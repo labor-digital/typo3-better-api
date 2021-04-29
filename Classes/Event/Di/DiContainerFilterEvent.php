@@ -40,7 +40,7 @@ class DiContainerFilterEvent
      * @var ContainerInterface
      */
     protected $container;
-
+    
     /**
      * DiContainerFilterEvent constructor.
      *
@@ -50,7 +50,7 @@ class DiContainerFilterEvent
     {
         $this->container = $container;
     }
-
+    
     /**
      * Returns the container instance that was instantiated
      *
@@ -60,5 +60,5 @@ class DiContainerFilterEvent
     {
         return $this->container;
     }
-
+    
 }

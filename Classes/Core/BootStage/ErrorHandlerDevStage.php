@@ -46,7 +46,7 @@ class ErrorHandlerDevStage implements BootStageInterface
      * @var Kernel
      */
     protected $kernel;
-
+    
     /**
      * @inheritDoc
      */
@@ -55,7 +55,7 @@ class ErrorHandlerDevStage implements BootStageInterface
         $this->kernel = $kernel;
         $eventBus->addListener(ErrorFilterEvent::class, [$this, 'onError']);
     }
-
+    
     /**
      * Special development only error handling helpers.
      * This clears your container cache if it failed to resolve something, which allows you easier debugging.
@@ -67,7 +67,7 @@ class ErrorHandlerDevStage implements BootStageInterface
         if (! Environment::getContext()->isDevelopment()) {
             return;
         }
-
+        
         // Flush the DI cache if a service was not defined, or changed
         $error = $event->getError();
         if ($error instanceof ConfigClassNotAutoloadableException
@@ -82,7 +82,7 @@ class ErrorHandlerDevStage implements BootStageInterface
             $this->clearAllCaches();
         }
     }
-
+    
     /**
      * Internal helper to flush all TYPO3 caches.
      * This will reset the system to a blank slate if we encounter issues with the DI container
@@ -92,7 +92,7 @@ class ErrorHandlerDevStage implements BootStageInterface
         $kernel = $this->kernel;
         register_shutdown_function(static function () use ($kernel) {
             $state = true;
-
+            
             // Try to flush the extbase caches
             try {
                 $coreCacheService = GeneralUtility::makeInstance(ClearCacheService::class);
@@ -100,7 +100,7 @@ class ErrorHandlerDevStage implements BootStageInterface
             } catch (Throwable $e) {
                 $state = false;
             }
-
+            
             // Try to flush all files
             try {
                 $cachePath = Path::join(Environment::getVarPath(), 'cache');
@@ -108,7 +108,7 @@ class ErrorHandlerDevStage implements BootStageInterface
             } catch (Throwable $e) {
                 $state = false;
             }
-
+            
             // Try to flush the di cache hard
             if (! $state) {
                 try {
@@ -116,7 +116,7 @@ class ErrorHandlerDevStage implements BootStageInterface
                 } catch (Throwable $e) {
                 }
             }
-
+            
             // Flush our internal file system
             try {
                 $kernel->getFs()->flush();
@@ -124,5 +124,5 @@ class ErrorHandlerDevStage implements BootStageInterface
             }
         });
     }
-
+    
 }

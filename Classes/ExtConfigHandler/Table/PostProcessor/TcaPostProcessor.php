@@ -45,7 +45,7 @@ use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 class TcaPostProcessor implements PublicServiceInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * Public API to register additional steps if you like. All steps have to be defined as class name.
      * Every class has to implement the TcaPostProcessorStepInterface
@@ -59,7 +59,7 @@ class TcaPostProcessor implements PublicServiceInterface
             ListPositionStep::class,
             TablesOnStandardPagesStep::class,
         ];
-
+    
     /**
      * Executes all existing steps for the database tables
      *
@@ -69,26 +69,26 @@ class TcaPostProcessor implements PublicServiceInterface
     {
         // Store the state of the class name map
         $meta['classNameMap'] = NamingUtil::$tcaTableClassNameMap;
-
+        
         // Create the steps
         $steps = [];
         foreach (static::$steps as $stepClass) {
             $step = $this->hasService($stepClass) ? $this->getService($stepClass) : $this->makeInstance($stepClass);
-
+            
             if (! $step instanceof TcaPostProcessorStepInterface) {
                 continue;
             }
-
+            
             $steps[] = $step;
         }
-
+        
         // Iterate the tables and all steps for them
         foreach ($GLOBALS['TCA'] as $tableName => &$config) {
             foreach ($steps as $step) {
                 $step->process($tableName, $config, $meta);
             }
         }
-
+        
         return $meta;
     }
 }

@@ -30,28 +30,28 @@ namespace LaborDigital\T3BA\Event\Core;
  */
 class RefIndexRecordDataFilterEvent
 {
-
+    
     /**
      * The name of the table for which the data is required
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The unique id of the table the data is required
      *
      * @var int
      */
     protected $uid;
-
+    
     /**
      * The raw data for the record to be filtered
      *
      * @var array
      */
     protected $row;
-
+    
     /**
      * RefIndexRecordDataFilterEvent constructor.
      *
@@ -62,10 +62,10 @@ class RefIndexRecordDataFilterEvent
     public function __construct(string $tableName, int $uid, array $row)
     {
         $this->tableName = $tableName;
-        $this->uid       = $uid;
-        $this->row       = $row;
+        $this->uid = $uid;
+        $this->row = $row;
     }
-
+    
     /**
      * Returns the name of the table for which the data is required
      *
@@ -75,7 +75,7 @@ class RefIndexRecordDataFilterEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the unique id of the table the data is required
      *
@@ -85,7 +85,7 @@ class RefIndexRecordDataFilterEvent
     {
         return $this->uid;
     }
-
+    
     /**
      * Returns the raw data for the record to be filtered
      *
@@ -95,7 +95,7 @@ class RefIndexRecordDataFilterEvent
     {
         return $this->row;
     }
-
+    
     /**
      * Updates the raw data for the record to be filtered
      *
@@ -106,7 +106,7 @@ class RefIndexRecordDataFilterEvent
     public function setRow(array $row): RefIndexRecordDataFilterEvent
     {
         $this->row = $row;
-
+        
         return $this;
     }
 }

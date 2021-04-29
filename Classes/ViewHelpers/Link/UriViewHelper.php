@@ -32,7 +32,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithContentArgumentAndRenderS
 class UriViewHelper extends AbstractViewHelper
 {
     use CompileWithContentArgumentAndRenderStatic;
-
+    
     public function initializeArguments()
     {
         $this->registerArgument(
@@ -61,21 +61,22 @@ class UriViewHelper extends AbstractViewHelper
             false
         );
     }
-
+    
     public static function renderStatic(
         array $arguments,
         Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ) {
+    )
+    {
         $link = TypoContext::getInstance()->di()->cs()->links->getLink(
             $arguments['definition'],
             $arguments['args'],
             $arguments['fragments'],
         );
-
+        
         return $link->build([
             'relative' => $arguments['relative'],
         ]);
     }
-
+    
 }

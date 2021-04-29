@@ -35,35 +35,35 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
  */
 class RelatedRecordRow
 {
-
+    
     /**
      * The unique id of the record in this row
      *
      * @var int
      */
     protected $uid;
-
+    
     /**
      * The name of the table this row comes from
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The raw database row that was fetched
      *
      * @var array
      */
     protected $row;
-
+    
     /**
      * A map of table names to the matching extbase models
      *
      * @var array|null
      */
     protected $modelMap;
-
+    
     /**
      * RelatedRecordRow constructor.
      *
@@ -74,12 +74,12 @@ class RelatedRecordRow
      */
     public function __construct(int $uid, string $tableName, array $row, ?array $modelMap)
     {
-        $this->uid       = $uid;
+        $this->uid = $uid;
         $this->tableName = $tableName;
-        $this->row       = $row;
-        $this->modelMap  = $modelMap;
+        $this->row = $row;
+        $this->modelMap = $modelMap;
     }
-
+    
     /**
      * Returns the unique id of the record in this row
      *
@@ -89,7 +89,7 @@ class RelatedRecordRow
     {
         return $this->uid;
     }
-
+    
     /**
      * Returns the name of the table this row comes from
      *
@@ -99,7 +99,7 @@ class RelatedRecordRow
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the raw database row that was fetched
      *
@@ -109,7 +109,7 @@ class RelatedRecordRow
     {
         return $this->row;
     }
-
+    
     /**
      * Returns the row as a mapped extbase object
      *
@@ -130,7 +130,7 @@ class RelatedRecordRow
         $objects = GeneralUtility::getContainer()
                                  ->get(DataMapper::class)
                                  ->map($this->modelMap[$this->getTableName()], [$this->row]);
-
+        
         return reset($objects);
     }
 }

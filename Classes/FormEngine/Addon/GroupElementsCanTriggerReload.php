@@ -26,7 +26,7 @@ use TYPO3\CMS\Backend\Form\Element\GroupElement;
 
 class GroupElementsCanTriggerReload
 {
-
+    
     /**
      * This applier allows group elements to emit the page reload when they have changed.
      *
@@ -37,20 +37,20 @@ class GroupElementsCanTriggerReload
         if (! $event->getNode() instanceof GroupElement) {
             return;
         }
-
+        
         $fieldChangeFunc = $event->getProxy()->getData()['parameterArray']['fieldChangeFunc'] ?? null;
-
+        
         if (empty($fieldChangeFunc)) {
             return;
         }
-
+        
         // Build the change function
-        $result         = $event->getResult();
+        $result = $event->getResult();
         $result['html'] = FormEngineChangeFunctionBuilder::buildOnChangeFunction(
             $result['html'],
             $fieldChangeFunc
         );
-
+        
         $event->setResult($result);
     }
 }

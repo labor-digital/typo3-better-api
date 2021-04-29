@@ -28,42 +28,42 @@ use Neunerlei\Inflection\Inflector;
 
 class TypoScriptConfigurator extends AbstractExtConfigConfigurator
 {
-
+    
     /**
      * The list of registered static directories
      *
      * @var array
      */
     protected $staticDirectories = [];
-
+    
     /**
      * The dynamic typo script definitions to add for each key
      *
      * @var array
      */
     protected $dynamicTypoScript = [];
-
+    
     /**
      * The collected user ts config
      *
      * @var string
      */
     protected $userTsConfig = '';
-
+    
     /**
      * The collected page ts config
      *
      * @var string
      */
     protected $pageTsConfig = '';
-
+    
     /**
      * The list of ts config files that should be selectable in a page TCA
      *
      * @var array
      */
     protected $selectablePageTsFiles = [];
-
+    
     /**
      * Adds the static extension typoScript to the selection list.
      *
@@ -79,20 +79,21 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     public function registerStaticTsDirectory(
         string $path = 'Configuration/TypoScript/',
         string $title = ''
-    ): self {
+    ): self
+    {
         if (stripos($path, 'ext:') === 0) {
             $path = preg_replace('~(ext):/?.*?/~si', '', $path);
         }
-
+        
         $this->staticDirectories[] = [
             $this->context->getExtKey(),
             $this->context->replaceMarkers($path),
             $this->context->replaceMarkers($title),
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Adds a new snippet of dynamic typo script to the registry.
      * Dynamic typoScript can be included into virtually any typoScript or tsConfig file using
@@ -116,7 +117,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
         if (! isset($this->dynamicTypoScript[$key])) {
             $this->dynamicTypoScript[$key] = '';
         }
-
+        
         $this->dynamicTypoScript[$key] .= '
 [GLOBAL]
 #############################################
@@ -126,11 +127,11 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
 #############################################
 [GLOBAL]
 ';
-
+        
         return $this;
     }
-
-
+    
+    
     /**
      * Allows you to add a generic typoScript setup code.
      *
@@ -145,7 +146,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->registerDynamicContent('generic.setup', $setup);
     }
-
+    
     /**
      * Allows you to add a generic typoScript constant code.
      *
@@ -160,7 +161,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->registerDynamicContent('generic.constants', $constants);
     }
-
+    
     /**
      * Adds the a @include tag to the generic setup
      *
@@ -176,7 +177,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->registerDynamicContent('generic.setup', '@import "' . $path . '"');
     }
-
+    
     /**
      * Shortcut, reminder and bridge to ExtensionManagementUtility::addUserTSConfig.
      * Let's you add userTsConfig to the configuration tree
@@ -196,10 +197,10 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
 #############################################
 [GLOBAL]
 ';
-
+        
         return $this;
     }
-
+    
     /**
      * Registers a static file as user ts config
      *
@@ -213,7 +214,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->registerUserTsConfig('@import "' . $path . '"');
     }
-
+    
     /**
      * Shortcut, reminder and bridge to ExtensionManagementUtility::addPageTSConfig.
      * Let's you add pageTsConfig to the configuration tree
@@ -233,10 +234,10 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
 #############################################
 [GLOBAL]
 ';
-
+        
         return $this;
     }
-
+    
     /**
      * Registers a static file as page ts config
      *
@@ -250,7 +251,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->registerPageTsConfig('@import "' . $path . '"');
     }
-
+    
     /**
      * Registers a file which can be selected in the "TyposScript Configuration" section of page records in the page
      * backend. A registered file is not globally included but only on the pages it was selected.
@@ -267,13 +268,13 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
         if (stripos($path, 'ext:') === 0) {
             $path = preg_replace('~(ext):/?.*?/~si', '', $path);
         }
-
+        
         $this->selectablePageTsFiles[$path] = [
             $this->context->getExtKey(),
             trim($path, '\\/'),
             $title ?? (Inflector::toHuman($this->context->getExtKey()) . ' - ' . Inflector::toHuman(basename($path))),
         ];
-
+        
         return $this;
     }
 }

@@ -33,25 +33,25 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
 {
     use ContainerAwareTrait;
     use LocallyCachedStatePropertyTrait;
-
+    
     /**
      * A list of all registered cache key enhancers
      *
      * @var \LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyEnhancerInterface[]
      */
     protected $enhancers = [];
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $context;
-
+    
     public function __construct(array $enhancers, TypoContext $context)
     {
         $this->enhancers = $enhancers;
-        $this->context   = $context;
+        $this->context = $context;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -59,20 +59,20 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $args = $this->context->env()->isFrontend() ?
             $this->getFrontendArgs() : $this->getBackendArgs();
-
+        
         foreach ($this->enhancers as $enhancer) {
             $args = $enhancer->enhanceArgs($args, $this->context);
         }
-
+        
         $args = $this->cs()->eventBus->dispatch(
             new EnvironmentCacheKeyArgFilterEvent($args, $this->context)
         )->getArgs();
-
+        
         ksort($args);
-
+        
         return implode('|', $args);
     }
-
+    
     /**
      * Returns the arguments for when executed in a frontend environment
      *
@@ -81,17 +81,18 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
     protected function getFrontendArgs(): array
     {
         $tsfe = $this->cs()->tsfe->getTsfe();
-
+        
         return [
-            'pageType'     => $tsfe->type,
-            'mountPoint'   => $tsfe->MP,
-            'feGroups'     => implode(',', $this->context->feUser()->getGroupIds()),
+            'pageType' => $tsfe->type,
+            'mountPoint' => $tsfe->MP,
+            'feGroups' => implode(',', $this->context->feUser()->getGroupIds()),
             'languageCode' => $this->context->language()->getCurrentFrontendLanguage()->getTwoLetterIsoCode(),
-            'isBeUser'     => $this->context->beUser()->isLoggedIn(),
-            'siteRootPid'  => $this->context->site()->getCurrent()->getRootPageId(),
+            'isBeUser' => $this->context->beUser()->isLoggedIn(),
+            'siteRootPid' => $this->context->site()->getCurrent()->getRootPageId(),
         ];
+        
     }
-
+    
     /**
      * Returns the arguments when executed in either the CLI or backend environment
      *
@@ -102,7 +103,7 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
         if ($this->context->beUser()->getUser() instanceof CommandLineUserAuthentication) {
             return ['CLI'];
         }
-
+        
         return [
             'pageId' => $this->context->pid()->getCurrent(),
             'userId' => $this->context->beUser()->getUser()->user['uid'] ?? -1,

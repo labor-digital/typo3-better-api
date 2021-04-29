@@ -34,19 +34,19 @@ use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
  */
 class RecordDataHandler
 {
-
+    
     /**
      * The table name to handle the actions
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
      */
     protected $handlerService;
-
+    
     /**
      * RecordDataHandler constructor.
      *
@@ -55,10 +55,10 @@ class RecordDataHandler
      */
     public function __construct(string $tableName, DataHandlerService $handlerService)
     {
-        $this->tableName      = $tableName;
+        $this->tableName = $tableName;
         $this->handlerService = $handlerService;
     }
-
+    
     /**
      * Returns the instance of the data handler service
      *
@@ -68,7 +68,7 @@ class RecordDataHandler
     {
         return $this->handlerService;
     }
-
+    
     /**
      * Creates a new record in the database.
      *
@@ -84,29 +84,29 @@ class RecordDataHandler
         if ($pid !== null) {
             $data['pid'] = $pid;
         }
-
+        
         $isNew = false;
         if (! isset($data['uid']) || ! is_numeric($data['uid'])) {
-            $isNew       = true;
+            $isNew = true;
             $data['uid'] = 'NEW_1';
         }
-
+        
         $uid = $data['uid'];
         unset($data['uid']);
-
+        
         $handler = $this->handlerService->processData([
             $this->tableName => [
                 $uid => $data,
             ],
         ], [], $force);
-
+        
         if (! $isNew) {
             return $uid;
         }
-
+        
         return reset($handler->substNEWwithIDs);
     }
-
+    
     /**
      * Creates a copy of a certain record. If the $targetPageId is empty, the copy will be created on the current page.
      * Otherwise it will be copied as a child of the given target page.
@@ -128,10 +128,10 @@ class RecordDataHandler
                 ],
             ],
         ], [], $force);
-
+        
         return $handler->copyMappingArray[$this->tableName][$uid];
     }
-
+    
     /**
      * Moves a record with the given uid to another page
      *
@@ -152,7 +152,7 @@ class RecordDataHandler
             ],
         ], [], $force);
     }
-
+    
     /**
      * Marks a record as "deleted". It still can be restored using the restore() method.
      *
@@ -170,7 +170,7 @@ class RecordDataHandler
             ],
         ], [], $force);
     }
-
+    
     /**
      * Restores a record by removing the marker that defines it as "deleted".
      *

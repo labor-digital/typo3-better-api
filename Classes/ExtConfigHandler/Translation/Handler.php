@@ -29,7 +29,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractSimpleExtConfigHandler
 {
     protected $configureMethod = 'configureTranslation';
-
+    
     /**
      * @inheritDoc
      */
@@ -37,7 +37,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return TranslationConfigurator::class;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -45,7 +45,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return 'typo.translation';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -54,5 +54,5 @@ class Handler extends AbstractSimpleExtConfigHandler
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureTranslationInterface::class);
     }
-
+    
 }

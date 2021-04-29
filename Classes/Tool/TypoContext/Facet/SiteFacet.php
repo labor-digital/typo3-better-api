@@ -36,36 +36,36 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  */
 class SiteFacet implements FacetInterface
 {
-
+    
     /**
      * @var \TYPO3\CMS\Core\Site\SiteFinder
      */
     protected $siteFinder;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $context;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Routing\SiteMatcher
      */
     protected $siteMatcher;
-
+    
     /**
      * Locally resolved current site first level cache, to avoid a lot of overhead
      *
      * @var \TYPO3\CMS\Core\Site\Entity\SiteInterface
      */
     protected $currentSite;
-
+    
     /**
      * True while the site is being found to avoid infinite loops
      *
      * @var bool
      */
     protected $simulateNoSite = false;
-
+    
     /**
      * SiteAspect constructor.
      *
@@ -75,11 +75,11 @@ class SiteFacet implements FacetInterface
      */
     public function __construct(SiteFinder $siteFinder, SiteMatcher $siteMatcher, TypoContext $context)
     {
-        $this->siteFinder  = $siteFinder;
-        $this->context     = $context;
+        $this->siteFinder = $siteFinder;
+        $this->context = $context;
         $this->siteMatcher = $siteMatcher;
     }
-
+    
     /**
      * Returns the instance of the current site
      *
@@ -93,20 +93,20 @@ class SiteFacet implements FacetInterface
         if (! empty($site)) {
             // Make sure to reset the current site if we suddenly get a site
             $this->currentSite = null;
-
+            
             return $site;
         }
-
+        
         /**
          * Check if we have a current site cached
          */
         if (! empty($this->currentSite)) {
             return $this->currentSite;
         }
-
+        
         // Try to find the site via pid
         $this->simulateNoSite = true;
-        $pid                  = $this->context->pid()->getCurrent();
+        $pid = $this->context->pid()->getCurrent();
         $this->simulateNoSite = false;
         if (! empty($pid)) {
             $site = $this->siteFinder->getSiteByPageId($pid);
@@ -114,29 +114,29 @@ class SiteFacet implements FacetInterface
                 return $this->currentSite = $site;
             }
         }
-
+        
         // Use the single site we have
         $sites = $this->siteFinder->getAllSites();
         if (count($sites) === 1) {
             return $this->currentSite = reset($sites);
         }
-
+        
         // Try to match the site with the current host
         $request = $this->context->request()->getRootRequest();
         if (! is_null($request)) {
             try {
                 $result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(true)));
-
+                
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $this->currentSite = $result->getSite();
             } catch (Throwable $exception) {
             }
         }
-
+        
         // Nothing found...
         throw new SiteNotFoundException('There is currently no site defined!');
     }
-
+    
     /**
      * Returns true if we currently have a site set in the context, false if not
      *
@@ -149,13 +149,13 @@ class SiteFacet implements FacetInterface
         }
         try {
             $this->getCurrent();
-
+            
             return true;
         } catch (Throwable $e) {
             return false;
         }
     }
-
+    
     /**
      * Returns all sites that are registered in the system
      *
@@ -167,7 +167,7 @@ class SiteFacet implements FacetInterface
     {
         return $this->siteFinder->getAllSites($useCache);
     }
-
+    
     /**
      * Returns the instance of a specific site based on the given identifier
      *
@@ -179,7 +179,7 @@ class SiteFacet implements FacetInterface
     {
         return $this->siteFinder->getSiteByIdentifier($identifier);
     }
-
+    
     /**
      * Returns the instance of a specific site based on the given page id
      *
@@ -191,7 +191,7 @@ class SiteFacet implements FacetInterface
     {
         return $this->siteFinder->getSiteByPageId($this->context->pid()->get($pid));
     }
-
+    
     /**
      * Returns true if the site with the given identifier exists, false if not
      *
@@ -203,7 +203,7 @@ class SiteFacet implements FacetInterface
     {
         try {
             $this->siteFinder->getSiteByIdentifier($identifier);
-
+            
             return true;
         } catch (SiteNotFoundException $exception) {
             return false;

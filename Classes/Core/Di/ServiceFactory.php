@@ -36,22 +36,22 @@ use Psr\Container\ContainerInterface;
  */
 class ServiceFactory
 {
-
+    
     public static function getListenerProvider()
     {
         return TypoEventBus::getInstance()->getConcreteListenerProvider();
     }
-
+    
     public static function getMainExtConfigLoader(ContainerInterface $container)
     {
         return $container->get(ExtConfigService::class)->getMainLoader();
     }
-
+    
     public static function getDiConfigLoader(ContainerInterface $container)
     {
         return $container->get(ExtConfigService::class)->getDiLoader();
     }
-
+    
     public static function getExtConfigContext(ContainerInterface $container)
     {
         return $container->get(ExtConfigService::class)->getContext();

@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\Utility\RootlineUtility;
 class ExtendedRootLineUtility extends RootlineUtility
 {
     use StaticContainerAwareTrait;
-
+    
     /**
      * Executes the root line request with additional options applied
      *
@@ -49,19 +49,19 @@ class ExtendedRootLineUtility extends RootlineUtility
     {
         $options = Options::make($options, [
             'includeAllNotDeleted' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => false,
             ],
-            'additionalFields'     => [
-                'type'    => 'array',
+            'additionalFields' => [
+                'type' => 'array',
                 'default' => [],
             ],
-            'mountPoint'           => [
-                'type'    => 'string',
+            'mountPoint' => [
+                'type' => 'string',
                 'default' => '',
             ],
         ]);
-
+        
         $instance = static::makeInstance(
             RootlineUtility::class,
             [
@@ -70,26 +70,26 @@ class ExtendedRootLineUtility extends RootlineUtility
                 static::getService(TypoContext::class)->getRootContext(),
             ]
         );
-
+        
         $instance->cacheIdentifier
             .= '_' . ((int)$options['includeAllNotDeleted']) . '_' . implode(',', $options['additionalFields'])
                . '_extended';
         if (isset(parent::$localCache[$instance->cacheIdentifier])) {
             return parent::$localCache[$instance->cacheIdentifier];
         }
-
+        
         $backupPermission = $instance->context->where_groupAccess;
         if ($options['includeAllNotDeleted']) {
             $instance->context->where_groupAccess = '';
         }
-
+        
         $backupFields = parent::$rootlineFields;
         try {
             parent::$rootlineFields = array_merge(parent::$rootlineFields, $options['additionalFields']);
-
+            
             return parent::$localCache[$instance->cacheIdentifier] = $instance->get();
         } finally {
-            parent::$rootlineFields               = $backupFields;
+            parent::$rootlineFields = $backupFields;
             $instance->context->where_groupAccess = $backupPermission;
         }
     }

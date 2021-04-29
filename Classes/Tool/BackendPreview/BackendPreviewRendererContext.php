@@ -25,35 +25,35 @@ use LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils;
 
 class BackendPreviewRendererContext
 {
-
+    
     /**
      * An additional header that will be placed above the rendered body
      *
      * @var string
      */
     protected $header = '';
-
+    
     /**
      * Holds the rendered body of this element's backend preview
      *
      * @var string
      */
     protected $body = '';
-
+    
     /**
      * Holds the rendered footer of this element's backend preview
      *
      * @var string
      */
     protected $footer = '';
-
+    
     /**
      * The raw typo event instance
      *
      * @var \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent
      */
     protected $event;
-
+    
     /**
      * By default the preview content will be wrapped in a link tag.
      * The link will lead the editor directly to the editing mode of the clicked element.
@@ -62,7 +62,7 @@ class BackendPreviewRendererContext
      * @var bool
      */
     protected $linkPreview = true;
-
+    
     /**
      * By default the configured description for this content element will be shown
      * If this is set to false it is hidden
@@ -70,7 +70,7 @@ class BackendPreviewRendererContext
      * @var bool
      */
     protected $showDescription = true;
-
+    
     /**
      * BackendPreviewRendererContext constructor.
      *
@@ -80,7 +80,7 @@ class BackendPreviewRendererContext
     {
         $this->event = $event;
     }
-
+    
     /**
      * Returns either the signature of the plugin variant that is required or NULL if the default variant should be
      * rendered.
@@ -91,7 +91,7 @@ class BackendPreviewRendererContext
     {
         return $this->event->getPluginVariant();
     }
-
+    
     /**
      * Returns the row of data that was given to this element
      *
@@ -101,7 +101,7 @@ class BackendPreviewRendererContext
     {
         return $this->event->getRow();
     }
-
+    
     /**
      * Some additional utilities that help when rendering a backend preview
      *
@@ -111,7 +111,7 @@ class BackendPreviewRendererContext
     {
         return $this->event->getUtils();
     }
-
+    
     /**
      * Returns the raw typo event instance
      *
@@ -121,7 +121,7 @@ class BackendPreviewRendererContext
     {
         return $this->event;
     }
-
+    
     /**
      * Returns either the given header or an empty string
      *
@@ -131,7 +131,7 @@ class BackendPreviewRendererContext
     {
         return $this->header;
     }
-
+    
     /**
      * Can be used to set an additional header that will be placed above the rendered body
      *
@@ -142,10 +142,10 @@ class BackendPreviewRendererContext
     public function setHeader(string $header): self
     {
         $this->header = $header;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns either the set body or an empty string
      *
@@ -155,7 +155,7 @@ class BackendPreviewRendererContext
     {
         return $this->body;
     }
-
+    
     /**
      * Sets the rendered body of this element's backend preview
      *
@@ -166,10 +166,10 @@ class BackendPreviewRendererContext
     public function setBody(string $body): self
     {
         $this->body = $body;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns either the set footer or an empty string
      *
@@ -179,7 +179,7 @@ class BackendPreviewRendererContext
     {
         return $this->footer;
     }
-
+    
     /**
      * Sets the rendered footer of this element's backend preview
      *
@@ -190,10 +190,10 @@ class BackendPreviewRendererContext
     public function setFooter(string $footer): self
     {
         $this->footer = $footer;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the preview content should be wrapped in a link tag, false if not
      *
@@ -203,7 +203,7 @@ class BackendPreviewRendererContext
     {
         return $this->linkPreview;
     }
-
+    
     /**
      * By default the preview content will be wrapped in a link tag.
      * The link will lead the editor directly to the editing mode of the clicked element.
@@ -215,7 +215,7 @@ class BackendPreviewRendererContext
     {
         $this->linkPreview = $linkPreview;
     }
-
+    
     /**
      * Returns true if the preview should include the content element description, false if not
      *
@@ -225,7 +225,7 @@ class BackendPreviewRendererContext
     {
         return $this->showDescription;
     }
-
+    
     /**
      * Allows you to set if the description text (registered for the new-content-element-wizard)
      * should be rendered (default) or not.
@@ -237,7 +237,7 @@ class BackendPreviewRendererContext
     public function setShowDescription(bool $showDescription = true): BackendPreviewRendererContext
     {
         $this->showDescription = $showDescription;
-
+        
         return $this;
     }
 }

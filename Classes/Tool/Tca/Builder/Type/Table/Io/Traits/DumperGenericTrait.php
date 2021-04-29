@@ -34,7 +34,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 trait DumperGenericTrait
 {
-
+    
     /**
      * Dumps the root tca array based on the originally loaded tca as well as the data of the default type
      *
@@ -45,21 +45,21 @@ trait DumperGenericTrait
     protected function dumpRootTca(TcaTable $table): array
     {
         /** @noinspection UnserializeExploitsInspection */
-        $tca                                   = unserialize(serialize($table->getRaw(true)));
+        $tca = unserialize(serialize($table->getRaw(true)));
         $tca[DataHookTypes::TCA_DATA_HOOK_KEY] = $table->getRegisteredDataHooks();
-
-        $defaultType    = $table->getType();
+        
+        $defaultType = $table->getType();
         $defaultTypeTca = $this->dumpTcaTypeVariant($defaultType);
-
+        
         foreach (['columns', 'palettes', 'types'] as $list) {
             foreach ($defaultTypeTca[$list] ?? [] as $k => $v) {
                 $tca[$list][$k] = $v;
             }
         }
-
+        
         return $tca;
     }
-
+    
     /**
      * Dumps the a slim tca object with the data of a specific type
      *
@@ -71,11 +71,11 @@ trait DumperGenericTrait
     {
         // Create a clean tca
         $tca = [
-            'columns'  => [],
+            'columns' => [],
             'palettes' => [],
-            'types'    => [],
+            'types' => [],
         ];
-
+        
         // Dump the columns
         foreach ($type->getFields() as $field) {
             $fTca = $field->getRaw();
@@ -84,18 +84,18 @@ trait DumperGenericTrait
             }
         }
         unset($fTca);
-
+        
         // Dump layout
         $this->dumpTypeShowItemAndPalettes($tca, $type);
-
+        
         // Allow filtering
         $this->eventBus->dispatch($e = new TableDumperTypeFilterEvent(
             $tca, $type, $type->getParent()
         ));
-
+        
         return $e->getTypeTca();
     }
-
+    
     /**
      * Iterates all elements in the TCA object and converts them into their showitem layout string.
      *
@@ -104,59 +104,59 @@ trait DumperGenericTrait
      */
     protected function dumpTypeShowItemAndPalettes(array &$tca, TcaTableType $type): void
     {
-        $showItem           = [];
-        $palettes           = [];
-        $currentPalette     = null;
-        $paletteShowItem    = [];
-        $pointer            = &$showItem;
+        $showItem = [];
+        $palettes = [];
+        $currentPalette = null;
+        $paletteShowItem = [];
+        $pointer = &$showItem;
         $hasFieldsOrPallets = false;
-
+        
         foreach ($type->getAllChildren() as $child) {
             if ($child instanceof TcaTab) {
-                $meta      = $child->getLayoutMeta();
-                $meta[0]   = $child->getLabel();
+                $meta = $child->getLayoutMeta();
+                $meta[0] = $child->getLabel();
                 $pointer[] = '--div--;' . implode(';', $meta);
-
+                
                 continue;
             }
-
+            
             if ($child instanceof TcaPalette) {
                 $hasFieldsOrPallets = true;
-                $meta               = $child->getLayoutMeta();
-                $meta[0]            = $child->hasLabel() ? $child->getLabel() : '';
-                $meta[1]            = $currentPalette = substr($child->getId(), 1);
-                $pointer[]          = '--palette--;' . implode(';', $meta);
-
+                $meta = $child->getLayoutMeta();
+                $meta[0] = $child->hasLabel() ? $child->getLabel() : '';
+                $meta[1] = $currentPalette = substr($child->getId(), 1);
+                $pointer[] = '--palette--;' . implode(';', $meta);
+                
                 $paletteShowItem = [];
-                $pointer         = &$paletteShowItem;
-
+                $pointer = &$paletteShowItem;
+                
                 continue;
             }
-
+            
             // This marks the end of a container/palette
             if ($child === null) {
                 $palettes[$currentPalette]['showitem']
-                                = empty($paletteShowItem) ? null : implode(',', $paletteShowItem);
+                    = empty($paletteShowItem) ? null : implode(',', $paletteShowItem);
                 $currentPalette = null;
-                $pointer        = &$showItem;
+                $pointer = &$showItem;
                 continue;
             }
-
+            
             if ($child instanceof TcaPaletteLineBreak) {
                 $pointer[] = '--linebreak--';
-
+                
                 continue;
             }
-
+            
             if ($child instanceof TcaField) {
                 $hasFieldsOrPallets = true;
-                $meta               = $child->getLayoutMeta();
-                $meta[0]            = $child->getId();
-                $meta[1]            = $child->hasLabel() ? $child->getLabel() : '';
-                $pointer[]          = rtrim(implode(';', $meta), ';');
+                $meta = $child->getLayoutMeta();
+                $meta[0] = $child->getId();
+                $meta[1] = $child->hasLabel() ? $child->getLabel() : '';
+                $pointer[] = rtrim(implode(';', $meta), ';');
             }
         }
-
+        
         if (! empty($showItem) && $hasFieldsOrPallets) {
             $tca['types'][$type->getTypeName()]['showitem'] = implode(',', $showItem);
         }

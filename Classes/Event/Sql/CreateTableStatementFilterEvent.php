@@ -36,14 +36,14 @@ class CreateTableStatementFilterEvent
      * @var array
      */
     protected $tableNames;
-
+    
     /**
      * The definition that should be filtered
      *
      * @var string
      */
     protected $statement;
-
+    
     /**
      * CreateTableStatementFilterEvent constructor.
      *
@@ -53,9 +53,9 @@ class CreateTableStatementFilterEvent
     public function __construct(array $tableNames, string $statement)
     {
         $this->tableNames = $tableNames;
-        $this->statement  = $statement;
+        $this->statement = $statement;
     }
-
+    
     /**
      * Returns the list of all table names that are included in the filtered statement
      *
@@ -65,7 +65,7 @@ class CreateTableStatementFilterEvent
     {
         return $this->tableNames;
     }
-
+    
     /**
      * Returns the statement that should be filtered
      *
@@ -75,7 +75,7 @@ class CreateTableStatementFilterEvent
     {
         return $this->statement;
     }
-
+    
     /**
      * Updates the statement that should be filtered
      *
@@ -86,7 +86,7 @@ class CreateTableStatementFilterEvent
     public function setStatement(string $statement): self
     {
         $this->statement = $statement;
-
+        
         return $this;
     }
 }

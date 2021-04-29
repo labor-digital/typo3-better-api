@@ -38,7 +38,7 @@ class BackendFormNodeDataFilterEvent
      * @var array
      */
     protected $data;
-
+    
     /**
      * BackendFormNodeDataFilterEvent constructor.
      *
@@ -48,7 +48,7 @@ class BackendFormNodeDataFilterEvent
     {
         $this->data = $data;
     }
-
+    
     /**
      * Returns the configuration data for the filtered form node
      *
@@ -58,7 +58,7 @@ class BackendFormNodeDataFilterEvent
     {
         return $this->data;
     }
-
+    
     /**
      * Sets the configuration data for the filtered form node
      *
@@ -69,10 +69,10 @@ class BackendFormNodeDataFilterEvent
     public function setData(array $data): BackendFormNodeDataFilterEvent
     {
         $this->data = $data;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the name of the node type we should filter
      *
@@ -82,7 +82,7 @@ class BackendFormNodeDataFilterEvent
     {
         return $this->data['parameterArray']['fieldConf']['config']['type'] ?? null;
     }
-
+    
     /**
      * Returns the render type of the node we should filter
      *

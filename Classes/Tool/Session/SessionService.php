@@ -44,7 +44,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 class SessionService implements SingletonInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * Returns the instance of the frontend session
      *
@@ -54,7 +54,7 @@ class SessionService implements SingletonInterface
     {
         return $this->getService(FrontendSessionProvider::class);
     }
-
+    
     /**
      * Returns the instance of the backend session
      *

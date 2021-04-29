@@ -42,18 +42,18 @@ class CacheClearing implements LazyEventSubscriberInterface
      * @var array
      */
     protected $cacheIdentifiers;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Cache\CacheManager
      */
     protected $cacheManager;
-
+    
     public function __construct(array $cacheIdentifiers, CacheManager $cacheManager)
     {
         $this->cacheIdentifiers = $cacheIdentifiers;
-        $this->cacheManager     = $cacheManager;
+        $this->cacheManager = $cacheManager;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -66,7 +66,7 @@ class CacheClearing implements LazyEventSubscriberInterface
         ], 'onDataHandlerAction');
         $subscription->subscribe(EntityPersistedEvent::class, 'onExtBaseObjectPersisting');
     }
-
+    
     /**
      * Flushes the caches for a single page if the "flash" icon is clicked on a page
      *
@@ -79,19 +79,19 @@ class CacheClearing implements LazyEventSubscriberInterface
         if (in_array('tt_content', $event->getTags(), true)) {
             return;
         }
-
+        
         $tags = [];
         foreach ($event->getTags() as $tag) {
             if (stripos($tag, 'pageId_') !== 0) {
                 continue;
             }
-
-            $id     = (int)substr($tag, 7);
+            
+            $id = (int)substr($tag, 7);
             $tags[] = 'page_' . $id;
         }
         $this->clearWithTags($tags);
     }
-
+    
     /**
      * Clears the required cache entries if the data handler modified a record in the database
      *
@@ -100,13 +100,13 @@ class CacheClearing implements LazyEventSubscriberInterface
     public function onDataHandlerAction(object $event): void
     {
         $table = $event->getTableName();
-        $id    = $event->getId();
+        $id = $event->getId();
         if (! is_numeric($id)) {
             return;
         }
         $this->clearWithTags([$table . '_' . $id]);
     }
-
+    
     /**
      * Clears the required cache entries if extbase persisted an object
      *
@@ -116,7 +116,7 @@ class CacheClearing implements LazyEventSubscriberInterface
     {
         $this->clearWithTags(CacheUtil::stringifyTag($event->getObject()));
     }
-
+    
     /**
      * Internal helper to flush all caches that have been used in implementations
      *
@@ -127,7 +127,7 @@ class CacheClearing implements LazyEventSubscriberInterface
         if (empty($tags)) {
             return;
         }
-
+        
         foreach ($this->cacheIdentifiers as $identifier) {
             if ($this->cacheManager->hasCache($identifier)) {
                 $this->cacheManager->getCache($identifier)->flushByTags(array_unique($tags));

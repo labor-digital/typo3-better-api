@@ -32,7 +32,7 @@ class Handler extends AbstractSimpleExtConfigHandler
      * @var \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     protected $configurator;
-
+    
     /**
      * @inheritDoc
      */
@@ -41,7 +41,7 @@ class Handler extends AbstractSimpleExtConfigHandler
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureTypoScriptInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -49,7 +49,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return TypoScriptConfigurator::class;
     }
-
+    
     /**
      * @inheritDoc
      */

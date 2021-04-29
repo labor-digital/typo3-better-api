@@ -40,13 +40,13 @@ trait FactoryPopulatorTrait
         if (! empty($def['meta']) && is_array($def['meta'])) {
             $flex->setMeta($def['meta']);
         }
-
+        
         foreach ($def['sheets'] ?? [] as $sheetId => $sheet) {
             $tab = $flex->getTab($sheetId);
             $this->populateTab($flex, $tab, $sheet);
         }
     }
-
+    
     /**
      * Creates the child instances of the form based on the given sheet definition
      *
@@ -62,24 +62,24 @@ trait FactoryPopulatorTrait
                 $sheet = ['ROOT' => $sheet];
             }
         }
-
+        
         $label = $sheet['ROOT']['TCEforms']['sheetTitle'] ?? null;
         if (! empty($label)) {
             $tab->setLabel($label);
         }
-
+        
         $displayCond = $sheet['ROOT']['TCEforms']['displayCond'] ?? null;
         if (! empty($displayCond)) {
             $tab->setDisplayCondition($displayCond);
         }
-
+        
         foreach ($sheet['ROOT']['el'] ?? [] as $k => $el) {
             // Sections
             if (! empty($el['section'])) {
                 $this->populateSection($flex, $tab, $k, $el);
                 continue;
             }
-
+            
             // Fields
             $fEl = $this->prepareFieldConfig($el);
             if ($fEl !== null) {
@@ -87,7 +87,7 @@ trait FactoryPopulatorTrait
             }
         }
     }
-
+    
     /**
      * Creates and populates a new section / container instance in the flex form object
      *
@@ -103,15 +103,15 @@ trait FactoryPopulatorTrait
             if (empty($children) || ! is_array($children)) {
                 return;
             }
-
+            
             $container = reset($children);
             if (empty($container['el']) || ! is_array($container['el'])) {
                 return;
             }
-
+            
             $i = $flex->getSection($id);
             $i->setContainerItemId((string)key($children));
-
+            
             // Load section labels
             if (! empty($config['title'])) {
                 $i->setLabel((string)$config['title']);
@@ -121,7 +121,7 @@ trait FactoryPopulatorTrait
             } elseif (! empty($container['tx_templavoila']['title'])) {
                 $i->setContainerItemLabel((string)$container['tx_templavoila']['title']);
             }
-
+            
             foreach ($container['el'] as $k => $el) {
                 $fEl = $this->prepareFieldConfig($el);
                 if ($fEl !== null) {
@@ -130,7 +130,7 @@ trait FactoryPopulatorTrait
             }
         });
     }
-
+    
     /**
      * Internal helper to create a new field in the form instance with the provided config applied to it.
      *
@@ -144,13 +144,14 @@ trait FactoryPopulatorTrait
         FormElementContainingInterface $target,
         string $id,
         array $config
-    ): void {
+    ): void
+    {
         $target->addMultiple(static function () use ($flex, $id, $config) {
             $i = $flex->getField($id);
             $i->setRaw($config);
         });
     }
-
+    
     /**
      * Checks if the given configuration array can be used as field configuration.
      * It will either return the field configuration or null if the config is no valid field.
@@ -164,12 +165,12 @@ trait FactoryPopulatorTrait
         if (! empty($el['TCEforms'])) {
             return $el['TCEforms'];
         }
-
+        
         // Fallback for invalid field configuration
         if (isset($el['config']['type']) || isset($el['config']['renderType'])) {
             return $el;
         }
-
+        
         return null;
     }
 }

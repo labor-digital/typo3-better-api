@@ -44,38 +44,38 @@ use TYPO3\CMS\Core\Database\T3BA__Copy__ReferenceIndex;
 
 class ExtendedReferenceIndex extends T3BA__Copy__ReferenceIndex
 {
-
+    
     /**
      * @inheritDoc
      */
     protected function getRecordRawCached(string $tableName, int $uid)
     {
         // Store the current cache list length to detect changes
-        $listLength    = count($this->recordCache);
-        $row           = parent::getRecordRawCached($tableName, $uid);
+        $listLength = count($this->recordCache);
+        $row = parent::getRecordRawCached($tableName, $uid);
         $listLengthNow = count($this->recordCache);
-
+        
         // Detect changes
         if ($listLength === $listLengthNow) {
             return $row;
         }
-
+        
         // Get changed id
         end($this->recordCache);
         $id = key($this->recordCache);
-
+        
         // Allow post processing
         $hasRow = is_array($row);
         if (! $hasRow) {
             $row = [];
         }
-
+        
         $e = TypoEventBus::getInstance()->dispatch(new RefIndexRecordDataFilterEvent($tableName, $uid, $row));
-
+        
         if ($hasRow) {
             $this->recordCache[$id] = $e->getRow();
         }
-
+        
         // Done
         return $e->getRow();
     }

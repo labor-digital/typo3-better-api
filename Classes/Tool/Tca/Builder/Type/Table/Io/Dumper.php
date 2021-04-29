@@ -37,12 +37,12 @@ class Dumper
     use DumperGenericTrait;
     use DumperTypeGeneratorTrait;
     use DumperDataHookTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * TableDumper constructor.
      *
@@ -52,45 +52,45 @@ class Dumper
     {
         $this->eventBus = $eventBus;
     }
-
+    
     public function dump(TcaTable $table): array
     {
         $this->eventBus->dispatch(new TableDumperBeforeBuildEvent($table));
-
+        
         $this->clearDataHookCache();
-
+        
         $tca = $this->dumpRootTca($table);
         $this->extractDataHooksFromTca($tca);
         $defaultTypeName = $table->getDefaultTypeName();
-
+        
         // Dump types
         foreach ($table->getLoadedTypes() as $typeName => $type) {
             // Ignore the default type -> as is is already part of the $tca
             if ((string)$defaultTypeName === (string)$typeName) {
                 continue;
             }
-
+            
             // Ignore invalid types
             if (! $type instanceof TcaTableType) {
                 continue;
             }
-
+            
             $typeName = $type->getTypeName();
-            $typeTca  = $this->dumpTcaTypeVariant($type);
+            $typeTca = $this->dumpTcaTypeVariant($type);
             $this->extractDataHooksFromTca($typeTca);
             $typeRaw = $type->getRaw();
             $this->extractDataHooksFromTca($typeRaw);
             $tca['types'][$typeName] = $typeRaw;
-
+            
             $this->dumpColumnOverrides($typeName, $tca, $typeTca, $table);
             $this->dumpTypePalettes($typeName, $tca, $typeTca);
         }
-
+        
         $this->injectDataHooksIntoTca($tca);
-
+        
         $this->eventBus->dispatch($e = new TableDumperAfterBuildEvent($tca, $table));
         $tca = $e->getTca();
-
+        
         return $tca;
     }
 }

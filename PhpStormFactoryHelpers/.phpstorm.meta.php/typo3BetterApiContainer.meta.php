@@ -18,7 +18,7 @@
  */
 
 namespace PHPSTORM_META {
-
+    
     use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
     use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
     use LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet;
@@ -28,22 +28,22 @@ namespace PHPSTORM_META {
     use TYPO3\CMS\Core\Utility\GeneralUtility;
     use TYPO3\CMS\Extbase\Object\ObjectManager;
     use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-
+    
     // TYPO3 Core
     override(ObjectManager::get(0), type(0));
     override(ObjectManagerInterface::get(0), type(0));
     override(ContainerInterface::get(0), type(0));
     override(GeneralUtility::makeInstance(0), type(0));
-
+    
     // Better API
     override(ContainerAwareTrait::getService(0), type(0));
     override(StaticContainerAwareTrait::getService(0), type(0));
     override(DependencyInjectionFacet::getService(0), type(0));
-
+    
     override(ContainerAwareTrait::makeInstance(0), type(0));
     override(StaticContainerAwareTrait::makeInstance(0), type(0));
     override(DependencyInjectionFacet::makeInstance(0), type(0));
-
+    
     override(TypoEventBus::dispatch(0), type(0));
     override(EventBusInterface::dispatch(0), type(0));
     override(EventDispatcherInterface::dispatch(0), type(0));

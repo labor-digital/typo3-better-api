@@ -33,7 +33,7 @@ abstract class AbstractRenderer implements PublicServiceInterface
 {
     use TypoContextAwareTrait;
     use ContainerAwareTrait;
-
+    
     /**
      * Internal helper that is used to resolve the default header based on the given database row.
      * If no header was found an empty string is returned
@@ -46,7 +46,7 @@ abstract class AbstractRenderer implements PublicServiceInterface
     {
         return TcaUtil::runWithResolvedTypeTca($row, 'tt_content', function () use ($row) {
             $translator = $this->cs()->translator;
-
+            
             // Find for plugin
             if ($row['CType'] === 'list') {
                 $signature = $row['list_type'];
@@ -54,30 +54,30 @@ abstract class AbstractRenderer implements PublicServiceInterface
                     if ($listTypeItem[1] !== $signature) {
                         continue;
                     }
-
+                    
                     // @todo translateBe!
                     return $translator->translate($listTypeItem[0]);
                 }
-
+                
                 return '';
             }
-
+            
             // Find for content element
             $signature = $row['CType'];
             foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $listTypeItem) {
                 if ($listTypeItem[1] !== $signature) {
                     continue;
                 }
-
+                
                 // @todo translateBe!
                 return $translator->translate($listTypeItem[0]);
             }
-
+            
             return '';
         });
-
+        
     }
-
+    
     /**
      * Helper to render a given throwable as a readable string
      *

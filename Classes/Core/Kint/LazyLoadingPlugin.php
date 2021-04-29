@@ -37,44 +37,44 @@ class LazyLoadingPlugin extends Plugin
      * @var \Kint\Parser\Parser
      */
     protected $parser;
-
+    
     public function getTypes()
     {
         return ['object'];
     }
-
+    
     public function getTriggers()
     {
         return Parser::TRIGGER_BEGIN;
     }
-
+    
     public function parse(&$variable, BasicObject &$o, $trigger)
     {
         if ($variable instanceof LazyObjectStorage) {
             /** @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $realVar */
-            $realVar      = LazyLoadingUtil::getRealValue($variable);
+            $realVar = LazyLoadingUtil::getRealValue($variable);
             $realVarArray = Arrays::makeFromObject($realVar);
-
+            
             /** @var InstanceObject $object */
             $object = InstanceObject::blank($o->name);
             $object->transplant($o);
             $object->classname = get_class($realVar);
-            $object->depth     = $o->depth + 1;
-
-            $object2         = InstanceObject::blank($o->name);
-            $object2         = $this->parser->parse($realVarArray, $object2);
+            $object->depth = $o->depth + 1;
+            
+            $object2 = InstanceObject::blank($o->name);
+            $object2 = $this->parser->parse($realVarArray, $object2);
             $representations = $object2->getRepresentations();
             $object->addRepresentation(reset($representations));
-            $o                           = $object;
-            $o->type                     = 'object';
-            $o->size                     = $realVar->count();
+            $o = $object;
+            $o->type = 'object';
+            $o->size = $realVar->count();
             IteratorPlugin::$blacklist[] = $object->classname;
         } elseif ($variable instanceof LazyLoadingProxy) {
             $realVar = LazyLoadingUtil::getRealValue($variable);
-            $object  = BasicObject::blank($o->name);
+            $object = BasicObject::blank($o->name);
             $object->transplant($o);
             $object->depth = $o->depth;
-            $o             = $this->parser->parse($realVar, $object);
+            $o = $this->parser->parse($realVar, $object);
         }
     }
 }

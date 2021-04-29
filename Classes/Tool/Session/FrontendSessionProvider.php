@@ -28,7 +28,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class FrontendSessionProvider implements SessionInterface, SingletonInterface
 {
     public const STORAGE_KEY = 'T3BA';
-
+    
     /**
      * @inheritDoc
      */
@@ -36,7 +36,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
     {
         return Arrays::hasPath($this->getSessionValues(), $path);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -46,10 +46,10 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if ($path === null) {
             return $values;
         }
-
+        
         return Arrays::getPath($values, $path, $default);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -59,14 +59,14 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if ($feUser === null) {
             return $this;
         }
-
+        
         $values = $this->getSessionValues();
         $values = Arrays::setPath($values, $path, $value);
         $feUser->setAndSaveSessionData(static::STORAGE_KEY, $values);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -76,14 +76,14 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if ($feUser === null) {
             return $this;
         }
-
+        
         $values = $this->getSessionValues();
         $values = Arrays::removePath($values, $path);
         $feUser->setAndSaveSessionData(static::STORAGE_KEY, $values);
-
+        
         return $this;
     }
-
+    
     /**
      * Helper to retrieve the session values from typo3
      *
@@ -95,12 +95,12 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if ($feUser === null) {
             return [];
         }
-
+        
         $value = $feUser->getKey('ses', static::STORAGE_KEY);
-
+        
         return is_array($value) ? $value : [];
     }
-
+    
     /**
      * Helper to get the instance of the typo3 frontend user
      *
@@ -114,7 +114,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
         if (empty($GLOBALS['TSFE']->fe_user) || ! $GLOBALS['TSFE']->fe_user instanceof FrontendUserAuthentication) {
             return null;
         }
-
+        
         return $GLOBALS['TSFE']->fe_user;
     }
 }

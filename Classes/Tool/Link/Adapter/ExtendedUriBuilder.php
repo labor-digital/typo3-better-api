@@ -55,12 +55,12 @@ class ExtendedUriBuilder extends UriBuilder implements PublicServiceInterface
     {
         $this->contentObject = $cObject;
     }
-
+    
     public function hasContentObject(): bool
     {
         return ! empty($this->contentObject);
     }
-
+    
     public function getContentObject(): ContentObjectRenderer
     {
         return $this->contentObject;

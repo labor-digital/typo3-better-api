@@ -27,6 +27,7 @@ use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
 use RuntimeException;
+use Throwable;
 use TypeError;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Event\Mvc\BeforeActionCallEvent;
@@ -51,14 +52,14 @@ trait ContentControllerBackendPreviewTrait
      * @var array
      */
     protected static $transfer = [];
-
+    
     /**
      * The context instance for this renderer
      *
      * @var BackendPreviewRendererContext
      */
     protected $previewRendererContext;
-
+    
     /**
      * Injects the context when the renderer is instantiated
      *
@@ -68,7 +69,7 @@ trait ContentControllerBackendPreviewTrait
     {
         $this->previewRendererContext = $context;
     }
-
+    
     /**
      * Returns a prepared fluid view you can use to render your backend preview with.
      * There are two variables already defined: "data" contains the raw db row and "settings" contains everything your
@@ -82,19 +83,19 @@ trait ContentControllerBackendPreviewTrait
     {
         ControllerUtil::requireActionController($this);
         /** @var ActionController $this */
-
-        $config      = $this->configurationManager
+        
+        $config = $this->configurationManager
             ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
         $typoContext = TypoContext::getInstance();
-        $typoScript  = $typoContext->di()->cs()->ts;
-        $viewConfig  = $typoScript->removeDots($config['view'] ?? []);
-
+        $typoScript = $typoContext->di()->cs()->ts;
+        $viewConfig = $typoScript->removeDots($config['view'] ?? []);
+        
         // Make and prepare the view instance
         return $typoContext->di()
                            ->getService(TemplateRenderingService::class)
                            ->getFluidView($templateName, $viewConfig);
     }
-
+    
     /**
      * This helper is used execute an extbase request in the backend.
      * The given action will be executed on the current controller class.
@@ -112,22 +113,22 @@ trait ContentControllerBackendPreviewTrait
     protected function simulateRequest(string $actionName, array $options = []): ResponseInterface
     {
         ControllerUtil::requireActionController($this);
-
+        
         static::$transfer['context'] = $this->previewRendererContext;
         /** @var ActionController $this */
-
+        
         // Prepare the options
         static::$transfer['options'] = Options::make($options, [
             'additionalArgs' => [
-                'type'    => 'array',
+                'type' => 'array',
                 'default' => [],
             ],
-            'templateName'   => [
-                'type'    => 'string',
+            'templateName' => [
+                'type' => 'string',
                 'default' => 'BackendPreview',
             ],
         ]);
-
+        
         // Create a new request
         $objectManager = $this->objectManager;
         /** @noinspection PhpParamsInspection */
@@ -137,20 +138,20 @@ trait ContentControllerBackendPreviewTrait
         $request->setControllerActionName($actionName);
         $request->setArguments(static::$transfer['options']['additionalArgs']);
         $request->setFormat('html');
-
+        
         // Create a response and dispatcher
-        $response   = $objectManager->get(ResponseInterface::class);
+        $response = $objectManager->get(ResponseInterface::class);
         $dispatcher = $objectManager->get(Dispatcher::class);
         $this->registerEnvironmentSetup();
         $dispatcher->dispatch($request, $response);
-
+        
         // Remove transfer
         static::$transfer = null;
-
+        
         // Done
         return $response;
     }
-
+    
     /**
      * Similar to simulateRequest() but allows you to provide a map of plugin variants and their action methods,
      * instead of a single, static action name.
@@ -169,38 +170,38 @@ trait ContentControllerBackendPreviewTrait
     protected function simulateVariantRequest(array $variantActionMap, array $options = []): ResponseInterface
     {
         ControllerUtil::requireActionController($this);
-
+        
         $variant = $this->previewRendererContext->getPluginVariant();
-        $action  = $variantActionMap[$variant] ?? $variantActionMap['default'] ?? null;
-
+        $action = $variantActionMap[$variant] ?? $variantActionMap['default'] ?? null;
+        
         if ($action === null) {
             if ($variant === null) {
                 throw new BackendPreviewException('Could not resolve a action for the "default" variant.');
             }
             throw new BackendPreviewException('Could not resolve a action for variant: ' . $variant);
         }
-
+        
         if ($action === false) {
             /** @var ActionController $this */
             $response = $this->objectManager->get(ResponseInterface::class);
             $response->setContent('');
-
+            
             return $response;
         }
-
+        
         if (! is_string($action)) {
             throw new TypeError(
                 'Invalid $variantActionMap configuration! Only a single action can be mapped for a variant request! ' .
                 'The value for variant: ' . $variant . ' was resolved to a value of type: ' . gettype($action));
         }
-
+        
         if ($variant !== null && empty($options['templateName'])) {
             $options['templateName'] = 'BackendPreview' . ucfirst($variant);
         }
-
+        
         return $this->simulateRequest($action, $options);
     }
-
+    
     /**
      * We use this method to override the basic controller properties.
      * Also provides the required environment properties to create a "mostly" real ext-base controller experience.
@@ -213,27 +214,27 @@ trait ContentControllerBackendPreviewTrait
             if (empty(static::$transfer)) {
                 return;
             }
-
+            
             $registered = false;
-
+            
             // We have to use this hack to get the instance of the controller,
             // because someone was clever enough to not include that instance into the event -.-
             foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 6) as $call) {
                 if (isset($call['object']) && $call['object'] instanceof self) {
-                    $controller                         = $call['object'];
+                    $controller = $call['object'];
                     $controller->previewRendererContext = static::$transfer['context'];
-
+                    
                     try {
                         $controller->view = $controller->getFluidView(static::$transfer['options']['templateName']);
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         // Silence
                     }
-
+                    
                     $registered = true;
                     break;
                 }
             }
-
+            
             if (! $registered) {
                 throw new RuntimeException('Failed to locate the target controller for the simulated request!');
             }

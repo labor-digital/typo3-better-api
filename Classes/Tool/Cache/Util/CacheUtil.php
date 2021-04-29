@@ -52,11 +52,11 @@ class CacheUtil
         if (empty($tag) && $tag !== 0) {
             return [];
         }
-
+        
         if (is_string($tag) || is_numeric($tag)) {
             return [(string)$tag];
         }
-
+        
         if (is_object($tag)) {
             $tags = [];
             if ($tag instanceof CacheTagProviderInterface || method_exists($tag, 'getCacheTags')) {
@@ -65,22 +65,22 @@ class CacheUtil
                     $tags = array_merge($tags, $_tags);
                 }
             }
-
+            
             if (method_exists($tag, 'getPid')) {
                 $tags[] = 'page_' . $tag->getPid();
             }
-
+            
             if ($tag instanceof AbstractEntity) {
                 $tags[] = NamingUtil::resolveTableName($tag) . '_' . $tag->getUid();
             } else {
                 $tags[] = Path::classBasename(get_class($tag)) . '_' . md5(get_class($tag));
             }
-
+            
             if (! empty($tags)) {
                 return $tags;
             }
         }
-
+        
         try {
             return [gettype($tag) . '_' . md5(serialize($tag))];
         } catch (Throwable $e) {

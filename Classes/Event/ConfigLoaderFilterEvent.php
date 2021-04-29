@@ -27,14 +27,14 @@ use Neunerlei\Configuration\Loader\Loader;
 
 class ConfigLoaderFilterEvent
 {
-
+    
     /**
      * The loader instance being created
      *
      * @var \Neunerlei\Configuration\Loader\Loader
      */
     protected $loader;
-
+    
     /**
      * ConfigLoaderFilterEvent constructor.
      *
@@ -44,7 +44,7 @@ class ConfigLoaderFilterEvent
     {
         $this->loader = $loader;
     }
-
+    
     /**
      * Returns the loader instance being created
      *
@@ -54,7 +54,7 @@ class ConfigLoaderFilterEvent
     {
         return $this->loader;
     }
-
+    
     /**
      * Allows you to replace the loader instance being created
      *
@@ -65,8 +65,8 @@ class ConfigLoaderFilterEvent
     public function setLoader(Loader $loader): ConfigLoaderFilterEvent
     {
         $this->loader = $loader;
-
+        
         return $this;
     }
-
+    
 }

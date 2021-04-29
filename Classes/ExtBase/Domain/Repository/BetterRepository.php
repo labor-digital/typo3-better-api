@@ -36,39 +36,40 @@ abstract class BetterRepository extends Repository
 {
     use BetterQueryPreparationTrait;
     use ContainerAwareTrait;
-
+    
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper
      */
     protected $dataMapper;
-
+    
     /**
      * When set, it will contain the cached table name so we don't need to build the mapping again
      *
      * @var string
      */
     protected $tableNameCache;
-
+    
     /**
      * Is used to allow RepositoryWrapper to rewrite the $this variable to the stored repository
      *
      * @var BetterRepository
      */
     protected $selfReference;
-
+    
     /**
      * @inheritDoc
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         DataMapper $dataMapper
-    ) {
+    )
+    {
         parent::__construct($objectManager);
         $this->selfReference = $this;
         $this->objectManager = $objectManager;
-        $this->dataMapper    = $dataMapper;
+        $this->dataMapper = $dataMapper;
     }
-
+    
     /**
      * Returns the name of the database table this repository works with
      *
@@ -79,10 +80,10 @@ abstract class BetterRepository extends Repository
         if (isset($this->tableNameCache)) {
             return $this->tableNameCache;
         }
-
+        
         return $this->tableNameCache = $this->dataMapper->getDataMap($this->selfReference->objectType)->getTableName();
     }
-
+    
     /**
      * Tries to find the database table name for either a given model, or the class name of a model
      *
@@ -102,10 +103,10 @@ abstract class BetterRepository extends Repository
         if (! is_string($modelOrClass)) {
             throw new DomainException('Invalid model given! Either an object or a string are allowed!');
         }
-
+        
         return $this->dataMapper->getDataMap($modelOrClass)->getTableName();
     }
-
+    
     /**
      * Returns a "BetterQuery" object. This object is intended to be lightweight and easy to use.
      * It does NOT implement all the features of the typo3 extBase query builder. But it's syntax is short,
@@ -126,7 +127,7 @@ abstract class BetterRepository extends Repository
             $this->getService(Session::class),
         ]);
     }
-
+    
     /**
      * Is used to create a wrapper, providing the BetterRepository api to every extbase repository.
      * Just pass the instance of your repository into this method and you can use demands and all other magic
@@ -144,10 +145,10 @@ abstract class BetterRepository extends Repository
         // @todo migrate this away from objectManager
         $wrapper = TypoContext::getInstance()->di()->cs()->objectManager->get(RepositoryWrapper::class);
         $wrapper->initialize($repository);
-
+        
         return $wrapper;
     }
-
+    
     /**
      * @inheritDoc
      * @noinspection PhpUnusedParameterInspection

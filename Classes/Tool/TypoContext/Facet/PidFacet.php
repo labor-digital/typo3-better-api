@@ -32,19 +32,19 @@ use Throwable;
 class PidFacet implements FacetInterface
 {
     use LocallyCachedStatePropertyTrait;
-
+    
     /**
      * @var TypoContext
      */
     protected $context;
-
+    
     /**
      * The list of configured pids
      *
      * @var array
      */
     protected $pids;
-
+    
     /**
      * PidFacet constructor.
      *
@@ -55,7 +55,7 @@ class PidFacet implements FacetInterface
         $this->context = $context;
         $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState());
     }
-
+    
     /**
      * Returns true if the pid with the given key exists
      *
@@ -67,7 +67,7 @@ class PidFacet implements FacetInterface
     {
         return Arrays::hasPath($this->pids, $this->stripPrefix($key));
     }
-
+    
     /**
      * Sets the given pid for the defined key for the current runtime.
      * Note: The mapping will not be persisted!
@@ -81,10 +81,10 @@ class PidFacet implements FacetInterface
     {
         $pidsModified = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
         $this->context->config()->getConfigState()->set('t3ba.pids', $pidsModified);
-
+        
         return $this;
     }
-
+    
     /**
      * The same as set() but adds multiple pids at once.
      * Note: The mapping will not be persisted!
@@ -106,15 +106,15 @@ class PidFacet implements FacetInterface
                     . gettype($pid));
             }
         }
-
+        
         $this->context->config()->getConfigState()->set(
             't3ba.pids',
             Arrays::merge($this->pids, $pids)
         );
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the pid for the given key
      *
@@ -133,23 +133,23 @@ class PidFacet implements FacetInterface
         if (is_int($key)) {
             return $key;
         }
-
+        
         if (! is_string($key)) {
             throw new InvalidPidException(
                 'Invalid key or pid given, only strings and integers are allowed! Given: ' . gettype($key));
         }
-
+        
         // Numeric as string -> directly convertible to integer
         if ((int)$key . '' === $key) {
             return (int)$key;
         }
-
+        
         if (! is_array($this->pids)) {
             throw new RuntimeException('You are requiring the PIDs to early! They have not yet been registered!');
         }
-
+        
         $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
-
+        
         if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
                 return $fallback;
@@ -159,10 +159,10 @@ class PidFacet implements FacetInterface
             }
             throw new InvalidPidException('There is no registered pid for key: ' . $key);
         }
-
+        
         return $pid;
     }
-
+    
     /**
      * Similar to get() but returns multiple pids at once, instead of a single one
      *
@@ -179,10 +179,10 @@ class PidFacet implements FacetInterface
         foreach ($keys as $k => $key) {
             $keys[$k] = $this->get($key, $fallback);
         }
-
+        
         return $keys;
     }
-
+    
     /**
      * Returns a subset of pids. A subset is a list of pids that are stored in the same "path".
      * For example "page.foo", "page.boo" and "page.bar" all live in the same subset of "page".
@@ -199,10 +199,10 @@ class PidFacet implements FacetInterface
         if (! is_array($list)) {
             throw new InvalidPidException('There given key : ' . $key . ' did not resolve to a pid subset!');
         }
-
+        
         return $list;
     }
-
+    
     /**
      * Returns the whole list of all registered pids by their keys
      *
@@ -212,7 +212,7 @@ class PidFacet implements FacetInterface
     {
         return $this->pids;
     }
-
+    
     /**
      * Returns the current page's pid
      *
@@ -261,7 +261,7 @@ class PidFacet implements FacetInterface
                 return (int)$requestFacet->getGet('id');
             }
         }
-
+        
         // Fallback to the root pid of the site
         try {
             if ($this->context->site()->hasCurrent()) {
@@ -269,10 +269,10 @@ class PidFacet implements FacetInterface
             }
         } catch (Throwable $exception) {
         }
-
+        
         return 0;
     }
-
+    
     /**
      * Internal helper to make sure there is no $pid, (at)pid (stupid annotation parsing...) prefix in the given keys
      *
@@ -282,12 +282,12 @@ class PidFacet implements FacetInterface
      */
     protected function stripPrefix(string $key): string
     {
-        $key    = trim($key);
+        $key = trim($key);
         $prefix = substr($key, 0, 5);
         if ($prefix === '$pid.' || $prefix === '@pid.') {
             return substr($key, 5);
         }
-
+        
         return $key;
     }
 }

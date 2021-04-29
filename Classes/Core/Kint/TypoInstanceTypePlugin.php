@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 class TypoInstanceTypePlugin extends Plugin
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -41,12 +41,12 @@ class TypoInstanceTypePlugin extends Plugin
     {
         return ['object'];
     }
-
+    
     public function getTriggers()
     {
         return Parser::TRIGGER_COMPLETE;
     }
-
+    
     /** @noinspection ReferencingObjectsInspection */
     public function parse(&$variable, BasicObject &$o, $trigger)
     {
@@ -56,17 +56,17 @@ class TypoInstanceTypePlugin extends Plugin
             $o->removeRepresentation('iterator');
             $o->addRepresentation($r, 0);
         }
-
+        
         // Add the uid of entities to the output
         if ($variable instanceof AbstractEntity && $o instanceof InstanceObject) {
             $o->classname = $o->classname .= ' - UID: ' . $variable->getUid();
         }
-
+        
         // Remove the iterator representation from lazy objects
         if ($variable instanceof LazyObjectStorage || $variable instanceof LazyLoadingProxy) {
             $o->removeRepresentation('iterator');
         }
-
+        
         // Add the real class name to lazy loading proxies
         if ($variable instanceof LazyLoadingProxy) {
             $realVal = LazyLoadingUtil::getRealValue($variable);
@@ -75,7 +75,7 @@ class TypoInstanceTypePlugin extends Plugin
                                  ($realVal instanceof AbstractEntity ? ' - UID: ' . $realVal->getUid() : '');
             }
         }
-
+        
         // Update size for countable objects
         if ($variable instanceof ObjectStorage || $variable instanceof QueryResultInterface) {
             $o->size = $variable->count();

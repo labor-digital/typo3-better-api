@@ -38,7 +38,7 @@ use Neunerlei\Configuration\State\ConfigState;
  */
 trait DelayedConfigExecutionTrait
 {
-
+    
     /**
      * This method is used to save a given class for a later point in time.
      *
@@ -57,24 +57,25 @@ trait DelayedConfigExecutionTrait
         string $className,
         ?string $groupKey = null,
         ?array $additionalData = null
-    ): void {
+    ): void
+    {
         $state = $context->getState();
-        $list  = $this->getDelayedConfig($state, $storageKey);
+        $list = $this->getDelayedConfig($state, $storageKey);
         $entry = [
-            'namespace'      => $context->getNamespace(),
-            'className'      => $className,
+            'namespace' => $context->getNamespace(),
+            'className' => $className,
             'additionalData' => $additionalData,
         ];
-
+        
         if ($groupKey) {
             $list[$groupKey][] = $entry;
         } else {
             $list[] = $entry;
         }
-
+        
         $state->setAsJson($storageKey, $list);
     }
-
+    
     /**
      * Retrieves the stored config class list from the given state
      *
@@ -86,10 +87,10 @@ trait DelayedConfigExecutionTrait
     public function getDelayedConfig(ConfigState $state, string $storageKey): array
     {
         $loadable = $state->get($storageKey);
-
+        
         return is_string($loadable) ? Arrays::makeFromJson($loadable) : [];
     }
-
+    
     /**
      * Loads the stored config class list and executes a given callback for each entry.
      * It will also configure the given $context object to run in the same namespace it did when
@@ -115,15 +116,16 @@ trait DelayedConfigExecutionTrait
         string $storageKey,
         callable $callback,
         ?callable $afterGroupCallback = null
-    ): void {
+    ): void
+    {
         $list = $this->getDelayedConfig($state, $storageKey);
-
+        
         if (empty($list)) {
             return;
         }
-
+        
         $hasGroupKey = ! isset(reset($list)['namespace']);
-
+        
         if ($hasGroupKey) {
             foreach ($list as $groupKey => $groupList) {
                 foreach ($groupList as $index => $entry) {

@@ -29,7 +29,7 @@ trait DumperDataHookTrait
 {
     protected $dataHookFieldCache = [];
     protected $dataHookTableCache = [];
-
+    
     /**
      * Clears the internal caching properties
      */
@@ -38,7 +38,7 @@ trait DumperDataHookTrait
         $this->dataHookFieldCache = [];
         $this->dataHookTableCache = [];
     }
-
+    
     /**
      * Extracts the data hook definition from the given TCA and storing them for later use
      *
@@ -55,12 +55,12 @@ trait DumperDataHookTrait
             }
             unset($def);
         }
-
+        
         // Extract table data hooks
         $this->iterateDataHooksIn($tca, function ($type, $key, $hook) {
             $this->dataHookTableCache[$type][$key] = $hook;
         });
-
+        
         // Extract type data hooks
         if ($tca['types'] && is_array($tca['types'])) {
             foreach ($tca['types'] as &$def) {
@@ -71,7 +71,7 @@ trait DumperDataHookTrait
             unset($def);
         }
     }
-
+    
     /**
      * The reverse of extractDataHooksFromTca(). It re-injects all currently cached
      * data hooks into the given tca array.
@@ -87,13 +87,13 @@ trait DumperDataHookTrait
             }
             $tca['columns'][$column][DataHookTypes::TCA_DATA_HOOK_KEY] = array_map('array_values', $hooks);
         }
-
+        
         // Inject the table data hooks into the table
         $tca[DataHookTypes::TCA_DATA_HOOK_KEY] = array_map('array_values', $this->dataHookTableCache);
-
+        
         $this->clearDataHookCache();
     }
-
+    
     /**
      * Internal helper to iterate the data hook array
      *
@@ -106,22 +106,22 @@ trait DumperDataHookTrait
             || ! is_array($configuration[DataHookTypes::TCA_DATA_HOOK_KEY])) {
             return;
         }
-
+        
         foreach ($configuration[DataHookTypes::TCA_DATA_HOOK_KEY] as $type => $hooks) {
             if (! is_array($hooks)) {
                 continue;
             }
-
+            
             foreach ($hooks as $hook) {
                 if (! is_array($hook)) {
                     continue;
                 }
-
+                
                 $key = md5(serialize($hook));
                 $callback($type, $key, $hook);
             }
         }
-
+        
         unset($configuration[DataHookTypes::TCA_DATA_HOOK_KEY]);
     }
 }

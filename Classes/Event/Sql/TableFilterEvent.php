@@ -48,21 +48,21 @@ class TableFilterEvent
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The table schema before the changes were applied
      *
      * @var \Doctrine\DBAL\Schema\Table
      */
     protected $initialTable;
-
+    
     /**
      * The table schema that will be dumped into an SQL string
      *
      * @var \Doctrine\DBAL\Schema\Table|null
      */
     protected $tableToDump;
-
+    
     /**
      * TableFilterEvent constructor.
      *
@@ -72,11 +72,11 @@ class TableFilterEvent
      */
     public function __construct(string $tableName, Table $initialTable, ?Table $tableToDump)
     {
-        $this->tableName    = $tableName;
+        $this->tableName = $tableName;
         $this->initialTable = $initialTable;
-        $this->tableToDump  = $tableToDump;
+        $this->tableToDump = $tableToDump;
     }
-
+    
     /**
      * Returns the name of the table the definition is generated for
      *
@@ -86,7 +86,7 @@ class TableFilterEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the table schema before the changes were applied
      * You should normally not edit this.
@@ -97,7 +97,7 @@ class TableFilterEvent
     {
         return $this->initialTable;
     }
-
+    
     /**
      * Returns the table schema that will be dumped into an SQL string
      * You should edit this
@@ -108,7 +108,7 @@ class TableFilterEvent
     {
         return $this->tableToDump;
     }
-
+    
     /**
      * Allows you to completely override the table schema that will be dumped into an SQL string
      *
@@ -119,7 +119,7 @@ class TableFilterEvent
     public function setTableToDump(?Table $tableToDump): TableFilterEvent
     {
         $this->tableToDump = $tableToDump;
-
+        
         return $this;
     }
 }

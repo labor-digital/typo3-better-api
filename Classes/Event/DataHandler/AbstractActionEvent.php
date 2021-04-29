@@ -35,42 +35,42 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
      * @var string
      */
     protected $command;
-
+    
     /**
      * The name of the table that is currently processed
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The id of the record that is currently processed
      *
      * @var int|string
      */
     protected $id;
-
+    
     /**
      * Contains either the value for a command or the target uid when a record is copied
      *
      * @var mixed
      */
     protected $value;
-
+    
     /**
      * Contains the data fields to update when a record is copied
      *
      * @var mixed
      */
     protected $pasteSpecialData;
-
+    
     /**
      * The instance of the data handler that is currently processing the request
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * @inheritDoc
      */
@@ -78,7 +78,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return ActionEventAdapter::class;
     }
-
+    
     /**
      * Returns the instance of the data handler that is currently processing the request
      *
@@ -88,7 +88,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return $this->dataHandler;
     }
-
+    
     /**
      * Returns the data handler command that is currently processed
      *
@@ -98,7 +98,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return $this->command;
     }
-
+    
     /**
      * Returns the name of the table that is currently processed
      *
@@ -108,7 +108,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the id of the record that is currently processed
      *
@@ -118,7 +118,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return $this->id;
     }
-
+    
     /**
      * Returns either the value for a command or the target uid when a record is copied
      *
@@ -128,7 +128,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return $this->value;
     }
-
+    
     /**
      * Returns the data fields to update when a record is copied
      *
@@ -138,7 +138,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     {
         return $this->pasteSpecialData;
     }
-
+    
     /**
      * Sets the data fields to update when a record is copied
      *
@@ -149,7 +149,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     public function setPasteSpecialData(array $pasteSpecialData): self
     {
         $this->pasteSpecialData = $pasteSpecialData;
-
+        
         return $this;
     }
 }

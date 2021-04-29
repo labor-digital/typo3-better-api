@@ -44,24 +44,24 @@ use TYPO3\CMS\Core\SingletonInterface;
 class ContentPreviewRenderer extends StandardContentPreviewRenderer implements SingletonInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var PreviewRenderingEvent
      */
     protected $event;
-
+    
     /**
      * @var GridColumnItem
      */
     protected $item;
-
+    
     /**
      * Contains the plugin variant map after it was loaded once
      *
      * @var array
      */
     protected $pluginVariantMap;
-
+    
     /**
      * @inheritDoc
      */
@@ -69,7 +69,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
     {
         return (string)$this->getEvent($item)->getHeader();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -77,7 +77,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
     {
         return '<div class="backendPreview">' . $this->getEvent($item)->getBody() . '</div>';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -85,7 +85,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
     {
         return (string)$this->getEvent($item)->getFooter();
     }
-
+    
     /**
      * Dispatches the render event and stores it so we can provide it for all three render methods
      *
@@ -98,16 +98,16 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
         if (isset($this->event) && $this->item === $item) {
             return $this->event;
         }
-
+        
         $this->item = $item;
-
+        
         $this->getService(TypoEventBus::class)->dispatch($this->event = new PreviewRenderingEvent(
             $item, $this->makeUtilsInstance($item), $this->getPluginVariant($item)
         ));
-
+        
         return $this->event;
     }
-
+    
     /**
      * Generates the backend preview utils instance for the given item by linking
      * the internal methods to a public helper class.
@@ -120,27 +120,27 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
     {
         return $this->makeInstance(BackendPreviewUtils::class, [
             [
-                'renderDefaultHeader'  => function () use ($item) {
+                'renderDefaultHeader' => function () use ($item) {
                     return parent::renderPageModulePreviewHeader($item);
                 },
                 'renderDefaultContent' => function () use ($item) {
                     return parent::renderPageModulePreviewContent($item);
                 },
-                'renderDefaultFooter'  => function () use ($item) {
+                'renderDefaultFooter' => function () use ($item) {
                     return parent::renderPageModulePreviewFooter($item);
                 },
-                'renderFieldList'      => function (array $fields, ?string $tableName) use ($item) {
+                'renderFieldList' => function (array $fields, ?string $tableName) use ($item) {
                     return $this->getService(FieldListRenderer::class)->render(
                         $tableName ?? 'tt_content', $item->getRecord(), $fields
                     );
                 },
-                'wrapWithEditLink'     => function ($linkText) use ($item) {
+                'wrapWithEditLink' => function ($linkText) use ($item) {
                     return $this->linkEditContent($linkText, $item->getRecord());
                 },
             ],
         ]);
     }
-
+    
     /**
      * Resolves the plugin/content element variant that was registered for this item.
      * It will return null if the default variant is used or no variant was found -> meaning the same
@@ -152,7 +152,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
     protected function getPluginVariant(GridColumnItem $item): ?string
     {
         $data = $item->getRecord();
-
+        
         if (! isset($this->pluginVariantMap)) {
             $variants = $this->cs()->typoContext->config()->getConfigValue('typo.extBase.element.variants');
             if (! empty($variants)) {
@@ -160,7 +160,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
             }
             $this->pluginVariantMap = $variants ?? [];
         }
-
+        
         return $this->pluginVariantMap[$data['list_type'] ?? '-1']
                ?? $this->pluginVariantMap[$data['CType']]
                   ?? null;

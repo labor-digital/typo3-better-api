@@ -31,35 +31,35 @@ class FileImportFilterEvent
      * @var string
      */
     protected $filename;
-
+    
     /**
      * Counter for detecting endless loops
      *
      * @var int
      */
     protected $cycleCounter;
-
+    
     /**
      * When set, filenames of included files will be prepended to the array $includedFiles
      *
      * @var bool
      */
     protected $returnFiles;
-
+    
     /**
      * Array to which the filenames of included files will be prepended (referenced)
      *
      * @var array
      */
     protected $includedFiles;
-
+    
     /**
      * If set this value will be returned instead of the default file handling
      *
      * @var string|null
      */
     protected $result;
-
+    
     /**
      * ImportExternalTypoScriptFileEvent constructor.
      *
@@ -73,13 +73,14 @@ class FileImportFilterEvent
         int $cycleCounter,
         bool $returnFiles,
         array $includedFiles
-    ) {
-        $this->filename      = $filename;
-        $this->cycleCounter  = $cycleCounter;
-        $this->returnFiles   = $returnFiles;
+    )
+    {
+        $this->filename = $filename;
+        $this->cycleCounter = $cycleCounter;
+        $this->returnFiles = $returnFiles;
         $this->includedFiles = $includedFiles;
     }
-
+    
     /**
      * Returns the full absolute path+filename to the typoScript file to be included
      *
@@ -89,7 +90,7 @@ class FileImportFilterEvent
     {
         return $this->filename;
     }
-
+    
     /**
      * Sets the full absolute path+filename to the typoScript file to be included
      *
@@ -100,10 +101,10 @@ class FileImportFilterEvent
     public function setFilename(string $filename): FileImportFilterEvent
     {
         $this->filename = $filename;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the counter for detecting endless loops
      *
@@ -113,7 +114,7 @@ class FileImportFilterEvent
     {
         return $this->cycleCounter;
     }
-
+    
     /**
      * Updates the counter for detecting endless loops
      *
@@ -124,10 +125,10 @@ class FileImportFilterEvent
     public function setCycleCounter(int $cycleCounter): FileImportFilterEvent
     {
         $this->cycleCounter = $cycleCounter;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if filenames of included files will be prepended to the array $includedFiles
      *
@@ -137,7 +138,7 @@ class FileImportFilterEvent
     {
         return $this->returnFiles;
     }
-
+    
     /**
      * Updates if filenames of included files will be prepended to the array $includedFiles
      *
@@ -148,10 +149,10 @@ class FileImportFilterEvent
     public function setReturnFiles(bool $returnFiles): FileImportFilterEvent
     {
         $this->returnFiles = $returnFiles;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the array to which the filenames of included files will be prepended (referenced)
      *
@@ -161,7 +162,7 @@ class FileImportFilterEvent
     {
         return $this->includedFiles;
     }
-
+    
     /**
      * Updates the array to which the filenames of included files will be prepended (referenced)
      *
@@ -172,10 +173,10 @@ class FileImportFilterEvent
     public function setIncludedFiles(array $includedFiles): FileImportFilterEvent
     {
         $this->includedFiles = $includedFiles;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the value which will be returned instead of the default file handling or null if none was registered
      *
@@ -185,7 +186,7 @@ class FileImportFilterEvent
     {
         return $this->result;
     }
-
+    
     /**
      * If set this value will be returned instead of the default file handling
      *
@@ -196,8 +197,8 @@ class FileImportFilterEvent
     public function setResult(?string $result): FileImportFilterEvent
     {
         $this->result = $result;
-
+        
         return $this;
     }
-
+    
 }

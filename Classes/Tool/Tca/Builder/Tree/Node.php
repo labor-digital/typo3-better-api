@@ -24,66 +24,66 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement;
 
 class Node
 {
-
+    
     /**
      * A list of possible node types
      */
-    public const TYPE_ROOT      = 0;
-    public const TYPE_FIELD     = 1;
+    public const TYPE_ROOT = 0;
+    public const TYPE_FIELD = 1;
     public const TYPE_CONTAINER = 2;
-    public const TYPE_TAB       = 4;
-    public const TYPE_NL        = 5;
-
+    public const TYPE_TAB = 4;
+    public const TYPE_NL = 5;
+    
     /**
      * Different modes to insert a new child into the node
      */
-    public const INSERT_MODE_AFTER  = 0;
+    public const INSERT_MODE_AFTER = 0;
     public const INSERT_MODE_BEFORE = 1;
-    public const INSERT_MODE_TOP    = 2;
+    public const INSERT_MODE_TOP = 2;
     public const INSERT_MODE_BOTTOM = 3;
-
+    
     /**
      * Contains the ordered list of direct children
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[]
      */
     public $children = [];
-
+    
     /**
      * The linked logic element represented by this node
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement
      */
     protected $el;
-
+    
     /**
      * One of self::TYPE_ to define the type of node
      *
      * @var int
      */
     protected $type;
-
+    
     /**
      * The parent node of the current node
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
      */
     protected $parent;
-
+    
     /**
      * The link to the containing tree instance
      *
      * @var Tree
      */
     protected $tree;
-
+    
     /**
      * The unique id of this node
      *
      * @var string|int
      */
     protected $id;
-
+    
     /**
      * FormNode constructor.
      *
@@ -95,9 +95,9 @@ class Node
     {
         $this->type = $type;
         $this->tree = $tree;
-        $this->id   = $id;
+        $this->id = $id;
     }
-
+    
     /**
      * Returns the tree this node is a part of
      *
@@ -107,7 +107,7 @@ class Node
     {
         return $this->tree;
     }
-
+    
     /**
      * Returns the linked logic element represented by this node
      *
@@ -117,7 +117,7 @@ class Node
     {
         return $this->el;
     }
-
+    
     /**
      * Sets the linked logic element represented by this node
      *
@@ -127,7 +127,7 @@ class Node
     {
         $this->el = $el;
     }
-
+    
     /**
      * Returns one of self::TYPE_ to define the type of node
      *
@@ -137,7 +137,7 @@ class Node
     {
         return $this->type;
     }
-
+    
     /**
      * Returns true if the node represents a form field
      *
@@ -147,7 +147,7 @@ class Node
     {
         return $this->type === static::TYPE_FIELD;
     }
-
+    
     /**
      * Returns true if the node represents a form container (section or pallet)
      *
@@ -157,7 +157,7 @@ class Node
     {
         return $this->type === static::TYPE_CONTAINER;
     }
-
+    
     /**
      * Returns true if the node represents a tab
      *
@@ -167,7 +167,7 @@ class Node
     {
         return $this->type === static::TYPE_TAB;
     }
-
+    
     /**
      * Returns true if this is the tree's root node
      *
@@ -177,7 +177,7 @@ class Node
     {
         return $this->type === static::TYPE_ROOT;
     }
-
+    
     /**
      * Returns the unique id of this node
      *
@@ -190,10 +190,10 @@ class Node
         if ($this->isContainer()) {
             return '_' . $this->id;
         }
-
+        
         return $this->id;
     }
-
+    
     /**
      * Returns the parent node of the current node
      *
@@ -203,7 +203,7 @@ class Node
     {
         return $this->parent;
     }
-
+    
     /**
      * Updates the parent node of the current node
      *
@@ -213,7 +213,7 @@ class Node
     {
         $this->parent = $node;
     }
-
+    
     /**
      * Returns the node of the closest tab node that contains this node
      *
@@ -225,16 +225,16 @@ class Node
         if ($this->isTab()) {
             return $this;
         }
-
+        
         // Return my parent if it is a tab
         if ($this->getParent()->isTab()) {
             return $this->getParent();
         }
-
+        
         // Return my parent's parent -> this has to be a tab
         return $this->getParent()->getParent();
     }
-
+    
     /**
      * Adds a given node as a child of this node
      *
@@ -247,16 +247,17 @@ class Node
         Node $node,
         int $insertMode,
         ?Node $pivotNode = null
-    ): void {
+    ): void
+    {
         // Update the node's parent
         $node->getParent()->removeChild($node);
         $node->setParent($this);
-
+        
         // Ignore misconfiguration
         if ($pivotNode !== null && ! isset($this->children[$pivotNode->getId()])) {
             $pivotNode = null;
         }
-
+        
         // Insert as first child
         if ($insertMode === static::INSERT_MODE_TOP
             || ($pivotNode === null && $insertMode === static::INSERT_MODE_BEFORE)) {
@@ -266,8 +267,8 @@ class Node
             $this->children += [$node->getId() => $node];
         } // Insert at pivot node
         else {
-            $keys     = array_keys($this->children);
-            $values   = $this->children;
+            $keys = array_keys($this->children);
+            $values = $this->children;
             $position = array_search($pivotNode->getId(), $keys, true);
             $position += $insertMode === static::INSERT_MODE_BEFORE ? 0 : 1;
             array_splice($keys, $position, 0, $node->getId());
@@ -275,7 +276,7 @@ class Node
             $this->children = array_combine($keys, $values);
         }
     }
-
+    
     /**
      * Removes a given node from this node's children
      *
@@ -285,7 +286,7 @@ class Node
     {
         unset($this->children[$node->getId()]);
     }
-
+    
     /**
      * Allows you to rename the id of a child node to something else.
      *
@@ -297,7 +298,7 @@ class Node
         $children = [];
         foreach ($this->children as $childId => $child) {
             if ($currentId === $childId) {
-                $child->id        = $newId;
+                $child->id = $newId;
                 $children[$newId] = $child;
             } else {
                 $children[$childId] = $child;
@@ -305,7 +306,7 @@ class Node
         }
         $this->children = $children;
     }
-
+    
     /**
      * Returns the lift of all children contained by this node
      *
@@ -315,7 +316,7 @@ class Node
     {
         return $this->children;
     }
-
+    
     /**
      * Moves this node to a new position, defined by the position string.
      *
@@ -331,7 +332,7 @@ class Node
         }
         $this->tree->moveNode($this, $insertMode, $pivotNode);
     }
-
+    
     /**
      * Removes the current node and all it's children from the tree
      */

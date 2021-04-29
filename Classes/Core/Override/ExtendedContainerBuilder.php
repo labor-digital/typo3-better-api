@@ -40,7 +40,7 @@ class ExtendedContainerBuilder extends T3BA__Copy__ContainerBuilder
         parent::__construct($earlyInstances);
         $this->defaultServices += [get_called_class() => $this];
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -48,7 +48,8 @@ class ExtendedContainerBuilder extends T3BA__Copy__ContainerBuilder
         PackageManager $packageManager,
         FrontendInterface $cache,
         bool $failsafe = false
-    ): ContainerInterface {
+    ): ContainerInterface
+    {
         return TypoEventBus::getInstance()->dispatch(
             new CreateDiContainerEvent(
                 $failsafe,
@@ -57,6 +58,6 @@ class ExtendedContainerBuilder extends T3BA__Copy__ContainerBuilder
             )
         )->getContainer();
     }
-
-
+    
+    
 }

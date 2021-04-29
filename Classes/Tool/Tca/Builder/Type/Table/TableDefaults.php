@@ -29,7 +29,7 @@ class TableDefaults
         = [
             'exclude' => 1,
         ];
-
+    
     public const TYPE_TCA
         = [
             'showitem' => '
@@ -40,149 +40,149 @@ class TableDefaults
                 --div--;t3ba.tab.language,
                 --palette--;;language',
         ];
-
+    
     public const TABLE_TCA
         = [
             'ctrl' => [
-                'label'                    => 'uid',
-                'hideAtCopy'               => true,
-                'tstamp'                   => 'tstamp',
-                'crdate'                   => 'crdate',
-                'cruser_id'                => 'cruser_id',
-                'versioningWS'             => true,
-                'origUid'                  => 't3_origuid',
-                'editlock'                 => 'editlock',
-                'prepentAtCopy'            => '',
-                'transOrigPointerField'    => 'l10n_parent',
-                'translationSource'        => 'l10n_source',
+                'label' => 'uid',
+                'hideAtCopy' => true,
+                'tstamp' => 'tstamp',
+                'crdate' => 'crdate',
+                'cruser_id' => 'cruser_id',
+                'versioningWS' => true,
+                'origUid' => 't3_origuid',
+                'editlock' => 'editlock',
+                'prepentAtCopy' => '',
+                'transOrigPointerField' => 'l10n_parent',
+                'translationSource' => 'l10n_source',
                 'transOrigDiffSourceField' => 'l10n_diffsource',
-                'languageField'            => 'sys_language_uid',
-                'enablecolumns'            => [
-                    'disabled'  => 'hidden',
+                'languageField' => 'sys_language_uid',
+                'enablecolumns' => [
+                    'disabled' => 'hidden',
                     'starttime' => 'starttime',
-                    'endtime'   => 'endtime',
-                    'fe_group'  => 'fe_group',
+                    'endtime' => 'endtime',
+                    'fe_group' => 'fe_group',
                 ],
-                'delete'                   => 'deleted',
+                'delete' => 'deleted',
             ],
-
-            'columns'  => [
+            
+            'columns' => [
                 'sys_language_uid' => [
                     'exclude' => true,
-                    'label'   => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel',
-                    'config'  => [
-                        'type'                => 'select',
-                        'renderType'          => 'selectSingle',
-                        'foreign_table'       => 'sys_language',
+                    'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel',
+                    'config' => [
+                        'type' => 'select',
+                        'renderType' => 'selectSingle',
+                        'foreign_table' => 'sys_language',
                         'foreign_table_where' => 'ORDER BY sys_language.title',
-                        'items'               => [
+                        'items' => [
                             ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages', -1],
                             ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.default_value', 0],
                         ],
-                        'default'             => 0,
-                        'fieldWizard'         => [
+                        'default' => 0,
+                        'fieldWizard' => [
                             'selectIcons' => [
                                 'disabled' => false,
                             ],
                         ],
                     ],
                 ],
-                'l10n_parent'      => [
+                'l10n_parent' => [
                     'displayCond' => 'FIELD:sys_language_uid:>:0',
-                    'label'       => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
-                    'config'      => [
-                        'type'                => 'select',
-                        'renderType'          => 'selectSingle',
-                        'items'               => [['', 0]],
-                        'foreign_table'       => '{{table}}',
+                    'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+                    'config' => [
+                        'type' => 'select',
+                        'renderType' => 'selectSingle',
+                        'items' => [['', 0]],
+                        'foreign_table' => '{{table}}',
                         'foreign_table_where' => 'AND {{table}}.uid=###REC_FIELD_l10n_parent### AND {{table}}.sys_language_uid IN (-1,0)',
-                        'default'             => 0,
+                        'default' => 0,
                     ],
                 ],
-                'l10n_diffsource'  => [
+                'l10n_diffsource' => [
                     'config' => [
-                        'type'    => 'passthrough',
+                        'type' => 'passthrough',
                         'default' => '',
                     ],
                 ],
-                'l10n_source'      => [
+                'l10n_source' => [
                     'config' => [
                         'type' => 'passthrough',
                     ],
                 ],
-                'hidden'           => [
+                'hidden' => [
                     'exclude' => true,
-                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.visible',
-                    'config'  => [
-                        'type'       => 'check',
+                    'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.visible',
+                    'config' => [
+                        'type' => 'check',
                         'renderType' => 'checkboxToggle',
-                        'items'      => [
+                        'items' => [
                             [
-                                0                    => '',
-                                1                    => '',
+                                0 => '',
+                                1 => '',
                                 'invertStateDisplay' => true,
                             ],
                         ],
                     ],
                 ],
-                'cruser_id'        => [
-                    'label'  => 'cruser_id',
+                'cruser_id' => [
+                    'label' => 'cruser_id',
                     'config' => ['type' => 'passthrough'],
                 ],
-                'pid'              => [
-                    'label'  => 'pid',
+                'pid' => [
+                    'label' => 'pid',
                     'config' => ['type' => 'passthrough'],
                 ],
-                'crdate'           => [
-                    'label'  => 'crdate',
+                'crdate' => [
+                    'label' => 'crdate',
                     'config' => ['type' => 'passthrough'],
                 ],
-                'tstamp'           => [
-                    'label'  => 'tstamp',
+                'tstamp' => [
+                    'label' => 'tstamp',
                     'config' => ['type' => 'passthrough'],
                 ],
-                'sorting'          => [
-                    'label'  => 'sorting',
+                'sorting' => [
+                    'label' => 'sorting',
                     'config' => ['type' => 'passthrough'],
                 ],
-                'starttime'        => [
+                'starttime' => [
                     'exclude' => true,
-                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
-                    'config'  => [
-                        'type'       => 'input',
+                    'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
+                    'config' => [
+                        'type' => 'input',
                         'renderType' => 'inputDateTime',
-                        'eval'       => 'datetime,int',
-                        'default'    => 0,
-                        'behaviour'  => [
+                        'eval' => 'datetime,int',
+                        'default' => 0,
+                        'behaviour' => [
                             'allowLanguageSynchronization' => true,
                         ],
                     ],
                 ],
-                'endtime'          => [
+                'endtime' => [
                     'exclude' => true,
-                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
-                    'config'  => [
-                        'type'       => 'input',
+                    'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
+                    'config' => [
+                        'type' => 'input',
                         'renderType' => 'inputDateTime',
-                        'eval'       => 'datetime,int',
-                        'default'    => 0,
-                        'range'      => [
+                        'eval' => 'datetime,int',
+                        'default' => 0,
+                        'range' => [
                             'upper' => 2208988800,
                         ],
-                        'behaviour'  => [
+                        'behaviour' => [
                             'allowLanguageSynchronization' => true,
                         ],
                     ],
                 ],
-                'fe_group'         => [
+                'fe_group' => [
                     'exclude' => true,
-                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
-                    'config'  => [
-                        'type'                => 'select',
-                        'renderType'          => 'selectMultipleSideBySide',
-                        'size'                => 5,
-                        'maxitems'            => 20,
-                        'items'               =>
+                    'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
+                    'config' => [
+                        'type' => 'select',
+                        'renderType' => 'selectMultipleSideBySide',
+                        'size' => 5,
+                        'maxitems' => 20,
+                        'items' =>
                             [
                                 ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login', -1],
                                 ['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.any_login', -2],
@@ -191,42 +191,42 @@ class TableDefaults
                                     '--div--',
                                 ],
                             ],
-                        'exclusiveKeys'       => '-1,-2',
-                        'foreign_table'       => 'fe_groups',
+                        'exclusiveKeys' => '-1,-2',
+                        'foreign_table' => 'fe_groups',
                         'foreign_table_where' => 'ORDER BY fe_groups.title',
                     ],
                 ],
-                't3_origuid'       => [
+                't3_origuid' => [
                     'config' => [
                         'default' => 0,
-                        'type'    => 'passthrough',
+                        'type' => 'passthrough',
                     ],
                 ],
-                't3ver_label'      => [
-                    'label'  => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
+                't3ver_label' => [
+                    'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
                     'config' => [
-                        'max'  => 255,
+                        'max' => 255,
                         'size' => 30,
                         'type' => 'input',
                     ],
                 ],
             ],
-            'types'    => [
+            'types' => [
                 '0' => self::TYPE_TCA,
             ],
             'palettes' => [
-                'hidden'   => [
+                'hidden' => [
                     'showitem' => 'hidden',
                 ],
                 'language' => [
                     'showitem' => 'sys_language_uid,l10n_parent',
                 ],
-                'access'   => [
+                'access' => [
                     'showitem' => 'starttime,endtime,--linebreak--,fe_group',
                 ],
             ],
         ];
-
+    
     public const CONTENT_TYPE_TCA
         = [
             'showitem' => '

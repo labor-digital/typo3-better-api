@@ -27,7 +27,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigureFluidInterface
 {
-
+    
     /**
      * Allows you to configure the TYPO3 fluid template engine
      *
@@ -35,5 +35,5 @@ interface ConfigureFluidInterface
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                $context
      */
     public static function configureFluid(FluidConfigurator $configurator, ExtConfigContext $context): void;
-
+    
 }

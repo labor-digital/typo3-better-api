@@ -28,28 +28,28 @@ use Neunerlei\Configuration\State\ConfigState;
 
 class TranslationConfigurator extends AbstractExtConfigConfigurator
 {
-
+    
     /**
      * The list of registered translation contexts
      *
      * @var array
      */
     protected $namespaces = [];
-
+    
     /**
      * The list of registered override files
      *
      * @var array
      */
     protected $overrideFiles = [];
-
+    
     /**
      * The list of single label overrides
      *
      * @var array
      */
     protected $overrideLabels = [];
-
+    
     /**
      * Registers a new translation namespace. A namespace is basically a shortcut for the long LLL:EXT:...xlf:
      * part of your translation label.
@@ -66,16 +66,17 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
     public function registerNamespace(
         string $namespace,
         string $filename = 'EXT:{{extKey}}/Resources/Private/Language/locallang.xlf'
-    ): self {
+    ): self
+    {
         if (basename($filename) === $filename) {
             $filename = 'EXT:{{extKey}}/Resources/Private/Language/' . $filename;
         }
-
+        
         $this->namespaces[$this->context->replaceMarkers($namespace)] = $this->context->replaceMarkers($filename);
-
+        
         return $this;
     }
-
+    
     /**
      * This method is used to register a complete language file override.
      *
@@ -91,15 +92,16 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
         string $original,
         string $override,
         string $lang = 'en'
-    ): self {
+    ): self
+    {
         $this->overrideFiles[$lang]
         [$this->context->replaceMarkers($original)]
         [md5($this->context->replaceMarkers($override))]
             = $this->context->replaceMarkers($override);
-
+        
         return $this;
     }
-
+    
     /**
      * Registers a label override for a single translation label.
      * Both labels should either be something like: EXT:ext/Resources/Private/Language/locallang_db.xlf:key
@@ -114,10 +116,10 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
     {
         $this->overrideLabels[$this->context->replaceMarkers($original)]
             = $this->context->replaceMarkers($override);
-
+        
         return $this;
     }
-
+    
     /**
      * The same as registerOverride() but can register multiple overrides at once using an array of
      * $original => $override...
@@ -132,10 +134,10 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
         foreach ($overrides as $k => $v) {
             $this->registerOverride($k, $v);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -143,9 +145,9 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
     {
         $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS.SYS.locallangXMLOverride', $this->overrideFiles);
         $this->overrideFiles = null;
-
+        
         parent::finish($state);
     }
-
-
+    
+    
 }

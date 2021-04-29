@@ -30,28 +30,28 @@ use Neunerlei\PathUtil\Path;
 
 trait CustomAssetTrait
 {
-
+    
     /**
      * True if the global event handler for injecting the backend assets is already bound
      *
      * @var bool
      */
     protected static $eventBound = false;
-
+    
     /**
      * The list of javascript files that are registered for the backend
      *
      * @var array
      */
     protected static $js = [];
-
+    
     /**
      * The list of registered css files for the backend
      *
      * @var array
      */
     protected static $css = [];
-
+    
     /**
      * Can be used to register an additional JS file to the typo3 backend.
      * The file is only included when the element is rendered.
@@ -64,7 +64,7 @@ trait CustomAssetTrait
     {
         return $this->addAsset($path);
     }
-
+    
     /**
      * Can be used to register an additional css file to the typo3 backend.
      * The file is only included when the element is rendered.
@@ -77,7 +77,7 @@ trait CustomAssetTrait
     {
         return $this->addAsset($path, true);
     }
-
+    
     /**
      * Internal helper to append a given js / css path to our stacks
      * It will check if the file was already added do avoid duplicates
@@ -89,18 +89,18 @@ trait CustomAssetTrait
     {
         // Make sure our event is bound
         $this->bindEventHandlerIfRequired();
-
+        
         // Helper to resolve urls
         if (! filter_var($path, FILTER_VALIDATE_URL)) {
             $pathAspect = TypoContext::getInstance()->path();
-            $path       = $pathAspect->typoPathToRealPath($path);
-            $path       = Path::makeRelative($path, $pathAspect->getPublicPath());
-
+            $path = $pathAspect->typoPathToRealPath($path);
+            $path = Path::makeRelative($path, $pathAspect->getPublicPath());
+            
             if (! empty($path) && ! in_array($path[0], ['/', '.'], true)) {
                 $path = '/' . $path;
             }
         }
-
+        
         // Add the file to the list or skip
         if ($css) {
             // CSS
@@ -115,10 +115,10 @@ trait CustomAssetTrait
             }
             static::$js[] = $path;
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Binds an event handler to inject the backend assets if required
      */
@@ -127,16 +127,16 @@ trait CustomAssetTrait
         if (static::$eventBound) {
             return;
         }
-
+        
         static::$eventBound = true;
-
+        
         TypoEventBus::getInstance()->addListener(BackendAssetFilterEvent::class, function (BackendAssetFilterEvent $e) {
             if (! empty(static::$js)) {
                 foreach (static::$js as $file) {
                     $e->getPageRenderer()->addJsFooterFile($file, 'text/javascript', false, false, '', true);
                 }
             }
-
+            
             if (! empty(static::$css)) {
                 foreach (static::$css as $file) {
                     $e->getPageRenderer()->addCssFile($file, 'stylesheet', 'all', '', false);

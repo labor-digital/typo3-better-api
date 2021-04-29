@@ -43,35 +43,35 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The current page id to query the records from
      *
      * @var int
      */
     protected $pid;
-
+    
     /**
      * An additional where clause to narrow down the selected rows
      *
      * @var string
      */
     protected $additionalWhereClause;
-
+    
     /**
      * The list of all database fields that should be queried for the table
      *
      * @var string
      */
     protected $selectedFieldList;
-
+    
     /**
      * The list that is currently rendered
      *
      * @var \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList
      */
     protected $listRenderer;
-
+    
     /**
      * @inheritDoc
      */
@@ -79,7 +79,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     {
         return DbListQueryFilterEventAdapter::class;
     }
-
+    
     /**
      * BackendDbListQueryFilterEvent constructor.
      *
@@ -95,14 +95,15 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
         string $additionalWhereClause,
         string $selectedFieldList,
         DatabaseRecordList $listRenderer
-    ) {
-        $this->tableName             = $tableName;
-        $this->pid                   = $pid;
+    )
+    {
+        $this->tableName = $tableName;
+        $this->pid = $pid;
         $this->additionalWhereClause = $additionalWhereClause;
-        $this->selectedFieldList     = $selectedFieldList;
-        $this->listRenderer          = $listRenderer;
+        $this->selectedFieldList = $selectedFieldList;
+        $this->listRenderer = $listRenderer;
     }
-
+    
     /**
      * Returns the name of the table to query the records from
      *
@@ -112,7 +113,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the current page id to query the records from
      *
@@ -122,7 +123,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     {
         return $this->pid;
     }
-
+    
     /**
      * Returns tn additional where clause to narrow down the selected rows
      *
@@ -132,7 +133,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     {
         return $this->additionalWhereClause;
     }
-
+    
     /**
      * Updates tn additional where clause to narrow down the selected rows
      *
@@ -143,10 +144,10 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     public function setAdditionalWhereClause(string $additionalWhereClause): self
     {
         $this->additionalWhereClause = $additionalWhereClause;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of all database fields that should be queried for the table
      *
@@ -156,7 +157,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     {
         return $this->selectedFieldList;
     }
-
+    
     /**
      * Updates the list of all database fields that should be queried for the table
      *
@@ -167,10 +168,10 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     public function setSelectedFieldList(string $selectedFieldList): self
     {
         $this->selectedFieldList = $selectedFieldList;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list that is currently rendered
      *
@@ -180,7 +181,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     {
         return $this->listRenderer;
     }
-
+    
     /**
      * Updates the list that is currently rendered
      *
@@ -191,7 +192,7 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     public function setListRenderer(DatabaseRecordList $listRenderer): self
     {
         $this->listRenderer = $listRenderer;
-
+        
         return $this;
     }
 }

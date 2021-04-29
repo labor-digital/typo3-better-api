@@ -35,28 +35,28 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  */
 class DataHandlerDefaultFilterEvent
 {
-
+    
     /**
      * The name of the table that gets the defaults created
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The raw field array that contains the prepared defaults
      *
      * @var array
      */
     protected $row;
-
+    
     /**
      * The currently executed data handler instance
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * DataHandlerDefaultFilterEvent constructor.
      *
@@ -66,11 +66,11 @@ class DataHandlerDefaultFilterEvent
      */
     public function __construct(string $tableName, array $row, DataHandler $dataHandler)
     {
-        $this->tableName   = $tableName;
-        $this->row         = $row;
+        $this->tableName = $tableName;
+        $this->row = $row;
         $this->dataHandler = $dataHandler;
     }
-
+    
     /**
      * Returns the name of the table that gets the defaults created
      *
@@ -80,7 +80,7 @@ class DataHandlerDefaultFilterEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the currently executed data handler instance
      *
@@ -90,7 +90,7 @@ class DataHandlerDefaultFilterEvent
     {
         return $this->dataHandler;
     }
-
+    
     /**
      * Returns the raw field array that contains the prepared defaults
      *
@@ -100,7 +100,7 @@ class DataHandlerDefaultFilterEvent
     {
         return $this->row;
     }
-
+    
     /**
      * Used to update the raw field array that contains the prepared defaults
      *
@@ -111,7 +111,7 @@ class DataHandlerDefaultFilterEvent
     public function setRow(array $row): self
     {
         $this->row = $row;
-
+        
         return $this;
     }
 }

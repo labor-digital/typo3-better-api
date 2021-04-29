@@ -24,7 +24,7 @@ use Neunerlei\Arrays\Arrays;
 
 class CustomFieldDataHookContext extends DataHookContext
 {
-
+    
     /**
      * Returns the list of additional options that were passed when the field
      * was applied using the fieldPreset applier.
@@ -34,10 +34,10 @@ class CustomFieldDataHookContext extends DataHookContext
     public function getOptions(): array
     {
         dbge($this);
-
+        
         return Arrays::getPath($this->config, ['config', 'customElementOptions'], []);
     }
-
+    
     /**
      * Can be used to return a single option, or returns the default value
      *
@@ -51,7 +51,7 @@ class CustomFieldDataHookContext extends DataHookContext
     {
         return Arrays::getPath($this->getOptions(), $path, $default);
     }
-
+    
     /**
      * Returns the registered class of the registered custom-element for this field.
      * If this returns an empty string, the space-time-continuum will explode in around 30 seconds...
@@ -61,10 +61,10 @@ class CustomFieldDataHookContext extends DataHookContext
     public function getElementClass(): string
     {
         dbge($this);
-
+        
         return Arrays::getPath($this->config, ['config', 'customElementClass'], '');
     }
-
+    
     /**
      * Alias of getKey() to make sure we use the same naming in both contexts
      *

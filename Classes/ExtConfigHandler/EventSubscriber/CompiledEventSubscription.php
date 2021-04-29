@@ -36,14 +36,14 @@ class CompiledEventSubscription implements EventSubscriptionInterface
      * @var string
      */
     protected $class;
-
+    
     /**
      * The list of subscribers
      *
      * @var array
      */
     protected $subscribers = [];
-
+    
     /**
      * Internal helper to set the handler class to configure
      *
@@ -53,7 +53,7 @@ class CompiledEventSubscription implements EventSubscriptionInterface
     {
         $this->class = $class;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -64,15 +64,15 @@ class CompiledEventSubscription implements EventSubscriptionInterface
             foreach ($events as $event) {
                 $this->subscribe($event, $method, $options);
             }
-
+            
             return $this;
         }
-
+        
         $this->subscribers[] = [$events, $this->class, $method, $options];
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -82,7 +82,7 @@ class CompiledEventSubscription implements EventSubscriptionInterface
             'This method does not work for lazy event subscribers! Please use the '
             . EventSubscriberInterface::class . ' instead, to add listeners directly to the bus!');
     }
-
+    
     /**
      * Internal helper to extract the registered subscribers
      *
@@ -92,5 +92,5 @@ class CompiledEventSubscription implements EventSubscriptionInterface
     {
         return $this->subscribers;
     }
-
+    
 }

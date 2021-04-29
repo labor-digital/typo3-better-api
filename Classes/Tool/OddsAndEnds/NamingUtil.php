@@ -41,14 +41,14 @@ class NamingUtil
      * @internal
      */
     public static $tcaTableClassNameMap = [];
-
+    
     /**
      * The list of resolved table names by their specified selector, for faster lookup
      *
      * @var string[]
      */
     protected static $resolvedTableNames = [];
-
+    
     /**
      * Generates an ext base extension name from the given ext key
      *
@@ -60,7 +60,7 @@ class NamingUtil
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $extKey)));
     }
-
+    
     /**
      * Generates the extbase controller alias based on the given controller class name
      *
@@ -72,7 +72,7 @@ class NamingUtil
     {
         return ExtensionUtility::resolveControllerAliasFromControllerClassName($controllerClass);
     }
-
+    
     /**
      * Receives the class of a plugin / module controller and returns the matching plugin name
      *
@@ -91,31 +91,31 @@ class NamingUtil
             if (! is_array($config['plugins'] ?? null)) {
                 continue;
             }
-
+            
             $pluginNames = [];
             foreach ($config['plugins'] as $pluginName => $pluginConfiguration) {
                 $actions = $pluginConfiguration['controllers'][$controllerClass]['actions'] ?? [];
-
+                
                 if (! empty($actions) && in_array($actionName, $actions, true)) {
                     $pluginNames[] = $pluginName;
                 }
             }
         }
-
+        
         if (empty($pluginNames)) {
             throw new RuntimeException('No plugin name could be found for this controller, and action combination: "'
                                        . $controllerClass . '::' . $actionName . '"!');
         }
-
+        
         if (count($pluginNames) > 1) {
             throw new RuntimeException(
                 'More than one plugins use the combination of: "'
                 . $controllerClass . '::' . $actionName . '"! Possible options are: ' . implode(', ', $pluginNames));
         }
-
+        
         return reset($pluginNames);
     }
-
+    
     /**
      * Receives a plugin name and a extension key and returns the plugin signature which will look like
      * "myextension_mypluginname" Note: Vendors are not allowed in the extKey while defining plugin signatures, so we
@@ -130,7 +130,7 @@ class NamingUtil
     {
         return static::flattenExtKey($extKey) . '_' . static::flattenExtKey($pluginName, true);
     }
-
+    
     /**
      * This will flatten the extension key down for the usage in plugin signatures like:
      * "Vendor.My_Extension" becomes: "myextension". In some cases, like for our typoScript injection
@@ -147,10 +147,10 @@ class NamingUtil
         if (! $keepVendor) {
             $extKey = static::extkeyWithoutVendor($extKey);
         }
-
+        
         return strtolower(str_replace(['_', ' ', '.'], '', trim($extKey)));
     }
-
+    
     /**
      * Receives the ext key, which may include a vendor like "vendor.my_extension" and strips off the vendor
      * which results in "my_extension". It also accepts a plain extKey like "my_extension" which will
@@ -165,10 +165,10 @@ class NamingUtil
         if (strpos($extKey, '.') === false) {
             return $extKey;
         }
-
+        
         return substr($extKey, strpos($extKey, '.') + 1);
     }
-
+    
     /**
      * Receives the ext key, which may include a vendor like "vendor.my_extension". If it contains a vendor, "vendor"
      * will be returned. If an extKey like "my_extension" is passed, an empty string is returned instead.
@@ -182,11 +182,11 @@ class NamingUtil
         if (strpos($extKey, '.') === false) {
             return '';
         }
-
+        
         return substr($extKey, 0, strpos($extKey, '.'));
     }
-
-
+    
+    
     /**
      * Tries to find the correct sql database table for the given selector.
      *
@@ -209,14 +209,14 @@ class NamingUtil
             if ($selector instanceof BetterRepository) {
                 return $selector->getTableName();
             }
-
+            
             if ($selector instanceof Repository
                 || $selector instanceof AbstractEntity
                 || $selector instanceof ConfigureTcaTableInterface) {
                 $selector = get_class($selector);
             }
         }
-
+        
         if (is_string($selector)) {
             if (isset(static::$tcaTableClassNameMap[$selector])) {
                 return static::$tcaTableClassNameMap[$selector];
@@ -224,13 +224,13 @@ class NamingUtil
             if (isset(static::$resolvedTableNames[$selector])) {
                 return static::$resolvedTableNames[$selector];
             }
-
+            
             if (class_exists($selector)) {
                 // Resolve repository class
                 if (in_array(Repository::class, class_parents($selector), true)) {
                     $selector = ClassNamingUtility::translateRepositoryNameToModelName($selector);
                 }
-
+                
                 // Resolve entity class
                 if (in_array(AbstractEntity::class, class_parents($selector), true)) {
                     return static::$resolvedTableNames[$selector]
@@ -238,14 +238,14 @@ class NamingUtil
                                      ->getDataMap($selector)->getTableName();
                 }
             }
-
+            
             return static::$resolvedTableNames[$selector] = $selector;
         }
-
+        
         throw new InvalidArgumentException('Could not convert the given selector: ' . $selector
                                            . ' into a database table name!');
     }
-
+    
     /**
      * Resolves the given callable into an actual callable.
      *
@@ -268,7 +268,7 @@ class NamingUtil
             if (is_callable($callable)) {
                 return $callable;
             }
-
+            
             // Resolve a list of multiple callables -> FlexForms
             if (strpos($callable, ';') !== false) {
                 return array_map(
@@ -276,7 +276,7 @@ class NamingUtil
                     array_filter(array_map('trim', explode(';', $callable)))
                 );
             }
-
+            
             // Resolve typo callable
             if (strpos($callable, '->') !== false) {
                 $parts = explode('->', $callable);
@@ -286,37 +286,37 @@ class NamingUtil
                         . '". It has to be something like: namespace\\class->method'
                     );
                 }
-
+                
                 $callable = [
                     trim(str_replace('/', '\\', $parts[0]), '\\ '),
                     trim($parts[1], ' \\/()'),
                 ];
             }
         }
-
+        
         if (is_array($callable) && count($callable) === 2) {
             // Already a callable using an instance, or instantiation disabled
             if (is_callable($callable) && (is_object($callable[0]) || ! $instantiateIfRequired)) {
                 return $callable;
             }
-
+            
             // Check if we have to instantiate the class first
             if (! (new ReflectionMethod($callable[0], $callable[1]))->isStatic()) {
-                $di        = TypoContext::getInstance()->di();
+                $di = TypoContext::getInstance()->di();
                 $container = $di->getContainer();
-
+                
                 return [
                     $container->has($callable[0]) ? $container->get($callable[0]) : $di->makeInstance($callable[0]),
                     $callable[1],
                 ];
             }
         }
-
+        
         if (! is_callable($callable)) {
             throw new InvalidArgumentException('Could not resolve the given callable into an actual callable!');
         }
-
+        
         return $callable;
     }
-
+    
 }

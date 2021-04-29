@@ -26,7 +26,7 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
 class BeUserAspect extends AbstractBetterUserAspect implements PublicServiceInterface
 {
-
+    
     /**
      * Returns the frontend user authentication object
      *
@@ -39,10 +39,10 @@ class BeUserAspect extends AbstractBetterUserAspect implements PublicServiceInte
         if (empty($user)) {
             throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
         }
-
+        
         return $user;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -50,7 +50,7 @@ class BeUserAspect extends AbstractBetterUserAspect implements PublicServiceInte
     {
         return 'backend.user';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -66,7 +66,7 @@ class BeUserAspect extends AbstractBetterUserAspect implements PublicServiceInte
         if (! empty($GLOBALS['BE_USER'])) {
             return $this->resolvedUser = $GLOBALS['BE_USER'];
         }
-
+        
         return $user;
     }
 }

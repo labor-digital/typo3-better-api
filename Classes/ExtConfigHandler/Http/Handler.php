@@ -29,7 +29,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractSimpleExtConfigHandler
 {
     protected $configureMethod = 'configureHttp';
-
+    
     /**
      * @inheritDoc
      */
@@ -38,7 +38,7 @@ class Handler extends AbstractSimpleExtConfigHandler
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureHttpInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -46,7 +46,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return HttpConfigurator::class;
     }
-
+    
     /**
      * @inheritDoc
      */

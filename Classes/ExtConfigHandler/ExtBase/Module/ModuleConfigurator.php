@@ -26,7 +26,7 @@ use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
 
 class ModuleConfigurator extends AbstractConfigurator
 {
-
+    
     /**
      * One of file, help, system, tools, user or web.
      * Defines the section of the left main menu where the module should be registered to.
@@ -34,7 +34,7 @@ class ModuleConfigurator extends AbstractConfigurator
      * @var string
      */
     protected $section = 'web';
-
+    
     /**
      * Optional position of the module inside the selected section.
      * The position is relative to another module key like before:key or after:key
@@ -42,7 +42,7 @@ class ModuleConfigurator extends AbstractConfigurator
      * @var string|null
      */
     protected $position;
-
+    
     /**
      * Optional path like EXT:extkey... that defines the translation file for this module. If this option is empty a
      * translation file will automatically be created for you. You may also supply the name of a registered translation
@@ -51,14 +51,14 @@ class ModuleConfigurator extends AbstractConfigurator
      * @var string
      */
     protected $translationFile;
-
+    
     /**
      * Defines which type of user can access the module
      *
      * @var array
      */
     protected $access = ['user', 'group'];
-
+    
     /**
      * Can be used to add additional options to the module definition. This can be useful if there are options that are
      * not implemented by this interface.
@@ -66,26 +66,26 @@ class ModuleConfigurator extends AbstractConfigurator
      * @var array
      */
     protected $additionalOptions = [];
-
+    
     /**
      * The module key of this backend module
      *
      * @var string
      */
     protected $moduleKey;
-
+    
     /**
      * @inheritDoc
      */
     public function __construct(string $signature, string $pluginName, ExtConfigContext $context)
     {
         parent::__construct($signature, $pluginName, $context);
-
-        $this->moduleKey       = explode('_', $this->signature)[1];
+        
+        $this->moduleKey = explode('_', $this->signature)[1];
         $this->translationFile = 'LLL:EXT:' . $context->getExtKey() .
                                  '/Resources/Private/Language/locallang_mod_' . strtolower($pluginName) . '.xlf';
     }
-
+    
     /**
      * Returns the section of the left main menu where the module should be registered to.
      *
@@ -95,7 +95,7 @@ class ModuleConfigurator extends AbstractConfigurator
     {
         return $this->section;
     }
-
+    
     /**
      * Sets the section of the left main menu where the module should be registered to.
      * One of file, help, system, tools, user or web.
@@ -107,10 +107,10 @@ class ModuleConfigurator extends AbstractConfigurator
     public function setSection(string $section): ModuleConfigurator
     {
         $this->section = $section;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the position relative to another module key like before:key or after:key
      *
@@ -120,7 +120,7 @@ class ModuleConfigurator extends AbstractConfigurator
     {
         return $this->position;
     }
-
+    
     /**
      * Sets the position relative to another module key like before:key or after:key
      *
@@ -131,10 +131,10 @@ class ModuleConfigurator extends AbstractConfigurator
     public function setPosition(?string $position): ModuleConfigurator
     {
         $this->position = $position;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the translation file for this module
      *
@@ -144,7 +144,7 @@ class ModuleConfigurator extends AbstractConfigurator
     {
         return $this->translationFile;
     }
-
+    
     /**
      * Sets the translation file for this module
      *
@@ -155,10 +155,10 @@ class ModuleConfigurator extends AbstractConfigurator
     public function setTranslationFile(string $translationFile): ModuleConfigurator
     {
         $this->translationFile = $translationFile;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns which type of user can access the module
      *
@@ -168,7 +168,7 @@ class ModuleConfigurator extends AbstractConfigurator
     {
         return $this->access;
     }
-
+    
     /**
      * Sets which type of user can access the module
      *
@@ -179,10 +179,10 @@ class ModuleConfigurator extends AbstractConfigurator
     public function setAccess(array $access): ModuleConfigurator
     {
         $this->access = $access;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns additional options to the module definition.
      *
@@ -192,7 +192,7 @@ class ModuleConfigurator extends AbstractConfigurator
     {
         return $this->additionalOptions;
     }
-
+    
     /**
      * Can be used to set additional options to the module definition.
      *
@@ -203,10 +203,10 @@ class ModuleConfigurator extends AbstractConfigurator
     public function setAdditionalOptions(array $additionalOptions): ModuleConfigurator
     {
         $this->additionalOptions = $additionalOptions;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the module key of this backend module
      *

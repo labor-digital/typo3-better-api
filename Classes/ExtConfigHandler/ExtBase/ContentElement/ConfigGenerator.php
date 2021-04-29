@@ -35,36 +35,37 @@ class ConfigGenerator extends AbstractElementConfigGenerator
     {
         return ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT;
     }
-
+    
     protected function setRegistrationArgs(
         array &$list,
         string $extensionName,
         ExtConfigContext $context,
         AbstractElementConfigurator $configurator
-    ): void {
+    ): void
+    {
         if (! $configurator instanceof ContentElementConfigurator) {
             return;
         }
-
+        
         $list['ce'][] = array_values([
             'sectionLabel' => empty($configurator->getCTypeSection()) ?
                 Inflector::toHuman($context->getExtKey()) : $configurator->getCTypeSection(),
-            'title'        => $configurator->getTitle(),
-            'signature'    => $configurator->getSignature(),
-            'icon'         => $this->makeIconIdentifier($configurator, $context),
+            'title' => $configurator->getTitle(),
+            'signature' => $configurator->getSignature(),
+            'icon' => $this->makeIconIdentifier($configurator, $context),
         ]);
     }
-
+    
     protected function getCeWizardValues(string $signature): string
     {
         return 'CType = ' . $signature;
     }
-
+    
     protected function setPreviewHooks(array &$list, string $signature, string $class): void
     {
         $list[$signature]['previewRenderer'] = $class;
     }
-
+    
     protected function getFlexFormCType(string $signature): string
     {
         return $signature;

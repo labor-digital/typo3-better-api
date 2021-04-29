@@ -38,33 +38,33 @@ class FileInfo
      * @var VideoFileInfo|ImageFileInfo
      */
     protected $nestedInfo;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Fal\FalService
      */
     protected $falService;
-
+    
     /**
      * The file resource instance to gather the information for
      *
      * @var File
      */
     protected $file;
-
+    
     /**
      * Either the instance of the processed file or null if the file was not processed
      *
      * @var ProcessedFile|null
      */
     protected $processedFile;
-
+    
     /**
      * The file reference instance or null if a file was given without reference
      *
      * @var FileReference|null
      */
     protected $fileReference;
-
+    
     /**
      * FileInfo constructor.
      *
@@ -76,7 +76,7 @@ class FileInfo
     public function __construct($file, FalService $falService)
     {
         $this->falService = $falService;
-
+        
         // Handle a processed file
         if ($file instanceof ProcessedFile) {
             $this->processedFile = $file;
@@ -86,48 +86,48 @@ class FileInfo
                 $file = $file->getOriginalFile();
             }
         }
-
+        
         // Try to load from database if a numeric value or string was passed
         if (is_numeric($file) || is_string($file)) {
             $file = $falService->getFile($file);
         }
-
+        
         // Fail
         if (! is_object($file)) {
             throw new FalException('Could not retrieve a file for the given selector!');
         }
-
+        
         // Handle lazy objects
         $file = LazyLoadingUtil::getRealValue($file);
-
+        
         // Handle object storage
         if ($file instanceof ObjectStorage) {
             $file->rewind();
             $file = $file->current();
         }
-
+        
         // Handle ext base wrapping
         if ($file instanceof \TYPO3\CMS\Extbase\Domain\Model\FileReference) {
             $file = $file->getOriginalResource();
         }
-
+        
         // Get the file reference
         if ($file instanceof FileReference) {
             $this->fileReference = $file;
-            $file                = $file->getOriginalFile();
+            $file = $file->getOriginalFile();
         }
-
+        
         // Get the file itself
         if ($file instanceof File) {
             $this->file = $file;
-
+            
             return;
         }
-
+        
         // Die
         throw new FalException('Could not retrieve a valid file or file reference for the given selector!');
     }
-
+    
     /**
      * Returns true if the file is handled as a "sys-file-reference" object
      *
@@ -137,7 +137,7 @@ class FileInfo
     {
         return isset($this->fileReference);
     }
-
+    
     /**
      * Returns true if the handled file is a processed file instance
      *
@@ -147,7 +147,7 @@ class FileInfo
     {
         return isset($this->processedFile);
     }
-
+    
     /**
      * Returns the unique id of either the file reference or the file
      *
@@ -157,7 +157,7 @@ class FileInfo
     {
         return $this->isFileReference() ? $this->fileReference->getUid() : $this->file->getUid();
     }
-
+    
     /**
      * Returns either the uid of the handled file reference or null if the file is not a file reference
      *
@@ -167,7 +167,7 @@ class FileInfo
     {
         return $this->isFileReference() ? $this->fileReference->getUid() : null;
     }
-
+    
     /**
      * Returns the uid if the low level file object
      *
@@ -177,7 +177,7 @@ class FileInfo
     {
         return $this->file->getUid();
     }
-
+    
     /**
      * Returns a cache buster string for the file
      *
@@ -193,10 +193,10 @@ class FileInfo
                 $this->file->getProperty('size') .
                 $this->file->getProperty('modification_date') .
                 $this->file->getProperty('folder_hash');
-
+        
         return md5($hash);
     }
-
+    
     /**
      * Returns the base name of the current file name
      *
@@ -206,7 +206,7 @@ class FileInfo
     {
         return $this->file->getName();
     }
-
+    
     /**
      * Returns the url of the file handled as absolute url
      *
@@ -222,10 +222,10 @@ class FileInfo
         } else {
             $url = $this->file->getPublicUrl();
         }
-
+        
         return FalFileUrlUtil::makeAbsoluteUrl($url . ($withHash ? '?hash=' . $this->getHash() : ''));
     }
-
+    
     /**
      * Similar to getUrl() but always returns the default url even if the current file is a processed file instance
      *
@@ -239,17 +239,17 @@ class FileInfo
         if (! $this->isProcessed()) {
             return $this->getUrl($withHash);
         }
-
+        
         // Handle processed file
-        $backupProcessed     = $this->processedFile;
+        $backupProcessed = $this->processedFile;
         $this->processedFile = null;
-        $url                 = $this->getUrl($withHash);
+        $url = $this->getUrl($withHash);
         $this->processedFile = $backupProcessed;
         unset($backupProcessed);
-
+        
         return $url;
     }
-
+    
     /**
      * Returns the mime type of the file
      *
@@ -259,7 +259,7 @@ class FileInfo
     {
         return $this->isProcessed() ? $this->processedFile->getMimeType() : $this->file->getProperty('mime_type');
     }
-
+    
     /**
      * Returns the size of the handled file in bytes
      *
@@ -269,7 +269,7 @@ class FileInfo
     {
         return $this->isProcessed() ? $this->processedFile->getSize() : $this->file->getProperty('size');
     }
-
+    
     /**
      * Returns the file extension of the handled file
      *
@@ -279,7 +279,7 @@ class FileInfo
     {
         return $this->isProcessed() ? $this->processedFile->getExtension() : $this->file->getProperty('extension');
     }
-
+    
     /**
      * Returns the file type as they are defined in the File::FILETYPE_ constants
      *
@@ -289,7 +289,7 @@ class FileInfo
     {
         return $this->file->getType();
     }
-
+    
     /**
      * Returns true if the handled file is an image
      *
@@ -299,7 +299,7 @@ class FileInfo
     {
         return $this->getType() === File::FILETYPE_IMAGE;
     }
-
+    
     /**
      * Returns true if the handled file is a video reference
      *
@@ -309,7 +309,7 @@ class FileInfo
     {
         return $this->getType() === File::FILETYPE_VIDEO;
     }
-
+    
     /**
      * Returns the raw file instance this information object represents
      *
@@ -319,7 +319,7 @@ class FileInfo
     {
         return $this->file;
     }
-
+    
     /**
      * Returns either the currently linked file reference or null if there is none
      *
@@ -329,7 +329,7 @@ class FileInfo
     {
         return $this->isFileReference() ? $this->fileReference : null;
     }
-
+    
     /**
      * Returns either the processed file object or null if the file was not processed
      *
@@ -339,7 +339,7 @@ class FileInfo
     {
         return $this->isProcessed() ? $this->processedFile : null;
     }
-
+    
     /**
      * Returns either additional information if this file is a video or null if this file is not a video
      *
@@ -350,11 +350,11 @@ class FileInfo
         if (! $this->isVideo()) {
             return null;
         }
-
+        
         return $this->nestedInfo ??
                $this->nestedInfo = GeneralUtility::makeInstance(VideoFileInfo::class, $this);
     }
-
+    
     /**
      * Returns either additional information if this file is an image or null if this file is not an image
      *
@@ -365,7 +365,7 @@ class FileInfo
         if (! $this->isImage()) {
             return null;
         }
-
+        
         return $this->nestedInfo ??
                $this->nestedInfo = GeneralUtility::makeInstance(ImageFileInfo::class, $this, $this->falService);
     }

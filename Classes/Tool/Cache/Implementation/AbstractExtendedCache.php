@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Cache\Implementation;
 
 
+use Closure;
 use LaborDigital\T3BA\Tool\Cache\CacheInterface;
 use LaborDigital\T3BA\Tool\Cache\InvalidArgumentException;
 use LaborDigital\T3BA\Tool\Cache\KeyGenerator\ArrayBasedCacheKeyGenerator;
@@ -41,12 +42,12 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @var FrontendInterface
      */
     protected $concreteFrontend;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface
      */
     protected $environmentCacheKeyGenerator;
-
+    
     /**
      * This is a list of keys that have been set and therefore are able to access the cached value.
      * This allows us to block all cache requests when an "update" is requested, until a key was set,
@@ -55,16 +56,17 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @var array
      */
     protected $keysThatWereSet = [];
-
-
+    
+    
     public function __construct(
         FrontendInterface $concreteFrontend,
         CacheKeyGeneratorInterface $environmentCacheKeyGenerator
-    ) {
-        $this->concreteFrontend             = $concreteFrontend;
+    )
+    {
+        $this->concreteFrontend = $concreteFrontend;
         $this->environmentCacheKeyGenerator = $environmentCacheKeyGenerator;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -72,17 +74,17 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->remove($key);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function clear(): bool
     {
         $this->flush();
-
+        
         return true;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -91,12 +93,12 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if (! is_iterable($keys)) {
             throw new InvalidArgumentException('The given $keys are not iterable');
         }
-
+        
         foreach ($keys as $key) {
             yield $this->get($key, $default);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -105,12 +107,12 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if (! is_iterable($values)) {
             throw new InvalidArgumentException('The given $values are not iterable');
         }
-
+        
         foreach ($values as $key => $value) {
             $this->set($key, $value, $ttl);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -119,15 +121,15 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if (! is_iterable($keys)) {
             throw new InvalidArgumentException('The given $keys are not iterable');
         }
-
+        
         $result = true;
         foreach ($keys as $key) {
             $result = $result && $this->delete($key);
         }
-
+        
         return $result;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -135,7 +137,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->concreteFrontend->getIdentifier();
     }
-
+    
     /**
      * Returns the TYPO3 cache object that gets wrapped by this instance
      *
@@ -145,7 +147,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->concreteFrontend;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -153,7 +155,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->concreteFrontend->getBackend();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -166,20 +168,20 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             } elseif (is_int($tagsOrLifetime)) {
                 $lifetime = $tagsOrLifetime;
             }
-
+            
             $res = $this->concreteFrontend->set(
                 $this->prepareIdentifier($entryIdentifier),
                 $data,
                 $this->prepareTags($tags),
                 $lifetime
             );
-
+            
             return $res ?? true;
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -188,15 +190,15 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if ($this->isUpdate() && ! in_array($entryIdentifier, $this->keysThatWereSet, true)) {
             return $default;
         }
-
+        
         $entryIdentifier = $this->prepareIdentifier($entryIdentifier);
         if ($this->concreteFrontend->has($entryIdentifier)) {
             return $this->concreteFrontend->get($entryIdentifier);
         }
-
+        
         return $default;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -205,14 +207,14 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if ($this->isUpdate() && ! in_array($entryIdentifier, $this->keysThatWereSet, true)) {
             return false;
         }
-
+        
         try {
             return $this->concreteFrontend->has($this->prepareIdentifier($entryIdentifier));
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -224,17 +226,17 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
     public function flush(): bool
     {
         $this->concreteFrontend->flush();
-
+        
         return true;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -242,7 +244,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->flushByTags([$tag]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -250,13 +252,13 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         try {
             $this->concreteFrontend->flushByTags($this->prepareTags($tags));
-
+            
             return true;
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -264,7 +266,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->concreteFrontend->collectGarbage();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -272,7 +274,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     {
         return $this->concreteFrontend->isValidEntryIdentifier($this->prepareIdentifier($identifier));
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -282,10 +284,10 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         foreach ($this->prepareTags($tag) as $_tag) {
             $valid = $valid && $this->concreteFrontend->isValidTag($_tag);
         }
-
+        
         return $valid;
     }
-
+    
     /**
      * Helper to make sure the cache key is no longer than 128 characters
      *
@@ -298,15 +300,15 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if (! is_string($entryIdentifier) && ! is_numeric($entryIdentifier)) {
             return $entryIdentifier;
         }
-
+        
         $entryIdentifier = Inflector::toFile($entryIdentifier);
         if (strlen($entryIdentifier) <= 128) {
             return $entryIdentifier;
         }
-
+        
         return substr($entryIdentifier, 0, 128 - 32 - 1) . '-' . md5($entryIdentifier);
     }
-
+    
     /**
      * The given $callback is called once and then cached. All subsequent calls
      * will then first try to serve the cached value instead of calling $callback again.
@@ -346,65 +348,65 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     public function remember(callable $callback, ?array $keyArgs = null, array $options = [])
     {
         $options = Options::make($options, $this->getRememberOptions($callback, $keyArgs));
-
+        
         if ($options['enabled'] === false) {
             return $callback();
         }
-
+        
         $identifier = $this->getCacheKey($options['keyGenerator'], $options['useEnvironment']);
-
+        
         if ($this->has($identifier)) {
             $value = $this->get($identifier);
-
+            
             $value = $this->beforeWarmup($value, $options);
-
+            
             if ($options['onWarmup'] !== null) {
                 $value = call_user_func($options['onWarmup'], $value);
             }
-
+            
             return $value;
         }
-
-        $tags    = empty($options['tags']) ? $this->prepareTags($keyArgs) : $options['tags'];
-        $ttl     = null;
+        
+        $tags = empty($options['tags']) ? $this->prepareTags($keyArgs) : $options['tags'];
+        $ttl = null;
         $enabled = true;
-        $value   = $this->wrapGeneratorCall(function (?int &$ttl, bool &$enabled) use ($callback, $options) {
+        $value = $this->wrapGeneratorCall(function (?int &$ttl, bool &$enabled) use ($callback, $options) {
             $value = $callback();
-
+            
             if (is_bool($options['enabled'])) {
                 $enabled = $options['enabled'];
             } elseif (is_callable($options['enabled'])) {
                 $enabled = (bool)call_user_func($options['enabled'], $value);
             }
-
+            
             if (is_int($options['ttl'])) {
                 $ttl = $options['ttl'];
             } elseif (is_callable($options['ttl'])) {
                 $_ttl = call_user_func($options['ttl'], $value);
-                $ttl  = $_ttl === null ? null : (int)$_ttl;
+                $ttl = $_ttl === null ? null : (int)$_ttl;
                 unset($_ttl);
             }
-
+            
             return $value;
         }, $options, $tags, $ttl, $enabled);
-
+        
         // Skip, if the the caching was disabled on the fly
         if (! $enabled) {
             return $value;
         }
-
+        
         $frozen = $value;
         if ($options['onFreeze'] !== null) {
             $frozen = call_user_func($options['onFreeze'], $frozen);
         }
-
+        
         $frozen = $this->afterFreeze($frozen, $value, $options, $tags, $ttl);
-
+        
         $this->set($identifier, $frozen, $tags, $ttl);
-
+        
         return $value;
     }
-
+    
     /**
      * Generates a cache key, the same way remember() does.
      *
@@ -424,17 +426,17 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             $key = GeneralUtility::makeInstance(ArrayBasedCacheKeyGenerator::class,
                 is_array($keyArgsOrGenerator) ? $keyArgsOrGenerator : [$keyArgsOrGenerator]);
         }
-
+        
         if ($withEnvironment === null) {
             $withEnvironment = $this->useEnvironment();
         }
-
+        
         return md5(static::class . implode('.', [
                 $key,
                 $withEnvironment ? $this->environmentCacheKeyGenerator->makeCacheKey() : '-1',
             ]));
     }
-
+    
     /**
      * Hook method for child classes to implement. If this method returns true, the cache is not
      * retrieved but written. This allows to force-refresh the cache
@@ -443,7 +445,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @see remember()
      */
     protected function isUpdate(): bool { return false; }
-
+    
     /**
      * Hook method for child classes to implement. If this method returns true, the
      * cache keys get automatically include environment specific arguments.
@@ -452,7 +454,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @see remember()
      */
     protected function useEnvironment(): bool { return false; }
-
+    
     /**
      * Hook method for child classes to implement. Allows children to wrap the generator
      * with additional code.
@@ -467,15 +469,16 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @see remember()
      */
     protected function wrapGeneratorCall(
-        \Closure $generator,
+        Closure $generator,
         array $options,
         array &$tags,
         ?int &$lifetime,
         bool &$enabled
-    ) {
+    )
+    {
         return $generator($lifetime, $enabled);
     }
-
+    
     /**
      * Hook method for child classes to implement. Allows your child to modify a value
      * that was retrieved from the cache
@@ -487,7 +490,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @see remember()
      */
     protected function beforeWarmup($value, array $options) { return $value; }
-
+    
     /**
      * Hook method for child classes to implement. Allows your child to modify a value
      * right before it will be stored into the cache
@@ -501,7 +504,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @return mixed
      */
     protected function afterFreeze($frozen, $value, array $options, array &$tags, ?int &$lifetime) { return $frozen; }
-
+    
     /**
      * Hook method to build the option definition for the remember() method.
      * Can be extended by child classes.
@@ -515,43 +518,43 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     protected function getRememberOptions(callable $callback, ?array $keyArgs): array
     {
         return [
-            'lifetime'       => [
-                'type'    => ['int', 'null', 'callable'],
+            'lifetime' => [
+                'type' => ['int', 'null', 'callable'],
                 'default' => null,
             ],
-            'enabled'        => [
-                'type'    => ['bool', 'callable'],
+            'enabled' => [
+                'type' => ['bool', 'callable'],
                 'default' => true,
             ],
-            'keyGenerator'   => [
-                'type'    => CacheKeyGeneratorInterface::class,
+            'keyGenerator' => [
+                'type' => CacheKeyGeneratorInterface::class,
                 'default' => function () use ($callback, $keyArgs) {
                     if (is_array($keyArgs)) {
                         return GeneralUtility::makeInstance(ArrayBasedCacheKeyGenerator::class, $keyArgs);
                     }
-
+                    
                     return GeneralUtility::makeInstance(CallableCacheKeyGenerator::class, $callback);
                 },
             ],
             'useEnvironment' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => $this->useEnvironment(),
             ],
-            'tags'           => [
-                'type'    => 'array',
+            'tags' => [
+                'type' => 'array',
                 'default' => [],
             ],
-            'onFreeze'       => [
-                'type'    => ['callable', 'null'],
+            'onFreeze' => [
+                'type' => ['callable', 'null'],
                 'default' => null,
             ],
-            'onWarmup'       => [
-                'type'    => ['callable', 'null'],
+            'onWarmup' => [
+                'type' => ['callable', 'null'],
                 'default' => null,
             ],
         ];
     }
-
+    
     /**
      * Converts A valid tag into a list of tags.
      *
@@ -564,16 +567,16 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         if ($tags === null) {
             return [];
         }
-
+        
         if (! is_array($tags)) {
             $tags = [$tags];
         }
-
+        
         $filtered = [];
         foreach ($tags as $tag) {
             $filtered[] = CacheUtil::stringifyTag($tag);
         }
-
+        
         return array_merge(...$filtered);
     }
 }

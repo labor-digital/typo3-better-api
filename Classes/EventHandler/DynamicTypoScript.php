@@ -34,7 +34,7 @@ class DynamicTypoScript implements LazyEventSubscriberInterface
      * @var \LaborDigital\T3BA\Tool\TypoScript\DynamicTypoScriptRegistry
      */
     protected $registry;
-
+    
     /**
      * DynamicTypoScriptHandler constructor.
      *
@@ -44,7 +44,7 @@ class DynamicTypoScript implements LazyEventSubscriberInterface
     {
         $this->registry = $registry;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -52,7 +52,7 @@ class DynamicTypoScript implements LazyEventSubscriberInterface
     {
         $subscription->subscribe(FileImportFilterEvent::class, 'onTypoScriptFileImport');
     }
-
+    
     /**
      * Watches imported typo script files (only with the new @import notation) getting included
      * and handles the rewrite of the filename to our dynamic typo script file

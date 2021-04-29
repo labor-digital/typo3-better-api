@@ -37,19 +37,19 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
 {
     use RouteEnhancerSchemaTrait;
     use RouteEnhancerConfigTrait;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Site\Entity\Site
      */
     protected $site;
-
+    
     /**
      * The list of registered route enhancers
      *
      * @var array
      */
     protected $routeEnhancers = [];
-
+    
     /**
      * HttpConfigurator constructor.
      *
@@ -57,10 +57,10 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
      */
     public function __construct(Site $site)
     {
-        $this->site           = $site;
+        $this->site = $site;
         $this->routeEnhancers = $site->getConfiguration()['routeEnhancers'] ?? [];
     }
-
+    
     /**
      * Returns true if a route enhancer with the given key exists either in this configuration or the site.yml
      *
@@ -72,13 +72,13 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     {
         try {
             $this->getRouteEnhancer($key);
-
+            
             return true;
         } catch (NotFoundException $e) {
             return true;
         }
     }
-
+    
     /**
      * Returns the raw route enhancer configuration for a specified key
      *
@@ -90,14 +90,14 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     public function getRouteEnhancer(string $key): array
     {
         $key = $this->context->replaceMarkers($key);
-
+        
         if (! isset($this->routeEnhancers[$key])) {
             throw new NotFoundException('There is no registered route enhancer with key: ' . $key);
         }
-
+        
         return $this->routeEnhancers[$key];
     }
-
+    
     /**
      * Registers a raw route enhancer configuration, like you would in your site.yml.
      *
@@ -113,10 +113,10 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     public function setRouteEnhancer(string $key, array $config): self
     {
         $this->routeEnhancers[$this->context->replaceMarkers($key)] = $this->context->replaceMarkers($config);
-
+        
         return $this;
     }
-
+    
     /**
      * Removes a previously registered route enhancer.
      * This will also remove route enhancers configured in your site.yml!
@@ -128,10 +128,10 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     public function removeRouteEnhancer(string $key): self
     {
         unset($this->routeEnhancers[$this->context->replaceMarkers($key)]);
-
+        
         return $this;
     }
-
+    
     /**
      * Creates a route enhancement for a simple pagination.
      * The route will look like /{page} so page is the property that will end up in your queryArguments
@@ -152,18 +152,18 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         $this->routeEnhancers[$this->context->replaceMarkers($key)]
             = $this->mergeConfig(
             [
-                'routePath'    => '/{page}',
+                'routePath' => '/{page}',
                 'requirements' => [
                     'page' => '\\d+',
                 ],
-                'defaults'     => [
+                'defaults' => [
                     'page' => '1',
                 ],
-                'aspects'      => [
+                'aspects' => [
                     'page' => [
-                        'type'  => 'StaticRangeMapper',
+                        'type' => 'StaticRangeMapper',
                         'start' => '1',
-                        'end'   => '999',
+                        'end' => '999',
                     ],
                 ],
             ],
@@ -174,10 +174,10 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
                 $this->getDefaultSchema()
             )
         );
-
+        
         return $this;
     }
-
+    
     /**
      * Similar to registerPagination, but creates a pagination route enhancer for an extbase plugin instead.
      * If you already have a route enhancer for the same plugin, you should use the "additional" option instead.
@@ -208,21 +208,22 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         string $actionName,
         array $pids,
         array $options = []
-    ): self {
+    ): self
+    {
         $options = Options::make(
             $this->context->replaceMarkers(
                 array_merge($options, [
-                    'pids'       => $pids,
+                    'pids' => $pids,
                     'controller' => $controllerClass,
-                    'action'     => $actionName,
+                    'action' => $actionName,
                 ])
             ),
             $this->getExtBaseSchema([
-                'routePath'    => [
+                'routePath' => [
                     'default' => '/page/{page}',
                 ],
-                'additional'   => '__UNSET',
-                'arguments'    => [
+                'additional' => '__UNSET',
+                'arguments' => [
                     'default' => ['page' => 'page'],
                 ],
                 'requirements' => [
@@ -230,9 +231,9 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
                 ],
             ])
         );
-
+        
         $key = $this->context->replaceMarkers($key);
-
+        
         $this->registerExtbasePlugin(
             $key,
             $options['routePath'],
@@ -242,31 +243,31 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
                 $options,
                 [
                     'rawOverride' => [],
-                    'additional'  => [
+                    'additional' => [
                         // We abuse the "pagination" feature of the additional route option here
                         // We will remove the second route again below
                         [$options['routePath'], $options['arguments']],
                     ],
-                    'arguments'   => [],
+                    'arguments' => [],
                 ]
             )
         );
-
+        
         $c = &$this->routeEnhancers[$key]['routes'];
-
+        
         $c[0]['_arguments'] = $c[1]['_arguments'];
         array_pop($c);
-
+        
         $this->routeEnhancers[$key] = Arrays::merge(
             $this->routeEnhancers[$key],
             $options['rawOverride'],
             'nn', 'r'
         );
-
+        
         return $this;
-
+        
     }
-
+    
     /**
      * Creates a route enhancement that works with values, either static (StaticValueMapper) or fetched from the
      * database (PersistedAliasMapper). It requires you to define a route path that contains the part definition
@@ -318,21 +319,22 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         string $routePath,
         array $pids,
         array $options = []
-    ): self {
+    ): self
+    {
         $options = Options::make(
             $this->context->replaceMarkers(
                 array_merge($options, ['pids' => $pids, 'routePath' => $routePath])
             ), $this->getRoutePathSchema()
         );
-
+        
         $this->routeEnhancers[$this->context->replaceMarkers($key)] = $this->mergeConfig([
-            'routePath'    => $options['routePath'],
+            'routePath' => $options['routePath'],
             'requirements' => $options['requirements'],
         ], $options);
-
+        
         return $this;
     }
-
+    
     /**
      * Works exactly the same way registerValueRoute does() but is designed specially for ext base plugins.
      *
@@ -408,71 +410,72 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
         string $actionName,
         array $pids,
         array $options = []
-    ): self {
+    ): self
+    {
         $options = Options::make(
             $this->context->replaceMarkers(
                 array_merge($options, [
-                    'pids'       => $pids,
-                    'routePath'  => $routePath,
+                    'pids' => $pids,
+                    'routePath' => $routePath,
                     'controller' => $controllerClass,
-                    'action'     => $actionName,
+                    'action' => $actionName,
                 ])
             ), $this->getExtBaseSchema()
         );
-
+        
         $controllerDefinition = NamingUtil::controllerAliasFromClass($options['controller'])
                                 . '::' . $options['action'];
-
+        
         $config = [
-            'type'              => 'Extbase',
-            'extension'         => $options['extension'],
-            'plugin'            => $options['plugin'],
-            'requirements'      => $options['requirements'],
-            'routes'            => [
+            'type' => 'Extbase',
+            'extension' => $options['extension'],
+            'plugin' => $options['plugin'],
+            'requirements' => $options['requirements'],
+            'routes' => [
                 array_filter([
-                    'routePath'   => $options['routePath'],
+                    'routePath' => $options['routePath'],
                     '_controller' => $controllerDefinition,
-                    '_arguments'  => $options['arguments'],
+                    '_arguments' => $options['arguments'],
                 ]),
             ],
             'defaultController' => $controllerDefinition,
         ];
-
+        
         if (! empty($options['additional'])) {
             foreach ($options['additional'] as $route) {
                 $isPaginatorRoute = isset($route[1]['page']);
-
+                
                 if ($isPaginatorRoute) {
-                    $options['defaults']['page']     = $options['defaults']['page'] ?? 0;
+                    $options['defaults']['page'] = $options['defaults']['page'] ?? 0;
                     $options['requirements']['page'] = $options['requirements']['page'] ?? '\\d+';
-
+                    
                     if ($route[1]['page'] === 'page') {
                         $route[1]['page'] = '@widget_0/currentPage';
                     }
-
+                    
                     if (! isset($config['aspects']['page'])) {
                         $config['aspects']['page'] = [
-                            'type'  => 'StaticRangeMapper',
+                            'type' => 'StaticRangeMapper',
                             'start' => '1',
-                            'end'   => '999',
+                            'end' => '999',
                         ];
                     }
                 }
-
-                $realRoutePath      = rtrim($options['routePath'], '/ ') . '/' . trim($route[0], '/ ');
+                
+                $realRoutePath = rtrim($options['routePath'], '/ ') . '/' . trim($route[0], '/ ');
                 $config['routes'][] = array_filter([
-                    'routePath'   => $realRoutePath,
+                    'routePath' => $realRoutePath,
                     '_controller' => $controllerDefinition,
-                    '_arguments'  => array_merge($options['arguments'], $route[1]),
+                    '_arguments' => array_merge($options['arguments'], $route[1]),
                 ]);
             }
         }
-
-        $this->routeEnhancers[$this->context->replaceMarkers($key)] = $this->mergeConfig($config, $options);;
-
+        
+        $this->routeEnhancers[$this->context->replaceMarkers($key)] = $this->mergeConfig($config, $options);
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */

@@ -33,7 +33,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Relations extends AbstractFieldPreset
 {
-
+    
     /**
      * Converts your field into a category field. That's it actually...
      * For further details on what categories are and how they work take a look at:
@@ -65,11 +65,11 @@ class Relations extends AbstractFieldPreset
                 $this->addMinMaxItemOptions(
                     [
                         'limitToPids' => [
-                            'type'    => ['bool', 'int', 'string', 'array'],
+                            'type' => ['bool', 'int', 'string', 'array'],
                             'default' => true,
                         ],
-                        'sideBySide'  => [
-                            'type'    => 'bool',
+                        'sideBySide' => [
+                            'type' => 'bool',
                             'default' => false,
                         ],
                     ]
@@ -77,48 +77,48 @@ class Relations extends AbstractFieldPreset
                 ['required']
             )
         );
-
+        
         // Prepare the config
-        $config         = CategoryRegistry::getTcaFieldConfiguration($this->getTcaTable()->getTableName(),
+        $config = CategoryRegistry::getTcaFieldConfiguration($this->getTcaTable()->getTableName(),
             $this->field->getId());
         $config['size'] = 7;
-
+        
         // Prepare the pid limiter
         if (! empty($options['limitToPids'])) {
             $pidSelector = '';
-
+            
             if (is_array($options['limitToPids'])) {
                 $options['limitToPids'] = implode(',', $options['limitToPids']);
             }
-
+            
             if (is_string($options['limitToPids'])
                 && ! empty($tmp = $this->context->getExtConfigContext()->getTypoContext()->pid()
                                                 ->get($options['limitToPids'], 0))) {
                 $pidSelector = ' = ' . $tmp;
             }
-
+            
             if (empty($pidSelector) && (is_string($options['limitToPids']) || is_numeric($options['limitToPids']))) {
                 $pidSelector = ' IN (' . $options['limitToPids'] . ')';
             }
-
+            
             if ($options['limitToPids'] === true) {
                 $pidSelector = ' = ###CURRENT_PID###';
             }
-
+            
             $config['foreign_table_where'] = ' AND sys_category.pid' . $pidSelector . $config['foreign_table_where'];
         }
-
+        
         // Apply defaults
         $config = $this->addMinMaxItemConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
-
+        
         // Convert the render type if required
         if ($options['sideBySide']) {
             $config['renderType'] = 'selectMultipleSideBySide';
         }
-
+        
         // Register opposite references for the foreign side of a relation
-        $path           = [
+        $path = [
             'TCA',
             'sys_category',
             'columns',
@@ -127,22 +127,22 @@ class Relations extends AbstractFieldPreset
             'MM_oppositeUsage',
             $this->getTcaTable()->getTableName(),
         ];
-        $fieldList      = Arrays::getPath($GLOBALS, $path, []);
-        $fieldList[]    = $this->field->getId();
-        $fieldList      = array_unique($fieldList);
+        $fieldList = Arrays::getPath($GLOBALS, $path, []);
+        $fieldList[] = $this->field->getId();
+        $fieldList = array_unique($fieldList);
         $GLOBALS['TCA'] = Arrays::setPath($GLOBALS, $path, $fieldList)['TCA'];
-
+        
         // Set the sql
         $this->configureSqlColumn(static function (Column $column) {
             $column->setType(new IntegerType())
                    ->setLength(11)
                    ->setDefault(0);
         });
-
+        
         // Set the field
         $this->field->addConfig($config);
     }
-
+    
     /**
      * This converts your field into a fully fledged relation field. You should use this method if you want your user
      * to choose records from anywhere on your page using a selector popup. This type also allows the relation to
@@ -200,18 +200,18 @@ class Relations extends AbstractFieldPreset
                     $this->addEvalOptions(
                         $this->addBasePidOptions(
                             $this->addMinMaxItemOptions([
-                                'mmTable'     => [
-                                    'type'    => 'bool',
+                                'mmTable' => [
+                                    'type' => 'bool',
                                     'default' => static function ($field, $given) {
                                         return ! ((int)$given['maxItems'] === 1);
                                     },
                                 ],
                                 'mmTableName' => [
-                                    'type'    => 'string',
+                                    'type' => 'string',
                                     'default' => '',
                                 ],
-                                'filters'     => [
-                                    'type'    => 'array',
+                                'filters' => [
+                                    'type' => 'array',
                                     'default' => [],
                                 ],
                             ])
@@ -221,52 +221,52 @@ class Relations extends AbstractFieldPreset
                 )
             )
         );
-
+        
         // Prepare table list
         $tables = $this->generateTableNameList($foreignTable);
-
+        
         // Build the tca
         $config = [
-            'type'                                   => 'group',
-            'internal_type'                          => 'db',
-            'allowed'                                => implode(',', $tables),
-            'size'                                   => $options['maxItems'] === 1 ? 1 : 3,
-            'multiple'                               => 0,
+            'type' => 'group',
+            'internal_type' => 'db',
+            'allowed' => implode(',', $tables),
+            'size' => $options['maxItems'] === 1 ? 1 : 3,
+            'multiple' => 0,
             'localizeReferencesAtParentLocalization' => true,
         ];
-
+        
         if (count($tables) === 1) {
             $config['foreign_table'] = reset($tables);
         }
-
+        
         // Add filters
         $filters = [];
         foreach ($options['filters'] as $filter) {
             if (! is_array($filter)) {
                 $filter = [$filter, []];
             }
-
+            
             // Update filter array
             $filters[] = [
-                'userFunc'   => $filter[0],
+                'userFunc' => $filter[0],
                 'parameters' => $filter[1],
             ];
         }
         if (! empty($filters)) {
             $config['filter'] = $filters;
         }
-
+        
         // Apply defaults
         $config = $this->addAllowNewConfig($config, $options);
         $config = $this->addAllowEditConfig($config, $options);
         $config = $this->addBasePidConfig($config, $options);
         $config = $this->addMmTableConfig($config, $options);
         $config = $this->addMinMaxItemConfig($config, $options);
-
+        
         // Merge the field
         $this->field->addConfig($config);
     }
-
+    
     /**
      * This sets your field to be a relation to a single, or multiple pages.
      * By default only a single page can be set, but you may use maxItems to create relations to multiple pages
@@ -282,14 +282,14 @@ class Relations extends AbstractFieldPreset
         if (! isset($options['maxItems'])) {
             $options['maxItems'] = 1;
         }
-
+        
         if (! isset($options['allowEdit'])) {
             $options['allowEdit'] = false;
         }
-
+        
         $this->applyRelationGroup('pages', $options);
     }
-
+    
     /**
      * This sets your field to be a relation to one or multiple files in TYPO3's FAL storage.
      *
@@ -316,20 +316,20 @@ class Relations extends AbstractFieldPreset
             $this->addMinMaxItemOptions(
                 $this->addEvalOptions(
                     [
-                        'allowList'        => [
-                            'type'    => 'string',
+                        'allowList' => [
+                            'type' => 'string',
                             'default' => '',
                         ],
-                        'blockList'        => [
-                            'type'    => 'string',
+                        'blockList' => [
+                            'type' => 'string',
                             'default' => '',
                         ],
-                        'baseDir'          => [
-                            'type'    => 'string',
+                        'baseDir' => [
+                            'type' => 'string',
                             'default' => '',
                         ],
                         'disableFalFields' => [
-                            'type'    => 'array',
+                            'type' => 'array',
                             'default' => [],
                         ],
                     ],
@@ -337,17 +337,17 @@ class Relations extends AbstractFieldPreset
                 )
             )
         );
-
+        
         // Check if we are inside a section
         if ($this->isInFlexFormSection()) {
             // Inside a section
             $config = [
-                'type'                                   => 'group',
-                'internal_type'                          => 'file',
-                'allowed'                                => $options['allowList'],
-                'disallowed'                             => $options['blockList'],
+                'type' => 'group',
+                'internal_type' => 'file',
+                'allowed' => $options['allowList'],
+                'disallowed' => $options['blockList'],
                 'localizeReferencesAtParentLocalization' => true,
-                'size'                                   => $options['maxItems'] === 1 ? 1 : 3,
+                'size' => $options['maxItems'] === 1 ? 1 : 3,
             ];
         } else {
             // Default field
@@ -357,33 +357,33 @@ class Relations extends AbstractFieldPreset
                 $options['allowList'],
                 $options['blockList']
             );
-
+            
             // Add our custom config
             $config = Arrays::merge($r, [
                 'foreign_match_fields' => [
-                    'tablenames'  => $this->getTcaTable()->getTableName(),
+                    'tablenames' => $this->getTcaTable()->getTableName(),
                     'table_local' => 'sys_file',
                 ],
-                'appearance'           => [
-                    'createNewRelationLinkTitle'      => 'LLL:EXT:cms/locallang_ttc.xlf:images.addFileReference',
-                    'fileUploadAllowed'               => false,
-                    'showSynchronizationLink'         => true,
-                    'showAllLocalizationLink'         => true,
+                'appearance' => [
+                    'createNewRelationLinkTitle' => 'LLL:EXT:cms/locallang_ttc.xlf:images.addFileReference',
+                    'fileUploadAllowed' => false,
+                    'showSynchronizationLink' => true,
+                    'showAllLocalizationLink' => true,
                     'showPossibleLocalizationRecords' => true,
                 ],
             ]);
-
+            
             // Remove all disabled fields
             if (! empty($options['disableFalFields'])) {
                 foreach ($options['disableFalFields'] as $field) {
                     if (! is_string($field)) {
                         continue;
                     }
-                    $config['overrideChildTca']['columns'][$field]['config']['type']       = 'passthrough';
+                    $config['overrideChildTca']['columns'][$field]['config']['type'] = 'passthrough';
                     $config['overrideChildTca']['columns'][$field]['config']['renderType'] = 'passthrough';
                 }
             }
-
+            
             // Set sql for field
             $this->configureSqlColumn(static function (Column $column) {
                 $column->setType(new IntegerType())
@@ -391,24 +391,24 @@ class Relations extends AbstractFieldPreset
                        ->setDefault(0);
             });
         }
-
+        
         // Add base dir if not empty
         if (! empty($options['baseDir'])) {
             $config['baseDir'] = $options['baseDir'];
-
+            
             // Allow direct upload
             if (! $this->isInFlexFormSection()) {
                 $config['appearance']['fileUploadAllowed'] = true;
             }
         }
-
+        
         // Add defaults
         $config = $this->addMinMaxItemConfig($config, $options);
-
+        
         // Merge the field
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Similar to relationFile but is already preconfigured to show online media, like youtube or vimeo videos.
      *
@@ -427,27 +427,27 @@ class Relations extends AbstractFieldPreset
     {
         $options = Options::make($options, [
             'allowYoutube' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => true,
             ],
-            'allowVimeo'   => [
-                'type'    => 'bool',
+            'allowVimeo' => [
+                'type' => 'bool',
                 'default' => false,
             ],
         ], ['allowUnknown' => true]);
-
+        
         // Build the allow list
-        $allowList            = implode(',', array_filter([
+        $allowList = implode(',', array_filter([
             $options['allowYoutube'] ? 'youtube' : '',
             $options['allowVimeo'] ? 'vimeo' : '',
         ]));
         $options['allowList'] = $allowList;
         unset($options['allowYoutube'], $options['allowVimeo']);
-
+        
         // Make the real relation
         $this->applyRelationFile($options);
     }
-
+    
     /**
      * Similar to relationFile but is already preconfigured to allow only image files
      *
@@ -499,24 +499,24 @@ class Relations extends AbstractFieldPreset
     {
         // Apply additional file options
         $options = Options::make($options, [
-            'allowList'             => [
-                'type'    => 'string',
+            'allowList' => [
+                'type' => 'string',
                 'default' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
             ],
-            'allowCrop'             => [
-                'type'    => 'bool',
+            'allowCrop' => [
+                'type' => 'bool',
                 'default' => true,
             ],
             'useDefaultCropVariant' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => true,
             ],
-            'cropVariants'          => [
-                'type'     => 'array',
-                'default'  => [],
+            'cropVariants' => [
+                'type' => 'array',
+                'default' => [],
                 'children' => [
                     '*' => [
-                        'title'        => [
+                        'title' => [
                             'type' => 'string',
                         ],
                         'aspectRatios' => [
@@ -526,29 +526,29 @@ class Relations extends AbstractFieldPreset
                 ],
             ],
         ], ['allowUnknown' => true]);
-
+        
         // Strip off our internal options
         $_options = $options;
         unset($options['allowCrop'], $options['useDefaultCropVariant'], $options['cropVariants']);
-
+        
         // Apply the normal file relation
         $this->applyRelationFile($options);
-
+        
         // Revert the options
         $options = $_options;
         unset($_options);
-
+        
         // Adjust labels
         // Make the thumbnail bigger
         $this->field->addConfig([
             'appearance' => [
                 'headerThumbnail' => [
                     'height' => 150,
-                    'width'  => 200,
+                    'width' => 200,
                 ],
             ],
         ]);
-
+        
         // Adjust the child tca
         if ($this->isFlexForm()) {
             $this->field->addConfig([
@@ -575,8 +575,8 @@ class Relations extends AbstractFieldPreset
                 ],
             ]);
         }
-
-
+        
+        
         // Apply settings for image cropping
         // There seems to be no cropping capability for images in flex forms ?
         if ($options['allowCrop'] && ! $this->isFlexForm()) {
@@ -587,7 +587,7 @@ class Relations extends AbstractFieldPreset
                 if (! is_array($c['allowedAspectRatios'])) {
                     $c['allowedAspectRatios'] = [];
                 }
-
+                
                 if (is_array($c['aspectRatios'])) {
                     foreach ($c['aspectRatios'] as $ratio => $label) {
                         if ($ratio === 'free') {
@@ -609,23 +609,23 @@ class Relations extends AbstractFieldPreset
                     }
                 }
                 unset($c['aspectRatios']);
-
+                
                 // Add the selected aspect ratio if it is not defined
                 if (! isset($c['selectedRatio']) && ! empty($c['allowedAspectRatios'])) {
                     reset($c['allowedAspectRatios']);
                     $c['selectedRatio'] = key($c['allowedAspectRatios']);
                 }
-
+                
                 // Add the crop area if it is not defined
                 if (! isset($c['cropArea'])) {
                     $c['cropArea'] = [
                         'height' => 1.0,
-                        'width'  => 1.0,
-                        'x'      => 0.0,
-                        'y'      => 0.0,
+                        'width' => 1.0,
+                        'x' => 0.0,
+                        'y' => 0.0,
                     ];
                 }
-
+                
                 // Make sure we have a default crop variant
                 if (is_numeric($k)) {
                     if (! isset($cropVariants['default']) && ! isset($options['cropVariants']['default'])) {
@@ -635,15 +635,15 @@ class Relations extends AbstractFieldPreset
                                                       . $k . ' is therefore invalid!');
                     }
                 }
-
+                
                 $cropVariants[$k] = $c;
             }
-
+            
             // Check if default variant is disabled
             if ($options['useDefaultCropVariant'] === false) {
                 $cropVariants['default']['disabled'] = 1;
             }
-
+            
             // Prepare crop config
             $cropConfig = [
                 'type' => 'imageManipulation',
@@ -651,7 +651,7 @@ class Relations extends AbstractFieldPreset
             if (! empty($cropVariants)) {
                 $cropConfig['cropVariants'] = $cropVariants;
             }
-
+            
             // Update the tca definition
             $this->field->addConfig([
                 // TCA
@@ -661,11 +661,11 @@ class Relations extends AbstractFieldPreset
                             'config' => $cropConfig,
                         ],
                     ],
-                    'types'   => [
+                    'types' => [
                         File::FILETYPE_UNKNOWN => [
                             'showitem' => '--palette--;;imageoverlayPalette, --palette--;;filePalette',
                         ],
-                        File::FILETYPE_IMAGE   => [
+                        File::FILETYPE_IMAGE => [
                             'showitem' => '--palette--;;imageoverlayPalette, --palette--;;filePalette',
                         ],
                     ],
@@ -673,7 +673,7 @@ class Relations extends AbstractFieldPreset
             ]);
         }
     }
-
+    
     /**
      * This converts your field into a fully fledged relation field using Typo3's "select" type.
      * You should use this method if you want your user to select a number of objects out of a predefined selection of
@@ -722,16 +722,16 @@ class Relations extends AbstractFieldPreset
                 $this->addMinMaxItemOptions(
                     $this->addBasePidOptions(
                         [
-                            'where'       => [
-                                'type'    => 'string',
+                            'where' => [
+                                'type' => 'string',
                                 'default' => '',
                             ],
-                            'userFunc'    => [
-                                'type'    => 'string',
+                            'userFunc' => [
+                                'type' => 'string',
                                 'default' => '',
                             ],
-                            'mmTable'     => [
-                                'type'    => 'bool',
+                            'mmTable' => [
+                                'type' => 'bool',
                                 'default' => static function ($field, $given) {
                                     // Automatically disable the mm table
                                     /** @noinspection TypeUnsafeComparisonInspection */
@@ -739,7 +739,7 @@ class Relations extends AbstractFieldPreset
                                 },
                             ],
                             'mmTableName' => [
-                                'type'    => 'string',
+                                'type' => 'string',
                                 'default' => '',
                             ],
                         ]
@@ -748,7 +748,7 @@ class Relations extends AbstractFieldPreset
             ),
             ['required']
         );
-
+        
         // Check if we got a multi selector and extend the options
         if (empty($options['maxItems']) || (is_numeric($options['maxItems']) && $options['maxItems'] > 1)) {
             $optionDefinition = $this->addAllowEditOptions(
@@ -758,49 +758,49 @@ class Relations extends AbstractFieldPreset
             );
         }
         $options = Options::make($options, $optionDefinition);
-
+        
         // Prepare table name
         $foreignTableList = $this->generateTableNameList($foreignTable);
-        $foreignTable     = (string)reset($foreignTableList);
-
+        $foreignTable = (string)reset($foreignTableList);
+        
         // Prepare the where clause
         if (empty($options['where']) && ! empty($options['basePid'])) {
             $options['where'] = "AND $foreignTable.pid = " . $options['basePid'];
         }
-
+        
         // Build the tca
         $config = [
-            'type'                                   => 'select',
-            'renderType'                             => $options['maxItems'] > 1
+            'type' => 'select',
+            'renderType' => $options['maxItems'] > 1
                 ? 'selectMultipleSideBySide'
                 : 'selectSingle',
-            'foreign_table'                          => $foreignTable,
-            'foreign_table_where'                    => $options['where'],
-            'multiple'                               => false,
-            'enableMultiSelectFilterTextfield'       => true,
+            'foreign_table' => $foreignTable,
+            'foreign_table_where' => $options['where'],
+            'multiple' => false,
+            'enableMultiSelectFilterTextfield' => true,
             'localizeReferencesAtParentLocalization' => true,
-            'itemsProcFunc'                          => $options['userFunc'],
+            'itemsProcFunc' => $options['userFunc'],
         ];
-
+        
         // Apply defaults
         $config = $this->addAllowNewConfig($config, $options);
         $config = $this->addAllowEditConfig($config, $options);
         $config = $this->addBasePidConfig($config, $options);
         $config = $this->addMmTableConfig($config, $options);
         $config = $this->addMinMaxItemConfig($config, $options);
-
+        
         // Merge the field
         $this->field->addConfig($config);
     }
-
+    
     /**
      * If you are defining a custom field and want to create an mm table for it, you can call this preset
      * and it will create the mm table and the required configuration for you.
      */
     public function applySetMmTable(): void
     {
-        $raw           = $this->field->getRaw();
-        $config        = Arrays::getPath($raw, 'config', []);
+        $raw = $this->field->getRaw();
+        $config = Arrays::getPath($raw, 'config', []);
         $raw['config'] = $this->addMmTableConfig($config, []);
         $this->field->setRaw($raw);
     }

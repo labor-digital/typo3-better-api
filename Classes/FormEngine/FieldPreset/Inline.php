@@ -30,7 +30,7 @@ use Neunerlei\Options\Options;
 
 class Inline extends AbstractFieldPreset
 {
-
+    
     /**
      * This sets your field to be rendered as inline relational record field (IRRE).
      *
@@ -54,23 +54,23 @@ class Inline extends AbstractFieldPreset
             if (strlen($v) > 64) {
                 return 'The configured field is too long, you a field name can have 64 characters at max!';
             }
-
+            
             return true;
         };
-
+        
         $options = Options::make(
             $options,
             $this->addMinMaxItemOptions(
                 $this->addEvalOptions(
                     [
-                        'foreignField'       => [
-                            'type'      => 'string',
-                            'default'   => 't3ba_inline',
+                        'foreignField' => [
+                            'type' => 'string',
+                            'default' => 't3ba_inline',
                             'validator' => $fieldLengthValidator,
                         ],
                         'foreignSortByField' => [
-                            'type'      => 'string',
-                            'default'   => 't3ba_inline_sorting',
+                            'type' => 'string',
+                            'default' => 't3ba_inline_sorting',
                             'validator' => $fieldLengthValidator,
                         ],
                     ],
@@ -78,30 +78,30 @@ class Inline extends AbstractFieldPreset
                 )
             )
         );
-
+        
         $foreignTableName = $this->context->getRealTableName($foreignTable);
-
+        
         $config = [
-            'type'           => 'inline',
-            'renderType'     => '__UNSET',
-            'allowed'        => $foreignTableName,
-            'foreign_table'  => $foreignTableName,
-            'foreign_field'  => $options['foreignField'],
+            'type' => 'inline',
+            'renderType' => '__UNSET',
+            'allowed' => $foreignTableName,
+            'foreign_table' => $foreignTableName,
+            'foreign_field' => $options['foreignField'],
             'foreign_sortby' => $options['foreignSortByField'],
-            'appearance'     => [
-                'collapseAll'                     => true,
-                'expandSingle'                    => true,
-                'useSortable'                     => true,
+            'appearance' => [
+                'collapseAll' => true,
+                'expandSingle' => true,
+                'useSortable' => true,
                 'showPossibleLocalizationRecords' => true,
-                'showRemovedLocalizationRecords'  => true,
-                'showAllLocalizationLink'         => true,
-                'showSynchronizationLink'         => true,
+                'showRemovedLocalizationRecords' => true,
+                'showAllLocalizationLink' => true,
+                'showSynchronizationLink' => true,
             ],
         ];
-
+        
         $this->addMinMaxItemConfig($config, $options);
         $this->addEvalConfig($config, $options, ['required']);
-
+        
         // Add columns to foreign table
         $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
         if (! $table->hasColumn($options['foreignField'], true)) {
@@ -112,16 +112,16 @@ class Inline extends AbstractFieldPreset
             $table->addColumn($options['foreignSortByField'], 'integer')
                   ->setLength(11);
         }
-
+        
         // Configure column on local table
         $this->configureSqlColumn(static function (Column $column) {
             $column->setType(new IntegerType())
                    ->setLength(11);
         });
-
+        
         $this->field->addConfig($config);
     }
-
+    
     /**
      * This sets your field to be a list of content elements using IRRE.
      * This is a wrapper of applyInline() with the tt_content table already preconfigured
@@ -145,5 +145,5 @@ class Inline extends AbstractFieldPreset
     {
         $this->applyInline('tt_content', $options);
     }
-
+    
 }

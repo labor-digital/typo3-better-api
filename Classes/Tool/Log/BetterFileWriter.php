@@ -28,42 +28,42 @@ use TYPO3\CMS\Core\Log\Writer\FileWriter;
 
 class BetterFileWriter extends FileWriter
 {
-
+    
     /**
      * The base name of the internal directory / log file we want to rotate
      *
      * @var string
      */
     protected $baseFileName;
-
+    
     /**
      * True if log rotation is enabled
      *
      * @var bool
      */
     protected $useRotation = false;
-
+    
     /**
      * The number of files we should keep when performing a rotation
      *
      * @var int
      */
     protected $filesToKeep = 5;
-
+    
     /**
      * @inheritDoc
      */
     public function __construct(array $options = [])
     {
-        $this->useRotation  = $options['logRotation'] === true;
-        $this->filesToKeep  = max(1, (int)$options['filesToKeep']);
+        $this->useRotation = $options['logRotation'] === true;
+        $this->filesToKeep = max(1, (int)$options['filesToKeep']);
         $this->baseFileName = Inflector::toFile($options['name']);
         parent::__construct([
             'logFile' => $this->getLogDirectory() .
                          $this->baseFileName . '-' . date('Y-m-d') . '.log',
         ]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -71,12 +71,12 @@ class BetterFileWriter extends FileWriter
     {
         // Perform log ration if required
         $this->doLogRotation();
-
+        
         // Do the default action
         parent::openLogFile();
     }
-
-
+    
+    
     /**
      * Generates the log file directory we are working with
      *
@@ -88,7 +88,7 @@ class BetterFileWriter extends FileWriter
                'log' . DIRECTORY_SEPARATOR .
                $this->baseFileName . DIRECTORY_SEPARATOR;
     }
-
+    
     /**
      * Automatically removes all log files that are older than the specified number of days
      */
@@ -105,7 +105,7 @@ class BetterFileWriter extends FileWriter
         if (! file_exists($logDir) || ! is_dir($logDir) || ! is_writable($logDir)) {
             return;
         }
-
+        
         // Get a sorted list of files
         $filesSorted = [];
         foreach (Fs::getDirectoryIterator($logDir) as $fileInfo) {
@@ -115,7 +115,7 @@ class BetterFileWriter extends FileWriter
             return;
         }
         ksort($filesSorted);
-
+        
         // Remove files if required
         $filesToRemove = array_slice($filesSorted, 0, -$this->filesToKeep);
         foreach ($filesToRemove as $path) {

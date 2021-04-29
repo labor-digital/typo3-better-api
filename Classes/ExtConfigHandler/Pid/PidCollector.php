@@ -32,14 +32,14 @@ use Neunerlei\Inflection\Inflector;
 class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfiguratorInterface
 {
     use ExtConfigContextAwareTrait;
-
+    
     /**
      * The list of configured pids
      *
      * @var array
      */
     protected $pids = [];
-
+    
     /**
      * Adds a new pid mapping to the pid service.
      *
@@ -51,10 +51,10 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
     public function set(string $key, int $pid): self
     {
         $this->pids = Arrays::setPath($this->pids, $this->context->replaceMarkers($key), $pid);
-
+        
         return $this;
     }
-
+    
     /**
      * The same as registerPid() but registers multiple pids at once
      *
@@ -74,10 +74,10 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
             }
             $this->set($k, (int)$pid);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Returns all registered pids in this collector instance
      *
@@ -87,7 +87,7 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
     {
         return $this->pids;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -101,7 +101,7 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
             $state->set('pids\\.setup', $ts['setup']);
         });
     }
-
+    
     /**
      * Uses the configured list of pids and converts it into a typoScript setup and constant string
      *
@@ -111,14 +111,14 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
     {
         $constantsTs = [];
         foreach (Arrays::flatten($this->pids) as $k => $pid) {
-            $key           = 'config.t3ba.pid.' . $k;
+            $key = 'config.t3ba.pid.' . $k;
             $constantsTs[] = '#cat=T3BA/pid; type=int+; label=Page ID ' . Inflector::toHuman($k);
             $constantsTs[] = $key . '=' . $pid;
         }
-
+        
         // Done
         return [
-            'setup'     => '# Nothing to do here',
+            'setup' => '# Nothing to do here',
             'constants' => implode(PHP_EOL, $constantsTs),
         ];
     }

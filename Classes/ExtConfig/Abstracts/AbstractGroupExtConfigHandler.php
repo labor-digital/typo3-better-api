@@ -32,7 +32,7 @@ use Neunerlei\PathUtil\Path;
 abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler implements PublicServiceInterface
 {
     use ExtConfigContextTrait;
-
+    
     /**
      * Helper to generate the element key for a given class, that automatically takes care
      * for classes implementing the ElementKeyProviderInterface
@@ -51,19 +51,20 @@ abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler 
         string $class,
         ?callable $postProcessor = null,
         bool $useOnlyBaseName = true
-    ): string {
+    ): string
+    {
         if (in_array(ElementKeyProviderInterface::class, class_implements($class), true)) {
             return call_user_func([$class, 'getElementKey']);
         }
-
+        
         if ($useOnlyBaseName) {
             $class = Path::classBasename($class);
         }
-
+        
         if ($postProcessor === null) {
             return $class;
         }
-
+        
         return $postProcessor($class);
     }
 }

@@ -43,17 +43,17 @@ class MainLoader
 {
     use TypoContextAwareTrait;
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * MainConfigLoader constructor.
      *
@@ -63,11 +63,12 @@ class MainLoader
     public function __construct(
         ExtConfigService $extConfigService,
         TypoEventBus $eventBus
-    ) {
+    )
+    {
         $this->extConfigService = $extConfigService;
-        $this->eventBus         = $eventBus;
+        $this->eventBus = $eventBus;
     }
-
+    
     /**
      * Runs the main ext config loader and injects the generated state into the container
      * It will also automatically inject the configuration of typo.globals into the GLOBALS array
@@ -75,7 +76,7 @@ class MainLoader
     public function load(): void
     {
         $loader = $this->extConfigService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
-
+        
         $loader->setEventDispatcher(
             $this->makeEventDispatcherProxy(
                 function (object $event) {
@@ -87,7 +88,7 @@ class MainLoader
                 }
             )
         );
-
+        
         $loader->setHandlerFinder(
             $this->makeInstance(
                 FilteredHandlerFinder:: class,
@@ -97,17 +98,17 @@ class MainLoader
                 ]
             )
         );
-
+        
         $loader->setContainer($this->getContainer());
         $state = $loader->load();
-
+        
         $this->getContainer()->set(ConfigState::class, $state);
-
+        
         // Merge the globals into the globals and then remove them from the state (save a bit of memory)
         $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
         $state->set('typo.globals', null);
     }
-
+    
     /**
      * Creates an internal event dispatcher proxy we use to keep track of the loading stages internally
      *
@@ -120,13 +121,13 @@ class MainLoader
         return new class($this->eventBus, $eventMapper) implements EventDispatcherInterface {
             protected $eventBus;
             protected $mapper;
-
+            
             public function __construct(TypoEventBus $eventBus, callable $mapper)
             {
                 $this->eventBus = $eventBus;
-                $this->mapper   = $mapper;
+                $this->mapper = $mapper;
             }
-
+            
             public function dispatch(object $event)
             {
                 call_user_func($this->mapper, $event);
@@ -134,7 +135,7 @@ class MainLoader
             }
         };
     }
-
+    
     /**
      * Injects the empty config shell into the container, so handler can use them as injected property
      *
@@ -144,7 +145,7 @@ class MainLoader
     {
         $this->getContainer()->set(ConfigState::class, $event->getLoaderContext()->configContext->getState());
     }
-
+    
     /**
      * Executed when the main loader is done gathering the main configuration state.
      * It will create a new child loader that will execute the handlers inside the Configuration/SiteConfig directory.
@@ -157,7 +158,7 @@ class MainLoader
         $loader->setConfigContextClass(SiteConfigContext::class);
         $loader->setCache(null);
         $loader->setContainer($this->getContainer());
-
+        
         $loader->setEventDispatcher(
             $this->makeEventDispatcherProxy(static function (object $event) use ($state) {
                 if ($event instanceof BeforeConfigLoadEvent) {
@@ -166,7 +167,7 @@ class MainLoader
                 }
             })
         );
-
+        
         $loader->setHandlerFinder(
             $this->makeInstance(
                 FilteredHandlerFinder::class,
@@ -176,7 +177,7 @@ class MainLoader
                 ]
             )
         );
-
+        
         $loader->setConfigFinder(
             $this->makeInstance(
                 ConfigFinder::class,
@@ -185,8 +186,8 @@ class MainLoader
                 ]
             )
         );
-
+        
         $loader->load();
     }
-
+    
 }

@@ -44,7 +44,7 @@ class FrontendCache extends AbstractExtendedCache
      * @var bool|null
      */
     protected $isUpdateState;
-
+    
     /**
      * @inheritDoc
      */
@@ -52,25 +52,25 @@ class FrontendCache extends AbstractExtendedCache
     {
         if ($this->isUpdateState === null) {
             $typoContext = TypoContext::getInstance();
-
+            
             $isUpdate = false;
-            $tsfe     = $typoContext->di()->cs()->tsfe;
+            $tsfe = $typoContext->di()->cs()->tsfe;
             if ($tsfe->hasTsfe()) {
                 if ($tsfe->getTsfe()->no_cache) {
                     $isUpdate = true;
                 }
             }
-
+            
             if (! $isUpdate && $typoContext->beUser()->isLoggedIn()) {
                 if ($_SERVER['HTTP_PRAGMA'] === 'no-cache') {
                     $isUpdate = true;
                 }
             }
-
+            
             $this->isUpdateState = $isUpdate;
         }
-
+        
         return $this->isUpdateState;
     }
-
+    
 }

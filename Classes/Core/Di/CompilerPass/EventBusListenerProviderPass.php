@@ -31,18 +31,18 @@ use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 
 class EventBusListenerProviderPass implements CompilerPassInterface
 {
-
+    
     /**
      * @inheritDoc
      */
     public function process(ContainerBuilder $container)
     {
         // Override the listener provider class
-        $innerId          = $container->findDefinition(ListenerProvider::class)->innerServiceId;
+        $innerId = $container->findDefinition(ListenerProvider::class)->innerServiceId;
         $listenerProvider = $container->getDefinition($innerId);
         $listenerProvider->setClass(TypoListenerProvider::class);
         $listenerProvider->setFactory([ServiceFactory::class, 'getListenerProvider']);
         $listenerProvider->setPublic(true);
     }
-
+    
 }

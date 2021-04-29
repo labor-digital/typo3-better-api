@@ -32,7 +32,7 @@ use LaborDigital\T3BA\Event\Sql\CreateTableStatementFilterEvent;
 class Dumper
 {
     use ContainerAwareTrait;
-
+    
     /**
      * Dumps the given list of tables as a single SQL string.
      * This is normally the output of DefinitionProcessor::findTableDiff()
@@ -44,30 +44,30 @@ class Dumper
      */
     public function dump(array $tables): string
     {
-        $sql        = [];
+        $sql = [];
         $tableNames = [];
-
+        
         foreach ($tables as $table) {
             try {
                 $statement = $this->generateSqlForTable($table);
             } catch (DbalException $e) {
                 continue;
             }
-
+            
             if (! empty($statement)) {
                 $tableNames[] = $table->getName();
-                $sql[]        = $statement;
+                $sql[] = $statement;
             }
         }
-
+        
         $statement = implode(PHP_EOL, $sql);
-
+        
         return $this->cs()->eventBus
             ->dispatch(new CreateTableStatementFilterEvent($tableNames, $statement))
             ->getStatement();
     }
-
-
+    
+    
     /**
      * Generates the "CREATE TABLE" string for a single table
      *
@@ -78,21 +78,21 @@ class Dumper
     protected function generateSqlForTable(Table $table): ?string
     {
         $schema = $this->makeInstance(Schema::class, [[$table]]);
-        $sql    = $schema->toSql($this->cs()->db->getConnection()->getDatabasePlatform());
-        $sql    = $sql[0] ?? '';
-
+        $sql = $schema->toSql($this->cs()->db->getConnection()->getDatabasePlatform());
+        $sql = $sql[0] ?? '';
+        
         if (empty($sql)) {
             return null;
         }
-
+        
         $sql = '--' . PHP_EOL .
                '-- Table structure for table \'' . $table->getName() . '\'' . PHP_EOL .
                '--' . PHP_EOL .
                $sql .
                ';';
-
+        
         return $sql;
     }
-
-
+    
+    
 }

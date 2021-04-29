@@ -35,21 +35,21 @@ class BackendRenderingService implements SingletonInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * True if the record filter event was registered, false if not
      *
      * @var bool
      */
     protected $dbRecordFilterRegistered = false;
-
+    
     /**
      * Holds the data for the database record list renderer
      *
      * @var array
      */
     protected $dbRecordFilterTmp = [];
-
+    
     /**
      * This method can be used to render a database record list in the backend.
      * The process is normally quite painful but with this interface it should become fairly easy.
@@ -72,67 +72,67 @@ class BackendRenderingService implements SingletonInterface
     {
         // Prepare the options
         $options = Options::make($options, [
-            'limit'    => [
-                'type'    => 'int',
+            'limit' => [
+                'type' => 'int',
                 'default' => 20,
             ],
-            'pid'      => [
-                'type'    => 'int',
+            'pid' => [
+                'type' => 'int',
                 'default' => function () {
                     return $this->getTypoContext()->pid()->getCurrent();
                 },
             ],
-            'where'    => [
-                'type'    => 'string',
+            'where' => [
+                'type' => 'string',
                 'default' => '',
             ],
             'callback' => [
-                'type'    => ['callable', 'null'],
+                'type' => ['callable', 'null'],
                 'default' => null,
             ],
         ]);
-
+        
         // Prepare object
-        $pid      = $options['pid'];
+        $pid = $options['pid'];
         $pageInfo = BackendUtility::readPageAccess($options['pid'], '');
         /** @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $backendUser */
         $backendUser = $GLOBALS['BE_USER'];
-
+        
         /** @var DatabaseRecordList $dbList */
-        $dbList                            = $this->makeInstance(DatabaseRecordList::class);
-        $dbList->script                    = GeneralUtility::getIndpEnv('REQUEST_URI');
-        $dbList->thumbs                    = $backendUser->uc['thumbnailsByDefault'];
-        $dbList->allFields                 = 1;
-        $dbList->clickTitleMode            = 'edit';
-        $dbList->calcPerms                 = $backendUser->calcPerms($pageInfo);
-        $dbList->showClipboard             = 0;
-        $dbList->disableSingleTableView    = 1;
-        $dbList->pageRow                   = $pageInfo;
-        $dbList->displayFields             = false;
+        $dbList = $this->makeInstance(DatabaseRecordList::class);
+        $dbList->script = GeneralUtility::getIndpEnv('REQUEST_URI');
+        $dbList->thumbs = $backendUser->uc['thumbnailsByDefault'];
+        $dbList->allFields = 1;
+        $dbList->clickTitleMode = 'edit';
+        $dbList->calcPerms = $backendUser->calcPerms($pageInfo);
+        $dbList->showClipboard = 0;
+        $dbList->disableSingleTableView = 1;
+        $dbList->pageRow = $pageInfo;
+        $dbList->displayFields = false;
         $dbList->dontShowClipControlPanels = true;
         $dbList->counter++;
-
+        
         $pointer = MathUtility::forceIntegerInRange($this->getTypoContext()->request()->getGet('pointer'), 0);
         $dbList->start($pid, $table, $pointer, '', 0, $options['limit']);
         $dbList->script = $_SERVER['REQUEST_URI'];
         $dbList->setDispFields();
-
+        
         // Apply the field list filter
         if (! empty($fields)) {
             $dbList->setFields = [$table => $fields];
         }
-
+        
         // Trigger the callback if we have one
         if (is_callable($options['callback'])) {
             call_user_func($options['callback'], $dbList);
         }
-
+        
         // Register the event handler for injecting our additional where clause
         $this->dbRecordFilterTmp = [];
         if (! empty($options['where'])) {
             if (! $this->dbRecordFilterRegistered) {
                 $this->dbRecordFilterRegistered = true;
-
+                
                 $this->getService(TypoEventBus::class)->addListener(
                     DbListQueryFilterEvent::class, function (DbListQueryFilterEvent $event) {
                     // Skip if the event was already emitted
@@ -140,16 +140,16 @@ class BackendRenderingService implements SingletonInterface
                         return;
                     }
                     $this->dbRecordFilterTmp['emitted'] = true;
-                    $options                            = $this->dbRecordFilterTmp['options'];
-
+                    $options = $this->dbRecordFilterTmp['options'];
+                    
                     // Inject our where statement
                     $whereParts = explode(' OR ', $event->getAdditionalWhereClause());
                     $event->setAdditionalWhereClause(
                         implode(' ' . $options['where'] . ' OR ', $whereParts) . ' ' . $options['where']
                     );
-
+                    
                     // Move all pseudo fields to the right...
-                    $fieldArray         = $event->getListRenderer()->fieldArray;
+                    $fieldArray = $event->getListRenderer()->fieldArray;
                     $fieldArrayFiltered = array_filter($fieldArray,
                         static function ($v) {
                             return $v[0] !== '_';
@@ -158,35 +158,35 @@ class BackendRenderingService implements SingletonInterface
                         static function ($v) {
                             return $v[0] === '_';
                         });
-
+                    
                     $event->getListRenderer()->fieldArray = array_values($fieldArrayFiltered);
                 });
             }
-
+            
             // Set our options
             $this->dbRecordFilterTmp = [
                 'emitted' => false,
                 'options' => $options,
             ];
-
+            
         }
-
+        
         // Generate the list
         $dbList->generateList();
-
-
+        
+        
         // Check for empty response
         if ($dbList->totalItems === 0) {
             return '';
         }
-
+        
         // Append T3 location
-        $result     = $dbList->HTMLcode;
+        $result = $dbList->HTMLcode;
         $requestUrl = GeneralUtility::quoteJSvalue(rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')));
         /** @noinspection JSUnresolvedVariable */
         $result .= '<script type="text/javascript">if(typeof T3_THIS_LOCATION === \'undefined\') T3_THIS_LOCATION = '
                    . $requestUrl . '; </script>';
-
+        
         // Done
         return $result;
     }

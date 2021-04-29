@@ -30,12 +30,12 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractExtConfigHandler
 {
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\FieldPreset\ListGenerator
      */
     protected $listGenerator;
-
+    
     /**
      * FieldPresetHandler constructor.
      *
@@ -45,7 +45,7 @@ class Handler extends AbstractExtConfigHandler
     {
         $this->listGenerator = $listGenerator;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -54,12 +54,12 @@ class Handler extends AbstractExtConfigHandler
         $configurator->registerLocation('Classes/FormEngine/FieldPreset');
         $configurator->registerInterface(FieldPresetInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void { }
-
+    
     /**
      * @inheritDoc
      */
@@ -67,7 +67,7 @@ class Handler extends AbstractExtConfigHandler
     {
         $this->listGenerator->registerClass($class, $this->definition->isOverride($class));
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -75,19 +75,19 @@ class Handler extends AbstractExtConfigHandler
     {
         // Store the presets
         $presets = $this->listGenerator->getPresets();
-
+        
         $presets = $this->context->getTypoContext()->di()->cs()->eventBus
             ->dispatch(new FieldPresetFilterEvent($presets, $this->context))
             ->getPresets();
-
+        
         $this->context->getState()->set('tca.fieldPresets', $presets);
-
+        
         // Generate the autocomplete helper in dev mode
         if ($this->context->env()->isDev()) {
             $this->makeAutocompleteHelper($presets);
         }
     }
-
+    
     /**
      * Loads and triggers the autocomplete helper generator for development environments
      *
@@ -100,7 +100,7 @@ class Handler extends AbstractExtConfigHandler
             AutocompleteGenerator::class,
             [$this->context->getExtConfigService()->getFsMount()]
         );
-
+        
         $generator->generate($presets);
     }
 }

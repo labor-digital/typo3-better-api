@@ -35,15 +35,15 @@ class LateFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements
      */
     public static function bind(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class]  = [
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][static::class] = [
             'depends' => [TcaInputPlaceholders::class],
-            'before'  => [TcaInlineIsOnSymmetricSide::class],
+            'before' => [TcaInlineIsOnSymmetricSide::class],
         ];
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['inlineParentRecord'][static::class] = [
             'depends' => [TcaInlineConfiguration::class],
         ];
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -53,7 +53,7 @@ class LateFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements
             return $result;
         }
         static::$bus->dispatch(($e = new LateFormFilterEvent($result['tableName'], $result)));
-
+        
         return $e->getData();
     }
 }

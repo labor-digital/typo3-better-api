@@ -44,19 +44,19 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 class PathFacet implements FacetInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * This property stores the vendor path after it was resolved in getVendorPath
      *
      * @var string
      */
     protected $vendorPath;
-
+    
     /**
      * @var TypoContext
      */
     protected $context;
-
+    
     /**
      * PathFacet constructor.
      *
@@ -66,7 +66,7 @@ class PathFacet implements FacetInterface
     {
         $this->context = $context;
     }
-
+    
     /**
      * Returns the absolute filepath of the "vendor" directory of typo3 was installed using composer.
      * Will return an empty string if the composer classloader is not yet loaded / not installed
@@ -79,23 +79,23 @@ class PathFacet implements FacetInterface
         if (defined('BETTER_API_TYPO3_VENDOR_PATH')) {
             return Path::unifyPath(BETTER_API_TYPO3_VENDOR_PATH);
         }
-
+        
         // Check if we know the path already
         if (isset($this->vendorPath)) {
             return $this->vendorPath;
         }
-
+        
         // Check if we have the autoloader
         if (! class_exists(ClassLoader::class)) {
             return '';
         }
-
+        
         // Read the directory of the classloader
         $file = (new ReflectionClass(ClassLoader::class))->getFileName();
-
+        
         return $this->vendorPath = Path::unifyPath(dirname($file, 2));
     }
-
+    
     /**
      * Helper to retrieve the filepath of an extension.
      *
@@ -108,7 +108,7 @@ class PathFacet implements FacetInterface
     {
         return Path::unifyPath(ExtensionManagementUtility::extPath($extensionKey, $script));
     }
-
+    
     /**
      * The public web folder where index.php (= the frontend application) is put. This is equal to the legacy constant
      * PATH_site, without the trailing slash. For non-composer installations, the project path = the public path.
@@ -119,7 +119,7 @@ class PathFacet implements FacetInterface
     {
         return Path::unifyPath(Environment::getPublicPath());
     }
-
+    
     /**
      * The folder where all global (= installation-wide) configuration like
      * - LocalConfiguration.php,
@@ -137,7 +137,7 @@ class PathFacet implements FacetInterface
     {
         return Path::unifyPath(Environment::getConfigPath());
     }
-
+    
     /**
      * Returns the default template path for a given extension, optionally including a plugin namespace.
      * The returned path is a typo3 path, beginning with EXT: use typoPathToRealPath() to convert it to a
@@ -154,7 +154,7 @@ class PathFacet implements FacetInterface
                'Private' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR .
                (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . DIRECTORY_SEPARATOR);
     }
-
+    
     /**
      * Returns the default partial path for a given extension, optionally including a plugin namespace.
      * The returned path is a typo3 path, beginning with EXT: use typoPathToRealPath() to convert it to a
@@ -171,7 +171,7 @@ class PathFacet implements FacetInterface
                'Private' . DIRECTORY_SEPARATOR . 'Partials' . DIRECTORY_SEPARATOR .
                (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . DIRECTORY_SEPARATOR);
     }
-
+    
     /**
      * Returns the default layout path for a given extension, optionally including a plugin namespace.
      * The returned path is a typo3 path, beginning with EXT: use typoPathToRealPath() to convert it to a
@@ -188,7 +188,7 @@ class PathFacet implements FacetInterface
                'Private' . DIRECTORY_SEPARATOR . 'Layouts' . DIRECTORY_SEPARATOR .
                (empty($pluginName) ? '' : Inflector::toCamelCase($pluginName) . DIRECTORY_SEPARATOR);
     }
-
+    
     /**
      * Tries to find the extension icon for the extension with the given ext key.
      * It will either return the path to the icon or an empty string
@@ -202,18 +202,18 @@ class PathFacet implements FacetInterface
     public function getExtensionIconPath(string $extKey, bool $absolute = false): string
     {
         $extensionPath = $this->getExtensionPath($extKey);
-        $iconPath      = ExtensionManagementUtility::getExtensionIcon($extensionPath);
-
+        $iconPath = ExtensionManagementUtility::getExtensionIcon($extensionPath);
+        
         if (empty($iconPath)) {
             return '';
         }
         if ($absolute) {
             return Path::join($extensionPath, $iconPath);
         }
-
+        
         return Path::join('EXT:' . $extKey, $iconPath);
     }
-
+    
     /**
      * Returns the path to the directory where dynamic data may be stored
      *
@@ -223,7 +223,7 @@ class PathFacet implements FacetInterface
     {
         return Environment::getVarPath() . DIRECTORY_SEPARATOR;
     }
-
+    
     /**
      * Receives a typo3 formatted string like: LLL:EXT:ext_key/something...
      * And converts it into an absolute path. Of course you may use paths that
@@ -236,49 +236,49 @@ class PathFacet implements FacetInterface
     public function typoPathToRealPath(string $typoPath): string
     {
         $file = Path::unifySlashes($typoPath);
-
+        
         // Prepare input string
         if (stripos($file, 'file:') === 0) {
             $file = substr($file, 5);
         }
-        $prefix     = substr($file, 0, 4);
+        $prefix = substr($file, 0, 4);
         $isLangFile = strtolower($prefix) === 'lll:';
         if ($isLangFile) {
             $prefix = substr($file, 4, 4);
         }
         $isExtFile = strtolower($prefix) === 'ext:';
-
+        
         // Nothing to do
         if (! $isLangFile && ! $isExtFile) {
             return $file;
         }
-
+        
         // Remove primary prefix -> EXT: or LLL:
         $file = substr($file, 4);
-
+        
         // Return non ext langFile
         if (! $isExtFile && $isLangFile) {
             return $file;
         }
-
+        
         // Remove secondary prefix -> EXT:
         if ($isExtFile && $isLangFile) {
             $file = substr($file, 4);
         }
-
+        
         // Get extKey
-        $pos    = strpos($file, DIRECTORY_SEPARATOR);
+        $pos = strpos($file, DIRECTORY_SEPARATOR);
         $extKey = substr($file, 0, $pos);
-        $file   = substr($file, $pos + 1);
-
+        $file = substr($file, $pos + 1);
+        
         // Resolve directory
-        $dir  = $this->getExtensionPath($extKey);
+        $dir = $this->getExtensionPath($extKey);
         $file = Path::unifyPath($dir) . $file;
-
+        
         // Done
         return $file;
     }
-
+    
     /**
      * This method does the exact opposite of typoPathToRealPath().
      * It takes a fully qualified filename and converts it into an relative path starting with EXT:...
@@ -294,13 +294,13 @@ class PathFacet implements FacetInterface
     public function realPathToTypoExt(string $path): string
     {
         $path = Path::unifySlashes(trim($path));
-
+        
         // Ignore if we have already an ext: prefix
         if (stripos($path, 'ext:') === 0) {
             return $path;
         }
         $p = PathUtility::stripPathSitePrefix($path);
-
+        
         // Could we resolve the path inside of ext?
         if (stripos($p, 'typo3conf' . DIRECTORY_SEPARATOR . 'ext' . DIRECTORY_SEPARATOR) !== 0) {
             // Try to find find a part inside the ext directory by looking for every chain member
@@ -310,18 +310,18 @@ class PathFacet implements FacetInterface
                 if (empty($extKey)) {
                     continue;
                 }
-
+                
                 // Check current chain member
                 if (ExtensionManagementUtility::isLoaded($extKey)) {
-                    $path     = 'EXT:' . $extKey . str_replace(implode(DIRECTORY_SEPARATOR, $stripPath), '', $path);
+                    $path = 'EXT:' . $extKey . str_replace(implode(DIRECTORY_SEPARATOR, $stripPath), '', $path);
                     $realPath = $this->typoPathToRealPath($path);
                     if (! file_exists($realPath)) {
                         continue;
                     }
-
+                    
                     return $path;
                 }
-
+                
                 // Check if the path has a composer file we can use to find the ext key
                 $composerJsonPath = implode(DIRECTORY_SEPARATOR, $stripPath) . DIRECTORY_SEPARATOR . 'composer.json';
                 if (file_exists($composerJsonPath)) {
@@ -335,17 +335,17 @@ class PathFacet implements FacetInterface
                     }
                 }
             }
-
+            
             // Try to find the path by looking
             throw new T3BAException('Could not resolve path: ' . $path . ' to a relative EXT: path!');
         }
-
+        
         // Looking inside the ext directory
         $path = substr($p, 14);
-
+        
         return 'EXT:' . $path;
     }
-
+    
     /**
      * This helper allows you to generate a slug programmatically like an author would in the TYPO3
      * backend. There are two different options when you generate a slug. Either you can generate a
@@ -372,17 +372,17 @@ class PathFacet implements FacetInterface
     public function getSlugFor($recordOrUid, string $table, string $field): string
     {
         throw new NotImplementedException();
-
+        
         // Try to read the field configuration from the TCA
         $languageField = Arrays::getPath($GLOBALS, ['TCA', $table, 'ctrl', 'languageField'], null);
-        $fieldConfig   = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $field, 'config'], []);
+        $fieldConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $field, 'config'], []);
         if (empty($fieldConfig)) {
             throw new RuntimeException(
                 'No valid field configuration for table ' . $table . ' field name ' . $field . ' found.',
                 1535379534
             );
         }
-
+        
         // Resolve the record
         if (is_numeric($recordOrUid)) {
             $record = $this->getService(DbServiceInterface::class)->getRecords($table, $recordOrUid);
@@ -393,15 +393,15 @@ class PathFacet implements FacetInterface
         if (! is_array($record)) {
             $record = [];
         }
-
+        
         // Inject language if required
         if (! empty($languageField) && ! isset($record[$languageField])) {
             $record[$languageField] = $this->context->language()->getCurrentFrontendLanguage()->getLanguageId();
         }
-
+        
         // Create the slug using the slug helper
         $slugHelper = $this->getService(SlugHelper::class, [$table, $field, $fieldConfig]);
-
+        
         return $slugHelper->generate($record, empty($record['pid']) ? -1 : $record['pid']);
     }
 }

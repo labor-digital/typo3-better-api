@@ -29,7 +29,7 @@ class CustomElements extends AbstractFieldPreset
 {
     use CustomFieldPresetTrait;
     use CustomWizardPresetTrait;
-
+    
     /**
      * Can be used to configure a generic, custom form element.
      *
@@ -41,7 +41,7 @@ class CustomElements extends AbstractFieldPreset
     {
         $this->applyCustomElementPreset($formElementClass, $options);
     }
-
+    
     /**
      * Can be used to configure a generic, custom wizard class.
      *

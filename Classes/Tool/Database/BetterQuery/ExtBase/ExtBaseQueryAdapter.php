@@ -33,7 +33,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
      * @var \TYPO3\CMS\Extbase\Persistence\QueryInterface
      */
     protected $query;
-
+    
     /**
      * ExtBaseQueryAdapter constructor.
      *
@@ -46,7 +46,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
         parent::__construct($tableName, $query->getQuerySettings(), $context);
         $this->query = $query;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -56,7 +56,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
         $this->query = clone $this->query;
         $this->query->setQuerySettings($this->settings);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -68,7 +68,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
             $this->query->setLimit($limit);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -76,7 +76,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->getLimit();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -84,7 +84,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         $this->query->setOffset($offset);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -92,7 +92,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->getOffset();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -100,7 +100,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         $this->query->setOrderings($orderings);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -108,7 +108,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return clone $this->query;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -116,7 +116,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         throw new NotImplementedException('The query builder is generated in the ext base better query implementation');
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -124,7 +124,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->logicalOr($list);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -132,7 +132,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     {
         return $this->query->logicalAnd($list);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -172,15 +172,15 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
                 $condition = $this->query->equals($key, $value);
                 break;
         }
-
+        
         // Handle negation
         if ($negated) {
             $condition = $this->query->logicalNot($condition);
         }
-
+        
         return $condition;
     }
-
+    
     /**
      * @inheritDoc
      */

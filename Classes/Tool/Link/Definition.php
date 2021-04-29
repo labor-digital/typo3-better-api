@@ -27,21 +27,21 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 class Definition
 {
-
+    
     /**
      * The target page id
      *
      * @var int
      */
     protected $pid;
-
+    
     /**
      * True if the current query string should be appended to the new url
      *
      * @var bool
      */
     protected $keepQuery = false;
-
+    
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be kept.
      * All others will be dropped.
@@ -50,7 +50,7 @@ class Definition
      * @var array
      */
     protected $allowedQueryArgs = [];
-
+    
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be removed.
      * All others will be kept.
@@ -59,28 +59,28 @@ class Definition
      * @var array
      */
     protected $deniedQueryArgs = [];
-
+    
     /**
      * The fragment / hash / anchor of the url
      *
      * @var string|iterable|null
      */
     protected $fragment;
-
+    
     /**
      * The fragment generator to be used instead of the $fragment property.
      *
      * @var array|null
      */
     protected $fragmentGenerator;
-
+    
     /**
      * Optional The controller class to create the request for
      *
      * @var string
      */
     protected $controllerClass;
-
+    
     /**
      * Optional if the controller class name is not known.
      * NOTE: $controllerClass has priority over this setting
@@ -88,7 +88,7 @@ class Definition
      * @var string
      */
     protected $controllerName;
-
+    
     /**
      * Optional if the controller class name is not known.
      * NOTE: $controllerClass has priority over this setting
@@ -96,49 +96,49 @@ class Definition
      * @var string
      */
     protected $controllerExtKey;
-
+    
     /**
      * Optional The controller action to create the link for
      *
      * @var string
      */
     protected $controllerAction;
-
+    
     /**
      * Optional The plugin name to create the link for
      *
      * @var string
      */
     protected $pluginName;
-
+    
     /**
      * The arguments to build the link with
      *
      * @var array
      */
     protected $args = [];
-
+    
     /**
      * A list of arguments that should be ignored when the chash is generated for this link
      *
      * @var array
      */
     protected $cHashExcludedArgs = [];
-
+    
     /**
      * Holds the language this link should be generated for
      *
      * @var \TYPO3\CMS\Core\Site\Entity\SiteLanguage|null
      */
     protected $language;
-
+    
     /**
      * Holds the setup for the link browser if it was given
      *
      * @var array|null
      */
     protected $linkBrowserConfig;
-
+    
     /**
      * Returns the target page id or null
      *
@@ -148,7 +148,7 @@ class Definition
     {
         return $this->pid;
     }
-
+    
     /**
      * Sets the target page id
      *
@@ -165,12 +165,12 @@ class Definition
         if ($pid instanceof Closure || is_array($pid) && is_object($pid[0])) {
             throw new TypeError('$pid can not be a Closure or a callback using a object as target. Please refer to the TYPO3 callback syntax, or provide a static callback.');
         }
-
+        
         $this->pid = $pid;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the current query string should be kept, otherwise false
      *
@@ -180,7 +180,7 @@ class Definition
     {
         return $this->keepQuery;
     }
-
+    
     /**
      * Setting this to true will keep the current query string.
      * Default is false.
@@ -192,10 +192,10 @@ class Definition
     public function setKeepQuery(bool $keepQuery): self
     {
         $this->keepQuery = $keepQuery;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns an array containing two keys:
      * - "type" is either denied, allowed or none which represents the type of query modifier that is used
@@ -211,20 +211,20 @@ class Definition
                 'list' => $this->deniedQueryArgs,
             ];
         }
-
+        
         if (! empty($this->allowedQueryArgs)) {
             return [
                 'type' => 'allowed',
                 'list' => $this->deniedQueryArgs,
             ];
         }
-
+        
         return [
             'type' => 'none',
             'list' => [],
         ];
     }
-
+    
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be kept.
      * All others will be dropped.
@@ -237,10 +237,10 @@ class Definition
     public function setAllowedQueryArgs(array $list): self
     {
         $this->allowedQueryArgs = array_values($list);
-
+        
         return $this;
     }
-
+    
     /**
      * If $keepQuery is set to TRUE. This list defines which query parameters should be removed.
      * All others will be kept.
@@ -253,10 +253,10 @@ class Definition
     public function setDeniedQueryArgs(array $list): self
     {
         $this->deniedQueryArgs = array_values($list);
-
+        
         return $this;
     }
-
+    
     /**
      * Sometimes you want to create the fragment of the link dynamically based on certain rules.
      * For this case you can provide a fragment generator. The generator will receive this link instance
@@ -275,10 +275,10 @@ class Definition
     public function setFragmentGenerator(?string $generatorClass, string $method = 'generateFragment'): self
     {
         $this->fragmentGenerator = $generatorClass === null ? null : [$generatorClass, $method];
-
+        
         return $this;
     }
-
+    
     /**
      * Returns either the configured fragment generator callable, or null if there is none
      *
@@ -288,8 +288,8 @@ class Definition
     {
         return $this->fragmentGenerator;
     }
-
-
+    
+    
     /**
      * Returns the fragment/anchor tag of the link
      *
@@ -302,7 +302,7 @@ class Definition
     {
         return $this->fragment;
     }
-
+    
     /**
      * Sets the fragment/anchor tag of the link
      *
@@ -321,10 +321,10 @@ class Definition
             throw new LinkException('The given fragment is invalid!');
         }
         $this->fragment = is_string($fragment) ? trim(ltrim(trim($fragment), '#')) : $fragment;
-
+        
         return $this;
     }
-
+    
     /**
      * Adds a single fragment argument and its value to the link
      *
@@ -344,10 +344,10 @@ class Definition
             $this->fragment = [];
         }
         $this->fragment[trim(ltrim(trim($key), '#'))] = $value;
-
+        
         return $this;
     }
-
+    
     /**
      * Removes a single argument from the list of fragment arguments
      *
@@ -361,10 +361,10 @@ class Definition
             return $this;
         }
         unset($this->args[trim(ltrim(trim($key), '#'))]);
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently configured extbase controller target-class for the link
      *
@@ -374,7 +374,7 @@ class Definition
     {
         return $this->controllerClass;
     }
-
+    
     /**
      * Can be used to set the target extbase controller, extension and vendor for this link.
      *
@@ -385,10 +385,10 @@ class Definition
     public function setControllerClass(string $controllerClass): self
     {
         $this->controllerClass = $controllerClass;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently set extbase controller name for this link.
      * Optional if the controller class name is not known.
@@ -401,7 +401,7 @@ class Definition
     {
         return $this->controllerName;
     }
-
+    
     /**
      * Sets the used extbase controller name for this link.
      * Optional if the controller class name is not known.
@@ -414,10 +414,10 @@ class Definition
     public function setControllerName(string $controllerName): self
     {
         $this->controllerName = $controllerName;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently set extbase extension key for the controller used by this link.
      * Optional if the controller class name is not known.
@@ -430,7 +430,7 @@ class Definition
     {
         return $this->controllerExtKey;
     }
-
+    
     /**
      * Sets the extbase extension key for the controller used by this link.
      * Optional if the controller class name is not known.
@@ -443,10 +443,10 @@ class Definition
     public function setControllerExtKey(string $controllerExtKey): self
     {
         $this->controllerExtKey = $controllerExtKey;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently configured action name for the extbase controller used by this link.
      *
@@ -456,7 +456,7 @@ class Definition
     {
         return $this->controllerAction;
     }
-
+    
     /**
      * Sets the extbase controller's action name this link should lead to
      *
@@ -467,10 +467,10 @@ class Definition
     public function setControllerAction(string $controllerAction): self
     {
         $this->controllerAction = $controllerAction;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently configured plugin name for this link.
      *
@@ -480,7 +480,7 @@ class Definition
     {
         return $this->pluginName;
     }
-
+    
     /**
      * Optionally sets the name of the typo3 plugin name this link should lead to.
      *
@@ -491,10 +491,10 @@ class Definition
     public function setPluginName(string $pluginName): self
     {
         $this->pluginName = $pluginName;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of arguments that should be excluded from cHash generation when the url is being build
      *
@@ -504,7 +504,7 @@ class Definition
     {
         return $this->cHashExcludedArgs;
     }
-
+    
     /**
      * Sets the list of arguments that should be excluded from cHash generation when the url is being build
      *
@@ -515,10 +515,10 @@ class Definition
     public function setCHashExcludedArgs(array $argsToExclude): self
     {
         $this->cHashExcludedArgs = $argsToExclude;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently set arguments
      *
@@ -528,7 +528,7 @@ class Definition
     {
         return $this->args;
     }
-
+    
     /**
      * Sets all currently configured arguments for the link
      *
@@ -542,10 +542,10 @@ class Definition
     public function setArgs(iterable $args): self
     {
         $this->args = $args;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of required argument and fragment elements that have to be set
      * in order to build the link successfully
@@ -555,13 +555,13 @@ class Definition
     public function getRequiredElements(): array
     {
         $required = [];
-
+        
         foreach ($this->args as $arg => $val) {
             if ($val === '?') {
                 $required[] = $arg;
             }
         }
-
+        
         if (is_iterable($this->fragment)) {
             foreach ($this->fragment as $arg => $val) {
                 if ($val === '?') {
@@ -569,10 +569,10 @@ class Definition
                 }
             }
         }
-
+        
         return $required;
     }
-
+    
     /**
      * Adds a single argument and its value to the list of link arguments
      *
@@ -587,10 +587,10 @@ class Definition
     public function addToArgs(string $key, $value): self
     {
         $this->args[$key] = $value;
-
+        
         return $this;
     }
-
+    
     /**
      * Removes a single argument from the list of arguments
      *
@@ -601,10 +601,10 @@ class Definition
     public function removeFromArgs(string $key): self
     {
         unset($this->args[$key]);
-
+        
         return $this;
     }
-
+    
     /**
      * Is used to set the language (L parameter) of the currently configured link.
      * Note: Using this will override the L parameter in your "args"
@@ -616,10 +616,10 @@ class Definition
     public function setLanguage(?SiteLanguage $language): self
     {
         $this->language = $language;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently configured language or null
      *
@@ -629,7 +629,7 @@ class Definition
     {
         return $this->language;
     }
-
+    
     /**
      * This method allows you to register this link set as "selectable" in the TYPO3 link selector.
      * That allows you to directly link to records in your TCA or other input fields.
@@ -654,14 +654,14 @@ class Definition
     {
         $this->linkBrowserConfig = [
             'handler' => LinkBrowserHandler::class,
-            'label'   => $label,
-            'table'   => $tableOrModelName,
+            'label' => $label,
+            'table' => $tableOrModelName,
             'options' => $options,
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Removes the previously defined link browser configuration for this set
      *
@@ -670,10 +670,10 @@ class Definition
     public function clearLinkBrowserConfig(): self
     {
         $this->linkBrowserConfig = null;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns either the currently set link browser configuration, or null if there is none
      *
@@ -683,7 +683,7 @@ class Definition
     {
         return $this->linkBrowserConfig;
     }
-
+    
     /**
      * Internal helper which is called by the link to create a new link instance with this link set applied to it
      *
@@ -730,7 +730,7 @@ class Definition
         if (! empty($this->fragmentGenerator)) {
             $link = $link->withFragmentGenerator(...$this->fragmentGenerator);
         }
-
+        
         // Build args and fragment
         if (! empty($this->args)) {
             $args = [];
@@ -748,21 +748,21 @@ class Definition
                 $link = $link->withFragment($this->fragment);
             } else {
                 $fragment = [];
-
+                
                 foreach ($this->fragment as $k => $v) {
                     if (trim($v) !== '?') {
                         $fragment[$k] = $v;
                     }
                 }
-
+                
                 if (! empty($fragment)) {
                     $link = $link->withFragment($fragment);
                 }
             }
         }
-
+        
         $link = $link->withRequiredElements($this->getRequiredElements());
-
+        
         // Done
         return $link;
     }

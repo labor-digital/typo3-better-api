@@ -38,36 +38,36 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 class SqlRegistry implements SingletonInterface
 {
-    public const FALLBACK_TYPE_NAME       = 'sql_registry_fallback';
+    public const FALLBACK_TYPE_NAME = 'sql_registry_fallback';
     public const TABLE_OVERRIDE_TYPE_NAME = 'sql_registry_table_type';
-
+    
     use ContainerAwareTrait;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Database\Schema\SqlReader
      */
     protected $reader;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Database\Schema\SchemaMigrator
      */
     protected $migrator;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor
      */
     protected $processor;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Sql\Io\Dumper
      */
     protected $dumper;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Sql\Definition
      */
     protected $definition;
-
+    
     /**
      * Registry constructor.
      *
@@ -81,19 +81,20 @@ class SqlRegistry implements SingletonInterface
         SchemaMigrator $migrator,
         DefinitionProcessor $processor,
         Dumper $dumper
-    ) {
-        $this->reader    = $reader;
-        $this->migrator  = $migrator;
+    )
+    {
+        $this->reader = $reader;
+        $this->migrator = $migrator;
         $this->processor = $processor;
-        $this->dumper    = $dumper;
-
+        $this->dumper = $dumper;
+        
         // Register fallback if required
         $reg = Type::getTypeRegistry();
         if (! $reg->has(self::FALLBACK_TYPE_NAME)) {
             $reg->register(self::FALLBACK_TYPE_NAME, new FallbackType());
         }
     }
-
+    
     /**
      * Returns the doctrine schema object for a single database table
      *
@@ -104,9 +105,9 @@ class SqlRegistry implements SingletonInterface
     public function getTable(string $tableName): Table
     {
         $this->loadDefinition();
-
+        
         if (! isset($this->definition->tables[$tableName])) {
-            $this->definition->newTableNames[]    = $tableName;
+            $this->definition->newTableNames[] = $tableName;
             $this->definition->tables[$tableName] = $this->makeInstance(Table::class, [
                 $tableName,
                 [],
@@ -116,10 +117,10 @@ class SqlRegistry implements SingletonInterface
                 [],
             ]);
         }
-
+        
         return $this->definition->tables[$tableName];
     }
-
+    
     /**
      * Returns the doctrine schema object for a single "type" of a table.
      * This is mostly used in the TCA builder.
@@ -138,21 +139,21 @@ class SqlRegistry implements SingletonInterface
     public function getType(string $tableName, $typeName): Table
     {
         $this->loadDefinition();
-
+        
         if (! isset($this->definition->types[$tableName][$typeName])) {
             if ($typeName === static::TABLE_OVERRIDE_TYPE_NAME) {
                 $table = $this->getTable($tableName);
-                $type  = new TableOverride($tableName, [], $table->getIndexes(), $table->getForeignKeys());
+                $type = new TableOverride($tableName, [], $table->getIndexes(), $table->getForeignKeys());
             } else {
                 $type = clone $this->getTable($tableName);
             }
-
+            
             $this->definition->types[$tableName][$typeName] = $type;
         }
-
+        
         return $this->definition->types[$tableName][$typeName];
     }
-
+    
     /**
      * This is a TCA builder special case. The table object itself provides the author with the option
      * to access the SQL table definition. This is useful to register indexes or foreign keys for the table,
@@ -166,7 +167,7 @@ class SqlRegistry implements SingletonInterface
     {
         return $this->getType($tableName, static::TABLE_OVERRIDE_TYPE_NAME);
     }
-
+    
     /**
      * Returns a single column object representing a unique column of a specified type
      *
@@ -182,10 +183,10 @@ class SqlRegistry implements SingletonInterface
         if (! $type->hasColumn($fieldName)) {
             return $type->addColumn($fieldName, static::FALLBACK_TYPE_NAME);
         }
-
+        
         return $type->getColumn($fieldName);
     }
-
+    
     /**
      * an be used to create a mm table definition in the sql file.
      *
@@ -200,25 +201,25 @@ class SqlRegistry implements SingletonInterface
         // Make the name of the mm table
         if (empty($mmTableName)) {
             $mmTableName = str_replace('_domain_model_', '_', $tableName) . '_' . Inflector::toUnderscore($fieldName);
-
+            
             // Make sure the name does not get longer than 128 chars at max (125 + 3 for "_mm")
             if (strlen($mmTableName) > 125) {
-                $mmNameHash  = md5($mmTableName);
+                $mmNameHash = md5($mmTableName);
                 $mmTableName = substr($mmTableName, 0, 125 - 32 - 1); // max length - md5 length - 1 for "_"
                 $mmTableName .= '_' . $mmNameHash;
             }
-
+            
             $mmTableName .= '_mm';
         }
-
+        
         // Already defined
         if (isset($this->definition->tables[$mmTableName])) {
             return $mmTableName;
         }
-
+        
         // Define the table
         $table = $this->getTable($mmTableName);
-
+        
         $table->addColumn('uid', 'integer', ['length' => 11, 'notnull' => true, 'autoincrement' => true]);
         $table->addColumn('uid_local', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
         $table->addColumn('uid_foreign', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
@@ -226,14 +227,14 @@ class SqlRegistry implements SingletonInterface
         $table->addColumn('sorting', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
         $table->addColumn('sorting_foreign', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
         $table->addColumn('ident', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
-
+        
         $table->setPrimaryKey(['uid']);
         $table->addIndex(['uid_local'], 'uid_local');
         $table->addIndex(['uid_foreign'], 'uid_foreign');
-
+        
         return $mmTableName;
     }
-
+    
     /**
      * Dumps the collected TCA changes into a single SQL string.
      * NOTE: This is a HEAVY operation that is not cached. Please use it with care!
@@ -245,12 +246,12 @@ class SqlRegistry implements SingletonInterface
         if (! isset($this->definition)) {
             return '';
         }
-
+        
         return $this->dumper->dump(
             $this->processor->findTableDiff($this->definition)
         );
     }
-
+    
     /**
      * Flushes the complete definition object and resets the registry
      */
@@ -258,7 +259,7 @@ class SqlRegistry implements SingletonInterface
     {
         $this->definition = null;
     }
-
+    
     /**
      * Removes all changed sql definitions for a specific table.
      * This will reset the table definition to the configuration loaded from the ext_tables.sql files
@@ -269,7 +270,7 @@ class SqlRegistry implements SingletonInterface
     {
         unset($this->definition->types[$tableName]);
     }
-
+    
     /**
      * Makes sure the definition object exists and is initialized.
      * It will also load all sql strings and create table instances for them.
@@ -279,13 +280,13 @@ class SqlRegistry implements SingletonInterface
         if ($this->definition) {
             return;
         }
-
+        
         Sql::$enabled = false;
-        $definition   = $this->reader->getTablesDefinitionString(false);
+        $definition = $this->reader->getTablesDefinitionString(false);
         Sql::$enabled = true;
-        $statements   = $this->reader->getStatementArray($definition);
-        $rawTables    = $this->migrator->parseCreateTableStatements($statements);
-
+        $statements = $this->reader->getStatementArray($definition);
+        $rawTables = $this->migrator->parseCreateTableStatements($statements);
+        
         $tables = [];
         foreach ($rawTables as $table) {
             if (! isset($tables[$table->getName()])) {
@@ -294,7 +295,7 @@ class SqlRegistry implements SingletonInterface
                 TableAdapter::mergeTables($tables[$table->getName()], $table);
             }
         }
-
+        
         $this->definition = $this->makeInstance(Definition::class, [$tables]);
     }
 }

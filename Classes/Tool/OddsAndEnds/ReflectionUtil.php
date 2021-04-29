@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\OddsAndEnds;
 
+use Closure;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionFunction;
@@ -41,7 +42,7 @@ class ReflectionUtil
     {
         $ref = null;
         if (is_object($callable)) {
-            if ($callable instanceof \Closure) {
+            if ($callable instanceof Closure) {
                 $ref = new ReflectionFunction($callable);
             } else {
                 $ref = new ReflectionObject((object)$callable);
@@ -65,7 +66,7 @@ class ReflectionUtil
         if ($ref === null) {
             throw new InvalidArgumentException('Could not generate a key for your given callable!');
         }
-
+        
         return $ref;
     }
 }

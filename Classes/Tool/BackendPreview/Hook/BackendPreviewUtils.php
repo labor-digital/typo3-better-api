@@ -31,7 +31,7 @@ class BackendPreviewUtils
      * @var callable[]
      */
     protected $links;
-
+    
     /**
      * BackendPreviewUtils constructor.
      *
@@ -41,7 +41,7 @@ class BackendPreviewUtils
     {
         $this->links = $links;
     }
-
+    
     /**
      * Renders the preview header the same way the normal TYPO3 does
      *
@@ -51,7 +51,7 @@ class BackendPreviewUtils
     {
         return call_user_func($this->links[__FUNCTION__]);
     }
-
+    
     /**
      * Renders the preview content/body the same way the normal TYPO3 does
      *
@@ -61,7 +61,7 @@ class BackendPreviewUtils
     {
         return call_user_func($this->links[__FUNCTION__]);
     }
-
+    
     /**
      * Renders the preview footer the same way the normal TYPO3 does
      *
@@ -71,7 +71,7 @@ class BackendPreviewUtils
     {
         return call_user_func($this->links[__FUNCTION__]);
     }
-
+    
     /**
      * Renders a list of fields as a nice html with both the value and the translated label
      *
@@ -84,7 +84,7 @@ class BackendPreviewUtils
     {
         return call_user_func($this->links[__FUNCTION__], $fields, $tableName);
     }
-
+    
     /**
      * Wraps the given $linkText with a link to the edit mode of the record
      *

@@ -33,12 +33,12 @@ use Neunerlei\TinyTimy\DateTimy;
 class ConfigGenerator extends AbstractConfigGenerator
 {
     use TypoContextAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Translation\Translator
      */
     protected $translator;
-
+    
     /**
      * ModuleConfigGenerator constructor.
      *
@@ -48,7 +48,7 @@ class ConfigGenerator extends AbstractConfigGenerator
     {
         $this->translator = $translator;
     }
-
+    
     /**
      * Generates the configuration array
      *
@@ -61,10 +61,10 @@ class ConfigGenerator extends AbstractConfigGenerator
     {
         $this->makeTranslationFileIfRequired($configurator, $context);
         $this->registerTemplateDefinition('module', $configurator, $context);
-
+        
         return $this->makeRegisterModuleArgs($configurator, $context);
     }
-
+    
     /**
      * Makes sure the module translation file exists or creates a new one
      *
@@ -78,15 +78,15 @@ class ConfigGenerator extends AbstractConfigGenerator
         if (file_exists($translationFile)) {
             return;
         }
-
+        
         // Check if we got a context
         if ($this->translator->hasNamespace($configurator->getTranslationFile())) {
             $translationFile = $this->translator->getNamespaceFile($configurator->getTranslationFile(), true);
             $configurator->setTranslationFile($translationFile);
-
+            
             return;
         }
-
+        
         // Create new translation file
         $definition = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <xliff version="1.0">
@@ -107,10 +107,10 @@ class ConfigGenerator extends AbstractConfigGenerator
     </body>
   </file>
 </xliff>';
-
+        
         Fs::writeFile($translationFile, $definition);
     }
-
+    
     /**
      * Builds and returns the arguments that have to be passed to the "registerModule" method to add our module to the
      * backend.
@@ -125,16 +125,16 @@ class ConfigGenerator extends AbstractConfigGenerator
     protected function makeRegisterModuleArgs(ModuleConfigurator $configurator, ExtConfigContext $context): array
     {
         return array_values([
-            'extensionName'       => $context->getExtKey(),
-            'mainModuleName'      => $configurator->getSection(),
-            'subModuleName'       => $configurator->getModuleKey(),
-            'position'            => $configurator->getPosition(),
-            'controllerActions'   => $configurator->getActions(),
+            'extensionName' => $context->getExtKey(),
+            'mainModuleName' => $configurator->getSection(),
+            'subModuleName' => $configurator->getModuleKey(),
+            'position' => $configurator->getPosition(),
+            'controllerActions' => $configurator->getActions(),
             'moduleConfiguration' => Arrays::merge(
                 $configurator->getAdditionalOptions(),
                 [
                     'access' => implode(',', $configurator->getAccess()),
-                    'icon'   => $configurator->getIcon(),
+                    'icon' => $configurator->getIcon(),
                     'labels' => $configurator->getTranslationFile(),
                 ]
             ),

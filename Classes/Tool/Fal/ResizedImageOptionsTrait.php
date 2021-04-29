@@ -25,7 +25,7 @@ use Neunerlei\Options\Options;
 
 trait ResizedImageOptionsTrait
 {
-
+    
     /**
      * Applies the option definition to create resized/manipulated images.
      * Encapsulated for other extension to use as global image processing format
@@ -40,84 +40,84 @@ trait ResizedImageOptionsTrait
     protected function applyResizedImageOptions(array $options, array $additionalDefinition = []): array
     {
         // Prepare image processing options
-        $def           = [
-            'type'    => ['number', 'null', 'string'],
+        $def = [
+            'type' => ['number', 'null', 'string'],
             'default' => null,
-            'filter'  => static function ($v) {
+            'filter' => static function ($v) {
                 if (! is_null($v)) {
                     return (string)$v;
                 }
-
+                
                 return null;
             },
         ];
         $defNumberOnly = [
-            'type'      => ['number', 'null'],
-            'default'   => null,
+            'type' => ['number', 'null'],
+            'default' => null,
             'preFilter' => static function ($v) {
                 if (is_numeric($v)) {
                     return (float)$v;
                 }
-
+                
                 return $v;
             },
-            'filter'    => static function ($v) {
+            'filter' => static function ($v) {
                 if (! is_null($v)) {
                     return (string)$v;
                 }
-
+                
                 return null;
             },
         ];
-
+        
         // Build the definition
         $defaultDefinition = [
-            'width'     => $def,
-            'minWidth'  => $defNumberOnly,
-            'maxWidth'  => $defNumberOnly,
-            'height'    => $def,
+            'width' => $def,
+            'minWidth' => $defNumberOnly,
+            'maxWidth' => $defNumberOnly,
+            'height' => $def,
             'minHeight' => $defNumberOnly,
             'maxHeight' => $defNumberOnly,
-            'crop'      => [
-                'type'    => ['bool', 'null', 'string', 'array'],
+            'crop' => [
+                'type' => ['bool', 'null', 'string', 'array'],
                 'default' => null,
-                'filter'  => static function ($v) {
+                'filter' => static function ($v) {
                     if (is_array($v)) {
                         $def = ['type' => 'number', 'default' => 0];
-
+                        
                         return Options::make($v, [
-                            'x'      => $def,
-                            'y'      => $def,
-                            'width'  => $def,
+                            'x' => $def,
+                            'y' => $def,
+                            'width' => $def,
                             'height' => $def,
                         ]);
                     }
                     if (! $v) {
                         return null;
                     }
-
+                    
                     return $v;
                 },
             ],
-            'params'    => [
-                'type'    => 'string',
+            'params' => [
+                'type' => 'string',
                 'default' => '',
             ],
         ];
-
+        
         // Apply the options
         $definition = Arrays::merge($defaultDefinition, $additionalDefinition);
-        $options    = Options::make($options, $definition);
-        $options    = array_filter($options, static function ($v) {
+        $options = Options::make($options, $definition);
+        $options = array_filter($options, static function ($v) {
             return ! is_null($v);
         });
-
+        
         // Build additional parameters
         if (! empty($options['params'])) {
             $options['additionalParameters'] = $options['params'];
         }
         unset($options['params']);
-
+        
         // Done
         return $options;
     }

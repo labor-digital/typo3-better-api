@@ -29,14 +29,14 @@ abstract class AbstractCustomField implements CustomFieldInterface
     use CustomFormElementTrait {
         enhanceTemplateData as enhanceTemplateDataRoot;
     }
-
+    
     /**
      * The context object to work with
      *
      * @var CustomFieldContext
      */
     protected $context;
-
+    
     /**
      * @inheritDoc
      */
@@ -44,7 +44,7 @@ abstract class AbstractCustomField implements CustomFieldInterface
     {
         $this->context = $context;
     }
-
+    
     /**
      * Your input field, like your custom <input type="text"...> has to have some quite
      * specific and extensive attributes in order to work correctly with the form engine of typo3's backend.
@@ -64,35 +64,35 @@ abstract class AbstractCustomField implements CustomFieldInterface
     protected function getInputAttributes(array $mergeAttributes = []): string
     {
         $config = $this->context->getConfig()['config'] ?? [];
-
+        
         // Build required attribute values
         $jsonValidation = $this->context->getRootNode()->callMethod('getValidationDataAsJsonString', [$config]);
-        $evalList       = implode(',', array_unique(Arrays::makeFromStringList(Arrays::getPath($config, 'eval', ''))));
-        $isIn           = trim(Arrays::getPath($config, 'is_in', ''));
-
+        $evalList = implode(',', array_unique(Arrays::makeFromStringList(Arrays::getPath($config, 'eval', ''))));
+        $isIn = trim(Arrays::getPath($config, 'is_in', ''));
+        
         // Build default attributes
         $attributes = [
-            'id'                               => $this->context->getRenderId(),
-            'class'                            => implode(' ', [
+            'id' => $this->context->getRenderId(),
+            'class' => implode(' ', [
                 'form-control',
                 't3js-clearable',
                 'hasDefaultValue',
             ]),
             'data-formengine-validation-rules' => $jsonValidation,
-            'data-formengine-input-params'     => json_encode([
-                'field'    => $this->context->getRenderName(),
+            'data-formengine-input-params' => json_encode([
+                'field' => $this->context->getRenderName(),
                 'evalList' => $evalList,
-                'is_in'    => $isIn,
+                'is_in' => $isIn,
             ], JSON_THROW_ON_ERROR),
-            'data-formengine-input-name'       => $this->context->getRenderName(),
+            'data-formengine-input-name' => $this->context->getRenderName(),
         ];
-
+        
         // Merge and implode attributes
         $attributes = Arrays::merge($attributes, $mergeAttributes);
-
+        
         return GeneralUtility::implodeAttributes($attributes, true);
     }
-
+    
     /**
      * Similar to your input field, the hidden field, which stores the real data
      * also has to have quite specific attributes. This method returns those attributes in the
@@ -115,19 +115,19 @@ abstract class AbstractCustomField implements CustomFieldInterface
                 $value = implode(', ', $value);
             }
         }
-
+        
         // Build default attributes
         $attributes = [
-            'name'  => $this->context->getRenderName(),
+            'name' => $this->context->getRenderName(),
             'value' => $value,
         ];
-
+        
         // Merge and implode attributes
         $attributes = Arrays::merge($attributes, $mergeAttributes);
-
+        
         return GeneralUtility::implodeAttributes($attributes, true);
     }
-
+    
     /**
      * It's not enough to add a new value field like <input type="text"...> to your template.
      * You will also have to add an additional <input type="hidden"...> field which is used as a data-holder
@@ -144,29 +144,29 @@ abstract class AbstractCustomField implements CustomFieldInterface
     protected function getHiddenHtml(array $mergeAttributes = []): string
     {
         $attr = $this->getHiddenAttributes($mergeAttributes);
-
+        
         return "<input type=\"hidden\" $attr />";
     }
-
+    
     /**
      * @inheritDoc
      */
     protected function enhanceTemplateData(array $data): array
     {
         $data = $this->enhanceTemplateDataRoot($data);
-
+        
         if (! isset($data['inputAttributes'])) {
             $data['inputAttributes'] = $this->getInputAttributes();
         }
-
+        
         if (! isset($data['hiddenField'])) {
             $data['hiddenField'] = $this->getHiddenHtml();
         }
-
+        
         if (! isset($data['hiddenAttributes'])) {
             $data['hiddenAttributes'] = $this->getHiddenAttributes();
         }
-
+        
         return $data;
     }
 }

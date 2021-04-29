@@ -31,35 +31,35 @@ use Neunerlei\PathUtil\Path;
 class BackendConfigurator extends AbstractExtConfigConfigurator
 {
     use RteConfigTrait;
-
+    
     /**
      * The list of backend assets to register
      *
      * @var array
      */
     protected $assets = [];
-
+    
     /**
      * The list of registered rte configuration arrays
      *
      * @var array
      */
     protected $rteConfig = [];
-
+    
     /**
      * A list of rte configuration files by their preset name to load
      *
      * @var array
      */
     protected $rteConfigFiles = [];
-
+    
     /**
      * TYPO3 core options in the $GLOBALS array
      *
      * @var array
      */
     protected $globals = [];
-
+    
     /**
      * Registers a new css file to the backend renderer.
      *
@@ -72,7 +72,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->addAssetInternal('addCssFile', [$cssFile, 'stylesheet', 'all', '', false], 0);
     }
-
+    
     /**
      * Registers a new js file to the backend renderer.
      *
@@ -91,7 +91,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
             0
         );
     }
-
+    
     /**
      * Use this method to register your custom RTE configuration for the Typo3 backend.
      *
@@ -117,17 +117,17 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
     public function registerRteConfig(array $config, array $options = []): self
     {
         $options = Options::make($options, [
-            'preset'            => [
-                'type'    => 'string',
+            'preset' => [
+                'type' => 'string',
                 'default' => 'default',
             ],
             'useDefaultImports' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => true,
             ],
-            'imports'           => [
-                'type'     => 'array',
-                'default'  => [],
+            'imports' => [
+                'type' => 'array',
+                'default' => [],
                 'children' => [
                     '*' => [
                         'type' => 'string',
@@ -136,16 +136,16 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
             ],
         ]);
         $options = $this->context->replaceMarkers($options);
-
+        
         unset($this->rteConfigFiles[$options['preset']]);
         $this->rteConfig[$options['preset']] = $this->makeRteConfig(
             $this->context->replaceMarkers($config),
             $options
         );
-
+        
         return $this;
     }
-
+    
     /**
      * Returns a registered rte config ur null if it was not defined
      *
@@ -157,7 +157,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->rteConfig[$this->context->replaceMarkers($presetName)] ?? null;
     }
-
+    
     /**
      * Used to set the raw configuration array for an rte configuration.
      * Unlike registerRteConfig() this method does not apply any additional logic to your configuration
@@ -170,10 +170,10 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
     public function setRteConfig(string $presetName, array $config): self
     {
         $this->rteConfig[$this->context->replaceMarkers($presetName)] = $config;
-
+        
         return $this;
     }
-
+    
     /**
      * Allows you to register a new, static editor configuration yml file
      *
@@ -187,10 +187,10 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
         $presetName = $this->context->replaceMarkers($presetName);
         unset($this->rteConfig[$presetName]);
         $this->rteConfigFiles[$presetName] = $this->context->replaceMarkers($fileName);
-
+        
         return $this;
     }
-
+    
     /**
      * Internal helper to register a new asset registration on the page renderer
      *
@@ -204,36 +204,36 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
     protected function addAssetInternal(string $method, array $args, ?int $assetArgIndex): self
     {
         $args = $this->context->replaceMarkers($args);
-
+        
         if ($assetArgIndex !== null) {
             $assetUrl = $args[$assetArgIndex];
-
+            
             if (! (bool)filter_var($assetUrl, FILTER_VALIDATE_URL)) {
-                $p        = $this->context->getTypoContext()->path();
+                $p = $this->context->getTypoContext()->path();
                 $assetUrl = $p->typoPathToRealPath($assetUrl);
                 $assetUrl = Path::makeRelative($assetUrl, $p->getPublicPath());
-
+                
                 if (! empty($assetUrl) && ! in_array($assetUrl[0], ['/', '.'], true)) {
                     $assetUrl = '/' . $assetUrl;
                 }
-
+                
                 $args[$assetArgIndex] = $assetUrl;
             }
         }
-
+        
         $this->assets[md5($method . '.' . json_encode($args))] = [$method, $args];
-
+        
         return $this;
     }
-
-
+    
+    
     /**
      * @inheritDoc
      */
     public function finish(ConfigState $state): void
     {
         $state->setAsJson('assets', $this->assets);
-
+        
         $state->useNamespace(null, function (ConfigState $state) {
             if (! empty($this->rteConfig)) {
                 $mount = $this->context->getExtConfigService()->getFsMount();
@@ -244,6 +244,6 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
             $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS.RTE.Presets', $this->rteConfigFiles);
         });
     }
-
-
+    
+    
 }

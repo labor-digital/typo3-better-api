@@ -28,7 +28,7 @@ use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
 class DbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
     implements RecordListGetTableHookInterface
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -38,13 +38,13 @@ class DbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
         [static::class]
             = static::class;
     }
-
+    
     public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject): void
     {
         if (! static::$context->env()->isBackend()) {
             return;
         }
-
+        
         static::$bus->dispatch(($e = new DbListQueryFilterEvent(
             $table,
             $pageId,
@@ -52,9 +52,9 @@ class DbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter
             $selectedFieldsList,
             $parentObject
         )));
-
+        
         $additionalWhereClause = $e->getAdditionalWhereClause();
-        $selectedFieldsList    = $e->getSelectedFieldList();
-        $parentObject          = $e->getListRenderer();
+        $selectedFieldsList = $e->getSelectedFieldList();
+        $parentObject = $e->getListRenderer();
     }
 }

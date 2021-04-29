@@ -26,12 +26,12 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
 interface FormElementContainingInterface
 {
     public function getChildren(): iterable;
-
+    
     public function getChild(string $id);
-
+    
     public function hasChild(string $id): bool;
-
+    
     public function removeChild(string $id);
-
+    
     public function addMultiple(callable $definition);
 }

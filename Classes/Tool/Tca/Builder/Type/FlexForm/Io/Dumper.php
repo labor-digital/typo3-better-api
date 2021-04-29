@@ -37,12 +37,12 @@ class Dumper implements PublicServiceInterface
      * @var \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
      */
     protected $tools;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\VarFs\VarFs|null
      */
     protected $fsMount;
-
+    
     /**
      * Dumper constructor.
      *
@@ -51,10 +51,10 @@ class Dumper implements PublicServiceInterface
      */
     public function __construct(FlexFormTools $tools, VarFs $fs)
     {
-        $this->tools   = $tools;
+        $this->tools = $tools;
         $this->fsMount = $fs->getMount('FlexForm');
     }
-
+    
     /**
      * Dumps the given flex form object back into an array
      *
@@ -64,75 +64,75 @@ class Dumper implements PublicServiceInterface
      */
     public function dumpAsArray(Flex $flex): array
     {
-        $sheets          = [];
-        $result          = [];
+        $sheets = [];
+        $result = [];
         $previousPointer = null;
-        $pointer         = &$sheets;
-
+        $pointer = &$sheets;
+        
         if (! empty($flex->getMeta())) {
             $result['meta'] = $flex->getMeta();
         }
-
+        
         $result['sheets'] = &$sheets;
-
+        
         foreach ($flex->getAllChildren() as $child) {
             if ($child instanceof FlexTab) {
                 unset($tabEl);
                 $tabEl = [];
-                $tab   = [
+                $tab = [
                     'ROOT' => [
                         'type' => 'array',
-                        'el'   => &$tabEl,
+                        'el' => &$tabEl,
                     ],
                 ];
-
+                
                 if (! empty($child->getLabel())) {
                     $tab['ROOT']['TCEforms']['sheetTitle'] = $child->getLabel();
                 }
                 if (! empty($child->getDisplayCondition())) {
                     $tab['ROOT']['TCEforms']['displayCond'] = $child->getDisplayCondition();
                 }
-
+                
                 $sheets[$child->getId()] = $tab;
-                $pointer                 = &$tabEl;
+                $pointer = &$tabEl;
                 continue;
             }
-
+            
             if ($child instanceof FlexSection) {
                 unset($sectionEl);
                 $sectionEl = [];
-                $section   = [
+                $section = [
                     'section' => 1,
-                    'type'    => 'array',
-                    'el'      => [
+                    'type' => 'array',
+                    'el' => [
                         $child->getContainerItemId() => [
                             'title' => $child->getContainerItemLabel(),
-                            'type'  => 'array',
-                            'el'    => &$sectionEl,
+                            'type' => 'array',
+                            'el' => &$sectionEl,
                         ],
                     ],
                 ];
-
+                
                 $pointer[substr($child->getId(), 1)] = $section;
-                $previousPointer                     = $pointer;
-                $pointer                             = &$sectionEl;
+                $previousPointer = $pointer;
+                $pointer = &$sectionEl;
                 continue;
             }
-
+            
             if ($child === null) {
-                $pointer         = &$previousPointer;
+                $pointer = &$previousPointer;
                 $previousPointer = null;
                 continue;
             }
-
+            
             if ($child instanceof FlexField) {
                 $pointer[$child->getId()] = ['TCEforms' => $child->getRaw()];
             }
         }
-
+        
         return $result;
     }
-
+    
     /**
      * Dumps the given flex form object back into an xml string
      *
@@ -143,10 +143,10 @@ class Dumper implements PublicServiceInterface
     public function dumpAsString(Flex $flex): string
     {
         $array = $this->dumpAsArray($flex);
-
+        
         return $this->tools->flexArray2Xml($array);
     }
-
+    
     /**
      * Dumps the given flex form into a file on the disk and returns the absolute filepath to its location.
      *
@@ -156,10 +156,10 @@ class Dumper implements PublicServiceInterface
      */
     public function dumpToFile(Flex $flex): string
     {
-        $content  = $this->dumpAsString($flex);
+        $content = $this->dumpAsString($flex);
         $filename = 'flexForm-' . md5($content) . '.xml';
         $this->fsMount->setFileContent($filename, $content);
-
+        
         return $this->fsMount->getFile($filename)->getPathname();
     }
 }

@@ -38,7 +38,7 @@ class SavePostProcessorEvent extends AbstractLateSaveEvent
      * @var string|int
      */
     protected $id;
-
+    
     /**
      * Returns the id of the entry that is saved
      *
@@ -48,7 +48,7 @@ class SavePostProcessorEvent extends AbstractLateSaveEvent
     {
         return $this->id;
     }
-
+    
     /**
      * Updates the id of the entry that is saved.
      *
@@ -59,10 +59,10 @@ class SavePostProcessorEvent extends AbstractLateSaveEvent
     public function setId($id): self
     {
         $this->id = $id;
-
+        
         return $this;
     }
-
+    
     /**
      * Updates the row that was given by to the data handler
      *
@@ -73,8 +73,8 @@ class SavePostProcessorEvent extends AbstractLateSaveEvent
     public function setRow(array $row): self
     {
         $this->row = $row;
-
+        
         return $this;
     }
-
+    
 }

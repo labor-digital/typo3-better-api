@@ -40,7 +40,7 @@ trait TcaTableConfigTrait
     {
         return isset($this->config['ctrl']['sortby']) ?? is_string($this->config['ctrl']['sortby']);
     }
-
+    
     /**
      * Allows you to define if the table rows should be manually sortable in the backend
      *
@@ -55,10 +55,10 @@ trait TcaTableConfigTrait
         } else {
             unset($this->config['ctrl']['sortby']);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if this table is hidden in record listings, especially the list module
      *
@@ -68,7 +68,7 @@ trait TcaTableConfigTrait
     {
         return (bool)($this->config['ctrl']['hideTable'] ?? true);
     }
-
+    
     /**
      * Allows you to define if this table is hidden in record listings, especially the list module
      *
@@ -79,10 +79,10 @@ trait TcaTableConfigTrait
     public function setHidden(bool $hidden = true)
     {
         $this->config['ctrl']['hideTable'] = $hidden;
-
+        
         return $this;
     }
-
+    
     /**
      * Allows you to define the database column to use for sorting the elements.
      * With this the records are considered manually sortable.
@@ -107,10 +107,10 @@ trait TcaTableConfigTrait
     public function setSortByColumn(?string $columnName)
     {
         $this->config['ctrl']['sortby'] = $columnName;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the table is allowed on standard pages, and not only in folder items
      *
@@ -120,7 +120,7 @@ trait TcaTableConfigTrait
     {
         return (bool)$this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY];
     }
-
+    
     /**
      * Use this if you want to allow this table to have records on standard pages and not only in folder items
      *
@@ -131,10 +131,10 @@ trait TcaTableConfigTrait
     public function setAllowOnStandardPages(bool $state = true)
     {
         $this->config['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] = $state;
-
+        
         return $this;
     }
-
+    
     /**
      * This allows you to set a class of the model which then will be mapped to this table
      *
@@ -147,10 +147,10 @@ trait TcaTableConfigTrait
     public function addModelClass(string $className, array $columnMap = [])
     {
         $this->config['ctrl'][DomainModelMapStep::CONFIG_KEY][$className] = $columnMap;
-
+        
         return $this;
     }
-
+    
     /**
      * Allows you to remove a previously registered model class mapping
      *
@@ -161,10 +161,10 @@ trait TcaTableConfigTrait
     public function removeModelClass(string $className)
     {
         unset($this->config['ctrl'][DomainModelMapStep::CONFIG_KEY][$className]);
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of currently configured model classes for this table
      *
@@ -174,7 +174,7 @@ trait TcaTableConfigTrait
     {
         return array_unique($this->config['ctrl'][DomainModelMapStep::CONFIG_KEY] ?? []);
     }
-
+    
     /**
      * Can be used to configure the order of tables when they are rendered in the "list" mode in the backend.
      * This table will be sorted either before or after the table with $otherTableName
@@ -189,10 +189,10 @@ trait TcaTableConfigTrait
     {
         $this->config['ctrl'][ListPositionStep::CONFIG_KEY][$before ? 'before' : 'after'][]
             = $this->getContext()->getRealTableName($otherTableName);
-
+        
         return $this;
     }
-
+    
     /**
      * If true: Records can be changed only by “admin”-users (having the “admin” flag set).
      *
@@ -204,7 +204,7 @@ trait TcaTableConfigTrait
     {
         return (bool)$this->config['ctrl']['adminOnly'] ?? false;
     }
-
+    
     /**
      * If true: Records can be changed only by “admin”-users (having the “admin” flag set).
      *
@@ -217,10 +217,10 @@ trait TcaTableConfigTrait
     public function setAdminOnly(bool $state = true)
     {
         $this->config['ctrl']['adminOnly'] = $state;
-
+        
         return $this;
     }
-
+    
     /**
      * Field name, which is automatically set to the current timestamp when the record is created. Is never modified
      * again. Typically the name “crdate” is used for that field. See tstamp example.
@@ -233,7 +233,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['crdate'] ?? '';
     }
-
+    
     /**
      * Field name, which is automatically set to the current timestamp when the record is created. Is never modified
      * again. Typically the name “crdate” is used for that field. See tstamp example.
@@ -247,10 +247,10 @@ trait TcaTableConfigTrait
     public function setCreatedAtColumn(?string $columnName)
     {
         $this->config['ctrl']['crdate'] = $columnName;
-
+        
         return $this;
     }
-
+    
     /**
      * Field name, which is automatically set to the uid of the backend user (be_users) who originally created the
      * record. Is never modified again. Typically the name “cruser_id” is used for that field. See tstamp example.
@@ -262,7 +262,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['cruser_id'] ?? '';
     }
-
+    
     /**
      * Field name, which is automatically set to the uid of the backend user (be_users) who originally created the
      * record. Is never modified again. Typically the name “cruser_id” is used for that field. See tstamp example.
@@ -276,11 +276,11 @@ trait TcaTableConfigTrait
     public function setCreateUserColumn(?string $columnName)
     {
         $this->config['ctrl']['cruser_id'] = $columnName;
-
+        
         return $this;
     }
-
-
+    
+    
     /**
      * Field name, which indicates if a record is considered deleted or not.
      *
@@ -296,7 +296,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['delete'] ?? '';
     }
-
+    
     /**
      * Field name, which indicates if a record is considered deleted or not.
      *
@@ -313,10 +313,10 @@ trait TcaTableConfigTrait
     public function setDeletedColumn(?string $columnName)
     {
         $this->config['ctrl']['delete'] = $columnName;
-
+        
         return $this;
     }
-
+    
     /**
      * Field name where description of a record is stored in. This description is only displayed in the backend to
      * guide editors and admins and should never be shown in the frontend. If filled, the content of this field is
@@ -332,7 +332,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['descriptionColumn'] ?? '';
     }
-
+    
     /**
      * Field name where description of a record is stored in. This description is only displayed in the backend to
      * guide editors and admins and should never be shown in the frontend. If filled, the content of this field is
@@ -349,11 +349,11 @@ trait TcaTableConfigTrait
     public function setDescriptionColumn(?string $columnName)
     {
         $this->config['ctrl']['descriptionColumn'] = $columnName;
-
+        
         return $this;
     }
-
-
+    
+    
     /**
      * Field name, which – if set – will prevent all editing of the record for non-admin users.
      *
@@ -369,7 +369,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['editlock'] ?? '';
     }
-
+    
     /**
      * Field name, which – if set – will prevent all editing of the record for non-admin users.
      *
@@ -386,10 +386,10 @@ trait TcaTableConfigTrait
     public function setEditLockColumn(?string $columnName)
     {
         $this->config['ctrl']['editlock'] = $columnName;
-
+        
         return $this;
     }
-
+    
     /**
      * Is used to set a single, or multiple columns to sort the backend view with.
      * If the table is sortable or setSortColumn() is set, this is ignored.
@@ -409,16 +409,16 @@ trait TcaTableConfigTrait
             $list = [];
             foreach ($columns as $k => $v) {
                 $column = is_numeric($k) ? $v : $k;
-                $order  = is_numeric($k) ? 'ASC' : strtoupper($v);
+                $order = is_numeric($k) ? 'ASC' : strtoupper($v);
                 $list[] = $column . ' ' . $order;
             }
             $columns = implode(', ', $list);
         }
         $this->config['ctrl']['default_sortby'] = $columns;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of configured backend order columns or null if there are none
      *
@@ -430,21 +430,21 @@ trait TcaTableConfigTrait
         if (empty($sortBy)) {
             return null;
         }
-
+        
         $columns = [];
         foreach (Arrays::makeFromStringList($sortBy) as $pair) {
-            $pair  = Arrays::makeFromStringList($pair, ' ');
-            $key   = array_shift($pair);
+            $pair = Arrays::makeFromStringList($pair, ' ');
+            $key = array_shift($pair);
             $order = strtolower(array_shift($pair));
             if (! in_array($order, ['desc', 'asc'])) {
                 $order = 'asc';
             }
             $columns[$key] = $order;
         }
-
+        
         return $columns;
     }
-
+    
     /**
      * Returns, if set the field name of the table which should be used as the “title” when the record is displayed in
      * the system.
@@ -456,7 +456,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['label'] ?? '';
     }
-
+    
     /**
      * Points to the field name of the table which should be used as the “title” when the record is displayed in the
      * system.
@@ -470,10 +470,10 @@ trait TcaTableConfigTrait
     public function setLabelColumn(?string $columnName)
     {
         $this->config['ctrl']['label'] = $columnName;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns a list of field names, which are holding alternative values to the value from the field pointed to
      * by “label” (see above) if that value is empty. May not be used consistently in the system, but should apply in
@@ -487,7 +487,7 @@ trait TcaTableConfigTrait
     {
         return Arrays::makeFromStringList($this->config['ctrl']['label_alt'] ?? '');
     }
-
+    
     /**
      * Sets a list of field names, which are holding alternative values to the value from the field pointed to
      * by “label” (see above) if that value is empty. May not be used consistently in the system, but should apply in
@@ -506,16 +506,16 @@ trait TcaTableConfigTrait
         if (is_array($columns)) {
             $columns = implode(', ', $columns);
         }
-
+        
         $this->config['ctrl']['label_alt'] = $columns;
-
+        
         if (is_bool($force)) {
             $this->setForceLabelAlternative($force);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the name of the column that is used to determine the "type" of the current table.
      * Note: This may contain a colon when the column of an external table should be used. See the documentation for
@@ -528,7 +528,7 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['type'] ?? '';
     }
-
+    
     /**
      * Sets the name of the column that is used to determine the "type" of the current table.
      * The value of this field determines which one of the types configurations are used for displaying the fields in
@@ -553,16 +553,16 @@ trait TcaTableConfigTrait
     public function setTypeColumn(?string $columnName, ?array $types = [], ?array $typeFieldOptions = [])
     {
         $this->config['ctrl']['type'] = $columnName;
-
+        
         // Apply the type definition as a field automatically if it was provided
         if ($columnName && is_array($types)) {
-            $typeFieldOptions             = $typeFieldOptions ?? [];
+            $typeFieldOptions = $typeFieldOptions ?? [];
             $typeFieldOptions['maxItems'] = 1;
-            $typeFieldOptions['default']  = $typeFieldOptions['default'] ?? key($types);
-
+            $typeFieldOptions['default'] = $typeFieldOptions['default'] ?? key($types);
+            
             // Add the field to the default type
-            $type     = $this->getType();
-            $tabKeys  = iterator_to_array($type->getTabKeys());
+            $type = $this->getType();
+            $tabKeys = iterator_to_array($type->getTabKeys());
             $firstTab = reset($tabKeys);
             $type->getField($columnName)
                  ->setReloadOnChange()
@@ -570,10 +570,10 @@ trait TcaTableConfigTrait
                  ->select($types, $typeFieldOptions)
                  ->moveTo('top:' . $firstTab);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the label_alt_force marker is set.
      * If set, then the label_alt fields are always shown in the title separated by comma.
@@ -584,7 +584,7 @@ trait TcaTableConfigTrait
     {
         return (bool)$this->config['ctrl']['label_alt_force'] ?? false;
     }
-
+    
     /**
      * If set, then the label_alt fields are always shown in the title separated by comma.
      *
@@ -595,10 +595,10 @@ trait TcaTableConfigTrait
     public function setForceLabelAlternative(bool $state = true)
     {
         $this->config['ctrl']['label_alt_force'] = $state;
-
+        
         return $this;
     }
-
+    
     /**
      * Contains the system name of the table. Is used for display in the backend.
      *
@@ -618,14 +618,14 @@ trait TcaTableConfigTrait
     public function getTitle(): string
     {
         $title = $this->config['ctrl']['title'] ?? '';
-
+        
         if (empty($title)) {
             return Inflector::toHuman(preg_replace('/^(.*?_domain_model_)/', '', $this->getTableName()));
         }
-
+        
         return $title;
     }
-
+    
     /**
      * Contains the system name of the table. Is used for display in the backend.
      *
@@ -647,12 +647,12 @@ trait TcaTableConfigTrait
         // Make sure we supply a real translation key for the table title
         // Because typo3 can't do some stuff if you don't use translation keys for a title...
         // What it can't do? Well, map the table to a extension for example /o\
-        $title                         = $this->getContext()->cs()->translator->getLabelKey($title);
+        $title = $this->getContext()->cs()->translator->getLabelKey($title);
         $this->config['ctrl']['title'] = $title;
-
+        
         return $this;
     }
-
+    
     /**
      * Sets the list of fields from the table that will be included when searching for records in the TYPO3
      * backend. No record from a table will ever be found if that table does not have “searchFields” defined.
@@ -665,12 +665,12 @@ trait TcaTableConfigTrait
      */
     public function setSearchColumns(array $columns)
     {
-        $searchFields                         = array_unique($columns);
+        $searchFields = array_unique($columns);
         $this->config['ctrl']['searchFields'] = implode(',', $searchFields);
-
+        
         return $this;
     }
-
+    
     /**
      * Adds some fields to the list of fields from the table that will be included when searching for records in the
      * TYPO3 backend. The existing fields will be kept.
@@ -685,7 +685,7 @@ trait TcaTableConfigTrait
     {
         return $this->setSearchColumns(array_merge($this->getSearchColumns(), $columns));
     }
-
+    
     /**
      * Returns the currently configured the of fields from the table that will be included when searching for records
      * in the TYPO3 backend.
@@ -698,7 +698,7 @@ trait TcaTableConfigTrait
     {
         return Arrays::makeFromStringList($this->config['ctrl']['searchFields'] ?? '');
     }
-
+    
     /**
      * Sets the icon that is displayed for this table
      * Pointing to the icon file to use for the table. Icons should be square SVGs. In case you cannot supply a SVG you
@@ -717,13 +717,13 @@ trait TcaTableConfigTrait
         if (str_starts_with($filename, './')) {
             $filename = 'EXT:{{extKey}}' . substr($filename, 1);
         }
-
+        
         $this->config['ctrl']['iconfile']
             = $this->getContext()->getExtConfigContext()->replaceMarkers($filename);
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently set path to the icon file or null.
      *
@@ -735,5 +735,5 @@ trait TcaTableConfigTrait
     {
         return $this->config['ctrl']['iconfile'] ?? null;
     }
-
+    
 }

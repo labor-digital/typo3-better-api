@@ -35,20 +35,20 @@ class LinkBrowserHandler extends RecordLinkHandler
     public function initialize(AbstractLinkBrowserController $linkBrowser, $identifier, array $configuration)
     {
         parent::initialize($linkBrowser, $identifier, $configuration);
-
+        
         if (isset($this->configuration['table']) && class_exists($this->configuration['table'])) {
             $this->configuration['table'] = NamingUtil::resolveTableName($this->configuration['table']);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
     public function getBodyTagAttributes(): array
     {
-        $attr                    = parent::getBodyTagAttributes();
+        $attr = parent::getBodyTagAttributes();
         $attr['data-identifier'] = str_replace('t3://record?', 't3://linkSetRecord?', (string)$attr['data-identifier']);
-
+        
         return $attr;
     }
 }

@@ -38,7 +38,7 @@ if (! function_exists('dbgQuery')) {
      */
     function dbgQuery($query)
     {
-        $result       = $exception = $count = null;
+        $result = $exception = $count = null;
         $isStandalone = false;
         if ($query instanceof ExtBaseBetterQuery) {
             $query = $query->getQuery();
@@ -50,7 +50,7 @@ if (! function_exists('dbgQuery')) {
             if (! $query instanceof StandaloneBetterQuery) {
                 throw new DatabaseException('The given query object can not be used!');
             }
-            $dQuery       = $query->getQueryBuilder();
+            $dQuery = $query->getQueryBuilder();
             $isStandalone = true;
         } else {
             $dQuery = GeneralUtility::getContainer()
@@ -63,31 +63,31 @@ if (! function_exists('dbgQuery')) {
                 $dQuery->setFirstResult($query->getOffset());
             }
         }
-
+        
         // Build the query
         $queryString = $dQuery->getSQL();
-
+        
         // Prepare query with parameters
         $in = $out = [];
         foreach ($dQuery->getParameters() as $k => $v) {
-            $in[]  = ':' . $k;
+            $in[] = ':' . $k;
             $out[] = '"' . addslashes($v) . '"';
         }
         $queryString = str_replace($in, $out, $queryString);
-
+        
         // Try to execute the message
         try {
             if ($isStandalone) {
-                $first  = $dQuery->getFirstResult();
+                $first = $dQuery->getFirstResult();
                 $result = $dQuery->execute();
             } else {
-                $first  = $query->execute()->getFirst();
+                $first = $query->execute()->getFirst();
                 $result = $query->execute(true);
             }
         } catch (Exception $e) {
             $exception = $e->getMessage();
         }
-
+        
         // Show general query information
         echo '<h5>Query string</h5>';
         if (function_exists('dbg')) {
@@ -95,7 +95,7 @@ if (! function_exists('dbgQuery')) {
         } else {
             DebuggerUtility::var_dump($queryString);
         }
-
+        
         try {
             if (! empty($exception)) {
                 echo '<h5>Db Errors</h5>';

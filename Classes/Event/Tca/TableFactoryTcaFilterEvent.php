@@ -41,14 +41,14 @@ class TableFactoryTcaFilterEvent
      * @var array
      */
     protected $tca;
-
+    
     /**
      * The table instance the default should be applied to
      *
      * @var TcaTable
      */
     protected $table;
-
+    
     /**
      * TableFactoryTcaFilterEvent constructor.
      *
@@ -57,10 +57,10 @@ class TableFactoryTcaFilterEvent
      */
     public function __construct(array $tca, TcaTable $table)
     {
-        $this->tca   = $tca;
+        $this->tca = $tca;
         $this->table = $table;
     }
-
+    
     /**
      * Returns the table instance the configuration should be applied to
      *
@@ -70,7 +70,7 @@ class TableFactoryTcaFilterEvent
     {
         return $this->table;
     }
-
+    
     /**
      * Returns the default TCA array to apply to the table
      *
@@ -80,7 +80,7 @@ class TableFactoryTcaFilterEvent
     {
         return $this->tca;
     }
-
+    
     /**
      * Updates the TCA array to apply to the table
      *
@@ -91,8 +91,8 @@ class TableFactoryTcaFilterEvent
     public function setTca(array $tca): self
     {
         $this->tca = $tca;
-
+        
         return $this;
     }
-
+    
 }

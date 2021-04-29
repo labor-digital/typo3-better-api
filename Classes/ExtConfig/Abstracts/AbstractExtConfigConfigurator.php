@@ -32,7 +32,7 @@ abstract class AbstractExtConfigConfigurator implements
     ExtConfigContextAwareInterface, ExtConfigConfiguratorInterface
 {
     use ExtConfigContextAwareTrait;
-
+    
     /**
      * Helper to automatically inject all configurator properties into the given state object
      *
@@ -44,7 +44,7 @@ abstract class AbstractExtConfigConfigurator implements
         unset($vars['context']);
         $state->setMultiple($vars);
     }
-
+    
     /**
      * @inheritDoc
      */

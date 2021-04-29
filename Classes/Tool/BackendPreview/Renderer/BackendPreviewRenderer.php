@@ -46,7 +46,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
      * @var array
      */
     protected $typeDescriptions;
-
+    
     /**
      * Tries to render the backend preview of a specific content element based on the data provided
      * in the given preview rendering event
@@ -55,21 +55,20 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
      */
     public function render(PreviewRenderingEvent $event): void
     {
-        foreach ($this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.previewRenderers', []) as $def)
-        {
+        foreach ($this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.previewRenderers', []) as $def) {
             [$handler, $constraints] = $def;
-
+            
             // Non-empty constraints in form of an array that don't match the row -> skip
             if (! empty($constraints) && is_array($constraints)
                 && count(array_intersect_assoc($constraints, $event->getRow())) !== count($constraints)) {
                 continue;
             }
-
+            
             $this->callConcreteRenderer($handler, $event);
             break;
         }
     }
-
+    
     /**
      * Main handler that receives the rendering class, executes the renderer and updates the event arguments.
      * It has also limited error handling capabilities that catch exceptions and render them as pretty message.
@@ -84,15 +83,15 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         if (! class_exists($rendererClass)) {
             throw new BackendPreviewException('The given renderer class: ' . $rendererClass . ' does not exist!');
         }
-
+        
         $objectManager = $this->makeInstance(ObjectManager::class);
         $configManager = $objectManager->get(ConfigurationManagerInterface::class);
-
+        
         ConfigurationManagerAdapter::runWithFrontendManager(
             $configManager,
             function () use ($rendererClass, $event, $configManager) {
                 $row = $event->getRow();
-
+                
                 $languageUid = $row['sys_language_uid'] ?? null;
                 $this->getService(EnvironmentSimulator::class)->runWithEnvironment(
                     ['bootTsfe' => false, 'language' => $languageUid],
@@ -102,16 +101,16 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                             // this allows the ContentControllerBackendPreviewTrait to directly access
                             // the settings through the configuration manager
                             if (in_array(ActionController::class, class_parents($rendererClass), true)) {
-                                $signature  = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
-                                $signature  = strpos($signature, 'tx_') === 0 ? $signature : 'tx_' . $signature;
+                                $signature = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
+                                $signature = strpos($signature, 'tx_') === 0 ? $signature : 'tx_' . $signature;
                                 $configType = $row['CType'] === 'list' ? 'plugin' : 'contentElement';
-                                $config     = $this->cs()->ts->get([$configType, $signature], ['default' => []]);
-                                $cObj       = $this->getService(TsfeService::class)->getContentObjectRenderer();
+                                $config = $this->cs()->ts->get([$configType, $signature], ['default' => []]);
+                                $cObj = $this->getService(TsfeService::class)->getContentObjectRenderer();
                                 $cObj->data = $row;
                                 $configManager->setConfiguration($config);
                                 $configManager->setContentObject($cObj);
                             }
-
+                            
                             $renderer = $this->getService($rendererClass);
                             if (! $renderer instanceof BackendPreviewRendererInterface) {
                                 throw new BackendPreviewException
@@ -119,18 +118,18 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                                  . ' has to implement the correct interface: '
                                  . BackendPreviewRendererInterface::class);
                             }
-
+                            
                             // Create the context and let the renderer run
                             $context = $this->makeInstance(
                                 BackendPreviewRendererContext::class,
                                 [$event]
                             );
-
+                            
                             if ($renderer instanceof ContextAwareBackendPreviewRendererInterface
                                 || method_exists($renderer, 'setBackendPreviewRendererContext')) {
                                 $renderer->setBackendPreviewRendererContext($context);
                             }
-
+                            
                             $context->setHeader(empty($event->getHeader())
                                 ? '<b>' . $this->findDefaultHeader($row) . '</b>'
                                 : (string)$event->getHeader());
@@ -139,30 +138,30 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                                 : (string)$event->getFooter());
                             $context->setBody((string)$event->getBody());
                             $context->setLinkPreview(empty($event->getBody()));
-
+                            
                             $result = $renderer->renderBackendPreview($context);
-
+                            
                             if ($result instanceof ViewInterface) {
                                 $result = $result->render();
                             } elseif ($result instanceof Response) {
                                 $result = $result->getContent();
                             }
-
+                            
                             if (is_string($result)) {
                                 $context->setBody($result);
                             }
-
+                            
                             // Add the description if required
                             $body = $context->getBody();
                             if ($context->showDescription()) {
                                 $body = $this->renderDescription($event->getRow()) . $body;
                             }
-
+                            
                             // Check if we have to link the content
                             if (! empty($body) && $context->isLinkPreview()) {
                                 $body = $event->getUtils()->wrapWithEditLink($body);
                             }
-
+                            
                             // Update event
                             $event->setBody($body);
                             $event->setFooter($context->getFooter());
@@ -177,7 +176,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
             }
         );
     }
-
+    
     /**
      * Internal helper to render a "pretty" error message
      *
@@ -190,7 +189,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         return '<div style="background-color:red; padding: 10px; font-family: sans-serif; color: #fff">'
                . htmlentities($error) . '</div>';
     }
-
+    
     /**
      * Renders the element description based on the given row
      *
@@ -203,8 +202,8 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
         // Load the type descriptions from ts config
         if (! isset($this->typeDescriptions)) {
             $this->typeDescriptions = [];
-            $items                  = $this->getTypoContext()->config()
-                                           ->getTsConfigValue('mod.wizards.newContentElement.wizardItems');
+            $items = $this->getTypoContext()->config()
+                          ->getTsConfigValue('mod.wizards.newContentElement.wizardItems');
             foreach ($items as $item) {
                 if (! is_array($item['elements.'])) {
                     continue;
@@ -213,24 +212,24 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                     if (! is_string($element['description']) || ! is_array($element['tt_content_defValues.'])) {
                         continue;
                     }
-
+                    
                     $this->typeDescriptions[] = [$element['description'], $element['tt_content_defValues.']];
                 }
             }
-
+            
             // Sort the elements with more constraints to the top -> More specific matches first
             usort($this->typeDescriptions, static function (array $a, array $b) {
                 return count($a[1]) < count($b[1]);
             });
         }
-
+        
         foreach ($this->typeDescriptions as $description) {
             if (empty(array_diff_assoc($description[1], $row))) {
                 // @todo translateBe
                 return '<p><i>' . $this->cs()->translator->translate($description[0]) . '</i></p>';
             }
         }
-
+        
         return '';
     }
 }

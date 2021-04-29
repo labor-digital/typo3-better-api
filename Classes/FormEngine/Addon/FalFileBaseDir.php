@@ -28,7 +28,7 @@ use LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent;
 class FalFileBaseDir
 {
     use StaticContainerAwareTrait;
-
+    
     /**
      * This handler adds the baseDir constraints to the javascript of the element browser
      *
@@ -40,21 +40,21 @@ class FalFileBaseDir
         if (empty($config['baseDir'])) {
             return;
         }
-
+        
         if (empty($event->getResult()['html'])) {
             return;
         }
-
+        
         // Build the expanded js query so we can tell the js window about our configuration
         $baseDirIdentifier = static::cs()->fal->mkFolder($config['baseDir'])->getCombinedIdentifier();
-        $url               = '&' . Query::build(['expandFolder' => $baseDirIdentifier]);
-
+        $url = '&' . Query::build(['expandFolder' => $baseDirIdentifier]);
+        
         // Update the open browser script
-        $result         = $event->getResult();
+        $result = $event->getResult();
         $result['html'] = preg_replace('~(data-params=".*?)(")~si', "$1$url$2", $result['html']);
         $event->setResult($result);
     }
-
+    
     /**
      * This applier is used to allow file relation files to define a "baseDir".
      * The given directory is opened by default if the file browser is opened.
@@ -64,9 +64,9 @@ class FalFileBaseDir
     public static function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {
         // Check inline elements -> default file reference
-        $data   = $event->getProxy()->getData();
+        $data = $event->getProxy()->getData();
         $config = $event->getProxy()->getConfig();
-        $type   = 'tca';
+        $type = 'tca';
         if (! isset($data['renderType']) || $data['renderType'] !== 'inline') {
             // Check for group elements -> For flex form sections
             if (! is_array($config) || ! isset($config['type']) || $config['type'] !== 'group'
@@ -82,30 +82,30 @@ class FalFileBaseDir
                 return;
             }
         }
-
+        
         // Legacy support
         if (isset($config['rootFolder'])) {
             $config['baseDir'] = $config['rootFolder'];
         }
-
+        
         // Ignore if there is no base dir configured
         if (! isset($config['baseDir'])) {
             return;
         }
-
+        
         // Add the directory path in the session storage
         $session = static::cs()->session->getBackendSession();
         $folders = $session->get('dynamicFalFolders', []);
-
+        
         if ($type === 'tca') {
             $folders[$data['tableName']][$data['fieldName']] = $config['baseDir'];
         } else {
             $folders['flex']['data' . $data['elementBaseName']] = $config['baseDir'];
         }
-
+        
         $session->set('dynamicFalFolders', $folders);
     }
-
+    
     /**
      * This method is used as a default upload folder provider.
      * It will use the stored dynamic fal folders in the session to map the directory browser
@@ -119,7 +119,7 @@ class FalFileBaseDir
     {
         $folders = static::cs()->session->getBackendSession()->get('dynamicFalFolders', []);
         $request = (string)static::cs()->typoContext->request()->getGet('bparams');
-
+        
         // Check if there was no request -> So we are probably called inline
         if (empty($request)) {
             // Check if we got table and field
@@ -127,7 +127,7 @@ class FalFileBaseDir
                 if (! isset($folders[$params['table']][$params['field']])) {
                     return $params['uploadFolder'];
                 }
-
+                
                 $folderDefinition = $folders[$params['table']][$params['field']];
             } else {
                 // Nope... this is not what I wanted...
@@ -136,7 +136,7 @@ class FalFileBaseDir
         } else {
             // Popup browser
             $request = explode('|', $request);
-
+            
             // Check if we got a flex form field
             if (! empty($request[0]) && empty($request[4])) {
                 // Handle flex form
@@ -164,7 +164,7 @@ class FalFileBaseDir
                 $folderDefinition = $folders[$table][$field];
             }
         }
-
+        
         // Get the fal folder
         return static::cs()->fal->mkFolder($folderDefinition);
     }

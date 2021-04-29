@@ -27,7 +27,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigureHttpInterface
 {
-
+    
     /**
      * Allows you to register http request related options, like middlewares or route aspect handlers.
      *

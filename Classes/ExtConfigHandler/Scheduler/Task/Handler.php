@@ -39,7 +39,7 @@ class Handler extends AbstractExtConfigHandler
      * @var array[]
      */
     protected $tasks = [];
-
+    
     /**
      * @inheritDoc
      */
@@ -49,12 +49,12 @@ class Handler extends AbstractExtConfigHandler
         if (! ExtensionManagementUtility::isLoaded('scheduler')) {
             return;
         }
-
+        
         $configurator->registerLocation('Classes/Scheduler');
         $configurator->registerInterface(ConfigureTaskInterface::class);
         $configurator->setAllowOverride(false);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -65,7 +65,7 @@ class Handler extends AbstractExtConfigHandler
                 'Could not configure the scheduler task for class: ' . $class
                 . ' because it does not extend the ' . AbstractTask::class . ' class!');
         }
-
+        
         /** @var \LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task\TaskConfigurator $configurator */
         $configurator = $this->getInstanceWithoutDi(
             TaskConfigurator::class, [
@@ -74,9 +74,9 @@ class Handler extends AbstractExtConfigHandler
                 $class,
             ]
         );
-
+        
         call_user_func([$class, 'configure'], $configurator, $this->context);
-
+        
         $this->context->getState()->mergeIntoArray(
             'typo.globals.TYPO3_CONF_VARS.SC_OPTIONS.scheduler.tasks',
             [
@@ -84,8 +84,8 @@ class Handler extends AbstractExtConfigHandler
                     array_merge(
                         $configurator->getOptions(),
                         [
-                            'extension'   => '{{extKey}}',
-                            'title'       => $configurator->getTitle(),
+                            'extension' => '{{extKey}}',
+                            'title' => $configurator->getTitle(),
                             'description' => $configurator->getDescription(),
                         ]
                     )
@@ -93,16 +93,16 @@ class Handler extends AbstractExtConfigHandler
             ]
         );
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void { }
-
+    
     /**
      * @inheritDoc
      */
     public function finish(): void { }
-
-
+    
+    
 }

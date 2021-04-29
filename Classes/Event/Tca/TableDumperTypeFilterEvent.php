@@ -41,21 +41,21 @@ class TableDumperTypeFilterEvent
      * @var array
      */
     protected $typeTca;
-
+    
     /**
      * The type instance which was used to generate the tca
      *
      * @var TcaTableType
      */
     protected $type;
-
+    
     /**
      * The instance of the table that is currently build
      *
      * @var TcaTable
      */
     protected $table;
-
+    
     /**
      * ExtConfigTableRawTcaTypeFilterEvent constructor.
      *
@@ -66,10 +66,10 @@ class TableDumperTypeFilterEvent
     public function __construct(array $typeTca, TcaTableType $type, TcaTable $table)
     {
         $this->typeTca = $typeTca;
-        $this->type    = $type;
-        $this->table   = $table;
+        $this->type = $type;
+        $this->table = $table;
     }
-
+    
     /**
      * Returns the array of the tca type that was build by the type itself
      *
@@ -79,7 +79,7 @@ class TableDumperTypeFilterEvent
     {
         return $this->typeTca;
     }
-
+    
     /**
      * Updates the array of the tca type that was build by the type itself
      *
@@ -90,10 +90,10 @@ class TableDumperTypeFilterEvent
     public function setTypeTca(array $typeTca): self
     {
         $this->typeTca = $typeTca;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the instance of the tca type that is filtered
      *
@@ -103,7 +103,7 @@ class TableDumperTypeFilterEvent
     {
         return $this->type;
     }
-
+    
     /**
      * Returns the name/identifier of the type that gets filtered
      *
@@ -113,7 +113,7 @@ class TableDumperTypeFilterEvent
     {
         return $this->type->getTypeName();
     }
-
+    
     /**
      * Returns the name of the database table that is currently being build
      *
@@ -123,7 +123,7 @@ class TableDumperTypeFilterEvent
     {
         return $this->table->getTableName();
     }
-
+    
     /**
      * Return the instance of the table that is being build
      *

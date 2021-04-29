@@ -34,34 +34,35 @@ class ConfigGenerator extends AbstractElementConfigGenerator
     {
         return ExtensionUtility::PLUGIN_TYPE_PLUGIN;
     }
-
+    
     protected function setRegistrationArgs(
         array &$list,
         string $extensionName,
         ExtConfigContext $context,
         AbstractElementConfigurator $configurator
-    ): void {
+    ): void
+    {
         $list['plugin'][] = array_values([
-            'extensionName'             => $extensionName,
-            'pluginName'                => $configurator->getPluginName(),
-            'pluginTitle'               => $configurator->getTitle(),
+            'extensionName' => $extensionName,
+            'pluginName' => $configurator->getPluginName(),
+            'pluginTitle' => $configurator->getTitle(),
             'pluginIconPathAndFilename' => $this->makeIconIdentifier($configurator, $context),
         ]);
     }
-
+    
     protected function getCeWizardValues(string $signature): string
     {
         return 'CType = list' . PHP_EOL . 'list_type = ' . $signature;
     }
-
+    
     protected function setPreviewHooks(array &$list, string $signature, string $class): void
     {
         $list['list']['previewRenderer'][$signature] = $class;
     }
-
+    
     protected function getFlexFormCType(string $signature): string
     {
         return 'list';
     }
-
+    
 }

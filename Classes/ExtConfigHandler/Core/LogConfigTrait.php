@@ -30,14 +30,14 @@ use TYPO3\CMS\Core\Log\LogLevel;
 
 trait LogConfigTrait
 {
-
+    
     /**
      * The list of registered log configurations
      *
      * @var array
      */
     protected $logConfigurations = [];
-
+    
     /**
      * Internal helper to build the options array based on the given input.
      * Allows to add additional config definitions to be used for different log type.
@@ -50,14 +50,14 @@ trait LogConfigTrait
     protected function prepareLogConfig(array $options, array $additionalDefinition = []): array
     {
         return Options::make($options, Arrays::merge([
-            'key'       => [
-                'type'    => 'string',
+            'key' => [
+                'type' => 'string',
                 'default' => (string)count($this->logConfigurations),
             ],
-            'logLevel'  => [
-                'type'    => ['string', 'int'],
+            'logLevel' => [
+                'type' => ['string', 'int'],
                 'default' => $this->getTypoContext()->Env()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
-                'values'  => [
+                'values' => [
                     LogLevel::EMERGENCY,
                     LogLevel::ERROR,
                     LogLevel::CRITICAL,
@@ -69,7 +69,7 @@ trait LogConfigTrait
                 ],
             ],
             'namespace' => [
-                'type'    => 'string',
+                'type' => 'string',
                 'default' => function () {
                     return implode(
                         '\\',
@@ -79,21 +79,21 @@ trait LogConfigTrait
                         ])
                     );
                 },
-                'filter'  => static function ($v) {
+                'filter' => static function ($v) {
                     return array_filter(explode('\\', $v));
                 },
             ],
-            'writer'    => [
-                'type'    => 'array',
+            'writer' => [
+                'type' => 'array',
                 'default' => [],
             ],
             'processor' => [
-                'type'    => 'array',
+                'type' => 'array',
                 'default' => [],
             ],
         ], $additionalDefinition));
     }
-
+    
     /**
      * Adds the log config option to the stack
      *
@@ -104,17 +104,17 @@ trait LogConfigTrait
     protected function pushLogConfig(array $options)
     {
         $config = [
-            'writerConfiguration'    => [
+            'writerConfiguration' => [
                 $options['logLevel'] => $options['writer'],
             ],
             'processorConfiguration' => [
                 $options['logLevel'] => $options['processor'],
             ],
         ];
-
+        
         $this->logConfigurations[$options['key']] = Arrays::setPath([], $options['namespace'], $config);
-
+        
         return $this;
     }
-
+    
 }

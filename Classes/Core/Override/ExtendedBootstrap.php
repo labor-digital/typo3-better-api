@@ -57,23 +57,23 @@ class ExtendedBootstrap extends T3BA__Copy__Bootstrap
     {
         TypoEventBus::getInstance()
                     ->dispatch(new BootstrapFailsafeDefinitionEvent($failsafe));
-
+        
         return parent::init($classLoader, $failsafe);
     }
-
+    
     /**
      * @inheritDoc
      */
     public static function createPackageManager($packageManagerClassName, FrontendInterface $coreCache): PackageManager
     {
         $packageManager = parent::createPackageManager($packageManagerClassName, $coreCache);
-
+        
         TypoEventBus::getInstance()
                     ->dispatch(new PackageManagerCreatedEvent($packageManager));
-
+        
         return $packageManager;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -81,9 +81,9 @@ class ExtendedBootstrap extends T3BA__Copy__Bootstrap
     {
         TypoEventBus::getInstance()
                     ->dispatch(new BootstrapInitializesErrorHandlingEvent());
-
+        
         parent::initializeErrorHandling();
     }
-
-
+    
+    
 }

@@ -31,35 +31,35 @@ use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\ContentType;
 
 class Factory
 {
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $extConfigContext;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable|null
      */
     protected $table;
-
+    
     /**
      * The default TCA to use when a new type instance is being generated
      *
      * @var string[]
      */
     protected $defaultTypeTca = TableDefaults::CONTENT_TYPE_TCA;
-
+    
     public function __construct(TableFactory $tableFactory, ExtConfigContext $extConfigContext)
     {
-        $this->tableFactory     = $tableFactory;
+        $this->tableFactory = $tableFactory;
         $this->extConfigContext = $extConfigContext;
     }
-
+    
     /**
      * Returns the currently configured default type tca. It is the configuration of a tt_content "type" entry.
      * It will be used when a form is generated for a type that currently does not exist.
@@ -70,7 +70,7 @@ class Factory
     {
         return $this->defaultTypeTca;
     }
-
+    
     /**
      * Allows the outside world to override the type tca entry to use for new forms
      *
@@ -81,32 +81,32 @@ class Factory
     public function setDefaultTypeTca(array $defaultTypeTca): Factory
     {
         $this->defaultTypeTca = $defaultTypeTca;
-
+        
         return $this;
     }
-
+    
     public function getType(string $cType): ContentType
     {
-        $tcaBackup              = $GLOBALS['TCA']['tt_content'];
-        $typeClassBackup        = TypeFactory::$typeClass;
+        $tcaBackup = $GLOBALS['TCA']['tt_content'];
+        $typeClassBackup = TypeFactory::$typeClass;
         TypeFactory::$typeClass = ContentType::class;
-
+        
         try {
             // Simplify the type definition
             $GLOBALS['TCA']['tt_content']['types'] = [
                 $cType => array_merge($this->getDefaultTypeTca(), $tcaBackup['types'][$cType] ?? []),
             ];
-
+            
             $table = $this->tableFactory->create('tt_content', $this->extConfigContext);
             $this->tableFactory->initialize($table);
-
+            
             /** @var ContentType $type */
             $type = $table->getType($cType);
-
+            
             return $type;
         } finally {
             $GLOBALS['TCA']['tt_content'] = $tcaBackup;
-            TypeFactory::$typeClass       = $typeClassBackup;
+            TypeFactory::$typeClass = $typeClassBackup;
         }
     }
 }

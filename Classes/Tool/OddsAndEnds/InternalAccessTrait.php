@@ -39,10 +39,10 @@ trait InternalAccessTrait
                 'The object ' . get_class($this->getExecutionTarget())
                 . ' does not have a property, called: "' . $key . '"!');
         }
-
+        
         return $this->getExecutionTarget()->$key;
     }
-
+    
     /**
      * Returns true if this object has a property with name $key.
      *
@@ -54,7 +54,7 @@ trait InternalAccessTrait
     {
         return property_exists($this->getExecutionTarget(), $key);
     }
-
+    
     /**
      * Sets a given property key with the given value
      *
@@ -71,10 +71,10 @@ trait InternalAccessTrait
                 . ' does not have a property, called: "' . $key . '"!');
         }
         $this->getExecutionTarget()->$key = $value;
-
+        
         return $this;
     }
-
+    
     /**
      * Can be used to call any method inside the current object, even if it is protected or private
      *
@@ -90,10 +90,10 @@ trait InternalAccessTrait
                 'The object ' . get_class($this->getExecutionTarget())
                 . ' does not have a method, called: "' . $method . '"!');
         }
-
+        
         return call_user_func_array([$this->getExecutionTarget(), $method], $args);
     }
-
+    
     /**
      * Returns true if the object has a method with the name of $method.
      *
@@ -105,7 +105,7 @@ trait InternalAccessTrait
     {
         return method_exists($this->getExecutionTarget(), $method);
     }
-
+    
     /**
      * This method should return the object we should use as target.
      * By default you can just do return $this. However if you are running inside a proxy element

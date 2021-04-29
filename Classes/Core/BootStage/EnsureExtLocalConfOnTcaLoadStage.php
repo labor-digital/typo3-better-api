@@ -37,7 +37,7 @@ class EnsureExtLocalConfOnTcaLoadStage implements BootStageInterface
      * @var bool
      */
     protected $extLocalConfWasLoaded = false;
-
+    
     /**
      * @inheritDoc
      */
@@ -48,16 +48,16 @@ class EnsureExtLocalConfOnTcaLoadStage implements BootStageInterface
             if ($this->extLocalConfWasLoaded) {
                 return;
             }
-
+            
             // Force load ext config files
             ExtensionManagementUtility::loadExtLocalconf(false);
         }, ['priority' => 1000]);
-
-
+        
+        
         // Listen if ext config was loaded
         $eventBus->addListener(ExtLocalConfLoadedEvent::class, function () {
             $this->extLocalConfWasLoaded = true;
         });
     }
-
+    
 }

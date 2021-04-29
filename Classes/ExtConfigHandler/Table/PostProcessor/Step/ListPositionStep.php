@@ -36,7 +36,7 @@ use Neunerlei\Arrays\Arrays;
 class ListPositionStep implements TcaPostProcessorStepInterface
 {
     public const CONFIG_KEY = 'listPosition';
-
+    
     /**
      * @inheritDoc
      */
@@ -45,16 +45,16 @@ class ListPositionStep implements TcaPostProcessorStepInterface
         if (! isset($config['ctrl'][static::CONFIG_KEY]) || ! is_array($config['ctrl'][static::CONFIG_KEY])) {
             return;
         }
-
+        
         if (! is_string($meta['backend']['listPosition'])) {
             $meta['backend']['listPosition'] = '';
         }
-
+        
         $meta['backend']['listPosition'] .= PHP_EOL . $this->buildOrderTsConfigString(
                 $tableName, $config['ctrl'][static::CONFIG_KEY]);
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
-
+    
     /**
      * Internal helper to build the ts config for the table list order
      *
@@ -66,20 +66,20 @@ class ListPositionStep implements TcaPostProcessorStepInterface
     protected function buildOrderTsConfigString(string $tableName, array $order): string
     {
         $c = Arrays::merge(['before' => [], 'after' => []], $order);
-
-        $ts   = [];
+        
+        $ts = [];
         $ts[] = 'mod.web_list.tableDisplayOrder.' . $tableName . ' {';
-
+        
         foreach (['before', 'after'] as $key) {
             if (! empty($c[$key])) {
                 $c[$key] = array_unique($c[$key]);
-                $ts[]    = $key . ' = ' . implode(', ', array_unique($c[$key]));
+                $ts[] = $key . ' = ' . implode(', ', array_unique($c[$key]));
             }
         }
-
+        
         $ts[] = '}';
-
+        
         return implode(PHP_EOL, $ts);
     }
-
+    
 }

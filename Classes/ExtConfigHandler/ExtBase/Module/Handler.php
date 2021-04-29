@@ -31,7 +31,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractGroupExtConfigHandler
 {
     use SignaturePluginNameMapTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -39,24 +39,24 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         return $this->getElementKeyForClass($class, [$this, 'getSignatureFromClass']);
     }
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ConfigGenerator
      */
     protected $generator;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigurator
      */
     protected $configurator;
-
+    
     /**
      * The collected list of arguments to store in the configuration
      *
      * @var array
      */
     protected $registerModuleArgs = [];
-
+    
     /**
      * ExtBaseModuleConfigHandler constructor.
      *
@@ -66,7 +66,7 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         $this->generator = $generator;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -76,12 +76,12 @@ class Handler extends AbstractGroupExtConfigHandler
         $configurator->executeThisHandlerAfter(TsHandler::class);
         $configurator->registerInterface(ConfigureModuleInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepareHandler(): void { }
-
+    
     /**
      * @inheritDoc
      */
@@ -91,7 +91,7 @@ class Handler extends AbstractGroupExtConfigHandler
         $this->context->getState()->set('typo.extBase.module.args',
             json_encode($this->registerModuleArgs, JSON_THROW_ON_ERROR));
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -106,7 +106,7 @@ class Handler extends AbstractGroupExtConfigHandler
             ]
         );
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -114,7 +114,7 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         call_user_func([$class, 'configureModule'], $this->configurator, $this->context);
     }
-
+    
     /**
      * @inheritDoc
      */

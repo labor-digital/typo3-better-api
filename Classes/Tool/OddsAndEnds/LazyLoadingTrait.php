@@ -25,7 +25,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 
 trait LazyLoadingTrait
 {
-
+    
     /**
      * Helper that always returns the real value of a given object.
      * LazyLoadingProxies and LazyObjectStorage will be converted to their real instance if required.
@@ -38,7 +38,7 @@ trait LazyLoadingTrait
     {
         return LazyLoadingUtil::getRealValue($value);
     }
-
+    
     /**
      * Tries to return the uid of the given entity.
      * If a lazyLoadingProxy is given, it will try to retrieve the uid of the linked element

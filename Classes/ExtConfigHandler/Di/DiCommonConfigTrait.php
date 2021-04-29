@@ -39,7 +39,7 @@ trait DiCommonConfigTrait
     protected static function registerCache(ContainerConfigurator $configurator, string $cacheIdentifier): void
     {
         $services = $configurator->services();
-
+        
         $services->set('cache.' . $cacheIdentifier)
                  ->class(FrontendInterface::class)
                  ->factory([service(CacheManager::class), 'getCache'])

@@ -34,12 +34,12 @@ trait DiAutoConfigTrait
      * @var ContainerConfigurator
      */
     protected static $configurator;
-
+    
     /**
      * @var ExtConfigContext
      */
     protected static $context;
-
+    
     /**
      * Injects the dependencies required to perform the service auto wiring
      *
@@ -49,11 +49,12 @@ trait DiAutoConfigTrait
     public static function setAutoWiringDependencies(
         ContainerConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         static::$configurator = $configurator;
-        static::$context      = $context;
+        static::$context = $context;
     }
-
+    
     /**
      * Automatically defines all classes in the registered PSR-4 auto loading definitions of your composer.json
      * (that point to a /Classes directory) as resources (auto-wired and auto-configured) for the symfony container.
@@ -68,8 +69,8 @@ trait DiAutoConfigTrait
      */
     protected static function autoWire(array $excludePaths = [], array $additionalNsPaths = []): ServicesConfigurator
     {
-        $services     = static::$configurator->services();
-        $defaults     = $services->defaults()->autowire()->autoconfigure();
+        $services = static::$configurator->services();
+        $defaults = $services->defaults()->autowire()->autoconfigure();
         $namespaceMap = static::$context->getExtConfigService()->getExtKeyNamespaceMap();
         $namespaceMap = array_merge($namespaceMap, $additionalNsPaths);
         foreach ($namespaceMap[static::$context->getExtKey()] ?? [] as $namespace => $dir) {
@@ -80,7 +81,7 @@ trait DiAutoConfigTrait
             } catch (FileLocatorFileNotFoundException $e) {
             }
         }
-
+        
         return $services;
     }
 }

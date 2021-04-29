@@ -25,6 +25,7 @@ namespace LaborDigital\T3BA\Tool\Tca;
 
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
+use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 class TcaUtil
@@ -35,7 +36,7 @@ class TcaUtil
      * @var array
      */
     protected static $resolvedTypeTca = [];
-
+    
     /**
      * Helper to apply "columnOverrides" to either whole TCA or the list of columns
      *
@@ -49,20 +50,20 @@ class TcaUtil
         if (isset($overrides['columnsOverrides'])) {
             $overrides = $overrides['columnsOverrides'];
         }
-
+        
         $hasColumns = is_array($tca['columns']);
-
+        
         $columns = Arrays::merge($hasColumns ? $tca['columns'] : $tca, $overrides, 'allowRemoval');
-
+        
         if ($hasColumns) {
             $tca['columns'] = $columns;
-
+            
             return $tca;
         }
-
+        
         return $columns;
     }
-
+    
     /**
      * Resolves the "type" value of a specific record row
      *
@@ -75,10 +76,10 @@ class TcaUtil
     public static function getRecordType(array $row, $table): string
     {
         $tableName = NamingUtil::resolveTableName($table);
-
+        
         try {
             return BackendUtility::getTCAtypeValue($tableName, $row);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // This is a bugfix, because sometimes we might encounter an array where we would
             // normally expect a value. e.g. CType in the list label renderer... I don't know why this happens
             // but this will fix the issue
@@ -87,7 +88,7 @@ class TcaUtil
             }, $row));
         }
     }
-
+    
     /**
      * Runs the given callback where the tca type overrides are applied to the global tca array.
      * This allows us to render the correct labels even if we have overrides
@@ -102,24 +103,24 @@ class TcaUtil
     public static function runWithResolvedTypeTca(array $row, $table, callable $callback)
     {
         $tableName = NamingUtil::resolveTableName($table);
-        $rowType   = static::getRecordType($row, $tableName);
-
+        $rowType = static::getRecordType($row, $tableName);
+        
         $tcaBackup = $GLOBALS['TCA'][$tableName]['columns'] ?? [];
-        $key       = $tableName . '_' . $rowType;
-
+        $key = $tableName . '_' . $rowType;
+        
         try {
             if (! empty($rowType)) {
                 if (isset(static::$resolvedTypeTca[$key])) {
                     $GLOBALS['TCA'][$tableName]['columns'] = static::$resolvedTypeTca[$key];
-
+                    
                     // Move the entry to the bottom -> Keep it longer in our short time memory
                     unset(static::$resolvedTypeTca[$key]);
                     static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
                 } else {
                     $typeTca = $GLOBALS['TCA'][$tableName]['types'][$rowType] ?? [];
-
+                    
                     $GLOBALS['TCA'][$tableName]['columns'] = static::applyColumnOverrides($tcaBackup, $typeTca);
-
+                    
                     // Only keep the last 20 results -> Save a bit of memory here...
                     if (count(static::$resolvedTypeTca) > 20) {
                         array_shift(static::$resolvedTypeTca);
@@ -127,11 +128,11 @@ class TcaUtil
                     static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
                 }
             }
-
+            
             return $callback($GLOBALS['TCA'][$tableName]);
         } finally {
             $GLOBALS['TCA'][$tableName]['columns'] = $tcaBackup;
         }
     }
-
+    
 }

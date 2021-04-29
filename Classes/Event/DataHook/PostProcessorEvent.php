@@ -38,7 +38,7 @@ class PostProcessorEvent
      * @var object
      */
     protected $context;
-
+    
     /**
      * BackendFormActionPostProcessorEvent constructor.
      *
@@ -48,7 +48,7 @@ class PostProcessorEvent
     {
         $this->context = $context;
     }
-
+    
     /**
      * Returns the instance of the context that was used by the applied data hook
      *
@@ -58,7 +58,7 @@ class PostProcessorEvent
     {
         return $this->context;
     }
-
+    
     /**
      * Returns the type of hook that was processed
      *

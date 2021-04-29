@@ -41,28 +41,28 @@ class MethodNameFilterEvent
      * @var string
      */
     protected $actionName;
-
+    
     /**
      * The extbase request object to handle
      *
      * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
      */
     protected $request;
-
+    
     /**
      * The ext base response object to dump the contents into
      *
      * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
      */
     protected $response;
-
+    
     /**
      * The controller to handle the request
      *
      * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     protected $controller;
-
+    
     /**
      * MethodNameFilterEvent constructor.
      *
@@ -76,13 +76,14 @@ class MethodNameFilterEvent
         RequestInterface $request,
         ResponseInterface $response,
         ActionController $controller
-    ) {
+    )
+    {
         $this->actionName = $actionName;
-        $this->request    = $request;
-        $this->response   = $response;
+        $this->request = $request;
+        $this->response = $response;
         $this->controller = $controller;
     }
-
+    
     /**
      * Returns the name of the action to filter
      *
@@ -92,7 +93,7 @@ class MethodNameFilterEvent
     {
         return $this->actionName;
     }
-
+    
     /**
      * Updates the name of the action to invoke
      *
@@ -103,10 +104,10 @@ class MethodNameFilterEvent
     public function setActionMethodName(string $actionName): MethodNameFilterEvent
     {
         $this->actionName = $actionName;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the extbase request object to handle
      *
@@ -116,7 +117,7 @@ class MethodNameFilterEvent
     {
         return $this->request;
     }
-
+    
     /**
      * Returns the ext base response object to dump the contents into
      *
@@ -126,7 +127,7 @@ class MethodNameFilterEvent
     {
         return $this->response;
     }
-
+    
     /**
      * Returns the controller to handle the request
      *

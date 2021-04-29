@@ -28,28 +28,28 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 abstract class AbstractElement
 {
     use ElementConfigTrait;
-
+    
     /**
      * The tree node that represents this element
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
      */
     protected $node;
-
+    
     /**
      * The form this element is part of
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
      */
     protected $form;
-
+    
     /**
      * Contains the label for the tab
      *
      * @var string
      */
     protected $label;
-
+    
     /**
      * AbstractFormElement constructor.
      *
@@ -61,7 +61,7 @@ abstract class AbstractElement
         $this->node = $node;
         $this->form = $form;
     }
-
+    
     /**
      * Moves this element to a new position, defined by the position string.
      *
@@ -81,10 +81,10 @@ abstract class AbstractElement
     public function moveTo(string $position = '0')
     {
         $this->node->moveTo($position);
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the parent element of this element.
      * Either the form, a tab or a container element.
@@ -97,11 +97,11 @@ abstract class AbstractElement
         if ($this->node->isTab()) {
             return $this->form;
         }
-
+        
         // Return the parent element
         return $this->node->getParent()->getEl();
     }
-
+    
     /**
      * Returns the instance of the type this element is part of
      *
@@ -111,7 +111,7 @@ abstract class AbstractElement
     {
         return $this->form;
     }
-
+    
     /**
      * Returns the instance of the root element that holds the elements type
      *
@@ -121,7 +121,7 @@ abstract class AbstractElement
     {
         return $this->form->getRoot();
     }
-
+    
     /**
      * Returns the id for this element
      *
@@ -131,7 +131,7 @@ abstract class AbstractElement
     {
         return $this->node->getId();
     }
-
+    
     /**
      * Returns the currently set label for this element
      *
@@ -141,7 +141,7 @@ abstract class AbstractElement
     {
         return (string)$this->label;
     }
-
+    
     /**
      * Can be used to set the label for this element
      *
@@ -155,10 +155,10 @@ abstract class AbstractElement
             $label = null;
         }
         $this->label = $label;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the element has a defined label, false if not
      *
@@ -168,7 +168,7 @@ abstract class AbstractElement
     {
         return ! is_null($this->label);
     }
-
+    
     /**
      * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
@@ -182,12 +182,12 @@ abstract class AbstractElement
             $this->label = $raw['label'];
             unset($raw['label']);
         }
-
+        
         $this->config = $raw;
-
+        
         return $this;
     }
-
+    
     /**
      * Removes this element from the form
      */

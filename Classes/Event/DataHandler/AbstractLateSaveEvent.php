@@ -35,28 +35,28 @@ abstract class AbstractLateSaveEvent implements CoreHookEventInterface
      * @var string
      */
     protected $status;
-
+    
     /**
      * The row that was given by to the data handler
      *
      * @var array
      */
     protected $row;
-
+    
     /**
      * The name of the table that is currently saved
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The currently executed data handler instance
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * @inheritDoc
      */
@@ -64,7 +64,7 @@ abstract class AbstractLateSaveEvent implements CoreHookEventInterface
     {
         return SaveEventAdapter::class;
     }
-
+    
     /**
      * AbstractLateSaveEvent constructor.
      *
@@ -76,13 +76,13 @@ abstract class AbstractLateSaveEvent implements CoreHookEventInterface
      */
     public function __construct(string $status, string $tableName, $id, array $row, DataHandler $dataHandler)
     {
-        $this->status      = $status;
-        $this->tableName   = $tableName;
-        $this->id          = $id;
-        $this->row         = $row;
+        $this->status = $status;
+        $this->tableName = $tableName;
+        $this->id = $id;
+        $this->row = $row;
         $this->dataHandler = $dataHandler;
     }
-
+    
     /**
      * Returns the status of the record either "new" or "update"
      *
@@ -92,7 +92,7 @@ abstract class AbstractLateSaveEvent implements CoreHookEventInterface
     {
         return $this->status;
     }
-
+    
     /**
      * Returns the row that was given by to the data handler
      *
@@ -102,7 +102,7 @@ abstract class AbstractLateSaveEvent implements CoreHookEventInterface
     {
         return $this->row;
     }
-
+    
     /**
      * Returns the name of the table that is currently saved
      *
@@ -112,7 +112,7 @@ abstract class AbstractLateSaveEvent implements CoreHookEventInterface
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the currently executed data handler instance
      *

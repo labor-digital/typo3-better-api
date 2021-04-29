@@ -35,7 +35,7 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
      * @var Typo3DbQueryParser
      */
     protected static $concreteQueryParser;
-
+    
     /**
      * Sadly not all features of ext base are implemented using the doctrine restrictions.
      * So I use the settings object internally and force the constraints using the db query parser object
@@ -49,16 +49,17 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         string $tableName,
         QueryBuilder $queryBuilder,
         QuerySettingsInterface $settings
-    ): void {
-        $self               = static::getConcreteQueryParser();
+    ): void
+    {
+        $self = static::getConcreteQueryParser();
         $self->queryBuilder = $queryBuilder;
-        $dummyQuery         = new Query('');
+        $dummyQuery = new Query('');
         $dummyQuery->setQuerySettings($settings);
-        $self->tableAliasMap             = [];
+        $self->tableAliasMap = [];
         $self->tableAliasMap[$tableName] = $tableName;
         $self->addTypo3Constraints($dummyQuery);
     }
-
+    
     /**
      * Internal helper to access the instance of the query parser object
      *
@@ -69,7 +70,7 @@ class BetterQueryTypo3DbQueryParserAdapter extends Typo3DbQueryParser
         if (! empty(static::$concreteQueryParser)) {
             return static::$concreteQueryParser;
         }
-
+        
         return static::$concreteQueryParser
             = TypoContext::getInstance()->di()->cs()->objectManager->get(Typo3DbQueryParser::class);
     }

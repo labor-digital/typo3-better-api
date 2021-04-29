@@ -33,12 +33,12 @@ use Neunerlei\Configuration\Loader\ConfigDefinition;
 class ConfigFinder extends DefaultConfigFinder
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var array
      */
     protected $sites;
-
+    
     /**
      * SiteBasedConfigFinder constructor.
      *
@@ -48,7 +48,7 @@ class ConfigFinder extends DefaultConfigFinder
     {
         $this->sites = $sites;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -62,5 +62,5 @@ class ConfigFinder extends DefaultConfigFinder
             ]
         );
     }
-
+    
 }

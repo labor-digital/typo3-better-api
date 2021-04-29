@@ -30,7 +30,7 @@ use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -38,7 +38,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $subscription->subscribe(SiteConfigFilterEvent::class, 'onSiteConfigFilter');
     }
-
+    
     /**
      * Injects the route enhancers into the site config array
      *
@@ -47,15 +47,15 @@ class Applier extends AbstractExtConfigApplier
     public function onSiteConfigFilter(SiteConfigFilterEvent $e): void
     {
         $routeEnhancers = $this->state->get('typo.site.*.routeEnhancers');
-        $filtered       = $e->getConfig();
-
+        $filtered = $e->getConfig();
+        
         foreach ($filtered as $key => $config) {
             if (! is_string($routeEnhancers[$key])) {
                 continue;
             }
             $filtered[$key]['routeEnhancers'] = Arrays::makeFromJson($routeEnhancers[$key]);
         }
-
+        
         $e->setConfig($filtered);
     }
 }

@@ -34,7 +34,7 @@ class Cache implements CacheInterface
      * @var \LaborDigital\T3BA\Core\VarFs\Mount
      */
     protected $mount;
-
+    
     /**
      * Cache constructor.
      *
@@ -44,7 +44,7 @@ class Cache implements CacheInterface
     {
         $this->mount = $mount;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -53,10 +53,10 @@ class Cache implements CacheInterface
         if (! $this->has($key)) {
             return $default;
         }
-
+        
         return $this->mount->getFileContent($this->keyToCacheFilename($key));
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -64,7 +64,7 @@ class Cache implements CacheInterface
     {
         $file = $this->keyToCacheFilename($key);
         $this->mount->setFileContent($file, $value);
-
+        
         if ($ttl !== null) {
             if ($ttl instanceof DateInterval) {
                 $endTime = new DateTimy();
@@ -74,10 +74,10 @@ class Cache implements CacheInterface
             }
             $this->mount->setFileContent($file . '.ttl', (new DateTimy($ttl . ' seconds from now')));
         }
-
+        
         return true;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -85,20 +85,20 @@ class Cache implements CacheInterface
     {
         $this->mount->delete($this->keyToCacheFilename($key));
         $this->mount->delete($this->keyToCacheFilename($key) . '.ttl');
-
+        
         return true;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function clear()
     {
         $this->mount->flush();
-
+        
         return true;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -108,10 +108,10 @@ class Cache implements CacheInterface
         foreach ($keys as $key) {
             $result[$key] = $this->get($key, $default);
         }
-
+        
         return $result;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -121,10 +121,10 @@ class Cache implements CacheInterface
         foreach ($values as $k => $v) {
             $result = $result && $this->set($k, $v, $ttl);
         }
-
+        
         return $result;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -134,10 +134,10 @@ class Cache implements CacheInterface
         foreach ($keys as $key) {
             $result = $result && $this->delete($key);
         }
-
+        
         return $result;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -147,12 +147,12 @@ class Cache implements CacheInterface
         if (! $this->mount->hasFile($file)) {
             return false;
         }
-
+        
         $ttlFile = $file . '.ttl';
         if (! $this->mount->hasFile($ttlFile)) {
             return true;
         }
-
+        
         $ttl = $this->mount->getFileContent($ttlFile);
         if (! $ttl instanceof DateTimy) {
             return false;
@@ -160,10 +160,10 @@ class Cache implements CacheInterface
         if ($ttl < new DateTimy()) {
             return false;
         }
-
+        
         return true;
     }
-
+    
     /**
      * Converts a key into a cache file name
      *
@@ -173,9 +173,9 @@ class Cache implements CacheInterface
      */
     protected function keyToCacheFilename($key): string
     {
-        $hash         = md5((string)$key);
+        $hash = md5((string)$key);
         $sanitizedKey = substr(Inflector::toFile($key), 0, 50) . '-' . $hash;
-
+        
         return $hash[0] . '/' . $hash[1] . '/' . $hash[2] . '/' . $sanitizedKey;
     }
 }

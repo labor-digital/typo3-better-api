@@ -32,14 +32,14 @@ abstract class AbstractField extends AbstractElement
 {
     use DataHookCollectorTrait;
     use DisplayConditionTrait;
-
+    
     /**
      * Additional configuration for the data hook registration
      *
      * @var array
      */
     protected $dataHookOptions = [];
-
+    
     /**
      * @inheritDoc
      */
@@ -47,7 +47,7 @@ abstract class AbstractField extends AbstractElement
     {
         parent::__construct($node, $form);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -57,10 +57,10 @@ abstract class AbstractField extends AbstractElement
         if (empty($label)) {
             return Inflector::toHuman($this->getId());
         }
-
+        
         return $label;
     }
-
+    
     /**
      * Set this to true, the form will reload itself after the value of this column was updated
      *
@@ -72,10 +72,10 @@ abstract class AbstractField extends AbstractElement
     public function setReloadOnChange(bool $state = true)
     {
         $this->config['onChange'] = $state ? 'reload' : '';
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the field should reload itself after an update, false if not
      *
@@ -87,7 +87,7 @@ abstract class AbstractField extends AbstractElement
     {
         return $this->config['onChange'] === 'reload';
     }
-
+    
     /**
      * If set, all backend users are prevented from editing the field unless they are members of a backend user group
      * with this field added as an “Allowed Excludefield” (or “admin” user).
@@ -100,10 +100,10 @@ abstract class AbstractField extends AbstractElement
     public function setExclude(bool $state = true)
     {
         $this->config['exclude'] = $state;
-
+        
         return $this;
     }
-
+    
     /**
      * If true all backend users are prevented from editing the field unless they are members of a backend user group
      * with this field added as an “Allowed Excludefield” (or “admin” user).
@@ -116,7 +116,7 @@ abstract class AbstractField extends AbstractElement
     {
         return (bool)$this->config['exclude'];
     }
-
+    
     /**
      * Sets if a field is read only or not
      * This property affects only the display. It is still possible to write to those fields when using the DataHandler
@@ -133,10 +133,10 @@ abstract class AbstractField extends AbstractElement
         } else {
             unset($this->config['config']['readOnly']);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if the field is configured to be read only, false if not
      *
@@ -146,7 +146,7 @@ abstract class AbstractField extends AbstractElement
     {
         return (bool)$this->config['config']['readOnly'];
     }
-
+    
     /**
      * Can be used to set a field description text between the label and the input field.
      * Can contain html
@@ -159,10 +159,10 @@ abstract class AbstractField extends AbstractElement
     public function setDescription(string $info)
     {
         $this->config['description'] = $info;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently set field information, or an empty string if there is none
      *
@@ -172,7 +172,7 @@ abstract class AbstractField extends AbstractElement
     {
         return (string)($this->config['description'] ?? '');
     }
-
+    
     /**
      * Completely overrides the configuration of this field with the configuration of another field.
      *
@@ -183,12 +183,12 @@ abstract class AbstractField extends AbstractElement
     public function inheritFrom(AbstractField $field)
     {
         $this->config = $field->config;
-        $this->label  = $field->label;
+        $this->label = $field->label;
         $this->loadDataHooks([DataHookTypes::TCA_DATA_HOOK_KEY => $field->getRegisteredDataHooks()]);
-
+        
         return $this;
     }
-
+    
     /**
      * Use the given object to apply presets to the given field.
      * This makes it a lot easier to configure your table fields, without the hassle of doing the configuration over
@@ -202,31 +202,31 @@ abstract class AbstractField extends AbstractElement
         /** @var FieldPresetApplier $applier */
         $applier = $context->getExtConfigContext()->getTypoContext()->di()->getService(FieldPresetApplier::class);
         $applier->configureField($this, $context);
-
+        
         return $applier;
     }
-
-
+    
+    
     /**
      * @inheritDoc
      */
     public function setRaw(array $raw)
     {
         $this->loadDataHooks($raw);
-
+        
         return parent::setRaw($raw);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function getRaw(): array
     {
         $raw = parent::getRaw();
-
+        
         // Transform some keys into real typo3 translation keys
         // Because typo does not handle those elements using the default translation method...
-        $translator   = $this->form->getContext()->cs()->translator;
+        $translator = $this->form->getContext()->cs()->translator;
         $raw['label'] = $translator->getLabelKey($this->getLabel());
         if (is_array($raw['config'])) {
             foreach (['default', 'placeholder'] as $k) {
@@ -235,13 +235,13 @@ abstract class AbstractField extends AbstractElement
                 }
             }
         }
-
+        
         $this->dumpDataHooks($raw);
-
+        
         // Done
         return $raw;
     }
-
+    
     /**
      * Lets you add additional entries to the field's "config" array.
      * This will merge your input with the existing value!
@@ -260,10 +260,10 @@ abstract class AbstractField extends AbstractElement
         }
         $this->config['config']
             = Arrays::merge($this->config['config'] ?? [], $key, 'allowRemoval');
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently set, additional options for the data hook registration.
      *
@@ -273,7 +273,7 @@ abstract class AbstractField extends AbstractElement
     {
         return $this->dataHookOptions;
     }
-
+    
     /**
      * Allows to set additional options for the data hook registration.
      *
@@ -284,10 +284,10 @@ abstract class AbstractField extends AbstractElement
     public function setDataHookOptions(array $dataHookOptions): AbstractField
     {
         $this->dataHookOptions = $dataHookOptions;
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -295,7 +295,7 @@ abstract class AbstractField extends AbstractElement
     {
         return [];
     }
-
+    
     /**
      * Provides the currently set additional data hook options
      *

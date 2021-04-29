@@ -26,7 +26,7 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class FeUserAspect extends AbstractBetterUserAspect implements PublicServiceInterface
 {
-
+    
     /**
      * Returns the frontend user authentication object
      *
@@ -39,10 +39,10 @@ class FeUserAspect extends AbstractBetterUserAspect implements PublicServiceInte
         if (empty($user)) {
             throw new TypoContextException('Could not find a user object! Seems like you are to early in the lifecycle');
         }
-
+        
         return $user;
     }
-
+    
     /**
      * @inheritDoc
      */

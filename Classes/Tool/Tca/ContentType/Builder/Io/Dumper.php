@@ -41,31 +41,31 @@ class Dumper
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper
      */
     protected $tableDumper;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
      */
     protected $sqlRegistry;
-
+    
     /**
      * The list of registered type instances that should be dumped
      *
      * @var ContentType[]
      */
     protected $typesToDump = [];
-
+    
     public function __construct(TableDumper $tableDumper, TableFactory $tableFactory, SqlRegistry $sqlRegistry)
     {
-        $this->tableDumper  = $tableDumper;
+        $this->tableDumper = $tableDumper;
         $this->tableFactory = $tableFactory;
-        $this->sqlRegistry  = $sqlRegistry;
+        $this->sqlRegistry = $sqlRegistry;
     }
-
+    
     /**
      * Adds a new content type definition to the list of dumped types
      *
@@ -75,7 +75,7 @@ class Dumper
     {
         $this->typesToDump[] = $type;
     }
-
+    
     /**
      * Dumps an array of modified tca tables
      *
@@ -89,49 +89,49 @@ class Dumper
         if (empty($this->typesToDump)) {
             return [];
         }
-
+        
         // Start a fresh instance of the tt_content table to which we will add our types
         $table = $this->tableFactory->create('tt_content', $context);
         $this->tableFactory->initialize($table);
-
-        $result      = [];
-        $tables      = [];
-        $columns     = [];
+        
+        $result = [];
+        $tables = [];
+        $columns = [];
         $typeColumns = [];
-        $models      = [];
+        $models = [];
         foreach ($this->typesToDump as $type) {
-            $cType               = $type->getTypeName();
-            $models[$cType]      = $type->getDataModelClass();
-            $columnNameMap       = $this->renameExtensionColumns($tca, $type);
-            $sqlColumns          = $this->extractExtensionSqlColumns($cType, $columnNameMap);
-            $tableName           = $this->generateExtensionTableSql($cType, $sqlColumns);
-            $columnNameMap       = array_flip($columnNameMap);
+            $cType = $type->getTypeName();
+            $models[$cType] = $type->getDataModelClass();
+            $columnNameMap = $this->renameExtensionColumns($tca, $type);
+            $sqlColumns = $this->extractExtensionSqlColumns($cType, $columnNameMap);
+            $tableName = $this->generateExtensionTableSql($cType, $sqlColumns);
+            $columnNameMap = array_flip($columnNameMap);
             $typeColumns[$cType] = $columnNameMap;
-            $columns[]           = $columnNameMap;
+            $columns[] = $columnNameMap;
             if ($tableName) {
                 $result[$tableName] = $this->generateExtensionTca($tableName, $cType, $sqlColumns);
-                $tables[$cType]     = $tableName;
+                $tables[$cType] = $tableName;
             }
             $table->setLoadedType($cType, $type);
         }
         $columns = array_merge(...$columns);
-        $models  = array_filter($models, function (string $v) {
+        $models = array_filter($models, function (string $v) {
             return $v !== DefaultDataModel::class;
         });
-
-        $tableTca                        = $this->tableDumper->dump($table);
+        
+        $tableTca = $this->tableDumper->dump($table);
         $tableTca['ctrl']['contentType'] = [
-            'tables'      => $tables,
-            'columns'     => $columns,
+            'tables' => $tables,
+            'columns' => $columns,
             'typeColumns' => $typeColumns,
-            'typeModels'  => $models,
+            'typeModels' => $models,
         ];
-        $tableTca                        = $this->registerModelClasses($tableTca, $models, $typeColumns);
-        $result['tt_content']            = $this->processContentTca($tableTca, $tables);
-
+        $tableTca = $this->registerModelClasses($tableTca, $models, $typeColumns);
+        $result['tt_content'] = $this->processContentTca($tableTca, $tables);
+        
         return $result;
     }
-
+    
     protected function renameExtensionColumns(array $tca, ContentType $type): array
     {
         $nameMap = [];
@@ -140,12 +140,12 @@ class Dumper
             if (array_key_exists($columnName, $tca['tt_content']['columns'] ?? [])) {
                 continue;
             }
-
-            $nsColumnName         = 'ct_' . $type->getSignature() . '_' . $columnName;
+            
+            $nsColumnName = 'ct_' . $type->getSignature() . '_' . $columnName;
             $nameMap[$columnName] = $nsColumnName;
-            $node                 = FieldAdapter::getNode($field);
+            $node = FieldAdapter::getNode($field);
             $node->getParent()->renameChild($columnName, $nsColumnName);
-
+            
             // Handle foreign field relations
             $raw = $field->getRaw();
             if (isset($raw['config']['foreign_match_fields']['fieldname'])
@@ -153,71 +153,71 @@ class Dumper
                 $field->addConfig(['foreign_match_fields' => ['fieldname' => $nsColumnName]]);
             }
         }
-
+        
         return $nameMap;
     }
-
+    
     protected function extractExtensionSqlColumns(string $cType, array $nameMap): array
     {
         $extractedColumns = [];
-        $type             = $this->sqlRegistry->getType('tt_content', $cType);
-
+        $type = $this->sqlRegistry->getType('tt_content', $cType);
+        
         foreach ($nameMap as $columnName => $foo) {
             $extractedColumns[$columnName] = $type->getColumn($columnName);
             $type->dropColumn($columnName);
         }
-
+        
         return $extractedColumns;
     }
-
+    
     protected function generateExtensionTableSql(string $cType, array $columns): ?string
     {
         if (empty($columns)) {
             return null;
         }
-
+        
         $tableName = 'ct_' . $cType;
-
+        
         $table = $this->sqlRegistry->getType($tableName, 'contentType');
-
+        
         $table->addColumn('ct_parent', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
-
+        
         foreach ($columns as $columnName => $column) {
             $col = $table->addColumn($columnName, 'integer');
             ColumnAdapter::inheritConfig($col, $column);
         }
-
+        
         return $tableName;
     }
-
+    
     protected function generateExtensionTca(string $tableName, string $cType, array $columnNames): array
     {
-        $tca                      = TableDefaults::TABLE_TCA;
-        $tca['ctrl']['title']     = 'Content Type - Table Extension - ' . $cType;
+        $tca = TableDefaults::TABLE_TCA;
+        $tca['ctrl']['title'] = 'Content Type - Table Extension - ' . $cType;
         $tca['ctrl']['hideTable'] = true;
-
+        
         $tca['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] = true;
-
-        $tca['columns']['l10n_parent']['config']['foreign_table']       = $tableName;
+        
+        $tca['columns']['l10n_parent']['config']['foreign_table'] = $tableName;
         $tca['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace(
             '{{table}}',
             $tableName,
             $tca['columns']['l10n_parent']['config']['foreign_table_where']
         );
-
+        
         $columnDefault = ['config' => ['type' => 'input', 'readOnly' => true]];
-
+        
         $columnNames = array_merge(['ct_parent'], array_keys($columnNames));
         foreach ($columnNames as $columnName) {
             $tca['columns'][$columnName] = array_merge($columnDefault, ['label' => $columnName]);
-            $showItem[]                  = $columnName;
+            $showItem[] = $columnName;
         }
-
+        
         $tca['types'][0]['showitem'] = implode(',', $columnNames);
-
+        
         return $tca;
     }
-
+    
     /**
      * Enhances the tca of the tt_content table to include the model mapping for our content models.
      * The post processor will pick them up and generate the required typoscript for ous.
@@ -233,47 +233,47 @@ class Dumper
         if (empty($models)) {
             return $tableTca;
         }
-
+        
         foreach ($models as $cType => $className) {
             $columns = array_values($typeColumns[$cType] ?? []);
             $mapping = array_combine($columns, $columns);
             $mapping = array_map(function (string $column) {
                 return Inflector::toProperty($column);
             }, $mapping);
-
+            
             $tableTca['ctrl'][DomainModelMapStep::CONFIG_KEY][$className] = $mapping;
         }
-
+        
         return $tableTca;
     }
-
+    
     protected function processContentTca(array $tca, array $tableMap): array
     {
         if (empty($tableMap)) {
             return $tca;
         }
-
+        
         $this->sqlRegistry->getType('tt_content', 'contentType')
                           ->addColumn('ct_child', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
-
+        
         $tca['columns']['ct_child'] = [
-            'label'       => 'Content Type Extension Map',
+            'label' => 'Content Type Extension Map',
             'description' => 'Allows the tt_content table to map to a set of extended columns on a foreign table like it would extend the table itself',
-            'config'      => [
+            'config' => [
                 'type' => 'passthrough',
             ],
         ];
-
+        
         foreach ($tableMap as $signature => $tableName) {
             if (! $tca['types'][$signature]) {
                 continue;
             }
-
+            
             $tca['types'][$signature]['columnsOverrides']['ct_child'] = [
                 'config' => ['foreign_table' => $tableName],
             ];
         }
-
+        
         return $tca;
     }
 }

@@ -34,7 +34,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * Returns true if the frontend is being simulated
      *
@@ -45,7 +45,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
     {
         return $this->hasTsfe() && $this->getTsfe() instanceof SimulatedTypoScriptFrontendController;
     }
-
+    
     /**
      * Returns true if the system has a typoScript frontend controller instance
      *
@@ -56,7 +56,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
         return isset($GLOBALS['TSFE']) && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
                && $GLOBALS['TSFE']->cObj !== '';
     }
-
+    
     /**
      * This method is used to ALWAYS return an instance of the typoScript frontend controller.
      * If we have to forcefully initialize it, we will do that.
@@ -72,7 +72,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
         }
         throw new TsfeNotLoadedException('The TypoScript frontend controller is not loaded!');
     }
-
+    
     /**
      * Returns a prepared content object renderer instance.
      * If this method is used in the backend / in cli context
@@ -83,24 +83,24 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
     public function getContentObjectRenderer(): ContentObjectRenderer
     {
         $cObj = null;
-
+        
         // Get the content object renderer from the frontend
         if ($this->hasTsfe()) {
             $cObj = $this->getTsfe()->cObj;
         }
-
+        
         // Get the content object renderer from the config manager
         if (! $cObj instanceof ContentObjectRenderer && $this->getTypoContext()->env()->isFrontend()) {
             $cObj = $this->getService(ConfigurationManager::class)->getContentObject();
         }
-
+        
         // Create it ourselves
         if (! $cObj instanceof ContentObjectRenderer) {
             return $this->getService(EnvironmentSimulator::class)->runWithEnvironment([], function () {
                 return $this->getTsfe()->cObj;
             });
         }
-
+        
         // Done
         return $cObj;
     }

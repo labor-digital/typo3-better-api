@@ -30,7 +30,7 @@ use LaborDigital\T3BA\Tool\Tca\TcaUtil;
 class FieldDefaultAndPlaceholderTranslation
 {
     use StaticContainerAwareTrait;
-
+    
     /**
      * We have to make sure that default values in the form engine get translated
      *
@@ -39,12 +39,12 @@ class FieldDefaultAndPlaceholderTranslation
     public static function onFormFilter(FormFilterEvent $event): void
     {
         $data = $event->getData();
-
+        
         $data['databaseRow'] = static::processDefaults($data['databaseRow'], $data['processedTca']);
-
+        
         $event->setData($data);
     }
-
+    
     /**
      * This applier is used to translate the "placeholder" value of form elements.
      *
@@ -53,7 +53,7 @@ class FieldDefaultAndPlaceholderTranslation
     public static function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {
         $config = $event->getProxy()->getConfig();
-
+        
         if (is_string($config['placeholder'] ?? null)) {
             $event->getProxy()->setConfig(array_merge(
                 $config,
@@ -64,7 +64,7 @@ class FieldDefaultAndPlaceholderTranslation
             ));
         }
     }
-
+    
     /**
      * Handles the default data generation in the data handler
      *
@@ -77,7 +77,7 @@ class FieldDefaultAndPlaceholderTranslation
             $event->setRow($row);
         });
     }
-
+    
     /**
      * Helper to replace both callback defaults and translatable defaults in the data handler and the form engine
      *
@@ -91,11 +91,11 @@ class FieldDefaultAndPlaceholderTranslation
         foreach ($tca['columns'] as $key => $column) {
             if (is_string($column['config']['default'] ?? null) && $row[$key] === $column['config']['default']) {
                 $value = $row[$key];
-
+                
                 if (empty($value) || ! is_string($value)) {
                     continue;
                 }
-
+                
                 // Resolve callback defaults
                 if (str_starts_with($value, '@callback:')) {
                     $row[$key] = call_user_func(
@@ -104,14 +104,14 @@ class FieldDefaultAndPlaceholderTranslation
                     );
                     continue;
                 }
-
+                
                 // Resolve translatable defaults
                 if (str_starts_with($value, 'LLL:') || strpos($value, '.') !== false) {
                     $row[$key] = static::cs()->translator->translate($value);
                 }
             }
         }
-
+        
         return $row;
     }
 }

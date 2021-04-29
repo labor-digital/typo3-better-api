@@ -39,19 +39,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FormNodeEventProxy extends AbstractNode
 {
     use InternalAccessTrait;
-
+    
     /**
      * The instance of the real node
      *
      * @var AbstractNode
      */
     protected $node;
-
+    
     /**
      * @var TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * @inheritDoc
      */
@@ -65,7 +65,7 @@ class FormNodeEventProxy extends AbstractNode
             )
         )->getResult();
     }
-
+    
     /**
      * Returns the data of this field
      *
@@ -75,7 +75,7 @@ class FormNodeEventProxy extends AbstractNode
     {
         return $this->data ?? [];
     }
-
+    
     /**
      * Used to update the raw data array of this field
      *
@@ -86,10 +86,10 @@ class FormNodeEventProxy extends AbstractNode
     public function setData(array $data): self
     {
         $this->data = $data;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the field configuration array
      *
@@ -99,7 +99,7 @@ class FormNodeEventProxy extends AbstractNode
     {
         return $this->getData()['parameterArray']['fieldConf']['config'] ?? [];
     }
-
+    
     /**
      * Used to update the field configuration
      *
@@ -110,10 +110,10 @@ class FormNodeEventProxy extends AbstractNode
     public function setConfig(array $config): self
     {
         $this->data['parameterArray']['fieldConf']['config'] = $config;
-
+        
         return $this;
     }
-
+    
     /**
      * Creates a new node proxy instance
      *
@@ -127,15 +127,16 @@ class FormNodeEventProxy extends AbstractNode
         TypoEventBus $eventBus,
         NodeFactory $nodeFactory,
         AbstractNode $node
-    ): FormNodeEventProxy {
-        $i           = GeneralUtility::makeInstance(static::class, $nodeFactory, []);
+    ): FormNodeEventProxy
+    {
+        $i = GeneralUtility::makeInstance(static::class, $nodeFactory, []);
         $i->eventBus = $eventBus;
-        $i->node     = $node;
-        $i->data     = &$node->data;
-
+        $i->node = $node;
+        $i->data = &$node->data;
+        
         return $i;
     }
-
+    
     /**
      * @inheritDoc
      */

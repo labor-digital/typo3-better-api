@@ -29,7 +29,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 class ActionEventAdapter extends AbstractCoreHookEventAdapter
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -38,18 +38,18 @@ class ActionEventAdapter extends AbstractCoreHookEventAdapter
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][static::class]
             = static::class;
     }
-
+    
     public function processCmdmap_preProcess(&$command, &$table, &$id, &$value, $parent, &$pasteUpdate): void
     {
         static::$bus->dispatch(($e = new ActionFilterEvent($command, $table, $id, $value, $pasteUpdate,
             $parent)));
-        $command     = $e->getCommand();
-        $table       = $e->getTableName();
-        $id          = $e->getId();
-        $value       = $e->getValue();
+        $command = $e->getCommand();
+        $table = $e->getTableName();
+        $id = $e->getId();
+        $value = $e->getValue();
         $pasteUpdate = $e->getPasteSpecialData();
     }
-
+    
     public function processCmdmap_postProcess(
         $command,
         $table,
@@ -58,13 +58,14 @@ class ActionEventAdapter extends AbstractCoreHookEventAdapter
         DataHandler $parent,
         &$pasteUpdate,
         &$pasteDataMap
-    ): void {
+    ): void
+    {
         // Make sure to extract the new uid when a record was copied
         $newElementId = -1;
         if ($command === 'copy' || $command === 'copyToLanguage') {
             $newElementId = Arrays::getPath($parent->copyMappingArray, [$table, $id], $newElementId);
         }
-
+        
         // Emit the event
         static::$bus->dispatch(($e = new ActionPostProcessorEvent(
             $command,
@@ -77,6 +78,6 @@ class ActionEventAdapter extends AbstractCoreHookEventAdapter
             $parent
         )));
         $pasteDataMap = $e->getPasteDataMap();
-        $pasteUpdate  = $e->getPasteSpecialData();
+        $pasteUpdate = $e->getPasteSpecialData();
     }
 }

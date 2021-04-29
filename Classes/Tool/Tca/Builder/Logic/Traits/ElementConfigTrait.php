@@ -33,7 +33,7 @@ trait ElementConfigTrait
      * @var array
      */
     protected $config = [];
-
+    
     /**
      * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
@@ -44,10 +44,10 @@ trait ElementConfigTrait
     public function setRaw(array $raw)
     {
         $this->config = $raw;
-
+        
         return $this;
     }
-
+    
     /**
      * Similar to setRaw() but will merge the given array of key/value pairs instead of
      * overwriting the original configuration.
@@ -62,7 +62,7 @@ trait ElementConfigTrait
     {
         return $this->setRaw(Arrays::merge($this->config, $raw, 'allowRemoval'));
     }
-
+    
     /**
      * Returns the raw configuration array for this object
      *

@@ -25,8 +25,8 @@ namespace LaborDigital\T3BA\Tool\Sql;
 
 interface SqlFieldLength
 {
-    public const TINY_TEXT   = 255;
-    public const TEXT        = 65535;
+    public const TINY_TEXT = 255;
+    public const TEXT = 65535;
     public const MEDIUM_TEXT = 16777215;
-    public const LONG_TEXT   = null;
+    public const LONG_TEXT = null;
 }

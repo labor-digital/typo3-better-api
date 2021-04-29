@@ -31,12 +31,12 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class DoctrineQueryAdapter extends AbstractQueryAdapter
 {
-
+    
     /**
      * @var \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     protected $queryBuilder;
-
+    
     /**
      * DoctrineQueryAdapter constructor.
      *
@@ -49,15 +49,16 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
         QueryBuilder $queryBuilder,
         QuerySettingsInterface $settings,
         TypoContext $context
-    ) {
+    )
+    {
         parent::__construct($tableName, $settings, $context);
         $this->queryBuilder = $queryBuilder;
-
+        
         // Reset query builder
         $queryBuilder->select('*');
         $queryBuilder->getRestrictions()->removeAll();
     }
-
+    
     /**
      * Clones the children of this query object to keep it immutable
      */
@@ -66,7 +67,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
         parent::__clone();
         $this->queryBuilder = clone $this->queryBuilder;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -74,7 +75,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         $this->queryBuilder->setMaxResults($limit);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -82,7 +83,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->getMaxResults();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -90,7 +91,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         $this->queryBuilder->setFirstResult($offset);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -98,7 +99,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->getFirstResult();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -109,7 +110,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
             $this->queryBuilder->addOrderBy($k, $v);
         }
     }
-
+    
     /**
      * @inheritDoc
      * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
@@ -118,7 +119,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         throw new NotImplementedException('There is no underlying "query" for a doctrine BetterQuery! Use getQueryBuilder() instead!');
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -126,7 +127,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return clone $this->queryBuilder;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -134,7 +135,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->expr()->orX(...$list);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -142,7 +143,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     {
         return $this->queryBuilder->expr()->andX(...$list);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -155,7 +156,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                     return $qb->expr()
                               ->notLike($key, $qb->createNamedParameter($value));
                 }
-
+                
                 return $qb->expr()->like($key, $qb->createNamedParameter($value));
             case 'in':
                 if ($negated) {
@@ -167,7 +168,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                         )
                     );
                 }
-
+                
                 return $qb->expr()->in(
                     $key,
                     $qb->createNamedParameter(
@@ -179,35 +180,35 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                 if ($negated) {
                     return $qb->expr()->lte($key, $qb->createNamedParameter($value));
                 }
-
+                
                 return $qb->expr()->gt($key, $qb->createNamedParameter($value));
             case '>=':
                 if ($negated) {
                     return $qb->expr()->lt($key, $qb->createNamedParameter($value));
                 }
-
+                
                 return $qb->expr()->gte($key, $qb->createNamedParameter($value));
             case '<':
                 if ($negated) {
                     return $qb->expr()->gte($key, $qb->createNamedParameter($value));
                 }
-
+                
                 return $qb->expr()->lt($key, $qb->createNamedParameter($value));
             case '<=':
                 if ($negated) {
                     return $qb->expr()->gt($key, $qb->createNamedParameter($value));
                 }
-
+                
                 return $qb->expr()->lte($key, $qb->createNamedParameter($value));
             default:
                 if ($negated) {
                     return $qb->expr()->neq($key, $qb->createNamedParameter($value));
                 }
-
+                
                 return $qb->expr()->eq($key, $qb->createNamedParameter($value));
         }
     }
-
+    
     /**
      * @inheritDoc
      */

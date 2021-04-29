@@ -36,29 +36,29 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 class ContentRepository implements PublicServiceInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Database\DbService
      */
     protected $dbService;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ExtensionRowRepository
      */
     protected $rowRepository;
-
+    
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper
      */
     protected $dataMapper;
-
+    
     public function __construct(DbService $dbService, ExtensionRowRepository $rowRepository, DataMapper $dataMapper)
     {
-        $this->dbService     = $dbService;
+        $this->dbService = $dbService;
         $this->rowRepository = $rowRepository;
-        $this->dataMapper    = $dataMapper;
+        $this->dataMapper = $dataMapper;
     }
-
+    
     /**
      * Retrieves either a single row, or multiple rows based on the given better query instance.
      * All rows will contain the extension fields when they are returned.
@@ -79,24 +79,24 @@ class ContentRepository implements PublicServiceInterface
                 'Your query must select data from the "tt_content" table, yours is configured to select from "'
                 . $query->getTableName() . '", instead.');
         }
-
+        
         if ($getAll) {
             $result = [];
             foreach ($query->getAll() as $row) {
                 $result[] = $this->getExtendedRow($row, $remapped);
             }
-
+            
             return $result;
         }
-
+        
         $result = $query->getFirst();
         if (empty($result) || ! is_array($result)) {
             return null;
         }
-
+        
         return $this->getExtendedRow($result, $remapped);
     }
-
+    
     /**
      * Returns a single row of the tt_content which contain the extension fields when returned.
      *
@@ -113,7 +113,7 @@ class ContentRepository implements PublicServiceInterface
             $remapped
         );
     }
-
+    
     /**
      * @param $rowOrUid
      *
@@ -126,22 +126,22 @@ class ContentRepository implements PublicServiceInterface
         } elseif (is_numeric($rowOrUid)) {
             $row = $this->getByQuery($this->dbService->getQuery('tt_content')->withWhere(['uid' => $rowOrUid]));
         }
-
+        
         $cType = $row['CType'] ?? '';
         $class = ContentTypeUtil::getModelClass($cType);
-
+        
         return ContentTypeUtil::runWithRemappedTca($cType, function () use ($row, $class) {
             $mapped = $this->dataMapper->map($class, [$row]);
             /** @var AbstractDataModel $model */
             $model = reset($mapped);
-
+            
             $model->_setProperty('__raw', $row);
             $model->_setProperty('__flex', $this->resolveFlexFormColumns($row));
-
+            
             return $model;
         });
     }
-
+    
     /**
      * Receives either an array of tt_content uids or a list of tt_content rows, which will get extended
      * and converted into their matched domain models. If no explicit domain model was configured, the
@@ -159,10 +159,10 @@ class ContentRepository implements PublicServiceInterface
                 $this->hydrateModel($rowOrUid)
             );
         }
-
+        
         return $result;
     }
-
+    
     /**
      * Retrieves a row of the tt_content table, loads the extension row and returns the merged sum of both
      *
@@ -179,14 +179,14 @@ class ContentRepository implements PublicServiceInterface
         if (! is_numeric($row['uid']) || ! is_string($row['CType'])) {
             return $row;
         }
-
+        
         $childRow = $this->rowRepository->getChildRow($row['CType'], $row['uid']);
-
+        
         $row = array_merge($row, ContentTypeUtil::convertChildForParent($childRow, $row['CType']));
-
+        
         return $remapped ? ContentTypeUtil::remapColumns($row, $row['CType']) : $row;
     }
-
+    
     /**
      * Internal helper to resolve the flex form columns into the __flex magic storage key
      *
@@ -197,17 +197,17 @@ class ContentRepository implements PublicServiceInterface
     protected function resolveFlexFormColumns(array $row): array
     {
         $flexFormService = $this->getService(FlexFormService::class);
-        $colConfig       = $GLOBALS['TCA']['tt_content']['columns'] ?? [];
-        $flexCols        = [];
+        $colConfig = $GLOBALS['TCA']['tt_content']['columns'] ?? [];
+        $flexCols = [];
         foreach ($colConfig as $col => $conf) {
             if (empty($row[$col])
                 || ($conf['config']['type'] ?? null) !== 'flex') {
                 continue;
             }
-
+            
             $flexCols[$col] = $flexFormService->convertFlexFormContentToArray($row[$col]);
         }
-
+        
         return $flexCols;
     }
 }

@@ -44,7 +44,7 @@ use TYPO3\CMS\Core\Database\Schema\DefaultTcaSchema;
 class DefinitionProcessor
 {
     use ContainerAwareTrait;
-
+    
     /**
      * DefinitionProcessor constructor.
      *
@@ -54,7 +54,7 @@ class DefinitionProcessor
     {
         $this->setService(Comparator::class, $comparator ?? new Comparator());
     }
-
+    
     /**
      * Receives the sql registry definition object and generates a list with tables
      * containing differences to be dumped into an SQL string
@@ -66,8 +66,8 @@ class DefinitionProcessor
     public function findTableDiff(Definition $definition): array
     {
         $newTables = [];
-        $tables    = [];
-
+        $tables = [];
+        
         foreach ($definition->tables as $table) {
             if ($definition->isNew($table)) {
                 $newTables[] = $table;
@@ -76,12 +76,12 @@ class DefinitionProcessor
                 $tables[] = $table;
             }
         }
-
+        
         $this->applyDefaultSchema($newTables);
-
+        
         return $this->processTables($tables, $definition);
     }
-
+    
     /**
      * Applies the default TCA schema to the list of new tables that have been added
      *
@@ -94,7 +94,7 @@ class DefinitionProcessor
             $defaultSchema->enrich($newTables);
         }
     }
-
+    
     /**
      * Iterates the given tables and merges all possible subtypes, as well as the table override
      * into a single table definition. After that a diff is calculated for each table.
@@ -109,11 +109,11 @@ class DefinitionProcessor
     protected function processTables(array $tables, Definition $definition): array
     {
         $result = [];
-
+        
         foreach ($tables as $table) {
             /** @noinspection ProperNullCoalescingOperatorUsageInspection */
             $types = $definition->types[$table->getName()] ?? [];
-
+            
             $tableToDump = null;
             if (empty($types)) {
                 // Special fallback if we have a new table that has no types configured
@@ -124,30 +124,30 @@ class DefinitionProcessor
                     continue;
                 }
             }
-
+            
             // Default handling if we have no "new" table override
             if ($tableToDump === null) {
                 $combined = $this->mergeTypes($table, $types);
-
+                
                 if ($types[SqlRegistry::TABLE_OVERRIDE_TYPE_NAME]) {
                     $this->mergeOverride($combined, $types[SqlRegistry::TABLE_OVERRIDE_TYPE_NAME]);
                 }
-
+                
                 $tableToDump = $this->makeDumpableTable($combined, $table, $definition);
             }
-
+            
             $tableToDump = $this->cs()->eventBus
                 ->dispatch(new TableFilterEvent($table->getName(), $table, $tableToDump))
                 ->getTableToDump();
-
+            
             if ($tableToDump !== null) {
                 $result[] = $tableToDump;
             }
         }
-
+        
         return $result;
     }
-
+    
     /**
      * Merges the given $initial table definition with all types that are provided
      * into a single, new table object
@@ -160,34 +160,34 @@ class DefinitionProcessor
     protected function mergeTypes(Table $initial, array $types): Table
     {
         $combined = clone $initial;
-
+        
         foreach ($types as $typeName => $type) {
             if ($typeName === SqlRegistry::TABLE_OVERRIDE_TYPE_NAME) {
                 continue;
             }
-
+            
             $diff = $this->getService(Comparator::class)->diffTable($combined, $type);
             if (! $diff) {
                 continue;
             }
-
+            
             // Add new column
             foreach ($diff->addedColumns as $key => $column) {
                 TableAdapter::attachColumn($combined, $column);
             }
-
+            
             // Modify columns
             foreach ($diff->changedColumns as $key => $columnDiff) {
                 TableAdapter::replaceColumn($combined, $this->processColumnDiff($columnDiff));
             }
-
+            
             // Theoretically there could be other actions to be applied
             // but those should never occur in our TCA builder use case.
         }
-
+        
         return $combined;
     }
-
+    
     /**
      * Merges the registered table overrides into the $combined table object
      *
@@ -198,13 +198,13 @@ class DefinitionProcessor
     {
         $override = clone $override;
         $override->unlock();
-
+        
         // Drop all fallback columns -> we don't need those
         $this->dropFallbackColumns($override);
-
+        
         TableAdapter::mergeTables($combined, $override);
     }
-
+    
     /**
      * Calculates a table diff between $initial and $combined. The diff will be returned as new
      * pseudo table object
@@ -219,27 +219,27 @@ class DefinitionProcessor
     {
         // Drop all fallback columns -> TYPO3 should handle this or it is not correctly configured
         $this->dropFallbackColumns($combined);
-
+        
         // Build a merge sum based on the combined types and their diff to the currently configured table
         $diff = $this->getService(Comparator::class)->diffTable($initial, $combined);
-
+        
         // Check if there is nothing to do...
         if (! $diff) {
             // Make sure new tables get added to the db even if there are no columns registered yet.
             if (! $definition->isNew($initial)) {
                 return null;
             }
-
+            
             // Create a fallback diff with a single column
             $diff = new TableDiff($initial->getName(), [
                 'uid' => new Column('uid', new IntegerType()),
             ]);
         }
-
+        
         // Build the final table definition based on the calculated diff
         return $this->makeTableFromDiff($diff);
     }
-
+    
     /**
      * Internal helper that drops all columns that have our internal "fallback" type from the given table
      *
@@ -248,14 +248,14 @@ class DefinitionProcessor
     protected function dropFallbackColumns(Table $table): void
     {
         TableAdapter::dropPrimaryKeyNameIfNoIndexExists($table);
-
+        
         foreach ($table->getColumns() as $column) {
             if ($column->getType() instanceof FallbackType) {
                 $table->dropColumn($column->getName());
             }
         }
     }
-
+    
     /**
      * Creates a new table instance with only either added or changed columns of the provided diff
      *
@@ -283,7 +283,7 @@ class DefinitionProcessor
             )
         );
     }
-
+    
     /**
      * Processes the diff of a single column by merging the changes "intelligently" into the
      * existing column (hopefully) without breaking something important on the way.
@@ -295,40 +295,40 @@ class DefinitionProcessor
     protected function processColumnDiff(ColumnDiff $diff): Column
     {
         $target = clone $diff->fromColumn;
-        $new    = $diff->column;
-
+        $new = $diff->column;
+        
         if ($new->getType() instanceof FallbackType) {
             return $target;
         }
         if ($target->getType() instanceof FallbackType) {
             return $new;
         }
-
+        
         // Inherit dynamic properties
         $ignoredProps = ['length', 'type'];
         foreach ($diff->changedProperties as $property) {
             if (in_array($property, $ignoredProps, true)) {
                 continue;
             }
-
+            
             $getter = Inflector::toGetter($property);
             $setter = Inflector::toSetter($property);
             $target->$setter($new->$getter());
         }
-
+        
         // Always use the bigger length
         if ($diff->hasChanged('length') && $target->getLength() < $new->getLength()) {
             $target->setLength($new->getLength());
         }
-
+        
         // Merge type changes
         if ($diff->hasChanged('type')) {
             $this->processColumnTypeOverride($target, $new);
         }
-
+        
         return $target;
     }
-
+    
     /**
      * Internal helper that tries to intelligently resolve the type changes in a column
      * by avoiding making the override more restrictive than the previous type
@@ -344,7 +344,7 @@ class DefinitionProcessor
                    ->setLength(SqlFieldLength::MEDIUM_TEXT)
                    ->setDefault(null);
         };
-
+        
         // Fallback types are ignored -> we always keep the target
         if ($new->getType() instanceof FallbackType) {
             // The only exception would be, if the target has also a fallback type
@@ -352,23 +352,23 @@ class DefinitionProcessor
             if ($target->getType() instanceof FallbackType) {
                 $defaultTypeConfig($target);
             }
-
+            
             return;
         }
-
+        
         $targetBType = $target->getType()->getBindingType();
-        $newBType    = $new->getType()->getBindingType();
-
+        $newBType = $new->getType()->getBindingType();
+        
         // Handle string -> string changes.
         if ($targetBType === $newBType && $targetBType === ParameterType::STRING) {
             // New type is text -> this overrules all other string types
             if ($new->getType() instanceof TextType) {
                 $defaultTypeConfig($target);
             }
-
+            
             return;
         }
-
+        
         // Handle remapping based on priority
         $priorityCalculator = static function (int $bType): int {
             foreach (
@@ -386,18 +386,18 @@ class DefinitionProcessor
                     return $test[1];
                 }
             }
-
+            
             return 0;
         };
-
+        
         // If new priority > target priority -> override the type
         if ($priorityCalculator($newBType) > $priorityCalculator($targetBType)) {
             $target->setType($new->getType())
                    ->setLength($new->getLength());
-
+            
             return;
         }
-
+        
         // Could not resolve a type -> Fallback to text type
         $defaultTypeConfig($target);
     }

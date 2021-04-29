@@ -29,7 +29,7 @@ use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 class CustomWizardNode extends AbstractFormElement
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -39,37 +39,37 @@ class CustomWizardNode extends AbstractFormElement
         $context = $this->makeInstance(
             CustomWizardContext::class, [
                 [
-                    'rawData'     => $this->data,
+                    'rawData' => $this->data,
                     'formElement' => $this,
-                    'value'       => $this->extractValueFromRow($this->data),
+                    'value' => $this->extractValueFromRow($this->data),
                 ],
             ]
         );
-
+        
         $className = $context->getOption('className');
         if (empty($className)) {
             throw new CustomFormException(
                 'Could not create the custom wizard, because it has no configured class!');
         }
-
+        
         $i = $this->getContainer()->has($className) ?
             $this->getService($className) : $this->makeInstance($className);
-
+        
         if (! $i instanceof CustomWizardInterface) {
             throw new CustomFormException(
                 'Could not render your field: ' . $context->getFieldName()
                 . " to use the custom field with class: $className. Because the class does not implement the required "
                 . CustomFieldInterface::class . ' interface!');
         }
-
+        
         $i->setContext($context);
-
-        $resultArray         = $this->initializeResultArray();
+        
+        $resultArray = $this->initializeResultArray();
         $resultArray['html'] = $i->render();
-
+        
         return $i->filterResultArray($resultArray);
     }
-
+    
     /**
      * Internal helper to extract the value either from the row, from the given flex form path.
      *
@@ -80,8 +80,8 @@ class CustomWizardNode extends AbstractFormElement
     protected function extractValueFromRow(array $config)
     {
         $field = $config['fieldName'];
-        $row   = $config['databaseRow'];
-
+        $row = $config['databaseRow'];
+        
         return empty($config['flexFormPath'])
             ? $row[$field]
             : Arrays::getPath($row[$field], $config['flexFormPath'], null, '/');

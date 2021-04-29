@@ -55,40 +55,40 @@ trait CodeGenerationHelperTrait
         $args = [];
         foreach ($method->getParameters() as $param) {
             $arg = [];
-
+            
             // Add type definition
             if ($param->hasType()) {
                 /** @noinspection NullPointerExceptionInspection */
                 $type = $param->getType()->getName();
-
+                
                 // Make sure the type of classes starts with a backslash...
                 if (strpos($type, '\\') !== false || class_exists($type)) {
                     $type = '\\' . $type;
                 }
-
+                
                 // Check for a nullable type
                 if ($param->allowsNull()) {
                     $type = '?' . $type;
                 }
-
+                
                 $arg[] = $type;
             }
-
+            
             // Add name of the arg
             $argName = '$' . $param->getName();
-
+            
             // Check if this argument is used as a reference
             if ($param->isPassedByReference()) {
                 $argName = '&' . $argName;
             }
-
+            
             // Add name to argument
             $arg[] = $argName;
-
+            
             // Add possible default value
             if ($param->isDefaultValueAvailable()) {
                 $default = '= ';
-
+                
                 if ($param->isDefaultValueConstant()) {
                     $default .= $param->getDefaultValueConstantName();
                 } else {
@@ -96,15 +96,15 @@ trait CodeGenerationHelperTrait
                 }
                 $arg[] = $default;
             }
-
+            
             // Implode the single argument
             $args[] = implode(' ', $arg);
         }
-
+        
         // Implode all arguments
         return implode(', ', $args);
     }
-
+    
     /**
      * Helper which is used to build a method signature out of the given method reflection
      *
@@ -115,7 +115,7 @@ trait CodeGenerationHelperTrait
     protected function generateMethodSignature(ReflectionMethod $method): string
     {
         $args = $this->generateMethodArgs($method);
-
+        
         // Build prefixes
         $prefixes = [];
         if ($method->isAbstract() && ! $method->getDeclaringClass()->isInterface()) {
@@ -137,22 +137,22 @@ trait CodeGenerationHelperTrait
             $prefixes[] = 'static';
         }
         $prefixes[] = ($method->returnsReference() ? '&' : '') . 'function';
-
+        
         // Build return type
         $returnType = '';
         if ($method->hasReturnType()) {
             $type = $method->getReturnType();
             if ($type !== null) {
-                $typeName            = (string)$type->getName();
+                $typeName = (string)$type->getName();
                 $isObjectOrInterface = class_exists($typeName) || interface_exists($typeName);
-                $returnType          = ':' . ($isObjectOrInterface ? '\\' : '') . $typeName;
+                $returnType = ':' . ($isObjectOrInterface ? '\\' : '') . $typeName;
             }
         }
-
+        
         // Build signature
         return implode(' ', $prefixes) . ' ' . $method->getName() . '(' . $args . ')' . $returnType;
     }
-
+    
     /**
      * Internal helper to parse a method's php doc block and to convert it into a usable description for our function
      *
@@ -162,7 +162,7 @@ trait CodeGenerationHelperTrait
      */
     protected function sanitizeDesc(string $desc): string
     {
-        $lines         = preg_split("/\r?\n/", $desc);
+        $lines = preg_split("/\r?\n/", $desc);
         $linesFiltered = [];
         foreach ($lines as $line) {
             if (stripos($line, '@package') !== false) {
@@ -176,7 +176,7 @@ trait CodeGenerationHelperTrait
             }
             $linesFiltered[] = preg_replace('/\\s*[\\/*]+\\s?/', '', $line);
         }
-
+        
         return implode(PHP_EOL . '	 * ', array_filter($linesFiltered));
     }
 }

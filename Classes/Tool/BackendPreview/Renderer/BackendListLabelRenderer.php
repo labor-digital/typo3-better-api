@@ -37,12 +37,12 @@ class BackendListLabelRenderer extends AbstractRenderer
      * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository
      */
     protected $contentRepository;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldRenderer
      */
     protected $fieldRenderer;
-
+    
     /**
      * BackendListLabelRenderer constructor.
      *
@@ -51,9 +51,9 @@ class BackendListLabelRenderer extends AbstractRenderer
     public function __construct(ContentRepository $contentRepository, FieldRenderer $fieldRenderer)
     {
         $this->contentRepository = $contentRepository;
-        $this->fieldRenderer     = $fieldRenderer;
+        $this->fieldRenderer = $fieldRenderer;
     }
-
+    
     /**
      * Tries to render the backend list label of a specific content element based on the data provided
      * in the given preview rendering event
@@ -63,35 +63,35 @@ class BackendListLabelRenderer extends AbstractRenderer
     public function render(ListLabelRenderingEvent $event): void
     {
         TcaUtil::runWithResolvedTypeTca($event->getRow(), $event->getTableName(), function () use ($event) {
-            $row        = $event->getRow();
-            $title      = $this->findDefaultHeader($row);
+            $row = $event->getRow();
+            $title = $this->findDefaultHeader($row);
             $foundLabel = false;
-
+            
             foreach (
                 $this->getTypoContext()->config()->getConfigValue('t3ba.backendPreview.listLabelRenderers', []) as $def
             ) {
                 [$handler, $constraints] = $def;
-
+                
                 // Non-empty constraints in form of an array that don't match the row -> skip
                 if (! empty($constraints) && is_array($constraints)
                     && count(array_intersect_assoc($constraints, $row)) !== count($constraints)) {
                     continue;
                 }
-
+                
                 $foundLabel = true;
-                $title      .= is_array($handler)
+                $title .= is_array($handler)
                     ? $this->renderColumns($handler, $event)
                     : $this->callConcreteRenderer($handler, $event);
             }
-
+            
             if (! $foundLabel) {
                 $title .= $this->renderFallbackLabel($event);
             }
-
+            
             $event->setTitle($title);
         });
     }
-
+    
     /**
      * Internal helper to call the backend list renderer class for the given row.
      * It will return the rendered label string that we should append to the title.
@@ -106,27 +106,27 @@ class BackendListLabelRenderer extends AbstractRenderer
             if (! class_exists($rendererClass)) {
                 throw new BackendPreviewException("The given renderer class: $rendererClass does not exist!");
             }
-
+            
             $renderer = $this->getService($rendererClass);
-
+            
             if (! $renderer instanceof BackendListLabelRendererInterface) {
                 throw new BackendPreviewException(
                     "The given renderer class: $rendererClass has to implement the correct interface: "
                     . BackendListLabelRendererInterface::class);
             }
-
+            
             return ContentTypeUtil::runWithRemappedTca($event->getRow(), function () use ($renderer, $event) {
                 return ' | ' . $renderer->renderBackendListLabel(
                         $this->contentRepository->getExtendedRow($event->getRow()),
                         $event->getOptions()
                     );
             });
-
+            
         } catch (Throwable $e) {
             return '[ERROR]: ' . $this->stringifyThrowable($e);
         }
     }
-
+    
     /**
      * Renders a list of selected columns as concatenated string
      *
@@ -142,35 +142,36 @@ class BackendListLabelRenderer extends AbstractRenderer
         array $columns,
         ListLabelRenderingEvent $event,
         ?callable $additionalFilter = null
-    ): string {
+    ): string
+    {
         $row = $this->contentRepository->getExtendedRow($event->getRow());
-
+        
         return ContentTypeUtil::runWithRemappedTca($row, function () use ($columns, $row, $additionalFilter, $event) {
             $result = [];
             foreach ($columns as $column) {
                 $value = trim(strip_tags((string)$row[$column]));
-
+                
                 if (($additionalFilter !== null && ! $additionalFilter($value)) || empty($value)) {
                     continue;
                 }
-
+                
                 $result[] = $this->sliceFieldContent(
                     $this->fieldRenderer->render($event->getTableName(), $column, $row, true) ?? ''
                 );
-
+                
             }
             $result = array_filter($result);
-
+            
             if (empty($result)) {
                 return '';
             }
-
+            
             return ' | ' . implode(' | ', $result);
         });
-
-
+        
+        
     }
-
+    
     /**
      * Renders an automatic fallback label based on the most commonly used columns of the tt_content table
      *
@@ -181,17 +182,17 @@ class BackendListLabelRenderer extends AbstractRenderer
     protected function renderFallbackLabel(ListLabelRenderingEvent $event): string
     {
         $isRendered = false;
-
+        
         return $this->renderColumns(['headline', 'title', 'header', 'bodytext', 'content', 'description', 'desc'],
             $event, static function (string $value) use (&$isRendered) {
                 if ($isRendered) {
                     return false;
                 }
-
+                
                 return $isRendered = (! empty($value) && ! is_numeric($value));
             });
     }
-
+    
     /**
      * Makes sure that the given value is limited to a number of characters to avoid flooding the list with content
      *
@@ -205,7 +206,7 @@ class BackendListLabelRenderer extends AbstractRenderer
         if (strlen($value) > 100) {
             return trim(substr($value, 0, 100)) . '...';
         }
-
+        
         return $value;
     }
 }

@@ -38,24 +38,24 @@ class TcaTableType extends AbstractType
     use ElementConfigTrait;
     use DataHookCollectorTrait;
     use TcaDataHookCollectorAddonTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable
      */
     protected $parent;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
-
+    
     /**
      * If set to true all field id issues will be ignored
      *
      * @var bool
      */
     protected $ignoreFieldIdIssues = false;
-
+    
     /**
      * @inheritDoc
      */
@@ -64,11 +64,12 @@ class TcaTableType extends AbstractType
         $typeName,
         TcaBuilderContext $context,
         TypeFactory $typeFactory
-    ) {
+    )
+    {
         parent::__construct($parent, $typeName, $context);
         $this->typeFactory = $typeFactory;
     }
-
+    
     /**
      * Returns the name of the linked database table
      *
@@ -78,7 +79,7 @@ class TcaTableType extends AbstractType
     {
         return $this->parent->getTableName();
     }
-
+    
     /**
      * Allows you to ignore all field id issues for this type
      *
@@ -89,10 +90,10 @@ class TcaTableType extends AbstractType
     public function ignoreFieldIdIssues(bool $state = true): self
     {
         $this->ignoreFieldIdIssues = $state;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the instance of a certain field inside your current layout
      * Note: If the field not exists, a new one will be created at the end of the form
@@ -118,7 +119,7 @@ class TcaTableType extends AbstractType
                 'to disable this exception: getField(\'' . $id .
                 '\', true); Keep in mind that you have to manually map the field, tho!');
         }
-
+        
         return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) use ($id, $ignoreFieldIdIssues) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField $i */
             $i = $this->context->cs()->di->makeInstance(
@@ -127,7 +128,7 @@ class TcaTableType extends AbstractType
                     $this,
                 ]
             );
-
+            
             // Inherit the configuration for a field
             /** @noinspection TypeUnsafeComparisonInspection */
             if ($this->getTypeName() != $this->parent->getDefaultTypeName()) {
@@ -135,11 +136,11 @@ class TcaTableType extends AbstractType
                 $defaultType = $this->parent->getType();
                 if ($defaultType->hasField($id)) {
                     $i->inheritFrom($defaultType->getField($id, $ignoreFieldIdIssues));
-
+                    
                     return $i;
                 }
             }
-
+            
             // Inherit from the column config if possible
             $columns = $this->parent->getRaw(true)['columns'] ?? [];
             if ($columns[$id]) {
@@ -147,11 +148,11 @@ class TcaTableType extends AbstractType
             } else {
                 $i->setRaw(TableDefaults::FIELD_TCA);
             }
-
+            
             return $i;
         });
     }
-
+    
     /**
      * Returns the list of all registered fields that are currently inside the layout
      *
@@ -161,7 +162,7 @@ class TcaTableType extends AbstractType
     {
         return parent::getFields();
     }
-
+    
     /**
      * Returns a single palette instance
      * Note: If the palette not exists, a new one will be created at the end of the form
@@ -178,11 +179,11 @@ class TcaTableType extends AbstractType
                 TcaPalette::class, [$node, $this]
             );
             $i->setLabel('');
-
+            
             return $i;
         });
     }
-
+    
     /**
      * Returns true if the layout has a palette with that id already registered
      *
@@ -194,7 +195,7 @@ class TcaTableType extends AbstractType
     {
         return $this->hasChild($id, Node::TYPE_CONTAINER);
     }
-
+    
     /**
      * Returns the list of all palettes that are used inside of this form
      *
@@ -204,7 +205,7 @@ class TcaTableType extends AbstractType
     {
         return $this->findAllChildrenByType(Node::TYPE_CONTAINER);
     }
-
+    
     /**
      * Similar to getPalettes() but only returns the keys of the palettes instead of the whole object
      *
@@ -216,7 +217,7 @@ class TcaTableType extends AbstractType
             yield $palette->getId();
         }
     }
-
+    
     /**
      * Adds a new line break to palettes
      *
@@ -227,20 +228,20 @@ class TcaTableType extends AbstractType
     public function addLineBreak(?string $position = null): string
     {
         $id = 'lb-' . md5((string)microtime(true));
-
+        
         $el = $this->findOrCreateChild($id, Node::TYPE_NL, function ($node) {
             return ($this->context->cs()->di->makeInstance(
                 TcaPaletteLineBreak::class, [$node, $this]
             ));
         });
-
+        
         if ($position !== null) {
             $el->moveTo($position);
         }
-
+        
         return $id;
     }
-
+    
     /**
      * Returns the instance of a certain tab.
      *
@@ -258,7 +259,7 @@ class TcaTableType extends AbstractType
             ))->setLabel('t3ba.tab.untitled');
         });
     }
-
+    
     /**
      * @inheritDoc
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab
@@ -267,7 +268,7 @@ class TcaTableType extends AbstractType
     {
         return parent::getNewTab();
     }
-
+    
     /**
      * @inheritDoc
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab[]
@@ -276,7 +277,7 @@ class TcaTableType extends AbstractType
     {
         return parent::getTabs();
     }
-
+    
     /**
      * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
@@ -297,10 +298,10 @@ class TcaTableType extends AbstractType
             $this->loadDataHooks($raw);
             $this->config = $raw;
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -308,10 +309,10 @@ class TcaTableType extends AbstractType
     {
         $raw = Arrays::without($this->config, ['columnsOverrides', 'showitem']);
         $this->dumpDataHooks($raw);
-
+        
         return $raw;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -320,7 +321,7 @@ class TcaTableType extends AbstractType
         parent::clear();
         $this->config = [];
     }
-
+    
     /**
      * @inheritDoc
      */

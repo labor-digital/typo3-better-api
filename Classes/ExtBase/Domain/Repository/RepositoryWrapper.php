@@ -29,22 +29,22 @@ class RepositoryWrapper extends BetterRepository
      * @var \TYPO3\CMS\Extbase\Persistence\Repository
      */
     protected $repository;
-
+    
     public function initialize(Repository $repository)
     {
-        $this->repository    = $repository;
+        $this->repository = $repository;
         $this->selfReference = $repository;
     }
-
+    
     public function __get($name)
     {
         if (! property_exists($this->repository, $name)) {
             return null;
         }
-
+        
         return $this->repository->$name;
     }
-
+    
     public function __set($name, $value)
     {
         if (! property_exists($this->repository, $name)) {
@@ -52,12 +52,12 @@ class RepositoryWrapper extends BetterRepository
         }
         $this->repository->$name = $value;
     }
-
+    
     public function __isset($name)
     {
         return property_exists($this->repository, $name) && isset($this->repository->$name);
     }
-
+    
     /**
      * @param   string  $methodName
      * @param   array   $arguments
@@ -69,10 +69,10 @@ class RepositoryWrapper extends BetterRepository
         if (! method_exists($this->repository, $methodName)) {
             return null;
         }
-
+        
         return call_user_func_array([$this->repository, $methodName], $arguments);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -80,7 +80,7 @@ class RepositoryWrapper extends BetterRepository
     {
         return $this->repository->findAll();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -88,7 +88,7 @@ class RepositoryWrapper extends BetterRepository
     {
         $this->repository->add($object);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -96,7 +96,7 @@ class RepositoryWrapper extends BetterRepository
     {
         $this->repository->remove($object);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -104,7 +104,7 @@ class RepositoryWrapper extends BetterRepository
     {
         $this->repository->update($modifiedObject);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -112,7 +112,7 @@ class RepositoryWrapper extends BetterRepository
     {
         return $this->repository->countAll();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -120,7 +120,7 @@ class RepositoryWrapper extends BetterRepository
     {
         $this->repository->removeAll();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -128,7 +128,7 @@ class RepositoryWrapper extends BetterRepository
     {
         return $this->repository->findByUid($uid);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -136,7 +136,7 @@ class RepositoryWrapper extends BetterRepository
     {
         return $this->repository->findByIdentifier($identifier);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -144,7 +144,7 @@ class RepositoryWrapper extends BetterRepository
     {
         $this->repository->setDefaultOrderings($defaultOrderings);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -152,7 +152,7 @@ class RepositoryWrapper extends BetterRepository
     {
         $this->repository->setDefaultQuerySettings($defaultQuerySettings);
     }
-
+    
     /**
      * @inheritDoc
      */

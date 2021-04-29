@@ -32,7 +32,7 @@ class ExtBasePersistenceRegistrationEvent
      * @see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Breaking-87623-ReplaceConfigpersistenceclassesTyposcriptConfiguration.html#migration
      */
     protected $classes = [];
-
+    
     /**
      * Returns the extbase persistence mapping
      *
@@ -42,7 +42,7 @@ class ExtBasePersistenceRegistrationEvent
     {
         return $this->classes;
     }
-
+    
     /**
      * Allows you to update the extbase persistence mapping
      *
@@ -53,7 +53,7 @@ class ExtBasePersistenceRegistrationEvent
     public function setClasses(array $classes): ExtBasePersistenceRegistrationEvent
     {
         $this->classes = $classes;
-
+        
         return $this;
     }
 }

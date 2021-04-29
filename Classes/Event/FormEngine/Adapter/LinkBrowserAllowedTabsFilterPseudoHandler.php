@@ -33,7 +33,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
      * @var AbstractLinkBrowserController
      */
     public static $currentController;
-
+    
     /**
      * @inheritDoc
      */
@@ -41,7 +41,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return [];
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -49,7 +49,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return [];
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -57,7 +57,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         static::$currentController = $linkBrowser;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -65,7 +65,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return false;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -73,7 +73,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return '';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -81,7 +81,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return '';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -89,7 +89,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return false;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -97,5 +97,5 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     {
         return [];
     }
-
+    
 }

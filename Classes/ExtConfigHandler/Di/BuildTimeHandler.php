@@ -32,7 +32,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInterface
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -41,7 +41,7 @@ class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHa
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureDiInterface::class);
     }
-
+    
     /**
      * Handles the container builder configuration
      *
@@ -50,12 +50,12 @@ class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHa
     public function handle(string $class): void
     {
         $packagePath = $this->context->getPackage()->getPackagePath();
-        $context     = $this->context;
-        $loader      = new ExtConfigLoader(
+        $context = $this->context;
+        $loader = new ExtConfigLoader(
             $this->getInstance(ContainerBuilder::class),
             new FileLocator($packagePath)
         );
-
+        
         $loader->load(static function (
             ContainerConfigurator $configurator,
             ContainerBuilder $containerBuilder
@@ -64,18 +64,18 @@ class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHa
             if (method_exists($class, 'setAutoWiringDependencies')) {
                 call_user_func([$class, 'setAutoWiringDependencies'], $configurator, $context);
             }
-
+            
             // Call the real configuration class
             call_user_func([$class, 'configure'], $configurator, $containerBuilder, $context);
-
+            
         }, $this->context->getPackage()->getPackagePath());
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void { }
-
+    
     /**
      * @inheritDoc
      */

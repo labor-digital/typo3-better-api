@@ -53,11 +53,12 @@ class ExtendedLocalizationUtility extends T3BA__Copy__LocalizationUtility
         array $arguments = null,
         string $languageKey = null,
         array $alternativeLanguageKeys = null
-    ): ?string {
+    ): ?string
+    {
         return TranslationLabelProvider::provideLabelFor($key,
             static function ($input) use ($extensionName, $arguments, $languageKey, $alternativeLanguageKeys) {
                 return parent::translate($input, $extensionName, $arguments, $languageKey, $alternativeLanguageKeys);
             });
     }
-
+    
 }

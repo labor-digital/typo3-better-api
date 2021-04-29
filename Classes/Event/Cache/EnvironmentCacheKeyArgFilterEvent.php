@@ -40,12 +40,12 @@ class EnvironmentCacheKeyArgFilterEvent
      * @var array
      */
     protected $args;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $context;
-
+    
     /**
      * EnvironmentCacheKeyFilterEvent constructor.
      *
@@ -53,10 +53,10 @@ class EnvironmentCacheKeyArgFilterEvent
      */
     public function __construct(array $args, TypoContext $context)
     {
-        $this->args    = $args;
+        $this->args = $args;
         $this->context = $context;
     }
-
+    
     /**
      * Returns the prepared cache key arguments
      *
@@ -66,7 +66,7 @@ class EnvironmentCacheKeyArgFilterEvent
     {
         return $this->args;
     }
-
+    
     /**
      * Updates the prepared cache key arguments
      *
@@ -77,10 +77,10 @@ class EnvironmentCacheKeyArgFilterEvent
     public function setArgs(array $args): self
     {
         $this->args = $args;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the TypoContext object
      *

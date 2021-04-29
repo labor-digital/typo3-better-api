@@ -36,14 +36,14 @@ class AbstractDataModel extends AbstractEntity
      * @var array
      */
     protected $__raw;
-
+    
     /**
      * Contains The unpacked flex form data by the name of the flex form field name
      *
      * @var array
      */
     protected $__flex = [];
-
+    
     /**
      * Returns the raw database array that was used to create this model
      *
@@ -53,7 +53,7 @@ class AbstractDataModel extends AbstractEntity
     {
         return $this->__raw;
     }
-
+    
     /**
      * Can be used to access the values of any flex form field in your configuration.
      * By default this method returns the full flex form array (if no path is given).
@@ -72,10 +72,10 @@ class AbstractDataModel extends AbstractEntity
         if (empty($path)) {
             return $this->__flex;
         }
-
+        
         return Arrays::getPath($this->__flex, $path, $default);
     }
-
+    
     /**
      * Block all writing on magic properties
      *
@@ -86,7 +86,7 @@ class AbstractDataModel extends AbstractEntity
     {
         throw new InvalidArgumentException('This model has only readable magic properties!');
     }
-
+    
     /**
      * Allow magic access to all the raw properties of this model
      *
@@ -97,20 +97,20 @@ class AbstractDataModel extends AbstractEntity
     public function __get($name)
     {
         $raw = $this->getRaw();
-
+        
         if (isset($raw[$name])) {
             return $raw[$name];
         }
-
+        
         $name = Inflector::toDatabase($name);
-
+        
         if (isset($raw[$name])) {
             return $raw[$name];
         }
-
+        
         return null;
     }
-
+    
     /**
      * Allow magic state lookup for raw properties
      *

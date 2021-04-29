@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\LinkHandling\RecordLinkHandler;
 class LinkHandler extends RecordLinkHandler
 {
     protected $baseUrn = 't3://linkSetRecord';
-
+    
     /**
      * Used to generate the preview in the backend input link element node
      *
@@ -47,12 +47,12 @@ class LinkHandler extends RecordLinkHandler
     {
         // Make sure our table, which can be a model name as well, resolves to a table!
         $table = &$data['pageTsConfig']['TCEMAIN.']['linkHandler.'][$linkData['identifier'] . '.']
-                  ['configuration.']['table'];
-
+        ['configuration.']['table'];
+        
         if (class_exists($table)) {
             $table = NamingUtil::resolveTableName($table);
         }
-
+        
         // Rewrite the request to a default "record" type
         return InputLinkElementAdapter::extractLinkExplanation($element, str_replace(
             'linkSetRecord?', LinkService::TYPE_RECORD . '?', $linkParts['url']

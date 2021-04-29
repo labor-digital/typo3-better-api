@@ -33,7 +33,7 @@ use Throwable;
 class FailsafeWrapper
 {
     public static $isFailsafe = false;
-
+    
     /**
      * Executes the code, catches all exceptions and returns null if the executed code failed.
      *
@@ -51,10 +51,10 @@ class FailsafeWrapper
                 return null;
             }
         }
-
+        
         return call_user_func_array($handler, $args);
     }
-
+    
     /**
      * Tries to execute handlerA, but automatically executes handlerB if handlerA threw an exception
      *
@@ -73,11 +73,11 @@ class FailsafeWrapper
             } catch (Throwable $e) {
                 // Add the exception to the args of the second handler
                 $argsB[] = $e;
-
+                
                 return call_user_func_array($handlerB, $argsB);
             }
         }
-
+        
         return call_user_func_array($handlerA, $argsA);
     }
 }

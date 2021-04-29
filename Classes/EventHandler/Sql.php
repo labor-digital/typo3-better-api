@@ -33,28 +33,28 @@ use TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent;
 class Sql implements LazyEventSubscriberInterface
 {
     public const STORAGE_KEY = 'registry.sql';
-
+    
     /**
      * Allows the outside world to disable the sql injection.
      *
      * @var bool
      */
     public static $enabled = true;
-
+    
     /**
      * The dynamic sql storage registry
      *
      * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
      */
     protected $registry;
-
+    
     /**
      * The file system storage for sql related data
      *
      * @var VarFs
      */
     protected $fsMount;
-
+    
     /**
      * SqlEventHandler constructor.
      *
@@ -64,9 +64,9 @@ class Sql implements LazyEventSubscriberInterface
     public function __construct(SqlRegistry $registry, VarFs $fs)
     {
         $this->registry = $registry;
-        $this->fsMount  = $fs->getMount('Sql');
+        $this->fsMount = $fs->getMount('Sql');
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -75,18 +75,18 @@ class Sql implements LazyEventSubscriberInterface
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, 'onTcaLoaded', ['priority' => -5000]);
         $subscription->subscribe(AlterTableDefinitionStatementsEvent::class, 'onSqlTableDefinitions');
     }
-
+    
     public function onTcaLoaded(): void
     {
         $this->fsMount->setFileContent(static::STORAGE_KEY, $this->registry->dump());
     }
-
+    
     public function onSqlTableDefinitions(AlterTableDefinitionStatementsEvent $e): void
     {
         if (! static::$enabled || ! $this->fsMount->hasFile(static::STORAGE_KEY)) {
             return;
         }
-
+        
         $e->addSqlData($this->fsMount->getFileContent(static::STORAGE_KEY));
     }
 }

@@ -31,36 +31,36 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
 
 class TcaFieldFlexFormConfig
 {
-
+    
     /**
      * @var array
      */
     protected $config;
-
+    
     /**
      * @var TcaField
      */
     protected $field;
-
+    
     /**
      * @var Factory
      */
     protected $factory;
-
+    
     /**
      * The list of flex forms by their structure key
      *
      * @var Flex[]
      */
     protected $structures = [];
-
+    
     public function __construct(TcaField $field, array &$fieldConfig, Factory $factory)
     {
-        $this->field   = $field;
+        $this->field = $field;
         $this->factory = $factory;
-        $this->config  = &$fieldConfig;
+        $this->config = &$fieldConfig;
     }
-
+    
     /**
      * Returns the id of the field, or fields (comma separated) that are responsible for
      * determining the the type of flex form structure to use on this field.
@@ -74,7 +74,7 @@ class TcaFieldFlexFormConfig
     {
         return $this->config['config']['ds_pointerField'] ?? '';
     }
-
+    
     /**
      * Can be used to set the id of the field, or fields (comma separated) that are responsible for
      * determining the the type of flex form structure to use on this field.
@@ -93,19 +93,19 @@ class TcaFieldFlexFormConfig
     {
         if ($field === null) {
             unset($this->config['ds_pointerField']);
-
+            
             return $this;
         }
-
+        
         if ($field instanceof AbstractField) {
             $field = $field->getId();
         }
-
+        
         $this->config['config']['ds_pointerField'] = $field;
-
+        
         return $this;
     }
-
+    
     /**
      * Use this method to get the flex form layout for this field.
      *
@@ -123,25 +123,25 @@ class TcaFieldFlexFormConfig
     public function getStructure(?string $structure = null): Flex
     {
         $structure = $structure ?? 'default';
-
+        
         // Return existing flex form objects
         if (isset($this->structures[$structure])) {
             return $this->structures[$structure];
         }
-
+        
         // Check if we have the structure for this form
         $definition = $this->config['config']['ds'][$structure] ?? '';
         if (empty($definition)) {
             $definition = '<T3DataStructure><sheets type=\'array\'></sheets></T3DataStructure>';
         }
-
+        
         // Generate a new flex form instance
         $i = $this->factory->create($this->field);
         $this->factory->initialize($i, $definition);
-
+        
         return $this->structures[$structure] = $i;
     }
-
+    
     /**
      * Returns true if this field has a flex form configuration for the given structure
      *
@@ -154,7 +154,7 @@ class TcaFieldFlexFormConfig
     {
         return isset($this->config['config']['ds'][$structure ?? 'default']);
     }
-
+    
     /**
      * Returns the keys of all flex form structures that are registered on this field.
      *
@@ -169,7 +169,7 @@ class TcaFieldFlexFormConfig
             )
         );
     }
-
+    
     /**
      * Internal helper to dump the configuration into the given tca field configuration array
      *
@@ -184,11 +184,11 @@ class TcaFieldFlexFormConfig
         $config['config']['type'] = 'flex';
         unset($config['config']['renderType']);
         $this->field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT);
-
+        
         $dumper = $this->field->getRoot()->getContext()->cs()->flexFormDumper;
         foreach ($this->structures as $k => $flexForm) {
             $config['config']['ds'][$k] = 'FILE:' . $dumper->dumpToFile($flexForm);
         }
-
+        
     }
 }

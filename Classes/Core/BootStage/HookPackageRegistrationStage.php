@@ -39,17 +39,17 @@ class HookPackageRegistrationStage implements BootStageInterface
     {
         $eventBus->addListener(PackageManagerCreatedEvent::class, static function (PackageManagerCreatedEvent $event) {
             $packageManager = $event->getPackageManager();
-
+            
             $packageKey = 'T3BA_hook';
             if ($packageManager->isPackageActive($packageKey)) {
                 $packageManager->deactivatePackage($packageKey);
             }
-
+            
             $package = new Package($packageManager, $packageKey,
                 Path::join(dirname(__DIR__, 3), 'HookExtension', $packageKey) . '/');
-
+            
             PackageManagerAdapter::registerHookPackage($packageManager, $package);
         });
     }
-
+    
 }

@@ -28,12 +28,12 @@ use Neunerlei\Configuration\State\ConfigState;
 
 abstract class AbstractExtConfigApplier implements ExtConfigApplierInterface
 {
-
+    
     /**
      * @var ConfigState
      */
     protected $state;
-
+    
     /**
      * @inheritDoc
      */
@@ -41,5 +41,5 @@ abstract class AbstractExtConfigApplier implements ExtConfigApplierInterface
     {
         $this->state = $state;
     }
-
+    
 }

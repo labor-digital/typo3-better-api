@@ -34,21 +34,21 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
 {
     use TypoContextAwareTrait;
     use LogConfigTrait;
-
+    
     /**
      * The list of registered x classes
      *
      * @var array
      */
     protected $xClasses = [];
-
+    
     /**
      * The list of registered cache configurations
      *
      * @var array
      */
     protected $cacheConfigurations = [];
-
+    
     /**
      * Registers a xClass override for a given class
      *
@@ -63,10 +63,10 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
         $this->xClasses[$classToOverride] = [
             'className' => $classToOverrideWith,
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Registers a new cache configuration to TYPO3's caching framework.
      *
@@ -89,38 +89,39 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
         string $frontend,
         string $backend,
         array $options = []
-    ): self {
+    ): self
+    {
         $options = Options::make($options,
             [
                 'options' => [[]],
-                'groups'  => [
-                    'type'      => ['string', 'array'],
-                    'filter'    => static function ($v) {
+                'groups' => [
+                    'type' => ['string', 'array'],
+                    'filter' => static function ($v) {
                         return is_array($v) ? $v : [$v];
                     },
-                    'default'   => [],
+                    'default' => [],
                     'validator' => static function ($v) {
                         if (! empty(array_filter($v, static function ($v) {
                             return ! in_array($v, ['all', 'system', 'pages'], true);
                         }))) {
                             return 'Your cache groups are invalid! Only the values all, system and pages are allowed!';
                         }
-
+                        
                         return true;
                     },
                 ],
             ]);
-
+        
         $this->cacheConfigurations[$this->context->replaceMarkers($identifier)] = [
             'frontend' => $frontend,
-            'backend'  => $backend,
-            'options'  => $this->context->replaceMarkers($options['options']),
-            'groups'   => $this->context->replaceMarkers($options['groups']),
+            'backend' => $backend,
+            'options' => $this->context->replaceMarkers($options['options']),
+            'groups' => $this->context->replaceMarkers($options['groups']),
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Registers a new logfile writer in the system. It utilizes our internal
      * better file writer that has built-in log rotation capabilities.
@@ -150,28 +151,28 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
     {
         $additionalDefinition = [
             'logRotation' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => true,
             ],
             'filesToKeep' => [
-                'type'    => 'int',
+                'type' => 'int',
                 'default' => 5,
             ],
         ];
-
+        
         $options = $this->prepareLogConfig($options, $additionalDefinition);
-
+        
         $options['writer'] = [
             BetterFileWriter::class => [
                 'logRotation' => $options['logRotation'],
                 'filesToKeep' => $options['filesToKeep'],
-                'name'        => is_numeric($options['key']) ? md5($options['key']) : $options['key'],
+                'name' => is_numeric($options['key']) ? md5($options['key']) : $options['key'],
             ],
         ];
-
+        
         return $this->pushLogConfig($options);
     }
-
+    
     /**
      * Registers any kind of log configuration based on your input.
      *
@@ -195,7 +196,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
     {
         return $this->pushLogConfig($this->prepareLogConfig($options));
     }
-
+    
     /**
      * Internal helper to store the configuration on the config state
      *

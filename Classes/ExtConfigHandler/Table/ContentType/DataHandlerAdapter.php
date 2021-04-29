@@ -42,12 +42,12 @@ class DataHandlerAdapter extends DataHandler
      */
     public static function rewriteHistory(DataHandler $dataHandler, int $id, array $childFields): void
     {
-        $record              = &$dataHandler->historyRecords['tt_content:' . $id];
+        $record = &$dataHandler->historyRecords['tt_content:' . $id];
         $record['oldRecord'] = array_merge(
             $record['oldRecord'],
             array_filter($childFields)
         );
-
+        
         foreach ($record['oldRecord'] as $k => $v) {
             if (isset($record['newRecord'][$k]) && $record['newRecord'][$k] === $v) {
                 unset($record['oldRecord'][$k], $record['newRecord'][$k]);

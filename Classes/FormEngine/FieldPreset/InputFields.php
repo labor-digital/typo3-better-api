@@ -33,7 +33,7 @@ use Neunerlei\TinyTimy\DateTimy;
 
 class InputFields extends AbstractFieldPreset
 {
-
+    
     /**
      * Configures the current field as a simple input element
      *
@@ -63,20 +63,20 @@ class InputFields extends AbstractFieldPreset
                 )
             )
         );
-
+        
         // Prepare the config
         $config = ['type' => 'input', 'size' => 39];
-
+        
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addReadOnlyConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
         $config = $this->addPlaceholderConfig($config, $options);
-
+        
         // Done
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Configures this field as either a date or a datetime field.
      * Date fields have their own datepicker.
@@ -100,18 +100,18 @@ class InputFields extends AbstractFieldPreset
             $this->addEvalOptions(
                 $this->addDefaultOptions([
                     'withTime' => [
-                        'type'    => 'bool',
+                        'type' => 'bool',
                         'default' => false,
                     ],
-                    'asInt'    => [
-                        'type'    => 'bool',
+                    'asInt' => [
+                        'type' => 'bool',
                         'default' => false,
                     ],
                 ], ['null', 'string', 'number', DateTime::class, DateTimy::class], null)
                 , ['required', 'trim']
             )
         );
-
+        
         // Set sql statement
         $this->configureSqlColumn(static function (Column $column) use ($options) {
             if ($options['asInt']) {
@@ -124,30 +124,30 @@ class InputFields extends AbstractFieldPreset
                     ->setDefault('CURRENT_TIMESTAMP');
             }
         });
-
+        
         // Prepare the config
         $config = [
-            'type'       => 'input',
+            'type' => 'input',
             'renderType' => 'inputDateTime',
         ];
-
+        
         if ($options['default'] !== null) {
-            $date              = new DateTimy($options['default']);
+            $date = new DateTimy($options['default']);
             $config['default'] = $options['asInt'] ? $date->getTimestamp() : $date->formatSql();
         }
-
+        
         $options[$options['withTime'] ? 'datetime' : 'date'] = true;
-
+        
         $config = $this->addEvalConfig($config, $options);
-
+        
         if (! $options['asInt']) {
             $config['dbType'] = 'datetime';
         }
-
+        
         // Done
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Configures the current field as a link selection.
      *
@@ -179,31 +179,31 @@ class InputFields extends AbstractFieldPreset
                     $this->addDefaultOptions(
                         [
                             'allowLinkSets' => [
-                                'type'    => ['bool', 'array'],
+                                'type' => ['bool', 'array'],
                                 'default' => false,
                             ],
-                            'allowFiles'    => [
-                                'type'    => 'bool',
+                            'allowFiles' => [
+                                'type' => 'bool',
                                 'default' => false,
                             ],
                             'allowExternal' => [
-                                'type'    => 'bool',
+                                'type' => 'bool',
                                 'default' => true,
                             ],
-                            'allowPages'    => [
-                                'type'    => 'bool',
+                            'allowPages' => [
+                                'type' => 'bool',
                                 'default' => true,
                             ],
-                            'allowMail'     => [
-                                'type'    => 'bool',
+                            'allowMail' => [
+                                'type' => 'bool',
                                 'default' => false,
                             ],
-                            'allowFolder'   => [
-                                'type'    => 'bool',
+                            'allowFolder' => [
+                                'type' => 'bool',
                                 'default' => false,
                             ],
-                            'hideClutter'   => [
-                                'type'    => 'bool',
+                            'hideClutter' => [
+                                'type' => 'bool',
                                 'default' => true,
                             ],
                         ]
@@ -213,7 +213,7 @@ class InputFields extends AbstractFieldPreset
                 ['trim' => true]
             )
         );
-
+        
         // Prepare blinded url types
         $blindFields = [];
         if (! $options['allowFiles']) {
@@ -231,33 +231,33 @@ class InputFields extends AbstractFieldPreset
         if (! $options['allowFolder']) {
             $blindFields[] = 'folder';
         }
-
+        
         $blindFields[] = '@linkSets:' . urlencode(\GuzzleHttp\json_encode($options['allowLinkSets']));
-        $blindFields   = implode(',', $blindFields);
-
+        $blindFields = implode(',', $blindFields);
+        
         // Prepare the config
         $config = [
-            'type'         => 'input',
-            'softref'      => 'typolink,typolink_tag,images,url',
-            'renderType'   => 'inputLink',
+            'type' => 'input',
+            'softref' => 'typolink,typolink_tag,images,url',
+            'renderType' => 'inputLink',
             'fieldControl' => [
                 'linkPopup' => [
                     'options' => [
                         'blindLinkOptions' => $blindFields,
-                        'blindLinkFields'  => $options['hideClutter'] ? 'class,params' : '',
+                        'blindLinkFields' => $options['hideClutter'] ? 'class,params' : '',
                     ],
                 ],
             ],
         ];
-
+        
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
-
+        
         // Set the field
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Converts your field into a slug or path segment field. By default we will use a custom renderer
      * to make sure your slug's don't look like "www.your-domain.deyour-slug". If you want the default
@@ -291,72 +291,72 @@ class InputFields extends AbstractFieldPreset
             $this->addEvalOptions(
                 $this->addDefaultOptions(
                     [
-                        'separator'      => [
-                            'type'    => 'string',
+                        'separator' => [
+                            'type' => 'string',
                             'default' => '/',
                         ],
-                        'replacements'   => [
-                            'type'    => 'array',
+                        'replacements' => [
+                            'type' => 'array',
                             'default' => ['/' => '-'],
                         ],
-                        'prefix'         => [
-                            'type'    => 'string',
+                        'prefix' => [
+                            'type' => 'string',
                             'default' => '',
                         ],
                         'prefixProvider' => [
-                            'type'      => 'string',
-                            'default'   => SlugPrefixProvider::class,
+                            'type' => 'string',
+                            'default' => SlugPrefixProvider::class,
                             'validator' => static function (string $class) {
                                 if (! class_exists($class)) {
                                     return 'The given class: ' . $class . ' does not exist!';
                                 }
-
+                                
                                 if (! in_array(SlugPrefixProviderInterface::class, class_implements($class), true)) {
                                     return 'The given slug prefix provider: ' . $class
                                            . ' must implement the required interface: '
                                            . SlugPrefixProviderInterface::class;
                                 }
-
+                                
                                 return true;
                             },
                         ],
                     ], ['string', 'number']
                 ), ['required', 'uniqueInSite'])
         );
-
+        
         // Sadly, TYPO3 sucks hard sometimes... The prefix provider does not get any information for
         // which field it is generating the slug for. So we have to get our prefix there, somehow...
         $prefixMethod = 'getPrefix';
         if ($options['prefix'] !== '' && $options['prefixProvider'] === SlugPrefixProvider::class) {
             $prefixMethod = 'pre_' . bin2hex($options['prefix']);
         }
-
+        
         // Build the configuration
         $config = [
-            'type'              => 'slug',
-            'generatorOptions'  => [
-                'fields'               => $fields,
-                'fieldSeparator'       => $options['separator'],
+            'type' => 'slug',
+            'generatorOptions' => [
+                'fields' => $fields,
+                'fieldSeparator' => $options['separator'],
                 'prefixParentPageSlug' => false,
-                'replacements'         => $options['replacements'],
+                'replacements' => $options['replacements'],
             ],
-            'appearance'        => [
-                'prefix'       => $options['prefixProvider'] . '->' . $prefixMethod,
+            'appearance' => [
+                'prefix' => $options['prefixProvider'] . '->' . $prefixMethod,
                 'staticPrefix' => $options['prefix'],
             ],
-            'prependSlash'      => false,
+            'prependSlash' => false,
             'fallbackCharacter' => '-',
-            'size'              => 50,
+            'size' => 50,
         ];
-
+        
         if ($this->field->isReadOnly()) {
             $config['renderType'] = 'input';
         }
-
+        
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048], true);
-
+        
         // Inject the field configuration
         $this->field->addConfig($config);
     }

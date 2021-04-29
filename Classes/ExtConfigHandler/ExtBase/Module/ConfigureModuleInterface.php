@@ -24,7 +24,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigureModuleInterface
 {
-
+    
     /**
      * Is used to configure a single ext base backend module.
      *

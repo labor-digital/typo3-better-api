@@ -37,7 +37,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $subscription->subscribe(BackendAssetFilterEvent::class, 'onBackendAssets');
     }
-
+    
     public function onBackendAssets(BackendAssetFilterEvent $event): void
     {
         $list = $this->state->get('typo.backend.assets');
@@ -48,5 +48,5 @@ class Applier extends AbstractExtConfigApplier
             }
         }
     }
-
+    
 }

@@ -62,10 +62,10 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
                 return parent::recordInfo($table, $id, $fieldList);
             }
         ));
-
+        
         return call_user_func($e->getConcreteInfoProvider(), $e->getFieldList(), $table, $id);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -76,8 +76,8 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $table, parent::newFieldArray($table), $this
         ))->getRow();
     }
-
-
+    
+    
     /**
      * @inheritDoc
      */
@@ -91,10 +91,10 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $id,
             $this
         ));
-
+        
         parent::updateDB($e->getTableName(), $e->getId(), $e->getRow());
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -105,7 +105,8 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
         $newVersion = false,
         $suggestedUid = 0,
         $dontSetNewIdIndex = false
-    ) {
+    )
+    {
         /** @noinspection PhpParamsInspection */
         $e = TypoEventBus::getInstance()->dispatch(new DataHandlerDbFieldsFilterEvent(
             'insert',
@@ -114,12 +115,12 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $id,
             $this,
             [
-                'newVersion'        => $newVersion,
-                'suggestedUid'      => $suggestedUid,
+                'newVersion' => $newVersion,
+                'suggestedUid' => $suggestedUid,
                 'dontSetNewIdIndex' => $dontSetNewIdIndex,
             ]
         ));
-
+        
         return parent::insertDB(
             $e->getTableName(),
             $e->getId(),
@@ -129,14 +130,14 @@ class ExtendedDataHandler extends T3BA__Copy__DataHandler
             $dontSetNewIdIndex
         );
     }
-
+    
     /**
      * @inheritDoc
      */
     protected function recordInfoWithPermissionCheck(string $table, int $id, $perms, string $fieldList = '*')
     {
         $result = parent::recordInfoWithPermissionCheck($table, $id, $perms, $fieldList);
-
+        
         /** @noinspection PhpParamsInspection */
         return TypoEventBus::getInstance()->dispatch(new DataHandlerRecordInfoWithPermsFilterEvent(
             $table, $id, $fieldList, $this, $result, $perms

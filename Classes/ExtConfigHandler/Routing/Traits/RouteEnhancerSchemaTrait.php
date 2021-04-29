@@ -25,6 +25,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Routing\Traits;
 
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
+use Throwable;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 trait RouteEnhancerSchemaTrait
@@ -32,78 +33,78 @@ trait RouteEnhancerSchemaTrait
     protected function getDefaultSchema(): array
     {
         return [
-            'pids'        => [
-                'type'    => 'array',
+            'pids' => [
+                'type' => 'array',
                 'default' => [],
-                'filter'  => function ($v) { return $this->context->resolvePids($v); },
+                'filter' => function ($v) { return $this->context->resolvePids($v); },
             ],
-            'raw'         => [
-                'type'    => 'array',
+            'raw' => [
+                'type' => 'array',
                 'default' => [],
             ],
             'rawOverride' => [
-                'type'    => 'array',
+                'type' => 'array',
                 'default' => [],
             ],
         ];
     }
-
+    
     protected function getRoutePathSchema(array $override = []): array
     {
         return $this->mergeOptionSchemas(
             $this->getDefaultSchema(),
             [
-                'routePath'    => [
-                    'type'   => 'string',
+                'routePath' => [
+                    'type' => 'string',
                     'filter' => static function ($v) {
                         return '/' . ltrim($v, '/ ');
                     },
                 ],
                 'requirements' => [
-                    'type'    => 'array',
+                    'type' => 'array',
                     'default' => [],
-                    'filter'  => function (array $list, $k, array $options) {
+                    'filter' => function (array $list, $k, array $options) {
                         if (! isset($options['routePath'])) {
                             return [];
                         }
-
+                        
                         foreach ($this->extractArgsFromRoutePath($options['routePath']) as $key) {
                             if (! isset($list[$key])) {
                                 $list[$key] = "[a-zA-Z0-9\-_.]*";
                             }
                         }
-
+                        
                         return $list;
                     },
                 ],
-                'defaults'     => [
-                    'type'    => 'array',
+                'defaults' => [
+                    'type' => 'array',
                     'default' => [],
                 ],
-                'dbArgs'       => [
-                    'type'    => 'array',
+                'dbArgs' => [
+                    'type' => 'array',
                     'default' => [],
                 ],
-                'localeArgs'   => [
-                    'type'    => 'array',
+                'localeArgs' => [
+                    'type' => 'array',
                     'default' => [],
                 ],
-                'staticArgs'   => [
-                    'type'    => 'array',
+                'staticArgs' => [
+                    'type' => 'array',
                     'default' => [],
                 ],
             ],
             $override
         );
     }
-
+    
     protected function getExtBaseSchema(array $override = []): array
     {
         return $this->mergeOptionSchemas(
             $this->getRoutePathSchema(),
             [
                 'controller' => [
-                    'type'      => 'string',
+                    'type' => 'string',
                     'validator' => static function (string $v) {
                         if (! class_exists($v)) {
                             return 'The given controller class: ' . $v . ' does not exist!';
@@ -111,37 +112,37 @@ trait RouteEnhancerSchemaTrait
                         if (! in_array(ActionController::class, class_parents($v), true)) {
                             return 'The given controller class: ' . $v . ' must extend ' . ActionController::class;
                         }
-
+                        
                         return true;
                     },
                 ],
-                'action'     => [
+                'action' => [
                     'type' => 'string',
                 ],
-                'extension'  => [
-                    'type'    => 'string',
+                'extension' => [
+                    'type' => 'string',
                     'default' => NamingUtil::extensionNameFromExtKey($this->context->getExtKey()),
                 ],
                 'additional' => [
-                    'type'      => 'array',
-                    'default'   => [],
-                    'filter'    => function (array $list) {
+                    'type' => 'array',
+                    'default' => [],
+                    'filter' => function (array $list) {
                         foreach ($list as $k => &$v) {
                             if (is_string($v)) {
                                 $v = [$v];
                             }
-
+                            
                             // We ignore the issue here and handle it in the validator
                             if (! isset($v[0]) || ! is_string($v[0])) {
                                 continue;
                             }
-
+                            
                             if (! isset($v[1])) {
                                 $args = $this->extractArgsFromRoutePath($v[0]);
                                 $v[1] = array_combine($args, $args);
                             }
                         }
-
+                        
                         return $list;
                     },
                     'validator' => static function ($list) {
@@ -149,36 +150,36 @@ trait RouteEnhancerSchemaTrait
                             if (empty($v) || ! is_array($v) || Arrays::isAssociative($v)) {
                                 return 'Invalid additional route at position: ' . $k;
                             }
-
+                            
                             if (! is_string($v[0])) {
                                 return 'The first element in an additional route at position: ' . $k
                                        . 'must be the route path, like "/{page}"!';
                             }
-
+                            
                             if (isset($v[1]) && ! is_array($v[1])) {
                                 return 'The second element in an additional route at position: ' . $k
                                        . 'must be an array containing the argument name map!';
                             }
                         }
-
+                        
                         return true;
                     },
                 ],
-                'arguments'  => [
-                    'type'    => 'array',
+                'arguments' => [
+                    'type' => 'array',
                     'default' => function ($key, array $options): array {
                         $args = $this->extractArgsFromRoutePath($options['routePath']);
-
+                        
                         return array_combine($args, $args);
                     },
                 ],
-                'plugin'     => [
-                    'type'      => 'string',
-                    'default'   => static function ($key, array $options): string {
+                'plugin' => [
+                    'type' => 'string',
+                    'default' => static function ($key, array $options): string {
                         try {
                             return NamingUtil::pluginNameFromControllerAction($options['controller'],
                                 $options['action']);
-                        } catch (\Throwable $e) {
+                        } catch (Throwable $e) {
                             return '-1';
                         }
                     },
@@ -188,7 +189,7 @@ trait RouteEnhancerSchemaTrait
                                    . ' and action: ' . $options['action']
                                    . ' is ambiguous, please define a plugin name manually using the "plugin" option!';
                         }
-
+                        
                         return true;
                     },
                 ],
@@ -196,7 +197,7 @@ trait RouteEnhancerSchemaTrait
             $override
         );
     }
-
+    
     /**
      * Merges multiple option schemas into a single schema array
      *
@@ -209,15 +210,15 @@ trait RouteEnhancerSchemaTrait
         if (count($definitions) > 1) {
             $definitions[] = 'nn';
             $definitions[] = 'r';
-
+            
             return Arrays::merge(
                 ...$definitions
             );
         }
-
+        
         return reset($definitions);
     }
-
+    
     /**
      * Helper to extract the argument list from the route path
      *
@@ -228,7 +229,7 @@ trait RouteEnhancerSchemaTrait
     protected function extractArgsFromRoutePath(string $routePath): array
     {
         preg_match_all('~({.*?})~si', $routePath, $m);
-
+        
         return array_map(static function ($v) { return trim($v, '{} '); }, $m[1]);
     }
 }

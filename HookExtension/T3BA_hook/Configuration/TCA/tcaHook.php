@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Copyright 2020 LABOR.digital
  *
@@ -18,5 +19,8 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 18:40
  */
 
-\LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\Core\TcaWithoutOverridesLoadedEvent());
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Core\TcaWithoutOverridesLoadedEvent;
+
+TypoEventBus::getInstance()->dispatch(
+    new TcaWithoutOverridesLoadedEvent());

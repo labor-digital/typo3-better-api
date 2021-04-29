@@ -32,12 +32,12 @@ use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
 class DiLoader
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
-
+    
     /**
      * DiLoader constructor.
      *
@@ -47,7 +47,7 @@ class DiLoader
     {
         $this->extConfigService = $extConfigService;
     }
-
+    
     /**
      * Runs the loader on container build time
      */
@@ -55,7 +55,7 @@ class DiLoader
     {
         $this->runConfigLoader(false);
     }
-
+    
     /**
      * Runs the loader on "runtime" when the container is getting set up
      */
@@ -63,7 +63,7 @@ class DiLoader
     {
         $this->runConfigLoader(true);
     }
-
+    
     /**
      * Internal helper to run the configuration loader
      *
@@ -73,16 +73,16 @@ class DiLoader
     {
         $key = $runtime
             ? ExtConfigService::DI_RUN_LOADER_KEY : ExtConfigService::DI_BUILD_LOADER_KEY;
-
+        
         $allowedHandlerInterfaces = $runtime
             ? [DiRunTimeHandlerInterface::class] : [DiBuildTimeHandlerInterface::class];
-
+        
         $loader = $this->extConfigService->makeLoader($key);
-
+        
         if (! $runtime) {
             $loader->setCache(null);
         }
-
+        
         $loader->setHandlerFinder(
             $this->makeInstance(
                 FilteredHandlerFinder:: class,
@@ -92,7 +92,7 @@ class DiLoader
                 ]
             )
         );
-
+        
         $loader->load(true);
     }
 }

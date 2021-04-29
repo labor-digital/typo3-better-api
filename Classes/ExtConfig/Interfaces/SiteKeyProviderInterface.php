@@ -33,7 +33,7 @@ namespace LaborDigital\T3BA\ExtConfig\Interfaces;
  */
 interface SiteKeyProviderInterface
 {
-
+    
     /**
      * Must return the list of site keys this configuration applies to.
      * If an empty array is returned the configuration will be applied to all sites.

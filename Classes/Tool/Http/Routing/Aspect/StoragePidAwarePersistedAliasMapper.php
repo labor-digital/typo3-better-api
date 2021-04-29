@@ -40,7 +40,7 @@ class StoragePidAwarePersistedAliasMapper extends PersistedAliasMapper
         if (empty($this->settings['storagePids'])) {
             return $qb;
         }
-
+        
         // Add additional restrictions
         $restrictions = $qb->getRestrictions();
         $restrictions->add(
@@ -49,8 +49,8 @@ class StoragePidAwarePersistedAliasMapper extends PersistedAliasMapper
                 $this->settings['storagePids']
             )
         );
-
+        
         return $qb;
     }
-
+    
 }

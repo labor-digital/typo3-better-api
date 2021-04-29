@@ -25,7 +25,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigurePluginInterface
 {
-
+    
     /**
      * This method is used to configure a single ext base plugin / content element using the
      * given configurator and context object
@@ -36,5 +36,5 @@ interface ConfigurePluginInterface
      * @return void
      */
     public static function configurePlugin(PluginConfigurator $configurator, ExtConfigContext $context): void;
-
+    
 }

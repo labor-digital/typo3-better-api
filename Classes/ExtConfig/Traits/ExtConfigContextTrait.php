@@ -29,14 +29,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 trait ExtConfigContextTrait
 {
-
+    
     /**
      * The configuration context we are working with
      *
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $context;
-
+    
     /**
      * Similar to getInstance() but does not create the instance using the container, but the general utility
      *
@@ -48,14 +48,14 @@ trait ExtConfigContextTrait
     protected function getInstanceWithoutDi(string $class, array $constructorArgs = [])
     {
         $i = GeneralUtility::makeInstance($class, ...$constructorArgs);
-
+        
         if (isset($this->context) && $i instanceof ConfigContextAwareInterface) {
             $i->setConfigContext($this->context);
         }
-
+        
         return $i;
     }
-
+    
     /**
      * Registers the default ext config location for your handler.
      * Just a helper, to save a bit of typing.

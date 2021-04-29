@@ -32,7 +32,7 @@ trait TypoContextAwareTrait
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $__typoContext;
-
+    
     /**
      * Injects the typo context instance
      *
@@ -42,7 +42,7 @@ trait TypoContextAwareTrait
     {
         $this->__typoContext = $typoContext;
     }
-
+    
     /**
      * Returns the typo context instance
      *
@@ -53,15 +53,15 @@ trait TypoContextAwareTrait
         if (isset($this->__typoContext)) {
             return $this->__typoContext;
         }
-
+        
         if (method_exists($this, 'getCommonServices') && $this->getCommonServices() instanceof CommonServices) {
             return $this->__typoContext = $this->getCommonServices()->typoContext;
         }
-
+        
         if (method_exists($this, 'getContainer') && $this->getContainer() instanceof ContainerInterface) {
             return $this->__typoContext = $this->getContainer()->get(TypoContext::class);
         }
-
+        
         return $this->__typoContext = TypoContext::getInstance();
     }
 }

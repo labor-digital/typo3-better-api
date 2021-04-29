@@ -37,7 +37,7 @@ class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
             $GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'] = static::class . '->emit';
         }, ['priority' => 300]);
     }
-
+    
     /**
      * Emit the hook for the content table
      *
@@ -46,7 +46,7 @@ class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
     public function emit(array &$args)
     {
         $row = empty($args['row']) || ! is_array($args['row']) ? [] : $args['row'];
-
+        
         $e = new ListLabelRenderingEvent(
             $args['table'],
             $row,

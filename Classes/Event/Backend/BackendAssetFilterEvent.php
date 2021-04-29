@@ -36,7 +36,7 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
 class BackendAssetFilterEvent implements CoreHookEventInterface
 {
     use AssetEventTrait;
-
+    
     /**
      * @inheritDoc
      */

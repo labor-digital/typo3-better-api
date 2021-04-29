@@ -29,7 +29,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractSimpleExtConfigHandler
 {
     protected $configureMethod = 'configureFluid';
-
+    
     /**
      * @inheritDoc
      */
@@ -38,7 +38,7 @@ class Handler extends AbstractSimpleExtConfigHandler
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureFluidInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -46,7 +46,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return FluidConfigurator::class;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -54,5 +54,5 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return 'typo.globals';
     }
-
+    
 }

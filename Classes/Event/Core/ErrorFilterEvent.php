@@ -39,14 +39,14 @@ class ErrorFilterEvent
      * @var \Throwable
      */
     protected $error;
-
+    
     /**
      * Should contain something if you want to block the default exception handler
      *
      * @var mixed|null
      */
     protected $result;
-
+    
     /**
      * ErrorFilterEvent constructor.
      *
@@ -55,10 +55,10 @@ class ErrorFilterEvent
      */
     public function __construct(Throwable $error, $result)
     {
-        $this->error  = $error;
+        $this->error = $error;
         $this->result = $result;
     }
-
+    
     /**
      * Returns the error that lead to this event
      *
@@ -68,7 +68,7 @@ class ErrorFilterEvent
     {
         return $this->error;
     }
-
+    
     /**
      * Returns the result that will be returned by the exception handler
      *
@@ -78,7 +78,7 @@ class ErrorFilterEvent
     {
         return $this->result;
     }
-
+    
     /**
      * Sets the result that will be returned by the exception handler
      *
@@ -89,7 +89,7 @@ class ErrorFilterEvent
     public function setResult($result): ErrorFilterEvent
     {
         $this->result = $result;
-
+        
         return $this;
     }
 }

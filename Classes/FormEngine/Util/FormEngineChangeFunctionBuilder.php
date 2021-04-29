@@ -25,7 +25,7 @@ use Neunerlei\Options\Options;
 
 class FormEngineChangeFunctionBuilder
 {
-
+    
     /**
      * This method is basically the extracted renderer for an element's fieldChangeFunc
      * javascript counterpart. It can be used to extend all elements which don't support the onChange
@@ -49,21 +49,22 @@ class FormEngineChangeFunctionBuilder
         string $ElementHtml,
         array $fieldChangeFunc,
         array $options = []
-    ): string {
+    ): string
+    {
         // Prepare options
         $options = Options::make($options, [
             'prependElementHtml' => true,
-            'pregPattern'        => '/<(?:[^<]*?) id=["\']([^"\']*?)["\']/si',
+            'pregPattern' => '/<(?:[^<]*?) id=["\']([^"\']*?)["\']/si',
             'onlyForNewSections' => false,
         ]);
-
+        
         // Match the id in the given html
         preg_match($options['pregPattern'], $ElementHtml, $m);
         $id = $m[1];
-
+        
         // Prepare the fieldchange func
         $src = ';' . str_replace(PHP_EOL, '', implode(';', $fieldChangeFunc)) . ';';
-
+        
         // Prepare the default code
         $code = <<<JS
 	var l = false;
@@ -89,7 +90,7 @@ class FormEngineChangeFunctionBuilder
         }
     }
 JS;
-
+        
         // Build special handling when sections are required
         if ($options['onlyForNewSections']) {
             $code = <<<JS
@@ -98,7 +99,7 @@ if(window.changeFuncInitialBindingsComplete){
 }
 JS;
         }
-
+        
         // Append on change output
         return ($options['prependElementHtml'] ? $ElementHtml : '') . PHP_EOL . <<<HTML
 <script type="text/javascript">

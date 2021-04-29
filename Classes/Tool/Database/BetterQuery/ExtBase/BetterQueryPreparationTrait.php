@@ -29,14 +29,14 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 trait BetterQueryPreparationTrait
 {
-
+    
     /**
      * Should return a new better query instance
      *
      * @return AbstractBetterQuery
      */
     abstract public function getQuery(): AbstractBetterQuery;
-
+    
     /**
      * Receives the query object after the initial preparation was done and should apply additional constraints to it.
      *
@@ -51,7 +51,7 @@ trait BetterQueryPreparationTrait
         array $settings,
         array $row
     ): AbstractBetterQuery;
-
+    
     /**
      * This method is similar to getQuery() on the BetterRepository class,
      * but it does not simply return an empty query object, no it can also take ext base plugin settings and a database
@@ -65,8 +65,8 @@ trait BetterQueryPreparationTrait
     public function getPreparedQuery(array $settings, ?array $row = null): AbstractBetterQuery
     {
         $query = $this->getQuery();
-        $row   = $row ?? [];
-
+        $row = $row ?? [];
+        
         // Fill default values
         if (! empty($settings['storagePid'])) {
             $query = $query->withPids(Arrays::makeFromStringList($settings['storagePid']));
@@ -85,15 +85,15 @@ trait BetterQueryPreparationTrait
                 $query = $query->withPids($pids);
             }
         }
-
+        
         // Apply additional configuration
         $query = $this->prepareBetterQuery($query, $settings, $row);
-
+        
         // Done
         return $query;
     }
-
-
+    
+    
     /**
      * Configures the given better query object to a date range constraint.
      * It is optional if you work on a single field or with startDate and endDate fields.
@@ -113,7 +113,8 @@ trait BetterQueryPreparationTrait
     protected function setQueryDateRangeConstraint(
         AbstractBetterQuery $query,
         array $queryDateRangeConfig
-    ): AbstractBetterQuery {
+    ): AbstractBetterQuery
+    {
         // Add the constraint to the query object
         return $query->withWhere([
             static function (QueryInterface $query) use ($queryDateRangeConfig) {
@@ -124,7 +125,7 @@ trait BetterQueryPreparationTrait
             },
         ], 'dateTimeRange');
     }
-
+    
     /**
      * Receives a query object and one/two fields that define a date range.
      * This method will query the database and calculate then min and max dates from the database.
@@ -153,18 +154,19 @@ trait BetterQueryPreparationTrait
         AbstractBetterQuery $query,
         string $startDateProperty,
         ?string $endDateProperty = null
-    ): array {
+    ): array
+    {
         // Get the date constraints
         // Start date
         $startDateField = $startDateProperty;
-        $minDate        = $query->withLimit(1)->withOrder($startDateProperty, 'asc')->getFirst(true);
+        $minDate = $query->withLimit(1)->withOrder($startDateProperty, 'asc')->getFirst(true);
         if (! empty($minDate) && ! isset($minDate[$startDateField])) {
             $startDateField = Inflector::toDatabase($startDateField);
         }
         $minDate = new DateTimy(empty($minDate) || ! isset($minDate[$startDateField]) ?
             0 : $minDate[$startDateField]);
         $minDate->setTime(0, 0, 0);
-
+        
         // End date
         $endDateField = $endDateProperty;
         if ($endDateField === null) {
@@ -177,18 +179,18 @@ trait BetterQueryPreparationTrait
         $maxDate = new DateTimy(empty($maxDate) || ! isset($maxDate[$endDateField]) ?
             0 : $maxDate[$endDateField]);
         $maxDate->setTime(23, 59, 59);
-
+        
         // Limit min max values
         if ($minDate > $maxDate) {
             throw new BetterQueryException('The calculated oldest date is newer than the latest date. That can\'t be true!');
         }
-
+        
         // Done
         return [
             'startDateField' => $startDateField,
-            'endDateField'   => $endDateField,
-            'min'            => $minDate,
-            'max'            => $maxDate,
+            'endDateField' => $endDateField,
+            'min' => $minDate,
+            'max' => $maxDate,
         ];
     }
 }

@@ -34,21 +34,21 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      * @var \LaborDigital\T3BA\Tool\Link\LinkContext
      */
     protected $context;
-
+    
     /**
      * If used inside a better action controller this will hold the controller's request object
      *
      * @var Request|null
      */
     protected $controllerRequest;
-
+    
     /**
      * Holds the host name and protocol, once it was generated
      *
      * @var string|null
      */
     protected $host;
-
+    
     /**
      * LinkService constructor.
      *
@@ -58,7 +58,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     {
         $this->context = $context;
     }
-
+    
     /**
      * Returns true if a link definition with the given key exists.
      * Definitions can be configured using the ConfigureLinksInterface
@@ -72,7 +72,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     {
         return $this->context->hasDefinition($key);
     }
-
+    
     /**
      * Creates a new link instance which is a better version of the typo3 extbase query builder.
      * You can use this method anywhere, no matter if you are in an extbase controller, the cli
@@ -92,7 +92,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     public function getLink(?string $definition = null, ?iterable $args = [], ?iterable $fragmentArgs = []): Link
     {
         $link = GeneralUtility::makeInstance(Link::class, $this->context, $this->controllerRequest);
-
+        
         // Inject link set and args if given
         if (! empty($definition)) {
             $link = $link->withSetApplied($definition);
@@ -107,11 +107,11 @@ class LinkService implements SingletonInterface, PublicServiceInterface
                 $link = $link->withAddedToFragment($k, $v);
             }
         }
-
+        
         // Done
         return $link;
     }
-
+    
     /**
      * This helper can be used to render typo3's text urls which look like t3://page?uid=26
      * into a real, url using the typoScript cObject of the frontend
@@ -127,7 +127,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
             is_string($typoLink) ? ['parameter' => $typoLink, 'forceAbsoluteUrl' => 1] : $typoLink
         );
     }
-
+    
     /**
      * Returns the target frame for a typo link definition object.
      *
@@ -140,10 +140,10 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     {
         $cObj = $this->context->getContentObject();
         $this->getTypoLink($typoLink);
-
+        
         return empty($cObj->lastTypoLinkTarget) ? '_self' : $cObj->lastTypoLinkTarget;
     }
-
+    
     /**
      * This helper to creating a link for a route. Routes are registered in the backend router.
      *
@@ -163,15 +163,15 @@ class LinkService implements SingletonInterface, PublicServiceInterface
         if (! $this->context->getTypoContext()->env()->isBackend()) {
             return '';
         }
-
+        
         // Prepare options
         $options = Options::make($options, [
             'args' => [
-                'type'    => 'array',
+                'type' => 'array',
                 'default' => [],
             ],
         ]);
-
+        
         return (string)$this->context
             ->getBackendUriBuilder()
             ->buildUriFromRoute(
@@ -180,7 +180,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
                 \TYPO3\CMS\Backend\Routing\UriBuilder::ABSOLUTE_URL
             );
     }
-
+    
     /**
      * Returns the list of all registered backend routes
      *
@@ -192,11 +192,11 @@ class LinkService implements SingletonInterface, PublicServiceInterface
         if (! $this->context->getTypoContext()->env()->isBackend()) {
             return [];
         }
-
+        
         // Load the routes from the router
         return $this->context->getBackendRouter()->getRoutes();
     }
-
+    
     /**
      * Returns the host name for the current request.
      *
@@ -210,7 +210,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     {
         return $this->context->getTypoContext()->request()->getHost($withProtocol);
     }
-
+    
     /**
      * Can be used to retrieve the fully qualified url of a given file object
      *
@@ -222,7 +222,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     {
         return $this->context->getFalService()->getFileUrl($file);
     }
-
+    
     /**
      * Returns a instance of the default extbase uri builder
      *
@@ -232,7 +232,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     {
         return $this->context->getUriBuilder();
     }
-
+    
     /**
      * Internal helper to create a clone of this service for an extbase controller
      * that also holds the request object of the current controller.
@@ -244,9 +244,9 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function makeControllerClone(RequestInterface $request): self
     {
-        $clone                    = clone $this;
+        $clone = clone $this;
         $clone->controllerRequest = $request;
-
+        
         return $clone;
     }
 }

@@ -37,10 +37,11 @@ class PackageManagerAdapter extends PackageManager
     public static function registerHookPackage(
         PackageManager $packageManager,
         PackageInterface $package
-    ): void {
+    ): void
+    {
         // Register a new base path
         $packageManager->packagesBasePaths[$package->getPackageKey()] = $package->getPackagePath();
-
+        
         // Activate the package
         $packageManager->packages[$package->getPackageKey()] = $package;
         $packageManager->registerTransientClassLoadingInformationForPackage($package);

@@ -30,7 +30,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
 {
     protected $configureMethod = 'configureRouting';
-
+    
     /**
      * @inheritDoc
      */
@@ -39,7 +39,7 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureRoutingInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -47,7 +47,7 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
     {
         $this->configurator = $this->getInstanceWithoutDi(RoutingConfigurator::class, [$this->context->getSite()]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -55,7 +55,7 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
     {
         return '';
     }
-
+    
     /**
      * @inheritDoc
      */

@@ -94,27 +94,27 @@ class CommonServices implements PublicServiceInterface
      */
     protected $def
         = [
-            'db'          => DbService::class,
-            'links'       => LinkService::class,
-            'tsfe'        => TsfeService::class,
-            'page'        => PageService::class,
-            'fal'         => FalService::class,
-            'eventBus'    => EventBusInterface::class,
-            'typoScript'  => TypoScriptService::class,
-            'ts'          => TypoScriptService::class,
-            'varFs'       => VarFs::class,
-            'translator'  => Translator::class,
-            'simulator'   => EnvironmentSimulator::class,
-            'session'     => SessionService::class,
+            'db' => DbService::class,
+            'links' => LinkService::class,
+            'tsfe' => TsfeService::class,
+            'page' => PageService::class,
+            'fal' => FalService::class,
+            'eventBus' => EventBusInterface::class,
+            'typoScript' => TypoScriptService::class,
+            'ts' => TypoScriptService::class,
+            'varFs' => VarFs::class,
+            'translator' => Translator::class,
+            'simulator' => EnvironmentSimulator::class,
+            'session' => SessionService::class,
             'dataHandler' => DataHandlerService::class,
             'typoContext' => TypoContext::class,
         ];
-
+    
     /**
      * @var \Psr\Container\ContainerInterface
      */
     protected $container;
-
+    
     /**
      * CommonServices constructor.
      *
@@ -124,7 +124,7 @@ class CommonServices implements PublicServiceInterface
     {
         $this->container = $container;
     }
-
+    
     /**
      * Magic method to resolve the required instance based on the property
      *
@@ -143,21 +143,21 @@ class CommonServices implements PublicServiceInterface
                 case 'objectManager':
                     return GeneralUtility::makeInstance(ObjectManager::class);
             }
-
+            
             throw new NotFoundException('Invalid common service "' . $name . '" requested!');
         }
-
+        
         if (is_object($this->def[$name])) {
             // Use a factory
             if ($this->def[$name] instanceof Closure) {
                 return $this->def[$name]($this->container, $name);
             }
-
+            
             // Return the instance
             return $this->def[$name];
         }
-
+        
         return $this->container->get($this->def[$name]);
     }
-
+    
 }

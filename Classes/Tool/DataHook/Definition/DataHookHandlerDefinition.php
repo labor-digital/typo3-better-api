@@ -29,35 +29,35 @@ class DataHookHandlerDefinition
      * @var callable
      */
     public $handler;
-
+    
     /**
      * True if the handler applies to the whole table instead of a specific field
      *
      * @var bool
      */
     public $appliesToTable = false;
-
+    
     /**
      * Either the name of the field or the name of the table this hook applies to
      *
      * @var string
      */
     public $key;
-
+    
     /**
      * The data this handler applies to, this is NULL if the handler applies to the whole table
      *
      * @var mixed
      */
     public $data;
-
+    
     /**
      * The tca configuration of this specific handler
      *
      * @var array
      */
     public $tca;
-
+    
     /**
      * Additional handler options that can be passed as second array in a handler definition.
      * Possible keys are:
@@ -69,7 +69,7 @@ class DataHookHandlerDefinition
      * @var array
      */
     public $options;
-
+    
     /**
      * The path through the data array to where this value is stored
      *

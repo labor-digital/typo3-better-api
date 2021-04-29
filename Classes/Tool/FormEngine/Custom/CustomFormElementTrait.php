@@ -29,7 +29,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 trait CustomFormElementTrait
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -37,12 +37,12 @@ trait CustomFormElementTrait
     {
         return $result;
     }
-
+    
     /**
      * @inheritDoc
      */
     public static function configureField(AbstractField $field, array $options, TcaBuilderContext $context): void { }
-
+    
     /**
      * This method can be used to execute some kind of user function that was registered on your tca.
      *
@@ -71,17 +71,18 @@ trait CustomFormElementTrait
         string $configKey,
         array $arguments = [],
         $defaultData = null
-    ) {
-        $config   = $this->context->getConfig()['config'] ?? [];
+    )
+    {
+        $config = $this->context->getConfig()['config'] ?? [];
         $callback = $config['t3ba'][$configKey] ?? $config[$configKey] ?? null;
-
+        
         if (empty($callback)) {
             return $defaultData;
         }
-
+        
         return call_user_func_array(NamingUtil::resolveCallable($callback), $arguments);
     }
-
+    
     /**
      * Returns the instance of the template rendering service
      *
@@ -91,7 +92,7 @@ trait CustomFormElementTrait
     {
         return $this->getService(TemplateRenderingService::class);
     }
-
+    
     /**
      * This method is a shortcut to $this->getTemplateRenderer()->getFluidView()->render().
      *
@@ -119,10 +120,10 @@ trait CustomFormElementTrait
         $data = $this->enhanceTemplateData($data);
         $view = $this->getTemplateRenderer()->getFluidView($template, $options);
         $view->assignMultiple($data);
-
+        
         return $view->render();
     }
-
+    
     /**
      * This method is a shortcut to $this->getTemplateRenderer()->renderMustache() and as you might have guessed
      * will render a mustache template you will supply.
@@ -149,10 +150,10 @@ trait CustomFormElementTrait
     protected function renderTemplate(string $template, array $data = [], array $options = []): string
     {
         $data = $this->enhanceTemplateData($data);
-
+        
         return $this->getTemplateRenderer()->renderMustache($template, $data, $options);
     }
-
+    
     /**
      * Mostly an internal helper to enhance the template data array with additional, useful information.
      *
@@ -165,15 +166,15 @@ trait CustomFormElementTrait
         if (! isset($data['value'])) {
             $data['value'] = $this->context->getValue();
         }
-
+        
         if (! isset($data['renderId'])) {
             $data['renderId'] = $this->context->getRenderId();
         }
-
+        
         if (! isset($data['renderName'])) {
             $data['renderName'] = $this->context->getRenderName();
         }
-
+        
         return $data;
     }
 }

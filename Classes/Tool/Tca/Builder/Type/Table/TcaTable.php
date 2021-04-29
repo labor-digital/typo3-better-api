@@ -39,24 +39,24 @@ class TcaTable extends AbstractTypeList
     use ElementConfigTrait;
     use TcaTableConfigTrait;
     use DataHookCollectorTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
-
+    
     /**
      * Holds the name of the db table we work with
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * @inheritDoc
      */
@@ -65,13 +65,14 @@ class TcaTable extends AbstractTypeList
         TcaBuilderContext $context,
         TableFactory $tableFactory,
         TypeFactory $typeFactory
-    ) {
+    )
+    {
         parent::__construct($context);
-        $this->tableName    = $tableName;
+        $this->tableName = $tableName;
         $this->tableFactory = $tableFactory;
-        $this->typeFactory  = $typeFactory;
+        $this->typeFactory = $typeFactory;
     }
-
+    
     /**
      * Returns the name of the linked database table
      *
@@ -81,7 +82,7 @@ class TcaTable extends AbstractTypeList
     {
         return $this->tableName;
     }
-
+    
     /**
      * Used to provide the correct auto-complete information
      *
@@ -92,7 +93,7 @@ class TcaTable extends AbstractTypeList
     {
         return parent::getType($typeName);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -102,7 +103,7 @@ class TcaTable extends AbstractTypeList
         $this->config = [];
         $this->context->cs()->sqlRegistry->clearTable($this->tableName);
     }
-
+    
     /**
      * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
@@ -120,16 +121,16 @@ class TcaTable extends AbstractTypeList
     public function setRaw(array $raw, bool $repopulate = false)
     {
         $this->loadDataHooks($raw);
-
+        
         if ($repopulate) {
             $this->clear();
         }
-
+        
         $this->config = $raw;
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -138,13 +139,13 @@ class TcaTable extends AbstractTypeList
         if ($initial) {
             return $this->config;
         }
-
+        
         $raw = Arrays::without($this->config, ['columns', 'types', 'palettes']);
         $this->dumpDataHooks($raw);
-
+        
         return $raw;
     }
-
+    
     /**
      * Returns the doctrine table that allows you to modify the table definition directly.
      *
@@ -160,7 +161,7 @@ class TcaTable extends AbstractTypeList
     {
         return $this->context->cs()->sqlRegistry->getTableOverride($this->getTableName());
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -168,10 +169,10 @@ class TcaTable extends AbstractTypeList
     {
         $type = $this->typeFactory->create($typeName, $this);
         $this->typeFactory->populate($type);
-
+        
         return $type;
     }
-
+    
     /**
      * @inheritDoc
      */

@@ -40,14 +40,14 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
      * @var \LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\CompiledEventSubscription
      */
     protected $lazySubscription;
-
+    
     /**
      * A list of runtime event subscriber classes
      *
      * @var array
      */
     protected $runtimeSubscribers = [];
-
+    
     /**
      * @inheritDoc
      */
@@ -58,7 +58,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
         $configurator->registerInterface(LazyEventSubscriberInterface::class);
         $configurator->registerInterface(EventSubscriberInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -66,7 +66,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
     {
         $this->lazySubscription = GeneralUtility::makeInstance(CompiledEventSubscription::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -79,7 +79,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
             call_user_func([$class, 'subscribeToEvents'], $this->lazySubscription);
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -87,20 +87,20 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
     {
         /** @var ContainerBuilder $containerBuilder */
         $containerBuilder = $this->context->getContainer()->get(ContainerBuilder::class);
-
+        
         $def = new Definition(EventSubscriberBridge::class);
         $def->setShared(false)->setPublic(true);
         $def->addArgument(new Reference(TypoEventBus::class));
-
+        
         foreach ($this->lazySubscription->getSubscribers() as $subscriber) {
             $def->addMethodCall('addListener', $subscriber);
         }
-
+        
         foreach ($this->runtimeSubscribers as $subscriber) {
             $def->addMethodCall('addSubscriber', [new Reference($subscriber)]);
         }
-
+        
         $containerBuilder->setDefinition(EventSubscriberBridge::class, $def);
     }
-
+    
 }

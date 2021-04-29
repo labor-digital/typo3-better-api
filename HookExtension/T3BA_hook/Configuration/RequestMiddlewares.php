@@ -19,5 +19,8 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 18:40
  */
 
-return \LaborDigital\T3BA\Core\EventBus\TypoEventBus::getInstance()->dispatch(
-    new \LaborDigital\T3BA\Event\Configuration\MiddlewareRegistrationEvent())->getMiddlewares();
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\Configuration\MiddlewareRegistrationEvent;
+
+return TypoEventBus::getInstance()->dispatch(
+    new MiddlewareRegistrationEvent())->getMiddlewares();

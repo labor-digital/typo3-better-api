@@ -24,7 +24,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class GeneralUtilityAdapter extends GeneralUtility
 {
-
+    
     /**
      * Use the xml2array method without the need for a database connection...
      *

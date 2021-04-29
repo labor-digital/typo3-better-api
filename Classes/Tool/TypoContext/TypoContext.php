@@ -46,12 +46,12 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
     use SingletonInstanceTrait;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Context\Context
      */
     protected $rootContext;
-
+    
     /**
      * Returns the TYPO3 root context
      *
@@ -61,13 +61,13 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->rootContext ?? ($this->rootContext = $this->getContainer()->get(Context::class));
     }
-
+    
     /** ====================================================
      *
      * DEFAULT ASPECTS AND EXTENSIONS
      *
      * ==================================================== */
-
+    
     /**
      * Returns the workspace aspect which holds information about the currently accessed workspace.
      *
@@ -77,7 +77,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->rootContext->getAspect('workspace');
     }
-
+    
     /**
      * Returns the language aspect of this request.
      * Note: This is not the core language aspect, but a better language aspect,
@@ -89,7 +89,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeAspect('betterLanguage', BetterLanguageAspect::class);
     }
-
+    
     /**
      * Returns information about the visibility of records
      *
@@ -99,7 +99,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeAspect('betterVisibility', BetterVisibilityAspect::class);
     }
-
+    
     /**
      * Returns the frontend user context aspect
      *
@@ -109,7 +109,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeAspect('frontend.betterUser', FeUserAspect::class);
     }
-
+    
     /**
      * Returns the backend user context aspect
      *
@@ -119,13 +119,13 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeAspect('backend.betterUser', BeUserAspect::class);
     }
-
+    
     /** ====================================================
      *
      * FACETS
      *
      * ==================================================== */
-
+    
     /**
      * Repository of path information and path resolving functions
      *
@@ -135,7 +135,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('path', PathFacet::class);
     }
-
+    
     /**
      * Repository of information about the environment
      *
@@ -145,7 +145,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('env', EnvFacet::class);
     }
-
+    
     /**
      * Repository of information about the current typo3 site
      *
@@ -155,7 +155,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('site', SiteFacet::class);
     }
-
+    
     /**
      * Repository of information about the current HTTP request
      *
@@ -165,7 +165,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('request', RequestFacet::class);
     }
-
+    
     /**
      * Repository of information about registered PIDs and the local page id
      *
@@ -175,7 +175,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('pid', PidFacet::class);
     }
-
+    
     /**
      * Repository for the different, global configuration options in TYPO3
      *
@@ -185,7 +185,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('globalConfig', ConfigFacet::class);
     }
-
+    
     /**
      * Repository to all dependency injection capabilities of typo3
      *
@@ -195,7 +195,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     {
         return $this->getOrMakeFacet('di', DependencyInjectionFacet::class);
     }
-
+    
     /**
      * Internal helper to request an aspect from the context, or if it is a custom aspect
      * create a new instance which is then provided to the context's storage.
@@ -216,10 +216,10 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
         }
         $aspect = $this->getService($aspectClass);
         $context->setAspect($aspectKey, $aspect);
-
+        
         return $aspect;
     }
-
+    
     /**
      * Facets are basically the same as an aspect but without the stupid get() method.
      * To store a facet on our root context we have to warp them in a pseudo-aspect called a FacetAspect
@@ -233,15 +233,15 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      */
     protected function getOrMakeFacet(string $facetKey, string $facetClass): FacetInterface
     {
-        $context   = $this->getRootContext();
+        $context = $this->getRootContext();
         $aspectKey = "facet.$facetKey";
         if ($context->hasAspect($aspectKey)) {
             return $context->getAspect($aspectKey)->get('');
         }
-        $facet  = $this->getService($facetClass);
+        $facet = $this->getService($facetClass);
         $aspect = $this->makeInstance(FacetAspect::class, [$facet]);
         $context->setAspect($aspectKey, $aspect);
-
+        
         return $facet;
     }
 }

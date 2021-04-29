@@ -27,7 +27,7 @@ use LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext;
 
 interface ConfigureRoutingInterface
 {
-
+    
     /**
      * Allows you to configure the site aware routing options. Currently, this is mostly the configuration
      * of route enhancers on a specific side in your sites.yml
@@ -36,5 +36,5 @@ interface ConfigureRoutingInterface
      * @param   \LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext         $context
      */
     public static function configureRouting(RoutingConfigurator $configurator, SiteConfigContext $context): void;
-
+    
 }

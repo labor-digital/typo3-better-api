@@ -40,12 +40,12 @@ class DataHook implements LazyEventSubscriberInterface
      * @var \LaborDigital\T3BA\Tool\DataHook\Dispatcher
      */
     protected $dispatcher;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Database\DbService
      */
     protected $dbService;
-
+    
     /**
      * DataHookEventHandler constructor.
      *
@@ -55,9 +55,9 @@ class DataHook implements LazyEventSubscriberInterface
     public function __construct(Dispatcher $dispatcher, DbService $dbService)
     {
         $this->dispatcher = $dispatcher;
-        $this->dbService  = $dbService;
+        $this->dbService = $dbService;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -69,7 +69,7 @@ class DataHook implements LazyEventSubscriberInterface
         $subscription->subscribe(ActionPostProcessorEvent::class, 'onActionPostProcessor');
         $subscription->subscribe(FormFilterEvent::class, 'onFormFilter');
     }
-
+    
     /**
      * Run the save hook queue
      *
@@ -83,7 +83,7 @@ class DataHook implements LazyEventSubscriberInterface
                              $event->setRow($data);
                          });
     }
-
+    
     /**
      * Run the save post processor queue
      *
@@ -97,7 +97,7 @@ class DataHook implements LazyEventSubscriberInterface
                              $event->setRow($data);
                          });
     }
-
+    
     /**
      * Run the after db operations queue
      *
@@ -108,7 +108,7 @@ class DataHook implements LazyEventSubscriberInterface
         $this->dispatcher->dispatch(DataHookTypes::TYPE_SAVE_AFTER_DB,
             $event->getTableName(), $event->getRow(), $event);
     }
-
+    
     /**
      * Run the action (copy, delete, ...) hook queue
      *
@@ -120,10 +120,10 @@ class DataHook implements LazyEventSubscriberInterface
                                ->withWhere(['uid' => $event->getId()])
                                ->withVersionOverlay(false)
                                ->getFirst();
-
+        
         $this->dispatcher->dispatch($event->getCommand(), $event->getTableName(), $row, $event);
     }
-
+    
     /**
      * Run the form filter hook queue
      *
@@ -134,7 +134,7 @@ class DataHook implements LazyEventSubscriberInterface
         $this->dispatcher->dispatch(DataHookTypes::TYPE_FORM,
             $event->getTableName(), $event->getData()['databaseRow'], $event)
                          ->runIfDirty(static function (array $row) use ($event) {
-                             $data                = $event->getData();
+                             $data = $event->getData();
                              $data['databaseRow'] = $row;
                              $event->setData($data);
                          });

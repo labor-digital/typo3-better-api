@@ -44,7 +44,7 @@ use TYPO3\CMS\Core\Cache\T3BA__Copy__CacheManager;
 
 class ExtendedCacheManager extends T3BA__Copy__CacheManager
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -53,7 +53,7 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
         parent::flushCaches();
         $this->emitFlushEvent(__FUNCTION__);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -62,7 +62,7 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
         parent::flushCachesInGroup($groupIdentifier);
         $this->emitFlushEvent(__FUNCTION__, $groupIdentifier);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -71,7 +71,7 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
         parent::flushCachesInGroupByTag($groupIdentifier, $tag);
         $this->emitFlushEvent(__FUNCTION__, $groupIdentifier, [$tag]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -80,7 +80,7 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
         parent::flushCachesInGroupByTag($groupIdentifier, $tags);
         $this->emitFlushEvent(__FUNCTION__, $groupIdentifier, $tags);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -89,7 +89,7 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
         parent::flushCachesByTag($tag);
         $this->emitFlushEvent(__FUNCTION__, null, [$tag]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -98,7 +98,7 @@ class ExtendedCacheManager extends T3BA__Copy__CacheManager
         parent::flushCachesByTags($tags);
         $this->emitFlushEvent(__FUNCTION__, null, $tags);
     }
-
+    
     /**
      * Internal helper to emit the clear cache event
      *

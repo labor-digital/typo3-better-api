@@ -38,12 +38,12 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoScript\TypoScriptConfigurationManager
      */
     protected $configurationManager;
-
+    
     /**
      * TypoScriptService constructor.
      *
@@ -53,7 +53,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     {
         $this->configurationManager = $configurationManager;
     }
-
+    
     /**
      * This method can be used to retrieve typoScript constants from the template.
      *
@@ -73,11 +73,11 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     public function getConstants($path = null, array $options = [])
     {
         $options = Options::make($options, [
-            'default'   => null,
-            'pid'       => $this->getPidOptionDefinition(),
+            'default' => null,
+            'pid' => $this->getPidOptionDefinition(),
             'separator' => '.',
         ]);
-
+        
         // Load configuration
         if (! empty($options['pid'])) {
             $this->configurationManager->setCurrentPid($options['pid']);
@@ -86,11 +86,11 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
         if (! empty($options['pid'])) {
             $this->configurationManager->resetCurrentPid();
         }
-
+        
         // Read contents
         return $this->getPathHelper($constants, $path, $options);
     }
-
+    
     /**
      * This method can be used to retrieve typoScript setup from the template.
      *
@@ -117,20 +117,20 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     public function get($path = null, array $options = [])
     {
         $options = Options::make($options, [
-            'default'   => null,
-            'pid'       => $this->getPidOptionDefinition(),
+            'default' => null,
+            'pid' => $this->getPidOptionDefinition(),
             'separator' => '.',
-            'getType'   => false,
+            'getType' => false,
         ]);
-
+        
         $this->configurationManager->setCurrentPid($options['pid']);
         $config = $this->configurationManager->getTypoScriptSetup();
         $this->configurationManager->resetCurrentPid();
-
+        
         // Read contents
         return $this->getPathHelper($config, $path, $options);
     }
-
+    
     /**
      * This method can be used to retrieve ts config values from the configuration.
      *
@@ -156,22 +156,22 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     public function getTsConfig($path = null, array $options = [])
     {
         /** @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $user */
-        $user     = $GLOBALS['BE_USER'];
+        $user = $GLOBALS['BE_USER'];
         $tsConfig = Arrays::merge(
             BackendUtility::getPagesTSconfig($this->getTypoContext()->pid()->getCurrent()),
             is_object($user) ? $user->getTSConfig() : []
         );
-
+        
         $options = Options::make($options, [
-            'default'   => null,
-            'pid'       => $this->getPidOptionDefinition(),
+            'default' => null,
+            'pid' => $this->getPidOptionDefinition(),
             'separator' => '.',
-            'getType'   => false,
+            'getType' => false,
         ]);
-
+        
         return $this->getPathHelper($tsConfig, $path, $options);
     }
-
+    
     /**
      * Returns the plugin / extension configuration for ext base extensions
      *
@@ -182,14 +182,14 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function getExtBaseSettings(?string $extensionName = null, ?string $pluginName = null): array
     {
-        $cm       = $this->getService(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $cm = $this->getService(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
         $settings = $cm->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             $extensionName, $pluginName);
-
+        
         return ! empty($settings) && is_array($settings) ?
             $settings : $cm->getConfiguration($extensionName, $pluginName);
     }
-
+    
     /**
      * Parses the given typoScript configuration into an array and returns the result
      *
@@ -201,10 +201,10 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     {
         $parser = $this->getService(TypoScriptParser::class);
         $parser->parse($config);
-
+        
         return $parser->setup;
     }
-
+    
     /**
      * Removes the tailing dot's from the given definition of parsed typoScript.
      *
@@ -220,7 +220,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
         if (! is_array($config)) {
             return [];
         }
-
+        
         $out = [];
         foreach ($config as $k => $v) {
             $keyWithoutDot = ! is_string($k) ? $k : rtrim($k, '.');
@@ -233,10 +233,10 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
             }
             $out[$keyWithoutDot] = $v;
         }
-
+        
         return $out;
     }
-
+    
     /**
      * Renders a content object with a given type, based on the given configuration
      *
@@ -248,12 +248,12 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     public function renderContentObject(string $type, array $config)
     {
         throw new NotImplementedException();
-
+        
         return $this->Simulator->runWithEnvironment(['ignoreIfFrontendExists'], function () use ($type, $config) {
             return $this->Tsfe->getContentObjectRenderer()->cObjGetSingle($type, $config);
         });
     }
-
+    
     /**
      * Renders an existing content element, based on the configuration set via typoScript.
      *
@@ -264,15 +264,15 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function renderContentObjectWith($selector): string
     {
-        $type   = $this->get($selector, ['getType']);
+        $type = $this->get($selector, ['getType']);
         $config = $this->get($selector);
         if (empty($type) || empty($config)) {
             throw new T3BAException("The given selector $selector is not a valid cObject");
         }
-
+        
         return $this->renderContentObject($type, $config);
     }
-
+    
     /**
      * Returns the option definition for the pid option
      *
@@ -282,26 +282,26 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     {
         return [
             'default' => null,
-            'type'    => ['int', 'string', 'null'],
-            'filter'  => function ($v) {
+            'type' => ['int', 'string', 'null'],
+            'filter' => function ($v) {
                 if (is_int($v)) {
                     return $v;
                 }
-
+                
                 if ($v === null) {
                     return $this->getTypoContext()->pid()->getCurrent();
                 }
-
+                
                 if (is_numeric($v)) {
                     return (int)$v;
                 }
-
+                
                 return $this->getTypoContext()->pid()->get($v);
-
+                
             },
         ];
     }
-
+    
     /**
      * Internal helper which is used to extract the requested $path's data from the given $config array
      *
@@ -315,24 +315,24 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     protected function getPathHelper(array $config, $path, array $options = [])
     {
         $options = Options::make($options, [
-            'default'   => null,
+            'default' => null,
             'separator' => '.',
-            'getType'   => false,
+            'getType' => false,
         ], ['ignoreUnknown' => true]);
-
+        
         // Skip if we have no path
         if (empty($path)) {
             return $config;
         }
-
+        
         // Prepare the path
         $path = Arrays::parsePath($path, $options['separator']);
-
+        
         // Resolve the path until the last element
         $lastPathPart = rtrim(array_pop($path), '.');
         if (! empty($path)) {
             // Make path valid for typoScript lookups
-            $path   = array_map(static function ($v) {
+            $path = array_map(static function ($v) {
                 // Remove tailing dots
                 $v = rtrim($v, "\.");
                 // Ignore wildcards
@@ -343,16 +343,16 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
                 if ($v[0] === '[') {
                     return str_replace(',', '.,', $v);
                 }
-
+                
                 return $v . '.';
             }, $path);
             $config = Arrays::getPath($config, $path) ?? [];
         }
-
+        
         // Handle multi value last part
         if ($lastPathPart[0] === '[') {
             $lastPathPart = trim($lastPathPart, '[]');
-            $result       = [];
+            $result = [];
             foreach (array_map('trim', explode(',', $lastPathPart)) as $key) {
                 if ($options['getType']) {
                     $result[$key] = $config[$key] ?? $options['default'];
@@ -364,15 +364,15 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
                     $result[$key] = $options['default'];
                 }
             }
-
+            
             return $result;
         }
-
+        
         // Find the last part
         if ($options['getType']) {
             return $config[$lastPathPart] ?? $options['default'];
         }
-
+        
         return $config[$lastPathPart . '.'] ?? $config[$lastPathPart] ?? $options['default'];
     }
 }

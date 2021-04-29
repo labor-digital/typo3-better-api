@@ -31,7 +31,7 @@ use TYPO3\CMS\Recordlist\Controller\AbstractLinkBrowserController;
 class LinkBrowserAllowedTabsFilterEventAdapter extends AbstractCoreHookEventAdapter implements SingletonInterface
 {
     protected const PSEUDO_LINK_HANDLER_KEY = 'noop_filter_event_pseudo_handler';
-
+    
     /**
      * @inheritDoc
      */
@@ -41,7 +41,7 @@ class LinkBrowserAllowedTabsFilterEventAdapter extends AbstractCoreHookEventAdap
             'handler' => static::class,
         ];
     }
-
+    
     /**
      * Registers our pseudo handler so we can fetch the controller instance that holds the field configuration
      *
@@ -54,10 +54,10 @@ class LinkBrowserAllowedTabsFilterEventAdapter extends AbstractCoreHookEventAdap
         $linkHandlers[static::PSEUDO_LINK_HANDLER_KEY . '.'] = [
             'handler' => LinkBrowserAllowedTabsFilterPseudoHandler::class,
         ];
-
+        
         return $linkHandlers;
     }
-
+    
     /**
      * The main filter method
      *
@@ -72,12 +72,12 @@ class LinkBrowserAllowedTabsFilterEventAdapter extends AbstractCoreHookEventAdap
         $allowedTabs = array_filter($allowedTabs, static function (string $v) {
             return $v !== static::PSEUDO_LINK_HANDLER_KEY;
         });
-
+        
         // There is something wrong if we don't have a controller here
         if (! LinkBrowserAllowedTabsFilterPseudoHandler::$currentController instanceof AbstractLinkBrowserController) {
             return $allowedTabs;
         }
-
+        
         // Dispatch the event
         return static::$bus->dispatch(
             new LinkBrowserAllowedTabsFilterEvent(

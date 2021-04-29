@@ -30,7 +30,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractSimpleExtConfigHandler
 {
     protected $configureMethod = 'configurePids';
-
+    
     /**
      * @inheritDoc
      */
@@ -40,7 +40,7 @@ class Handler extends AbstractSimpleExtConfigHandler
         $configurator->executeThisHandlerAfter(TsHandler::class);
         $configurator->registerInterface(ConfigurePidsInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -48,7 +48,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return PidCollector::class;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -56,6 +56,6 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return 't3ba';
     }
-
-
+    
+    
 }

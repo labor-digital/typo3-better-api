@@ -38,14 +38,14 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
      * @var string
      */
     protected static $defaultExceptionHandler;
-
+    
     /**
      * The instance of the registered default exception handler
      *
      * @var ExceptionHandlerInterface
      */
     protected $defaultExceptionHandlerInstance;
-
+    
     /**
      * @inheritDoc
      */
@@ -57,14 +57,14 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
                 . ' because no default exception handler was registered!');
         }
         $this->defaultExceptionHandlerInstance = GeneralUtility::makeInstance(static::$defaultExceptionHandler);
-
+        
         // Disable the child exception handler's handling -> We will take care of that
         restore_exception_handler();
-
+        
         // Register myself as real exception handler
         parent::__construct();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -74,10 +74,10 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
         if ($e->getResult() !== null) {
             return $e->getResult();
         }
-
+        
         return $this->defaultExceptionHandlerInstance->handleException($exception);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -85,7 +85,7 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
     {
         return $this->defaultExceptionHandlerInstance->handleException($exception);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -93,7 +93,7 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
     {
         return $this->defaultExceptionHandlerInstance->handleException($exception);
     }
-
+    
     /**
      * Internal helper to inject the default exception handler class
      *

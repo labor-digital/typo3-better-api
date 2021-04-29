@@ -31,7 +31,7 @@ class BackendUtilityRecordFilterEvent extends AbstractBackendUtilityRecordEvent
      * @var array|null
      */
     protected $row;
-
+    
     public function __construct(
         string $tableName,
         int $uid,
@@ -39,11 +39,12 @@ class BackendUtilityRecordFilterEvent extends AbstractBackendUtilityRecordEvent
         string $where,
         bool $useDeleteClause,
         ?array $row
-    ) {
+    )
+    {
         parent::__construct($tableName, $uid, $fields, $where, $useDeleteClause);
         $this->row = $row;
     }
-
+    
     /**
      * Returns an array containing the found column, or null if nothing could be resolved
      *
@@ -53,7 +54,7 @@ class BackendUtilityRecordFilterEvent extends AbstractBackendUtilityRecordEvent
     {
         return $this->row;
     }
-
+    
     /**
      * Allows you to update the array containing the found column. Can be set to null if nothing could be resolved
      *
@@ -64,7 +65,7 @@ class BackendUtilityRecordFilterEvent extends AbstractBackendUtilityRecordEvent
     public function setRow(?array $row): BackendUtilityRecordFilterEvent
     {
         $this->row = $row;
-
+        
         return $this;
     }
 }

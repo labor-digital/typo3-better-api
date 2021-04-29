@@ -41,12 +41,12 @@ class EventSubscriberBridge
      * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\EventBus\TypoListenerProvider
      */
     protected $provider;
-
+    
     /**
      * EventSubscriberBridge constructor.
      *
@@ -57,18 +57,18 @@ class EventSubscriberBridge
         $this->eventBus = $eventBus;
         $this->provider = $eventBus->getConcreteListenerProvider();
     }
-
+    
     public function addListener($event, $class, $method, $options): self
     {
         $this->provider->addListener($event, $class, $method, $options);
-
+        
         return $this;
     }
-
+    
     public function addSubscriber(EventSubscriberInterface $subscriber): self
     {
         $this->eventBus->addSubscriber($subscriber);
-
+        
         return $this;
     }
 }

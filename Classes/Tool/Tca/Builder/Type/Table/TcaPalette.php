@@ -29,7 +29,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
 class TcaPalette extends AbstractContainer
 {
     use LayoutMetaTrait;
-
+    
     /**
      * @inheritDoc
      * @return $this
@@ -38,9 +38,9 @@ class TcaPalette extends AbstractContainer
     {
         // Make sure the label gets printed when the showItem string is build
         $this->layoutMeta[0] = $label;
-
+        
         parent::setLabel($label);
-
+        
         return $this;
     }
 }

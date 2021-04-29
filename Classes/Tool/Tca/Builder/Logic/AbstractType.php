@@ -26,21 +26,21 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractType extends AbstractForm
 {
-
+    
     /**
      * The parent instance that holds the information about all available types
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList
      */
     protected $parent;
-
+    
     /**
      * Holds the type key this instance represents
      *
      * @var string|int
      */
     protected $typeName;
-
+    
     /**
      * AbstractForm constructor.
      *
@@ -51,10 +51,10 @@ abstract class AbstractType extends AbstractForm
     public function __construct(AbstractTypeList $parent, $typeName, TcaBuilderContext $context)
     {
         parent::__construct($context);
-        $this->parent   = $parent;
+        $this->parent = $parent;
         $this->typeName = $typeName;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -62,7 +62,7 @@ abstract class AbstractType extends AbstractForm
     {
         return $this->parent;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -70,7 +70,7 @@ abstract class AbstractType extends AbstractForm
     {
         return $this->getParent();
     }
-
+    
     /**
      * Returns the currently set name of the type represented by this object
      *
@@ -80,7 +80,7 @@ abstract class AbstractType extends AbstractForm
     {
         return $this->typeName;
     }
-
+    
     /**
      * Allows you to override the name of this type -> be careful with this! Overwrites are handled without warning!
      *
@@ -90,9 +90,9 @@ abstract class AbstractType extends AbstractForm
      */
     public function setTypeName($typeName): AbstractType
     {
-        $oldTypeName    = $this->typeName;
+        $oldTypeName = $this->typeName;
         $this->typeName = $typeName;
-
+        
         // Update the parent
         if ($this instanceof TcaTableType) {
             $types = $this->parent->getLoadedTypes();
@@ -100,10 +100,10 @@ abstract class AbstractType extends AbstractForm
             $types[$typeName] = $this;
             $this->parent->setLoadedTypes($types);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if a given tab exists, false if not
      *
@@ -115,5 +115,5 @@ abstract class AbstractType extends AbstractForm
     {
         return $this->tree->hasNode($id, Node::TYPE_TAB);
     }
-
+    
 }

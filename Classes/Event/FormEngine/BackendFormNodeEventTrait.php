@@ -26,21 +26,21 @@ use TYPO3\CMS\Backend\Form\AbstractNode;
 
 trait BackendFormNodeEventTrait
 {
-
+    
     /**
      * The instance of the proxy that dispatched this event
      *
      * @var \LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy
      */
     protected $proxy;
-
+    
     /**
      * The instance of the real node that should be rendered
      *
      * @var \TYPO3\CMS\Backend\Form\AbstractNode
      */
     protected $node;
-
+    
     /**
      * The rendered result. If null the node's render() method will be executed, if it is a array
      * the given data will be passed on directly
@@ -48,7 +48,7 @@ trait BackendFormNodeEventTrait
      * @var array|null
      */
     protected $result;
-
+    
     /**
      * BackendFormNodeFilterEvent constructor.
      *
@@ -58,11 +58,11 @@ trait BackendFormNodeEventTrait
      */
     public function __construct(FormNodeEventProxy $proxy, AbstractNode $node, ?array $result)
     {
-        $this->proxy  = $proxy;
-        $this->node   = $node;
+        $this->proxy = $proxy;
+        $this->node = $node;
         $this->result = $result;
     }
-
+    
     /**
      * Returns the instance of the proxy that dispatched this event
      *
@@ -72,7 +72,7 @@ trait BackendFormNodeEventTrait
     {
         return $this->proxy;
     }
-
+    
     /**
      * Returns the instance of the real node that should be rendered
      *
@@ -82,7 +82,7 @@ trait BackendFormNodeEventTrait
     {
         return $this->node;
     }
-
+    
     /**
      * Returns the rendered result. If null the node's render() method will be executed, if it is a string
      * the given string will be passed on directly
@@ -93,7 +93,7 @@ trait BackendFormNodeEventTrait
     {
         return $this->result;
     }
-
+    
     /**
      * Used to update the rendered result. If null the node's render() method will be executed, if it is a string
      * the given string will be passed on directly
@@ -105,7 +105,7 @@ trait BackendFormNodeEventTrait
     public function setResult(?array $result)
     {
         $this->result = $result;
-
+        
         return $this;
     }
 }

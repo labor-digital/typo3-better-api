@@ -25,7 +25,7 @@ use Symfony\Component\Yaml\Yaml;
 
 trait RteConfigTrait
 {
-
+    
     /**
      * Processes the given rte config array to match the requirements of TYPO3
      *
@@ -49,7 +49,7 @@ trait RteConfigTrait
             $c['editor']['config'] = $c['editor'];
         }
         $config = $c;
-
+        
         // Attach required nodes
         if (! isset($config['imports']) || ! is_array($config['imports'])) {
             $config['imports'] = [];
@@ -58,7 +58,7 @@ trait RteConfigTrait
             || ! is_array($config['editor']['config']['stylesSheet'])) {
             $config['editor']['config']['stylesSheet'] = [];
         }
-
+        
         foreach (
             array_merge(
                 $options['imports'],
@@ -72,15 +72,15 @@ trait RteConfigTrait
             if (is_string($import)) {
                 $import = ['resource' => $import];
             }
-
+            
             if (! in_array($import, $config['imports'], true)) {
                 $config['imports'][] = $import;
             }
         }
-
+        
         return $config;
     }
-
+    
     /**
      * Internal helper to generate a single rte config preset file.
      * The method will dump the content into the tempFs and return the relative path to the file
@@ -95,7 +95,7 @@ trait RteConfigTrait
     {
         $fileName = 'rteConfig/' . $key . '.yaml';
         $mount->setFileContent($fileName, Yaml::dump($config));
-
+        
         return $mount->getFile($fileName)->getPathname();
     }
 }

@@ -26,7 +26,7 @@ use TYPO3\CMS\Backend\Form\NodeExpansion\FieldWizard;
 
 class DbBaseId
 {
-
+    
     /**
      * This element adds the basePid constraints to the javascript of the element browser
      *
@@ -36,24 +36,24 @@ class DbBaseId
     {
         $config = $event->getProxy()->getConfig();
         $result = $event->getResult();
-
+        
         // Check if there is work for us to do
         if (empty($result) || empty($result['html'])) {
             return;
         }
-
+        
         // We only apply this fix for the field wizard
         if (! $event->getNode() instanceof FieldWizard) {
             return;
         }
-
+        
         // Ignore if there is already a temp mount set
         $html = $result['html'];
         if (stripos($html, 'setTempDBmount') !== false || stripos($html, 'expandPage') !== false
             || stripos($html, 'data-params="') === false) {
             return;
         }
-
+        
         // Inject the temp db mount based on the basePid
         $pattern = '~(data-params=".*?\|)([^|]*?)(")~i';
         if (! empty($config['basePid'])) {
@@ -62,37 +62,37 @@ class DbBaseId
             if (! is_array($pidMap)) {
                 $pidMap = ['@default' => $config['basePid']];
             }
-
+            
             // Rewrite the object html
             $result['html'] = preg_replace_callback($pattern, function ($m) use ($pidMap) {
                 [$a, $prefix, $table, $suffix] = $m;
                 $pid = $pidMap[$table] ?? $pidMap['@default'] ?? 0;
-
+                
                 $url = Query::build([
-                    'expandPage'     => $pid,
+                    'expandPage' => $pid,
                     'setTempDBmount' => $pid,
                 ]);
-
+                
                 return $prefix . $table . '&' . $url . $suffix;
             }, $html);
-
+            
             $event->setResult($result);
-
+            
             return;
-
+            
         }
-
+        
         // Make sure to reset the temp db mount if multiple fields are registered in a form
         $result['html'] = preg_replace_callback($pattern, static function ($m) {
             [$a, $prefix, $table, $suffix] = $m;
             $url = Query::build([
                 'setTempDBmount' => 0,
             ]);
-
+            
             return $prefix . $table . '&' . $url . $suffix;
         }, $html);
-
+        
         $event->setResult($result);
-
+        
     }
 }

@@ -27,7 +27,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigureTypoCoreInterface
 {
-
+    
     /**
      * Allows you to configure TYPO3 core options, that did not fit in other categories
      *
@@ -35,5 +35,5 @@ interface ConfigureTypoCoreInterface
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                  $context
      */
     public static function configureCore(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
-
+    
 }

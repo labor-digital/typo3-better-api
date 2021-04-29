@@ -46,16 +46,16 @@ use TYPO3\CMS\Backend\Form\T3BA__Copy__NodeFactory;
 
 class ExtendedNodeFactory extends T3BA__Copy__NodeFactory
 {
-
+    
     /**
      * @inheritDoc
      */
     public function create(array $data)
     {
         $eventBus = TypoEventBus::getInstance();
-
+        
         $data = $eventBus->dispatch(new BackendFormNodeDataFilterEvent($data))->getData();
-
+        
         return FormNodeEventProxy::makeInstance($eventBus, $this, parent::create($data));
     }
 }

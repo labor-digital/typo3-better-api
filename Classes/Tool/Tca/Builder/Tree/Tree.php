@@ -33,35 +33,35 @@ class Tree
      * @var bool
      */
     protected $allowTabIdStrings = false;
-
+    
     /**
      * Defines the id that is used when the tree creates a new, default tab node.
      *
      * @var int|string
      */
     protected $defaultTabId = 0;
-
+    
     /**
      * The form that is linked with this tree
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
      */
     protected $form;
-
+    
     /**
      * A list of form nodes by their type and their id for direct lookup
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[][]
      */
     protected $nodes = [];
-
+    
     /**
      * The root node that stores the sorted tabs
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
      */
     protected $root;
-
+    
     /**
      * The name of the form element to create if there is no tab in the
      * root node. The class MUST extend the AbstractFormTab class!
@@ -70,14 +70,14 @@ class Tree
      * @see \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab
      */
     protected $tabClass;
-
+    
     /**
      * The node in which all new nodes should be automatically added to.
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node|null
      */
     protected $defaultNode;
-
+    
     /**
      * FormTree constructor.
      *
@@ -86,15 +86,15 @@ class Tree
      */
     public function __construct(AbstractForm $form, string $tabClass)
     {
-        $this->form     = $form;
+        $this->form = $form;
         $this->tabClass = $tabClass;
-        $this->root     = $form->getContext()->cs()
+        $this->root = $form->getContext()->cs()
             ->di->makeInstance(
                 Node::class,
                 ['root', Node::TYPE_ROOT, $this]
             );
     }
-
+    
     /**
      * Returns the linked form instance
      *
@@ -104,7 +104,7 @@ class Tree
     {
         return $this->form;
     }
-
+    
     /**
      * Factory to create a new, empty node
      *
@@ -119,23 +119,23 @@ class Tree
     {
         $node = $this->form->getContext()->cs()
             ->di->makeInstance(Node::class, [$id, $type, $this]);
-
+        
         $parent = $type === Node::TYPE_TAB ? $this->root : $this->getDefaultNode();
-
+        
         $node->setParent($parent);
         $parent->addChild($node, Node::INSERT_MODE_AFTER);
-
+        
         if (isset($this->nodes[$type][$node->getId()])) {
             throw new NonUniqueIdException(
                 'You can\'t create a new node with ' . $id . ', and ' . $type
                 . ', because it already exists!');
         }
-
+        
         $this->nodes[$type][$node->getId()] = $node;
-
+        
         return $node;
     }
-
+    
     /**
      * Returns true if a node with a given id exist
      *
@@ -150,7 +150,7 @@ class Tree
     {
         return $this->getNode($id, $type) !== null;
     }
-
+    
     /**
      * Returns either the instance of a node with the given id or null,
      * if it does not exist.
@@ -170,37 +170,37 @@ class Tree
             if ($type === Node::TYPE_CONTAINER) {
                 return $this->nodes[$type][$id] ?? $this->nodes[$type]['_' . $id] ?? null;
             }
-
+            
             // Normal lookup
             return $this->nodes[$type][$id] ?? null;
         }
-
+        
         // Check if we need to retrieve a field
         if ($type !== Node::TYPE_CONTAINER && isset($this->nodes[Node::TYPE_FIELD][$id])) {
             return $this->nodes[Node::TYPE_FIELD][$id];
         }
-
+        
         // Check if we need to retrieve a line break
         if ($type !== Node::TYPE_CONTAINER && isset($this->nodes[Node::TYPE_NL][$id])) {
             return $this->nodes[Node::TYPE_NL][$id];
         }
-
+        
         // Check if alphanumeric tab ids are allowed and we have one
         if ($this->allowTabIdStrings && isset($this->nodes[Node::TYPE_TAB][$id])) {
             return $this->nodes[Node::TYPE_TAB][$id];
         }
-
+        
         // Numeric values -> this has to be a tab
         if (is_numeric($id)) {
             return $this->nodes[Node::TYPE_TAB][(int)$id] ?? null;
         }
-
+        
         // Return either a container, or a tab
         return $this->nodes[Node::TYPE_CONTAINER][$id] ??
                $this->nodes[Node::TYPE_CONTAINER]['_' . $id] ??
                null;
     }
-
+    
     /**
      * Returns the list of nodes based on their currently
      * configured order in the form.
@@ -245,7 +245,7 @@ class Tree
                 throw new InvalidArgumentException('The given type is not supported!');
         }
     }
-
+    
     /**
      * Helper to parse a "position" string into both the insert mode and the
      * instance of the pivot id.
@@ -273,12 +273,12 @@ class Tree
     {
         // Parse position into node
         $positionParts = explode(':', $position);
-        $pivotId       = $positionParts[1] ?? $positionParts[0];
-        $pivotNode     = $this->getNode($pivotId);
-
+        $pivotId = $positionParts[1] ?? $positionParts[0];
+        $pivotNode = $this->getNode($pivotId);
+        
         // Build the insert mode
         $defaultInsertMode = $pivotNode !== null && ! $pivotNode->isField() ? 'bottom' : 'after';
-        $insertMode        = isset($positionParts[1]) ? $positionParts[0] : $defaultInsertMode;
+        $insertMode = isset($positionParts[1]) ? $positionParts[0] : $defaultInsertMode;
         if ($insertMode === 'bottom') {
             $insertMode = Node::INSERT_MODE_BOTTOM;
         } elseif ($insertMode === 'top') {
@@ -288,11 +288,11 @@ class Tree
         } elseif ($insertMode === 'after') {
             $insertMode = Node::INSERT_MODE_AFTER;
         }
-
+        
         // Done
         return [$insertMode, $pivotNode];
     }
-
+    
     /**
      * Moves a given node to a new position, relative to the
      * given pivot node.
@@ -306,19 +306,20 @@ class Tree
         Node $nodeToMove,
         int $insertMode,
         Node $pivotNode
-    ): void {
+    ): void
+    {
         // Ignore if the node to move is the pivot node -> this is wrong
         if ($nodeToMove === $pivotNode) {
             return;
         }
-
+        
         // True if only "before and after" are allowed
         $allowOnlyBeforeAndAfter = false;
-
+        
         // Move Tabs only in the root node
         if ($nodeToMove->isTab()) {
-            $nodeToAddNodeTo         = $this->getRootNode();
-            $pivotNode               = $pivotNode->getContainingTab();
+            $nodeToAddNodeTo = $this->getRootNode();
+            $pivotNode = $pivotNode->getContainingTab();
             $allowOnlyBeforeAndAfter = true;
             if ($insertMode === Node::INSERT_MODE_TOP) {
                 $insertMode = Node::INSERT_MODE_BEFORE;
@@ -331,7 +332,7 @@ class Tree
         } elseif ($nodeToMove->isField()) {
             // Move field to other field
             if ($pivotNode->isField()) {
-                $nodeToAddNodeTo         = $pivotNode->getParent();
+                $nodeToAddNodeTo = $pivotNode->getParent();
                 $allowOnlyBeforeAndAfter = true;
             } elseif ($insertMode === Node::INSERT_MODE_TOP || $insertMode === Node::INSERT_MODE_BOTTOM
                       || $pivotNode->isTab()) {
@@ -344,7 +345,7 @@ class Tree
             return;
             // @codeCoverageIgnoreEnd
         }
-
+        
         // Simplify the insert mode
         if ($allowOnlyBeforeAndAfter) {
             if ($insertMode === Node::INSERT_MODE_TOP) {
@@ -353,11 +354,11 @@ class Tree
                 $insertMode = Node::INSERT_MODE_AFTER;
             }
         }
-
+        
         // Add the node as a child
         $nodeToAddNodeTo->addChild($nodeToMove, $insertMode, $pivotNode);
     }
-
+    
     /**
      * Completely removes a node from the tree
      *
@@ -369,19 +370,19 @@ class Tree
         foreach ($node->getChildren() as $child) {
             $this->removeNode($child);
         }
-
+        
         // Remove the node from its parent
         $node->getParent()->removeChild($node);
-
+        
         // Unlink the default node if it is the given node
         if ($node === $this->defaultNode) {
             unset($this->defaultNode);
         }
-
+        
         // Remove the node from the types' list
         unset($this->nodes[$node->getType()][$node->getId()]);
     }
-
+    
     /**
      * Returns true if there is a default node configured, false if not
      *
@@ -391,7 +392,7 @@ class Tree
     {
         return $this->defaultNode !== null;
     }
-
+    
     /**
      * Sets the node to which all new nodes will be automatically added
      *
@@ -405,7 +406,7 @@ class Tree
         }
         $this->defaultNode = $node;
     }
-
+    
     /**
      * Returns the node that is currently configured as "default".
      *
@@ -417,24 +418,24 @@ class Tree
         if (isset($this->defaultNode)) {
             return $this->defaultNode;
         }
-
+        
         // Make sure we have at least a single tab
         if (empty($this->nodes[Node::TYPE_TAB])) {
             $node = $this->makeNewNode($this->defaultTabId, Node::TYPE_TAB);
-            $tab  = $this->form->getContext()->cs()
+            $tab = $this->form->getContext()->cs()
                 ->di->makeInstance($this->tabClass, [$node, $this->form]);
-
+            
             if ($tab instanceof AbstractTab) {
                 $tab->setLabel('t3ba.tab.general');
             }
-
+            
             $node->setEl($tab);
         }
-
+        
         // Return the last possible tab
         return end($this->nodes[Node::TYPE_TAB]);
     }
-
+    
     /**
      * Returns the tree's root node
      *
@@ -444,7 +445,7 @@ class Tree
     {
         return $this->root;
     }
-
+    
     /**
      * Returns true if alpha numeric strings can be resolve to tab ids, false if only numeric tab ids are allowed
      *
@@ -454,7 +455,7 @@ class Tree
     {
         return $this->allowTabIdStrings;
     }
-
+    
     /**
      * Allows the outside world to change the tab id lookup behaviour. By default only numeric tab ids are allowed,
      * if this is set to true alphanumeric strings are allowed to
@@ -466,10 +467,10 @@ class Tree
     public function setAllowTabIdStrings(bool $allowTabIdStrings): Tree
     {
         $this->allowTabIdStrings = $allowTabIdStrings;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the tab id that is used when the tree is forced to create a new tab. Default: 0
      *
@@ -479,7 +480,7 @@ class Tree
     {
         return $this->defaultTabId;
     }
-
+    
     /**
      * Allows you to modify the default tab id that is created when the tree needs to forcefully create an initial tab
      *
@@ -490,7 +491,7 @@ class Tree
     public function setDefaultTabId($defaultTabId)
     {
         $this->defaultTabId = $defaultTabId;
-
+        
         return $this;
     }
 }

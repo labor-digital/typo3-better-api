@@ -37,14 +37,14 @@ class RunTimeHandler extends AbstractExtConfigHandler implements DiRunTimeHandle
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureDiInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void
     {
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -54,15 +54,15 @@ class RunTimeHandler extends AbstractExtConfigHandler implements DiRunTimeHandle
         if ($container instanceof DelegateContainer && $container->getSymfony()) {
             $container = $container->getSymfony();
         }
-
+        
         call_user_func([$class, 'configureRuntime'], $container, $this->context);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function finish(): void
     {
     }
-
+    
 }

@@ -32,27 +32,27 @@ class AdminSimulationPass implements SimulatorPassInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * Holds the cached version of the admin user authentication
      *
      * @var AdminUserAuthentication
      */
     protected $adminUserAuth;
-
+    
     /**
      * @inheritDoc
      */
     public function addOptionDefinition(array $options): array
     {
         $options['asAdmin'] = [
-            'type'    => 'bool',
+            'type' => 'bool',
             'default' => false,
         ];
-
+        
         return $options;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -67,7 +67,7 @@ class AdminSimulationPass implements SimulatorPassInterface
                    || ! $GLOBALS['BE_USER']->isAdmin()
                );
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -75,26 +75,26 @@ class AdminSimulationPass implements SimulatorPassInterface
     {
         // Backup the data
         $storage['aspect'] = $this->getTypoContext()->getRootContext()->getAspect('backend.user');
-        $storage['user']   = $currentUser = $GLOBALS['BE_USER'];
-
+        $storage['user'] = $currentUser = $GLOBALS['BE_USER'];
+        
         // Make the admin user
         $adminUser = $this->getAdminAuth();
-
+        
         // Create a more speaking log if possible
         if ($currentUser instanceof BackendUserAuthentication
             && is_array($currentUser->user)
             && ! empty($currentUser->user['uid'])) {
-            $adminUser                         = clone $adminUser;
+            $adminUser = clone $adminUser;
             $adminUser->user['ses_backuserid'] = $currentUser->user['uid'];
         }
-
+        
         // Inject the admin user
         $GLOBALS['BE_USER'] = $adminUser;
         $this->getTypoContext()->getRootContext()->setAspect('backend.user',
             $this->makeInstance(UserAspect::class, [$adminUser])
         );
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -103,7 +103,7 @@ class AdminSimulationPass implements SimulatorPassInterface
         $GLOBALS['BE_USER'] = $storage['user'];
         $this->getTypoContext()->getRootContext()->setAspect('backend.user', $storage['aspect']);
     }
-
+    
     /**
      * Tries to return a cached user auth or creates a new one
      *
@@ -115,12 +115,12 @@ class AdminSimulationPass implements SimulatorPassInterface
         if (isset($this->adminUserAuth)) {
             return $this->adminUserAuth;
         }
-
+        
         // Create a new instance
         $this->adminUserAuth = $this->getService(AdminUserAuthentication::class);
         $this->adminUserAuth->start();
-
+        
         return $this->adminUserAuth;
     }
-
+    
 }

@@ -44,7 +44,7 @@ use TYPO3\CMS\Core\Localization\T3BA__Copy__LanguageService;
 
 class ExtendedLanguageService extends T3BA__Copy__LanguageService
 {
-
+    
     /**
      * @inheritDoc
      */

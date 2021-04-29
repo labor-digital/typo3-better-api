@@ -34,7 +34,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 class DataHandlerService implements PublicServiceInterface, SingletonInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * Returns a new, empty data handler instance
      *
@@ -44,7 +44,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
     {
         return $this->makeInstance(DataHandler::class);
     }
-
+    
     /**
      * Returns a simple abstraction to perform record actions using the data handler in an object oriented way
      *
@@ -59,7 +59,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
             RecordDataHandler::class, [NamingUtil::resolveTableName($tableName), $this]
         );
     }
-
+    
     /**
      * Shortcut to run process_datamap() on a fresh data handler instance.
      *
@@ -75,7 +75,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
     {
         return $this->doProcessing($data, $commands, true, $force);
     }
-
+    
     /**
      * Shortcut to run process_cmdmap() on a fresh data handler instance.
      *
@@ -91,7 +91,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
     {
         return $this->doProcessing($data, $commands, false, $force);
     }
-
+    
     /**
      * Internal handler to do the processing on a fresh data handler instance
      *
@@ -110,7 +110,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
         if ($context->env()->isCli() && empty($context->beUser()->getUser()->user)) {
             $context->beUser()->getUser()->backendCheckLogin();
         }
-
+        
         return $this->forceWrapper(function () use ($data, $commands, $handleData) {
             $handler = $this->getEmptyDataHandler();
             try {
@@ -124,15 +124,15 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
             } catch (Throwable $e) {
                 throw DataHandlerException::makeNewInstance($handler, $e);
             }
-
+            
             if (! empty($handler->errorLog)) {
                 throw DataHandlerException::makeNewInstance($handler, null);
             }
-
+            
             return $handler;
         }, (bool)$force);
     }
-
+    
     /**
      * Internal helper to run the given callback either as forced user or as the current user
      *
@@ -146,8 +146,8 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
         if (! $force) {
             return $callback();
         }
-
+        
         return $this->cs()->simulator->runWithEnvironment(['asAdmin'], $callback);
     }
-
+    
 }

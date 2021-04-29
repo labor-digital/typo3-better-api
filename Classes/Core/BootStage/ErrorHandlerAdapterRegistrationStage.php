@@ -39,12 +39,12 @@ class ErrorHandlerAdapterRegistrationStage implements BootStageInterface
     {
         $eventBus->addListener(BootstrapInitializesErrorHandlingEvent::class,
             function () { $this->registerErrorHandlerAdapter(); });
-
+        
         $eventBus->addListener(ExtLocalConfLoadedEvent::class,
             function () { $this->registerErrorHandlerAdapter(); },
             ['priority' => -500]);
     }
-
+    
     /**
      * Registers our error handling adapter in the global configuration
      */
@@ -58,7 +58,7 @@ class ErrorHandlerAdapterRegistrationStage implements BootStageInterface
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
                 = ProductionExceptionHandler::class;
         }
-
+        
         // Register debug exception handler
         if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
             !== DebugExceptionHandler::class) {

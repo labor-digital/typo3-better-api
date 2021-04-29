@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\Context\Exception\AspectPropertyNotFoundException;
 
 trait AutomaticAspectGetTrait
 {
-
+    
     /**
      * The internal storage of possible properties to retrieve from this aspect.
      * This storage is automatically generated based on the method names
@@ -35,7 +35,7 @@ trait AutomaticAspectGetTrait
      * @var array|null
      */
     protected $properties;
-
+    
     /**
      * Can be used inside the aspect's "get" method to automatically find the properties based on the public methods.
      *
@@ -52,7 +52,7 @@ trait AutomaticAspectGetTrait
         }
         throw new AspectPropertyNotFoundException("There is no property called $name in this aspect.");
     }
-
+    
     /**
      * Internal helper to find the the list of possible properties by the public method names of the aspect class
      *
@@ -84,7 +84,7 @@ trait AutomaticAspectGetTrait
             $properties[$propertyName] = $methodName;
         }
         $this->properties = $properties;
-
+        
         return $properties;
     }
 }

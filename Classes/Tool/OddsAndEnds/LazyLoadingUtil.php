@@ -51,14 +51,14 @@ class LazyLoadingUtil
                 foreach ($value as $v) {
                     $res->attach($v);
                 }
-
+                
                 return $res;
             }
         }
-
+        
         return $value;
     }
-
+    
     /**
      * Tries to return the uid of the given entity.
      * If a lazyLoadingProxy is given, it will try to retrieve the uid of the linked element

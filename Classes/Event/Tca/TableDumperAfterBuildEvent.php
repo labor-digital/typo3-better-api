@@ -39,14 +39,14 @@ class TableDumperAfterBuildEvent
      * @var array
      */
     protected $tca;
-
+    
     /**
      * The instance of the table that is being build
      *
      * @var TcaTable
      */
     protected $table;
-
+    
     /**
      * ExtConfigTableAfterBuildEvent constructor.
      *
@@ -56,10 +56,10 @@ class TableDumperAfterBuildEvent
      */
     public function __construct(array $tca, TcaTable $table)
     {
-        $this->tca   = $tca;
+        $this->tca = $tca;
         $this->table = $table;
     }
-
+    
     /**
      * Returns the generated tca array for the table
      *
@@ -69,7 +69,7 @@ class TableDumperAfterBuildEvent
     {
         return $this->tca;
     }
-
+    
     /**
      * Updates the generated tca array for the table
      *
@@ -80,10 +80,10 @@ class TableDumperAfterBuildEvent
     public function setTca(array $tca): self
     {
         $this->tca = $tca;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the name of the database table that is currently being build
      *
@@ -93,7 +93,7 @@ class TableDumperAfterBuildEvent
     {
         return $this->table->getTableName();
     }
-
+    
     /**
      * Return the instance of the table that is being build
      *

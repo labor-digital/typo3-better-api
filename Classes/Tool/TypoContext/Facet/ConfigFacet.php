@@ -36,12 +36,12 @@ use TYPO3\CMS\Core\Registry;
 class ConfigFacet implements FacetInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $context;
-
+    
     /**
      * ConfigFacet constructor.
      *
@@ -51,14 +51,14 @@ class ConfigFacet implements FacetInterface
     {
         $this->context = $context;
     }
-
+    
     /**
      * Holds the request attributes for all actions where we don't have a HTTP request
      *
      * @var array
      */
     protected $requestAttributeFallbackStorage = [];
-
+    
     /**
      * Allows you to retrieve data from the ExtConfig config state object.
      *
@@ -72,7 +72,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getConfigState()->get($key, $fallback);
     }
-
+    
     /**
      * Returns the compiled ExtConfig state object.
      *
@@ -84,10 +84,10 @@ class ConfigFacet implements FacetInterface
         if (! isset($this->caServices[ConfigState::class]) && ! $this->getContainer()->has(ConfigState::class)) {
             throw new TypoContextException('The ConfigState object was not built and injected, yet! You are to early in the lifecycle!');
         }
-
+        
         return $this->getService(ConfigState::class);
     }
-
+    
     /**
      * Shortcut to TYPO3's system registry lookup method
      *
@@ -103,7 +103,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getService(Registry::class)->get($namespace, $key, $defaultValue);
     }
-
+    
     /**
      * Shortcut to add or remove a value to/from TYPO3's system registry.
      * NOTE: Setting $value to NULL will remove the entry from the registry
@@ -123,10 +123,10 @@ class ConfigFacet implements FacetInterface
         } else {
             $this->getService(Registry::class)->set($namespace, $key, $value);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Retrieve a single derived ServerRequest attribute.
      *
@@ -146,15 +146,15 @@ class ConfigFacet implements FacetInterface
      */
     public function getRequestAttribute(string $attributeName, $fallback = null)
     {
-        $request    = $this->context->request()->getRootRequest();
+        $request = $this->context->request()->getRootRequest();
         $localValue = $this->requestAttributeFallbackStorage[$attributeName] ?? $fallback;
         if ($request === null) {
             return $localValue;
         }
-
+        
         return $request->getAttribute($attributeName, $localValue);
     }
-
+    
     /**
      * Updates the global server request object with an additional attribute.
      * As the request is immutable we create a new copy of the request and reset the global
@@ -172,7 +172,7 @@ class ConfigFacet implements FacetInterface
     public function setRequestAttribute(string $attributeName, $value): ?ServerRequestInterface
     {
         $requestFacet = $this->context->request();
-        $request      = $requestFacet->getRootRequest();
+        $request = $requestFacet->getRootRequest();
         if (is_null($request)) {
             // Store the attribute locally
             $this->requestAttributeFallbackStorage[$attributeName] = $value;
@@ -181,10 +181,10 @@ class ConfigFacet implements FacetInterface
             $request = $request->withAttribute($attributeName, $value);
             $requestFacet->setRootRequest($request);
         }
-
+        
         return $request;
     }
-
+    
     /**
      * Returns the values of a certain environment variable or returns the $fallback if the
      * variable was not defined.
@@ -199,10 +199,10 @@ class ConfigFacet implements FacetInterface
         if (getenv($varName) === false) {
             return $fallback;
         }
-
+        
         return getenv($varName);
     }
-
+    
     /**
      * Returns information based on the Extension Configuration (defined in the ext_conf_template.txt)
      *
@@ -228,7 +228,7 @@ class ConfigFacet implements FacetInterface
             return $default;
         }
     }
-
+    
     /**
      * Returns the plugin / extension configuration for ext base extensions
      *
@@ -241,7 +241,7 @@ class ConfigFacet implements FacetInterface
     {
         return $this->getService(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
     }
-
+    
     /**
      * Shortcut to find a TypoScript configuration value using the TypoScriptService
      *
@@ -269,10 +269,10 @@ class ConfigFacet implements FacetInterface
         if (! is_null($default)) {
             $options['default'] = $default;
         }
-
+        
         return $this->getService(TypoScriptService::class)->get($path, $options);
     }
-
+    
     /**
      * This method can be used to retrieve ts config values from the configuration.
      *
@@ -300,7 +300,7 @@ class ConfigFacet implements FacetInterface
         if (! is_null($default)) {
             $options['default'] = $default;
         }
-
+        
         return $this->getService(TypoScriptService::class)->getTsConfig($path, $options);
     }
 }

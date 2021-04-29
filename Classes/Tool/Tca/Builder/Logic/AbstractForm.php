@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
 
 
+use Closure;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
@@ -33,19 +34,19 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
 
 abstract class AbstractForm
 {
-
+    
     /**
      * @var TcaBuilderContext
      */
     protected $context;
-
+    
     /**
      * The tree that holds the forms' structural data
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree
      */
     protected $tree;
-
+    
     /**
      * MUST return the name of the class that should be used as a default tab
      * if we can't find any other elements and have to create one.
@@ -53,21 +54,21 @@ abstract class AbstractForm
      * @return string
      */
     abstract protected function getTabClass(): string;
-
+    
     /**
      * Returns the instance of the parent form / parent table
      *
      * @return AbstractTypeList|TcaTable|TcaField
      */
     abstract public function getParent();
-
+    
     /**
      * Alias of getParent()
      *
      * @return AbstractTypeList|TcaTable
      */
     abstract public function getRoot();
-
+    
     /**
      * AbstractTreeHolder constructor.
      *
@@ -76,11 +77,11 @@ abstract class AbstractForm
     public function __construct(TcaBuilderContext $context)
     {
         $this->context = $context;
-        $this->tree    = $context->cs()->di->makeInstance(
+        $this->tree = $context->cs()->di->makeInstance(
             Tree::class, [$this, $this->getTabClass()]
         );
     }
-
+    
     /**
      * Returns the context object
      *
@@ -90,7 +91,7 @@ abstract class AbstractForm
     {
         return $this->context;
     }
-
+    
     /**
      * Checks if a child (field / container / tab) with the given id exists in the form
      *
@@ -105,7 +106,7 @@ abstract class AbstractForm
     {
         return $this->tree->hasNode($id, $type);
     }
-
+    
     /**
      * Returns a single child (field / container / tab) inside the form
      *
@@ -122,10 +123,10 @@ abstract class AbstractForm
         if ($node === null) {
             return null;
         }
-
+        
         return $node->getEl();
     }
-
+    
     /**
      * Returns a list of all elements in the sorted order
      *
@@ -135,22 +136,22 @@ abstract class AbstractForm
     {
         foreach ($this->tree->getRootNode()->getChildren() as $tab) {
             yield $tab->getEl();
-
+            
             foreach ($tab->getChildren() as $child) {
                 yield $child->getEl();
-
+                
                 if ($child->isContainer()) {
                     foreach ($child->getChildren() as $_child) {
                         yield $_child->getEl();
                     }
-
+                    
                     // Mark the end of a container with a "NULL" value
                     yield null;
                 }
             }
         }
     }
-
+    
     /**
      * Removes all elements from the current form, leaving you with a clean state
      */
@@ -158,7 +159,7 @@ abstract class AbstractForm
     {
         $this->removeAllChildren();
     }
-
+    
     /**
      * Removes all child objects in this form.
      */
@@ -168,7 +169,7 @@ abstract class AbstractForm
             $tab->remove();
         }
     }
-
+    
     /**
      * Allows you to remove multiple children of the form at once.
      * Provide an array of id's in the following schema:
@@ -185,7 +186,7 @@ abstract class AbstractForm
             $this->findAllChildrenByType(Node::TYPE_CONTAINER),
             $this->findAllChildrenByType(Node::TYPE_FIELD),
         ];
-
+        
         foreach ($lists as $list) {
             foreach ($list as $item) {
                 /** @var AbstractTab|AbstractField|AbstractContainer */
@@ -195,7 +196,7 @@ abstract class AbstractForm
             }
         }
     }
-
+    
     /**
      * Similar to "getTab()" but always returns a new tab with a new id added to it
      *
@@ -207,27 +208,27 @@ abstract class AbstractForm
         if (! method_exists($this, 'getTab')) {
             throw new NotImplementedException('The getNewTab() method is not supported on this object!');
         }
-
+        
         $highestTabId = 0;
         foreach ($this->getTabs() as $tab) {
             if (! is_numeric($tab->getId())) {
                 $highestTabId++;
                 continue;
             }
-
+            
             if ($tab->getId() > $highestTabId) {
                 $highestTabId = ((int)$tab->getId());
             }
         }
-
+        
         if ($this instanceof Flex) {
             return $this->getTab((string)($highestTabId + 1));
         }
-
+        
         /** @noinspection PhpStrictTypeCheckingInspection */
         return $this->getTab($highestTabId + 1);
     }
-
+    
     /**
      * Return the list of all registered tab instances
      *
@@ -237,7 +238,7 @@ abstract class AbstractForm
     {
         return $this->findAllChildrenByType(Node::TYPE_TAB);
     }
-
+    
     /**
      * Similar to getTabs() but returns only the tab keys instead of the whole object
      *
@@ -249,7 +250,7 @@ abstract class AbstractForm
             yield $tab->getId();
         }
     }
-
+    
     /**
      * Returns the list of all registered fields that are currently inside the layout
      *
@@ -259,7 +260,7 @@ abstract class AbstractForm
     {
         return $this->findAllChildrenByType(Node::TYPE_FIELD);
     }
-
+    
     /**
      * Similar to getFields() but only returns the keys of the fields instead of the whole object
      *
@@ -271,7 +272,7 @@ abstract class AbstractForm
             yield $tab->getId();
         }
     }
-
+    
     /**
      * Returns true if a field with the given id is registered in this form
      *
@@ -283,7 +284,7 @@ abstract class AbstractForm
     {
         return $this->tree->hasNode($id, Node::TYPE_FIELD);
     }
-
+    
     /**
      * Internal helper to retrieve/create child elements easier
      *
@@ -293,18 +294,18 @@ abstract class AbstractForm
      *
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement|mixed
      */
-    protected function findOrCreateChild($id, int $type, \Closure $factory): AbstractElement
+    protected function findOrCreateChild($id, int $type, Closure $factory): AbstractElement
     {
         $node = $this->tree->getNode($id, $type);
-
+        
         if (! $node) {
             $node = $this->tree->makeNewNode($id, $type);
             $node->setEl($factory($node));
         }
-
+        
         return $node->getEl();
     }
-
+    
     /**
      * Internal helper to resolve the ordered list of all children with the given type
      *

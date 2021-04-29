@@ -40,7 +40,7 @@ class KernelBootEvent
      * @var \LaborDigital\T3BA\Core\Kernel
      */
     protected $kernel;
-
+    
     /**
      * KernelBootEvent constructor.
      *
@@ -50,7 +50,7 @@ class KernelBootEvent
     {
         $this->kernel = $kernel;
     }
-
+    
     /**
      * Returns the kernel instance which is being initialized
      *

@@ -41,7 +41,7 @@ class Basics extends AbstractFieldPreset
             'type' => 'passthrough',
         ]);
     }
-
+    
     /**
      * Converts the field into a checkbox
      *
@@ -58,20 +58,20 @@ class Basics extends AbstractFieldPreset
         $options = Options::make($options,
             $this->addDefaultOptions(
                 [
-                    'toggle'   => [
-                        'type'    => 'bool',
+                    'toggle' => [
+                        'type' => 'bool',
                         'default' => false,
                     ],
                     'inverted' => [
-                        'type'    => 'bool',
+                        'type' => 'bool',
                         'default' => false,
                     ],
                 ], ['bool'], false
             )
         );
-
+        
         // Prepare the config
-        $config            = ['type' => 'check'];
+        $config = ['type' => 'check'];
         $config['default'] = (int)$options['default'];
         if ($options['toggle']) {
             $config['renderType'] = 'checkboxToggle';
@@ -79,7 +79,7 @@ class Basics extends AbstractFieldPreset
         if ($options['inverted']) {
             $config['items'] = [[0 => '', 1 => '', 'invertStateDisplay' => true,]];
         }
-
+        
         // Set sql config
         $this->configureSqlColumn(static function (Column $column) {
             $column
@@ -87,11 +87,11 @@ class Basics extends AbstractFieldPreset
                 ->setLength(4)
                 ->setDefault(0);
         });
-
+        
         // Done
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Configures the current input element as a text area optionally with a rte configuration
      *
@@ -117,20 +117,20 @@ class Basics extends AbstractFieldPreset
                 $this->addMinMaxLengthOptions(
                     $this->addDefaultOptions(
                         [
-                            'cols'      => [
-                                'type'    => 'int',
+                            'cols' => [
+                                'type' => 'int',
                                 'default' => 42,
                             ],
-                            'rows'      => [
-                                'type'    => 'int',
+                            'rows' => [
+                                'type' => 'int',
                                 'default' => 5,
                             ],
-                            'rte'       => [
-                                'type'    => 'bool',
+                            'rte' => [
+                                'type' => 'bool',
                                 'default' => false,
                             ],
                             'rteConfig' => [
-                                'type'    => 'string',
+                                'type' => 'string',
                                 'default' => '',
                             ],
                         ]
@@ -139,17 +139,17 @@ class Basics extends AbstractFieldPreset
                 )
             )
         );
-
+        
         $config = [
             'type' => 'text',
             'rows' => $options['rows'],
             'cols' => $options['cols'],
         ];
-
+        
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
-
+        
         // Add rte config
         if ($options['rte']) {
             $config['enableRichtext'] = true;
@@ -157,11 +157,11 @@ class Basics extends AbstractFieldPreset
                 $config['richtextConfiguration'] = $options['rteConfig'];
             }
         }
-
+        
         // Done
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Sets the current field as a simple select field.
      *
@@ -193,7 +193,7 @@ class Basics extends AbstractFieldPreset
                     $this->addDefaultOptions(
                         [
                             'userFunc' => [
-                                'type'    => 'string',
+                                'type' => 'string',
                                 'default' => '',
                             ],
                         ], ['string', 'number', 'null'], null
@@ -202,7 +202,7 @@ class Basics extends AbstractFieldPreset
                 ['required']
             )
         );
-
+        
         // Convert the items array
         $itemsFiltered = [];
         foreach ($items as $k => $v) {
@@ -211,7 +211,7 @@ class Basics extends AbstractFieldPreset
                 if (! isset($v[0]) || ! is_string($v[1]) || ! isset($v[1])) {
                     continue;
                 }
-
+                
                 // Handle specials
                 if ($v[1] === true) {
                     // Handle an option group
@@ -225,22 +225,22 @@ class Basics extends AbstractFieldPreset
             } else {
                 $v = [$v, $k];
             }
-
+            
             $itemsFiltered[] = $v;
         }
-
+        
         // Build the config
         $config = [
-            'type'       => 'select',
+            'type' => 'select',
             'renderType' => $options['maxItems'] <= 1 ? 'selectSingle' : 'selectCheckBox',
-            'size'       => 1,
-            'items'      => $itemsFiltered,
+            'size' => 1,
+            'items' => $itemsFiltered,
         ];
-
+        
         if (! empty($options['userFunc'])) {
             $config['itemsProcFunc'] = $options['userFunc'];
         }
-
+        
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addMinMaxItemConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
@@ -249,11 +249,11 @@ class Basics extends AbstractFieldPreset
                    ->setLength(1024)
                    ->setDefault('');
         });
-
+        
         // Set the field
         $this->field->addConfig($config);
     }
-
+    
     /**
      * Creates a select field that has 9 possible positions from top-left over middle-middle to bottom-right.
      * It can be used to create an image alignment configuration.
@@ -279,7 +279,7 @@ class Basics extends AbstractFieldPreset
             'br' => 'tbbe.d.sys_file_reference.imageAlignment.bottomRight',
         ], ['default' => 'cc']);
     }
-
+    
     /**
      * Can be used to apply a callback function on a field.
      * This can become quite handy if you want to configure multiple fields with the same configuration.

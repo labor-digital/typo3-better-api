@@ -25,7 +25,7 @@ use Neunerlei\Inflection\Inflector;
 
 trait CTypeRegistrationTrait
 {
-
+    
     /**
      * A mostly internal helper that is used to inject a given list of elements as cTypes in the tt_content TCA array
      *
@@ -37,36 +37,36 @@ trait CTypeRegistrationTrait
     {
         // Get the correct slot in the tca
         $itemList = Arrays::getPath($tca, ['tt_content', 'columns', 'CType', 'config', 'items'], []);
-
+        
         // Build the section list from all entries
         $sectionList = [];
-        $options     = [];
+        $options = [];
         foreach (array_reverse($itemList) as $item) {
             if ($item[1] === '--div--') {
-                $sectionId               = Inflector::toUuid($item[0]);
+                $sectionId = Inflector::toUuid($item[0]);
                 $sectionList[$sectionId] = [
-                    'item'    => $item,
+                    'item' => $item,
                     'options' => array_reverse($options),
                 ];
-                $options                 = [];
+                $options = [];
                 continue;
             }
             $options[] = $item;
         }
         $sectionList = array_reverse($sectionList);
-
+        
         // Process the elements
         foreach ($elements as $element) {
             // Prepare the input
             [$sectionLabel, $title, $signature, $icon] = array_values($element);
-
+            
             // Find the section id
             $sectionId = Inflector::toUuid($sectionLabel);
-
+            
             // Create a new section if it does not exist
             if (! isset($sectionList[$sectionId])) {
                 $sectionList[$sectionId] = [
-                    'item'    => [
+                    'item' => [
                         $sectionLabel,
                         '--div--',
                         null,
@@ -75,7 +75,7 @@ trait CTypeRegistrationTrait
                     'options' => [],
                 ];
             }
-
+            
             // Create the element
             $sectionList[$sectionId]['options'][] = [
                 $title,
@@ -83,7 +83,7 @@ trait CTypeRegistrationTrait
                 $icon,
             ];
         }
-
+        
         // Rebuild the list
         $newItemList = [];
         foreach ($sectionList as $section) {

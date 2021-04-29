@@ -33,14 +33,14 @@ trait DataHookCollectorTrait
      * @var array
      */
     protected $dataHooks = [];
-
+    
     /**
      * Should return the field constraint (if any is required) or an empty array if no field constraint is required
      *
      * @return array
      */
     abstract protected function getDataHookTableFieldConstraints(): array;
-
+    
     /**
      * Registers a new save data hook which allows you to filter incoming data when it is processed by the data handler.
      *
@@ -56,10 +56,11 @@ trait DataHookCollectorTrait
     public function registerSaveHook(
         string $handlerClass,
         string $handlerMethodName = 'saveHook'
-    ) {
+    )
+    {
         return $this->registerDataHook(DataHookTypes::TYPE_SAVE, $handlerClass, $handlerMethodName);
     }
-
+    
     /**
      * Registers a new form data hook, which allows you to modify the field data or configuration when the backend
      * form engine builds the form for the data.
@@ -76,10 +77,11 @@ trait DataHookCollectorTrait
     public function registerFormHook(
         string $handlerClass,
         string $handlerMethodName = 'formHook'
-    ) {
+    )
+    {
         return $this->registerDataHook(DataHookTypes::TYPE_FORM, $handlerClass, $handlerMethodName);
     }
-
+    
     /**
      * Registers a new data hook handler that should be processed when the data handler or the form engine processes
      * the data in some form.
@@ -100,22 +102,23 @@ trait DataHookCollectorTrait
         string $handlerClass,
         string $handlerMethodName = 'dataHook',
         array $options = []
-    ) {
+    )
+    {
         $this->validateDataHookType($type);
         $options['constraints'] = $this->getDataHookTableFieldConstraints();
-
+        
         if (method_exists($this, 'additionalDataHookOptions')) {
             $options = array_merge($this->additionalDataHookOptions(), $options);
         }
-
+        
         $this->dataHooks[$type][md5($handlerClass . '.' . $handlerMethodName)] = [
             [$handlerClass, $handlerMethodName],
             $options,
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Completely removes all registered data hooks
      *
@@ -124,10 +127,10 @@ trait DataHookCollectorTrait
     public function clearDataHooks()
     {
         $this->dataHooks = [];
-
+        
         return $this;
     }
-
+    
     /**
      * Removes a previously registered data hook handler from the list
      *
@@ -142,13 +145,14 @@ trait DataHookCollectorTrait
         string $type,
         string $handlerClass,
         string $handlerMethodName = 'dataHook'
-    ) {
+    )
+    {
         $this->validateDataHookType($type);
         unset($this->dataHooks[$type][md5($handlerClass . '.' . $handlerMethodName)]);
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of all registered data hooks. This is mostly internal to extract the values of this trait..
      *
@@ -158,7 +162,7 @@ trait DataHookCollectorTrait
     {
         return array_map('array_values', $this->dataHooks);
     }
-
+    
     /**
      * This helper allows to reset all registered hooks of this trait to the provided list.
      * The hook list is automatically validated and only valid hooks are added back to the store
@@ -171,22 +175,22 @@ trait DataHookCollectorTrait
             || ! is_array($source[DataHookTypes::TCA_DATA_HOOK_KEY])) {
             return;
         }
-
+        
         $this->dataHooks = [];
-
+        
         $constraint = $this->getDataHookTableFieldConstraints();
-
+        
         foreach ($source[DataHookTypes::TCA_DATA_HOOK_KEY] as $type => $hooks) {
             if (! is_array($hooks) || ! is_string($type)) {
                 continue;
             }
-
+            
             try {
                 $this->validateDataHookType($type);
             } catch (InvalidArgumentException $e) {
                 continue;
             }
-
+            
             foreach ($hooks as $def) {
                 if (! isset($def[0], $def[1], $def[1]['constraints'])
                     || ! is_array($def)
@@ -196,7 +200,7 @@ trait DataHookCollectorTrait
                     || count($def[0]) !== 2) {
                     continue;
                 }
-
+                
                 /** @noinspection TypeUnsafeComparisonInspection */
                 if ($def[1]['constraints'] != $constraint) {
                     // @todo We could add a "partial" validation here,
@@ -204,7 +208,7 @@ trait DataHookCollectorTrait
                     // This would have the added benefit, that non-type-validations are simply ignored
                     continue;
                 }
-
+                
                 $this->dataHooks[$type][md5(implode('.', $def[0]))] = [
                     array_values($def[0]),
                     $def[1],
@@ -212,7 +216,7 @@ trait DataHookCollectorTrait
             }
         }
     }
-
+    
     /**
      * Dumps the registered data hooks into the given $target array.
      * The hooks will be stored at the DataHookTypes::TCA_DATA_HOOK_KEY key
@@ -226,7 +230,7 @@ trait DataHookCollectorTrait
             $target[DataHookTypes::TCA_DATA_HOOK_KEY] = $hooks;
         }
     }
-
+    
     /**
      * Checks if the given type is valid or throws an invalid argument exception
      *
@@ -246,11 +250,11 @@ trait DataHookCollectorTrait
             DataHookTypes::TYPE_LOCALIZE,
             DataHookTypes::TYPE_VERSION,
         ];
-
+        
         if (method_exists($this, 'getAdditionalValidDataHookTypes')) {
             $validTypes = array_merge($validTypes, $this->getAdditionalValidDataHookTypes());
         }
-
+        
         if (! in_array($type, $validTypes, true)) {
             throw new InvalidArgumentException(
                 'The given type: "' . $type . '" is invalid! Only the following types are allowed: ' .

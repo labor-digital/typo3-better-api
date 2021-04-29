@@ -40,7 +40,7 @@ class Applier extends AbstractExtConfigApplier
 {
     use ContainerAwareTrait;
     use CTypeRegistrationTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -50,13 +50,13 @@ class Applier extends AbstractExtConfigApplier
         $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(ExtTablesLoadedEvent::class, 'onExtTablesLoaded');
     }
-
+    
     public function onExtTablesLoaded(): void
     {
         $this->registerModules();
         $this->registerElementIcons();
     }
-
+    
     public function onTcaCompletelyLoaded(): void
     {
         $this->registerElements();
@@ -64,12 +64,12 @@ class Applier extends AbstractExtConfigApplier
         $this->registerElementBackendPreviewHooks();
         $this->registerElementFlexForms();
     }
-
+    
     public function onExtLocalConfLoaded(): void
     {
         $this->configurePlugins();
     }
-
+    
     /**
      * Registers the configured ext base modules in the backend
      */
@@ -82,7 +82,7 @@ class Applier extends AbstractExtConfigApplier
             }
         }
     }
-
+    
     /**
      * Registers the plugin icons into the icon registry
      */
@@ -96,7 +96,7 @@ class Applier extends AbstractExtConfigApplier
             }
         }
     }
-
+    
     /**
      * Registers the configured data hooks in the tt_content table by merging them into the table's TCA
      */
@@ -104,7 +104,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $hookDefinition = $this->state->get('typo.extBase.element.dataHooks');
         if (! empty($hookDefinition)) {
-            $dataHooks      = Arrays::makeFromJson($hookDefinition);
+            $dataHooks = Arrays::makeFromJson($hookDefinition);
             $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
                 'tt_content' => [
                     DataHookTypes::TCA_DATA_HOOK_KEY => $dataHooks,
@@ -112,7 +112,7 @@ class Applier extends AbstractExtConfigApplier
             ], 'noNumericMerge');
         }
     }
-
+    
     /**
      * Registers the backend preview rendering hooks into the tca
      */
@@ -120,13 +120,13 @@ class Applier extends AbstractExtConfigApplier
     {
         $hookDefinition = $this->state->get('typo.extBase.element.backendPreviewHooks');
         if (! empty($hookDefinition)) {
-            $hooks          = Arrays::makeFromJson($hookDefinition);
+            $hooks = Arrays::makeFromJson($hookDefinition);
             $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
                 'tt_content' => $hooks,
             ], 'noNumericMerge');
         }
     }
-
+    
     /**
      * Performs the "configurePlugins" loop when the ext local conf files are loaded
      */
@@ -139,7 +139,7 @@ class Applier extends AbstractExtConfigApplier
             }
         }
     }
-
+    
     /**
      * Registers the plugins / content elements in the TYPO3 backend
      */
@@ -149,21 +149,21 @@ class Applier extends AbstractExtConfigApplier
         $argDefinition = $this->state->get('typo.extBase.element.args');
         if (! empty($argDefinition)) {
             $args = Arrays::makeFromJson($argDefinition);
-
+            
             // Plugin registration
             if (is_array($args['plugin'])) {
                 foreach ($args['plugin'] as $pluginArgs) {
                     ExtensionUtility::registerPlugin(...$pluginArgs);
                 }
             }
-
+            
             // Content element registration
             if (is_array($args['ce'])) {
                 $this->registerCTypesForElements($GLOBALS['TCA'], $args['ce']);
             }
         }
     }
-
+    
     /**
      * Adds the registered flex form configuration to the TCA
      */
@@ -173,9 +173,9 @@ class Applier extends AbstractExtConfigApplier
         if (! empty($definition)) {
             foreach (Arrays::makeFromJson($definition) as $def) {
                 ExtensionManagementUtility::addPiFlexFormValue(...$def['args']);
-
+                
                 $signature = $def['signature'];
-                $val       = $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$signature] ?? null;
+                $val = $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$signature] ?? null;
                 if ($val !== null) {
                     if (is_string($val) && stripos($val, 'pi_flexform') === false) {
                         // A string exists, but pi_flexform is not part of it
@@ -190,5 +190,5 @@ class Applier extends AbstractExtConfigApplier
             }
         }
     }
-
+    
 }

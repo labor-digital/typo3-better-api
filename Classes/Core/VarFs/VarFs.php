@@ -41,26 +41,26 @@ use Psr\SimpleCache\CacheInterface;
  */
 class VarFs
 {
-
+    
     /**
      * The base directory where the file system will work in
      *
      * @var string
      */
     protected $rootPath;
-
+    
     /**
      * @var CacheInterface
      */
     protected $cache;
-
+    
     /**
      * The list of all loaded mounts
      *
      * @var \LaborDigital\T3BA\Core\VarFs\Mount[]
      */
     protected $mounts = [];
-
+    
     /**
      * VarFs constructor.
      *
@@ -69,23 +69,23 @@ class VarFs
     public function __construct()
     {
         $this->rootPath = Path::unifyPath(BETTER_API_TYPO3_VAR_PATH, '/') . 't3ba/';
-
+        
         if (is_file($this->rootPath)) {
             throw new InvalidRootPathException(
                 'The resolved root directory path: "' . $this->rootPath . '" seems to lead to a file!');
         }
-
+        
         if (! is_writable($this->rootPath)) {
             Fs::mkdir($this->rootPath);
             FilePermissionUtil::setFilePermissions($this->rootPath);
         }
-
+        
         if (! is_writable($this->rootPath) && ! is_writable(dirname($this->rootPath))) {
             throw new InvalidRootPathException(
                 'The resolved root directory path: "' . $this->rootPath . '" is not writable by the web-server!');
         }
     }
-
+    
     /**
      * Completely removes all files and directories inside the file system
      */
@@ -94,7 +94,7 @@ class VarFs
         $this->mounts = [];
         Fs::flushDirectory($this->rootPath);
     }
-
+    
     /**
      * Returns the reference to a single mount inside the file system.
      * A mount is basically a single directory where you can read and write files in.
@@ -106,11 +106,11 @@ class VarFs
     public function getMount(string $id): Mount
     {
         $mountName = Inflector::toCamelCase(Inflector::toFile(Inflector::toDashed($id)));
-
+        
         return $this->mounts[$mountName] ?? $this->mounts[$mountName]
                 = new Mount(Path::join($this->rootPath, $mountName));
     }
-
+    
     /**
      * Returns a cache implementation which stores it's values inside this filesystem
      *
@@ -121,7 +121,7 @@ class VarFs
         if (isset($this->cache)) {
             return $this->cache;
         }
-
+        
         return $this->cache = new Cache($this->getMount('cache'));
     }
 }

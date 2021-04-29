@@ -59,25 +59,26 @@ trait QueryWhereApplierTrait
         $key,
         Closure $constraintGenerator,
         AbstractQueryAdapter $adapter
-    ) {
+    )
+    {
         // Load TCA configuration
         $parentUidField = Arrays::getPath(
             $GLOBALS,
             ['TCA', $adapter->getTableName(), 'ctrl', 'transOrigPointerField']
         );
-
+        
         // Ignore if we don't have a parent uid field configured in the TCA
         if (empty($parentUidField)) {
             return $constraintGenerator($key);
         }
-
+        
         // Build the constraint
         return $adapter->makeOr([
             $constraintGenerator($key),
             $constraintGenerator($parentUidField),
         ]);
     }
-
+    
     /**
      * Internal walker to handle potential recursions inside the query
      *
@@ -90,7 +91,7 @@ trait QueryWhereApplierTrait
     protected function whereConstraintBuilder(array $query, AbstractQueryAdapter $adapter)
     {
         $conditions = [];
-
+        
         // Pass 1 - Traverse the list for "OR" statements and separate the chunks
         $chunks = [];
         foreach ($query as $k => $v) {
@@ -109,54 +110,54 @@ trait QueryWhereApplierTrait
             $chunks[] = $conditions;
         }
         $conditions = [];
-
+        
         // Check if we have multiple chunks
         if (count($chunks) > 1) {
             // Process the chunks, put them into an or block and return that result
             foreach ($chunks as $k => $chunk) {
                 $chunks[$k] = $this->whereConstraintBuilder($chunk, $adapter);
             }
-
+            
             return $adapter->makeOr($chunks);
         }
-
-        $validOperators   = ['>', '<', '=', '>=', '<=', 'in', 'like'];
+        
+        $validOperators = ['>', '<', '=', '>=', '<=', 'in', 'like'];
         $extBaseOperators = ['has', 'hasany', 'hasall'];
         if ($adapter instanceof ExtBaseQueryAdapter) {
             $validOperators = Arrays::attach($validOperators, ['has', 'hasany', 'hasall']);
         }
-
+        
         foreach ($query as $k => $v) {
             if (is_string($k)) {
                 $operator = ' = ';
-                $negated  = false;
-
+                $negated = false;
+                
                 // Key value pair
                 $k = trim($k);
-
+                
                 // Check if there is a space in the key
                 if (strpos($k, ' ') !== false) {
-                    $kParts    = explode(' ', $k);
+                    $kParts = explode(' ', $k);
                     $lastKPart = strtolower(trim((string)end($kParts)));
-
+                    
                     // Check for negation
                     if (! empty($lastKPart) && $lastKPart[0] === '!') {
-                        $negated   = true;
+                        $negated = true;
                         $lastKPart = substr($lastKPart, 1);
                     }
-
+                    
                     // Check if the operator is valid
                     if (! in_array($lastKPart, $validOperators, true)) {
                         throw new BetterQueryException(
                             'Invalid operator "' . $lastKPart . '" for given for: "' . $k . '"!');
                     }
-
+                    
                     // Valid operator found
                     array_pop($kParts);
-                    $k        = trim(implode(' ', $kParts));
+                    $k = trim(implode(' ', $kParts));
                     $operator = $lastKPart;
                 }
-
+                
                 // Handle operators
                 if ($k === 'uid' && ! in_array($operator, $extBaseOperators, true)) {
                     $condition = $this->whereUidSpecialConstraintWrapper(
@@ -169,7 +170,7 @@ trait QueryWhereApplierTrait
                 } else {
                     $condition = $adapter->makeCondition($operator, $k, $v, $negated);
                 }
-
+                
                 // Done
                 $conditions[] = $condition;
             } else {
@@ -189,17 +190,17 @@ trait QueryWhereApplierTrait
                 }
             }
         }
-
+        
         // Combine the conditions
         if (empty($conditions)) {
             throw new BetterQueryException('Failed to convert the query into a constraint! The given query was: '
                                            . json_encode($query));
         }
-
+        
         return $adapter->makeAnd($conditions);
     }
-
-
+    
+    
     /**
      * Internal helper which is used to apply the configured where constraints to the current query object
      * The result is the completely configured query instance
@@ -215,7 +216,7 @@ trait QueryWhereApplierTrait
         if (empty($this->where)) {
             return;
         }
-
+        
         // Run the constraint builder recursively
         $whereGroups = ['and' => [], 'or' => []];
         foreach ($this->where as $whereGroup => $where) {
@@ -224,7 +225,7 @@ trait QueryWhereApplierTrait
                     = $this->whereConstraintBuilder($where['query'], $adapter);
             }
         }
-
+        
         // Add "AND" to constraints
         $constraints = [];
         if (count($whereGroups['and']) > 1) {
@@ -232,21 +233,21 @@ trait QueryWhereApplierTrait
         } elseif (! empty($whereGroups['and'])) {
             $constraints = reset($whereGroups['and']);
         }
-
+        
         // Add "OR" to constraints
         $orConstraints = [];
         if (! empty($whereGroups['or'])) {
             $orConstraints = $whereGroups['or'];
         }
-
+        
         if (! empty($constraints)) {
             array_unshift($orConstraints, $constraints);
         }
-
+        
         if (count($orConstraints) > 1) {
             $constraints = $adapter->makeOr($orConstraints);
         }
-
+        
         // Finalize the query object
         $adapter->finalizeConstraints($constraints);
     }

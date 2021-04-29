@@ -36,7 +36,7 @@ class AssetFilterEventAdapter extends AbstractCoreHookEventAdapter
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][static::class]
             = static::class . '->emit';
     }
-
+    
     public function emit(&$arguments, $pageRenderer)
     {
         $event = static::$context->env()->isBackend()

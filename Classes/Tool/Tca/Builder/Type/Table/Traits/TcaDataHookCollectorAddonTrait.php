@@ -38,11 +38,11 @@ trait TcaDataHookCollectorAddonTrait
     protected function getDataHookTableFieldConstraints(): array
     {
         $typeCol = $this->getRoot()->getTypeColumn();
-
+        
         if (empty($typeCol)) {
             return [];
         }
-
+        
         return [
             $typeCol => $this instanceof TcaField
                 ? $this->getForm()->getTypeName()

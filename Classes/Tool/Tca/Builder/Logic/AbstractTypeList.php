@@ -29,12 +29,12 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractTypeList
 {
-
+    
     /**
      * @var TcaBuilderContext
      */
     protected $context;
-
+    
     /**
      * Contains the list of all instantiated tca types of this list
      *
@@ -44,7 +44,7 @@ abstract class AbstractTypeList
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType[]
      */
     protected $types = [];
-
+    
     /**
      * AbstractTypeList constructor.
      *
@@ -54,7 +54,7 @@ abstract class AbstractTypeList
     {
         $this->context = $context;
     }
-
+    
     /**
      * Returns the context object
      *
@@ -64,7 +64,7 @@ abstract class AbstractTypeList
     {
         return $this->context;
     }
-
+    
     /**
      * Returns the instance of a certain tca type.
      *
@@ -79,14 +79,14 @@ abstract class AbstractTypeList
         if ($typeName === null) {
             $typeName = $this->getDefaultTypeName();
         }
-
+        
         if (isset($this->types[$typeName])) {
             return $this->types[$typeName];
         }
-
+        
         return $this->types[$typeName] = $this->loadType($typeName);
     }
-
+    
     /**
      * Returns true if the given type name is currently registered
      *
@@ -98,7 +98,7 @@ abstract class AbstractTypeList
     {
         return in_array($typeName, $this->getTypeNames(), false);
     }
-
+    
     /**
      * Returns the list of all type names that are currently registered (both loaded and defined)
      *
@@ -108,7 +108,7 @@ abstract class AbstractTypeList
     {
         return array_keys($this->types);
     }
-
+    
     /**
      * Returns the name of the default type (normally the first one in the list of type names)
      *
@@ -117,10 +117,10 @@ abstract class AbstractTypeList
     public function getDefaultTypeName()
     {
         $types = $this->getTypeNames();
-
+        
         return empty($types) ? 0 : reset($types);
     }
-
+    
     /**
      * Returns true if a certain type is currently loaded as object representation
      *
@@ -132,7 +132,7 @@ abstract class AbstractTypeList
     {
         return isset($this->types[$typeName]);
     }
-
+    
     /**
      * Allows you to completely replace all type instances for this list.
      *
@@ -146,10 +146,10 @@ abstract class AbstractTypeList
         foreach ($types as $k => $t) {
             $this->setLoadedType($k, $t);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Adds a new type to the list of loaded types
      *
@@ -161,10 +161,10 @@ abstract class AbstractTypeList
     public function setLoadedType($typeName, AbstractType $type)
     {
         $this->types[$typeName] = $type;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the list of all types
      *
@@ -176,7 +176,7 @@ abstract class AbstractTypeList
     {
         return $this->types;
     }
-
+    
     /**
      * Removes all types and configuration from the list, leaving you with a clean state
      */
@@ -184,7 +184,7 @@ abstract class AbstractTypeList
     {
         $this->types = [];
     }
-
+    
     /**
      * This method must be implemented by the child class and should
      * return a new type instance for the given type name.

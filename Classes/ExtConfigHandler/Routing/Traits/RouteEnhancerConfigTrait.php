@@ -28,7 +28,7 @@ use Neunerlei\Arrays\Arrays;
 
 trait RouteEnhancerConfigTrait
 {
-
+    
     /**
      * Internal helper to merge the "raw" config, the $typeConfig and the "rawOverride" config
      * into a single array, while automatically applying some polyfills
@@ -45,32 +45,32 @@ trait RouteEnhancerConfigTrait
             $typeConfig,
             'nn', 'r'
         );
-
+        
         $config = $this->injectDbArgsConfig($config, $options);
         $config = $this->injectLocaleArgsConfig($config, $options);
         $config = $this->injectStaticArgsConfig($config, $options);
-
+        
         if (! empty($options['pids'])) {
             $config['limitToPages'] = $this->context->resolvePids($options['pids']);
         }
-
+        
         if (! isset($config['type'])) {
             $config['type'] = 'Simple';
         }
-
+        
         if (! empty($options['defaults'])) {
             $config['defaults'] = is_array($config['defaults'] ?? null)
                 ? Arrays::merge($config['defaults'], $options['defaults'])
                 : $options['defaults'];
         }
-
+        
         return Arrays::merge(
             $config,
             $options['rawOverride'],
             'nn', 'r'
         );
     }
-
+    
     /**
      * Internal helper to generate the PersistedAliasMapper configuration based on the given dbArgs
      *
@@ -85,55 +85,55 @@ trait RouteEnhancerConfigTrait
         if (empty($options['dbArgs'])) {
             return $config;
         }
-
+        
         foreach ($options['dbArgs'] as $field => $fieldConfig) {
             // Validate the input
             if (! is_string($field)) {
                 throw new ExtConfigException('Invalid configuration for a dbArgs in the configuration of route: '
                                              . $options['routePath'] . '! A numeric key can\'t be an alias name!');
             }
-
+            
             $baseError = 'Invalid configuration for the dbArgs "' . $field . '" in the configuration of route: '
                          . $options['routePath'] . '!';
-
+            
             if (! is_array($fieldConfig) || ! in_array(count($fieldConfig), [2, 3], true)) {
                 throw new ExtConfigException(
                     $baseError . ' The field configuration has to be an array with two or three elements!');
             }
-
+            
             if (! is_string($fieldConfig[0]) || ! is_string($fieldConfig[1])) {
                 throw new ExtConfigException(
                     $baseError . ' Both elements have to be strings!');
             }
-
-            $tableName  = $this->context->resolveTableName($fieldConfig[0]);
+            
+            $tableName = $this->context->resolveTableName($fieldConfig[0]);
             $tableField = $fieldConfig[1];
-
+            
             $storagePids = null;
             if (isset($fieldConfig[2])) {
                 $storagePids = $fieldConfig[2];
-
+                
                 if (! is_array($storagePids)) {
                     $storagePids = [$storagePids];
                 }
-
+                
                 $storagePids = array_unique(
                     $this->context->resolvePids($storagePids)
                 );
             }
-
+            
             $config['aspects'][$field] = [
-                'type'           => $storagePids === null ?
+                'type' => $storagePids === null ?
                     'PersistedAliasMapper' : 'T3BAStoragePidAwarePersistedAliasMapper',
-                'tableName'      => $tableName,
+                'tableName' => $tableName,
                 'routeFieldName' => $tableField,
-                'storagePids'    => $storagePids,
+                'storagePids' => $storagePids,
             ];
         }
-
+        
         return $config;
     }
-
+    
     /**
      * Internal helper to generate the LocaleModifier configuration based on the given localeArgs
      *
@@ -148,43 +148,43 @@ trait RouteEnhancerConfigTrait
         if (empty($options['localeArgs'])) {
             return $config;
         }
-
+        
         foreach ($options['localeArgs'] as $field => $fieldConfig) {
             if (! is_string($field)) {
                 throw new ExtConfigException('Invalid configuration for a localeArgs in the configuration of route: '
                                              . $options['routePath'] . '! A numeric key can\'t be an alias name!');
             }
-
+            
             if (! is_array($fieldConfig)) {
                 throw new ExtConfigException(
                     'Invalid configuration for the localeArgs "' . $field . '" in the configuration of route: '
                     . $options['routePath'] . '! The field configuration has to be an array!');
             }
-
+            
             $default = reset($fieldConfig);
             if (is_numeric(key($fieldConfig))) {
                 array_shift($fieldConfig);
             }
-
+            
             $map = [];
             foreach ($fieldConfig as $locale => $value) {
                 $map[] = [
                     'locale' => $locale,
-                    'value'  => $value,
+                    'value' => $value,
                 ];
             }
-
+            
             $config['aspects'][$field] = [
-                'type'      => 'LocaleModifier',
-                'default'   => $default,
+                'type' => 'LocaleModifier',
+                'default' => $default,
                 'localeMap' => $map,
             ];
         }
-
+        
         // Done
         return $config;
     }
-
+    
     /**
      * Internal helper to generate the StaticValueMapper configuration based on the given staticArgs
      *
@@ -199,21 +199,21 @@ trait RouteEnhancerConfigTrait
         if (empty($options['staticArgs'])) {
             return $config;
         }
-
+        
         foreach ($options['staticArgs'] as $field => $fieldConfig) {
             if (! is_string($field)) {
                 throw new ExtConfigException(
                     'Invalid configuration for a staticArgs in the configuration of route: '
                     . $options['routePath'] . '! A numeric key can\'t be an alias name!');
             }
-
+            
             if (! is_array($fieldConfig)) {
                 throw new ExtConfigException(
                     'Invalid configuration for the staticArgs "' . $field . '" in the configuration of route: '
                     . $options['routePath'] . '! The field configuration has to be an array!');
             }
-
-            $map       = [];
+            
+            $map = [];
             $localeMap = [];
             foreach ($fieldConfig as $value => $label) {
                 // Handle locale array-definition
@@ -223,32 +223,32 @@ trait RouteEnhancerConfigTrait
                     if (is_numeric(key($label))) {
                         array_shift($label);
                     }
-
+                    
                     // Build the locale map
                     foreach ($label as $locale => $localeLabel) {
                         $localeMap[$locale][$localeLabel] = $value;
                     }
                     $label = $defaultLabel;
                 }
-
+                
                 $map[$label] = $value;
             }
-
+            
             foreach ($localeMap as $locale => $map) {
                 $localeMap[$locale] = [
                     'locale' => $locale,
-                    'map'    => $map,
+                    'map' => $map,
                 ];
             }
             $localeMap = array_values($localeMap);
-
+            
             $config['aspects'][$field] = [
-                'type'      => 'StaticValueMapper',
-                'map'       => $map,
+                'type' => 'StaticValueMapper',
+                'map' => $map,
                 'localeMap' => empty($localeMap) ? null : $localeMap,
             ];
         }
-
+        
         return $config;
     }
 }

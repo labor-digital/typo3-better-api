@@ -38,14 +38,14 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
      * @var \LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
      */
     protected $configurator;
-
+    
     /**
      * The name of the configure method to use
      *
      * @var string
      */
     protected $configureMethod = 'configure';
-
+    
     /**
      * @inheritDoc
      * @throws \LaborDigital\T3BA\ExtConfig\InvalidConfiguratorException
@@ -60,7 +60,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
                 . __CLASS__ . ' as a handler!');
         }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -68,7 +68,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
     {
         call_user_func([$class, $this->configureMethod], $this->configurator, $this->context);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -76,7 +76,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
     {
         $this->context->getState()->useNamespace($this->getStateNamespace(), [$this->configurator, 'finish']);
     }
-
+    
     /**
      * Must return the name of the configurator class to use
      * The class has to implement the ExtConfigConfiguratorInterface!
@@ -85,7 +85,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
      * @see \LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
      */
     abstract protected function getConfiguratorClass(): string;
-
+    
     /**
      * Must return the namespace of the state storage for this configurator
      *

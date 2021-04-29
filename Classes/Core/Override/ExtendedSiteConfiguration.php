@@ -51,26 +51,26 @@ class ExtendedSiteConfiguration extends T3BA__Copy__SiteConfiguration
     public function getAllSiteConfigurationFromFiles(bool $useCache = true): array
     {
         // Create the configuration if it is not yet cached
-        $isCached   = $useCache && ! empty($this->getCache()->get($this->cacheIdentifier));
+        $isCached = $useCache && ! empty($this->getCache()->get($this->cacheIdentifier));
         $siteConfig = parent::getAllSiteConfigurationFromFiles($useCache);
         if ($isCached) {
             return $siteConfig;
         }
-
+        
         // Special switch if we load the configuration early
         if ($this instanceof CachelessSiteConfigurationAdapter) {
             return $siteConfig;
         }
-
+        
         // Allow filtering
         TypoEventBus::getInstance()->dispatch(($e = new SiteConfigFilterEvent($siteConfig)));
         $siteConfig = $e->getConfig();
-
+        
         // Update the cached value
         if ($useCache) {
             $this->getCache()->set($this->cacheIdentifier, 'return ' . var_export($siteConfig, true) . ';');
         }
-
+        
         // Done
         return $siteConfig;
     }

@@ -34,22 +34,22 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class DelegateContainer implements ContainerInterface
 {
     use SingletonInstanceTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\Di\MiniContainer
      */
     protected $internal;
-
+    
     /**
      * @var \Symfony\Component\DependencyInjection\Container
      */
     protected $symfony;
-
+    
     /**
      * @var \TYPO3\CMS\Core\DependencyInjection\FailsafeContainer
      */
     protected $failsafe;
-
+    
     /**
      * Allows the outside world to provide a container instance to this delegate
      *
@@ -63,7 +63,7 @@ class DelegateContainer implements ContainerInterface
         }
         $this->$type = $container;
     }
-
+    
     /**
      * Allows the outside world to register a concrete service on the container
      *
@@ -78,7 +78,7 @@ class DelegateContainer implements ContainerInterface
             $this->internal->set($id, $concrete);
         }
     }
-
+    
     /**
      * Returns the symfony container instance or null if there is none.
      *
@@ -91,21 +91,21 @@ class DelegateContainer implements ContainerInterface
     {
         try {
             $c = GeneralUtility::getContainer();
-
+            
             if ($c instanceof Container) {
                 return $c;
             }
-
+            
         } catch (LogicException $e) {
         }
-
+        
         if (isset($this->symfony)) {
             return $this->symfony;
         }
-
+        
         return null;
     }
-
+    
     /**
      * Returns the internal mini container for our root services
      *
@@ -115,7 +115,7 @@ class DelegateContainer implements ContainerInterface
     {
         return $this->internal;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -124,23 +124,23 @@ class DelegateContainer implements ContainerInterface
         if (isset($this->failsafe) && $this->failsafe->has($id)) {
             return $this->failsafe->get($id);
         }
-
+        
         $symfony = $this->getSymfony();
         if ($symfony && $symfony->has($id)) {
             return $symfony->get($id);
         }
-
+        
         if (isset($this->internal) && $this->internal->has($id)) {
             return $this->internal->get($id);
         }
-
+        
         if ($symfony) {
             return $this->symfony->get($id);
         }
-
+        
         throw new ServiceNotFoundException($id);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -149,16 +149,16 @@ class DelegateContainer implements ContainerInterface
         if (isset($this->failsafe) && $this->failsafe->has($id)) {
             return true;
         }
-
+        
         $symfony = $this->getSymfony();
         if ($symfony && $symfony->has($id)) {
             return true;
         }
-
+        
         if (isset($this->internal) && $this->internal->has($id)) {
             return true;
         }
-
+        
         return false;
     }
 }

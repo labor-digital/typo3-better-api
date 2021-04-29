@@ -28,7 +28,7 @@ use Neunerlei\Inflection\Inflector;
 
 trait DumperTypeGeneratorTrait
 {
-
+    
     /**
      * Generates an array containing the differences between two arrays and returns it.
      *
@@ -45,27 +45,27 @@ trait DumperTypeGeneratorTrait
                 $diff[$k] = $v;
                 continue;
             }
-
+            
             /** @noinspection TypeUnsafeComparisonInspection */
             if ($a[$k] === $v || is_numeric($a[$k]) && is_numeric($v) && $a[$k] == $v) {
                 continue;
             }
-
+            
             if (is_array($v) && is_array($a[$k])) {
                 $_diff = $this->makeArrayDiff($a[$k], $v);
                 if (! empty($_diff)) {
                     $diff[$k] = $_diff;
                 }
-
+                
                 continue;
             }
-
+            
             $diff[$k] = $v;
         }
-
+        
         return $diff;
     }
-
+    
     /**
      * Generates the required column overrides for a specific TCA Type or extends the the main table's columns
      * if new columns have been added in a type
@@ -79,10 +79,10 @@ trait DumperTypeGeneratorTrait
      */
     protected function dumpColumnOverrides($typeName, array &$tca, array $typeTca, TcaTable $table): void
     {
-        $cols      = $tca['columns'] ?? [];
-        $typeCols  = $typeTca['columns'] ?? [];
+        $cols = $tca['columns'] ?? [];
+        $typeCols = $typeTca['columns'] ?? [];
         $overrides = [];
-
+        
         foreach ($typeCols as $id => $col) {
             // Column does not exist in parent
             if (! isset($cols[$id])) {
@@ -97,30 +97,30 @@ trait DumperTypeGeneratorTrait
                 }
                 continue;
             }
-
+            
             // Check if the column equals the other column
             /** @noinspection TypeUnsafeComparisonInspection */
             if ($cols[$id] == $col) {
                 continue;
             }
-
+            
             // Calculate difference
             $diff = $this->makeArrayDiff($cols[$id], $col);
-
+            
             if (empty($diff)) {
                 continue;
             }
-
+            
             $overrides[$id] = $diff;
         }
-
+        
         $tca['columns'] = $cols;
-
+        
         if (! empty($overrides)) {
             $tca['types'][$typeName]['columnsOverrides'] = $overrides;
         }
     }
-
+    
     /**
      * Checks if palettes have been changed for a type and therefore have to be replaced with a own, special palette
      * definition to avoid interference between types
@@ -131,37 +131,37 @@ trait DumperTypeGeneratorTrait
      */
     protected function dumpTypePalettes($typeName, array &$tca, array $typeTca): void
     {
-        $palettes     = $tca['palettes'] ?? [];
+        $palettes = $tca['palettes'] ?? [];
         $typePalettes = $typeTca['palettes'] ?? [];
         $typeShowitem = $typeTca['types'][$typeName]['showitem'] ?? '';
-
+        
         // Loop over all type palettes
         foreach ($typePalettes as $k => $p) {
             $showitem = $p['showitem'];
-
+            
             // Add new palette
             if (! isset($palettes[$k])) {
                 $palettes[$k]['showitem'] = $showitem;
                 continue;
             }
-
+            
             // Check if there is already a showitem for this palette
             if (isset($palettes[$k]['showitem'])) {
                 // Ignore identical palette
                 if ($palettes[$k]['showitem'] === $showitem) {
                     continue;
                 }
-
+                
                 // Compare a unified version of both
                 if (Inflector::toComparable($palettes[$k]['showitem']) === Inflector::toComparable($showitem)) {
                     continue;
                 }
             }
-
+            
             // Create a new version of this palette for the type
-            $newK                        = $typeName . '-' . $k;
+            $newK = $typeName . '-' . $k;
             $palettes[$newK]['showitem'] = $showitem;
-
+            
             // Update type's show item...
             // Yay for string manipulation \o/...
             $typeShowitem = preg_replace(
@@ -169,12 +169,12 @@ trait DumperTypeGeneratorTrait
                 '${1}' . $newK . ',',
                 $typeShowitem);
         }
-
+        
         if (! empty($typeShowitem)) {
             $tca['types'][$typeName]['showitem'] = $typeShowitem;
         }
         $tca['palettes'] = $palettes;
     }
-
-
+    
+    
 }

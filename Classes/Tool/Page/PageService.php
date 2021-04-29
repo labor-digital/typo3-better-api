@@ -37,14 +37,14 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 class PageService implements SingletonInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * The record data handler instance after it was created at least once
      *
      * @var \LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
      */
     protected $recordHandler;
-
+    
     /**
      * Returns the record data handler for the pages table.
      * Which allows you root level access to the TYPO3 data handler.
@@ -57,7 +57,7 @@ class PageService implements SingletonInterface
                $this->recordHandler
                    = $this->cs()->dataHandler->getRecordDataHandler('pages');
     }
-
+    
     /**
      * Creates a new, empty page below the given $parentPid with the given title and returns the new
      * page's pid for further processing
@@ -81,28 +81,28 @@ class PageService implements SingletonInterface
     {
         // Prepare the options
         $options = Options::make($options, [
-            'title'   => [
-                'type'    => 'string',
+            'title' => [
+                'type' => 'string',
                 'default' => '',
             ],
-            'force'   => [
-                'type'    => 'bool',
+            'force' => [
+                'type' => 'bool',
                 'default' => false,
             ],
             'pageRow' => [
-                'type'    => 'array',
+                'type' => 'array',
                 'default' => [],
             ],
         ]);
-
+        
         $row = $options['pageRow'];
         if ($options['title'] !== '' && ! isset($row['title'])) {
             $row['title'] = $options['title'];
         }
-
+        
         return $this->recordHandler->save($row, $parentPid, $options['force']);
     }
-
+    
     /**
      * Creates a copy of a certain page. If the $targetPageId is empty, the copy will be created right below the
      * current page Otherwise it will be copied as a child of said target id.
@@ -126,18 +126,18 @@ class PageService implements SingletonInterface
         // Prepare the options
         $options = Options::make($options, [
             'targetPid' => [
-                'type'    => ['null', 'int'],
+                'type' => ['null', 'int'],
                 'default' => null,
             ],
-            'force'     => [
-                'type'    => 'bool',
+            'force' => [
+                'type' => 'bool',
                 'default' => false,
             ],
         ]);
-
+        
         return $this->getPageDataHandler()->copy($pageId, $options['targetPid'], $options['force']);
     }
-
+    
     /**
      * Moves a page with the given page id to another page
      *
@@ -152,7 +152,7 @@ class PageService implements SingletonInterface
     {
         $this->getPageDataHandler()->move($pageId, $targetPid, $force);
     }
-
+    
     /**
      * Marks this page as "deleted". It still can be restored using the "restorePage" method.
      *
@@ -164,7 +164,7 @@ class PageService implements SingletonInterface
     {
         $this->getPageDataHandler()->delete($pageId, $force);
     }
-
+    
     /**
      * Restores a page by removing the marker that defines it as "deleted".
      *
@@ -176,7 +176,7 @@ class PageService implements SingletonInterface
     {
         $this->getPageDataHandler()->restore($pageId, $force);
     }
-
+    
     /**
      * Returns true if a page exists, false if not.
      *
@@ -191,14 +191,14 @@ class PageService implements SingletonInterface
         if ($pageId <= 0) {
             return false;
         }
-
+        
         if ($includeAllNotDeleted) {
             return ! empty($this->getPageRepository()->getPage_noCheck($pageId));
         }
-
+        
         return ! empty($this->getPageRepository()->getPage($pageId));
     }
-
+    
     /**
      * This method can be used to render the contents of a given page id as html.
      *
@@ -224,44 +224,44 @@ class PageService implements SingletonInterface
     {
         // Prepare options
         $options = Options::make($options, [
-            'language'              => [
-                'type'    => ['int', 'string', 'null', SiteLanguage::class],
+            'language' => [
+                'type' => ['int', 'string', 'null', SiteLanguage::class],
                 'default' => null,
             ],
-            'includeHiddenPages'    => [
-                'type'    => 'bool',
+            'includeHiddenPages' => [
+                'type' => 'bool',
                 'default' => false,
             ],
-            'includeHiddenContent'  => [
-                'type'    => 'bool',
+            'includeHiddenContent' => [
+                'type' => 'bool',
                 'default' => false,
             ],
             'includeDeletedRecords' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => false,
             ],
         ]);
-
+        
         return $this->cs()->simulator->runWithEnvironment([
-            'pid'                   => $pageId,
-            'language'              => $options['language'],
-            'includeHiddenPages'    => $options['includeHiddenPages'],
-            'includeHiddenContent'  => $options['includeHiddenContent'],
+            'pid' => $pageId,
+            'language' => $options['language'],
+            'includeHiddenPages' => $options['includeHiddenPages'],
+            'includeHiddenContent' => $options['includeHiddenContent'],
             'includeDeletedRecords' => $options['includeDeletedRecords'],
         ], function () use ($pageId) {
             // Render the page
             return $this->cs()->ts->renderContentObject('CONTENT', [
-                'table'   => 'tt_content',
+                'table' => 'tt_content',
                 'select.' => [
-                    'pidInList'     => $this->resolveContentPid($pageId),
+                    'pidInList' => $this->resolveContentPid($pageId),
                     'languageField' => 'sys_language_uid',
-                    'orderBy'       => 'sorting',
-                    'where'         => '{#colPos} = 0',
+                    'orderBy' => 'sorting',
+                    'where' => '{#colPos} = 0',
                 ],
             ]);
         });
     }
-
+    
     /**
      * Can be used to return the list of all content elements of a given page.
      * The contents will be sorted into their matching layout columns in order of their "sorting".
@@ -291,42 +291,42 @@ class PageService implements SingletonInterface
     {
         // Prepare options
         $options = Options::make($options, [
-            'where'                 => [
-                'type'    => 'string',
+            'where' => [
+                'type' => 'string',
                 'default' => '',
             ],
-            'language'              => [
-                'type'    => ['int', 'string', 'null', SiteLanguage::class],
+            'language' => [
+                'type' => ['int', 'string', 'null', SiteLanguage::class],
                 'default' => null,
             ],
-            'includeHiddenPages'    => [
-                'type'    => 'bool',
+            'includeHiddenPages' => [
+                'type' => 'bool',
                 'default' => false,
             ],
-            'includeHiddenContent'  => [
-                'type'    => 'bool',
+            'includeHiddenContent' => [
+                'type' => 'bool',
                 'default' => false,
             ],
             'includeDeletedRecords' => [
-                'type'    => 'bool',
+                'type' => 'bool',
                 'default' => false,
             ],
-            'returnRaw'             => [
-                'type'    => 'bool',
+            'returnRaw' => [
+                'type' => 'bool',
                 'default' => false,
             ],
         ]);
-
+        
         // Collect the records
         $records = $this->cs()->simulator->runWithEnvironment([
-            'language'              => $options['language'],
-            'includeHiddenPages'    => $options['includeHiddenPages'],
-            'includeHiddenContent'  => $options['includeHiddenContent'],
+            'language' => $options['language'],
+            'includeHiddenPages' => $options['includeHiddenPages'],
+            'includeHiddenContent' => $options['includeHiddenContent'],
             'includeDeletedRecords' => $options['includeDeletedRecords'],
         ], function () use ($pageId, $options) {
             return $this->cs()->tsfe->getContentObjectRenderer()->getRecords('tt_content', [
                 'pidInList' => $this->resolveContentPid($pageId),
-                'where'     => $options['where'],
+                'where' => $options['where'],
             ]);
         });
         if (! is_array($records)) {
@@ -335,42 +335,42 @@ class PageService implements SingletonInterface
         if ($options['returnRaw']) {
             return $records;
         }
-
+        
         // Default configuration for extensions that provide custom grids
         $customGrids = [
             [
-                'parentField'    => 'tx_gridelements_container',
+                'parentField' => 'tx_gridelements_container',
                 'parentColField' => 'tx_gridelements_columns',
             ],
         ];
-
+        
         // Let the outside world add it's own grids or filter the records if required...
         $this->cs()->eventBus
             ->dispatch(($e = new PageContentsGridConfigFilterEvent($pageId, $records, $customGrids)));
-        $records     = $e->getRecords();
+        $records = $e->getRecords();
         $customGrids = $e->getCustomGrids();
-
+        
         // Loop 1: Map the records into an element list
         $elements = [];
         foreach ($records as $record) {
-            $uid            = $record['uid'];
-            $row            = [
-                'parent'   => null,
-                'colPos'   => $record['colPos'],
-                'uid'      => $uid,
-                'record'   => $record,
+            $uid = $record['uid'];
+            $row = [
+                'parent' => null,
+                'colPos' => $record['colPos'],
+                'uid' => $uid,
+                'record' => $record,
                 'children' => [],
-                'sorting'  => $record['sorting'],
+                'sorting' => $record['sorting'],
             ];
             $elements[$uid] = $row;
         }
-
+        
         // Loop 2: Map potential stacked grids to their parents
         foreach ($elements as &$element) {
             $parent = null;
             $record = $element['record'];
             $colPos = $record['colPos'];
-
+            
             foreach ($customGrids as $customGridConfig) {
                 // Ignore if the custom grid has no parent field -> misconfiguration
                 if (! isset($customGridConfig['parentField'])) {
@@ -390,25 +390,25 @@ class PageService implements SingletonInterface
                 }
                 break;
             }
-
+            
             // Check if we can map the record as a child
             if (empty($parent)) {
                 continue;
             }
-
+            
             // Strip out element's that define a parent which is not in our element list -> broken relation?
             if (! isset($elements[$parent])) {
                 $element['parent'] = false;
                 continue;
             }
-
+            
             // Map the element into a tree
-            $element['parent']                                       = $parent;
-            $element['colPos']                                       = $colPos;
+            $element['parent'] = $parent;
+            $element['colPos'] = $colPos;
             $elements[$parent]['children'][$colPos][$element['uid']] = &$element;
         }
         unset($element);
-
+        
         // Loop 3: Sort the children and clean up the output
         $output = [];
         foreach ($elements as &$element) {
@@ -419,23 +419,23 @@ class PageService implements SingletonInterface
                 }
                 unset($childCol);
             }
-
+            
             // Build the output
             if ($element['parent'] === null) {
                 $output[$element['colPos']][$element['uid']] = $element;
             }
         }
         unset($element);
-
+        
         // Sort the elements inside the cols
         foreach ($output as &$col) {
             $col = Arrays::sortBy($col, 'sorting');
         }
-
+        
         // Done (make sure we break the references)
         return json_decode(json_encode($output, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
     }
-
+    
     /**
      * Returns an array with fields of the pages from here ($uid) and back to the root
      *
@@ -462,7 +462,7 @@ class PageService implements SingletonInterface
     {
         return ExtendedRootLineUtility::getWith($pageId, $options);
     }
-
+    
     /**
      * Can be used to retrieve the database record for a certain page based on the given page id.
      * The translation is done according to the current frontend language.
@@ -479,14 +479,14 @@ class PageService implements SingletonInterface
         } else {
             $row = $this->getPageRepository()->getPage($pageId, true);
         }
-
+        
         if (! is_array($row)) {
             return null;
         }
-
+        
         return $row;
     }
-
+    
     /**
      * Returns the instance of the page repository.
      * Either of the frontend or a new instance if the frontend did not help us...
@@ -503,11 +503,11 @@ class PageService implements SingletonInterface
                 return $sysPage;
             }
         }
-
+        
         // Fallback to creating a new instance when the frontend did not serve us
         return $this->makeInstance(PageRepository::class);
     }
-
+    
     /**
      * Internal helper to check the "content_from_pid" field of the given page id.
      * If it has another pid as a reference we will rewrite the page id to retrieve the contents from
@@ -521,9 +521,9 @@ class PageService implements SingletonInterface
         $pageInfo = $this->getPageInfo($pageId);
         if (! empty($pageInfo['content_from_pid'])) {
             $pidList = Arrays::makeFromStringList($pageInfo['content_from_pid']);
-            $pageId  = reset($pidList);
+            $pageId = reset($pidList);
         }
-
+        
         return $pageId;
     }
 }

@@ -28,7 +28,7 @@ use LaborDigital\T3BA\ExtConfigHandler\Table\ContentType\ContentTypeConfigInterf
 
 interface ConfigureContentElementInterface extends ContentTypeConfigInterface
 {
-
+    
     /**
      * This method is used to configure a single ext base content element using the
      * given configurator and context object
@@ -42,5 +42,5 @@ interface ConfigureContentElementInterface extends ContentTypeConfigInterface
         ContentElementConfigurator $configurator,
         ExtConfigContext $context
     ): void;
-
+    
 }

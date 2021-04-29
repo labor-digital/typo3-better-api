@@ -25,14 +25,14 @@ use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
 class TranslationLabelProvider
 {
     use StaticContainerAwareTrait;
-
+    
     /**
      * Stores all requested labels to speed up subsequent requests
      *
      * @var array
      */
     protected static $labelCache = [];
-
+    
     /**
      * Bridge for the translation service, used in the core modding classes
      *
@@ -47,19 +47,19 @@ class TranslationLabelProvider
         if (! is_string($input)) {
             return $translationProvider($input);
         }
-
+        
         // Skip events and override resolution if we already resolved this label
         $input = trim($input);
         if (isset(static::$labelCache[$input])) {
             return static::$labelCache[$input] === true ?
                 $translationProvider($input) : $translationProvider(static::$labelCache[$input]);
         }
-
+        
         // Resolve our label
-        $inputRaw                   = $input;
-        $input                      = static::getService(Translator::class)->getLabelKey($input);
+        $inputRaw = $input;
+        $input = static::getService(Translator::class)->getLabelKey($input);
         static::$labelCache[$input] = $inputRaw === $input ? true : $input;
-
+        
         // Do the translation
         return $translationProvider($input);
     }

@@ -34,49 +34,49 @@ class DataHookDefinition
      * @see \LaborDigital\T3BA\Tool\DataHook\DataHookTypes
      */
     public $type;
-
+    
     /**
      * The name of the database table the data corresponds to
      *
      * @var string
      */
     public $tableName;
-
+    
     /**
      * The TCA definition of the table this hook applies to
      *
      * @var array
      */
     public $tca;
-
+    
     /**
      * The prepared data array, with all flex form fields unpacked
      *
      * @var array
      */
     public $data;
-
+    
     /**
      * The raw data which was passed to the hook dispatcher, without anything modified
      *
      * @var array
      */
     public $dataRaw;
-
+    
     /**
      * The list of dirty fields, meaning fields that have been modified by a hook handler
      *
      * @var array
      */
     public $dirtyFields = [];
-
+    
     /**
      * The list of used field packer instances.
      *
      * @var FieldPackerInterface[]
      */
     public $fieldPackers = [];
-
+    
     /**
      * The list of fields that have been unpacked by the used field packer instances.
      * The index of this array matches the index of the used field packer in $fieldPackers.
@@ -84,21 +84,21 @@ class DataHookDefinition
      * @var array
      */
     public $unpackedFields = [];
-
+    
     /**
      * The name of the context class that should be passed through the registered handlers
      *
      * @var string
      */
     public $contextClass = '';
-
+    
     /**
      * The list of resolved handler definitions for this table
      *
      * @var DataHookHandlerDefinition[]
      */
     public $handlers = [];
-
+    
     /**
      * The given callback will be executed if the data was modified while the hooks were executed
      *
@@ -114,7 +114,7 @@ class DataHookDefinition
         if (empty($this->dirtyFields)) {
             return $this;
         }
-
+        
         // Pack unpacked data back if required
         $clone = clone $this;
         foreach ($clone->unpackedFields as $id => $fields) {
@@ -128,17 +128,17 @@ class DataHookDefinition
                     $clone->data[$field] = $clone->dataRaw[$field];
                 }
             }
-
+            
             if (empty($fieldsToPack)) {
                 continue;
             }
-
+            
             $clone->fieldPackers[$id]->packFields($clone, $fieldsToPack);
         }
-
+        
         $callback($clone->data, $clone);
-
+        
         return $this;
     }
-
+    
 }

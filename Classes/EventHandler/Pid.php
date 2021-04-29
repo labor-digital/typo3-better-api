@@ -36,12 +36,12 @@ class Pid implements LazyEventSubscriberInterface
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $context;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoScript\TypoScriptService
      */
     protected $typoScriptService;
-
+    
     /**
      * PidEventHandler constructor.
      *
@@ -51,11 +51,12 @@ class Pid implements LazyEventSubscriberInterface
     public function __construct(
         TypoContext $context,
         TypoScriptService $typoScriptService
-    ) {
-        $this->context           = $context;
+    )
+    {
+        $this->context = $context;
         $this->typoScriptService = $typoScriptService;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -63,7 +64,7 @@ class Pid implements LazyEventSubscriberInterface
     {
         $subscription->subscribe(ConfigArrayPostProcEvent::class, 'onTypoScriptConfigPostProcessing');
     }
-
+    
     /**
      * Reads the pids from typo script and re-injects their values into the pid aspect.
      * This allows the pid aspect to be modified using typoScript

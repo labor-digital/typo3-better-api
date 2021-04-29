@@ -32,7 +32,7 @@ class MiniContainer implements ContainerInterface
      * @var array
      */
     protected $instances = [];
-
+    
     /**
      * MiniContainer constructor.
      *
@@ -42,7 +42,7 @@ class MiniContainer implements ContainerInterface
     {
         $this->instances = $instances;
     }
-
+    
     /**
      * Sets a specific instance for an id
      *
@@ -53,7 +53,7 @@ class MiniContainer implements ContainerInterface
     {
         $this->instances[$id] = $instance;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -62,14 +62,14 @@ class MiniContainer implements ContainerInterface
         if (! $this->has($id)) {
             return null;
         }
-
+        
         if (isset($this->instances[$id])) {
             return $this->instances[$id];
         }
-
+        
         return $this->instances[$id] ?? null;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -77,5 +77,5 @@ class MiniContainer implements ContainerInterface
     {
         return isset($this->instances[$id]);
     }
-
+    
 }

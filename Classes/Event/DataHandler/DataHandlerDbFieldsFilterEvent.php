@@ -32,28 +32,28 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  */
 class DataHandlerDbFieldsFilterEvent
 {
-
+    
     /**
      * The method that is used to write into the database. Can be "insert" or "update".
      *
      * @var string
      */
     protected $method;
-
+    
     /**
      * The name of the table that is currently saved
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The prepared database row to write into the database
      *
      * @var array
      */
     protected $row;
-
+    
     /**
      * The id of the entry that is saved.
      * May be the numeric id or a string with "NEW_..." at the beginning
@@ -61,21 +61,21 @@ class DataHandlerDbFieldsFilterEvent
      * @var string|int
      */
     protected $id;
-
+    
     /**
      * The currently executed data handler instance
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * Can contain additional information depending on the given method
      *
      * @var array
      */
     protected $additionalData;
-
+    
     /**
      * DataHandlerDbFieldsFilterEvent constructor.
      *
@@ -93,15 +93,16 @@ class DataHandlerDbFieldsFilterEvent
         $id,
         DataHandler $dataHandler,
         array $additionalData = []
-    ) {
-        $this->method         = $method;
-        $this->tableName      = $tableName;
-        $this->row            = $row;
-        $this->id             = $id;
-        $this->dataHandler    = $dataHandler;
+    )
+    {
+        $this->method = $method;
+        $this->tableName = $tableName;
+        $this->row = $row;
+        $this->id = $id;
+        $this->dataHandler = $dataHandler;
         $this->additionalData = $additionalData;
     }
-
+    
     /**
      * Returns the method that is used to write into the database. Can be "insert" or "update".
      *
@@ -111,7 +112,7 @@ class DataHandlerDbFieldsFilterEvent
     {
         return $this->method;
     }
-
+    
     /**
      * Returns additional information depending on the given method
      *
@@ -121,7 +122,7 @@ class DataHandlerDbFieldsFilterEvent
     {
         return $this->additionalData;
     }
-
+    
     /**
      * Returns the name of the table that is currently saved
      *
@@ -131,7 +132,7 @@ class DataHandlerDbFieldsFilterEvent
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the currently executed data handler instance
      *
@@ -141,7 +142,7 @@ class DataHandlerDbFieldsFilterEvent
     {
         return $this->dataHandler;
     }
-
+    
     /**
      * Returns the row that was given by to the data handler
      *
@@ -151,7 +152,7 @@ class DataHandlerDbFieldsFilterEvent
     {
         return $this->row;
     }
-
+    
     /**
      * Updates the row that was given by to the data handler
      *
@@ -162,10 +163,10 @@ class DataHandlerDbFieldsFilterEvent
     public function setRow(array $row): DataHandlerDbFieldsFilterEvent
     {
         $this->row = $row;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the id of the entry that is saved
      *
@@ -175,7 +176,7 @@ class DataHandlerDbFieldsFilterEvent
     {
         return $this->id;
     }
-
+    
     /**
      * Updates the id of the entry that is saved.
      *
@@ -186,7 +187,7 @@ class DataHandlerDbFieldsFilterEvent
     public function setId($id): DataHandlerDbFieldsFilterEvent
     {
         $this->id = $id;
-
+        
         return $this;
     }
 }

@@ -40,42 +40,42 @@ class PreviewRenderingEvent
      * @var \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem
      */
     protected $item;
-
+    
     /**
      * The utility class for hooks into the TYPO3 core, default content preview renderer
      *
      * @var \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils
      */
     protected $utils;
-
+    
     /**
      * The header line that should be displayed for this item
      *
      * @var string|null
      */
     protected $header;
-
+    
     /**
      * The body that should be displayed for this item
      *
      * @var string|null
      */
     protected $body;
-
+    
     /**
      * The footer that should be displayed for this item
      *
      * @var string|null
      */
     protected $footer;
-
+    
     /**
      * Either the signature of the plugin variant that is required or NULL if the default variant should be rendered
      *
      * @var string|null
      */
     protected $pluginVariant;
-
+    
     /**
      * BackendPreviewRenderingEvent constructor.
      *
@@ -85,11 +85,11 @@ class PreviewRenderingEvent
      */
     public function __construct(GridColumnItem $item, BackendPreviewUtils $utils, ?string $pluginVariant)
     {
-        $this->item          = $item;
-        $this->utils         = $utils;
+        $this->item = $item;
+        $this->utils = $utils;
         $this->pluginVariant = $pluginVariant;
     }
-
+    
     /**
      * Returns the row of the tt_content record that should be rendered as backend preview
      *
@@ -99,7 +99,7 @@ class PreviewRenderingEvent
     {
         return (array)$this->item->getRecord();
     }
-
+    
     /**
      * Returns either the signature of the plugin variant that is required or NULL if the default variant should be
      * rendered.
@@ -110,7 +110,7 @@ class PreviewRenderingEvent
     {
         return $this->pluginVariant;
     }
-
+    
     /**
      * Returns the header set for the backend preview
      *
@@ -120,7 +120,7 @@ class PreviewRenderingEvent
     {
         return $this->header;
     }
-
+    
     /**
      * Updates the header set for the backend preview
      *
@@ -131,10 +131,10 @@ class PreviewRenderingEvent
     public function setHeader(string $header): self
     {
         $this->header = $header;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the body that should be displayed for this item
      *
@@ -144,7 +144,7 @@ class PreviewRenderingEvent
     {
         return $this->body;
     }
-
+    
     /**
      * Updates the body that should be displayed for this item
      *
@@ -155,10 +155,10 @@ class PreviewRenderingEvent
     public function setBody(?string $body): PreviewRenderingEvent
     {
         $this->body = $body;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the footer that should be displayed for this item
      *
@@ -168,7 +168,7 @@ class PreviewRenderingEvent
     {
         return $this->footer;
     }
-
+    
     /**
      * Updates the footer that should be displayed for this item
      *
@@ -179,10 +179,10 @@ class PreviewRenderingEvent
     public function setFooter(?string $footer): PreviewRenderingEvent
     {
         $this->footer = $footer;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the column item that should be rendered
      *
@@ -192,7 +192,7 @@ class PreviewRenderingEvent
     {
         return $this->item;
     }
-
+    
     /**
      * Returns the utility class for hooks into the TYPO3 core, default content preview renderer
      *

@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm;
 
 
+use Closure;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
@@ -40,28 +41,28 @@ class Flex extends AbstractForm
      * So we use the php object key as a exception to the rule here...
      */
     public const PATH_SEPARATOR = '->';
-
+    
     /**
      * The form field reference which holds this flex form
      *
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField
      */
     protected $containingField;
-
+    
     /**
      * The factory to initialize the sheets with
      *
      * @var Factory
      */
     protected $factory;
-
+    
     /**
      * Contains additional metadata that was stored in the head of the flex form config
      *
      * @var array
      */
     protected $meta = [];
-
+    
     /**
      * @inheritDoc
      */
@@ -71,9 +72,9 @@ class Flex extends AbstractForm
         $this->tree->setAllowTabIdStrings(true);
         $this->tree->setDefaultTabId('sDEF');
         $this->containingField = $containingField;
-        $this->factory         = $factory;
+        $this->factory = $factory;
     }
-
+    
     /**
      * @inheritDoc
      * @return TcaField
@@ -82,7 +83,7 @@ class Flex extends AbstractForm
     {
         return $this->containingField;
     }
-
+    
     /**
      * @inheritDoc
      * @return TcaTable
@@ -91,7 +92,7 @@ class Flex extends AbstractForm
     {
         return $this->containingField->getRoot();
     }
-
+    
     /**
      * Returns the context object
      *
@@ -101,7 +102,7 @@ class Flex extends AbstractForm
     {
         return $this->context;
     }
-
+    
     /**
      * Returns additional metadata that was stored in the head of the flex form config
      *
@@ -111,7 +112,7 @@ class Flex extends AbstractForm
     {
         return $this->meta;
     }
-
+    
     /**
      * Allows you to update the additional metadata that will be stored in the head of the flex form config
      *
@@ -122,10 +123,10 @@ class Flex extends AbstractForm
     public function setMeta(array $meta): Flex
     {
         $this->meta = $meta;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the form field which holds this flex form structure
      *
@@ -137,7 +138,7 @@ class Flex extends AbstractForm
     {
         return $this->containingField;
     }
-
+    
     /**
      * Allows the outside world to update the field linked with this flex form structure
      *
@@ -148,10 +149,10 @@ class Flex extends AbstractForm
     public function setContainingField(TcaField $field): self
     {
         $this->containingField = $field;
-
+        
         return $this;
     }
-
+    
     /**
      * You can use this method to load a new flex form definition into your current form.
      * Note: This will overwrite your current configuration!.
@@ -169,12 +170,12 @@ class Flex extends AbstractForm
     public function loadDefinition(string $definition): self
     {
         $this->types = [];
-
+        
         $this->factory->initialize($this, $definition);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -182,7 +183,7 @@ class Flex extends AbstractForm
     {
         return $this->findNodeByPath($id, $type) !== null;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -190,7 +191,7 @@ class Flex extends AbstractForm
     {
         return $this->findNodeByPath($id, Node::TYPE_FIELD) !== null;
     }
-
+    
     /**
      * Returns the instance of a certain field inside your current layout
      *
@@ -219,7 +220,7 @@ class Flex extends AbstractForm
             );
         });
     }
-
+    
     /**
      * Returns the list of all registered fields that are currently inside the layout
      *
@@ -229,7 +230,7 @@ class Flex extends AbstractForm
     {
         return parent::getFields();
     }
-
+    
     /**
      * Returns a single section instance
      * Note: If the section not exists, a new one will be created at the end of the form
@@ -246,11 +247,11 @@ class Flex extends AbstractForm
                 FlexSection::class, [$node, $this]
             );
             $i->setLabel('');
-
+            
             return $i;
         });
     }
-
+    
     /**
      * Returns true if the layout has a section with that id already registered
      *
@@ -262,7 +263,7 @@ class Flex extends AbstractForm
     {
         return $this->hasChild($id, Node::TYPE_CONTAINER);
     }
-
+    
     /**
      * Returns the list of all sections that are used inside of this form
      *
@@ -272,7 +273,7 @@ class Flex extends AbstractForm
     {
         return $this->findAllChildrenByType(Node::TYPE_CONTAINER);
     }
-
+    
     /**
      * Similar to getSections() but only returns the keys of the sections instead of the whole object
      *
@@ -284,7 +285,7 @@ class Flex extends AbstractForm
             yield $palette->getId();
         }
     }
-
+    
     /**
      * Returns true if a given tab exists, false if not
      *
@@ -296,7 +297,7 @@ class Flex extends AbstractForm
     {
         return $this->tree->hasNode($id, Node::TYPE_TAB);
     }
-
+    
     /**
      * Returns the instance of a certain tab.
      * Note: If the tab not exists, a new one will be created at the end of the form
@@ -308,43 +309,43 @@ class Flex extends AbstractForm
     public function getTab(?string $id = null): FlexTab
     {
         $id = $id ?? 'sDEF';
-
+        
         return $this->findOrCreateChild($id, Node::TYPE_TAB, function (Node $node) {
             return ($this->context->cs()->di->makeInstance(
                 $this->getTabClass(), [$node, $this]
             ))->setLabel('t3ba.tab.untitled');
         });
     }
-
+    
     /**
      * @inheritDoc
      */
-    protected function findOrCreateChild($id, int $type, \Closure $factory): AbstractElement
+    protected function findOrCreateChild($id, int $type, Closure $factory): AbstractElement
     {
         if (strpos($id, static::PATH_SEPARATOR) !== false) {
             $node = $this->findNodeByPath($id, $type);
-
+            
             if (! $node) {
                 // Try to find the parent node
-                $path       = $this->parsePath($id);
-                $id         = array_pop($path);
+                $path = $this->parsePath($id);
+                $id = array_pop($path);
                 $parentNode = $this->findNodeByPath(implode(static::PATH_SEPARATOR, $path));
-
+                
                 // Create tne new node
                 $node = $this->tree->getNode($id, $type);
                 $node->setEl($factory($node));
-
+                
                 if ($parentNode) {
                     $parentNode->addChild($node, Node::INSERT_MODE_AFTER);
                 }
             }
-
+            
             return $node->getEl();
         }
-
+        
         return parent::findOrCreateChild($id, $type, $factory);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -353,7 +354,7 @@ class Flex extends AbstractForm
         $this->meta = [];
         parent::clear();
     }
-
+    
     /**
      * Internal helper that will resolve the given path by recursively looking up a node
      *
@@ -364,17 +365,17 @@ class Flex extends AbstractForm
      */
     protected function findNodeByPath($id, ?int $type = null): ?Node
     {
-        $tree  = $this->tree;
-        $path  = $this->parsePath($id);
+        $tree = $this->tree;
+        $path = $this->parsePath($id);
         $lastK = count($path) - 1;
-        $node  = null;
+        $node = null;
         foreach ($path as $k => $subId) {
             $node = $tree->getNode($subId, $lastK === $k ? $type : null);
         }
-
+        
         return $node;
     }
-
+    
     /**
      * Internal helper which takes a path and unifies it into an array
      *
@@ -389,14 +390,14 @@ class Flex extends AbstractForm
         if (is_string($path)) {
             $path = Arrays::parsePath($path, static::PATH_SEPARATOR);
         }
-
+        
         if (! is_array($path) || empty($path)) {
             throw new InvalidPathException('Invalid path given! ' . json_encode($path));
         }
-
+        
         return $path;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -404,6 +405,6 @@ class Flex extends AbstractForm
     {
         return FlexTab::class;
     }
-
-
+    
+    
 }

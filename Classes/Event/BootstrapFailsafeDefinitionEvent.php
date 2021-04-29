@@ -37,7 +37,7 @@ class BootstrapFailsafeDefinitionEvent
      * @var bool
      */
     protected $failsafe = false;
-
+    
     /**
      * BootstrapFailsafeDefinition constructor.
      *
@@ -47,7 +47,7 @@ class BootstrapFailsafeDefinitionEvent
     {
         $this->failsafe = $failsafe;
     }
-
+    
     /**
      * Returns true if the bootstrap is running in failsafe mode
      *

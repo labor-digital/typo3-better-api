@@ -29,14 +29,14 @@ trait FormFilterEventTrait
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The data to be filtered
      *
      * @var array
      */
     protected $data;
-
+    
     /**
      * BackendFormFilterEvent constructor.
      *
@@ -46,9 +46,9 @@ trait FormFilterEventTrait
     public function __construct(string $tableName, array $data)
     {
         $this->tableName = $tableName;
-        $this->data      = $data;
+        $this->data = $data;
     }
-
+    
     /**
      * Returns the name of the table that the current form applies to
      *
@@ -58,8 +58,8 @@ trait FormFilterEventTrait
     {
         return $this->tableName;
     }
-
-
+    
+    
     /**
      * Returns the data to be filtered
      *
@@ -69,7 +69,7 @@ trait FormFilterEventTrait
     {
         return $this->data;
     }
-
+    
     /**
      * Updates the data to be filtered
      *
@@ -80,7 +80,7 @@ trait FormFilterEventTrait
     public function setData(array $data)
     {
         $this->data = $data;
-
+        
         return $this;
     }
 }

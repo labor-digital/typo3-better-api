@@ -52,22 +52,22 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class ClassOverrideStage implements BootStageInterface
 {
-
+    
     public const OVERRIDE_MAP
         = [
-            BackendUtility::class      => ExtendedBackendUtility::class,
-            Bootstrap::class           => ExtendedBootstrap::class,
-            ContainerBuilder::class    => ExtendedContainerBuilder::class,
-            CacheManager::class        => ExtendedCacheManager::class,
-            TypoScriptParser::class    => ExtendedTypoScriptParser::class,
+            BackendUtility::class => ExtendedBackendUtility::class,
+            Bootstrap::class => ExtendedBootstrap::class,
+            ContainerBuilder::class => ExtendedContainerBuilder::class,
+            CacheManager::class => ExtendedCacheManager::class,
+            TypoScriptParser::class => ExtendedTypoScriptParser::class,
             LocalizationUtility::class => ExtendedLocalizationUtility::class,
-            LanguageService::class     => ExtendedLanguageService::class,
-            SiteConfiguration::class   => ExtendedSiteConfiguration::class,
-            NodeFactory::class         => ExtendedNodeFactory::class,
-            DataHandler::class         => ExtendedDataHandler::class,
-            ReferenceIndex::class      => ExtendedReferenceIndex::class,
+            LanguageService::class => ExtendedLanguageService::class,
+            SiteConfiguration::class => ExtendedSiteConfiguration::class,
+            NodeFactory::class => ExtendedNodeFactory::class,
+            DataHandler::class => ExtendedDataHandler::class,
+            ReferenceIndex::class => ExtendedReferenceIndex::class,
         ];
-
+    
     /**
      * @inheritDoc
      */
@@ -76,7 +76,7 @@ class ClassOverrideStage implements BootStageInterface
         ClassOverrideGenerator::init($kernel->getClassLoader(), $kernel->getFs()->getMount('ClassOverrides'));
         $eventBus->addListener(KernelBootEvent::class, [$this, 'onKernelBoot']);
     }
-
+    
     /**
      * Register all class overrides
      */
@@ -89,5 +89,5 @@ class ClassOverrideStage implements BootStageInterface
             ClassOverrideGenerator::registerOverride($target, $override);
         }
     }
-
+    
 }

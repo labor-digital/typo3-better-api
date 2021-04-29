@@ -28,12 +28,12 @@ use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
 interface ExtConfigApplierInterface extends LazyEventSubscriberInterface
 {
-
+    
     /**
      * Injects the configuration state into the applier instance
      *
      * @param   \Neunerlei\Configuration\State\ConfigState  $state
      */
     public function injectState(ConfigState $state): void;
-
+    
 }

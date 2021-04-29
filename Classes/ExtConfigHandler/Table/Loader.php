@@ -37,39 +37,40 @@ class Loader implements PublicServiceInterface
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
     use DelayedConfigExecutionTrait;
-
+    
     /**
      * The state of the loaded tca types to prevent double loading in the install tool
      *
      * @var array
      */
     protected $loaded = [];
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper
      */
     protected $tableDumper;
-
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
      */
     protected $configContext;
-
+    
     public function __construct(
         TableFactory $tableFactory,
         Dumper $tableDumper,
         ExtConfigContext $configContext
-    ) {
-        $this->tableFactory  = $tableFactory;
-        $this->tableDumper   = $tableDumper;
+    )
+    {
+        $this->tableFactory = $tableFactory;
+        $this->tableDumper = $tableDumper;
         $this->configContext = $configContext;
     }
-
+    
     /**
      * Executes the TCA extension for the normal table definitions
      */
@@ -77,7 +78,7 @@ class Loader implements PublicServiceInterface
     {
         $this->executeLoad('default');
     }
-
+    
     /**
      * Executes the TCA extension for the table override definitions
      */
@@ -85,7 +86,7 @@ class Loader implements PublicServiceInterface
     {
         $this->executeLoad('override');
     }
-
+    
     /**
      * Internal handler to load the registered set of table configuration classes
      * and inject the configuration result into the "TCA" array
@@ -99,10 +100,10 @@ class Loader implements PublicServiceInterface
             foreach ($this->loaded[$definitionKey] as $tableName => $tca) {
                 $GLOBALS['TCA'][$tableName] = $tca;
             }
-
+            
             return;
         }
-
+        
         $table = null;
         $this->runDelayedConfig(
             $this->getTypoContext()->config()->getConfigState(),
@@ -116,9 +117,9 @@ class Loader implements PublicServiceInterface
                     $table = $this->tableFactory->create($tableName, $this->configContext);
                     $this->tableFactory->initialize($table);
                 }
-
+                
                 call_user_func([$className, 'configureTable'], $table, $this->configContext);
-
+                
                 array_map(
                     static function (TcaTableType $type) {
                         $type->ignoreFieldIdIssues(false);

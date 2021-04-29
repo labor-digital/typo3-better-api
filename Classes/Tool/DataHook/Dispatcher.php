@@ -34,17 +34,17 @@ use Neunerlei\Arrays\Arrays;
 class Dispatcher implements PublicServiceInterface
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DefinitionResolver
      */
     protected $definitionResolver;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * Dispatcher constructor.
      *
@@ -53,9 +53,9 @@ class Dispatcher implements PublicServiceInterface
     public function __construct(DefinitionResolver $definitionResolver, TypoEventBus $eventBus)
     {
         $this->definitionResolver = $definitionResolver;
-        $this->eventBus           = $eventBus;
+        $this->eventBus = $eventBus;
     }
-
+    
     /**
      * Dispatches a data hook event by executing all registered handlers for the given $type that can be
      * found in the TCA/flexform configuration of the table.
@@ -76,11 +76,11 @@ class Dispatcher implements PublicServiceInterface
     public function dispatch(string $type, string $tableName, array $data, object $event): DataHookDefinition
     {
         $definition = $this->definitionResolver->resolve($type, $tableName, $data);
-
+        
         if (empty($definition->handlers)) {
             return $definition;
         }
-
+        
         foreach ($definition->handlers as $handlerDefinition) {
             // Create the context object
             $contextClass = $handlerDefinition->options['contextClass'] ?? DataHookContext::class;
@@ -91,28 +91,28 @@ class Dispatcher implements PublicServiceInterface
             }
             /** @var \LaborDigital\T3BA\Tool\DataHook\DataHookContext $context */
             $context = $this->makeInstance($contextClass, [$definition, $handlerDefinition, $event]);
-
+            
             // Execute the handler
             call_user_func($handlerDefinition->handler, $context);
-
+            
             $this->eventBus->dispatch(new PostProcessorEvent($context));
-
+            
             // Check if some changes were applied
             if ($context->isDirty()) {
                 if ($handlerDefinition->appliesToTable) {
-                    $definition->data          = $context->getData();
+                    $definition->data = $context->getData();
                     $definition->dirtyFields[] = '@table';
                 } else {
-                    $definition->data          = Arrays::setPath($definition->data, $handlerDefinition->path,
+                    $definition->data = Arrays::setPath($definition->data, $handlerDefinition->path,
                         $context->getData());
                     $definition->dirtyFields[] = reset($handlerDefinition->path);
                 }
             }
         }
-
+        
         $definition->dirtyFields = array_unique($definition->dirtyFields);
-
+        
         return $definition;
     }
-
+    
 }

@@ -27,21 +27,21 @@ use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
 class EnvFacet implements FacetInterface
 {
-
+    
     /**
      * Stores the current typo3 version as integer
      *
      * @var int
      */
     protected $versionInt;
-
+    
     /**
      * Stores the version comparisons to save repetitive overhead
      *
      * @var array
      */
     protected $versionComparisons = [];
-
+    
     /**
      * Returns typo3's application context object
      *
@@ -51,7 +51,7 @@ class EnvFacet implements FacetInterface
     {
         return Environment::getContext();
     }
-
+    
     /**
      * Returns true if the current typo3 version is LTS 9.x
      *
@@ -61,7 +61,7 @@ class EnvFacet implements FacetInterface
     {
         return $this->isVersion(9);
     }
-
+    
     /**
      * Returns true if the current typo3 version is LTS 10.x
      *
@@ -71,7 +71,7 @@ class EnvFacet implements FacetInterface
     {
         return $this->isVersion(10);
     }
-
+    
     /**
      * Can be used to compare a given version with the current typo3 version
      *
@@ -93,18 +93,18 @@ class EnvFacet implements FacetInterface
         if (isset($this->versionComparisons[$key])) {
             return $this->versionComparisons[$key];
         }
-
+        
         // Get the integer version of the typo3 version
         if (empty($this->versionInt)) {
             $this->versionInt = VersionNumberUtility::convertVersionNumberToInteger($this->getVersion());
         }
         $versionInt = $this->versionInt;
-
+        
         // Check if we have to use fuzzy compare
         if (strlen($version . '') < 3) {
             $versionInt = floor($versionInt / 1000000) * 1000000;
         }
-
+        
         // Compare the given version with the current version
         $givenInt = VersionNumberUtility::convertVersionNumberToInteger($version);
         switch ($operator) {
@@ -129,11 +129,11 @@ class EnvFacet implements FacetInterface
             default:
                 throw new T3BAException("Invalid operator \"$operator\" given! Only =, !=, <, >, <= or >= are supported!");
         }
-
+        
         // Done
         return $this->versionComparisons[$key];
     }
-
+    
     /**
      * Returns the current typo3 version as a semver string.
      *
@@ -145,7 +145,7 @@ class EnvFacet implements FacetInterface
     {
         return $exact ? VersionNumberUtility::getCurrentTypo3Version() : VersionNumberUtility::getNumericTypo3Version();
     }
-
+    
     /**
      * Returns true if the current call was performed in the typo3 backend
      *
@@ -155,7 +155,7 @@ class EnvFacet implements FacetInterface
     {
         return (defined('TYPO3_MODE') && TYPO3_MODE === 'BE') ?: false;
     }
-
+    
     /**
      * Returns true if the current call was performed in the typo3 frontend
      *
@@ -165,7 +165,7 @@ class EnvFacet implements FacetInterface
     {
         return (defined('TYPO3_MODE') && TYPO3_MODE === 'FE') ?: false;
     }
-
+    
     /**
      * Returns true if the current call was performed in the typo3 cli handler
      *
@@ -175,7 +175,7 @@ class EnvFacet implements FacetInterface
     {
         return Environment::isCli() || PHP_SAPI === 'cli';
     }
-
+    
     /**
      * Returns true if the current call was performed in the typo3 install tool
      *
@@ -186,7 +186,7 @@ class EnvFacet implements FacetInterface
         return TYPO3_REQUESTTYPE === TYPO3_REQUESTTYPE_INSTALL
                || TYPO3_REQUESTTYPE === (TYPO3_REQUESTTYPE_INSTALL + TYPO3_REQUESTTYPE_BE);
     }
-
+    
     /**
      * Returns true if debug messages in the frontend should be shown
      *
@@ -196,7 +196,7 @@ class EnvFacet implements FacetInterface
     {
         return ! empty($GLOBALS['TYPO3_CONF_VARS']['FE']['debug']);
     }
-
+    
     /**
      * Returns true if debug messages in the backend should be shown
      *
@@ -206,7 +206,7 @@ class EnvFacet implements FacetInterface
     {
         return ! empty($GLOBALS['TYPO3_CONF_VARS']['BE']['debug']);
     }
-
+    
     /**
      * Returns true if the current instance is running in development context
      *
@@ -216,7 +216,7 @@ class EnvFacet implements FacetInterface
     {
         return Environment::getContext()->isDevelopment();
     }
-
+    
     /**
      * Returns true if the current instance is running in production OR staging context
      *
@@ -229,7 +229,7 @@ class EnvFacet implements FacetInterface
     {
         return $includeStaging ? ! $this->isDev() : Environment::getContext()->isProduction();
     }
-
+    
     /**
      * Returns true if the current instance is running in staging context
      *

@@ -34,18 +34,18 @@ class ExtensionRowRepository implements PublicServiceInterface
      * @var \LaborDigital\T3BA\Tool\Database\DbService
      */
     protected $dbService;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
      */
     protected $dataHandlerService;
-
+    
     public function __construct(DbService $dbService, DataHandlerService $dataHandlerService)
     {
-        $this->dbService          = $dbService;
+        $this->dbService = $dbService;
         $this->dataHandlerService = $dataHandlerService;
     }
-
+    
     /**
      * Retrieves the raw row of a extension table.
      *
@@ -62,15 +62,15 @@ class ExtensionRowRepository implements PublicServiceInterface
         if (! ContentTypeUtil::hasExtensionTable($cType)) {
             return [];
         }
-
+        
         $row = $this->dbService->getQuery(ContentTypeUtil::getTableMap()[$cType])
                                ->withLanguage(false)
                                ->withWhere($treatIdAsChildId ? ['uid' => $uid] : ['ct_parent' => $uid])
                                ->getFirst();
-
+        
         return is_array($row) ? $row : [];
     }
-
+    
     /**
      * Saves the content of a single extension table row into the database
      * The uid will be automatically resolve,d but can be overwritten using $data['uid' => ...].
@@ -84,16 +84,16 @@ class ExtensionRowRepository implements PublicServiceInterface
     public function saveChildRow(string $cType, int $parentUid, array $data): int
     {
         [$tableName, $uid] = $this->resolveTableNameAndUid($cType, $parentUid);
-
+        
         if (! $data['uid'] && $uid !== null) {
             $data['uid'] = $uid;
         }
-
+        
         $data['ct_parent'] = $parentUid;
-
+        
         return $this->dataHandlerService->getRecordDataHandler($tableName)->save($data);
     }
-
+    
     /**
      * Restores a previously deleted extension row
      *
@@ -104,14 +104,14 @@ class ExtensionRowRepository implements PublicServiceInterface
     {
         [$tableName] = $this->resolveTableNameAndUid($cType, $parentUid);
         $parentRow = $this->dataHandlerService->getEmptyDataHandler()->recordInfo('tt_content', $parentUid, 'ct_child');
-
+        
         if (! is_array($parentRow) || ! is_numeric($parentRow['ct_child'])) {
             return;
         }
-
+        
         $this->dataHandlerService->getRecordDataHandler($tableName)->restore($parentRow['ct_child']);
     }
-
+    
     /**
      * Deletes a extension row
      *
@@ -121,14 +121,14 @@ class ExtensionRowRepository implements PublicServiceInterface
     public function deleteChildRow(string $cType, int $parentUid): void
     {
         [$tableName, $uid] = $this->resolveTableNameAndUid($cType, $parentUid);
-
+        
         if ($uid === null) {
             return;
         }
-
+        
         $this->dataHandlerService->getRecordDataHandler($tableName)->delete($uid);
     }
-
+    
     /**
      * Internal helper to retrieve both the table name and extension row uid based on the $cType and $parentUid
      * The result is an array where the first index is the name of the table, and the uid provides the second.
@@ -141,19 +141,19 @@ class ExtensionRowRepository implements PublicServiceInterface
      */
     protected function resolveTableNameAndUid(string $cType, int $parentUid): array
     {
-        $tableMap  = ContentTypeUtil::getTableMap();
+        $tableMap = ContentTypeUtil::getTableMap();
         $tableName = $tableMap[$cType] ?? null;
         if (! $tableName) {
             throw new UnknownChildTableException(
                 'Could not save the child row for cType: ' . $cType . ' on tt_content '
                 . $parentUid . ', because there is no mapped table for that');
         }
-
+        
         $row = $this->dbService->getQuery($tableName)
                                ->withLanguage(false)
                                ->withWhere(['ct_parent' => $parentUid])
                                ->getFirst();
-
+        
         return [
             $tableName,
             is_array($row) && is_numeric($row['uid']) ? $row['uid'] : null,

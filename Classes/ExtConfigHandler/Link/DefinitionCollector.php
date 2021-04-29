@@ -33,14 +33,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigContextAwareInterface
 {
     use ExtConfigContextAwareTrait;
-
+    
     /**
      * The list of registered set definitions
      *
      * @var Definition[]
      */
     protected $definitions = [];
-
+    
     /**
      * Returns a definition object to configure the link attributes with
      *
@@ -56,10 +56,10 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
         if (isset($this->definitions[$key])) {
             return $this->definitions[$key];
         }
-
+        
         return $this->definitions[$key] = GeneralUtility::makeInstance(Definition::class);
     }
-
+    
     /**
      * Can be used to check if a set exists or not
      *
@@ -71,7 +71,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
     {
         return isset($this->definitions[$key]);
     }
-
+    
     /**
      * Can be used to remove a set completely.
      * Becomes useful if you want to completely change an existing set of an another extension
@@ -83,22 +83,22 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
     public function removeDefinition(string $key): self
     {
         unset($this->definitions[$key]);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function finish(ConfigState $state): void
     {
         $state->set('definitions', array_map('serialize', $this->definitions));
-
+        
         $state->useNamespace(null, function (ConfigState $state) {
             $state->attachToString('typo.typoScript.pageTsConfig', $this->generateLinkBrowserTsConfig(), true);
         });
     }
-
+    
     /**
      * Builds the link browser ts config entries for the registered definitions
      *
@@ -112,28 +112,28 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
             if ($linkSet->getLinkBrowserConfig() === null) {
                 continue;
             }
-
+            
             $required = $linkSet->getRequiredElements();
             if (count($required) !== 1) {
                 throw new LinkException('You can\'t register the link set: "' . $key
                                         . '" to show up in the link browser, because it MUST have EXACTLY ONE required argument or ONE required fragment part!');
             }
-
-            $config  = $linkSet->getLinkBrowserConfig();
+            
+            $config = $linkSet->getLinkBrowserConfig();
             $options = $config['options'];
             $linkSet->clearLinkBrowserConfig();
-
+            
             $basePid = '';
             if (! empty($options['basePid'])) {
                 $basePid = 'storagePid = ' . $this->context->resolvePids($options['basePid']) . PHP_EOL;
             }
-
+            
             $hidePageTree = '';
             if ((isset($options['hidePageTree']) && $options['hidePageTree'] === true)
                 || in_array('hidePageTree', $options, true)) {
                 $hidePageTree = 'hidePageTree = 1' . PHP_EOL;
             }
-
+            
             $tsConfig[] = 'TCEMAIN.linkHandler.linkSet_' . $key . '{' . PHP_EOL .
                           'handler = ' . $config['handler'] . PHP_EOL .
                           'label = ' . $config['label'] . PHP_EOL .
@@ -144,9 +144,9 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
                           $hidePageTree .
                           '}' . PHP_EOL .
                           '}' . PHP_EOL;
-
+            
         }
-
+        
         return PHP_EOL . implode(PHP_EOL . PHP_EOL, $tsConfig);
     }
 }

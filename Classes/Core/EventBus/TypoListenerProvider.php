@@ -31,28 +31,28 @@ use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 
 class TypoListenerProvider extends ListenerProvider
 {
-
+    
     /**
      * The list of core hook events that have been registered already
      *
      * @var array
      */
     protected $boundCoreHooks = [];
-
+    
     /**
      * The real listener provider we use under the hood
      *
      * @var \Neunerlei\EventBus\Dispatcher\EventBusListenerProvider
      */
     protected $concreteListenerProvider;
-
+    
     /**
      * The container instance to create core hooks
      *
      * @var \Psr\Container\ContainerInterface
      */
     protected $container;
-
+    
     /**
      * TypoListenerProvider constructor.
      */
@@ -61,7 +61,7 @@ class TypoListenerProvider extends ListenerProvider
         parent::__construct(new MiniContainer());
         $this->concreteListenerProvider = new EventBusListenerProvider();
     }
-
+    
     /**
      * Used to inject the PSR service container after it was created
      *
@@ -71,7 +71,7 @@ class TypoListenerProvider extends ListenerProvider
     {
         $this->container = $container;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -79,16 +79,16 @@ class TypoListenerProvider extends ListenerProvider
     {
         $this->listeners[$event][] = [
             'service' => $service,
-            'method'  => $method,
+            'method' => $method,
         ];
-
+        
         $this->registerCoreHookEventIfRequired($event);
-
+        
         $this->concreteListenerProvider->addListener($event, function ($e) use ($service, $method) {
             $this->getCallable($service, $method)($e);
         }, $options);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -96,7 +96,7 @@ class TypoListenerProvider extends ListenerProvider
     {
         return $this->concreteListenerProvider->getListenersForEvent($event);
     }
-
+    
     /**
      * Registers a new listener for a certain event
      *
@@ -112,12 +112,13 @@ class TypoListenerProvider extends ListenerProvider
         string $eventClassName,
         callable $listener,
         array $options = []
-    ): string {
+    ): string
+    {
         $this->registerCoreHookEventIfRequired($eventClassName);
-
+        
         return $this->concreteListenerProvider->addListener($eventClassName, $listener, $options);
     }
-
+    
     /**
      * Internal helper to call the bind method if the given $eventClass
      * implements the core hook event interface
@@ -139,7 +140,7 @@ class TypoListenerProvider extends ListenerProvider
         if (! in_array(CoreHookEventInterface::class, class_implements($eventClass), true)) {
             return;
         }
-
+        
         // Validate the adapter class
         $adapterClass = call_user_func([$eventClass, 'getAdapterClass']);
         if (! class_exists($adapterClass)) {
@@ -160,7 +161,7 @@ class TypoListenerProvider extends ListenerProvider
         if (isset($this->boundCoreHooks[$adapterClass])) {
             return;
         }
-
+        
         // Bind the adapter
         $context = TypoContext::getInstance();
         call_user_func(
@@ -170,6 +171,6 @@ class TypoListenerProvider extends ListenerProvider
         );
         call_user_func([$adapterClass, 'bind']);
         $this->boundCoreHooks[$adapterClass] = true;
-        $this->boundCoreHooks[$eventClass]   = true;
+        $this->boundCoreHooks[$eventClass] = true;
     }
 }

@@ -33,7 +33,7 @@ class TcaBuilderContext
      * @var \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderServices
      */
     protected $commonServices;
-
+    
     /**
      * TcaBuilderContext constructor.
      *
@@ -43,7 +43,7 @@ class TcaBuilderContext
     {
         $this->commonServices = $extConfigContext->getLoaderContext()->getInstance(TcaBuilderServices::class);
     }
-
+    
     /**
      * Returns the ext config context used to run this builder
      *
@@ -53,7 +53,7 @@ class TcaBuilderContext
     {
         return $this->commonServices->extConfigContext;
     }
-
+    
     /**
      * Returns a extended version of the normal CommonServices object which contains
      * additional services specific to the tca builder context
@@ -65,7 +65,7 @@ class TcaBuilderContext
     {
         return $this->commonServices;
     }
-
+    
     /**
      * Shorthand alias of: getCommonServices()
      * Returns a extended version of the normal CommonServices object which contains
@@ -78,7 +78,7 @@ class TcaBuilderContext
     {
         return $this->commonServices;
     }
-
+    
     /**
      * Helper which is used to unfold the "..." prefixed table names to a ext base, default table name
      *
@@ -92,7 +92,7 @@ class TcaBuilderContext
         if (! is_string($tableName) || strpos(trim($tableName), '...') !== 0) {
             return NamingUtil::resolveTableName($tableName);
         }
-
+        
         return implode('_', array_filter([
             'tx',
             NamingUtil::flattenExtKey($this->getExtConfigContext()->getExtKey()),

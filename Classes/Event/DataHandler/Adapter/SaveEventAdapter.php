@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Event\DataHandler\Adapter;
 
 
+use ArgumentCountError;
 use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 use LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent;
 use LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent;
@@ -41,14 +42,14 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][static::class]
             = static::class;
     }
-
+    
     public function processDatamap_preProcessFieldArray(array &$fieldArray, $table, &$id, DataHandler $pObj)
     {
         // Ignore this if only the visibility is toggled >= 8.7.20 ?
         if (array_keys($fieldArray) === ['hidden']) {
             return;
         }
-
+        
         try {
             $this->EventBus()->dispatch(($e = new SaveFilterEvent(
                 $fieldArray,
@@ -57,20 +58,20 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
                 $pObj
             )));
             $fieldArray = $e->getRow();
-            $id         = $e->getId();
+            $id = $e->getId();
         } catch (Throwable $e) {
             $this->handleErrorMessages($e, $pObj);
             $fieldArray = [];
         }
     }
-
+    
     public function processDatamap_postProcessFieldArray($status, $table, &$id, &$fieldArray, DataHandler $pObj)
     {
         // Ignore this if only the visibility is toggled >= 8.7.20 ?
         if (array_keys($fieldArray) === ['hidden']) {
             return;
         }
-
+        
         try {
             $this->EventBus()->dispatch(($e = new SavePostProcessorEvent(
                 $status,
@@ -79,14 +80,14 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
                 $fieldArray,
                 $pObj
             )));
-            $id         = $e->getId();
+            $id = $e->getId();
             $fieldArray = $e->getRow();
         } catch (Throwable $e) {
             $this->handleErrorMessages($e, $pObj);
             $fieldArray = [];
         }
     }
-
+    
     public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, DataHandler $pObj): void
     {
         try {
@@ -102,7 +103,7 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
             $this->handleErrorMessages($e, $pObj);
         }
     }
-
+    
     /**
      * Converts the given throwable into a readable error message for the backend user
      *
@@ -111,10 +112,10 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
      */
     protected function handleErrorMessages(Throwable $e, DataHandler $pObj)
     {
-        if ($e instanceof ServiceNotFoundException || $e instanceof \ArgumentCountError) {
+        if ($e instanceof ServiceNotFoundException || $e instanceof ArgumentCountError) {
             throw $e;
         }
-
+        
         if ($pObj->enableLogging) {
             $pObj->log('', 0, 0, 0, 1,
                 $this->TypoContext()->di()->getService(Translator::class)->translate($e->getMessage()));

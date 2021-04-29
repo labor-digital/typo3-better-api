@@ -36,14 +36,14 @@ use Neunerlei\PathUtil\Path;
  */
 trait SignaturePluginNameMapTrait
 {
-
+    
     /**
      * The local map of stored values
      *
      * @var array
      */
     protected $signaturePluginNameMap = [];
-
+    
     /**
      * Helper to generate an extbase signature out of a given controller class name
      *
@@ -53,14 +53,14 @@ trait SignaturePluginNameMapTrait
      */
     protected function getSignatureFromClass(string $classBaseName): string
     {
-        $name      = preg_replace('/Controller$/i', '', Path::classBasename($classBaseName));
+        $name = preg_replace('/Controller$/i', '', Path::classBasename($classBaseName));
         $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
-
+        
         $this->signaturePluginNameMap[$signature] = $name;
-
+        
         return $signature;
     }
-
+    
     /**
      * Returns the plugin name for the given signature
      *
@@ -74,7 +74,7 @@ trait SignaturePluginNameMapTrait
             throw new InvalidArgumentException(
                 'There is no plugin name for signature: ' . $signature . ' registered!');
         }
-
+        
         return $this->signaturePluginNameMap[$signature];
     }
 }

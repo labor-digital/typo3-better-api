@@ -28,41 +28,41 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 class VisibilitySimulationPass implements SimulatorPassInterface
 {
     use TypoContextAwareTrait;
-
+    
     /**
      * @inheritDoc
      */
     public function addOptionDefinition(array $options): array
     {
-        $options['includeHiddenPages']    = [
-            'type'    => 'bool',
+        $options['includeHiddenPages'] = [
+            'type' => 'bool',
             'default' => false,
         ];
-        $options['includeHiddenContent']  = [
-            'type'    => 'bool',
+        $options['includeHiddenContent'] = [
+            'type' => 'bool',
             'default' => false,
         ];
         $options['includeDeletedRecords'] = [
-            'type'    => 'bool',
+            'type' => 'bool',
             'default' => false,
         ];
-
+        
         return $options;
-
+        
     }
-
+    
     /**
      * @inheritDoc
      */
     public function requireSimulation(array $options, array &$storage): bool
     {
         $visibilityAspect = $this->getTypoContext()->visibility();
-
+        
         return $options['includeHiddenPages'] !== $visibilityAspect->includeHiddenPages()
                || $options['includeHiddenContent'] !== $visibilityAspect->includeHiddenContent()
                || $options['includeDeletedRecords'] !== $visibilityAspect->includeDeletedRecords();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -70,14 +70,14 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     {
         // Backup the aspect
         $storage['aspect'] = clone $this->getTypoContext()->getRootContext()->getAspect('visibility');
-
+        
         // Update the aspect
         $visibilityAspect = $this->getTypoContext()->visibility();
         $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
         $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
         $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -85,5 +85,5 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     {
         $this->getTypoContext()->getRootContext()->setAspect('visibility', $storage['aspect']);
     }
-
+    
 }

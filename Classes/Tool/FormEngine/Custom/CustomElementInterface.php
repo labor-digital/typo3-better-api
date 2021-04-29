@@ -42,7 +42,7 @@ interface CustomElementInterface
      * @return void
      */
     public static function configureField(AbstractField $field, array $options, TcaBuilderContext $context): void;
-
+    
     /**
      * This method receives the prepared form element context and should render the html that will be displayed in the
      * backend.
@@ -50,7 +50,7 @@ interface CustomElementInterface
      * @return string
      */
     public function render(): string;
-
+    
     /**
      * This is a low-level method that you will probably only use in extreme edge-cases.
      * It will receive the prepared and ready result array, formatted for typo3's form engine.

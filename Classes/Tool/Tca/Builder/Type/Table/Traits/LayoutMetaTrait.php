@@ -22,14 +22,14 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits;
 
 trait LayoutMetaTrait
 {
-
+    
     /**
      * Stores additional information, that were parsed out of the showitem string
      *
      * @var array
      */
     protected $layoutMeta = [];
-
+    
     /**
      * Returns additional information, that were parsed out of the showitem string
      *
@@ -39,7 +39,7 @@ trait LayoutMetaTrait
     {
         return $this->layoutMeta;
     }
-
+    
     /**
      * Sets additional information, that were parsed out of the showitem string
      *
@@ -50,7 +50,7 @@ trait LayoutMetaTrait
     public function setLayoutMeta(array $meta)
     {
         $this->layoutMeta = $meta;
-
+        
         return $this;
     }
 }

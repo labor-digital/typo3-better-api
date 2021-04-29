@@ -36,7 +36,7 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
 class BackendAssetPostProcessorEvent implements CoreHookEventInterface
 {
     use AssetEventTrait;
-
+    
     /**
      * @inheritDoc
      */

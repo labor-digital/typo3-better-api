@@ -33,63 +33,63 @@ class SharedConfig
      * @var array
      */
     public $registrationArgs = [];
-
+    
     /**
      * The list of "configurePlugin" method arguments
      *
      * @var array
      */
     public $configureArgs = [];
-
+    
     /**
      * The list of generated typo script snippets
      *
      * @var array
      */
     public $typoScript = [];
-
+    
     /**
      * The list of generated Ts Config settings for the plugin registration
      *
      * @var array
      */
     public $tsConfig = [];
-
+    
     /**
      * Contains the arguments that have to be used to register the plugin's icon in the icon registry
      *
      * @var array
      */
     public $iconArgs = [];
-
+    
     /**
      * The list of registered backend preview renderers, for both the cTypes and the list_types
      *
      * @var array
      */
     public $backendPreviewHooks = [];
-
+    
     /**
      * The list of all collected data hooks to be executed for the content elements
      *
      * @var array
      */
     public $dataHooks = [];
-
+    
     /**
      * The list of all collected flex form registration arguments for the content elements
      *
      * @var array
      */
     public $flexFormArgs = [];
-
+    
     /**
      * A list of all signatures and their matching variant names
      *
      * @var array
      */
     public $variantMap = [];
-
+    
     /**
      * The generator caches some of the generated configuration that has to be dumped into the state object
      * after all handlers have been processed.
@@ -107,7 +107,7 @@ class SharedConfig
             $state->setAsJson('flexForms', $this->flexFormArgs);
             $state->setAsJson('variants', $this->variantMap);
         });
-
+        
         $state->attachToString('typo.typoScript.pageTsConfig',
             implode(PHP_EOL, $this->tsConfig), true);
         $state->attachToString('typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup',

@@ -40,7 +40,7 @@ class PidViewHelper extends AbstractViewHelper
             true
         );
     }
-
+    
     public function render(): int
     {
         return TypoContext::getInstance()->pid()->get($this->arguments['key']);

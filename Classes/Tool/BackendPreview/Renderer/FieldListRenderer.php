@@ -34,18 +34,18 @@ class FieldListRenderer implements PublicServiceInterface
      * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository
      */
     protected $contentRepository;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldRenderer
      */
     protected $fieldRenderer;
-
+    
     public function __construct(ContentRepository $contentRepository, FieldRenderer $fieldRenderer)
     {
         $this->contentRepository = $contentRepository;
-        $this->fieldRenderer     = $fieldRenderer;
+        $this->fieldRenderer = $fieldRenderer;
     }
-
+    
     /**
      * Renders a list of field values as a HTML table
      *
@@ -61,11 +61,11 @@ class FieldListRenderer implements PublicServiceInterface
             if ($tableName === 'tt_content') {
                 return $this->renderTtContent($row, $fields);
             }
-
+            
             return $this->renderInternal($tableName, $row, $fields);
         });
     }
-
+    
     /**
      * We handle the tt_content table a bit different, in that we also resolve the extension columns
      *
@@ -77,12 +77,12 @@ class FieldListRenderer implements PublicServiceInterface
     protected function renderTtContent(array $row, array $fields): string
     {
         $row = $this->contentRepository->getExtendedRow($row);
-
+        
         return ContentTypeUtil::runWithRemappedTca($row, function () use ($row, $fields) {
             return $this->renderInternal('tt_content', $row, $fields);
         });
     }
-
+    
     /**
      * Actual renderer of the fields of a specific table
      *
@@ -99,22 +99,22 @@ class FieldListRenderer implements PublicServiceInterface
             if (empty($row[$field]) && $row[$field] !== 0) {
                 continue;
             }
-
+            
             $content = $this->fieldRenderer->render($tableName, $field, $row);
-
+            
             if ($content === null) {
                 continue;
             }
-
+            
             $rows[] = $this->renderRow(
                 $this->fieldRenderer->renderLabel($tableName, $field),
                 $content
             );
         }
-
+        
         return $this->renderTable(array_filter($rows));
     }
-
+    
     /**
      * Generates the HTML of a single field row
      *
@@ -127,7 +127,7 @@ class FieldListRenderer implements PublicServiceInterface
     {
         return '<td><strong>' . $this->htmlEncode($label) . ': </strong></td><td>' . $content . '</td>';
     }
-
+    
     /**
      * Generates the outer HTML of the field table, by concatenating the given rows
      *
@@ -140,15 +140,15 @@ class FieldListRenderer implements PublicServiceInterface
         if (empty($rows)) {
             return '';
         }
-
+        
         $class = 'be-preview-table-' . md5(random_bytes(25));
-
+        
         return
             '<style>.' . $class . ' td {padding: 4px 15px 0 0; vertical-align: top;} ' .
             '.' . $class . '{margin-top:10px;}</style>' .
             '<table class="' . $class . '"><tr>' . implode('</tr><tr>', $rows) . '</tr></table>';
     }
-
+    
     /**
      * Helper to encode html special characters
      *

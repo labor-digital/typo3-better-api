@@ -35,35 +35,35 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
  */
 class ListLabelRenderingEvent implements CoreHookEventInterface
 {
-
+    
     /**
      * The name of the table that is currently rendered
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The database row of the record to render the the label for
      *
      * @var array
      */
     protected $row;
-
+    
     /**
      * The title/label to be rendered for the record
      *
      * @var string
      */
     protected $title;
-
+    
     /**
      * Additional options for the label
      *
      * @var array
      */
     protected $options;
-
+    
     /**
      * @inheritDoc
      */
@@ -71,7 +71,7 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     {
         return ListLabelRenderingEventAdapter::class;
     }
-
+    
     /**
      * BackendListLabelFilterEvent constructor.
      *
@@ -83,11 +83,11 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     public function __construct(string $tableName, array $row, string $title, array $options)
     {
         $this->tableName = $tableName;
-        $this->row       = $row;
-        $this->title     = $title;
-        $this->options   = $options;
+        $this->row = $row;
+        $this->title = $title;
+        $this->options = $options;
     }
-
+    
     /**
      * Returns the name of the table that is currently rendered
      *
@@ -97,7 +97,7 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     {
         return $this->tableName;
     }
-
+    
     /**
      * Return the database row of the record to render the the label for
      *
@@ -107,7 +107,7 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     {
         return $this->row;
     }
-
+    
     /**
      * Returns additional options for the label
      *
@@ -117,7 +117,7 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     {
         return $this->options;
     }
-
+    
     /**
      * Returns the title/label to be rendered for the record
      *
@@ -127,7 +127,7 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     {
         return $this->title;
     }
-
+    
     /**
      * Sets the title/label to be rendered for the record
      *
@@ -138,7 +138,7 @@ class ListLabelRenderingEvent implements CoreHookEventInterface
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
+        
         return $this;
     }
 }

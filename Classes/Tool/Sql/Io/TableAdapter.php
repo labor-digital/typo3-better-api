@@ -30,7 +30,7 @@ use Neunerlei\Arrays\Arrays;
 
 class TableAdapter extends Table
 {
-
+    
     /**
      * Helper to add a column instance to an existing table
      *
@@ -41,7 +41,7 @@ class TableAdapter extends Table
     {
         $table->_addColumn($column);
     }
-
+    
     /**
      * Helper to replace a column with the given column on an existing table
      *
@@ -53,7 +53,7 @@ class TableAdapter extends Table
         $table->dropColumn($column->getName());
         $table->_addColumn($column);
     }
-
+    
     /**
      * Merges the whole configuration of the $new table into the $target table object
      *
@@ -68,11 +68,11 @@ class TableAdapter extends Table
             }
             $target->_addColumn($column);
         }
-
+        
         if ($new->hasPrimaryKey()) {
             $target->_primaryKeyName = $new->_primaryKeyName;
         }
-
+        
         foreach ($new->_indexes as $key => $index) {
             if ($target->hasIndex($key)) {
                 $target->dropIndex($key);
@@ -83,14 +83,14 @@ class TableAdapter extends Table
                 // Ignore issues with foreign key indexes
             }
         }
-
+        
         foreach ($new->_fkConstraints as $constraint) {
             $target->_addForeignKeyConstraint($constraint);
         }
-
+        
         $target->_options = Arrays::merge($target->_options, $new->getOptions());
     }
-
+    
     /**
      * Resets the _primaryKeyName property of $table if no "primary" index exists
      *

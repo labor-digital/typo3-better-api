@@ -23,7 +23,7 @@ namespace LaborDigital\T3BA\Event\CoreHookAdapter;
 
 interface CoreHookEventInterface
 {
-
+    
     /**
      * Returns the name of the used adapter class for this event
      *

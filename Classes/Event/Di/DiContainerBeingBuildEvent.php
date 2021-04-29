@@ -42,14 +42,14 @@ class DiContainerBeingBuildEvent
      * @var \Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator
      */
     protected $containerConfigurator;
-
+    
     /**
      * The container builder instance
      *
      * @var \Symfony\Component\DependencyInjection\ContainerBuilder
      */
     protected $containerBuilder;
-
+    
     /**
      * DiContainerBeingBuildEvent constructor.
      *
@@ -59,9 +59,9 @@ class DiContainerBeingBuildEvent
     public function __construct(ContainerConfigurator $container, ContainerBuilder $containerBuilder)
     {
         $this->containerConfigurator = $container;
-        $this->containerBuilder      = $containerBuilder;
+        $this->containerBuilder = $containerBuilder;
     }
-
+    
     /**
      * Returns the container configurator of the class being build
      *
@@ -71,7 +71,7 @@ class DiContainerBeingBuildEvent
     {
         return $this->containerConfigurator;
     }
-
+    
     /**
      * Returns the container builder instance
      *
@@ -81,6 +81,6 @@ class DiContainerBeingBuildEvent
     {
         return $this->containerBuilder;
     }
-
-
+    
+    
 }

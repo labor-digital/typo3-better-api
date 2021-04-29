@@ -27,7 +27,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 
 interface ConfigureTypoScriptInterface
 {
-
+    
     /**
      * Used to add typoScript and tsConfig to your setup
      *
@@ -35,5 +35,5 @@ interface ConfigureTypoScriptInterface
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
      */
     public static function configure(TypoScriptConfigurator $configurator, ExtConfigContext $context): void;
-
+    
 }

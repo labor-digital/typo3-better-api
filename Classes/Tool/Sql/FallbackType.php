@@ -35,7 +35,7 @@ class FallbackType extends TextType
     {
         return parent::getSQLDeclaration($column, $platform);
     }
-
+    
     /**
      * @inheritDoc
      */

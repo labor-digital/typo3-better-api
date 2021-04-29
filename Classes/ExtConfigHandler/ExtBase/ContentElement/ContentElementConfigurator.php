@@ -27,16 +27,16 @@ use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurato
 
 class ContentElementConfigurator extends AbstractElementConfigurator
 {
-
+    
     protected $wizardTab = 'common';
-
+    
     /**
      * The section label of this element when it is rendered in the cType select box
      *
      * @var string
      */
     protected $cTypeSection;
-
+    
     /**
      * Returns the currently set section label of this element when it is rendered in the cType select box.
      *
@@ -46,7 +46,7 @@ class ContentElementConfigurator extends AbstractElementConfigurator
     {
         return (string)$this->cTypeSection;
     }
-
+    
     /**
      * Is used to set the section label of this element when it is rendered in the cType select box.
      * If this is not defined, a label is automatically generated using the extension key
@@ -58,10 +58,10 @@ class ContentElementConfigurator extends AbstractElementConfigurator
     public function setCTypeSection(string $cTypeSection): self
     {
         $this->cTypeSection = $cTypeSection;
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */

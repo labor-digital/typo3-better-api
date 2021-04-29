@@ -42,7 +42,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig
      */
     protected $config;
-
+    
     /**
      * MUST return the type of the configured element using the ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT or
      * ExtensionUtility::PLUGIN_TYPE_PLUGIN constants
@@ -50,7 +50,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * @return string
      */
     abstract protected function getExtensionUtilityType(): string;
-
+    
     /**
      * MUST build the argument array that is passed used to register this element in the TYPO3 api
      *
@@ -65,7 +65,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
         ExtConfigContext $context,
         AbstractElementConfigurator $configurator
     ): void;
-
+    
     /**
      * Must return the value for tt_content_defValues that is used to register this element in the new
      * content element wizard
@@ -75,7 +75,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * @return string
      */
     abstract protected function getCeWizardValues(string $signature): string;
-
+    
     /**
      * MUST inject the preview hooks for this element in the given list
      *
@@ -84,7 +84,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * @param   string  $class
      */
     abstract protected function setPreviewHooks(array &$list, string $signature, string $class): void;
-
+    
     /**
      * MUST return the "CTypeToMatch" argument of ExtensionManagementUtility::addPiFlexFormValue for this element
      *
@@ -93,7 +93,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * @return string
      */
     abstract protected function getFlexFormCType(string $signature): string;
-
+    
     /**
      * Injects the shared config object on which the data is stored
      *
@@ -103,7 +103,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     {
         $this->config = $config;
     }
-
+    
     /**
      * Generates the required configuration to register the plugin defined in the given $configurator
      *
@@ -117,14 +117,14 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
         if (! $this->config instanceof SharedConfig) {
             throw new ExtConfigException('You can\'t execute "generate" before you set a config object');
         }
-
+        
         $this->generateForSingleVariant($configurator, $context, null);
-
+        
         foreach ($configurator->getVariants() as $variantName => $variant) {
             $this->generateForSingleVariant($variant, $context, $variantName);
         }
     }
-
+    
     /**
      * Generates the required configuration for a single plugin variant
      *
@@ -136,7 +136,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context,
         ?string $variantName
-    ): void {
+    ): void
+    {
         $this->registerTemplateDefinition('plugin', $configurator, $context);
         $this->registerTypoScript($configurator);
         $this->registerElementInTypoHooks($configurator, $context);
@@ -144,12 +145,12 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
         $this->registerNewCEWizardTsConfig($configurator, $context);
         $this->registerBackendPreviewAndListLabelRenderer($configurator, $context);
         $this->registerFlexFormConfig($configurator, $context);
-
+        
         $this->config->dataHooks = array_merge($this->config->dataHooks, $configurator->getRegisteredDataHooks());
-
+        
         $this->config->variantMap[$configurator->getSignature()] = $variantName;
     }
-
+    
     /**
      * Registers the required typo script configuration into the ext base templates file
      *
@@ -163,7 +164,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
                                           PHP_EOL . $typoScript;
         }
     }
-
+    
     /**
      * Generates and registers the arguments that are required to register the plugin/content element in the TYPO3 api
      *
@@ -173,18 +174,19 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     protected function registerElementInTypoHooks(
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         $extensionName = NamingUtil::extensionNameFromExtKey($context->getExtKey());
-
+        
         /** @see \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin() */
         $this->config->configureArgs[] = array_values([
-            'extensionName'                 => $extensionName,
-            'pluginName'                    => $configurator->getPluginName(),
-            'controllerActions'             => $configurator->getActions(),
+            'extensionName' => $extensionName,
+            'pluginName' => $configurator->getPluginName(),
+            'controllerActions' => $configurator->getActions(),
             'nonCacheableControllerActions' => $configurator->getNoCacheActions(),
-            'pluginType'                    => $this->getExtensionUtilityType(),
+            'pluginType' => $this->getExtensionUtilityType(),
         ]);
-
+        
         // We simulate a bit of ExtensionUtility::configurePlugin() here,
         // because NamingUtil::pluginNameFromControllerAction relies on the information
         // about plugins to be available in the globals array. To use the method inside the extConfig
@@ -196,14 +198,14 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
             ['plugins'][$configurator->getPluginName()]['controllers'][$controllerClass]
                 = [
                 'className' => $controllerClass,
-                'alias'     => ExtensionUtility::resolveControllerAliasFromControllerClassName($controllerClass),
-                'actions'   => Arrays::makeFromStringList($actions),
+                'alias' => ExtensionUtility::resolveControllerAliasFromControllerClassName($controllerClass),
+                'actions' => Arrays::makeFromStringList($actions),
             ];
         }
-
+        
         $this->setRegistrationArgs($this->config->registrationArgs, $extensionName, $context, $configurator);
     }
-
+    
     /**
      * Generates a new set of arguments that have to be used to register the plugin's icon in the icon registry
      *
@@ -213,15 +215,16 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     protected function registerIconDefinition(
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
-        $iconExtension            = strtolower(pathinfo($configurator->getIcon(), PATHINFO_EXTENSION));
+    ): void
+    {
+        $iconExtension = strtolower(pathinfo($configurator->getIcon(), PATHINFO_EXTENSION));
         $this->config->iconArgs[] = array_values([
-            'identifier'            => $this->makeIconIdentifier($configurator, $context),
+            'identifier' => $this->makeIconIdentifier($configurator, $context),
             'iconProviderClassName' => $iconExtension === 'svg' ? SvgIconProvider::class : BitmapIconProvider::class,
-            'options'               => ['source' => $configurator->getIcon()],
+            'options' => ['source' => $configurator->getIcon()],
         ]);
     }
-
+    
     /**
      * Generates and registers the ts config snippet that is required to register a new content element wizard icon for
      * this plugin
@@ -232,13 +235,14 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     protected function registerNewCEWizardTsConfig(
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         if ($configurator->getWizardTab() === false) {
             return;
         }
-
-        $header                   = ! empty($configurator->getWizardTabLabel()) ? 'header = '
-                                                                                  . $configurator->getWizardTabLabel()
+        
+        $header = ! empty($configurator->getWizardTabLabel()) ? 'header = '
+                                                                . $configurator->getWizardTabLabel()
             : '';
         $this->config->tsConfig[] = 'mod.wizards.newContentElement.wizardItems.' . $configurator->getWizardTab() . ' {
 			' . $header . '
@@ -255,8 +259,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
 			show := addToList(' . $configurator->getSignature() . ')
 		}';
     }
-
-
+    
+    
     /**
      * Registers both the backend preview renderer and the backend list label renderer definitions in the
      * configuration state
@@ -267,11 +271,12 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     protected function registerBackendPreviewAndListLabelRenderer(
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         // Register renderer configuration
         foreach (
             [
-                't3ba.backendPreview.previewRenderers'   => 'getBackendPreviewRenderer',
+                't3ba.backendPreview.previewRenderers' => 'getBackendPreviewRenderer',
                 't3ba.backendPreview.listLabelRenderers' => 'getBackendListLabelRenderer',
             ] as $key => $method
         ) {
@@ -280,14 +285,14 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
                 $context->getState()->attachToArray($key, [$renderer, $configurator->getFieldConstraints()]);
             }
         }
-
+        
         // Register backend preview renderer hook in the tca
         $renderer = $configurator->getBackendPreviewRenderer();
         if (! empty($renderer)) {
             if (! $this->config->backendPreviewHooks['types']) {
                 $this->config->backendPreviewHooks['types'] = [];
             }
-
+            
             $this->setPreviewHooks(
                 $this->config->backendPreviewHooks['types'],
                 $configurator->getSignature(),
@@ -295,7 +300,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
             );
         }
     }
-
+    
     /**
      * Builds and registers the arguments for the flex form definition of content elements and plugins
      *
@@ -305,24 +310,25 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     protected function registerFlexFormConfig(
         AbstractElementConfigurator $configurator,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         if (! $configurator instanceof PluginConfigurator || ! $configurator->hasFlexForm()) {
             return;
         }
-
+        
         $flexFormFile = $context->getTypoContext()->di()->getService(Dumper::class)
                                 ->dumpToFile($configurator->getFlexForm());
-
+        
         $this->config->flexFormArgs[] = [
             'signature' => $configurator->getSignature(),
-            'args'      => array_values([
+            'args' => array_values([
                 'piKeyToMatch' => $configurator->getSignature(),
-                'value'        => 'FILE:' . $flexFormFile,
+                'value' => 'FILE:' . $flexFormFile,
                 'CTypeToMatch' => $this->getFlexFormCType($configurator->getSignature()),
             ]),
         ];
     }
-
+    
     /**
      * Internal helper to create the icon identifier for this plugin
      *
@@ -335,5 +341,5 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     {
         return Inflector::toDashed($context->getExtKey() . '-' . $configurator->getPluginName());
     }
-
+    
 }

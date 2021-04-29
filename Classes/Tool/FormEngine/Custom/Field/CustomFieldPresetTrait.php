@@ -78,20 +78,21 @@ trait CustomFieldPresetTrait
         ?array $options = null,
         ?AbstractField $field = null,
         ?ExtConfigContext $context = null
-    ): void {
+    ): void
+    {
         $options = $options ?? [];
         if ($this instanceof AbstractFieldPreset) {
-            $field   = $field ?? $this->field;
+            $field = $field ?? $this->field;
             $context = $context ?? $this->context;
         }
-
+        
         if (! class_exists($customElementClass)) {
             throw new TcaBuilderException(
                 'Could not configure your field: ' . $field->getId()
                 . ' to use the custom element with class: ' . $customElementClass
                 . '. Because the class does not exist!');
         }
-
+        
         if (! in_array(CustomFieldInterface::class, class_implements($customElementClass), true)) {
             throw new TcaBuilderException(
                 'Could not configure your field: ' . $field->getId()
@@ -99,31 +100,31 @@ trait CustomFieldPresetTrait
                 . '. Because the class does not implement the required '
                 . CustomFieldInterface::class . ' interface!');
         }
-
+        
         $field->setRaw(
             Arrays::merge(
                 $field->getRaw(),
                 [
                     'config' => [
-                        'type'       => 'text',
+                        'type' => 'text',
                         'renderType' => 't3baField',
-                        't3baClass'  => $customElementClass,
-                        't3ba'       => $options,
+                        't3baClass' => $customElementClass,
+                        't3ba' => $options,
                     ],
                 ]
             )
         );
-
+        
         if ($field instanceof TcaField) {
             $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT);
         }
-
+        
         $dataHookOptions = $field->getDataHookOptions();
         $field->setDataHookOptions(array_merge($dataHookOptions,
             ['contextClass' => CustomFieldDataHookContext::class]));
-
+        
         call_user_func([$customElementClass, 'configureField'], $field, $options, $context);
-
+        
         $field->setDataHookOptions($dataHookOptions);
     }
 }

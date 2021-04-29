@@ -35,28 +35,28 @@ use TYPO3\CMS\Core\Package\PackageManager;
  */
 class CreateDiContainerEvent
 {
-
+    
     /**
      * True if a failsafe container gets created
      *
      * @var bool
      */
     protected $failsafe;
-
+    
     /**
      * The instance of the package manager
      *
      * @var \TYPO3\CMS\Core\Package\PackageManager
      */
     protected $packageManager;
-
+    
     /**
      * The container that gets created
      *
      * @var \Psr\Container\ContainerInterface
      */
     protected $container;
-
+    
     /**
      * CreateDiContainerEvent constructor.
      *
@@ -66,11 +66,11 @@ class CreateDiContainerEvent
      */
     public function __construct(bool $failsafe, PackageManager $packageManager, ContainerInterface $container)
     {
-        $this->failsafe       = $failsafe;
+        $this->failsafe = $failsafe;
         $this->packageManager = $packageManager;
-        $this->container      = $container;
+        $this->container = $container;
     }
-
+    
     /**
      * Returns true if a failsafe container gets created
      *
@@ -80,7 +80,7 @@ class CreateDiContainerEvent
     {
         return $this->failsafe;
     }
-
+    
     /**
      * Returns the instance of the package manager
      *
@@ -90,7 +90,7 @@ class CreateDiContainerEvent
     {
         return $this->packageManager;
     }
-
+    
     /**
      * Returns the container that gets created
      *
@@ -100,7 +100,7 @@ class CreateDiContainerEvent
     {
         return $this->container;
     }
-
+    
     /**
      * Allows you to replace the container that gets created
      *
@@ -111,8 +111,8 @@ class CreateDiContainerEvent
     public function setContainer(ContainerInterface $container): CreateDiContainerEvent
     {
         $this->container = $container;
-
+        
         return $this;
     }
-
+    
 }

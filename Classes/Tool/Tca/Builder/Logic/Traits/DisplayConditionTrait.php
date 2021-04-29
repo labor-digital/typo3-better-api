@@ -43,7 +43,7 @@ use Neunerlei\Arrays\Arrays;
 
 trait DisplayConditionTrait
 {
-
+    
     /**
      * Sets the display condition for the current column
      *
@@ -65,16 +65,16 @@ trait DisplayConditionTrait
         if (empty($condition)) {
             return $this;
         }
-
+        
         if (is_array($condition)) {
             $fieldProcessor = static function (array $condition) {
                 if (count($condition) === 3 && Arrays::isSequential($condition)) {
                     $condition = 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
                 }
-
+                
                 return $condition;
             };
-
+            
             if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
                 $condition = [
                     'AND' => array_map($fieldProcessor, $condition),
@@ -82,16 +82,16 @@ trait DisplayConditionTrait
             } else {
                 $condition = $fieldProcessor($condition);
             }
-
+            
         } elseif (! is_string($condition)) {
             throw new TcaBuilderException('Only strings and arrays are allowed as display conditions!');
         }
-
+        
         $this->config['displayCond'] = $condition;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the currently configured display condition, or an empty string if there is none
      *

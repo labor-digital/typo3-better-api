@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Cache\Implementation;
 
 
+use Closure;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 
 /**
@@ -40,26 +41,27 @@ class PageCache extends FrontendCache
     public function getCacheKey($keyArgsOrGenerator, ?bool $withEnvironment = null): string
     {
         $identifier = parent::getCacheKey($keyArgsOrGenerator, $withEnvironment);
-
+        
         return md5($identifier . '.' . $this->getPageUid());
     }
-
+    
     /**
      * @inheritDoc
      */
     protected function wrapGeneratorCall(
-        \Closure $generator,
+        Closure $generator,
         array $options,
         array &$tags,
         ?int &$lifetime,
         bool &$enabled
-    ) {
+    )
+    {
         $tags[] = 'page_' . $this->getPageUid();
-
+        
         return parent::wrapGeneratorCall($generator, $options, $tags, $lifetime, $enabled);
     }
-
-
+    
+    
     /**
      * Returns the page uid
      *

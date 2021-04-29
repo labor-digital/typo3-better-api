@@ -28,12 +28,12 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterface
 {
     use AutomaticAspectGetTrait;
-
+    
     /**
      * @var TypoContext
      */
     protected $context;
-
+    
     /**
      * Inject the typo context instance
      *
@@ -43,7 +43,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         $this->context = $context;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -51,7 +51,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->handleGet($name);
     }
-
+    
     /**
      * Returns the instance of the current frontend object
      *
@@ -61,7 +61,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->context->site()->getCurrent()->getLanguageById($this->getRootLanguageAspect()->getId());
     }
-
+    
     /**
      * Returns the list of all languages the frontend may display
      *
@@ -75,10 +75,10 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
         if ($siteIdentifier !== null) {
             return $this->context->site()->get($siteIdentifier)->getLanguages();
         }
-
+        
         return $this->context->site()->getCurrent()->getLanguages();
     }
-
+    
     /**
      * Returns the two char ISO code that defines the backend language
      *
@@ -94,10 +94,10 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
         } else {
             $isoCode = 'en';
         }
-
+        
         return $isoCode;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -105,7 +105,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->getRootLanguageAspect()->getOverlayType();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -113,7 +113,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->getRootLanguageAspect()->getId();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -121,13 +121,13 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->getRootLanguageAspect()->getContentId();
     }
-
-
+    
+    
     public function getFallbackChain(): array
     {
         return $this->getRootLanguageAspect()->getFallbackChain();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -135,7 +135,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->getRootLanguageAspect()->doOverlays();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -143,7 +143,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->getRootLanguageAspect()->getLegacyLanguageMode();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -151,8 +151,8 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     {
         return $this->getRootLanguageAspect()->getLegacyOverlayType();
     }
-
-
+    
+    
     /**
      * Returns the root context's language aspect
      *

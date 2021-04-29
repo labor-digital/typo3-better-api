@@ -32,12 +32,12 @@ class TcaTraverser extends AbstractTraverser
      * @var \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\FlexFormTraverser
      */
     protected $flexFormTraverser;
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * TcaTraverser constructor.
      *
@@ -46,9 +46,9 @@ class TcaTraverser extends AbstractTraverser
     public function __construct(FlexFormTraverser $flexFormTraverser, TypoEventBus $eventBus)
     {
         $this->flexFormTraverser = $flexFormTraverser;
-        $this->eventBus          = $eventBus;
+        $this->eventBus = $eventBus;
     }
-
+    
     /**
      * Traverses the tca in order to find the registered handler definitions
      */
@@ -56,17 +56,17 @@ class TcaTraverser extends AbstractTraverser
     {
         // Register data hooks on the table
         $this->registerHandlerDefinitions($this->definition->tableName, $this->definition->tca);
-
+        
         // Register data hooks on the types and fields
         $this->traverseTypes();
         $this->traverseFields();
-
+        
         // Allow externals
         $this->eventBus->dispatch(new CustomDataHookTraverserEvent($this->definition, function () {
             $this->registerHandlerDefinitions(...func_get_args());
         }));
     }
-
+    
     /**
      * Traverses the type array of a TCA to find possible data hooks
      */
@@ -78,7 +78,7 @@ class TcaTraverser extends AbstractTraverser
             }
         }
     }
-
+    
     /**
      * Iterates the TCA columns for all fields inside data to find the registered handler definitions
      *
@@ -92,9 +92,9 @@ class TcaTraverser extends AbstractTraverser
             if (! is_array($columns[$fieldName])) {
                 continue;
             }
-
+            
             $this->registerHandlerDefinitions($fieldName, $columns[$fieldName], [$fieldName]);
-
+            
             // Handle flex form fields
             if (isset($columns[$fieldName]['config']['type']) && $columns[$fieldName]['config']['type'] === 'flex') {
                 $this->flexFormTraverser->initialize($this->definition, [$fieldName])->traverse();

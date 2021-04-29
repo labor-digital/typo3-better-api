@@ -31,19 +31,19 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 class DynamicTypoScriptRegistry implements SingletonInterface
 {
-
+    
     /**
      * @var \LaborDigital\T3BA\Core\VarFs\VarFs
      */
     protected $fs;
-
+    
     /**
      * The contents that have been collected
      *
      * @var array
      */
     protected $contents = [];
-
+    
     /**
      * DynamicTypoScriptRegistry constructor.
      *
@@ -52,10 +52,10 @@ class DynamicTypoScriptRegistry implements SingletonInterface
      */
     public function __construct(ConfigState $configState, VarFs $fs)
     {
-        $this->fs       = $fs->getMount('DynamicTypoScript');
+        $this->fs = $fs->getMount('DynamicTypoScript');
         $this->contents = (array)$configState->get('typo.typoScript.dynamicTypoScript', []);
     }
-
+    
     /**
      * Adds a new snippet of dynamic typo script to the registry.
      * Dynamic typoScript can be included into virtually any typoScript or tsConfig file using
@@ -78,7 +78,7 @@ class DynamicTypoScriptRegistry implements SingletonInterface
         if (! isset($this->contents[$key])) {
             $this->contents[$key] = '';
         }
-
+        
         $this->contents[$key] .= '
 [GLOBAL]
 #############################################
@@ -86,10 +86,10 @@ class DynamicTypoScriptRegistry implements SingletonInterface
 #############################################
 [GLOBAL]
 ';
-
+        
         return $this;
     }
-
+    
     /**
      * Returns all collected contents for a definition key.
      * It will return a speaking comment if there were no contents for this key given
@@ -110,10 +110,10 @@ class DynamicTypoScriptRegistry implements SingletonInterface
 [GLOBAL]
 ';
         }
-
+        
         return $this->contents[$key];
     }
-
+    
     /**
      * Dumps the typoScript definition into a file on the temp fs
      * and returns the file information object for it
@@ -124,12 +124,12 @@ class DynamicTypoScriptRegistry implements SingletonInterface
      */
     public function getFile(string $key): SplFileInfo
     {
-        $content  = $this->getContents($key);
+        $content = $this->getContents($key);
         $realName = substr(Inflector::toFile($key), 0, 50) . '-' . md5($key . $content) . '.typoscript';
         if (! $this->fs->hasFile($realName)) {
             $this->fs->setFileContent($realName, $content);
         }
-
+        
         return $this->fs->getFile($realName);
     }
 }

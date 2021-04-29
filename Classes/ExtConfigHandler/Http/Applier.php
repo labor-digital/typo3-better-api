@@ -37,7 +37,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $subscription->subscribe(MiddlewareRegistrationEvent::class, 'onMiddlewareRegistration');
     }
-
+    
     /**
      * Inject our middleware configuration into the TYPO3 configuration option
      *
@@ -46,9 +46,9 @@ class Applier extends AbstractExtConfigApplier
     public function onMiddlewareRegistration(MiddlewareRegistrationEvent $event): void
     {
         $config = $this->state->get('typo.middleware', []);
-
+        
         $middlewares = $event->getMiddlewares();
-
+        
         if (! empty($config['list'])) {
             foreach (Arrays::makeFromJson($config['list']) as $stack => $list) {
                 foreach ($list as $identifier => $middleware) {
@@ -56,7 +56,7 @@ class Applier extends AbstractExtConfigApplier
                 }
             }
         }
-
+        
         if (! empty($config['disabled'])) {
             foreach (Arrays::makeFromJson($config['disabled']) as $stack => $list) {
                 foreach ($list as $identifier => $foo) {
@@ -64,8 +64,8 @@ class Applier extends AbstractExtConfigApplier
                 }
             }
         }
-
+        
         $event->setMiddlewares($middlewares);
     }
-
+    
 }

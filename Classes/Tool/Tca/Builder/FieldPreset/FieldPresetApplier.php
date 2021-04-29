@@ -39,24 +39,24 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use TypoContextAwareTrait;
     use LocallyCachedStatePropertyTrait;
-
+    
     /**
      * @var TcaBuilderContext
      */
     protected $context;
-
+    
     /**
      * @var AbstractField
      */
     protected $field;
-
+    
     /**
      * The list of presets that have been configured
      *
      * @var array
      */
     protected $presets = [];
-
+    
     /**
      * TYPO3 container hook to be called when the object was created
      *
@@ -68,7 +68,7 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
         $this->registerCachedProperty('presets', 'tca.fieldPresets',
             $this->getTypoContext()->config()->getConfigState());
     }
-
+    
     /**
      * Called when a field executed the "applyPreset" to set the context for the preset to be applied
      *
@@ -82,12 +82,12 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
      */
     public function configureField(AbstractField $field, TcaBuilderContext $context): self
     {
-        $this->field   = $field;
+        $this->field = $field;
         $this->context = $context;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns true if a certain preset exists, false if not
      *
@@ -99,7 +99,7 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
     {
         return isset($this->presets[$key]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -108,16 +108,16 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
         if (! $this->field || ! $this->context) {
             throw new TcaBuilderException('You can\'t apply a preset without configuring a field beforehand!');
         }
-
+        
         if (! $this->hasPreset($name)) {
             $this->logger->error('Field preset applier failed to apply a preset with name: ' . $name
                                  . ' for field: ' . $this->field->getId() . ' because the preset was not registered!');
-
+            
             return $this;
         }
-
+        
         $definition = $this->presets[$name] ?? null;
-
+        
         /** @var \LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface $i */
         if (! $this->getContainer()->has($definition[0])) {
             dbge('missing', $definition[0], $this->getContainer());
@@ -125,11 +125,11 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
         $i = $this->getService($definition[0]);
         $i->setContext($this->context);
         $i->setField($this->field);
-
+        
         call_user_func_array([$i, $definition[1]], $arguments);
-
+        
         return $this->field;
     }
-
-
+    
+    
 }

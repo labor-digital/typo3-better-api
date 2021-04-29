@@ -41,7 +41,7 @@ class ExtConfigLoader extends PhpFileLoader
         $this->setCurrentDir($path);
         $this->container->fileExists($path);
         $hookExtensionServicesPhp = dirname(__DIR__, 5) . '/HookExtension/T3BA_hook/Configuration/Services.php';
-
+        
         try {
             $callback(
                 new ContainerConfigurator($this->container, $this, $this->instanceof, $path, $hookExtensionServicesPhp),
@@ -51,8 +51,8 @@ class ExtConfigLoader extends PhpFileLoader
             $this->registerAliasesForSinglyImplementedInterfaces();
         }
     }
-
-
+    
+    
     /**
      * @inheritDoc
      */
@@ -60,5 +60,5 @@ class ExtConfigLoader extends PhpFileLoader
     {
         return $resource instanceof Closure;
     }
-
+    
 }

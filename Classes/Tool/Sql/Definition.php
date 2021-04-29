@@ -33,26 +33,26 @@ class Definition
      * @var \Doctrine\DBAL\Schema\Table[]
      */
     public $tables = [];
-
+    
     /**
      * The list of tables that have been created by the sql registry
      *
      * @var \Doctrine\DBAL\Schema\Table[][]
      */
     public $newTableNames = [];
-
+    
     /**
      * A list of loaded subtypes (table-clones) for all loaded types
      *
      * @var \Doctrine\DBAL\Schema\Table[]
      */
     public $types = [];
-
+    
     public function __construct(array $tables)
     {
         $this->tables = $tables;
     }
-
+    
     /**
      * Returns true if the given table is considered "new"
      *
@@ -64,7 +64,7 @@ class Definition
     {
         return in_array($table->getName(), $this->newTableNames, true);
     }
-
+    
     /**
      * Returns true if the given table should be dumped into an sql string
      *

@@ -31,14 +31,14 @@ use ReflectionMethod;
 class ListGenerator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
+    
     /**
      * The list of presets and their
      *
      * @var array
      */
     protected $presets = [];
-
+    
     /**
      * Generates the list of preset methods/names and adds them to the list of all registered presets
      *
@@ -56,14 +56,14 @@ class ListGenerator implements LoggerAwareInterface
             if ($method->getDeclaringClass()->getName() !== $class) {
                 continue;
             }
-
+            
             // Ignore all methods that don't start with "apply"
             $name = $method->getName();
             if (strpos($name, 'apply') !== 0) {
                 continue;
             }
             $name = lcfirst(substr($name, 5));
-
+            
             // Avoid overlap
             if (! $allowOverride && isset($this->presets[$name])) {
                 $this->logger->error(
@@ -74,11 +74,11 @@ class ListGenerator implements LoggerAwareInterface
                 );
                 continue;
             }
-
+            
             $this->presets[$name] = [$ref->getName(), $method->getName()];
         }
     }
-
+    
     /**
      * Returns the list of all registered presets with their defining class names
      *
@@ -88,5 +88,5 @@ class ListGenerator implements LoggerAwareInterface
     {
         return $this->presets;
     }
-
+    
 }

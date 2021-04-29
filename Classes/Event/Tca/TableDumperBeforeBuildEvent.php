@@ -32,14 +32,14 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  */
 class TableDumperBeforeBuildEvent
 {
-
+    
     /**
      * The instance of the table that is being build
      *
      * @var TcaTable
      */
     protected $table;
-
+    
     /**
      * ExtConfigTableBeforeBuildEvent constructor.
      *
@@ -50,7 +50,7 @@ class TableDumperBeforeBuildEvent
     {
         $this->table = $table;
     }
-
+    
     /**
      * Returns the name of the database table that is currently being build
      *
@@ -60,7 +60,7 @@ class TableDumperBeforeBuildEvent
     {
         return $this->table->getTableName();
     }
-
+    
     /**
      * Return the instance of the table that is being build
      *

@@ -34,21 +34,21 @@ use LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldContext;
  */
 class CustomFieldPostProcessorEvent
 {
-
+    
     /**
      * The context that was passed to the custom element controller
      *
      * @var \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldContext
      */
     protected $context;
-
+    
     /**
      * The prepared result array for the form engine
      *
      * @var array
      */
     protected $result;
-
+    
     /**
      * BackendFormCustomElementPostProcessorEvent constructor.
      *
@@ -58,9 +58,9 @@ class CustomFieldPostProcessorEvent
     public function __construct(CustomFieldContext $context, array $result)
     {
         $this->context = $context;
-        $this->result  = $result;
+        $this->result = $result;
     }
-
+    
     /**
      * Returns the context that was passed to the custom element controller
      *
@@ -70,7 +70,7 @@ class CustomFieldPostProcessorEvent
     {
         return $this->context;
     }
-
+    
     /**
      * Returns the prepared result array for the form engine
      *
@@ -80,7 +80,7 @@ class CustomFieldPostProcessorEvent
     {
         return $this->result;
     }
-
+    
     /**
      * Sets the prepared result array for the form engine
      *
@@ -91,7 +91,7 @@ class CustomFieldPostProcessorEvent
     public function setResult(array $result): CustomFieldPostProcessorEvent
     {
         $this->result = $result;
-
+        
         return $this;
     }
 }

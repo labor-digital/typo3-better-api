@@ -35,17 +35,17 @@ class TsfeSimulationPass implements SimulatorPassInterface
 {
     use ContainerAwareTrait;
     use TypoContextAwareTrait;
-
+    
     /**
      * @var TsfeService
      */
     protected $tsfeService;
-
+    
     /**
      * @var PageService
      */
     protected $pageService;
-
+    
     /**
      * A list of simulated tsfe instances by their id/language identifiers
      * We store this instances to speed up the simulation process by avoiding a lot of
@@ -54,7 +54,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
      * @var SimulatedTypoScriptFrontendController[]
      */
     protected $instanceCache = [];
-
+    
     /**
      * TsfeSimulationPass constructor.
      *
@@ -66,24 +66,24 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $this->tsfeService = $tsfeService;
         $this->pageService = $pageService;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function addOptionDefinition(array $options): array
     {
         $options['bootTsfe'] = [
-            'type'    => 'bool',
+            'type' => 'bool',
             'default' => true,
         ];
-        $options['pid']      = [
-            'type'    => ['int', 'null'],
+        $options['pid'] = [
+            'type' => ['int', 'null'],
             'default' => null,
         ];
-
+        
         return $options;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -98,25 +98,25 @@ class TsfeSimulationPass implements SimulatorPassInterface
                    )
                );
     }
-
+    
     /**
      * @inheritDoc
      */
     public function setup(array $options, array &$storage): void
     {
         // Backup the tsfe
-        $storage['tsfe']           = $GLOBALS['TSFE'];
+        $storage['tsfe'] = $GLOBALS['TSFE'];
         $storage['languageAspect'] = clone $this->getTypoContext()->getRootContext()->getAspect('language');
-        $storage['pid']            = $this->getTypoContext()->config()->getConfigState()->get('t3ba.pids', []);
-
+        $storage['pid'] = $this->getTypoContext()->config()->getConfigState()->get('t3ba.pids', []);
+        
         // Store the language aspect temporarily
-        $pid             = $options['pid'] ?? $this->getTypoContext()->pid()->getCurrent();
+        $pid = $options['pid'] ?? $this->getTypoContext()->pid()->getCurrent();
         $GLOBALS['TSFE'] = $this->makeSimulatedTsfe($pid, $storage);
-
+        
         // Make sure the language aspect stays the same way as we set it...
         $this->getTypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -126,7 +126,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $GLOBALS['TSFE'] = $storage['tsfe'];
         $this->getTypoContext()->getRootContext()->setAspect('language', $storage['languageAspect']);
     }
-
+    
     /**
      * Internal helper that is used to create a new tsfe instance
      *
@@ -144,24 +144,24 @@ class TsfeSimulationPass implements SimulatorPassInterface
         if (isset($this->instanceCache[$key])) {
             return $this->instanceCache[$key];
         }
-
-        $controller           = $this->makeInstance(
+        
+        $controller = $this->makeInstance(
             SimulatedTypoScriptFrontendController::class, [
                 null,
                 $pid,
                 $this->getTypoContext()->language()->getCurrentFrontendLanguage(),
             ]
         );
-        $GLOBALS['TSFE']      = $controller;
+        $GLOBALS['TSFE'] = $controller;
         $controller->sys_page = $this->pageService->getPageRepository();
         $controller->rootLine = $this->pageService->getRootLine($pid);
-        $controller->page     = $this->pageService->getPageInfo($pid);
+        $controller->page = $this->pageService->getPageInfo($pid);
         $controller->getConfigArray();
         $controller->settingLanguage();
-        $controller->cObj    = $this->makeInstance(ContentObjectRenderer::class, [$controller, $this->getContainer()]);
+        $controller->cObj = $this->makeInstance(ContentObjectRenderer::class, [$controller, $this->getContainer()]);
         $controller->fe_user = $this->makeInstance(FrontendUserAuthentication::class);
-
-
+        
+        
         return $this->instanceCache[$key] = $controller;
     }
 }

@@ -35,7 +35,7 @@ class Links implements LazyEventSubscriberInterface
     {
         $subscription->subscribe(LinkBrowserAllowedTabsFilterEvent::class, 'onAllowedItemsFilter');
     }
-
+    
     /**
      * Removes all not required link set handlers from the gui.
      *
@@ -47,15 +47,15 @@ class Links implements LazyEventSubscriberInterface
     public function onAllowedItemsFilter(LinkBrowserAllowedTabsFilterEvent $event): void
     {
         $allowedTabs = $event->getAllowedTabs();
-        $config      = $event->getFieldConfig();
-
+        $config = $event->getFieldConfig();
+        
         // All link sets are allowed in rte fields
         if (isset($config['richtextConfigurationName'])) {
             return;
         }
-
+        
         // Extract the "@linkSets:" key from the blindLinkOptions parameter
-        $blindOptions   = Arrays::makeFromStringList($config['params']['blindLinkOptions'] ?? '');
+        $blindOptions = Arrays::makeFromStringList($config['params']['blindLinkOptions'] ?? '');
         $linkSetOptions = null;
         foreach ($blindOptions as $option) {
             if (strpos($option, '@linkSets:') === 0) {
@@ -63,28 +63,28 @@ class Links implements LazyEventSubscriberInterface
                 break;
             }
         }
-
+        
         if ($linkSetOptions === null) {
             $linkSetOptions = false;
         } else {
             $linkSetOptions = \GuzzleHttp\json_decode(substr($linkSetOptions, 10));
         }
-
+        
         // Filter out the link sets, either none (TRUE), all (FALSE) or just keep some (ARRAY)
         $event->setAllowedTabs(
             array_filter($allowedTabs, static function (string $v) use ($linkSetOptions): bool {
                 if ($linkSetOptions === true) {
                     return true;
                 }
-
+                
                 if (strpos($v, 'linkSet_') === 0) {
                     if ($linkSetOptions === false) {
                         return false;
                     }
-
+                    
                     return is_array($linkSetOptions) && in_array($v, $linkSetOptions, true);
                 }
-
+                
                 return true;
             })
         );

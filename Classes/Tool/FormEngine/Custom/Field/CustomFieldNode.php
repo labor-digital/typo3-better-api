@@ -30,14 +30,14 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 class CustomFieldNode extends AbstractFormElement
 {
     use ContainerAwareTrait;
-
+    
     /**
      * Holds the current context to be able to update our local data if required
      *
      * @var \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldContext
      */
     protected $context;
-
+    
     /**
      * @inheritDoc
      */
@@ -48,16 +48,16 @@ class CustomFieldNode extends AbstractFormElement
             CustomFieldContext::class,
             [
                 [
-                    'rawData'           => $this->data,
-                    'iconFactory'       => $this->iconFactory,
-                    'rootNode'          => $this,
+                    'rawData' => $this->data,
+                    'iconFactory' => $this->iconFactory,
+                    'rootNode' => $this,
                     'defaultInputWidth' => $this->defaultInputWidth,
-                    'maxInputWidth'     => $this->maxInputWidth,
-                    'minInputWidth'     => $this->minimumInputWidth,
+                    'maxInputWidth' => $this->maxInputWidth,
+                    'minInputWidth' => $this->minimumInputWidth,
                 ],
             ]
         );
-
+        
         // Validate if the class exists
         $className = $this->context->getClassName();
         if (! class_exists($className)) {
@@ -66,44 +66,44 @@ class CustomFieldNode extends AbstractFormElement
                 . ' to use the custom field class: ' . $className
                 . '. Because the class does not exist!');
         }
-
+        
         $i = $this->getContainer()->has($className) ?
             $this->getService($className) : $this->makeInstance($className);
-
+        
         if (! $i instanceof CustomFieldInterface) {
             throw new CustomFormException(
                 'Could not render your field: ' . $this->context->getFieldName()
                 . " to use the custom field with class: $className. Because the class does not implement the required "
                 . CustomFieldInterface::class . ' interface!');
         }
-
+        
         $i->setContext($this->context);
-
+        
         // Initialize the result
-        $result         = $this->initializeResultArray();
+        $result = $this->initializeResultArray();
         $result['html'] = $i->render();
-
+        
         // Update the data of this node
         $this->refreshData();
-
+        
         // Check if we can render the field wizard
         $fieldWizardResult = ['html' => ''];
         if (method_exists($this, 'renderFieldWizard')) {
             $fieldWizardResult = $this->renderFieldWizard();
-            $result            = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
+            $result = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
         }
-
+        
         // Check if we should apply the outer wrap
         if ($this->context->isApplyOuterWrap()) {
             $config = $this->context->getConfig()['config'] ?? [];
-
+            
             // Calculate field size
-            $size           = Arrays::getPath($config, ['size'], $this->context->getDefaultInputWidth());
-            $size           = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(),
+            $size = Arrays::getPath($config, ['size'], $this->context->getDefaultInputWidth());
+            $size = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(),
                 $this->context->getMaxInputWidth());
-            $width          = (int)$this->context->getRootNode()->callMethod('formMaxWidth', [$size]);
-            $html           = $result['html'];
-            $wizardHtml     = $fieldWizardResult['html'];
+            $width = (int)$this->context->getRootNode()->callMethod('formMaxWidth', [$size]);
+            $html = $result['html'];
+            $wizardHtml = $fieldWizardResult['html'];
             $result['html'] = <<<HTML
 				<div class="form-control-wrap" style="max-width: $width px;">
 					<div class="form-wizards-wrap">
@@ -117,14 +117,14 @@ class CustomFieldNode extends AbstractFormElement
 				</div>
 HTML;
         }
-
+        
         // Allow the outside world to filter the result
         return $this->cs()->eventBus->dispatch(new CustomFieldPostProcessorEvent(
             $this->context,
             $i->filterResultArray($result)
         ))->getResult();
     }
-
+    
     /**
      * Internal helper to allow the external world access to all protected methods of this object
      *
@@ -142,14 +142,14 @@ HTML;
                 'It is not allowed to call method: ' . $method
                 . ' on the root node, because the method does not exist!');
         }
-
+        
         // Make sure our data is up to data
         $this->refreshData();
-
+        
         // Call the method
         return call_user_func_array([$this, $method], $args);
     }
-
+    
     /**
      * The companion to __callMethod. Checks if a certain, protected method exists or not
      *
@@ -161,7 +161,7 @@ HTML;
     {
         return method_exists($this, $method);
     }
-
+    
     /**
      * Internal helper to synchronize the context's data back to this nodes data storage
      */

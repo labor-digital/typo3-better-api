@@ -30,17 +30,17 @@ use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 class AdminUserAuthentication extends BackendUserAuthentication implements PublicServiceInterface
 {
     public const ADMIN_USERNAME = '_t3ba_adminUser_';
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\Database\DbService
      */
     protected $dbService;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory
      */
     protected $passwordHashFactory;
-
+    
     /**
      * @inheritDoc
      */
@@ -48,10 +48,10 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     {
         $this->dontSetCookie = true;
         parent::__construct();
-        $this->dbService           = $db;
+        $this->dbService = $db;
         $this->passwordHashFactory = $passwordHashFactory;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -60,7 +60,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
         parent::start();
         $this->loginUser();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -68,7 +68,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     {
         $this->loginUser();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -76,7 +76,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     {
         return true;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -84,7 +84,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     {
         return '';
     }
-
+    
     /**
      * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
      */
@@ -94,30 +94,30 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
         if (! empty($this->user['uid'])) {
             return;
         }
-
+        
         // Try to login with a username
         $this->setBeUserByName(static::ADMIN_USERNAME);
-
+        
         // Check if the login succeeded
         if (empty($this->user['uid'])) {
             $this->ensureBackendUserExists();
-
+            
             // Try to login again
             $this->setBeUserByName(static::ADMIN_USERNAME);
-
+            
             // Failed ?
             /** @noinspection NotOptimalIfConditionsInspection */
             if (empty($this->user['uid'])) {
                 throw new T3BAException('Could not automatically create an admin user for you to use!');
             }
         }
-
+        
         // Initialize the object
         $this->fetchGroupData();
         $this->backendSetUC();
         $this->uc['recursiveDelete'] = true;
     }
-
+    
     /**
      * Removes all users that match our username from the database and creates a new, admin user
      */
@@ -126,18 +126,18 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
         // Make sure that there are no other remnants of this user...
         $this->dbService->getQuery('be_users', true)
                         ->withWhere(['username' => static::ADMIN_USERNAME])->delete();
-
+        
         // Create a new user
         $this->dbService->getQuery('be_users', true)
                         ->insert([
                             'username' => static::ADMIN_USERNAME,
                             'password' => $this->generateHashedPassword(),
-                            'admin'    => 1,
-                            'tstamp'   => $GLOBALS['EXEC_TIME'],
-                            'crdate'   => $GLOBALS['EXEC_TIME'],
+                            'admin' => 1,
+                            'tstamp' => $GLOBALS['EXEC_TIME'],
+                            'crdate' => $GLOBALS['EXEC_TIME'],
                         ]);
     }
-
+    
     /**
      * This function returns a salted hashed key.
      *

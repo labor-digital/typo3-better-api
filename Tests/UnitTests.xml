@@ -34,19 +34,7 @@
   ~ Last modified: 2020.05.27 at 00:57
   -->
 
-<phpunit backupGlobals="true"
-         backupStaticAttributes="false"
-         bootstrap="./Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertWarningsToExceptions="true"
-         forceCoversAnnotation="false"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         stopOnIncomplete="false"
-         stopOnSkipped="false"
-         verbose="false">
+<phpunit backupGlobals="true" backupStaticAttributes="false" bootstrap="./Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php" colors="true" convertErrorsToExceptions="true" convertWarningsToExceptions="true" forceCoversAnnotation="false" processIsolation="false" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" verbose="false">
     <testsuites>
         <testsuite name="ExtConfig">
             <directory suffix="Test.php">../Module/ExtConfig/Tests/*</directory>

@@ -29,28 +29,28 @@ use TYPO3\CMS\Recordlist\Controller\AbstractLinkBrowserController;
 
 class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
 {
-
+    
     /**
      * The instance of the link browser controller that is currently rendered
      *
      * @var \TYPO3\CMS\Recordlist\Controller\AbstractLinkBrowserController
      */
     protected $linkBrowserController;
-
+    
     /**
      * The list of allowed link handler/tab identifiers
      *
      * @var array
      */
     protected $allowedTabs;
-
+    
     /**
      * The parsed parts of the currently selected link
      *
      * @var array
      */
     protected $currentLinkParts;
-
+    
     /**
      * LinkBrowserAllowedItemsFilterEvent constructor.
      *
@@ -62,12 +62,13 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
         AbstractLinkBrowserController $linkBrowserController,
         array $allowedTabs,
         array $currentLinkParts
-    ) {
+    )
+    {
         $this->linkBrowserController = $linkBrowserController;
-        $this->allowedTabs           = $allowedTabs;
-        $this->currentLinkParts      = $currentLinkParts;
+        $this->allowedTabs = $allowedTabs;
+        $this->currentLinkParts = $currentLinkParts;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -75,7 +76,7 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     {
         return LinkBrowserAllowedTabsFilterEventAdapter::class;
     }
-
+    
     /**
      * Returns the instance of the link browser controller that is currently rendered
      *
@@ -85,7 +86,7 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     {
         return $this->linkBrowserController;
     }
-
+    
     /**
      * Returns the tca configuration of the field which required the link browser
      *
@@ -95,7 +96,7 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     {
         return $this->linkBrowserController->getParameters();
     }
-
+    
     /**
      * Returns the list of allowed link handler/tab identifiers
      *
@@ -105,7 +106,7 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     {
         return $this->allowedTabs;
     }
-
+    
     /**
      * Used to update the list of allowed link handler/tab identifiers
      *
@@ -116,10 +117,10 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     public function setAllowedTabs(array $allowedTabs): LinkBrowserAllowedTabsFilterEvent
     {
         $this->allowedTabs = $allowedTabs;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the parsed parts of the currently selected link
      *
@@ -129,5 +130,5 @@ class LinkBrowserAllowedTabsFilterEvent implements CoreHookEventInterface
     {
         return $this->currentLinkParts;
     }
-
+    
 }

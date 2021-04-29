@@ -33,7 +33,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Table;
  */
 interface TcaTableNameProviderInterface
 {
-
+    
     /**
      * Must return the name of the table you want to configure with your configuration class
      *

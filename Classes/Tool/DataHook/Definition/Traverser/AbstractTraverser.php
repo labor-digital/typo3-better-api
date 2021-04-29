@@ -34,12 +34,12 @@ use Neunerlei\Arrays\Arrays;
 abstract class AbstractTraverser
 {
     use ContainerAwareTrait;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
      */
     protected $definition;
-
+    
     /**
      * Prepares the traverser with the required data to traverse
      *
@@ -50,15 +50,15 @@ abstract class AbstractTraverser
     public function initialize(DataHookDefinition $definition): self
     {
         $this->definition = $definition;
-
+        
         return $this;
     }
-
+    
     /**
      * Traverses the data structure set with calling the initialize() method
      */
     abstract public function traverse(): void;
-
+    
     /**
      * Registers all matching handler definitions for the given node on the hook definition
      *
@@ -75,7 +75,7 @@ abstract class AbstractTraverser
             || ! is_array($tca[DataHookTypes::TCA_DATA_HOOK_KEY][$this->definition->type])) {
             return;
         }
-
+        
         foreach ($tca[DataHookTypes::TCA_DATA_HOOK_KEY][$this->definition->type] as $handler) {
             // Resolve a string like class->method into a handler
             // or an array containing a typical php callable
@@ -92,26 +92,26 @@ abstract class AbstractTraverser
                     'Invalid data hook handler for node: ' . $nodeKey
                     . ' given! Only strings and arrays are allowed, given type: ' . gettype($handler));
             }
-
+            
             // Check if the handler matches the constraints
             if (! empty($handler[1]) && is_array($handler[1]['constraints'])
                 && count(array_intersect_assoc($handler[1]['constraints'], $this->definition->data))
                    !== count($handler[1]['constraints'])) {
                 continue;
             }
-
-            $handlerDefinition                 = $this->makeInstance(DataHookHandlerDefinition::class);
-            $handlerDefinition->handler        = NamingUtil::resolveCallable($handler[0]);
-            $handlerDefinition->key            = $nodeKey;
-            $handlerDefinition->path           = $path;
+            
+            $handlerDefinition = $this->makeInstance(DataHookHandlerDefinition::class);
+            $handlerDefinition->handler = NamingUtil::resolveCallable($handler[0]);
+            $handlerDefinition->key = $nodeKey;
+            $handlerDefinition->path = $path;
             $handlerDefinition->appliesToTable = empty($path);
-            $handlerDefinition->tca            = $tca;
-            $handlerDefinition->options        = is_array($handler[1]) ? $handler[1] : [];
-
+            $handlerDefinition->tca = $tca;
+            $handlerDefinition->options = is_array($handler[1]) ? $handler[1] : [];
+            
             if (! empty($path)) {
                 $handlerDefinition->data = Arrays::getPath($this->definition->data, $path);
             }
-
+            
             $this->definition->handlers[] = $handlerDefinition;
         }
     }

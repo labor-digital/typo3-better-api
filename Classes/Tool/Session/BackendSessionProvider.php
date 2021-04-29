@@ -26,7 +26,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 class BackendSessionProvider implements SessionInterface, SingletonInterface
 {
     public const STORAGE_KEY = 'T3BA';
-
+    
     /**
      * @inheritDoc
      */
@@ -34,7 +34,7 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
     {
         return Arrays::hasPath($this->getSessionValues(), $path);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -44,10 +44,10 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         if ($path === null) {
             return $values;
         }
-
+        
         return Arrays::getPath($values, $path, $default);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -57,14 +57,14 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         if ($beUser === null) {
             return $this;
         }
-
+        
         $values = $this->getSessionValues();
         $values = Arrays::setPath($values, $path, $value);
         $beUser->setAndSaveSessionData(static::STORAGE_KEY, $values);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -74,14 +74,14 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         if ($beUser === null) {
             return $this;
         }
-
+        
         $values = $this->getSessionValues();
         $values = Arrays::removePath($values, $path);
         $beUser->setAndSaveSessionData(static::STORAGE_KEY, $values);
-
+        
         return $this;
     }
-
+    
     /**
      * Helper to retrieve the stored data from the session
      *
@@ -93,12 +93,12 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
         if ($beUser === null) {
             return [];
         }
-
+        
         $value = $beUser->getSessionData(static::STORAGE_KEY);
-
+        
         return is_array($value) ? $value : [];
     }
-
+    
     /**
      * Helper to get the backend user instance
      *

@@ -32,7 +32,7 @@ class FalFileUrlUtil
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected static $context;
-
+    
     /**
      * Makes sure that the fal file url always has the host name prepended to it
      *
@@ -47,10 +47,10 @@ class FalFileUrlUtil
         if (filter_var($relativeUrl, FILTER_VALIDATE_URL)) {
             return $relativeUrl;
         }
-
+        
         return static::getHost() . '/' . ltrim($relativeUrl, '/');
     }
-
+    
     /**
      * Returns the host of the current page
      *
@@ -60,7 +60,7 @@ class FalFileUrlUtil
     {
         $context = static::$context ??
                    static::$context = GeneralUtility::makeInstance(TypoContext::class);
-
+        
         return $context->request()->getHost();
     }
 }

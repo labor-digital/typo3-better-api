@@ -34,7 +34,7 @@ class CachelessSiteConfigurationAdapter extends SiteConfiguration
      * @inheritDoc
      */
     public function __construct(string $configPath = '') { parent::__construct($configPath); }
-
+    
     /**
      * @inheritDoc
      */
@@ -42,7 +42,7 @@ class CachelessSiteConfigurationAdapter extends SiteConfiguration
     {
         return new PhpFrontend('foo', new NullBackend('foo'));
     }
-
+    
     /**
      * Creates a new instance of myself based on the given site config
      *
@@ -53,8 +53,8 @@ class CachelessSiteConfigurationAdapter extends SiteConfiguration
     public static function makeInstance(?SiteConfiguration $siteConfiguration = null): self
     {
         $siteConfiguration = $siteConfiguration ?? GeneralUtility::makeInstance(SiteConfiguration::class);
-        $configPath        = $siteConfiguration->configPath;
-
+        $configPath = $siteConfiguration->configPath;
+        
         return GeneralUtility::makeInstance(static::class, $configPath);
     }
 }

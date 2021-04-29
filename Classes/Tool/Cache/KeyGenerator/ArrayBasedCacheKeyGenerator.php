@@ -34,7 +34,7 @@ class ArrayBasedCacheKeyGenerator implements CacheKeyGeneratorInterface
      * @var array
      */
     protected $data;
-
+    
     /**
      * ArrayBasedCacheKeyGenerator constructor.
      *
@@ -44,7 +44,7 @@ class ArrayBasedCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $this->data = $data;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -52,12 +52,12 @@ class ArrayBasedCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $dataList = Arrays::flatten($this->data);
         ksort($dataList);
-
+        
         try {
             return md5(serialize($dataList));
         } catch (Throwable $exception) {
             return md5(Arrays::dumpToJson($dataList));
         }
     }
-
+    
 }

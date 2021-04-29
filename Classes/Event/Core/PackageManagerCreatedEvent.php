@@ -32,12 +32,12 @@ use TYPO3\CMS\Core\Package\PackageManager;
  */
 class PackageManagerCreatedEvent
 {
-
+    
     /**
      * @var \TYPO3\CMS\Core\Package\PackageManager
      */
     protected $packageManager;
-
+    
     /**
      * RegisterRuntimePackagesEvent constructor.
      *
@@ -47,7 +47,7 @@ class PackageManagerCreatedEvent
     {
         $this->packageManager = $packageManager;
     }
-
+    
     /**
      * Returns the package manager instance
      *

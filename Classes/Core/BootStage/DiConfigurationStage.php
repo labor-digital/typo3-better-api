@@ -48,28 +48,28 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DiConfigurationStage implements BootStageInterface
 {
-    protected const STAGE_CONTAINER_BUILD       = 1;
+    protected const STAGE_CONTAINER_BUILD = 1;
     protected const STAGE_CONTAINER_INSTANTIATE = 2;
-
+    
     protected $stage = 0;
-
+    
     /**
      * @var DelegateContainer
      */
     protected $delegate;
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
         $this->delegate = $kernel->getContainer();
-
+        
         $eventBus->addListener(PackageManagerCreatedEvent::class, [$this, 'onPackageManagerCreated']);
         $eventBus->addListener(DiContainerBeingBuildEvent::class, [$this, 'onDiContainerBeingBuild']);
         $eventBus->addListener(CreateDiContainerEvent::class, [$this, 'onDiContainerBeingInstantiated']);
     }
-
+    
     /**
      * Stores the package manager reference and registers the composer autoload
      * capabilities for the Configuration directories of each activated package.
@@ -82,7 +82,7 @@ class DiConfigurationStage implements BootStageInterface
         $this->initializeExtConfigService();
         $this->registerConfigNamespace();
     }
-
+    
     /**
      * Executes the configuration for the di container builder and related stuff, like event registration and so on.
      *
@@ -92,11 +92,11 @@ class DiConfigurationStage implements BootStageInterface
     {
         $this->setStage(static::STAGE_CONTAINER_BUILD);
         $this->delegate->set(ContainerBuilder::class, $event->getContainerBuilder());
-
+        
         $extConfigService = $this->delegate->get(ExtConfigService::class);
         $extConfigService->getDiLoader()->loadForBuildTime();
     }
-
+    
     /**
      * Injects the early dependencies into the real di container instance
      * and runs the "runtime" container configuration handler
@@ -107,49 +107,49 @@ class DiConfigurationStage implements BootStageInterface
     {
         if ($event->isFailsafe()) {
             $this->delegate->setContainer('failsafe', $event->getContainer());
-
+            
             return;
         }
-
+        
         $this->setStage(static::STAGE_CONTAINER_INSTANTIATE);
-
+        
         $symfony = $event->getContainer();
         if (! $symfony instanceof Container) {
             return;
         }
-
+        
         $miniContainer = $this->delegate->getInternal();
         $this->delegate->setContainer('symfony', $symfony);
-
+        
         $symfony->set(VarFs::class, $miniContainer->get(VarFs::class));
-
+        
         $eventBus = $miniContainer->get(TypoEventBus::class);
         $symfony->set(EventBusInterface::class, $eventBus);
         $symfony->set(TypoEventBus::class, $eventBus);
-
+        
         /** @var TypoListenerProvider $listenerProvider */
         $listenerProvider = clone $miniContainer->get('@listenerProviderBackup');
         $eventBus->setConcreteListenerProvider($listenerProvider);
         $symfony->set(ListenerProviderInterface::class, $listenerProvider);
         $symfony->set(TypoListenerProvider::class, $listenerProvider);
-
+        
         $context = TypoContext::setInstance(new TypoContext());
         $symfony->set(TypoContext::class, $context);
-
+        
         // This is required to link the new event bus into the TYPO3 core and to load the registered event handlers
         // This MUST be executed after the typo context class is set up correctly
         $symfony->get(ListenerProvider::class);
         $symfony->get(EventSubscriberBridge::class);
-
+        
         $extConfigService = $miniContainer->get(ExtConfigService::class);
         $symfony->set(ExtConfigService::class, $extConfigService);
         $symfony->set(ConfigState::class, new ConfigState([]));
         $extConfigService->getContext()->setTypoContext($context);
         $extConfigService->getDiLoader()->loadForRuntime();
-
+        
         $eventBus->dispatch(new DiContainerFilterEvent($symfony));
     }
-
+    
     /**
      * Helper to detect degeneration in the state and automatically re-register the configuration namespace
      *
@@ -162,7 +162,7 @@ class DiConfigurationStage implements BootStageInterface
         }
         $this->stage = $stage;
     }
-
+    
     /**
      * Initializes and registers a new and empty instance of the ext config service
      *
@@ -177,15 +177,15 @@ class DiConfigurationStage implements BootStageInterface
             $this->delegate->get(VarFs::class),
             $this->delegate
         );
-
+        
         $this->delegate->set(ExtConfigService::class, $configService);
         $this->delegate->set(ExtConfigContext::class, $configService->getContext());
     }
-
+    
     protected function registerConfigNamespace(): void
     {
         $configService = $this->delegate->get(ExtConfigService::class);
-        $classLoader   = $this->delegate->get(ClassLoader::class);
+        $classLoader = $this->delegate->get(ClassLoader::class);
         $configService->reset();
         foreach ($configService->getAutoloaderMap() as $namespace => $directory) {
             $classLoader->setPsr4($namespace, $directory);

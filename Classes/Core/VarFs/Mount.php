@@ -37,14 +37,14 @@ class Mount
      * Marker that is prepended in front of serialized file contents
      */
     protected const SERIALIZED_MARKER = '__SERIALIZED__:';
-
+    
     /**
      * The path to the directory where the mount should be stored
      *
      * @var string
      */
     protected $mountPath;
-
+    
     /**
      * The baseDirectory as a path relative to the better api root directory.
      * This is required for typo script and flex form registration.
@@ -52,14 +52,14 @@ class Mount
      * @var string|null
      */
     protected $relativeBaseDirectory;
-
+    
     /**
      * True if the local file system was checked and the mount is initialized
      *
      * @var bool
      */
     protected $isInitialized = false;
-
+    
     /**
      * Mount constructor.
      *
@@ -69,7 +69,7 @@ class Mount
     {
         $this->mountPath = $mountPath;
     }
-
+    
     /**
      * Returns true if a file exists, false if not
      *
@@ -80,10 +80,10 @@ class Mount
     public function hasFile(string $filePath): bool
     {
         $filePathReal = $this->resolvePath($filePath);
-
+        
         return $this->hasFileInternal($filePathReal);
     }
-
+    
     /**
      * Returns the file object for the required file path
      *
@@ -98,10 +98,10 @@ class Mount
         if (! $this->hasFileInternal($filePathReal)) {
             throw new FileNotFoundException('Could not get the file: "' . $filePath . '" because it does not exist!');
         }
-
+        
         return new SplFileInfo($filePathReal);
     }
-
+    
     /**
      * Returns the content of a required file.
      * It will automatically unpack serialized values back into their PHP values
@@ -121,16 +121,16 @@ class Mount
             );
         }
         $content = Fs::readFile($filePathReal);
-
+        
         // Deserialize serialized content
         if (str_starts_with($content, static::SERIALIZED_MARKER)) {
             $content = unserialize(substr($content, strlen(static::SERIALIZED_MARKER)));
         }
-
+        
         // Done
         return $content;
     }
-
+    
     /**
      * Is used to dump some content into a file.
      * Automatically serializes non-string/numeric content before writing it as a file
@@ -142,18 +142,18 @@ class Mount
     public function setFileContent(string $filePath, $content): void
     {
         $filePathReal = $this->resolvePath($filePath);
-
+        
         // Prepare the content
         if (! is_string($content) && ! is_numeric($content)) {
             $content = static::SERIALIZED_MARKER . serialize($content);
         }
-
+        
         // Write the file
         FilePermissionUtil::setFilePermissions($this->mountPath);
         Fs::writeFile($filePathReal, $content);
         FilePermissionUtil::setFilePermissions($filePathReal);
     }
-
+    
     /**
      * Includes a file as a PHP resource
      *
@@ -172,10 +172,10 @@ class Mount
                 'Could not include file: "' . $filePath . '" because it does not exist!'
             );
         }
-
+        
         return varFsIncludeHelper($filePathReal, $once);
     }
-
+    
     /**
      * Returns the configured base directory, either as absolute, or as relative path (relative to the typo3_better_api
      * root directory)
@@ -193,13 +193,13 @@ class Mount
         if (! empty($this->relativeBaseDirectory)) {
             return $this->relativeBaseDirectory;
         }
-
+        
         return $this->relativeBaseDirectory = Path::makeRelative(
                 $this->mountPath,
                 Path::unifyPath(realpath(ExtensionManagementUtility::extPath('T3BA')))
             ) . DIRECTORY_SEPARATOR;
     }
-
+    
     /**
      * Removes a single file or directory from the file system
      *
@@ -211,13 +211,13 @@ class Mount
     {
         if ($this->hasFile($filePath)) {
             Fs::remove($this->resolvePath($filePath));
-
+            
             return true;
         }
-
+        
         return false;
     }
-
+    
     /**
      * Completely removes all files and directories inside this mount
      */
@@ -225,7 +225,7 @@ class Mount
     {
         Fs::flushDirectory($this->mountPath);
     }
-
+    
     /**
      * Internal helper to resolve relative path's inside the base directory
      *
@@ -241,24 +241,24 @@ class Mount
             if (file_exists($this->mountPath) && ! is_dir($this->mountPath)) {
                 Fs::remove($this->mountPath);
             }
-
+            
             if (! is_writable($this->mountPath)) {
                 Fs::mkdir($this->mountPath);
                 FilePermissionUtil::setFilePermissions($this->mountPath);
             }
         }
-
-        $path    = Path::unifyPath($path);
+        
+        $path = Path::unifyPath($path);
         $pathAbs = Path::makeAbsolute(ltrim($path, DIRECTORY_SEPARATOR), $this->mountPath);
         if (stripos($pathAbs, $this->mountPath) !== 0 && stripos($pathAbs . '/', $this->mountPath) !== 0) {
             throw new InvalidFilePathException(
                 'The path "' . $path . '" does not lead to a file inside the registered mount directory at: "'
                 . $this->mountPath . '", instead it would lead to: "' . $pathAbs . '"!');
         }
-
+        
         return $pathAbs;
     }
-
+    
     /**
      * Internal helper to check if a file exists
      *
@@ -286,6 +286,6 @@ function varFsIncludeHelper(string $file, bool $once)
         /** @noinspection UsingInclusionOnceReturnValueInspection */
         return include_once $file;
     }
-
+    
     return include $file;
 }

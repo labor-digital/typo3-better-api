@@ -28,7 +28,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RequestCollectorMiddleware implements MiddlewareInterface
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -36,7 +36,7 @@ class RequestCollectorMiddleware implements MiddlewareInterface
     {
         // Store fallback request
         $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
-
+        
         // Done
         return $handler->handle($request);
     }

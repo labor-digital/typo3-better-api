@@ -51,42 +51,42 @@ class Kernel
      * @var self
      */
     protected static $instance;
-
+    
     /**
      * A list of low level event listeners to register on the event dispatcher
      *
      * @var array
      */
     protected static $lowLevelListeners = [];
-
+    
     /**
      * The boot stage instances to be run when the package hooks itself into the TYPO3 core
      *
      * @var BootStageInterface[]
      */
     protected static $bootStages = [];
-
+    
     /**
      * The event bus instance
      *
      * @var TypoEventBus
      */
     protected $eventBus;
-
+    
     /**
      * The file system we write our internal files with
      *
      * @var VarFs
      */
     protected $fs;
-
+    
     /**
      * The internal, delegate container that holds the early services
      *
      * @var DelegateContainer
      */
     protected $container;
-
+    
     /**
      * Initializes the better api kernel and prepares the boot stages
      * to hook the extension into the TYPO3 core
@@ -99,10 +99,10 @@ class Kernel
         if (static::$instance instanceof static) {
             return;
         }
-
+        
         // Create a new instance
         static::$instance = $i = new static();
-
+        
         // Build our internal container
         $container = $i->container = DelegateContainer::setInstance(new DelegateContainer());
         $container->setContainer('internal', new MiniContainer());
@@ -111,7 +111,7 @@ class Kernel
         $container->set(static::class, $i);
         $container->set(ClassLoader::class, $composerClassLoader);
         $container->set(TypoEventBus::class, $i->eventBus = $i->makeEventBus());
-
+        
         // Create the default boot stages
         $defaultBootStages = [
             new DbgConfigurationStage(),
@@ -123,19 +123,19 @@ class Kernel
             new ErrorHandlerAdapterRegistrationStage(),
             new ErrorHandlerDevStage(),
         ];
-
+        
         // Prepare the boot stages
         foreach (array_merge($defaultBootStages, static::$bootStages) as $bootStage) {
             /** @var BootStageInterface $bootStage */
             $bootStage->prepare($i->eventBus, $i);
         }
-
+        
         $container->set('@listenerProviderBackup', clone $i->eventBus->getConcreteListenerProvider());
-
+        
         // Dispatch the boot event
         $i->eventBus->dispatch(new KernelBootEvent($i));
     }
-
+    
     /**
      * Registers a new boot stage instance to be executed, while the better api package
      * hooks itself into the TYPO3 core.
@@ -146,7 +146,7 @@ class Kernel
     {
         static::$bootStages[get_class($stage)] = $stage;
     }
-
+    
     /**
      * Adds a new, really early event listener that applies even inside the bootstrap of the kernel.
      * This would be a real edge-case and you would have to do some black composer magic (autoload file)
@@ -162,7 +162,7 @@ class Kernel
     {
         static::$lowLevelListeners[] = func_get_args();
     }
-
+    
     /**
      * Returns the singleton instance of the kernel, after it was initialized in using the init() method
      *
@@ -174,10 +174,10 @@ class Kernel
         if (! static::$instance instanceof static) {
             throw new KernelNotInitializedException('The T3BA kernel was not correctly initialized!');
         }
-
+        
         return static::$instance;
     }
-
+    
     /**
      * Returns the composer class loader instance
      *
@@ -187,7 +187,7 @@ class Kernel
     {
         return $this->container->get(ClassLoader::class);
     }
-
+    
     /**
      * Returns the event bus instance
      *
@@ -197,7 +197,7 @@ class Kernel
     {
         return $this->eventBus;
     }
-
+    
     /**
      * Returns the file system instance
      *
@@ -207,7 +207,7 @@ class Kernel
     {
         return $this->fs;
     }
-
+    
     /**
      * Returns the delegate container that is shared in this application
      *
@@ -217,7 +217,7 @@ class Kernel
     {
         return $this->container;
     }
-
+    
     /**
      * Creates the typo event bus instance
      *
@@ -228,9 +228,9 @@ class Kernel
         if ($this->eventBus instanceof TypoEventBus) {
             return $this->eventBus;
         }
-
+        
         // Create the eventbus instance
-        $eventBus         = TypoEventBus::setInstance(new TypoEventBus());
+        $eventBus = TypoEventBus::setInstance(new TypoEventBus());
         $listenerProvider = new TypoListenerProvider();
         $listenerProvider->setContainer($this->container);
         $eventBus->setContainer($this->container);
@@ -243,12 +243,12 @@ class Kernel
         ) {
             $provider->addCallableListener($event, $item->listener, $options);
         }, true);
-
+        
         // Register low level events
         foreach (static::$lowLevelListeners as $listener) {
             $eventBus->addListener(...$listener);
         }
-
+        
         return $eventBus;
     }
 }

@@ -30,37 +30,37 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 abstract class AbstractBetterQuery
 {
     use QueryWhereApplierTrait;
-
+    
     /**
      * @var AbstractQueryAdapter
      */
     protected $adapter;
-
+    
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\Session
      */
     protected $session;
-
+    
     /**
      * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
      */
     protected $typoContext;
-
+    
     /**
      * Defines, if set the number of items that are on a logical "page" when using the getPage() or getPages() methods
      *
      * @var int|null
      */
     protected $itemsPerPage;
-
+    
     /**
      * Contains the currently configured where statement
      *
      * @var array
      */
     protected $where = [];
-
-
+    
+    
     /**
      * BetterQuery constructor.
      *
@@ -72,12 +72,13 @@ abstract class AbstractBetterQuery
         AbstractQueryAdapter $adapter,
         TypoContext $typoContext,
         Session $session
-    ) {
-        $this->adapter     = $adapter;
+    )
+    {
+        $this->adapter = $adapter;
         $this->typoContext = $typoContext;
-        $this->session     = $session;
+        $this->session = $session;
     }
-
+    
     /**
      * Clones the children of this query object to keep it immutable
      */
@@ -85,35 +86,35 @@ abstract class AbstractBetterQuery
     {
         $this->adapter = clone $this->adapter;
     }
-
+    
     /**
      * Returns the configured instance of the query builder for this query
      *
      * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     abstract public function getQueryBuilder(): QueryBuilder;
-
+    
     /**
      * Executes the currently configured query and returns the results
      *
      * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
     abstract public function getAll();
-
+    
     /**
      * Returns the total number of items in the result set, matching the given query parameters
      *
      * @return int
      */
     abstract public function getCount(): int;
-
+    
     /**
      * Returns the first element from the queries result set that matches your criteria
      *
      * @return mixed
      */
     abstract public function getFirst();
-
+    
     /**
      * Returns the name of the database table this query applies to
      *
@@ -123,7 +124,7 @@ abstract class AbstractBetterQuery
     {
         return $this->adapter->getTableName();
     }
-
+    
     /**
      * By default the results from ALL pages will be returned.
      * If you want to limit your result set to a single, or a range of pages you can use this method.
@@ -141,9 +142,9 @@ abstract class AbstractBetterQuery
      */
     public function withPids($pids): self
     {
-        $clone    = clone $this;
+        $clone = clone $this;
         $settings = $clone->adapter->getSettings();
-
+        
         // Handle special pid values
         if (is_bool($pids)) {
             // True means use current pid
@@ -152,27 +153,27 @@ abstract class AbstractBetterQuery
             } // False means reset storage page
             else {
                 $settings->setRespectStoragePage(false);
-
+                
                 return $clone;
             }
         }
-
+        
         // Apply possible pid values
         $pids = array_map(static function ($v) use ($clone) {
             if (! is_string($v) || ! $clone->typoContext->pid()->has($v)) {
                 return $v;
             }
-
+            
             return $clone->typoContext->pid()->get($v);
         }, $clone->adapter->ensureArrayValue($pids, 'pid'));
-
+        
         // Update the page limitations in the query settings
         $settings->setRespectStoragePage(true);
         $settings->setStoragePageIds($pids);
-
+        
         return $clone;
     }
-
+    
     /**
      * Either returns the list of registered storage page ids or null
      * if there are either none or the query should not respect storage page ids
@@ -184,7 +185,7 @@ abstract class AbstractBetterQuery
         return $this->adapter->getSettings()->getRespectStoragePage() ?
             $this->adapter->getSettings()->getStoragePageIds() : null;
     }
-
+    
     /**
      * Used to set the language restriction for the current query.
      * By default only records of the currently active language will be returned.
@@ -213,28 +214,28 @@ abstract class AbstractBetterQuery
      */
     public function withLanguage($language, array $options = [])
     {
-        $clone    = clone $this;
+        $clone = clone $this;
         $settings = $clone->adapter->getSettings();
-
+        
         // Reset the ext base object cache
         $clone->session->destroy();
-
+        
         // Handle legacy options
         $options = Options::make($options, [
             'languageMode' => [
-                'type'    => ['null', 'string'],
+                'type' => ['null', 'string'],
                 'default' => null,
             ],
-            'overlayMode'  => [
-                'type'    => ['bool', 'string'],
+            'overlayMode' => [
+                'type' => ['bool', 'string'],
                 'default' => false,
             ],
         ]);
-
+        
         // Set language mode
         $settings->setLanguageMode($options['languageMode']);
         $settings->setLanguageOverlayMode($options['overlayMode']);
-
+        
         // Handle special language values
         if (is_bool($language)) {
             $settings->setRespectSysLanguage($language);
@@ -243,10 +244,10 @@ abstract class AbstractBetterQuery
                     $clone->typoContext->language()->getCurrentFrontendLanguage()->getLanguageId()
                 );
             }
-
+            
             return $clone;
         }
-
+        
         // Convert language objects
         if (is_object($language) && $language instanceof SiteLanguage) {
             $language = $language->getLanguageId();
@@ -260,11 +261,11 @@ abstract class AbstractBetterQuery
         }
         $settings->setRespectSysLanguage(true);
         $settings->setLanguageUid($language);
-
+        
         // Done
         return $clone;
     }
-
+    
     /**
      * Set this to true if you want the query to retrieve hidden / disabled elements as well
      *
@@ -274,16 +275,16 @@ abstract class AbstractBetterQuery
      */
     public function withIncludeHidden(bool $state = true): self
     {
-        $clone    = clone $this;
+        $clone = clone $this;
         $settings = $clone->adapter->getSettings();
         $settings->setIgnoreEnableFields($state);
         if ($state) {
             $settings->setEnableFieldsToBeIgnored(['disabled']);
         }
-
+        
         return $clone;
     }
-
+    
     /**
      * Set this to true if you want the query to retrieve deleted elements as well.
      *
@@ -295,14 +296,14 @@ abstract class AbstractBetterQuery
      */
     public function withIncludeDeleted(bool $state = true): self
     {
-        $clone    = clone $this;
+        $clone = clone $this;
         $settings = $clone->adapter->getSettings();
         $settings->setIgnoreEnableFields($state);
         $settings->setIncludeDeleted($state);
-
+        
         return $clone;
     }
-
+    
     /**
      * Set the limit of items retrieved by this demand
      *
@@ -314,10 +315,10 @@ abstract class AbstractBetterQuery
     {
         $clone = clone $this;
         $clone->adapter->setLimit($limit);
-
+        
         return $clone;
     }
-
+    
     /**
      * Sets the offset in the database table
      *
@@ -329,10 +330,10 @@ abstract class AbstractBetterQuery
     {
         $clone = clone $this;
         $clone->adapter->setOffset($offset);
-
+        
         return $clone;
     }
-
+    
     /**
      * Can be used to set the order in which the results will be returned from the database.
      * Can be either a key / direction pair or an array of key / direction pairs if you want to sort the
@@ -349,22 +350,22 @@ abstract class AbstractBetterQuery
     public function withOrder($field, ?string $direction = null): self
     {
         $clone = clone $this;
-
+        
         // Unify the input to an array
         if (! is_array($field)) {
             $field = [$field => $direction];
         }
-
+        
         // Build the orderings
         $orderings = [];
         foreach ($field as $k => $_dir) {
             $orderings[$k] = strtolower(trim($_dir ?? 'asc')) === 'asc' ? 'ASC' : 'DESC';
         }
         $clone->adapter->setOrderings($orderings);
-
+        
         return $clone;
     }
-
+    
     /**
      * This method is the central element of the query. I tried to make the syntax as easy to read and write as
      * possible
@@ -446,20 +447,20 @@ abstract class AbstractBetterQuery
     public function withWhere(array $query, string $groupName = ''): self
     {
         $clone = clone $this;
-
+        
         $orOperator = false;
         if (stripos($groupName, 'or ') === 0) {
             $orOperator = true;
-            $groupName  = trim(substr($groupName, 3));
+            $groupName = trim(substr($groupName, 3));
         }
         $clone->where[$groupName] = [
             'query' => $query,
-            'or'    => $orOperator,
+            'or' => $orOperator,
         ];
-
+        
         return $clone;
     }
-
+    
     /**
      * Returns the currently configured where query
      *
@@ -475,10 +476,10 @@ abstract class AbstractBetterQuery
         if (! isset($this->where[$groupName])) {
             return [];
         }
-
+        
         return $this->where[$groupName]['query'];
     }
-
+    
     /**
      * Returns all currently set where groups as an array
      *
@@ -488,7 +489,7 @@ abstract class AbstractBetterQuery
     {
         return $this->where;
     }
-
+    
     /**
      * Can be used to remove a single where group
      *
@@ -499,10 +500,10 @@ abstract class AbstractBetterQuery
     public function removeWhereGroup(string $groupName): self
     {
         unset($this->where[$groupName]);
-
+        
         return $this;
     }
-
+    
     /**
      * Can be used to batch set the where groups of this query
      *
@@ -512,15 +513,15 @@ abstract class AbstractBetterQuery
      */
     public function withWhereGroups(array $groups): self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $this->where = [];
         foreach ($groups as $groupName => $where) {
             $clone = $clone->withWhere($where, $groupName);
         }
-
+        
         return $clone;
     }
-
+    
     /**
      * Is used to set the number of items per pages, that will be used in the getPage() and getPages()
      * methods of this query object
@@ -531,12 +532,12 @@ abstract class AbstractBetterQuery
      */
     public function withItemsPerPage(int $items): self
     {
-        $clone               = clone $this;
+        $clone = clone $this;
         $clone->itemsPerPage = $items;
-
+        
         return $clone;
     }
-
+    
     /**
      * Returns the results of a given, logical page of the current result list.
      * The number of pages depends on the number of items on a page, which can be configured
@@ -553,16 +554,16 @@ abstract class AbstractBetterQuery
             return $this->getAll();
         }
         $offset = $this->adapter->getOffset();
-        $limit  = $this->adapter->getLimit();
+        $limit = $this->adapter->getLimit();
         $this->adapter->setOffset(max(0, $page * $this->itemsPerPage));
         $this->adapter->setLimit($this->itemsPerPage);
         $result = $this->getAll();
         $this->adapter->setOffset($offset);
         $this->adapter->setLimit($limit);
-
+        
         return $result;
     }
-
+    
     /**
      * Returns the number of logical pages that are in the current result list.
      * The number of pages depends on the number of items on a page, which can be configured
@@ -576,13 +577,13 @@ abstract class AbstractBetterQuery
             return 1;
         }
         $offset = $this->adapter->getOffset();
-        $limit  = $this->adapter->getLimit();
+        $limit = $this->adapter->getLimit();
         $this->adapter->setOffset(0);
         $this->adapter->setLimit(0);
         $pages = (int)ceil($this->getCount() / $this->itemsPerPage);
         $this->adapter->setOffset($offset);
         $this->adapter->setLimit($limit);
-
+        
         return $pages;
     }
 }

@@ -34,7 +34,7 @@ class ExtConfig implements LazyEventSubscriberInterface
      * @var \LaborDigital\T3BA\ExtConfig\Loader\MainLoader
      */
     protected $loader;
-
+    
     /**
      * ExtConfigEventHandler constructor.
      *
@@ -44,7 +44,7 @@ class ExtConfig implements LazyEventSubscriberInterface
     {
         $this->loader = $loader;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -52,7 +52,7 @@ class ExtConfig implements LazyEventSubscriberInterface
     {
         $subscription->subscribe(ExtConfigLoadedEvent::class, 'onExtConfigLoaded', ['priority' => 100]);
     }
-
+    
     /**
      * Executes the ext config loader
      */
@@ -60,5 +60,5 @@ class ExtConfig implements LazyEventSubscriberInterface
     {
         $this->loader->load();
     }
-
+    
 }

@@ -29,14 +29,14 @@ use Neunerlei\Inflection\Inflector;
 
 class FluidConfigurator extends AbstractExtConfigConfigurator
 {
-
+    
     /**
      * The list of registered view helper namespaces
      *
      * @var array
      */
     protected $viewHelpers = [];
-
+    
     /**
      * Globally registers the extension's view helpers when $key and $namespace are empty.
      * The default key is the CamelCase of your extension key, and the namespace the CamelCase of
@@ -54,7 +54,7 @@ class FluidConfigurator extends AbstractExtConfigConfigurator
         if (empty($key)) {
             $key = Inflector::toCamelCase($this->context->getExtKey());
         }
-
+        
         if (empty($namespace)) {
             $namespace = '';
             if (! empty($this->context->getVendor())) {
@@ -63,12 +63,12 @@ class FluidConfigurator extends AbstractExtConfigConfigurator
             $namespace .= Inflector::toCamelCase($this->context->getExtKey());
             $namespace .= '\\ViewHelpers';
         }
-
+        
         $this->viewHelpers[$this->context->replaceMarkers($key)][] = $this->context->replaceMarkers($namespace);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritDoc
      */

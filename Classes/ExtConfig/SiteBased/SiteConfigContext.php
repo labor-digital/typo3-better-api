@@ -36,14 +36,14 @@ class SiteConfigContext extends ExtConfigContext
      * @var string
      */
     protected $siteKey;
-
+    
     /**
      * The site that gets currently configured
      *
      * @var \TYPO3\CMS\Core\Site\Entity\Site
      */
     protected $site;
-
+    
     /**
      * @inheritDoc
      */
@@ -52,7 +52,7 @@ class SiteConfigContext extends ExtConfigContext
         parent::__construct($extConfigService);
         $this->typoContext = $typoContext;
     }
-
+    
     /**
      * Returns the key of the site that currently gets configured
      *
@@ -62,7 +62,7 @@ class SiteConfigContext extends ExtConfigContext
     {
         return $this->siteKey;
     }
-
+    
     /**
      * Returns the site that gets currently configured
      *
@@ -72,7 +72,7 @@ class SiteConfigContext extends ExtConfigContext
     {
         return $this->site;
     }
-
+    
     /**
      * Internal helper to inject the configured site into the context
      *
@@ -84,6 +84,6 @@ class SiteConfigContext extends ExtConfigContext
     public function initializeSite(string $siteKey, Site $site): void
     {
         $this->siteKey = $siteKey;
-        $this->site    = $site;
+        $this->site = $site;
     }
 }

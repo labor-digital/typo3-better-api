@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Tca\ContentType\Builder;
 
+use InvalidArgumentException;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\AbstractDataModel;
 use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\DefaultDataModel;
@@ -35,7 +36,7 @@ class ContentType extends TcaTableType
      * @var string
      */
     protected $dataModelClass = DefaultDataModel::class;
-
+    
     /**
      * Returns the name of the class to use as data model.
      *
@@ -45,7 +46,7 @@ class ContentType extends TcaTableType
     {
         return $this->dataModelClass;
     }
-
+    
     /**
      * Allows you to configure the content model class to use when the data is retrieved. The data content model is an
      * extbase model for the data of a single content element. Therefore it behaves in the same way a normal extbase
@@ -58,14 +59,14 @@ class ContentType extends TcaTableType
     public function setModelClass(string $modelClass): ContentType
     {
         if (! class_exists($modelClass) || ! in_array(AbstractDataModel::class, class_parents($modelClass), true)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The given model class ' . $modelClass . ' must extend ' . AbstractDataModel::class);
         }
         $this->dataModelClass = $modelClass;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the content element signature / CType this form is linked with
      *

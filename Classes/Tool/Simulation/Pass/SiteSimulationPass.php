@@ -27,20 +27,20 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 class SiteSimulationPass implements SimulatorPassInterface
 {
     use TypoContextAwareTrait;
-
+    
     /**
      * @inheritDoc
      */
     public function addOptionDefinition(array $options): array
     {
         $options['site'] = [
-            'type'    => ['string', 'null'],
+            'type' => ['string', 'null'],
             'default' => null,
         ];
-
+        
         return $options;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -53,7 +53,7 @@ class SiteSimulationPass implements SimulatorPassInterface
                    || $this->getTypoContext()->site()->getCurrent()->getIdentifier() !== $options['site']
                );
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -61,12 +61,12 @@ class SiteSimulationPass implements SimulatorPassInterface
     {
         // Backup the current site
         $storage['site'] = $this->getTypoContext()->config()->getRequestAttribute('site');
-
+        
         // Find the given site instance and inject it into the request
         $site = $this->getTypoContext()->site()->get($options['site']);
         $this->getTypoContext()->config()->setRequestAttribute('site', $site);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -74,5 +74,5 @@ class SiteSimulationPass implements SimulatorPassInterface
     {
         $this->getTypoContext()->config()->setRequestAttribute('site', $storage['site']);
     }
-
+    
 }

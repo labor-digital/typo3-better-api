@@ -38,7 +38,7 @@ interface CoreHookEventAdapterInterface
         TypoEventBus $bus,
         TypoContext $context
     ): void;
-
+    
     /**
      * This method is called as soon as the first handler is registered for the matched event
      *

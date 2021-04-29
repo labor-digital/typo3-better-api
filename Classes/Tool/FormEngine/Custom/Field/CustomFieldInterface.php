@@ -26,12 +26,12 @@ use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomElementInterface;
 
 interface CustomFieldInterface extends CustomElementInterface
 {
-
+    
     /**
      * Used to inject the field context
      *
      * @param   \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldContext  $context
      */
     public function setContext(CustomFieldContext $context): void;
-
+    
 }

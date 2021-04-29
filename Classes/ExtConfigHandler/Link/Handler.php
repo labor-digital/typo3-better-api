@@ -31,7 +31,7 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 class Handler extends AbstractSimpleExtConfigHandler
 {
     protected $configureMethod = 'configureLinks';
-
+    
     /**
      * @inheritDoc
      */
@@ -39,7 +39,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return DefinitionCollector::class;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -47,7 +47,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     {
         return 't3ba.link';
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -58,5 +58,5 @@ class Handler extends AbstractSimpleExtConfigHandler
         $configurator->executeThisHandlerAfter(TsHandler::class);
         $configurator->executeThisHandlerAfter(PidHandler::class);
     }
-
+    
 }

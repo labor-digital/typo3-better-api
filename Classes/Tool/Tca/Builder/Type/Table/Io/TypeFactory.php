@@ -42,12 +42,12 @@ class TypeFactory implements PublicServiceInterface
      * @var string
      */
     public static $typeClass = TcaTableType::class;
-
+    
     use ContainerAwareTrait;
     use FactoryTypeLoaderTrait;
     use FactoryPopulatorTrait;
     use FactoryDataHookTrait;
-
+    
     /**
      * Creates a new, empty instance for a certain TCA table type
      *
@@ -67,7 +67,7 @@ class TypeFactory implements PublicServiceInterface
             ]
         );
     }
-
+    
     /**
      * Populates the type based on the TCA showitem string
      *
@@ -77,25 +77,25 @@ class TypeFactory implements PublicServiceInterface
     public function populate(TcaTableType $type, ?array $typeTca = null): void
     {
         // Prepare the tca to match the selected type
-        $tca            = $type->getParent()->getRaw(true);
-        $typeTca        = $typeTca ?? $tca['types'][$type->getTypeName()] ?? TableDefaults::TYPE_TCA;
+        $tca = $type->getParent()->getRaw(true);
+        $typeTca = $typeTca ?? $tca['types'][$type->getTypeName()] ?? TableDefaults::TYPE_TCA;
         $tca['columns'] = TcaUtil::applyColumnOverrides(
             $tca['columns'] ?? [], $typeTca['columnsOverrides'] ?? []
         );
-
+        
         // Inherit the data hooks from the table
         if (isset($tca[DataHookTypes::TCA_DATA_HOOK_KEY])
             && (! isset($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY])
                 || ! is_array($typeTca[DataHookTypes::TCA_DATA_HOOK_KEY]))) {
             $typeTca[DataHookTypes::TCA_DATA_HOOK_KEY] = $tca[DataHookTypes::TCA_DATA_HOOK_KEY];
         }
-
+        
         $tca['types'][$type->getTypeName()] = $typeTca;
         $type->setRaw($typeTca);
-
+        
         // Start the population
         $type->removeAllChildren();
         $this->populateElements($type, $tca);
     }
-
+    
 }

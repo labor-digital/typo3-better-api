@@ -27,17 +27,17 @@ use TYPO3\CMS\Core\Context\UserAspect;
 abstract class AbstractBetterUserAspect extends UserAspect
 {
     use AutomaticAspectGetTrait;
-
+    
     /**
      * @var TypoContext
      */
     protected $context;
-
+    
     /**
      * @var \TYPO3\CMS\Core\Authentication\AbstractUserAuthentication
      */
     protected $resolvedUser;
-
+    
     /**
      * Inject the typo context instance
      *
@@ -47,7 +47,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         $this->context = $context;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -55,7 +55,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->handleGet($name);
     }
-
+    
     /**
      * Returns the root context's user aspect
      *
@@ -65,7 +65,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->context->getRootContext()->getAspect($this->getRootAspectKey());
     }
-
+    
     /**
      * Returns true if there is a user object registered
      *
@@ -75,7 +75,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return ! empty($this->getUserObject());
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -83,7 +83,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->getRootUserAspect()->isLoggedIn();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -91,14 +91,14 @@ abstract class AbstractBetterUserAspect extends UserAspect
     {
         return $this->getRootUserAspect()->isAdmin();
     }
-
+    
     /**
      * Returns the root aspect key
      *
      * @return string
      */
     abstract protected function getRootAspectKey(): string;
-
+    
     /**
      * Should try to return the user object, either from the parent aspect, or by using the globals array
      *
@@ -116,7 +116,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
         if (! empty($rootUser) && ! $rootUser instanceof stdClass && ! is_array($rootUser)) {
             return $this->resolvedUser = $rootUser;
         }
-
+        
         return null;
     }
 }

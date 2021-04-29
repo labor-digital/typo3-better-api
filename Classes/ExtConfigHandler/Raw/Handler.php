@@ -36,12 +36,12 @@ class Handler extends AbstractExtConfigHandler
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureRawSettingsInterface::class);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function prepare(): void { }
-
+    
     /**
      * @inheritDoc
      */
@@ -49,10 +49,10 @@ class Handler extends AbstractExtConfigHandler
     {
         call_user_func([$class, 'configureRaw'], $this->context->getState(), $this->context);
     }
-
+    
     /**
      * @inheritDoc
      */
     public function finish(): void { }
-
+    
 }

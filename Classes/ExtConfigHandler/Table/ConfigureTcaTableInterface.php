@@ -39,7 +39,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  */
 interface ConfigureTcaTableInterface
 {
-
+    
     /**
      * Should be used to configure the table that is passed to it
      *

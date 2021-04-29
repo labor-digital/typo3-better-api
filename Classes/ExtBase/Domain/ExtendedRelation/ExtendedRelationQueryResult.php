@@ -25,19 +25,19 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class ExtendedRelationQueryResult extends QueryResult
 {
-
+    
     /**
      * @var ExtendedRelationService
      */
     protected $extendedRelationService;
-
+    
     /**
      * The settings for the extended relation service
      *
      * @var array
      */
     protected $settings;
-
+    
     /**
      * @inheritDoc
      */
@@ -46,7 +46,7 @@ class ExtendedRelationQueryResult extends QueryResult
         parent::__construct($query);
         $this->settings = $settings;
     }
-
+    
     /**
      * @param   ExtendedRelationService  $extendedRelationService
      */
@@ -54,7 +54,7 @@ class ExtendedRelationQueryResult extends QueryResult
     {
         $this->extendedRelationService = $extendedRelationService;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -64,7 +64,7 @@ class ExtendedRelationQueryResult extends QueryResult
             parent::initialize();
         });
     }
-
+    
     /**
      * @inheritDoc
      */

@@ -29,6 +29,7 @@ use LaborDigital\T3BA\Tool\Cache\CacheInterface;
 use LaborDigital\T3BA\Tool\Cache\Implementation\GenericCache;
 use LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator;
 use Neunerlei\Arrays\Arrays;
+use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -45,32 +46,32 @@ class CacheConfigurationPass implements CompilerPassInterface
             \Psr\SimpleCache\CacheInterface::class,
             FrontendInterface::class,
         ];
-
+    
     /**
      * Holds the ids of the already generated cache provider services.
      *
      * @var array
      */
     protected $generatedCacheServices = [];
-
+    
     /**
      * @inheritDoc
      */
     public function process(ContainerBuilder $container)
     {
         $definitions = $this->getImplementationDefinitions($container);
-
+        
         $this->autoWireCacheArguments($container, $definitions);
-
+        
         $container->getDefinition(CacheFactory::class)
                   ->setArgument('$implementations', array_keys($definitions));
-
+        
         $container->getDefinition(CacheClearing::class)
                   ->setArgument('$cacheIdentifiers', array_unique(Arrays::getList($definitions, 'cache')));
-
+        
         $this->configureEnvironmentCacheKeyEnhancers($container);
     }
-
+    
     /**
      * Extracts and prepares the list of classes that have been tagged using the "t3ba.cache" tag.
      * Those classes are static implementations which provide additional features above the normal
@@ -90,7 +91,7 @@ class CacheConfigurationPass implements CompilerPassInterface
                         'The service ' . $serviceId
                         . ' is tagged as t3ba.cache, but does not have an "identifier" configured');
                 }
-
+                
                 if (is_string($config['identifier'])) {
                     $config['identifier'] = array_map('trim', explode(',', $config['identifier']));
                 }
@@ -99,23 +100,23 @@ class CacheConfigurationPass implements CompilerPassInterface
                         'The service ' . $serviceId
                         . ' has an invalid "identifier" configured, only strings and arrays of strings are allowed');
                 }
-
+                
                 if (empty($config['cacheIdentifier']) || ! is_string($config['cacheIdentifier'])) {
                     $config['cacheIdentifier'] = null;
                 }
-
+                
                 foreach ($config['identifier'] as $identifier) {
                     $definitions[$identifier] = [
                         'service' => $serviceId,
-                        'cache'   => $config['cacheIdentifier'],
+                        'cache' => $config['cacheIdentifier'],
                     ];
                 }
             }
         }
-
+        
         return $definitions;
     }
-
+    
     /**
      * Iterates all services that have been tagged as "t3ba.cacheConsumer", scans the constructor,
      * and "inject" methods and automatically generates the auto-wiring to the inflected cache instance.
@@ -130,22 +131,22 @@ class CacheConfigurationPass implements CompilerPassInterface
             if (! $ref) {
                 continue;
             }
-
+            
             $def = $container->getDefinition($serviceId);
-
+            
             if ($ref->getConstructor()) {
                 /** @noinspection NullPointerExceptionInspection */
                 $this->autoWireSingleMethod($container, $def, $ref->getConstructor(), $definitions);
             }
-
-            foreach ($ref->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            
+            foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
                 if (stripos($method->getName(), 'inject') === 0) {
                     $this->autoWireSingleMethod($container, $def, $method, $definitions);
                 }
             }
         }
     }
-
+    
     /**
      * Handles the auto wiring of a single method in autoWireCacheArguments()
      *
@@ -157,27 +158,28 @@ class CacheConfigurationPass implements CompilerPassInterface
     protected function autoWireSingleMethod(
         ContainerBuilder $container,
         Definition $definition,
-        \ReflectionMethod $reflectionMethod,
+        ReflectionMethod $reflectionMethod,
         array $definitions
-    ): void {
+    ): void
+    {
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $types = explode('|', (string)ProxyHelper::getTypeHint($reflectionMethod, $parameter, true));
-
+            
             if (empty(array_intersect($types, static::TRACKED_INTERFACES))) {
                 continue;
             }
-
+            
             $identifier = preg_replace('~(Cache)$~', '', lcfirst($parameter->getName()));
-
+            
             $providerServiceId = $this->getProviderServiceId($container, $identifier, $definitions);
-
+            
             $definition->setArgument(
                 '$' . $parameter->getName(),
                 new Reference($providerServiceId)
             );
         }
     }
-
+    
     /**
      * Calculates the cache provider, service id and if its a new one,
      * automatically registers it into the service container
@@ -192,33 +194,34 @@ class CacheConfigurationPass implements CompilerPassInterface
         ContainerBuilder $container,
         string $identifier,
         array $definitions
-    ): string {
+    ): string
+    {
         $cacheIdentifier = $identifier;
-        $serviceName     = GenericCache::class;
-
+        $serviceName = GenericCache::class;
+        
         if (isset($definitions[$identifier])) {
-            $serviceName     = $definitions[$identifier]['service'];
+            $serviceName = $definitions[$identifier]['service'];
             $cacheIdentifier = $definitions[$identifier]['cache'];
         }
-
+        
         $className = $container->getDefinition($serviceName)->getClass();
         if (! is_string($className)) {
             throw new \RuntimeException('Cache provider for identifier ' . $identifier
                                         . ' could not be created, because it could not be resolved into a class name');
         }
-
+        
         $cacheServiceId = 't3ba_cache_' . md5($serviceName . '.' . $cacheIdentifier);
-
+        
         if (! isset($this->generatedCacheServices[$cacheServiceId])) {
             $def = new Definition(CacheInterface::class);
             $def->setFactory([new Reference(CacheFactory::class), 'makeCacheImplementation']);
             $def->setArguments([$className, $cacheIdentifier]);
             $container->setDefinition($cacheServiceId, $def);
         }
-
+        
         return $cacheServiceId;
     }
-
+    
     /**
      * Configures the environment cache key generator by providing the list of all registered cache key enhancer
      * instances to it
@@ -231,7 +234,7 @@ class CacheConfigurationPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('t3ba.cacheKeyEnhancer') as $serviceId => $_) {
             $enhancers = new Reference($serviceId);
         }
-
+        
         $container->getDefinition(EnvironmentCacheKeyGenerator::class)
                   ->setArgument('$enhancers', [$enhancers]);
     }

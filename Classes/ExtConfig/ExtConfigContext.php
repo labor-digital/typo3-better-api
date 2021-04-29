@@ -39,19 +39,19 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
-
+    
     /**
      * @var TypoContext
      */
     protected $typoContext;
-
+    
     /**
      * Holds the cached namespace to ext key and vendor value map
      *
      * @var array
      */
     protected $extKeyVendorCache = [];
-
+    
     /**
      * ExtConfigContext constructor.
      *
@@ -61,7 +61,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     {
         $this->extConfigService = $extConfigService;
     }
-
+    
     /**
      * Returns the typo context instance if it was provided by the lifecycle yet
      *
@@ -73,10 +73,10 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         if (! $this->typoContext) {
             throw new ExtConfigException('You can\'t access the TypoContext object here, because it is to early in the lifecycle!');
         }
-
+        
         return $this->typoContext;
     }
-
+    
     /**
      * Allows to inject the typo context instance
      *
@@ -87,10 +87,10 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     public function setTypoContext(TypoContext $typoContext): self
     {
         $this->typoContext = $typoContext;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns multiple environment related constraint helpers
      *
@@ -101,11 +101,11 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         if ($this->typoContext) {
             return $this->typoContext->env();
         }
-
+        
         // Fallback if used to early in the lifecycle
         return new EnvFacet();
     }
-
+    
     /**
      * Returns the instance of the ext config service
      *
@@ -115,7 +115,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     {
         return $this->extConfigService;
     }
-
+    
     /**
      * Returns the vendor key of the current configuration or an empty string
      *
@@ -125,7 +125,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     {
         return $this->getExtKeyAndVendorFromNamespace()[0];
     }
-
+    
     /**
      * Returns the extension key for the current configuration
      *
@@ -135,7 +135,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     {
         return $this->getExtKeyAndVendorFromNamespace()[1];
     }
-
+    
     /**
      * Returns the extension key and the vendor, separated by a dot
      *
@@ -145,7 +145,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     {
         return ($this->getVendor() === '' ? '' : $this->getVendor() . '.') . $this->getExtKey();
     }
-
+    
     /**
      * This helper can be used to replace {{extKey}}, {{extKeyWithVendor}} and {{vendor}}
      * inside of keys and values with the proper value for the current context
@@ -162,17 +162,17 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
             }
         } elseif (is_string($raw)) {
             $markers = [
-                '{{extKey}}'           => $this->getExtKey(),
+                '{{extKey}}' => $this->getExtKey(),
                 '{{extKeyWithVendor}}' => $this->getExtKeyWithVendor(),
-                '{{vendor}}'           => $this->getVendor(),
+                '{{vendor}}' => $this->getVendor(),
             ];
-
+            
             return str_ireplace(array_keys($markers), $markers, $raw);
         }
-
+        
         return $raw;
     }
-
+    
     /**
      * This helper allows you to resolve either a single pid entry or a list of multiple pids at once.
      * It will also take replaceMarkers into account before requesting the pids
@@ -189,16 +189,16 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         if (empty($keys)) {
             return $keys;
         }
-
+        
         $keys = $this->replaceMarkers($keys);
-
+        
         if (is_array($keys)) {
             return $this->getTypoContext()->pid()->getMultiple($keys, $fallback);
         }
-
+        
         return $this->getTypoContext()->pid()->get($keys, $fallback);
     }
-
+    
     /**
      * Helper to resolve either a single or an array of table names into their real table name.
      * It will unfold "..." prefixed table names to a valid ext base table name, or convert
@@ -214,7 +214,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         if (is_array($tableName)) {
             return array_map([$this, 'resolveTableName'], $tableName);
         }
-
+        
         if (is_string($tableName) && strpos($tableName, '...') === 0) {
             return implode('_', array_filter([
                 'tx',
@@ -224,10 +224,10 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
                 substr($tableName, 3),
             ]));
         }
-
+        
         return NamingUtil::resolveTableName($tableName);
     }
-
+    
     /**
      * Can be used to execute a given $callback in the scope of another extKey / vendor pair.
      * The current context"s extKey and vendor will be stored changed with the given values and reverted
@@ -242,10 +242,10 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     public function runWithExtKeyAndVendor(string $extKey, ?string $vendor, callable $callback)
     {
         $namespace = empty($vendor) ? $extKey : $vendor . '.' . $extKey;
-
+        
         return $this->runWithNamespace($namespace, $callback);
     }
-
+    
     /**
      * Returns the instance of the TYPO3 package configuration for the currently configured extension
      *
@@ -257,7 +257,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
                     ->getInstance(PackageManager::class)
                     ->getPackage($this->getExtKey());
     }
-
+    
     /**
      * Returns the instance of the dependency injection container
      *
@@ -267,7 +267,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     {
         return DelegateContainer::getInstance();
     }
-
+    
     /**
      * Extracts ext key and vendor from the currently set configuration namespace
      *
@@ -279,9 +279,9 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
         if (isset($this->extKeyVendorCache[$namespace])) {
             return $this->extKeyVendorCache[$namespace];
         }
-
+        
         $parts = explode('.', $namespace);
-
+        
         return $this->extKeyVendorCache[$namespace] = [
             isset($parts[1]) ? (string)$parts[0] : null,
             $parts[1] ?? $parts[0],

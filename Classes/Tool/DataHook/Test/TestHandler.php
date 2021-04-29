@@ -28,15 +28,15 @@ use LaborDigital\T3BA\Tool\DataHook\DataHookContext;
 
 class TestHandler implements PublicServiceInterface
 {
-
+    
     public function global(DataHookContext $context)
     {
         dbge($context->getType(), $context);
-
+        
         return;
         dbge($context->getUid(), $context->getData(), $context->getTableName());
     }
-
+    
     public function field(DataHookContext $context)
     {
         $context->setData('D' . microtime());

@@ -41,14 +41,14 @@ class SaveFilterEvent implements CoreHookEventInterface
      * @var array
      */
     protected $row;
-
+    
     /**
      * The name of the table that is currently saved
      *
      * @var string
      */
     protected $tableName;
-
+    
     /**
      * The id of the entry that is saved.
      * May be the numeric id or a string with "NEW_..." at the beginning
@@ -56,14 +56,14 @@ class SaveFilterEvent implements CoreHookEventInterface
      * @var string|int
      */
     protected $id;
-
+    
     /**
      * The currently executed data handler instance
      *
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
-
+    
     /**
      * @inheritDoc
      */
@@ -71,7 +71,7 @@ class SaveFilterEvent implements CoreHookEventInterface
     {
         return SaveEventAdapter::class;
     }
-
+    
     /**
      * SaveFilterEvent constructor.
      *
@@ -82,12 +82,12 @@ class SaveFilterEvent implements CoreHookEventInterface
      */
     public function __construct(array $row, string $tableName, $id, DataHandler $dataHandler)
     {
-        $this->row         = $row;
-        $this->tableName   = $tableName;
-        $this->id          = $id;
+        $this->row = $row;
+        $this->tableName = $tableName;
+        $this->id = $id;
         $this->dataHandler = $dataHandler;
     }
-
+    
     /**
      * Returns the row that was given by to the data handler
      *
@@ -97,7 +97,7 @@ class SaveFilterEvent implements CoreHookEventInterface
     {
         return $this->row;
     }
-
+    
     /**
      * Updates the row that was given by to the data handler
      *
@@ -108,10 +108,10 @@ class SaveFilterEvent implements CoreHookEventInterface
     public function setRow(array $row): SaveFilterEvent
     {
         $this->row = $row;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the id of the entry that is saved
      *
@@ -121,7 +121,7 @@ class SaveFilterEvent implements CoreHookEventInterface
     {
         return $this->id;
     }
-
+    
     /**
      * Updates the id of the entry that is saved.
      *
@@ -132,10 +132,10 @@ class SaveFilterEvent implements CoreHookEventInterface
     public function setId($id)
     {
         $this->id = $id;
-
+        
         return $this;
     }
-
+    
     /**
      * Returns the name of the table that is currently saved
      *
@@ -145,7 +145,7 @@ class SaveFilterEvent implements CoreHookEventInterface
     {
         return $this->tableName;
     }
-
+    
     /**
      * Returns the currently executed data handler instance
      *

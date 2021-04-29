@@ -53,21 +53,21 @@ class DbgConfigurationStage implements BootStageInterface
         if (! function_exists('dbgConfig') || ! defined('_DBG_CONFIG_LOADED')) {
             return;
         }
-
+        
         // Register our Plugins
         Kint::$plugins[] = LazyLoadingPlugin::class;
         Kint::$plugins[] = TypoInstanceTypePlugin::class;
-
+        
         // Redirect the logs into the TYPO log directory
         dbgConfig('logDir', Path::unifyPath(BETTER_API_TYPO3_VAR_PATH, '/') . 'log');
-
+        
         // Register pre hook to fix broken typo3 iframe
         $recursion = false;
         dbgConfig('postHooks', static function ($type, $function) use (&$recursion) {
             if (! str_starts_with($function, 'dbg') || $recursion) {
                 return;
             }
-
+            
             $recursion = true;
             try {
                 if ((defined('TYPO3_MODE') && TYPO3_MODE === 'BE') && PHP_SAPI !== 'cli') {
@@ -90,7 +90,7 @@ HTML;
             }
             $recursion = false;
         });
-
+        
         // Register blacklisted objects to prevent kint from breaking apart ...
         if (class_exists(BlacklistPlugin::class)) {
             BlacklistPlugin::$shallow_blacklist[] = ReflectionService::class;
@@ -107,5 +107,5 @@ HTML;
             BlacklistPlugin::$shallow_blacklist[] = ListenerProviderInterface::class;
         }
     }
-
+    
 }

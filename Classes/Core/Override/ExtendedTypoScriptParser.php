@@ -37,7 +37,8 @@ class ExtendedTypoScriptParser extends T3BA__Copy__TypoScriptParser
         $cycleCounter,
         $returnFiles,
         array &$includedFiles
-    ) {
+    )
+    {
         TypoEventBus::getInstance()->dispatch(
             $e = new FileImportFilterEvent(
                 (string)$filename,
@@ -45,16 +46,16 @@ class ExtendedTypoScriptParser extends T3BA__Copy__TypoScriptParser
                 (bool)$returnFiles,
                 $includedFiles)
         );
-        $filename      = $e->getFilename();
-        $cycleCounter  = $e->getCycleCounter();
-        $returnFiles   = $e->doesReturnFiles();
+        $filename = $e->getFilename();
+        $cycleCounter = $e->getCycleCounter();
+        $returnFiles = $e->doesReturnFiles();
         $includedFiles = $e->getIncludedFiles();
         if ($e->getResult() !== null) {
             return $e->getResult();
         }
-
+        
         return parent::importExternalTypoScriptFile($filename, $cycleCounter, $returnFiles, $includedFiles);
     }
-
-
+    
+    
 }

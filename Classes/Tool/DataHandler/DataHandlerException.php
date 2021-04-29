@@ -35,7 +35,7 @@ class DataHandlerException extends T3BAException
      * @var DataHandler
      */
     protected $handler;
-
+    
     /**
      * Returns the data handler that threw the exception
      *
@@ -45,7 +45,7 @@ class DataHandlerException extends T3BAException
     {
         return $this->handler;
     }
-
+    
     /**
      * Returns the list of errors that occurred
      *
@@ -55,7 +55,7 @@ class DataHandlerException extends T3BAException
     {
         return $this->handler->errorLog;
     }
-
+    
     /**
      * Creates a new instance of this exception
      *
@@ -72,15 +72,15 @@ class DataHandlerException extends T3BAException
             foreach ($handler->errorLog as $error) {
                 $message .= PHP_EOL . $error;
             }
-        };
-
+        }
+        
         if ($previous !== null) {
             $message .= PHP_EOL . $previous->getMessage();
         }
-
-        $i          = new static($message, 1599580792, $previous);
+        
+        $i = new static($message, 1599580792, $previous);
         $i->handler = $handler;
-
+        
         return $i;
     }
 }
