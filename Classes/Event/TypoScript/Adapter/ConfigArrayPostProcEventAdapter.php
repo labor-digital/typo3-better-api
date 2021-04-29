@@ -39,7 +39,7 @@ class ConfigArrayPostProcEventAdapter extends AbstractCoreHookEventAdapter
             = static::class . '->handle';
     }
     
-    public function handle(array $params, TypoScriptFrontendController $tsfe): void
+    public function handle(array &$params, TypoScriptFrontendController $tsfe): void
     {
         $this->EventBus()->dispatch($e = new ConfigArrayPostProcEvent($params['config'], $tsfe));
         $params['config'] = $e->getConfig();
