@@ -87,7 +87,7 @@ class NamingUtil
      */
     public static function pluginNameFromControllerAction(string $controllerClass, string $actionName): string
     {
-        foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions'] as $extensionName => $config) {
+        foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions'] as $config) {
             if (! is_array($config['plugins'] ?? null)) {
                 continue;
             }
