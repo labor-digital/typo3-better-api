@@ -68,16 +68,16 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
     }
 
     /**
-     * Registers a new cache configuration to typo3's caching framework.
+     * Registers a new cache configuration to TYPO3's caching framework.
      *
-     * @param   string  $key       The cache key which is used to retrieve the cache instance later
-     * @param   string  $frontend  The classname of the frontend to use
-     * @param   string  $backend   The classname of the backend to use
-     * @param   array   $options   Additional options for this cache
-     *                             - options: (array) default: [] | Additional configuration for your backend.
-     *                             Take a look a the typo3 documentation to see which options are supported.
-     *                             - groups: (array|string) default: [] | One or multiple cache groups that should
-     *                             be able to flush this cache. Allowed values are "all", "system" and "pages"
+     * @param   string  $identifier  The cache identifier which is used to retrieve the cache instance later
+     * @param   string  $frontend    The classname of the frontend to use
+     * @param   string  $backend     The classname of the backend to use
+     * @param   array   $options     Additional options for this cache
+     *                               - options: (array) default: [] | Additional configuration for your backend.
+     *                               Take a look a the typo3 documentation to see which options are supported.
+     *                               - groups: (array|string) default: [] | One or multiple cache groups that should
+     *                               be able to flush this cache. Allowed values are "all", "system" and "pages"
      *
      * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
      *
@@ -85,7 +85,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      * @see https://docs.typo3.org/typo3cms/CoreApiReference/latest/ApiOverview/CachingFramework/Developer/Index.html
      */
     public function registerCache(
-        string $key,
+        string $identifier,
         string $frontend,
         string $backend,
         array $options = []
@@ -101,7 +101,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
                     'default'   => [],
                     'validator' => static function ($v) {
                         if (! empty(array_filter($v, static function ($v) {
-                            return in_array($v, ['all', 'system', 'pages'], true);
+                            return ! in_array($v, ['all', 'system', 'pages'], true);
                         }))) {
                             return 'Your cache groups are invalid! Only the values all, system and pages are allowed!';
                         }
@@ -111,7 +111,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
                 ],
             ]);
 
-        $this->cacheConfigurations[$this->context->replaceMarkers($key)] = [
+        $this->cacheConfigurations[$this->context->replaceMarkers($identifier)] = [
             'frontend' => $frontend,
             'backend'  => $backend,
             'options'  => $this->context->replaceMarkers($options['options']),
