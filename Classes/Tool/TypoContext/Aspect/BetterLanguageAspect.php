@@ -65,10 +65,17 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     /**
      * Returns the list of all languages the frontend may display
      *
+     * @param   string|null  $siteIdentifier  By default the current site is used to retrieve the languages.
+     *                                        You can set a site identifier to get the languages of a specific site.
+     *
      * @return SiteLanguage[]
      */
-    public function getAllFrontendLanguages(): array
+    public function getAllFrontendLanguages(?string $siteIdentifier = null): array
     {
+        if ($siteIdentifier !== null) {
+            return $this->context->site()->get($siteIdentifier)->getLanguages();
+        }
+
         return $this->context->site()->getCurrent()->getLanguages();
     }
 
