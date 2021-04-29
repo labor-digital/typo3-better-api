@@ -141,10 +141,12 @@ trait CodeGenerationHelperTrait
         // Build return type
         $returnType = '';
         if ($method->hasReturnType()) {
-            $type                = $method->getReturnType();
-            $isObjectOrInterface = class_exists($type) || interface_exists($type);
-            /** @noinspection NullPointerExceptionInspection */
-            $returnType = ':' . ($isObjectOrInterface ? '\\' : '') . $type->getName();
+            $type = $method->getReturnType();
+            if ($type !== null) {
+                $typeName            = (string)$type->getName();
+                $isObjectOrInterface = class_exists($typeName) || interface_exists($typeName);
+                $returnType          = ':' . ($isObjectOrInterface ? '\\' : '') . $typeName;
+            }
         }
 
         // Build signature
