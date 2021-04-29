@@ -247,7 +247,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      * @throws BetterQueryException
      * @see RelatedRecordRow
      */
-    public function getRelated($fields, array $options = []): array
+    public function getRelated(array $fields, array $options = []): array
     {
         $tableName = $this->adapter->getTableName();
         
@@ -269,17 +269,6 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                 },
             ],
         ]);
-        
-        // Legacy fallback
-        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-        if (is_string($fields)) {
-            trigger_error(
-                'String based field definitions are deprecated for getRelated() use arrays instead!',
-                E_USER_DEPRECATED
-            );
-            $isSingleField = true;
-            $fields = [$fields];
-        }
         
         // Validate fields
         if (empty($fields)) {
@@ -351,6 +340,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                 // This is done so we can apply the frontend constraints to the backend utility we use
                 foreach ($relationHandler->tableArray as $localTable => $items) {
                     // Build additional where or load it from cache
+                    /** @noinspection PhpArrayIsAlwaysEmptyInspection */
                     $additionalWhere = $additionalWhereCache[$localTable] ??
                                        $dbService->getQuery($localTable)
                                                  ->withLanguage(false)
@@ -393,11 +383,6 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                 // Store the relations
                 $resultsByField[$currentField][$result['uid']] = $relationList;
             }
-        }
-        
-        // Check if we got a single field request
-        if (isset($isSingleField)) {
-            return $resultsByField[reset($fieldList)] ?? [];
         }
         
         // Done

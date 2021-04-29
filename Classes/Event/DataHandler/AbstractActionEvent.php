@@ -134,7 +134,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
      *
      * @return array
      */
-    public function getPasteSpecialData()
+    public function getPasteSpecialData(): array
     {
         return $this->pasteSpecialData;
     }

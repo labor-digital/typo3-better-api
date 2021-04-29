@@ -41,7 +41,7 @@ class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface
      */
     public function process(string $tableName, array &$config, array &$meta): void
     {
-        if (isset($config['ctrl'][static::CONFIG_KEY]) && $config['ctrl'][static::CONFIG_KEY]) {
+        if (! empty($config['ctrl'][static::CONFIG_KEY])) {
             $meta['onStandardPages'][] = $tableName;
         }
         

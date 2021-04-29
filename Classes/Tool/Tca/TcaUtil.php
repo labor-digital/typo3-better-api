@@ -115,7 +115,6 @@ class TcaUtil
                     
                     // Move the entry to the bottom -> Keep it longer in our short time memory
                     unset(static::$resolvedTypeTca[$key]);
-                    static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
                 } else {
                     $typeTca = $GLOBALS['TCA'][$tableName]['types'][$rowType] ?? [];
                     
@@ -125,8 +124,9 @@ class TcaUtil
                     if (count(static::$resolvedTypeTca) > 20) {
                         array_shift(static::$resolvedTypeTca);
                     }
-                    static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
                 }
+                
+                static::$resolvedTypeTca[$key] = $GLOBALS['TCA'][$tableName]['columns'];
             }
             
             return $callback($GLOBALS['TCA'][$tableName]);

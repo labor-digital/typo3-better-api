@@ -37,7 +37,7 @@ class AssetFilterEventAdapter extends AbstractCoreHookEventAdapter
             = static::class . '->emit';
     }
     
-    public function emit(&$arguments, $pageRenderer)
+    public function emit(&$arguments, $pageRenderer): void
     {
         $event = static::$context->env()->isBackend()
             ? new BackendAssetFilterEvent($arguments, $pageRenderer)

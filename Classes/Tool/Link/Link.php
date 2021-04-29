@@ -1032,6 +1032,7 @@ class Link
         if (! empty($this->language)) {
             $this->args['L'] = $this->language->getLanguageId();
         } else {
+            // @todo can this else be removed?
 //            $this->args['L'] = $typoContext->language()->getCurrentFrontendLanguage()->getLanguageId();
         }
         
@@ -1173,8 +1174,8 @@ class Link
         
         // Resolve callable
         if (is_callable($this->pid)
-            || (is_array($this->pid) && class_exists((string)$this->pid[0])
-                || is_string($this->pid) && strpos($this->pid, '->') !== false)) {
+            || ((is_array($this->pid) && class_exists((string)$this->pid[0]))
+                || (is_string($this->pid) && strpos($this->pid, '->') !== false))) {
             $pid = call_user_func(NamingUtil::resolveCallable($this->pid), $this);
         } elseif (is_array($this->pid)) {
             // Translate the map keys into real pids so we can do a lookup for the correct value
@@ -1186,7 +1187,7 @@ class Link
                 return $typoContext->Pid()->get($k);
             }, array_keys($this->pid));
             
-            $pids = array_combine($keys, array_values((array)$this->pid));
+            $pids = array_combine($keys, (array)$this->pid);
             
             // Try to fetch the storage pid based on the given argument
             $arg = isset($pids['argument']) ? $this->args[$pids['argument']] : reset($this->args);

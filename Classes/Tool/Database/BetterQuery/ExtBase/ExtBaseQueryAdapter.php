@@ -111,10 +111,11 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
     public function getQueryBuilder(): QueryBuilder
     {
-        throw new NotImplementedException('The query builder is generated in the ext base better query implementation');
+        throw new NotImplementedException('The query builder is generated in the extBase better-query implementation');
     }
     
     /**
@@ -136,7 +137,7 @@ class ExtBaseQueryAdapter extends AbstractQueryAdapter
     /**
      * @inheritDoc
      */
-    public function makeCondition(string $operator, $key, $value, bool $negated)
+    public function makeCondition(string $operator, string $key, $value, bool $negated)
     {
         switch ($operator) {
             case 'has':

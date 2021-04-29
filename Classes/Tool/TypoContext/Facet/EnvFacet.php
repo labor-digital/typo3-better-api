@@ -171,7 +171,7 @@ class EnvFacet implements FacetInterface
      */
     public function isBackend(): bool
     {
-        return (defined('TYPO3_MODE') && TYPO3_MODE === 'BE') ?: false;
+        return defined('TYPO3_MODE') && TYPO3_MODE === 'BE';
     }
     
     /**
@@ -181,7 +181,7 @@ class EnvFacet implements FacetInterface
      */
     public function isFrontend(): bool
     {
-        return (defined('TYPO3_MODE') && TYPO3_MODE === 'FE') ?: false;
+        return defined('TYPO3_MODE') && TYPO3_MODE === 'FE';
     }
     
     /**

@@ -57,7 +57,7 @@ class CacheConfigurationPass implements CompilerPassInterface
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definitions = $this->getImplementationDefinitions($container);
         
@@ -163,6 +163,7 @@ class CacheConfigurationPass implements CompilerPassInterface
     ): void
     {
         foreach ($reflectionMethod->getParameters() as $parameter) {
+            // todo implement this in the CodeGenerationHelperTrait
             $types = explode('|', (string)ProxyHelper::getTypeHint($reflectionMethod, $parameter, true));
             
             if (empty(array_intersect($types, static::TRACKED_INTERFACES))) {

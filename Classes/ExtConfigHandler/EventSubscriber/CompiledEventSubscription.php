@@ -75,6 +75,7 @@ class CompiledEventSubscription implements EventSubscriptionInterface
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
     public function getBus(): EventBusInterface
     {

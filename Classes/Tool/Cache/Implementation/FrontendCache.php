@@ -55,16 +55,12 @@ class FrontendCache extends AbstractExtendedCache
             
             $isUpdate = false;
             $tsfe = $typoContext->di()->cs()->tsfe;
-            if ($tsfe->hasTsfe()) {
-                if ($tsfe->getTsfe()->no_cache) {
-                    $isUpdate = true;
-                }
+            if ($tsfe->hasTsfe() && $tsfe->getTsfe()->no_cache) {
+                $isUpdate = true;
             }
             
-            if (! $isUpdate && $typoContext->beUser()->isLoggedIn()) {
-                if ($_SERVER['HTTP_PRAGMA'] === 'no-cache') {
-                    $isUpdate = true;
-                }
+            if (! $isUpdate && $_SERVER['HTTP_PRAGMA'] === 'no-cache' && $typoContext->beUser()->isLoggedIn()) {
+                $isUpdate = true;
             }
             
             $this->isUpdateState = $isUpdate;

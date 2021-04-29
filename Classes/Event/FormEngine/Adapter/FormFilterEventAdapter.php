@@ -49,7 +49,7 @@ class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements For
     /**
      * @inheritDoc
      */
-    public function addData(array $result)
+    public function addData(array $result): array
     {
         if (! isset($result['tableName'])) {
             return $result;

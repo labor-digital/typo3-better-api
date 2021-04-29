@@ -43,6 +43,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
      * @param   string                                                         $tableName
      * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
+     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext                $context
      */
     public function __construct(
         string $tableName,
@@ -147,7 +148,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     /**
      * @inheritDoc
      */
-    public function makeCondition(string $operator, $key, $value, bool $negated)
+    public function makeCondition(string $operator, string $key, $value, bool $negated)
     {
         $qb = $this->queryBuilder;
         switch ($operator) {

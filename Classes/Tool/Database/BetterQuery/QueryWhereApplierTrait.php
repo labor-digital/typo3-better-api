@@ -173,28 +173,28 @@ trait QueryWhereApplierTrait
                 
                 // Done
                 $conditions[] = $condition;
-            } else {
-                // Special value detected
-                // Check if there is a closure for advanced helpers
-                if (is_callable($v)) {
-                    $q = null;
-                    if ($adapter instanceof DoctrineQueryAdapter) {
-                        $q = $adapter->getQueryBuilder();
-                    } else {
-                        $q = $adapter->getQuery();
-                    }
-                    $conditions[] = call_user_func($v, $q, $k, $this);
-                } // Check if there is an array -> means an "AND"
-                elseif (is_array($v)) {
-                    $conditions[] = $this->whereConstraintBuilder($v, $adapter);
+            }
+            // Special value detected
+            // Check if there is a closure for advanced helpers
+            elseif (is_callable($v)) {
+                $q = null;
+                if ($adapter instanceof DoctrineQueryAdapter) {
+                    $q = $adapter->getQueryBuilder();
+                } else {
+                    $q = $adapter->getQuery();
                 }
+                $conditions[] = call_user_func($v, $q, $k, $this);
+            } // Check if there is an array -> means an "AND"
+            elseif
+            (is_array($v)) {
+                $conditions[] = $this->whereConstraintBuilder($v, $adapter);
             }
         }
         
         // Combine the conditions
         if (empty($conditions)) {
             throw new BetterQueryException('Failed to convert the query into a constraint! The given query was: '
-                                           . json_encode($query));
+                                           . json_encode($query, JSON_THROW_ON_ERROR));
         }
         
         return $adapter->makeAnd($conditions);
@@ -210,7 +210,10 @@ trait QueryWhereApplierTrait
      * @return void
      * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
      */
-    protected function applyWhere(AbstractQueryAdapter $adapter): void
+    protected
+    function applyWhere(
+        AbstractQueryAdapter $adapter
+    ): void
     {
         // Ignore if there is no where set
         if (empty($this->where)) {

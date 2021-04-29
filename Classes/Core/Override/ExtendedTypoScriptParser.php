@@ -50,11 +50,8 @@ class ExtendedTypoScriptParser extends T3BA__Copy__TypoScriptParser
         $cycleCounter = $e->getCycleCounter();
         $returnFiles = $e->doesReturnFiles();
         $includedFiles = $e->getIncludedFiles();
-        if ($e->getResult() !== null) {
-            return $e->getResult();
-        }
         
-        return parent::importExternalTypoScriptFile($filename, $cycleCounter, $returnFiles, $includedFiles);
+        return $e->getResult() ?? parent::importExternalTypoScriptFile($filename, $cycleCounter, $returnFiles, $includedFiles);
     }
     
     

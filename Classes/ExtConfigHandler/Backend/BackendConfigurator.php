@@ -200,6 +200,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
      *                                    parsed for TYPO3 path definitions
      *
      * @return $this
+     * @throws \JsonException
      */
     protected function addAssetInternal(string $method, array $args, ?int $assetArgIndex): self
     {
@@ -208,6 +209,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
         if ($assetArgIndex !== null) {
             $assetUrl = $args[$assetArgIndex];
             
+            /** @noinspection BypassedUrlValidationInspection */
             if (! (bool)filter_var($assetUrl, FILTER_VALIDATE_URL)) {
                 $p = $this->context->getTypoContext()->path();
                 $assetUrl = $p->typoPathToRealPath($assetUrl);
@@ -221,7 +223,7 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
             }
         }
         
-        $this->assets[md5($method . '.' . json_encode($args))] = [$method, $args];
+        $this->assets[md5($method . '.' . json_encode($args, JSON_THROW_ON_ERROR))] = [$method, $args];
         
         return $this;
     }

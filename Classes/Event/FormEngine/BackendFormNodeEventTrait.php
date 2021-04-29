@@ -102,7 +102,7 @@ trait BackendFormNodeEventTrait
      *
      * @return $this
      */
-    public function setResult(?array $result)
+    public function setResult(?array $result): self
     {
         $this->result = $result;
         

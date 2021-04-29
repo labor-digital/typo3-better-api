@@ -47,7 +47,7 @@ class LateFormFilterEventAdapter extends AbstractCoreHookEventAdapter implements
     /**
      * @inheritDoc
      */
-    public function addData(array $result)
+    public function addData(array $result): array
     {
         if (! isset($result['tableName'])) {
             return $result;

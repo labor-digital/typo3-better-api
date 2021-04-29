@@ -103,6 +103,7 @@ class TcaTableType extends AbstractType
      *                                           against TYPO3s field naming schema
      *
      * @return TcaField
+     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\InvalidFieldIdException
      */
     public function getField(string $id, ?bool $ignoreFieldIdIssues = null): TcaField
     {
@@ -264,7 +265,7 @@ class TcaTableType extends AbstractType
      * @inheritDoc
      * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab
      */
-    public function getNewTab()
+    public function getNewTab(): TcaTab
     {
         return parent::getNewTab();
     }
@@ -290,7 +291,7 @@ class TcaTableType extends AbstractType
      *                              them based on your provided $data. All existing instances and their configuration
      *                              will be dropped and set to the provided configuration in data. Be careful with this!
      */
-    public function setRaw(array $raw, bool $repopulate = false)
+    public function setRaw(array $raw, bool $repopulate = false): self
     {
         if ($repopulate) {
             $this->typeFactory->populate($this, $raw);

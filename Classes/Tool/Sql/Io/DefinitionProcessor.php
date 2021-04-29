@@ -317,7 +317,9 @@ class DefinitionProcessor
         }
         
         // Always use the bigger length
-        if ($diff->hasChanged('length') && $target->getLength() < $new->getLength()) {
+        /** @noinspection InsufficientTypesControlInspection */
+        if ($diff->hasChanged('length') && ($target->getLength() === null ||
+                                            ($new->getLength() !== null && $target->getLength() < $new->getLength()))) {
             $target->setLength($new->getLength());
         }
         

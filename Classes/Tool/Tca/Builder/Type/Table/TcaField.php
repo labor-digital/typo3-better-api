@@ -98,6 +98,7 @@ class TcaField extends AbstractField
     
     /**
      * @inheritDoc
+     * @throws \JsonException
      */
     public function setRaw(array $raw)
     {

@@ -39,6 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtBase\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class RepositoryWrapper extends BetterRepository
@@ -48,7 +49,7 @@ class RepositoryWrapper extends BetterRepository
      */
     protected $repository;
     
-    public function initialize(Repository $repository)
+    public function initialize(Repository $repository): void
     {
         $this->repository = $repository;
         $this->selfReference = $repository;
@@ -102,7 +103,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function add($object)
+    public function add($object): void
     {
         $this->repository->add($object);
     }
@@ -110,7 +111,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function remove($object)
+    public function remove($object): void
     {
         $this->repository->remove($object);
     }
@@ -118,7 +119,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function update($modifiedObject)
+    public function update($modifiedObject): void
     {
         $this->repository->update($modifiedObject);
     }
@@ -126,7 +127,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function countAll()
+    public function countAll(): int
     {
         return $this->repository->countAll();
     }
@@ -134,7 +135,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this->repository->removeAll();
     }
@@ -142,7 +143,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function findByUid($uid)
+    public function findByUid($uid): object
     {
         return $this->repository->findByUid($uid);
     }
@@ -150,7 +151,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function findByIdentifier($identifier)
+    public function findByIdentifier($identifier): object
     {
         return $this->repository->findByIdentifier($identifier);
     }
@@ -158,7 +159,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function setDefaultOrderings(array $defaultOrderings)
+    public function setDefaultOrderings(array $defaultOrderings): void
     {
         $this->repository->setDefaultOrderings($defaultOrderings);
     }
@@ -166,7 +167,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function setDefaultQuerySettings(QuerySettingsInterface $defaultQuerySettings)
+    public function setDefaultQuerySettings(QuerySettingsInterface $defaultQuerySettings): void
     {
         $this->repository->setDefaultQuerySettings($defaultQuerySettings);
     }
@@ -174,7 +175,7 @@ class RepositoryWrapper extends BetterRepository
     /**
      * @inheritDoc
      */
-    public function createQuery()
+    public function createQuery(): QueryInterface
     {
         return $this->repository->createQuery();
     }

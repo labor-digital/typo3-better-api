@@ -136,10 +136,6 @@ class VarFs
      */
     public function getCache(): CacheInterface
     {
-        if (isset($this->cache)) {
-            return $this->cache;
-        }
-        
-        return $this->cache = new Cache($this->getMount('cache'));
+        return $this->cache ?? ($this->cache = new Cache($this->getMount('cache')));
     }
 }

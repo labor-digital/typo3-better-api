@@ -228,7 +228,7 @@ trait RouteEnhancerSchemaTrait
      */
     protected function extractArgsFromRoutePath(string $routePath): array
     {
-        preg_match_all('~({.*?})~si', $routePath, $m);
+        preg_match_all('~({.*?})~s', $routePath, $m);
         
         return array_map(static function ($v) { return trim($v, '{} '); }, $m[1]);
     }

@@ -47,7 +47,7 @@ trait DumperTypeGeneratorTrait
             }
             
             /** @noinspection TypeUnsafeComparisonInspection */
-            if ($a[$k] === $v || is_numeric($a[$k]) && is_numeric($v) && $a[$k] == $v) {
+            if ($a[$k] === $v || (is_numeric($a[$k]) && is_numeric($v) && $a[$k] == $v)) {
                 continue;
             }
             

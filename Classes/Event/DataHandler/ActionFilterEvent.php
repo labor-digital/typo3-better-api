@@ -96,9 +96,9 @@ class ActionFilterEvent extends AbstractActionEvent
      *
      * @param   int|string  $id
      *
-     * @return ActionFilterEvent
+     * @return $this
      */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
         

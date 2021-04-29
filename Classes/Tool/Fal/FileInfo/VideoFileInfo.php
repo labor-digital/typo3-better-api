@@ -87,8 +87,8 @@ class VideoFileInfo
      */
     public function isAutoPlay(): bool
     {
-        return $this->parent->getFileReference() !== null
-            ? (bool)$this->parent->getFileReference()->getReferenceProperty('autoplay') : false;
+        return $this->parent->getFileReference() !== null &&
+               $this->parent->getFileReference()->getReferenceProperty('autoplay');
     }
     
     /**

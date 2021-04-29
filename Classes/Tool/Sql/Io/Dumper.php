@@ -85,13 +85,11 @@ class Dumper
             return null;
         }
         
-        $sql = '--' . PHP_EOL .
+        return '--' . PHP_EOL .
                '-- Table structure for table \'' . $table->getName() . '\'' . PHP_EOL .
                '--' . PHP_EOL .
                $sql .
                ';';
-        
-        return $sql;
     }
     
     

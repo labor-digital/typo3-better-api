@@ -124,6 +124,7 @@ class Mount
         
         // Deserialize serialized content
         if (str_starts_with($content, static::SERIALIZED_MARKER)) {
+            /** @noinspection UnserializeExploitsInspection */
             $content = unserialize(substr($content, strlen(static::SERIALIZED_MARKER)));
         }
         
@@ -238,7 +239,7 @@ class Mount
     {
         if (! $this->isInitialized) {
             $this->isInitialized = true;
-            if (file_exists($this->mountPath) && ! is_dir($this->mountPath)) {
+            if (! is_dir($this->mountPath)) {
                 Fs::remove($this->mountPath);
             }
             

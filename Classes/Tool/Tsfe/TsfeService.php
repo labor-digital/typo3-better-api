@@ -72,7 +72,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
     public function hasTsfe(): bool
     {
         return isset($GLOBALS['TSFE']) && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
-               && $GLOBALS['TSFE']->cObj !== '';
+               && ! empty($GLOBALS['TSFE']->cObj);
     }
     
     /**

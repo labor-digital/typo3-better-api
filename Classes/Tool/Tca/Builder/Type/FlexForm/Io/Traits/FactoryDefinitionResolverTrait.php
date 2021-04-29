@@ -47,6 +47,7 @@ trait FactoryDefinitionResolverTrait
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
      *
      * @return array
+     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException
      */
     protected function resolveDefinitionToArray(string $definition, ExtConfigContext $context): array
     {

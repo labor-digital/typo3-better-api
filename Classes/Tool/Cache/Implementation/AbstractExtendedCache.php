@@ -558,7 +558,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     /**
      * Converts A valid tag into a list of tags.
      *
-     * @param   string|mixed[]|mixed  $tags
+     * @param   string|array|mixed  $tags
      *
      * @return array
      */

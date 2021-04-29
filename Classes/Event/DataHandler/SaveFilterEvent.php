@@ -129,7 +129,7 @@ class SaveFilterEvent implements CoreHookEventInterface
      *
      * @return SaveFilterEvent
      */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
         

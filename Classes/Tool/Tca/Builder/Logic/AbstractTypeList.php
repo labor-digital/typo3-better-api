@@ -24,7 +24,6 @@ namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
 
 
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSheet;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractTypeList
@@ -80,11 +79,7 @@ abstract class AbstractTypeList
             $typeName = $this->getDefaultTypeName();
         }
         
-        if (isset($this->types[$typeName])) {
-            return $this->types[$typeName];
-        }
-        
-        return $this->types[$typeName] = $this->loadType($typeName);
+        return $this->types[$typeName] ?? ($this->types[$typeName] = $this->loadType($typeName));
     }
     
     /**

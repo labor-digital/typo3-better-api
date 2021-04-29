@@ -214,7 +214,7 @@ class ExtendedRelationService implements SingletonInterface
             return $this->enabledStateCache[$cacheKey];
         }
         $state = $settings[$key];
-        $result = (function () use ($state, $model, $property) {
+        $result = (static function () use ($state, $model, $property) {
             // Simple state
             if ($state === true) {
                 return true;
@@ -227,14 +227,15 @@ class ExtendedRelationService implements SingletonInterface
             if (is_string($state)) {
                 $state = [$state];
             }
-            if (in_array($model, $state)) {
+            /** @noinspection InArrayMissUseInspection */
+            if (in_array($model, $state, true)) {
                 return true;
             }
             
             // Check if a specific property is allowed
             if (isset($state[$model])
                 && ($state[$model] === $property
-                    || is_array($state[$model]) && in_array($property, $state[$model]))) {
+                    || (is_array($state[$model]) && in_array($property, $state[$model], true)))) {
                 return true;
             }
             
@@ -242,14 +243,15 @@ class ExtendedRelationService implements SingletonInterface
             $parents = class_parents($model);
             foreach ($parents as $parent) {
                 // Check if a class name is given -> Allow all properties
-                if (in_array($parent, $state)) {
+                /** @noinspection InArrayMissUseInspection */
+                if (in_array($parent, $state, true)) {
                     return true;
                 }
                 
                 // Check if a specific property is allowed
                 if (isset($state[$model])
                     && ($state[$model] === $property
-                        || is_array($state[$model]) && in_array($property, $state[$model]))) {
+                        || (is_array($state[$model]) && in_array($property, $state[$model], true)))) {
                     return true;
                 }
             }

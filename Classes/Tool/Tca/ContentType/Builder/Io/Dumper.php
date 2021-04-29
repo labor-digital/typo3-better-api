@@ -115,7 +115,7 @@ class Dumper
             $table->setLoadedType($cType, $type);
         }
         $columns = array_merge(...$columns);
-        $models = array_filter($models, function (string $v) {
+        $models = array_filter($models, static function (string $v) {
             return $v !== DefaultDataModel::class;
         });
         
@@ -237,7 +237,7 @@ class Dumper
         foreach ($models as $cType => $className) {
             $columns = array_values($typeColumns[$cType] ?? []);
             $mapping = array_combine($columns, $columns);
-            $mapping = array_map(function (string $column) {
+            $mapping = array_map(static function (string $column) {
                 return Inflector::toProperty($column);
             }, $mapping);
             

@@ -482,7 +482,7 @@ class Tree
      *
      * @return Tree
      */
-    public function setAllowTabIdStrings(bool $allowTabIdStrings): Tree
+    public function setAllowTabIdStrings(bool $allowTabIdStrings): self
     {
         $this->allowTabIdStrings = $allowTabIdStrings;
         
@@ -506,7 +506,7 @@ class Tree
      *
      * @return Tree
      */
-    public function setDefaultTabId($defaultTabId)
+    public function setDefaultTabId($defaultTabId): self
     {
         $this->defaultTabId = $defaultTabId;
         

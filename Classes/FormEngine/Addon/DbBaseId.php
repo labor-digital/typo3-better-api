@@ -82,7 +82,7 @@ class DbBaseId
             }
             
             // Rewrite the object html
-            $result['html'] = preg_replace_callback($pattern, function ($m) use ($pidMap) {
+            $result['html'] = preg_replace_callback($pattern, static function ($m) use ($pidMap) {
                 [$a, $prefix, $table, $suffix] = $m;
                 $pid = $pidMap[$table] ?? $pidMap['@default'] ?? 0;
                 

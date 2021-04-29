@@ -108,9 +108,9 @@ class ActionPostProcessorEvent extends AbstractActionEvent
      *
      * @param   mixed  $pasteDataMap
      *
-     * @return ActionPostProcessorEvent
+     * @return $this
      */
-    public function setPasteDataMap($pasteDataMap)
+    public function setPasteDataMap($pasteDataMap): self
     {
         $this->pasteDataMap = $pasteDataMap;
         

@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Sql;
 
 
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use LaborDigital\T3BA\Core\Exception\NotImplementedException;
@@ -106,6 +107,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
     public function getPrimaryKeyColumns()
     {
@@ -114,6 +116,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
     public function dropColumn($name)
     {
@@ -126,8 +129,9 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
-    public function getColumn($name, bool $useAnyway = false)
+    public function getColumn($name, bool $useAnyway = false): Column
     {
         if ($this->locked && ! $useAnyway) {
             throw new NotImplementedException('This method is unreliable here! The column might be reconfigured in the TCA builder. I recommend not using this method here! If you know what you are doing, set the second parameter to TRUE, to access it anyway!');
@@ -138,8 +142,9 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
-    public function hasColumn($name, bool $useAnyway = false)
+    public function hasColumn($name, bool $useAnyway = false): bool
     {
         if (parent::hasColumn($name)) {
             return true;
@@ -154,8 +159,9 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
      */
-    public function getColumns(bool $useAnyway = false)
+    public function getColumns(bool $useAnyway = false): array
     {
         if ($this->locked && ! $useAnyway) {
             throw new NotImplementedException('This method is unreliable here! The column definition is based on the TCA builder, so this will NEVER return the correct value! Pass TRUE to the method to use it anyway.');

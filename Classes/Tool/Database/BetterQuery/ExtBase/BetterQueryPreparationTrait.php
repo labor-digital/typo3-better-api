@@ -104,11 +104,7 @@ trait BetterQueryPreparationTrait
             }
         }
         
-        // Apply additional configuration
-        $query = $this->prepareBetterQuery($query, $settings, $row);
-        
-        // Done
-        return $query;
+        return $this->prepareBetterQuery($query, $settings, $row);
     }
     
     
@@ -183,7 +179,7 @@ trait BetterQueryPreparationTrait
         }
         $minDate = new DateTimy(empty($minDate) || ! isset($minDate[$startDateField]) ?
             0 : $minDate[$startDateField]);
-        $minDate->setTime(0, 0, 0);
+        $minDate->setTime(0, 0);
         
         // End date
         $endDateField = $endDateProperty;

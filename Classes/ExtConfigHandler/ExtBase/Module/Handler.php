@@ -88,20 +88,19 @@ class Handler extends AbstractGroupExtConfigHandler
     public function finishHandler(): void
     {
         /** @see \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Applier::registerModules() */
-        $this->context->getState()->set('typo.extBase.module.args',
-            json_encode($this->registerModuleArgs, JSON_THROW_ON_ERROR));
+        $this->context->getState()->setAsJson('typo.extBase.module.args', $this->registerModuleArgs, true);
     }
     
     /**
      * @inheritDoc
      */
-    public function prepareGroup(string $signature, array $groupClasses): void
+    public function prepareGroup(string $groupKey, array $groupClasses): void
     {
         $this->configurator = $this->getInstanceWithoutDi(
             ModuleConfigurator::class,
             [
-                $signature,
-                $this->getPluginNameForSignature($signature),
+                $groupKey,
+                $this->getPluginNameForSignature($groupKey),
                 $this->context,
             ]
         );

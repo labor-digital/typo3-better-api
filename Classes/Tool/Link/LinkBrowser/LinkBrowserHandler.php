@@ -32,7 +32,7 @@ class LinkBrowserHandler extends RecordLinkHandler
     /**
      * @inheritDoc
      */
-    public function initialize(AbstractLinkBrowserController $linkBrowser, $identifier, array $configuration)
+    public function initialize(AbstractLinkBrowserController $linkBrowser, $identifier, array $configuration): void
     {
         parent::initialize($linkBrowser, $identifier, $configuration);
         
@@ -47,7 +47,7 @@ class LinkBrowserHandler extends RecordLinkHandler
     public function getBodyTagAttributes(): array
     {
         $attr = parent::getBodyTagAttributes();
-        $attr['data-identifier'] = str_replace('t3://record?', 't3://linkSetRecord?', (string)$attr['data-identifier']);
+        $attr['data-identifier'] = str_replace('t3://record?', 't3://linkSetRecord?', $attr['data-identifier'] ?? '');
         
         return $attr;
     }

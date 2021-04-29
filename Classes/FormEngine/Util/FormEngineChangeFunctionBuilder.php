@@ -86,7 +86,7 @@ class FormEngineChangeFunctionBuilder
         // Prepare the default code
         $code = <<<JS
 	var l = false;
-	var nextE = document.querySelector("#{$id}:not(.initialized)");
+	var nextE = document.querySelector("#$id:not(.initialized)");
 	nextE.className += " initialized";
 	var obs = new MutationObserver(function(m){
 	  m.forEach(function(mu) {

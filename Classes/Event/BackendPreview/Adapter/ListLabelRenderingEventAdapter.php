@@ -43,7 +43,7 @@ class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
      *
      * @param   array  $args
      */
-    public function emit(array &$args)
+    public function emit(array &$args): void
     {
         $row = empty($args['row']) || ! is_array($args['row']) ? [] : $args['row'];
         

@@ -43,7 +43,7 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
             = static::class;
     }
     
-    public function processDatamap_preProcessFieldArray(array &$fieldArray, $table, &$id, DataHandler $pObj)
+    public function processDatamap_preProcessFieldArray(array &$fieldArray, $table, &$id, DataHandler $pObj): void
     {
         // Ignore this if only the visibility is toggled >= 8.7.20 ?
         if (array_keys($fieldArray) === ['hidden']) {
@@ -65,7 +65,7 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
         }
     }
     
-    public function processDatamap_postProcessFieldArray($status, $table, &$id, &$fieldArray, DataHandler $pObj)
+    public function processDatamap_postProcessFieldArray($status, $table, &$id, &$fieldArray, DataHandler $pObj): void
     {
         // Ignore this if only the visibility is toggled >= 8.7.20 ?
         if (array_keys($fieldArray) === ['hidden']) {
@@ -109,8 +109,10 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
      *
      * @param   \Throwable                                $e
      * @param   \TYPO3\CMS\Core\DataHandling\DataHandler  $pObj
+     *
+     * @throws \Throwable
      */
-    protected function handleErrorMessages(Throwable $e, DataHandler $pObj)
+    protected function handleErrorMessages(Throwable $e, DataHandler $pObj): void
     {
         if ($e instanceof ServiceNotFoundException || $e instanceof ArgumentCountError) {
             throw $e;

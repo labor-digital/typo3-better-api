@@ -128,7 +128,7 @@ class MainLoader
                 $this->mapper = $mapper;
             }
             
-            public function dispatch(object $event)
+            public function dispatch(object $event): void
             {
                 call_user_func($this->mapper, $event);
                 $this->eventBus->dispatch($event);

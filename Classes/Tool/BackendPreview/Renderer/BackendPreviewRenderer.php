@@ -76,6 +76,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
      * @param   string                                                         $rendererClass
      * @param   \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent  $event
      *
+     * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
      */
     protected function callConcreteRenderer(string $rendererClass, PreviewRenderingEvent $event): void
     {
@@ -187,7 +188,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
     protected function renderErrorMessage(string $error): string
     {
         return '<div style="background-color:red; padding: 10px; font-family: sans-serif; color: #fff">'
-               . htmlentities($error) . '</div>';
+               . htmlentities($error, ENT_QUOTES | ENT_HTML5) . '</div>';
     }
     
     /**

@@ -24,8 +24,12 @@ namespace LaborDigital\T3BA\Core\Di;
 
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\ExtConfigService;
+use LaborDigital\T3BA\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 
 /**
  * Class ServiceFactory
@@ -37,22 +41,22 @@ use Psr\Container\ContainerInterface;
 class ServiceFactory
 {
     
-    public static function getListenerProvider()
+    public static function getListenerProvider(): ListenerProviderInterface
     {
         return TypoEventBus::getInstance()->getConcreteListenerProvider();
     }
     
-    public static function getMainExtConfigLoader(ContainerInterface $container)
+    public static function getMainExtConfigLoader(ContainerInterface $container): MainLoader
     {
         return $container->get(ExtConfigService::class)->getMainLoader();
     }
     
-    public static function getDiConfigLoader(ContainerInterface $container)
+    public static function getDiConfigLoader(ContainerInterface $container): DiLoader
     {
         return $container->get(ExtConfigService::class)->getDiLoader();
     }
     
-    public static function getExtConfigContext(ContainerInterface $container)
+    public static function getExtConfigContext(ContainerInterface $container): ExtConfigContext
     {
         return $container->get(ExtConfigService::class)->getContext();
     }

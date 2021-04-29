@@ -33,7 +33,7 @@ class UriViewHelper extends AbstractViewHelper
 {
     use CompileWithContentArgumentAndRenderStatic;
     
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument(
             'definition',
@@ -45,14 +45,12 @@ class UriViewHelper extends AbstractViewHelper
             'args',
             'mixed',
             'The list of arguments to pass to the link',
-            false,
-            null);
+            false);
         $this->registerArgument(
             'fragments',
             'mixed',
             'The list of hash fragments to pass to the link',
-            false,
-            null);
+            false);
         $this->registerArgument(
             'relative',
             'bool',

@@ -246,6 +246,7 @@ class DataHookContext
      */
     public function isDirty(): bool
     {
+        /** @noinspection TypeUnsafeComparisonInspection */
         return $this->dataWasSet && $this->data != $this->handlerDefinition->data;
     }
     

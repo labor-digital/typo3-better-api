@@ -85,7 +85,7 @@ class ExtConfigService
     /**
      * The list of instantiated loader objects
      *
-     * @var mixed[]
+     * @var array
      */
     protected $loaders = [];
     

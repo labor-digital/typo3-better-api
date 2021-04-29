@@ -27,7 +27,6 @@ use LaborDigital\T3BA\Event\Core\CacheClearedEvent;
 use LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent;
 use LaborDigital\T3BA\Event\DataHandler\SavePostProcessorEvent;
 use LaborDigital\T3BA\Tool\Cache\Util\CacheUtil;
-use LaborDigital\Typo3BetterApi\Event\Events\ExtBaseAfterPersistObjectEvent;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;

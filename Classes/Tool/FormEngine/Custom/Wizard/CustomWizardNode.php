@@ -50,6 +50,7 @@ class CustomWizardNode extends AbstractFormElement
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormException
      */
     public function render()
     {

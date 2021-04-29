@@ -117,14 +117,14 @@ class PathFacet implements FacetInterface
     /**
      * Helper to retrieve the filepath of an extension.
      *
-     * @param   string  $extensionKey  The extension key
-     * @param   string  $script        Will be appended to the created path
+     * @param   string       $extensionKey  The extension key
+     * @param   string|null  $script        Will be appended to the created path
      *
      * @return string
      */
-    public function getExtensionPath($extensionKey, $script = ''): string
+    public function getExtensionPath(string $extensionKey, ?string $script = null): string
     {
-        return Path::unifyPath(ExtensionManagementUtility::extPath($extensionKey, $script));
+        return Path::unifyPath(ExtensionManagementUtility::extPath($extensionKey, $script ?? ''));
     }
     
     /**
@@ -291,10 +291,8 @@ class PathFacet implements FacetInterface
         
         // Resolve directory
         $dir = $this->getExtensionPath($extKey);
-        $file = Path::unifyPath($dir) . $file;
         
-        // Done
-        return $file;
+        return Path::unifyPath($dir) . $file;
     }
     
     /**
@@ -389,6 +387,7 @@ class PathFacet implements FacetInterface
      */
     public function getSlugFor($recordOrUid, string $table, string $field): string
     {
+        // Todo fix this
         throw new NotImplementedException();
         
         // Try to read the field configuration from the TCA

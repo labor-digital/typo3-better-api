@@ -159,9 +159,9 @@ class DataHandlerRecordInfoWithPermsFilterEvent
      *
      * @param   array|false  $result
      *
-     * @return DataHandlerRecordInfoWithPermsFilterEvent
+     * @return $this
      */
-    public function setResult($result)
+    public function setResult($result): self
     {
         $this->result = $result;
         

@@ -35,6 +35,7 @@ class LinkBuilder extends AbstractTypolinkBuilder
     
     /**
      * @inheritDoc
+     * @throws \TYPO3\CMS\Frontend\Typolink\UnableToLinkException
      */
     public function build(array &$linkDetails, string $linkText, string $target, array $conf): array
     {

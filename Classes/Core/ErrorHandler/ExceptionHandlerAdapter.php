@@ -48,12 +48,13 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
      */
     public function __construct()
     {
         if (empty(static::$defaultExceptionHandler)) {
             throw new T3BAException(
-                'Could not create instance of: ' . get_called_class()
+                'Could not create instance of: ' . static::class
                 . ' because no default exception handler was registered!');
         }
         $this->defaultExceptionHandlerInstance = GeneralUtility::makeInstance(static::$defaultExceptionHandler);
@@ -71,11 +72,8 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
     public function handleException(Throwable $exception)
     {
         TypoEventBus::getInstance()->dispatch(($e = new ErrorFilterEvent($exception, null)));
-        if ($e->getResult() !== null) {
-            return $e->getResult();
-        }
         
-        return $this->defaultExceptionHandlerInstance->handleException($exception);
+        return $e->getResult() ?? $this->defaultExceptionHandlerInstance->handleException($exception);
     }
     
     /**

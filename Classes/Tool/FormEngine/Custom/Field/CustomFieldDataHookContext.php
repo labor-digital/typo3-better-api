@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2021 LABOR.digital
  *
@@ -22,6 +23,7 @@ namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
 use LaborDigital\T3BA\Tool\DataHook\DataHookContext;
 use Neunerlei\Arrays\Arrays;
 
+// @todo finish this
 class CustomFieldDataHookContext extends DataHookContext
 {
     

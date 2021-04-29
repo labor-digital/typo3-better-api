@@ -104,11 +104,7 @@ class AbstractDataModel extends AbstractEntity
         
         $name = Inflector::toDatabase($name);
         
-        if (isset($raw[$name])) {
-            return $raw[$name];
-        }
-        
-        return null;
+        return $raw[$name] ?? null;
     }
     
     /**

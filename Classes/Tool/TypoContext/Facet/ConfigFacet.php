@@ -240,9 +240,7 @@ class ConfigFacet implements FacetInterface
         $path = Arrays::parsePath($key);
         try {
             return $this->getService(ExtensionConfiguration::class)->get($extensionName, implode('/', $path));
-        } catch (ExtensionConfigurationExtensionNotConfiguredException $e) {
-            return $default;
-        } catch (ExtensionConfigurationPathDoesNotExistException $e) {
+        } catch (ExtensionConfigurationExtensionNotConfiguredException | ExtensionConfigurationPathDoesNotExistException $e) {
             return $default;
         }
     }

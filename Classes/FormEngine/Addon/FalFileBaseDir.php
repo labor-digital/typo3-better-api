@@ -87,18 +87,14 @@ class FalFileBaseDir
         $type = 'tca';
         if (! isset($data['renderType']) || $data['renderType'] !== 'inline') {
             // Check for group elements -> For flex form sections
-            if (! is_array($config) || ! isset($config['type']) || $config['type'] !== 'group'
-                || ! isset($config['internal_type'])
-                || $config['internal_type'] !== 'file') {
+            if (! isset($config['type'], $config['internal_type']) || ! is_array($config)
+                || $config['type'] !== 'group' || $config['internal_type'] !== 'file') {
                 return;
             }
             $type = 'flex';
-        } else {
-            // Handle inline elements
-            if (! is_array($config) || ! isset($config['foreign_table'])
-                || $config['foreign_table'] !== 'sys_file_reference') {
-                return;
-            }
+        } elseif (! is_array($config) || ! isset($config['foreign_table'])
+                  || $config['foreign_table'] !== 'sys_file_reference') {
+            return;
         }
         
         // Legacy support

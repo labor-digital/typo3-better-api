@@ -14,7 +14,9 @@
  * limitations under the License.
  *
  * Last modified: 2021.04.29 at 22:17
- */ /** @noinspection PhpMissingStrictTypesDeclarationInspection */
+ */
+
+/** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
 namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
@@ -25,6 +27,8 @@ use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 class ExtConfigLoader extends PhpFileLoader
 {
+    
+    // todo this has changed since I implemented it, what does it do, and how can we fix it reliably?
     /**
      * @inheritDoc
      *
@@ -53,7 +57,7 @@ class ExtConfigLoader extends PhpFileLoader
     /**
      * @inheritDoc
      */
-    public function supports($resource, string $type = null)
+    public function supports($resource, string $type = null): bool
     {
         return $resource instanceof Closure;
     }

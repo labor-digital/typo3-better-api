@@ -208,7 +208,7 @@ class Basics extends AbstractFieldPreset
         foreach ($items as $k => $v) {
             if (is_array($v)) {
                 // Ignore invalid configuration
-                if (! isset($v[0]) || ! is_string($v[1]) || ! isset($v[1])) {
+                if (! isset($v[0], $v[1]) || (! is_string($v[1]) && ! is_bool($v[1]))) {
                     continue;
                 }
                 

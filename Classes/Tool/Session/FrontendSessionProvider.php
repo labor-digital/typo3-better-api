@@ -124,7 +124,7 @@ class FrontendSessionProvider implements SessionInterface, SingletonInterface
      *
      * @return FrontendUserAuthentication|null
      */
-    protected function getFeUser()
+    protected function getFeUser(): ?FrontendUserAuthentication
     {
         if (empty($GLOBALS['TSFE']) || ! $GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
             return null;

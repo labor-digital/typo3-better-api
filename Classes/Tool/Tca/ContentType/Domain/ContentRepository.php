@@ -121,6 +121,7 @@ class ContentRepository implements PublicServiceInterface
      */
     public function hydrateModel($rowOrUid): AbstractDataModel
     {
+        $row = [];
         if (is_array($rowOrUid)) {
             $row = $this->getExtendedRow($rowOrUid);
         } elseif (is_numeric($rowOrUid)) {

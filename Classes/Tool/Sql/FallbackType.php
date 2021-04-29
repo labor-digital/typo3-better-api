@@ -23,19 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\Sql;
 
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\TextType;
 
 class FallbackType extends TextType
 {
-    /**
-     * @inheritDoc
-     */
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
-    {
-        return parent::getSQLDeclaration($column, $platform);
-    }
-    
     /**
      * @inheritDoc
      */

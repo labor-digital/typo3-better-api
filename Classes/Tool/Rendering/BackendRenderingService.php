@@ -162,6 +162,7 @@ class BackendRenderingService implements SingletonInterface
                     
                     // Inject our where statement
                     $whereParts = explode(' OR ', $event->getAdditionalWhereClause());
+                    /** @noinspection ImplodeMissUseInspection */
                     $event->setAdditionalWhereClause(
                         implode(' ' . $options['where'] . ' OR ', $whereParts) . ' ' . $options['where']
                     );
@@ -194,7 +195,7 @@ class BackendRenderingService implements SingletonInterface
         
         
         // Check for empty response
-        if ($dbList->totalItems === 0) {
+        if ((int)$dbList->totalItems === 0) {
             return '';
         }
         

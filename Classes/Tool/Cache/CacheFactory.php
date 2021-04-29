@@ -88,7 +88,7 @@ class CacheFactory
             $identifierNormalized = Inflector::toCamelBack($identifier);
             
             if (! $this->cacheManager->hasCache($identifierNormalized)) {
-                $identifiersNormalized = array_map(function (string $identifier): string {
+                $identifiersNormalized = array_map(static function (string $identifier): string {
                     $normalized = Inflector::toCamelBack($identifier);
                     if ($normalized === $identifier) {
                         return $identifier;

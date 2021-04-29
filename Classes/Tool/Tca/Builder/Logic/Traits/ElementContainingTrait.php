@@ -31,7 +31,7 @@ trait ElementContainingTrait
     /**
      * Returns the fields/containers inside this container/tab
      *
-     * @return AbstractField[]|AbstractContainer[]|mixed[]
+     * @return AbstractField[]|AbstractContainer[]|array
      */
     public function getChildren(): iterable
     {

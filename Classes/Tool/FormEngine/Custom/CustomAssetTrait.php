@@ -122,7 +122,7 @@ trait CustomAssetTrait
     /**
      * Binds an event handler to inject the backend assets if required
      */
-    protected function bindEventHandlerIfRequired()
+    protected function bindEventHandlerIfRequired(): void
     {
         if (static::$eventBound) {
             return;
@@ -131,15 +131,16 @@ trait CustomAssetTrait
         static::$eventBound = true;
         
         TypoEventBus::getInstance()->addListener(BackendAssetFilterEvent::class, function (BackendAssetFilterEvent $e) {
+            $renderer = $e->getPageRenderer();
             if (! empty(static::$js)) {
                 foreach (static::$js as $file) {
-                    $e->getPageRenderer()->addJsFooterFile($file, 'text/javascript', false, false, '', true);
+                    $renderer->addJsFooterFile($file, 'text/javascript', false, false, '', true);
                 }
             }
             
             if (! empty(static::$css)) {
                 foreach (static::$css as $file) {
-                    $e->getPageRenderer()->addCssFile($file, 'stylesheet', 'all', '', false);
+                    $renderer->addCssFile($file, 'stylesheet', 'all', '', false);
                 }
             }
         });

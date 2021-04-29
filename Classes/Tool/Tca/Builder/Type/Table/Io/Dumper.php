@@ -88,9 +88,6 @@ class Dumper
         
         $this->injectDataHooksIntoTca($tca);
         
-        $this->eventBus->dispatch($e = new TableDumperAfterBuildEvent($tca, $table));
-        $tca = $e->getTca();
-        
-        return $tca;
+        return $this->eventBus->dispatch(new TableDumperAfterBuildEvent($tca, $table))->getTca();
     }
 }

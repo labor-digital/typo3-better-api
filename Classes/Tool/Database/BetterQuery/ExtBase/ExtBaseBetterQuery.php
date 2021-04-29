@@ -182,7 +182,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
     public function getAll(bool $returnAsArray = false)
     {
         // Check if we have to apply an advanced relation lookup
-        if (! $returnAsArray && ! empty($this->includeHiddenChildren) || ! empty($this->includeDeletedChildren)) {
+        if ((! $returnAsArray && ! empty($this->includeHiddenChildren)) || ! empty($this->includeDeletedChildren)) {
             /** @noinspection PhpIncompatibleReturnTypeInspection */
             return $this->typoContext->di()->cs()->objectManager->get(
                 ExtendedRelationQueryResult::class,
@@ -213,7 +213,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
             return reset($result);
         }
         
-        return $this->getAll(false)->getFirst();
+        return $this->getAll()->getFirst();
     }
     
     /**

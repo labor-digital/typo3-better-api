@@ -35,7 +35,7 @@ class EventBusListenerProviderPass implements CompilerPassInterface
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         // Override the listener provider class
         $innerId = $container->findDefinition(ListenerProvider::class)->innerServiceId;

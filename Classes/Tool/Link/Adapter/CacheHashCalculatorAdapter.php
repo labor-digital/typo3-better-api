@@ -25,6 +25,7 @@ namespace LaborDigital\T3BA\Tool\Link\Adapter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 
+// @todo finish implementing this
 class CacheHashCalculatorAdapter extends CacheHashCalculator
 {
     /**

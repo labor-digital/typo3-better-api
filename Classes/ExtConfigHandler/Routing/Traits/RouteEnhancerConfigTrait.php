@@ -234,10 +234,10 @@ trait RouteEnhancerConfigTrait
                 $map[$label] = $value;
             }
             
-            foreach ($localeMap as $locale => $map) {
+            foreach ($localeMap as $locale => $_map) {
                 $localeMap[$locale] = [
                     'locale' => $locale,
-                    'map' => $map,
+                    'map' => $_map,
                 ];
             }
             $localeMap = array_values($localeMap);

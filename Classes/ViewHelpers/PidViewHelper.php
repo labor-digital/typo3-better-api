@@ -31,7 +31,7 @@ class PidViewHelper extends AbstractViewHelper
     /**
      * @inheritDoc
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument(
             'key',

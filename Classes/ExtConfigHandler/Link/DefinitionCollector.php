@@ -53,11 +53,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
      */
     public function getDefinition(string $key): Definition
     {
-        if (isset($this->definitions[$key])) {
-            return $this->definitions[$key];
-        }
-        
-        return $this->definitions[$key] = GeneralUtility::makeInstance(Definition::class);
+        return $this->definitions[$key] ?? ($this->definitions[$key] = GeneralUtility::makeInstance(Definition::class));
     }
     
     /**

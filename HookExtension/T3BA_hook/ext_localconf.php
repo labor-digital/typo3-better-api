@@ -14,13 +14,15 @@
  * limitations under the License.
  *
  * Last modified: 2021.04.29 at 21:56
- */ /** @noinspection PhpMissingStrictTypesDeclarationInspection */
+ */
+
+/** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
 use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
 
-(function () {
+(static function () {
     $bus = TypoEventBus::getInstance();
     $bus->dispatch(new ExtConfigLoadedEvent());
     $bus->dispatch(new ExtLocalConfLoadedEvent());

@@ -42,7 +42,6 @@ use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
 use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetApplier;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\DisplayConditionTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -57,14 +56,6 @@ abstract class AbstractField extends AbstractElement
      * @var array
      */
     protected $dataHookOptions = [];
-    
-    /**
-     * @inheritDoc
-     */
-    public function __construct(Node $node, AbstractForm $form)
-    {
-        parent::__construct($node, $form);
-    }
     
     /**
      * @inheritDoc

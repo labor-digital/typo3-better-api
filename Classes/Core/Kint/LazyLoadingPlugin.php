@@ -44,7 +44,7 @@ use Kint\Object\InstanceObject;
 use Kint\Parser\IteratorPlugin;
 use Kint\Parser\Parser;
 use Kint\Parser\Plugin;
-use LaborDigital\T3BA\Core\Util\LazyLoadingUtil;
+use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingUtil;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
@@ -56,7 +56,7 @@ class LazyLoadingPlugin extends Plugin
      */
     protected $parser;
     
-    public function getTypes()
+    public function getTypes(): array
     {
         return ['object'];
     }

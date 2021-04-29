@@ -141,6 +141,7 @@ class Handler extends AbstractGroupExtConfigHandler
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
     protected function getGroupKeyOfClass(string $class): string
     {
@@ -176,16 +177,16 @@ class Handler extends AbstractGroupExtConfigHandler
     /**
      * @inheritDoc
      */
-    public function prepareGroup(string $signature, array $groupClasses): void
+    public function prepareGroup(string $groupKey, array $groupClasses): void
     {
-        $isContentElement = $this->types[$signature] === 'ce';
+        $isContentElement = $this->types[$groupKey] === 'ce';
         $this->isContentElement = $isContentElement;
         $confClass = $isContentElement ? ContentElementConfigurator::class : PluginConfigurator::class;
         $this->configMethod = $isContentElement ? 'configureContentElement' : 'configurePlugin';
         $this->generator = $isContentElement ? $this->ceGenerator : $this->pluginGenerator;
         $this->configurator = $this->getInstanceWithoutDi($confClass, [
-            $signature,
-            $this->getPluginNameForSignature($signature),
+            $groupKey,
+            $this->getPluginNameForSignature($groupKey),
             $this->context,
         ]);
     }

@@ -151,7 +151,7 @@ class BackendListLabelRenderer extends AbstractRenderer
             foreach ($columns as $column) {
                 $value = trim(strip_tags((string)$row[$column]));
                 
-                if (($additionalFilter !== null && ! $additionalFilter($value)) || empty($value)) {
+                if (empty($value) || ($additionalFilter !== null && ! $additionalFilter($value))) {
                     continue;
                 }
                 

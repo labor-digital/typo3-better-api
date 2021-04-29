@@ -197,13 +197,6 @@ abstract class AbstractBetterQuery
      *                                                   the current language uid If this is set to FALSE you disable
      *                                                   all language constraints
      * @param   array                         $options   Additional, language specific options to apply.
-     *                                                   - languageMode string|null (NULL): If you specify a language,
-     *                                                   all entities for this language, as well as the default
-     *                                                   language entities will be returned. If you ONLY want to
-     *                                                   retrieve elements for the given language and not the default
-     *                                                   language, you can set languageMode to "strict".
-     *                                                   Values: NULL, "content_fallback", "strict" or "ignore"
-     *                                                   {@link QuerySettingsInterface::setLanguageMode()}
      *                                                   - overlayMode string|bool (FALSE): Defines how TYPO3 should
      *                                                   handle language overlays.
      *                                                   Values: TRUE, FALSE or "hideNonTranslated"
@@ -222,10 +215,6 @@ abstract class AbstractBetterQuery
         
         // Handle legacy options
         $options = Options::make($options, [
-            'languageMode' => [
-                'type' => ['null', 'string'],
-                'default' => null,
-            ],
             'overlayMode' => [
                 'type' => ['bool', 'string'],
                 'default' => false,
@@ -233,7 +222,6 @@ abstract class AbstractBetterQuery
         ]);
         
         // Set language mode
-        $settings->setLanguageMode($options['languageMode']);
         $settings->setLanguageOverlayMode($options['overlayMode']);
         
         // Handle special language values

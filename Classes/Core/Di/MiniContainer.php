@@ -63,17 +63,13 @@ class MiniContainer implements ContainerInterface
             return null;
         }
         
-        if (isset($this->instances[$id])) {
-            return $this->instances[$id];
-        }
-        
-        return $this->instances[$id] ?? null;
+        return $this->instances[$id] ?? $this->instances[$id] ?? null;
     }
     
     /**
      * @inheritDoc
      */
-    public function has($id)
+    public function has($id): bool
     {
         return isset($this->instances[$id]);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * Copyright 2021 LABOR.digital
  *
@@ -20,7 +21,7 @@
 namespace LaborDigital\T3BA\Tool\Session;
 
 use Neunerlei\Arrays\Arrays;
-use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
+use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class BackendSessionProvider implements SessionInterface, SingletonInterface
@@ -87,7 +88,7 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
      *
      * @return array
      */
-    protected function getSessionValues()
+    protected function getSessionValues(): array
     {
         $beUser = $this->getBeUser();
         if ($beUser === null) {
@@ -102,10 +103,10 @@ class BackendSessionProvider implements SessionInterface, SingletonInterface
     /**
      * Helper to get the backend user instance
      *
-     * @return FrontendBackendUserAuthentication|null
+     * @return \TYPO3\CMS\Core\Authentication\AbstractUserAuthentication|null
      */
-    protected function getBeUser()
+    protected function getBeUser(): ?AbstractUserAuthentication
     {
-        return isset($GLOBALS['BE_USER']) ? $GLOBALS['BE_USER'] : null;
+        return $GLOBALS['BE_USER'] ?? null;
     }
 }

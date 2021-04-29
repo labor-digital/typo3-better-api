@@ -14,7 +14,8 @@
  * limitations under the License.
  *
  * Last modified: 2021.04.29 at 22:17
- */ /** @noinspection ReturnTypeCanBeDeclaredInspection */
+ */
+/** @noinspection ReturnTypeCanBeDeclaredInspection */
 declare(strict_types=1);
 
 
@@ -36,7 +37,7 @@ trait TcaTableConfigTrait
      */
     public function isSortable(): bool
     {
-        return isset($this->config['ctrl']['sortby']) ?? is_string($this->config['ctrl']['sortby']);
+        return is_string($this->config['ctrl']['sortby'] ?? null);
     }
     
     /**
@@ -200,7 +201,7 @@ trait TcaTableConfigTrait
      */
     public function isAdminOnly(): bool
     {
-        return (bool)$this->config['ctrl']['adminOnly'] ?? false;
+        return (bool)($this->config['ctrl']['adminOnly'] ?? false);
     }
     
     /**
@@ -560,7 +561,7 @@ trait TcaTableConfigTrait
             
             // Add the field to the default type
             $type = $this->getType();
-            $tabKeys = iterator_to_array($type->getTabKeys());
+            $tabKeys = iterator_to_array($type->getTabKeys(), false);
             $firstTab = reset($tabKeys);
             $type->getField($columnName)
                  ->setReloadOnChange()
@@ -580,7 +581,7 @@ trait TcaTableConfigTrait
      */
     public function isLabelAlternativeForced(): bool
     {
-        return (bool)$this->config['ctrl']['label_alt_force'] ?? false;
+        return (bool)($this->config['ctrl']['label_alt_force'] ?? false);
     }
     
     /**

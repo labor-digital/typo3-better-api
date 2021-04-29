@@ -38,7 +38,7 @@ if (! function_exists('dbgQuery')) {
      */
     function dbgQuery($query)
     {
-        $result = $exception = $count = null;
+        $result = $exception = null;
         $isStandalone = false;
         if ($query instanceof ExtBaseBetterQuery) {
             $query = $query->getQuery();

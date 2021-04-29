@@ -79,7 +79,7 @@ class Flex extends AbstractForm
      * @inheritDoc
      * @return TcaField
      */
-    public function getParent()
+    public function getParent(): TcaField
     {
         return $this->containingField;
     }
@@ -88,7 +88,7 @@ class Flex extends AbstractForm
      * @inheritDoc
      * @return TcaTable
      */
-    public function getRoot()
+    public function getRoot(): TcaTable
     {
         return $this->containingField->getRoot();
     }
@@ -169,8 +169,6 @@ class Flex extends AbstractForm
      */
     public function loadDefinition(string $definition): self
     {
-        $this->types = [];
-        
         $this->factory->initialize($this, $definition);
         
         return $this;
@@ -210,7 +208,7 @@ class Flex extends AbstractForm
      */
     public function getField(string $id): FlexField
     {
-        return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) use ($id) {
+        return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) {
             /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField $i */
             return $this->context->cs()->di->makeInstance(
                 FlexField::class, [
@@ -382,6 +380,7 @@ class Flex extends AbstractForm
      * @param   array|string  $path
      *
      * @return array
+     * @throws \JsonException
      * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\InvalidPathException
      */
     protected function parsePath($path): array
@@ -392,7 +391,7 @@ class Flex extends AbstractForm
         }
         
         if (! is_array($path) || empty($path)) {
-            throw new InvalidPathException('Invalid path given! ' . json_encode($path));
+            throw new InvalidPathException('Invalid path given! ' . json_encode($path, JSON_THROW_ON_ERROR));
         }
         
         return $path;

@@ -118,7 +118,7 @@ class TcaTable extends AbstractTypeList
      *
      * @return $this
      */
-    public function setRaw(array $raw, bool $repopulate = false)
+    public function setRaw(array $raw, bool $repopulate = false): self
     {
         $this->loadDataHooks($raw);
         

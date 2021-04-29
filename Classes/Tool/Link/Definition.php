@@ -180,7 +180,7 @@ class Definition
      */
     public function setPid($pid): self
     {
-        if ($pid instanceof Closure || is_array($pid) && is_object($pid[0])) {
+        if ($pid instanceof Closure || (is_array($pid) && is_object($pid[0]))) {
             throw new TypeError('$pid can not be a Closure or a callback using a object as target. Please refer to the TYPO3 callback syntax, or provide a static callback.');
         }
         
@@ -779,9 +779,6 @@ class Definition
             }
         }
         
-        $link = $link->withRequiredElements($this->getRequiredElements());
-        
-        // Done
-        return $link;
+        return $link->withRequiredElements($this->getRequiredElements());
     }
 }

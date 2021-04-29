@@ -44,7 +44,7 @@ class ContentElementConfigurator extends AbstractElementConfigurator
      */
     public function getCTypeSection(): string
     {
-        return (string)$this->cTypeSection;
+        return $this->cTypeSection ?? '';
     }
     
     /**

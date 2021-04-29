@@ -131,7 +131,7 @@ abstract class AbstractBetterUserAspect extends UserAspect
             return $this->resolvedUser = $this->user;
         }
         $rootUser = $this->getRootUserAspect()->user;
-        if (! empty($rootUser) && ! $rootUser instanceof stdClass && ! is_array($rootUser)) {
+        if ($rootUser !== null && ! $rootUser instanceof stdClass && ! is_array($rootUser)) {
             return $this->resolvedUser = $rootUser;
         }
         

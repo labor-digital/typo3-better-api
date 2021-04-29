@@ -104,7 +104,9 @@ class Kernel
         static::$instance = $i = new static();
         
         // Build our internal container
-        $container = $i->container = DelegateContainer::setInstance(new DelegateContainer());
+        $container = new DelegateContainer();
+        $i->container = $container;
+        DelegateContainer::setInstance($container);
         $container->setContainer('internal', new MiniContainer());
         $container->set(VarFs::class, $i->fs = new VarFs());
         $container->set(CacheInterface::class, $i->fs->getCache());

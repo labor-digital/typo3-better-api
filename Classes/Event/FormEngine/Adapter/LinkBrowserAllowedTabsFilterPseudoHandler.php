@@ -37,7 +37,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function getLinkAttributes()
+    public function getLinkAttributes(): array
     {
         return [];
     }
@@ -45,7 +45,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function modifyLinkAttributes(array $fieldDefinitions)
+    public function modifyLinkAttributes(array $fieldDefinitions): array
     {
         return [];
     }
@@ -53,7 +53,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function initialize(AbstractLinkBrowserController $linkBrowser, $identifier, array $configuration)
+    public function initialize(AbstractLinkBrowserController $linkBrowser, $identifier, array $configuration): void
     {
         static::$currentController = $linkBrowser;
     }
@@ -61,7 +61,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function canHandleLink(array $linkParts)
+    public function canHandleLink(array $linkParts): bool
     {
         return false;
     }
@@ -69,7 +69,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function formatCurrentUrl()
+    public function formatCurrentUrl(): string
     {
         return '';
     }
@@ -77,7 +77,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function render(ServerRequestInterface $request)
+    public function render(ServerRequestInterface $request): string
     {
         return '';
     }
@@ -85,7 +85,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function isUpdateSupported()
+    public function isUpdateSupported(): bool
     {
         return false;
     }
@@ -93,7 +93,7 @@ class LinkBrowserAllowedTabsFilterPseudoHandler implements LinkHandlerInterface
     /**
      * @inheritDoc
      */
-    public function getBodyTagAttributes()
+    public function getBodyTagAttributes(): array
     {
         return [];
     }

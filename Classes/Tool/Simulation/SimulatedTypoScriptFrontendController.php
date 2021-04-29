@@ -37,11 +37,11 @@ class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
     /**
      * @inheritDoc
      */
-    public function settingLanguage(ServerRequestInterface $request = null)
+    public function settingLanguage(ServerRequestInterface $request = null): void
     {
         // Make sure to use the existing language service if possible
         if (! isset($GLOBALS['LANG'])) {
-            return parent::settingLanguage();
+            parent::settingLanguage();
         }
         
         // Link the language into the existing service
@@ -49,6 +49,6 @@ class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
         $lang = $GLOBALS['LANG'];
         $this->config['config']['language'] = $lang->lang;
         
-        return parent::settingLanguage($request);
+        parent::settingLanguage($request);
     }
 }

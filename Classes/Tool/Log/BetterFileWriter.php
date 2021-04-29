@@ -120,7 +120,7 @@ class BetterFileWriter extends FileWriter
             return;
         }
         $logDir = $this->getLogDirectory();
-        if (! file_exists($logDir) || ! is_dir($logDir) || ! is_writable($logDir)) {
+        if (! is_dir($logDir) || ! is_writable($logDir)) {
             return;
         }
         

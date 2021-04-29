@@ -57,6 +57,7 @@ class Handler extends AbstractExtConfigHandler
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
     public function handle(string $class): void
     {

@@ -298,6 +298,7 @@ class ClassOverrideGenerator
         $baseName = Path::classBasename($classToOverride);
         
         return "<?php
+declare(strict_types=1);
 /**
  * CLASS OVERRIDE GENERATOR - GENERATED FILE
  * This file is generated dynamically! You should not edit it's contents,
@@ -358,7 +359,7 @@ if(!class_exists('\\$classToOverride', false)) {
             $nameChanged = true;
             $find = $m[1] . $m[2];
             $replaceWith = $m[1] . $copyClassName;
-            $source[$k] = str_replace($find, $replaceWith, $source[$k]);
+            $source[$k] = str_replace($find, $replaceWith, $line);
             break;
         }
         
@@ -412,20 +413,17 @@ if(!class_exists('\\$classToOverride', false)) {
         // Unlock all "private" methods to be "protected"...
         $source = preg_replace_callback('~(^|\\s|\\t)private(\\s(?:static\\s)?(?:\$|function))~i',
             static function ($m) {
-                [$foo, $before, $after] = $m;
+                [, $before, $after] = $m;
                 
                 return $before . 'protected' . $after;
             }, $source);
         
         // Replace all "self::" references with "static::" to allow external overrides
-        $source = preg_replace_callback('~(^|\\s|\\t)self::([$\w])~i',
+        return preg_replace_callback('~(^|\\s|\\t)self::([$\w])~i',
             static function ($m) {
-                [$foo, $before, $after] = $m;
+                [, $before, $after] = $m;
                 
                 return $before . 'static::' . $after;
             }, $source);
-        
-        // Combine source
-        return $source;
     }
 }

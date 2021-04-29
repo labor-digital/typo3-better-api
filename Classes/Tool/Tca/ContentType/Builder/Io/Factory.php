@@ -100,10 +100,8 @@ class Factory
             $table = $this->tableFactory->create('tt_content', $this->extConfigContext);
             $this->tableFactory->initialize($table);
             
-            /** @var ContentType $type */
-            $type = $table->getType($cType);
-            
-            return $type;
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return $table->getType($cType);
         } finally {
             $GLOBALS['TCA']['tt_content'] = $tcaBackup;
             TypeFactory::$typeClass = $typeClassBackup;

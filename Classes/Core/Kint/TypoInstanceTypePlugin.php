@@ -42,7 +42,7 @@ use Kint\Object\BasicObject;
 use Kint\Object\InstanceObject;
 use Kint\Parser\Parser;
 use Kint\Parser\Plugin;
-use LaborDigital\T3BA\Core\Util\LazyLoadingUtil;
+use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingUtil;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
@@ -55,18 +55,18 @@ class TypoInstanceTypePlugin extends Plugin
     /**
      * @inheritDoc
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return ['object'];
     }
     
-    public function getTriggers()
+    public function getTriggers(): int
     {
         return Parser::TRIGGER_COMPLETE;
     }
     
     /** @noinspection ReferencingObjectsInspection */
-    public function parse(&$variable, BasicObject &$o, $trigger)
+    public function parse(&$variable, BasicObject &$o, $trigger): void
     {
         // Show the iterator first
         if (! empty($o->getRepresentation('iterator'))) {

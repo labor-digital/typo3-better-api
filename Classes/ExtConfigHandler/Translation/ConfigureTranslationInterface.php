@@ -31,8 +31,8 @@ interface ConfigureTranslationInterface
     /**
      * Allows you to provide translation related configuration, like namespace registration and label overrides
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\TranslationConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                $context
+     * @param   \LaborDigital\T3BA\ExtConfigHandler\Translation\TranslationConfigurator  $configurator
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                            $context
      */
     public static function configureTranslation(TranslationConfigurator $configurator, ExtConfigContext $context): void;
 }

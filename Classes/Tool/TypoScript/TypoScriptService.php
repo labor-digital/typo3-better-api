@@ -247,6 +247,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function renderContentObject(string $type, array $config)
     {
+        // todo make this work
         throw new NotImplementedException();
         
         return $this->Simulator->runWithEnvironment(['ignoreIfFrontendExists'], function () use ($type, $config) {

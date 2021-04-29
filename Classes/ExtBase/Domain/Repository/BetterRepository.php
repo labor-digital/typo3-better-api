@@ -95,11 +95,8 @@ abstract class BetterRepository extends Repository
      */
     public function getTableName(): string
     {
-        if (isset($this->tableNameCache)) {
-            return $this->tableNameCache;
-        }
-        
-        return $this->tableNameCache = $this->dataMapper->getDataMap($this->selfReference->objectType)->getTableName();
+        return $this->tableNameCache ??
+               ($this->tableNameCache = $this->dataMapper->getDataMap($this->selfReference->objectType)->getTableName());
     }
     
     /**

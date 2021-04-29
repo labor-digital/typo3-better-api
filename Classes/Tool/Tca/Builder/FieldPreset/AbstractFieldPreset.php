@@ -124,7 +124,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
             if (empty($evalFilter) || in_array($type, $evalFilter, true)) {
                 $optionDefinition[$type] = [
                     'type' => 'bool',
-                    'default' => isset($evalDefaults[$type]) ? $evalDefaults[$type] : false,
+                    'default' => $evalDefaults[$type] ?? false,
                 ];
             }
         }
@@ -443,7 +443,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     protected function addDefaultOptions(array $optionDefinition, ?array $type = null, $default = ''): array
     {
         $optionDefinition['default'] = [
-            'type' => $type ?? 'string',
+            'type' => $type ?? ['string'],
             'preFilter' => static function ($v) {
                 if (is_array($v) && count($v) === 2 && is_string($v[0] ?? null) && is_string($v[1] ?? null)) {
                     return '@callback:' . $v[0] . '->' . $v[1];

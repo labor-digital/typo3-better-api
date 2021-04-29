@@ -164,7 +164,7 @@ abstract class AbstractQueryAdapter
      *
      * @return mixed
      */
-    abstract public function makeCondition(string $operator, $key, $value, bool $negated);
+    abstract public function makeCondition(string $operator, string $key, $value, bool $negated);
     
     /**
      * Injects the build constraints into the query implementation

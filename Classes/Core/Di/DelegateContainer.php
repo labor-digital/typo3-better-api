@@ -99,11 +99,7 @@ class DelegateContainer implements ContainerInterface
         } catch (LogicException $e) {
         }
         
-        if (isset($this->symfony)) {
-            return $this->symfony;
-        }
-        
-        return null;
+        return $this->symfony ?? null;
     }
     
     /**
@@ -144,7 +140,7 @@ class DelegateContainer implements ContainerInterface
     /**
      * @inheritDoc
      */
-    public function has($id)
+    public function has($id): bool
     {
         if (isset($this->failsafe) && $this->failsafe->has($id)) {
             return true;

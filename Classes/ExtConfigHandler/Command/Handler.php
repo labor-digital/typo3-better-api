@@ -58,10 +58,11 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
     
     /**
      * @inheritDoc
+     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
      */
     public function handle(string $class): void
     {
-        if (! in_array(Command::class, class_parents($class))) {
+        if (! in_array(Command::class, class_parents($class), true)) {
             throw new ExtConfigException(
                 'Invalid command configuration class: ' . $class
                 . ' a command has to extend the symfony command class: ' . Command::class);

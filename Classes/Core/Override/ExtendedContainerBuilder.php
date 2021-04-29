@@ -38,7 +38,7 @@ class ExtendedContainerBuilder extends T3BA__Copy__ContainerBuilder
     public function __construct(array $earlyInstances)
     {
         parent::__construct($earlyInstances);
-        $this->defaultServices += [get_called_class() => $this];
+        $this->defaultServices += [static::class => $this];
     }
     
     /**

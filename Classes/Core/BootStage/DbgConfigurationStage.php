@@ -64,7 +64,7 @@ class DbgConfigurationStage implements BootStageInterface
         // Register pre hook to fix broken typo3 iframe
         $recursion = false;
         dbgConfig('postHooks', static function ($type, $function) use (&$recursion) {
-            if (! str_starts_with($function, 'dbg') || $recursion) {
+            if ($recursion || ! str_starts_with($function, 'dbg')) {
                 return;
             }
             

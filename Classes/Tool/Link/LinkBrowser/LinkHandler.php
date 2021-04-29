@@ -43,7 +43,7 @@ class LinkHandler extends RecordLinkHandler
      * @return array
      * @see InputLinkElement::getLinkExplanation()
      */
-    public function getFormData(array $linkData, array $linkParts, array &$data, InputLinkElement $element)
+    public function getFormData(array $linkData, array $linkParts, array &$data, InputLinkElement $element): array
     {
         // Make sure our table, which can be a model name as well, resolves to a table!
         $table = &$data['pageTsConfig']['TCEMAIN.']['linkHandler.'][$linkData['identifier'] . '.']

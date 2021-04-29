@@ -56,6 +56,7 @@ class ExtendedNodeFactory extends T3BA__Copy__NodeFactory
         
         $data = $eventBus->dispatch(new BackendFormNodeDataFilterEvent($data))->getData();
         
+        /** @noinspection PhpParamsInspection */
         return FormNodeEventProxy::makeInstance($eventBus, $this, parent::create($data));
     }
 }

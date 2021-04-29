@@ -192,7 +192,7 @@ trait DataHookCollectorTrait
             }
             
             foreach ($hooks as $def) {
-                if (! isset($def[0], $def[1], $def[1]['constraints'])
+                if (! isset($def[0], $def[1]['constraints'])
                     || ! is_array($def)
                     || ! is_array($def[0])
                     || ! is_array($def[1])

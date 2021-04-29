@@ -67,19 +67,21 @@ abstract class AbstractTraverser
      * @param   array   $tca      The TCA of the current table/field that gets traversed
      * @param   array   $path     The path through the multi-dimensional data structure to select the value with
      *                            This MUST be empty if the handlers for a whole table are registered
+     *
+     * @throws \LaborDigital\T3BA\Tool\DataHook\DataHookException
      */
     protected function registerHandlerDefinitions(string $nodeKey, array $tca, array $path = []): void
     {
         // Ignore if there is nothing relevant for us here
-        if (! is_array($tca) || ! is_array($tca[DataHookTypes::TCA_DATA_HOOK_KEY])
-            || ! is_array($tca[DataHookTypes::TCA_DATA_HOOK_KEY][$this->definition->type])) {
+        if (! is_array($tca[DataHookTypes::TCA_DATA_HOOK_KEY] ?? null)
+            || ! is_array($tca[DataHookTypes::TCA_DATA_HOOK_KEY][$this->definition->type] ?? null)) {
             return;
         }
         
         foreach ($tca[DataHookTypes::TCA_DATA_HOOK_KEY][$this->definition->type] as $handler) {
             // Resolve a string like class->method into a handler
             // or an array containing a typical php callable
-            if (is_string($handler) || is_array($handler) && count($handler) === 2 && is_callable($handler)) {
+            if (is_string($handler) || (is_array($handler) && count($handler) === 2 && is_callable($handler))) {
                 $handler = [$handler, []];
             }
             if (is_array($handler)) {

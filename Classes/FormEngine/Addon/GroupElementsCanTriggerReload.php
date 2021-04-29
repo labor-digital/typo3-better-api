@@ -50,7 +50,7 @@ class GroupElementsCanTriggerReload
      *
      * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
      */
-    public static function onPostProcess(BackendFormNodePostProcessorEvent $event)
+    public static function onPostProcess(BackendFormNodePostProcessorEvent $event): void
     {
         if (! $event->getNode() instanceof GroupElement) {
             return;

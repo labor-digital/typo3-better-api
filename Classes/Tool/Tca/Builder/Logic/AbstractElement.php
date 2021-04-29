@@ -157,7 +157,7 @@ abstract class AbstractElement
      */
     public function getLabel(): string
     {
-        return (string)$this->label;
+        return $this->label ?? '';
     }
     
     /**

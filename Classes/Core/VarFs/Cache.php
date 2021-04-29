@@ -60,7 +60,7 @@ class Cache implements CacheInterface
     /**
      * @inheritDoc
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $file = $this->keyToCacheFilename($key);
         $this->mount->setFileContent($file, $value);
@@ -81,7 +81,7 @@ class Cache implements CacheInterface
     /**
      * @inheritDoc
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         $this->mount->delete($this->keyToCacheFilename($key));
         $this->mount->delete($this->keyToCacheFilename($key) . '.ttl');
@@ -92,7 +92,7 @@ class Cache implements CacheInterface
     /**
      * @inheritDoc
      */
-    public function clear()
+    public function clear(): bool
     {
         $this->mount->flush();
         
@@ -115,7 +115,7 @@ class Cache implements CacheInterface
     /**
      * @inheritDoc
      */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         $result = true;
         foreach ($values as $k => $v) {
@@ -128,7 +128,7 @@ class Cache implements CacheInterface
     /**
      * @inheritDoc
      */
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         $result = true;
         foreach ($keys as $key) {
@@ -141,7 +141,7 @@ class Cache implements CacheInterface
     /**
      * @inheritDoc
      */
-    public function has($key)
+    public function has($key): bool
     {
         $file = $this->keyToCacheFilename($key);
         if (! $this->mount->hasFile($file)) {
