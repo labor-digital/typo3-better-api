@@ -40,10 +40,10 @@ namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3BA\Tool\Database\DbService;
+use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -380,35 +380,32 @@ class PathFacet implements FacetInterface
      *
      * @param   string|int|array  $recordOrUid  Either the uid of an existing record or a mapping of fields that are
      *                                          used to generate a slug when the record is not yet in the database
-     * @param   string            $table        The full name of the database table that holds the slug field
-     * @param   string            $field        The name of the slug field to read the configuration from
+     * @param   string            $tableName    The full name of the database table that holds the slug field
+     * @param   string            $fieldName    The name of the slug field to read the configuration from
      *
      * @return string
      */
-    public function getSlugFor($recordOrUid, string $table, string $field): string
+    public function getSlugFor($recordOrUid, string $tableName, string $fieldName): string
     {
-        // Todo fix this
-        throw new NotImplementedException();
+        $tableName = NamingUtil::resolveTableName($tableName);
         
         // Try to read the field configuration from the TCA
-        $languageField = Arrays::getPath($GLOBALS, ['TCA', $table, 'ctrl', 'languageField'], null);
-        $fieldConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $field, 'config'], []);
+        $languageField = $GLOBALS['TCA'][$tableName]['ctrl']['languageField'] ?? null;
+        $fieldConfig = $GLOBALS['TCA'][$tableName]['columns'][$fieldName]['config'] ?? [];
         if (empty($fieldConfig)) {
             throw new RuntimeException(
-                'No valid field configuration for table ' . $table . ' field name ' . $field . ' found.',
+                'No valid field configuration for table ' . $tableName . ' field name ' . $fieldName . ' found.',
                 1535379534
             );
         }
         
         // Resolve the record
+        $record = [];
         if (is_numeric($recordOrUid)) {
-            $record = $this->getService(DbServiceInterface::class)->getRecords($table, $recordOrUid);
-            $record = reset($record);
-        } else {
+            $record = $this->getService(DbService::class)->getQuery($tableName)
+                           ->withWhere(['uid' => $recordOrUid])->getFirst();
+        } elseif (is_array($record)) {
             $record = $recordOrUid;
-        }
-        if (! is_array($record)) {
-            $record = [];
         }
         
         // Inject language if required
@@ -417,7 +414,7 @@ class PathFacet implements FacetInterface
         }
         
         // Create the slug using the slug helper
-        $slugHelper = $this->getService(SlugHelper::class, [$table, $field, $fieldConfig]);
+        $slugHelper = $this->makeInstance(SlugHelper::class, [$tableName, $fieldName, $fieldConfig]);
         
         return $slugHelper->generate($record, empty($record['pid']) ? -1 : $record['pid']);
     }
