@@ -49,11 +49,11 @@ class CacheClearedEvent
     protected $group;
 
     /**
-     * The tag that should be flushed in the group
+     * The tags that should be flushed
      *
-     * @var string|null
+     * @var array
      */
-    protected $tag;
+    protected $tags;
 
     /**
      * The cache manager instance
@@ -65,16 +65,16 @@ class CacheClearedEvent
     /**
      * CacheClearedEvent constructor.
      *
-     * @param   string                              $method
-     * @param   string|null                         $group
-     * @param   string|null                         $tag
-     * @param   \TYPO3\CMS\Core\Cache\CacheManager  $cacheManager
+     * @param   string        $method
+     * @param   string|null   $group
+     * @param   array         $tags
+     * @param   CacheManager  $cacheManager
      */
-    public function __construct(string $method, ?string $group, ?string $tag, CacheManager $cacheManager)
+    public function __construct(string $method, ?string $group, array $tags, CacheManager $cacheManager)
     {
         $this->method       = $method;
         $this->group        = $group;
-        $this->tag          = $tag;
+        $this->tags         = $tags;
         $this->cacheManager = $cacheManager;
     }
 
@@ -99,13 +99,13 @@ class CacheClearedEvent
     }
 
     /**
-     * Returns the tag that should be flushed in the group
+     * Returns the tags that should be flushed
      *
-     * @return string|null
+     * @return array
      */
-    public function getTag(): ?string
+    public function getTags(): array
     {
-        return $this->tag;
+        return $this->tags;
     }
 
     /**
