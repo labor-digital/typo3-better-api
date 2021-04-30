@@ -234,14 +234,18 @@ class FileInfo
      */
     public function getUrl(bool $withHash = true): string
     {
-        $url = null;
         if ($this->isProcessed()) {
             $url = $this->processedFile->getPublicUrl();
         } else {
             $url = $this->file->getPublicUrl();
         }
         
-        return FalFileUrlUtil::makeAbsoluteUrl($url . ($withHash ? '?hash=' . $this->getHash() : ''));
+        if ($withHash) {
+            $url .= strpos($url, '?') === false ? '?' : '&';
+            $url .= 'hash=' . md5($this->getHash());
+        }
+        
+        return FalFileUrlUtil::makeAbsoluteUrl(ltrim($url, '/'));
     }
     
     /**

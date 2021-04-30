@@ -544,7 +544,11 @@ class FalService implements SingletonInterface
     {
         $processed = $this->getResizedImage($file, $options);
         
-        return FalFileUrlUtil::makeAbsoluteUrl($processed->getPublicUrl(false) . '?hash=' . md5($processed->getSha1()));
+        $url = $processed->getPublicUrl(false);
+        $url .= strpos($url, '?') === false ? '?' : '&';
+        $url .= 'hash=' . md5($processed->getSha1());
+        
+        return FalFileUrlUtil::makeAbsoluteUrl(ltrim($url, '/'));
     }
     
     /**
