@@ -67,22 +67,23 @@ trait DisplayConditionTrait
         }
         
         if (is_array($condition)) {
-            $fieldProcessor = static function (array $condition) {
-                if (count($condition) === 3 && Arrays::isSequential($condition)) {
-                    $condition = 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
-                }
+            if (! Arrays::isAssociative($condition)) {
+                $fieldProcessor = static function (array $condition) {
+                    if (count($condition) === 3 && Arrays::isSequential($condition)) {
+                        return 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
+                    }
+                    
+                    return $condition;
+                };
                 
-                return $condition;
-            };
-            
-            if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
-                $condition = [
-                    'AND' => array_map($fieldProcessor, $condition),
-                ];
-            } else {
-                $condition = $fieldProcessor($condition);
+                if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
+                    $condition = [
+                        'AND' => array_map($fieldProcessor, $condition),
+                    ];
+                } else {
+                    $condition = $fieldProcessor($condition);
+                }
             }
-            
         } elseif (! is_string($condition)) {
             throw new TcaBuilderException('Only strings and arrays are allowed as display conditions!');
         }
