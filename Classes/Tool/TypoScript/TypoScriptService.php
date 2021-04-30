@@ -155,12 +155,16 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function getTsConfig($path = null, array $options = [])
     {
-        /** @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $user */
-        $user = $GLOBALS['BE_USER'];
-        $tsConfig = Arrays::merge(
-            BackendUtility::getPagesTSconfig($this->getTypoContext()->pid()->getCurrent()),
-            is_object($user) ? $user->getTSConfig() : []
-        );
+        $context = $this->getTypoContext();
+        
+        if ($context->env()->isFrontend() && $this->cs()->tsfe->hasTsfe()) {
+            $tsConfig = $this->cs()->tsfe->getTsfe()->getPagesTSconfig();
+        } else {
+            $tsConfig = Arrays::merge(
+                BackendUtility::getPagesTSconfig($this->getTypoContext()->pid()->getCurrent()),
+                $context->beUser()->hasUser() ? $context->beUser()->getUser()->getTSConfig() : []
+            );
+        }
         
         $options = Options::make($options, [
             'default' => null,
