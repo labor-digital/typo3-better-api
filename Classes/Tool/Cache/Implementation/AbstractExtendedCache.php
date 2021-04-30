@@ -139,9 +139,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     }
     
     /**
-     * Returns the TYPO3 cache object that gets wrapped by this instance
-     *
-     * @return \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+     * @inheritDoc
      */
     public function getFrontend(): FrontendInterface
     {
@@ -289,11 +287,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     }
     
     /**
-     * Helper to make sure the cache key is no longer than 128 characters
-     *
-     * @param   mixed  $entryIdentifier
-     *
-     * @return string|mixed
+     * @inheritDoc
      */
     public function prepareIdentifier($entryIdentifier)
     {
@@ -310,40 +304,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     }
     
     /**
-     * The given $callback is called once and then cached. All subsequent calls
-     * will then first try to serve the cached value instead of calling $callback again.
-     *
-     * The execution of remember() can be nested in order to build cached data trees.
-     * This also means that outer executions will inherit the cache options like ttl, tags and "enabled" state
-     * from the inner executions.
-     *
-     * @param   callable    $callback  The callable to generate the value to be cached
-     * @param   array|null  $keyArgs   Allows you to pass key arguments to generate the cache key with
-     *                                 You can omit this parameter if you are supplying your own keyGenerator
-     *                                 implementation in the options
-     * @param   array       $options   Additional options
-     *                                 - ttl int|callable: The numeric value in seconds for how long the cache entry
-     *                                 should be stored. Can be a callable which receives the $callback result,
-     *                                 to create a ttl based on the output. Is inherited to outer scopes.
-     *                                 - enabled bool|callable (true): Allows you to dynamically disable the cache
-     *                                 for this execution. Can be a callable which receives the $callback result,
-     *                                 to enable/disable the cache based on the output. Is inherited to outer scopes.
-     *                                 - keyGenerator CacheKeyGeneratorInterface: The generator instance
-     *                                 which is used to generate a cache key for this entry.
-     *                                 - useEnvironment bool: Determines if the environment should be taken into account
-     *                                 when a cache key is generated. The "environment" is the current language,
-     *                                 the current site(not page!), user groups, mount point or page types.
-     *                                 The flag is automatically set depending by your implementation.
-     *                                 - tags array: A list of tags that should be added to this cache entry.
-     *                                 The tags will be inherited to outer scopes.
-     *                                 - onFreeze callable: A callback to execute before the result of $callback is
-     *                                 written into the cache. Allows you to perform additional post processing on the
-     *                                 fly. The callback receives the result as parameter.
-     *                                 - onWarmup callable: A callback to execute when the cached value is read from
-     *                                 the caching system. Allows you to rehydrate objects on the fly. The callback
-     *                                 receives the value as parameter.
-     *
-     * @return false|mixed
+     * @inheritDoc
      */
     public function remember(callable $callback, ?array $keyArgs = null, array $options = [])
     {
@@ -408,15 +369,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     }
     
     /**
-     * Generates a cache key, the same way remember() does.
-     *
-     * @param   array|CacheKeyGeneratorInterface  $keyArgsOrGenerator  Either a cache key generator, or a list of
-     *                                                                 arguments that should be converted into a key
-     * @param   bool                              $withEnvironment     By default the environment will be taken into
-     *                                                                 account. If you set this to false, only the key
-     *                                                                 generator is used.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getCacheKey($keyArgsOrGenerator, ?bool $withEnvironment = null): string
     {
