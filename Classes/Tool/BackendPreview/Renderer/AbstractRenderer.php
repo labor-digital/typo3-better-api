@@ -55,8 +55,7 @@ abstract class AbstractRenderer implements PublicServiceInterface
                         continue;
                     }
                     
-                    // @todo translateBe!
-                    return $translator->translate($listTypeItem[0]);
+                    return $translator->translateBe($listTypeItem[0]);
                 }
                 
                 return '';
@@ -69,8 +68,7 @@ abstract class AbstractRenderer implements PublicServiceInterface
                     continue;
                 }
                 
-                // @todo translateBe!
-                return $translator->translate($listTypeItem[0]);
+                return $translator->translateBe($listTypeItem[0]);
             }
             
             return '';

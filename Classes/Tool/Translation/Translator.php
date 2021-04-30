@@ -98,6 +98,9 @@ class Translator implements SingletonInterface
      */
     protected $selectorLabelMap = [];
     
+    
+    protected $beLangInstances = [];
+    
     /**
      * TranslationService constructor.
      *
@@ -237,6 +240,45 @@ class Translator implements SingletonInterface
         } else {
             $result = (string)$this->getTypoLanguageService()->sl($key);
         }
+        
+        return empty($args) ? $result : vsprintf($result, $args);
+    }
+    
+    
+    /**
+     * This method is quite similar to translate() but translates labels for the language
+     * of the current backend user. This allows you to translate labels in the backend language
+     * alongside the default frontend language
+     *
+     * @param   string  $selector
+     * @param   array   $args
+     *
+     * @return string
+     */
+    public function translateBe(string $selector, array $args = []): string
+    {
+        // Fall back to the default translator if there is no backend user
+        $beUser = $this->getTypoContext()->BeUser();
+        if (! $beUser->hasUser()) {
+            return $this->translate($selector, $args);
+        }
+        
+        try {
+            $selector = $this->getLabelKey($selector);
+        } catch (TranslationException $exception) {
+            return empty($args) ? $selector : vsprintf($selector, $args);
+        }
+        
+        $languageKey = $beUser->hasUser() ? $beUser->getUser()->uc['lang'] : 'default';
+        
+        if (! isset($this->beLangInstances[$languageKey])) {
+            $this->beLangInstances[$languageKey] = GeneralUtility::makeInstance(
+                LanguageService::class
+            );
+            $this->beLangInstances[$languageKey]->init($languageKey);
+        }
+        
+        $result = (string)$this->beLangInstances[$languageKey]->sL($selector);
         
         return empty($args) ? $result : vsprintf($result, $args);
     }

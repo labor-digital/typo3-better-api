@@ -76,8 +76,7 @@ class FieldDefaultAndPlaceholderTranslation
             $event->getProxy()->setConfig(array_merge(
                 $config,
                 [
-                    // @todo translate be when implemented
-                    'placeholder' => static::cs()->translator->translate($config['placeholder']),
+                    'placeholder' => static::cs()->translator->translateBe($config['placeholder']),
                 ]
             ));
         }
