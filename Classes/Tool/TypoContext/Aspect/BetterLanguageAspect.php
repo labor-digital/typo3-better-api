@@ -41,6 +41,7 @@ namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\LanguageAspect;
+use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterface
@@ -71,13 +72,26 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     }
     
     /**
+     * Returns a language object by its unique id
+     *
+     * @param   int          $languageId
+     * @param   string|null  $siteIdentifier
+     *
+     * @return \TYPO3\CMS\Core\Site\Entity\SiteLanguage
+     */
+    public function getLanguageById(int $languageId, ?string $siteIdentifier = null): SiteLanguage
+    {
+        return $this->getSite($siteIdentifier)->getLanguageById($languageId);
+    }
+    
+    /**
      * Returns the instance of the current frontend object
      *
      * @return \TYPO3\CMS\Core\Site\Entity\SiteLanguage
      */
-    public function getCurrentFrontendLanguage(): SiteLanguage
+    public function getCurrentFrontendLanguage(?string $siteIdentifier = null): SiteLanguage
     {
-        return $this->context->site()->getCurrent()->getLanguageById($this->getRootLanguageAspect()->getId());
+        return $this->getSite($siteIdentifier)->getLanguageById($this->getId());
     }
     
     /**
@@ -90,11 +104,7 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
      */
     public function getAllFrontendLanguages(?string $siteIdentifier = null): array
     {
-        if ($siteIdentifier !== null) {
-            return $this->context->site()->get($siteIdentifier)->getLanguages();
-        }
-        
-        return $this->context->site()->getCurrent()->getLanguages();
+        return $this->getSite($siteIdentifier)->getLanguages();
     }
     
     /**
@@ -170,7 +180,6 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
         return $this->getRootLanguageAspect()->getLegacyOverlayType();
     }
     
-    
     /**
      * Returns the root context's language aspect
      *
@@ -179,5 +188,21 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     public function getRootLanguageAspect(): LanguageAspect
     {
         return $this->context->getRootContext()->getAspect('language');
+    }
+    
+    /**
+     * Internal helper to retrieve the site object, either from an identifier or the current site
+     *
+     * @param   string|null  $siteIdentifier
+     *
+     * @return \TYPO3\CMS\Core\Site\Entity\SiteInterface
+     */
+    protected function getSite(?string $siteIdentifier = null): SiteInterface
+    {
+        if ($siteIdentifier !== null) {
+            return $this->context->site()->get($siteIdentifier);
+        }
+        
+        return $this->context->site()->getCurrent();
     }
 }
