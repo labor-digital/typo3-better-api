@@ -43,6 +43,7 @@ use Neunerlei\PathUtil\Path;
 use Throwable;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Routing\SiteMatcher;
+use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
@@ -108,7 +109,7 @@ class SiteFacet implements FacetInterface
     {
         // Check if we can fetch a better site
         $site = $this->context->config()->getRequestAttribute('site');
-        if (! empty($site)) {
+        if (! empty($site) && ! $site instanceof NullSite) {
             // Make sure to reset the current site if we suddenly get a site
             $this->currentSite = null;
             
