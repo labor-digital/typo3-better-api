@@ -53,12 +53,12 @@ class DiContainerBeingBuildEvent
     /**
      * DiContainerBeingBuildEvent constructor.
      *
-     * @param   \Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator  $container
+     * @param   \Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator  $containerConfigurator
      * @param   \Symfony\Component\DependencyInjection\ContainerBuilder                           $containerBuilder
      */
-    public function __construct(ContainerConfigurator $container, ContainerBuilder $containerBuilder)
+    public function __construct(ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder)
     {
-        $this->containerConfigurator = $container;
+        $this->containerConfigurator = $containerConfigurator;
         $this->containerBuilder = $containerBuilder;
     }
     

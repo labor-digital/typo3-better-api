@@ -24,6 +24,7 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Symfony\Component\Config\FileLocator;
@@ -50,16 +51,18 @@ class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHa
     public function handle(string $class): void
     {
         $packagePath = $this->context->getPackage()->getPackagePath();
-        $context = $this->context;
+        
         $loader = new ExtConfigLoader(
             $this->getInstance(ContainerBuilder::class),
             new FileLocator($packagePath)
         );
         
-        $loader->load(static function (
+        $loader->runExtConfigLoad($class, $this->context, $packagePath, static function (
+            string $class,
+            ExtConfigContext $context,
             ContainerConfigurator $configurator,
             ContainerBuilder $containerBuilder
-        ) use ($class, $context) {
+        ) {
             // Apply the default configuration
             if (method_exists($class, 'setAutoWiringDependencies')) {
                 call_user_func([$class, 'setAutoWiringDependencies'], $configurator, $context);
@@ -67,8 +70,7 @@ class BuildTimeHandler extends AbstractExtConfigHandler implements DiBuildTimeHa
             
             // Call the real configuration class
             call_user_func([$class, 'configure'], $configurator, $containerBuilder, $context);
-            
-        }, $this->context->getPackage()->getPackagePath());
+        });
     }
     
     /**

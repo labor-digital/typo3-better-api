@@ -42,6 +42,7 @@ use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -91,6 +92,7 @@ class DiConfigurationStage implements BootStageInterface
     public function onDiContainerBeingBuild(DiContainerBeingBuildEvent $event): void
     {
         $this->setStage(static::STAGE_CONTAINER_BUILD);
+        $this->delegate->set(ContainerConfigurator::class, $event->getContainerConfigurator());
         $this->delegate->set(ContainerBuilder::class, $event->getContainerBuilder());
         
         $extConfigService = $this->delegate->get(ExtConfigService::class);

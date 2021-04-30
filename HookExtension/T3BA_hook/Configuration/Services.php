@@ -24,6 +24,6 @@ use LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $container, ContainerBuilder $containerBuilder) {
-    TypoEventBus::getInstance()->dispatch(new DiContainerBeingBuildEvent($container, $containerBuilder));
+return static function (ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder) {
+    TypoEventBus::getInstance()->dispatch(new DiContainerBeingBuildEvent($containerConfigurator, $containerBuilder));
 };

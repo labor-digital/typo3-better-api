@@ -22,37 +22,36 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Di;
 
 
 use Closure;
+use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 class ExtConfigLoader extends PhpFileLoader
 {
-    
-    // todo this has changed since I implemented it, what does it do, and how can we fix it reliably?
     /**
-     * @inheritDoc
+     * Wraps around the ext config loading process
      *
-     * Symfony is not compatible with itself here -.- So we have to disable the inspections
-     *
-     * @noinspection PhpHierarchyChecksInspection
-     * @noinspection PhpSignatureMismatchDuringInheritanceInspection
+     * @param   string                                         $class
+     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   string                                         $packagePath
+     * @param   callable                                       $callback
      */
-    public function load($callback, $path = null)
+    public function runExtConfigLoad(string $class, ExtConfigContext $context, string $packagePath, callable $callback)
     {
-        $this->setCurrentDir($path);
-        $this->container->fileExists($path);
+        $this->setCurrentDir($packagePath);
+        $this->container->fileExists($packagePath);
         $hookExtensionServicesPhp = dirname(__DIR__, 5) . '/HookExtension/T3BA_hook/Configuration/Services.php';
         
         try {
             $callback(
-                new ContainerConfigurator($this->container, $this, $this->instanceof, $path, $hookExtensionServicesPhp),
+                $class, $context,
+                new ContainerConfigurator($this->container, $this, $this->instanceof, $packagePath, $hookExtensionServicesPhp),
                 $this->container);
         } finally {
             $this->instanceof = [];
             $this->registerAliasesForSinglyImplementedInterfaces();
         }
     }
-    
     
     /**
      * @inheritDoc
