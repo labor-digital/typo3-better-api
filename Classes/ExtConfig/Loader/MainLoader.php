@@ -38,6 +38,8 @@ use Neunerlei\Configuration\Event\BeforeStateCachingEvent;
 use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
 use Neunerlei\Configuration\State\ConfigState;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Core\Log\LogManager;
 
 class MainLoader
 {
@@ -107,6 +109,9 @@ class MainLoader
         // Merge the globals into the globals and then remove them from the state (save a bit of memory)
         $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
         $state->set('typo.globals', null);
+        
+        $this->getContainer()->get(LogManager::class)->reset();
+        dbge($this->getContainer()->get(LogManager::class)->getLogger()->log(LogLevel::WARNING, 'hello world'));
     }
     
     /**

@@ -24,7 +24,9 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Core;
 
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3BA\Tool\Log\BeLogWriter;
 use LaborDigital\T3BA\Tool\Log\BetterFileWriter;
+use LaborDigital\T3BA\Tool\Log\StreamWriter;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
@@ -126,28 +128,33 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      * Registers a new logfile writer in the system. It utilizes our internal
      * better file writer that has built-in log rotation capabilities.
      *
-     * @param   array  $options   Additional log configuration options
-     *                            - key string: Allows you to provide a unique key for this configuration
-     *                            so other configuration classes may override your config. The key will also be used
-     *                            for the file name generation
-     *                            - logLevel int (7|3): This is equivalent with one of the LogLevel constants.
-     *                            It defines the minimal viable severity that should be logged, all levels with a higher
-     *                            number that the given level will be be ignored
-     *                            - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
-     *                            This can be either a class name or a part of a php namespace. If an empty
-     *                            string is given the configuration is applied globally
-     *                            - writer array: the writer configuration array for the configured loglevel
-     *                            - processor array: the processor configuration array for the configured loglevel
-     *                            - logRotation bool (TRUE): By default the log files will be rotated once a day.
-     *                            If you want to disable the log rotation set this option to false.
-     *                            - filesToKeep int (5): If logRotation is enabled, this defines how many
-     *                            files will be kept before they are deleted
+     * @param   array|null  $options  Additional log configuration options
+     *                                - key string: Allows you to provide a unique key for this configuration
+     *                                so other configuration classes may override your config. The key will also be used
+     *                                for the file name generation
+     *                                - logLevel int: This is equivalent with one of the LogLevel constants.
+     *                                Default:
+     *                                -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                                a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                                or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                                -- LogLevel::ERROR in all other cases
+     *                                - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                                This can be either a class name or a part of a php namespace. If an empty
+     *                                string is given the configuration is applied globally
+     *                                - writer array: the writer configuration array for the configured loglevel
+     *                                - processor array: the processor configuration array for the configured loglevel
+     *                                - logRotation bool (TRUE): By default the log files will be rotated once a day.
+     *                                If you want to disable the log rotation set this option to false.
+     *                                - global bool: If this flag is set the writer is set as a global "default",
+     *                                this will disable the "namespace" and "processor" options, tho!
+     *                                - filesToKeep int (5): If logRotation is enabled, this defines how many
+     *                                files will be kept before they are deleted
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
+     * @return $this
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
      * @see \TYPO3\CMS\Core\Log\LogLevel
      */
-    public function registerFileLog(array $options = []): self
+    public function registerFileLog(?array $options = null): self
     {
         $additionalDefinition = [
             'logRotation' => [
@@ -168,6 +175,85 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
                 'filesToKeep' => $options['filesToKeep'],
                 'name' => is_numeric($options['key']) ? md5($options['key']) : $options['key'],
             ],
+        ];
+        
+        return $this->pushLogConfig($options);
+    }
+    
+    /**
+     * Registers a new stream logger the system. It works quite similar to the syslog writer that is available in the
+     * TYPO3 core, but allows you to define the stream to write to. By default it will write to php://stdout which
+     * means it is perfect for logging inside of docker containers.
+     *
+     * @param   array|null  $options  Additional log configuration options
+     *                                - logLevel int: This is equivalent with one of the LogLevel constants.
+     *                                Default:
+     *                                -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                                a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                                or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                                -- LogLevel::ERROR in all other cases
+     *                                - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                                This can be either a class name or a part of a php namespace. If an empty
+     *                                string is given the configuration is applied globally
+     *                                - global bool: If this flag is set the writer is set as a global "default",
+     *                                this will disable the "namespace" and "processor" options, tho!
+     *                                - processor array: the processor configuration array for the configured loglevel
+     *                                - stream string (php://stdout): Allows you to configure the stream to write to.
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
+     * @see \TYPO3\CMS\Core\Log\LogLevel
+     */
+    public function registerStreamLogger(?array $options = null): self
+    {
+        $additionalDefinition = [
+            'stream' => [
+                'type' => ['null', 'string'],
+                'default' => null,
+            ],
+        ];
+        
+        $options = $this->prepareLogConfig($options, $additionalDefinition);
+        
+        $options['writer'] = [
+            StreamWriter::class => [
+                'stream' => $options['stream'],
+            ],
+        ];
+        
+        return $this->pushLogConfig($options);
+    }
+    
+    /**
+     * Registers a new backend log logger in the system. This type of logger is basically a hybrid of the
+     * DatabaseWriter in the PSR-3 logging implementation, and the old-school $GLOBALS['BE_USER']->writelog() logger.
+     * It writes the log entries always in the sys_log table, but fills the field sets of both implementations while
+     * doing so.
+     *
+     * @param   array|null  $options  Additional log configuration options
+     *                                - logLevel int: This is equivalent with one of the LogLevel constants.
+     *                                Default:
+     *                                -- LogLevel::INFO: if the TYPO3 context is set to "development",
+     *                                a frontend request is executed and TYPO3_CONF_VARS.FE.debug is truthy,
+     *                                or a backend/install/CLI request is executed and TYPO3_CONF_VARS.BE.debug is truthy,
+     *                                -- LogLevel::ERROR in all other cases
+     *                                - namespace string (Vendor/ExtKey): The PHP namespace for the logger to be active in.
+     *                                This can be either a class name or a part of a php namespace. If an empty
+     *                                string is given the configuration is applied globally
+     *                                - global bool: If this flag is set the writer is set as a global "default",
+     *                                this will disable the "namespace" and "processor" options, tho!
+     *                                - processor array: the processor configuration array for the configured loglevel
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
+     * @see \TYPO3\CMS\Core\Log\LogLevel
+     */
+    public function registerBeLogLogger(?array $options = null): self
+    {
+        $options = $this->prepareLogConfig($options);
+        
+        $options['writer'] = [
+            BeLogWriter::class => [],
         ];
         
         return $this->pushLogConfig($options);

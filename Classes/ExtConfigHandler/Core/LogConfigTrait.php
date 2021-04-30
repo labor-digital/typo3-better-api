@@ -47,16 +47,21 @@ trait LogConfigTrait
      *
      * @return array
      */
-    protected function prepareLogConfig(array $options, array $additionalDefinition = []): array
+    protected function prepareLogConfig(?array $options, array $additionalDefinition = []): array
     {
-        return Options::make($options, Arrays::merge([
+        $env = $this->getTypoContext()->env();
+        $isDebug = $env->isDev()
+                   || ($env->isFrontend() && $env->isFeDebug())
+                   || (! $env->isFrontend() && $env->isBeDebug());
+        
+        return Options::make($options ?? [], Arrays::merge([
             'key' => [
                 'type' => 'string',
                 'default' => (string)count($this->logConfigurations),
             ],
             'logLevel' => [
                 'type' => ['string', 'int'],
-                'default' => $this->getTypoContext()->Env()->isDev() ? LogLevel::DEBUG : LogLevel::ERROR,
+                'default' => $isDebug ? LogLevel::DEBUG : LogLevel::ERROR,
                 'values' => [
                     LogLevel::EMERGENCY,
                     LogLevel::ERROR,
@@ -91,6 +96,10 @@ trait LogConfigTrait
                 'type' => 'array',
                 'default' => [],
             ],
+            'global' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
         ], $additionalDefinition));
     }
     
@@ -103,6 +112,12 @@ trait LogConfigTrait
      */
     protected function pushLogConfig(array $options)
     {
+        if ($options['global']) {
+            $this->logConfigurations['@global']['writerConfiguration'][$options['logLevel']][key($options['writer'])] = reset($options['writer']);
+            
+            return $this;
+        }
+        
         $config = [
             'writerConfiguration' => [
                 $options['logLevel'] => $options['writer'],
