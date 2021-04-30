@@ -183,6 +183,33 @@ abstract class AbstractField extends AbstractElement
     }
     
     /**
+     * Sets a default value for your field.
+     * NOTE: Not all field types support a default configuration option.
+     * In those cases the value is simply ignored
+     *
+     * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Input.html#default
+     *      https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Radio.html#default
+     *      https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#default
+     *      etc...
+     */
+    public function setDefault($default)
+    {
+        $this->config['config']['default'] = $default;
+        
+        return $this;
+    }
+    
+    /**
+     * Returns either the currently set default value or null if there is none
+     *
+     * @return mixed|null
+     */
+    public function getDefault()
+    {
+        return $this->config['config']['default'] ?? null;
+    }
+    
+    /**
      * Completely overrides the configuration of this field with the configuration of another field.
      *
      * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField  $field
