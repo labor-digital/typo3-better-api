@@ -188,7 +188,6 @@ class Relations extends AbstractFieldPreset
      *                                       LEGACY SUPPORT
      *                                       - mmTableName string: When given this table name is set as mm table name
      *                                       instead of the automatically generated one. Useful for legacy codebase.
-     *                                        *
      */
     public function applyRelationGroup($foreignTable, array $options = []): void
     {
@@ -703,6 +702,11 @@ class Relations extends AbstractFieldPreset
      *                                 maxItems = 1 there is no requirement for an mm table so we will just
      *                                 use a 1:1 relation in the database. If you, however want this field
      *                                 to always use an mmTable, just set this to TRUE manually
+     *                                 - additionalItems array: Additional items that should be attached to the
+     *                                 list of items gathered by the relation lookup. Provide an array of $key =>
+     *                                 $label pairs as a definition.
+     *                                 - default string|number: If given this is used as default value when a new
+     *                                 record is created
      *
      *                             AVAILABLE WHEN maxItems > 1:
      *                             - allowNew bool (FALSE): If set new records can be created with the new record
@@ -722,6 +726,18 @@ class Relations extends AbstractFieldPreset
                 $this->addMinMaxItemOptions(
                     $this->addBasePidOptions(
                         [
+                            'additionalItems' => [
+                                'type' => 'array',
+                                'default' => [],
+                            ],
+                            'default' => [
+                                'type' => ['string', 'number', 'null'],
+                                'default' => null,
+                            ],
+                            'allowEmpty' => [
+                                'type' => 'bool',
+                                'default' => false,
+                            ],
                             'where' => [
                                 'type' => 'string',
                                 'default' => '',
@@ -768,9 +784,21 @@ class Relations extends AbstractFieldPreset
             $options['where'] = "AND $foreignTable.pid = " . $options['basePid'];
         }
         
+        // Convert the items array
+        $itemsFiltered = [];
+        foreach ($options['additionalItems'] as $k => $v) {
+            $itemsFiltered[] = [$v, $k];
+        }
+        
+        // Add additional config
+        if ($options['default'] !== null) {
+            $config['default'] = $options['default'];
+        }
+        
         // Build the tca
         $config = [
             'type' => 'select',
+            'items' => $itemsFiltered,
             'renderType' => $options['maxItems'] > 1
                 ? 'selectMultipleSideBySide'
                 : 'selectSingle',
