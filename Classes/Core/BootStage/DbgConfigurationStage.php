@@ -50,6 +50,8 @@ class DbgConfigurationStage implements BootStageInterface
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
+        include_once dirname(__DIR__, 2) . '/Tool/Database/functions.php';
+        
         if (! function_exists('dbgConfig') || ! defined('_DBG_CONFIG_LOADED')) {
             return;
         }

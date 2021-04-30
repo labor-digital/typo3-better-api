@@ -44,7 +44,6 @@ use TYPO3\CMS\Core\Context\VisibilityAspect;
 
 class BetterVisibilityAspect extends VisibilityAspect implements PublicServiceInterface
 {
-    use AutomaticAspectGetTrait;
     
     /**
      * @var TypoContext
@@ -66,7 +65,7 @@ class BetterVisibilityAspect extends VisibilityAspect implements PublicServiceIn
      */
     public function get(string $name)
     {
-        return $this->handleGet($name);
+        return $this->getRootVisibilityAspect()->get($name);
     }
     
     /**

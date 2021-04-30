@@ -38,15 +38,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\Override;
 
-use LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent;
-use LaborDigital\Typo3BetterApi\Event\TypoEventBus;
+
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\ExtBase\Persistence\DataMapperQueryFilterEvent;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\T3BA__Copy__DataMapper;
 
-// @todo implement this
 class ExtendedDataMapper extends T3BA__Copy__DataMapper
 {
-    
     /**
      * @inheritDoc
      */

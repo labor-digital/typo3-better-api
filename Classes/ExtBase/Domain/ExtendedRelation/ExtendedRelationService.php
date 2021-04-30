@@ -38,21 +38,21 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation;
 
-use LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent;
-use Neunerlei\EventBus\EventBusInterface;
+use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3BA\Event\ExtBase\Persistence\DataMapperQueryFilterEvent;
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
 use Neunerlei\Options\Options;
-use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 
 /**
  * Class ExtendedRelationService
  *
  * @package LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation
- *
- * @todo    finalize migrating this!
  */
-class ExtendedRelationService implements SingletonInterface
+class ExtendedRelationService implements PublicServiceInterface
 {
-    
     /**
      * True if our internal event handler was registered
      *
@@ -68,7 +68,7 @@ class ExtendedRelationService implements SingletonInterface
     protected $filter;
     
     /**
-     * @var \Neunerlei\EventBus\EventBusInterface
+     * @var TypoEventBus
      */
     protected $eventBus;
     
@@ -82,9 +82,9 @@ class ExtendedRelationService implements SingletonInterface
     /**
      * ExtendedRelationService constructor.
      *
-     * @param   \Neunerlei\EventBus\EventBusInterface  $eventBus
+     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
      */
-    public function __construct(EventBusInterface $eventBus)
+    public function __construct(TypoEventBus $eventBus)
     {
         $this->eventBus = $eventBus;
     }
@@ -148,29 +148,48 @@ class ExtendedRelationService implements SingletonInterface
         
         // Build the main query modifier with the given settings
         $this->filter = function (DataMapperQueryFilterEvent $event) use ($settings) {
-            $model = $event->getParentObject();
+            $model = get_class($event->getParentObject());
             $property = $event->getPropertyName();
             $querySettings = $event->getQuery()->getQuerySettings();
             
             // HIDDEN
             if ($this->validateEnabledState('hidden', $settings, $model, $property)) {
+                $hidden = true;
                 $querySettings
                     ->setIgnoreEnableFields(true)
-                    ->setEnableFieldsToBeIgnored(['hidden', 'disabled']);
+                    ->setEnableFieldsToBeIgnored(['disabled']);
             }
             
             // DELETED
             if ($this->validateEnabledState('deleted', $settings, $model, $property)) {
+                $deleted = true;
                 $querySettings
                     ->setIgnoreEnableFields(true)
                     ->setIncludeDeleted(true);
+            }
+            
+            // We have to manually parse the extbase query into a doctrine query
+            // otherwise the restrictions will override our settings we set here.
+            if (isset($deleted) || isset($hidden)) {
+                $dQuery = BetterQueryTypo3DbQueryParserAdapter::getConcreteQueryParser()
+                                                              ->convertQueryToDoctrineQueryBuilder($event->getQuery());
+                
+                if (! empty($deleted)) {
+                    $dQuery->getRestrictions()->removeByType(DeletedRestriction::class);
+                }
+                
+                if (! empty($hidden)) {
+                    $dQuery->getRestrictions()->removeByType(HiddenRestriction::class);
+                }
+                
+                $event->getQuery()->statement($dQuery);
             }
         };
         
         // Bind our event if required
         if (! $this->handlerRegistered) {
             $this->handlerRegistered = true;
-            $this->eventBus->addListener(DataMapperQueryFilterEvent::class, [$this, '__dataMapperQueryFilter']);
+            $this->eventBus->addListener(DataMapperQueryFilterEvent::class, [$this, 'onDataMapperQueryFilter']);
         }
         
         // Run our given function
@@ -185,9 +204,9 @@ class ExtendedRelationService implements SingletonInterface
     /**
      * Event listener to inject or special configuration into the generated query object
      *
-     * @param   \LaborDigital\Typo3BetterApi\Event\Events\DataMapperQueryFilterEvent  $event
+     * @param   \LaborDigital\T3BA\Event\ExtBase\Persistence\DataMapperQueryFilterEvent  $event
      */
-    public function __dataMapperQueryFilter(DataMapperQueryFilterEvent $event)
+    public function onDataMapperQueryFilter(DataMapperQueryFilterEvent $event): void
     {
         // Ignore if there is no filter we have to apply
         if (empty($this->filter)) {

@@ -19,12 +19,11 @@
 
 declare(strict_types=1);
 
+use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3BA\Tool\Database\DatabaseException;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
-use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
@@ -53,9 +52,12 @@ if (! function_exists('dbgQuery')) {
             $dQuery = $query->getQueryBuilder();
             $isStandalone = true;
         } else {
-            $dQuery = GeneralUtility::getContainer()
-                                    ->get(Typo3DbQueryParser::class)
-                                    ->convertQueryToDoctrineQueryBuilder($query);
+            $dQuery = BetterQueryTypo3DbQueryParserAdapter::getConcreteQueryParser()
+                                                          ->convertQueryToDoctrineQueryBuilder($query);
+            /** @noinspection SuspiciousBinaryOperationInspection */
+            if ($query->getStatement() === null) {
+                $dQuery->getRestrictions()->removeAll();
+            }
             if (! empty($query->getLimit())) {
                 $dQuery->setMaxResults($query->getLimit());
             }
@@ -71,7 +73,7 @@ if (! function_exists('dbgQuery')) {
         $in = $out = [];
         foreach ($dQuery->getParameters() as $k => $v) {
             $in[] = ':' . $k;
-            $out[] = '"' . addslashes($v) . '"';
+            $out[] = '"' . addslashes((string)$v) . '"';
         }
         $queryString = str_replace($in, $out, $queryString);
         
