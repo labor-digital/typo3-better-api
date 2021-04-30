@@ -69,4 +69,24 @@ class ReflectionUtil
         
         return $ref;
     }
+    
+    /**
+     * Iterates the call-stack backwards and tries to find the find an object with the $className in it.
+     * It will retrieve the first matching result.
+     *
+     * @param   string    $className  The class name to look up
+     * @param   int|null  $limit      Optional limit of call-stack entries to process
+     *
+     * @return object|null
+     */
+    public static function getClosestFromStack(string $className, ?int $limit = null): ?object
+    {
+        foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $limit ?? 0) as $call) {
+            if (isset($call['object']) && $call['object'] instanceof $className) {
+                return $call['object'];
+            }
+        }
+        
+        return null;
+    }
 }

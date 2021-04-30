@@ -41,6 +41,7 @@ namespace LaborDigital\T3BA\ExtBase\Controller;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
 use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
+use LaborDigital\T3BA\Tool\OddsAndEnds\ReflectionUtil;
 use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
@@ -233,28 +234,19 @@ trait ContentControllerBackendPreviewTrait
                 return;
             }
             
-            $registered = false;
-            
             // We have to use this hack to get the instance of the controller,
             // because someone was clever enough to not include that instance into the event -.-
-            foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 6) as $call) {
-                if (isset($call['object']) && $call['object'] instanceof self) {
-                    $controller = $call['object'];
-                    $controller->previewRendererContext = static::$transfer['context'];
-                    
-                    try {
-                        $controller->view = $controller->getFluidView(static::$transfer['options']['templateName']);
-                    } catch (Throwable $e) {
-                        // Silence
-                    }
-                    
-                    $registered = true;
-                    break;
-                }
+            $controller = ReflectionUtil::getClosestFromStack(static::class, 6);
+            if (! $controller instanceof self) {
+                throw new RuntimeException('Failed to locate the target controller for the simulated request!');
             }
             
-            if (! $registered) {
-                throw new RuntimeException('Failed to locate the target controller for the simulated request!');
+            $controller->previewRendererContext = static::$transfer['context'];
+            
+            try {
+                $controller->view = $controller->getFluidView(static::$transfer['options']['templateName']);
+            } catch (Throwable $e) {
+                // Silence
             }
         }, ['once']);
     }
