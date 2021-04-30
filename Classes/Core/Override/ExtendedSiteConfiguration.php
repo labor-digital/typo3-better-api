@@ -41,10 +41,15 @@ namespace LaborDigital\T3BA\Core\Override;
 use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
 use LaborDigital\T3BA\Event\Core\SiteConfigFilterEvent;
 use LaborDigital\T3BA\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
+use LaborDigital\T3BA\Tool\OddsAndEnds\ReflectionUtil;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use TYPO3\CMS\Backend\Controller\SiteConfigurationController;
 use TYPO3\CMS\Core\Configuration\T3BA__Copy__SiteConfiguration;
 
 class ExtendedSiteConfiguration extends T3BA__Copy__SiteConfiguration
 {
+    use TypoContextAwareTrait;
+    
     /**
      * @inheritDoc
      */
@@ -59,6 +64,13 @@ class ExtendedSiteConfiguration extends T3BA__Copy__SiteConfiguration
         
         // Special switch if we load the configuration early
         if ($this instanceof CachelessSiteConfigurationAdapter) {
+            return $siteConfig;
+        }
+        
+        // Ignore this if the backend generates new yaml files
+        $context = $this->getTypoContext();
+        if (! $useCache && $context->env()->isBackend() &&
+            ReflectionUtil::getClosestFromStack(SiteConfigurationController::class, 10) !== null) {
             return $siteConfig;
         }
         
