@@ -54,24 +54,46 @@ class FieldRenderer implements PublicServiceInterface
         $this->falService = $falService;
     }
     
+    /**
+     * Renders the translated label string given to a field of a table
+     *
+     * @param   string  $tableName  The name of the database table
+     * @param   string  $fieldName  The column/field name in the table to render
+     *
+     * @return string
+     */
     public function renderLabel(string $tableName, string $fieldName): string
     {
         $fieldTca = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
         
-        // @todo switch this to translateBe when it was implemented
         if (isset($fieldTca['label'])) {
-            return $this->translator->translate($fieldTca['label']);
+            return $this->translator->translateBe($fieldTca['label']);
         }
         
         return Inflector::toHuman($fieldName);
     }
     
+    /**
+     * Renders the value of a single field in a given row of a database table.
+     *
+     * @param   string  $tableName  The name of the database table
+     * @param   string  $fieldName  The column/field name in the table to render
+     * @param   array   $row        The raw database row to extract the value from
+     * @param   bool    $textOnly   By default the rendered value may contain HTML markup, if you set this
+     *                              flag to true those cases will be replaced with a textual representation
+     *
+     * @return string|null
+     */
     public function render(string $tableName, string $fieldName, array $row, bool $textOnly = false): ?string
     {
         $fieldTca = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
         
-        if (empty($fieldTca) || empty($row[$fieldName])) {
+        if (empty($fieldTca) || (empty($row[$fieldName]) && $row[$fieldName] !== 0)) {
             return null;
+        }
+        
+        if ($fieldName === 'sys_language_uid') {
+            return $this->cs()->typoContext->language()->getLanguageById($row[$fieldName])->getTitle();
         }
         
         if (isset($row['uid']) && ($fieldTca['config']['foreign_table'] ?? null) === 'sys_file_reference') {
