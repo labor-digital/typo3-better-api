@@ -95,6 +95,10 @@ class DbService implements SingletonInterface, PublicServiceInterface
     public function getQueryBuilder(?string $tableName = null, ?string $connectionName = null): QueryBuilder
     {
         if (! empty($tableName)) {
+            if (class_exists($tableName)) {
+                $tableName = NamingUtil::resolveTableName($tableName);
+            }
+            
             $connection = $this->getConnectionPool()->getConnectionForTable($tableName);
         } else {
             $connection = $this->getConnection($connectionName);
