@@ -23,7 +23,6 @@ namespace LaborDigital\T3BA\Tool\TypoScript;
 
 use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
 use LaborDigital\T3BA\Core\Exception\T3BAException;
 use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
@@ -249,13 +248,10 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      *
      * @return string
      */
-    public function renderContentObject(string $type, array $config)
+    public function renderContentObject(string $type, array $config): string
     {
-        // todo make this work
-        throw new NotImplementedException();
-        
-        return $this->Simulator->runWithEnvironment(['ignoreIfFrontendExists'], function () use ($type, $config) {
-            return $this->Tsfe->getContentObjectRenderer()->cObjGetSingle($type, $config);
+        return $this->cs()->simulator->runWithEnvironment(['ignoreIfFrontendExists'], function () use ($type, $config) {
+            return $this->cs()->tsfe->getContentObjectRenderer()->cObjGetSingle($type, $config);
         });
     }
     
