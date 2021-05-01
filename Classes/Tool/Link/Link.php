@@ -41,7 +41,6 @@ namespace LaborDigital\T3BA\Tool\Link;
 use GuzzleHttp\Psr7\Query;
 use LaborDigital\T3BA\Tool\Link\Adapter\CacheHashCalculatorAdapter;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -1099,21 +1098,15 @@ class Link
                 );
             }
         } else {
-            // Simulate the ignored cHash fields
             if (! empty($this->cHashExcludedArgs)) {
-                $calculator = CacheHashCalculatorAdapter::getGlobalCalculator();
-                $cHashExcludedParametersBackup = CacheHashCalculatorAdapter::getExcludedParameters($calculator);
-                CacheHashCalculatorAdapter::updateExcludedParameters(
-                    $calculator, Arrays::attach($cHashExcludedParametersBackup, $this->cHashExcludedArgs));
-            }
-            
-            // Build the url
-            $uri = $ub->buildFrontendUri();
-            
-            // Restore cHash fields if required
-            if (isset($calculator, $cHashExcludedParametersBackup)) {
-                CacheHashCalculatorAdapter::updateExcludedParameters($calculator, $cHashExcludedParametersBackup);
-                unset($cHashExcludedParametersBackup);
+                // Simulate the ignored cHash fields
+                $uri = CacheHashCalculatorAdapter::runWithConfiguration([
+                    'excludedParameters' => $this->cHashExcludedArgs,
+                ], function () use ($ub) {
+                    return $ub->buildFrontendUri();
+                });
+            } else {
+                $uri = $ub->buildFrontendUri();
             }
         }
         

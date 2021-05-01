@@ -22,10 +22,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Tool\Link\Adapter;
 
+use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 
-// @todo finish implementing this
 class CacheHashCalculatorAdapter extends CacheHashCalculator
 {
     /**
@@ -39,28 +39,32 @@ class CacheHashCalculatorAdapter extends CacheHashCalculator
     }
     
     /**
-     * Returns the list of excluded parameters for a cache hash calculator instance
+     * Executes a given $callback, with a given cacheHash $configuration applied to the chash calculator
      *
-     * @param   \TYPO3\CMS\Frontend\Page\CacheHashCalculator  $calculator
+     * @param   array                     $configuration
+     * @param   callable                  $callback
+     * @param   CacheHashCalculator|null  $calculator
      *
-     * @return array
+     * @return mixed
      */
-    public static function getExcludedParameters(CacheHashCalculator $calculator): array
+    public static function runWithConfiguration(array $configuration, callable $callback, ?CacheHashCalculator $calculator = null)
     {
-        dbge($calculator->configuration);
+        $calculator = $calculator ?? static::getGlobalCalculator();
+        $configurationBackup = $calculator->configuration;
         
-        return $calculator->excludedParameters;
+        try {
+            $calculator->setConfiguration(
+                Arrays::merge(
+                    $GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash'] ?? [],
+                    $configuration
+                )
+            );
+            
+            return $callback();
+            
+        } finally {
+            $calculator->configuration = $configurationBackup;
+        }
     }
     
-    /**
-     * Updates the list of excluded parameters for a given calculator instance
-     *
-     * @param   \TYPO3\CMS\Frontend\Page\CacheHashCalculator  $calculator
-     * @param   array                                         $excluded
-     */
-    public static function updateExcludedParameters(CacheHashCalculator $calculator, array $excluded): void
-    {
-        dbge($calculator->configuration);
-        $calculator->setExcludedParameters($excluded);
-    }
 }
