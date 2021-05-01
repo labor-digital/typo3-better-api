@@ -24,7 +24,9 @@ namespace LaborDigital\T3BA\Tool\DataHook\FieldPacker;
 
 
 use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FlexFormFieldPacker implements FieldPackerInterface
@@ -35,15 +37,15 @@ class FlexFormFieldPacker implements FieldPackerInterface
     public function unpackFields(DataHookDefinition $definition): array
     {
         $flexFields = [];
-        foreach ($definition->data as $field => $value) {
+        foreach ($definition->data as $fieldName => $value) {
             if (is_array($value)
-                || Arrays::getPath($definition->tca, ['columns', $field, 'config', 'type']) !== 'flex') {
+                || Arrays::getPath($definition->tca, ['columns', $fieldName, 'config', 'type']) !== 'flex') {
                 continue;
             }
             
             $value = empty($value) ? [] : GeneralUtility::xml2array($value);
-            $definition->data[$field] = is_array($value) ? $value : [];
-            $flexFields[] = $field;
+            $definition->data[$fieldName] = is_array($value) ? $value : [];
+            $flexFields[] = $fieldName;
         }
         
         return $flexFields;
@@ -54,8 +56,16 @@ class FlexFormFieldPacker implements FieldPackerInterface
      */
     public function packFields(DataHookDefinition $definition, array $fieldsToPack): void
     {
-        dbge('REPACK!');
-        // TODO: Implement packFields() method.
+        $tools = TypoContext::getInstance()->di()->makeInstance(FlexFormTools::class);
+        foreach ($fieldsToPack as $fieldName) {
+            $value = $definition->data[$fieldName];
+            
+            if (! is_array($value)) {
+                continue;
+            }
+            
+            $definition->data[$fieldName] = $tools->flexArray2Xml($value, true);
+        }
     }
     
 }
