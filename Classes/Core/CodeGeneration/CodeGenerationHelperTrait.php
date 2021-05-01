@@ -38,7 +38,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3BA\Core\CodeGeneration;
 
+use InvalidArgumentException;
+use ReflectionFunction;
 use ReflectionMethod;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
 
 trait CodeGenerationHelperTrait
 {
@@ -192,13 +197,13 @@ trait CodeGenerationHelperTrait
             return [];
         }
         
-        if ($typeOrParent instanceof \ReflectionParameter) {
+        if ($typeOrParent instanceof ReflectionParameter) {
             if (! $typeOrParent->hasType()) {
                 return [];
             }
             
             $rawType = $typeOrParent->getType();
-        } elseif ($typeOrParent instanceof \ReflectionFunction || $typeOrParent instanceof ReflectionMethod) {
+        } elseif ($typeOrParent instanceof ReflectionFunction || $typeOrParent instanceof ReflectionMethod) {
             if (! $typeOrParent->hasReturnType()) {
                 return [];
             }
@@ -209,7 +214,7 @@ trait CodeGenerationHelperTrait
         } elseif (is_array($typeOrParent)) {
             return array_map([$this, 'parseType'], $typeOrParent);
         } else {
-            throw new \InvalidArgumentException('Could not parse the type, because $type is an invalid argument');
+            throw new InvalidArgumentException('Could not parse the type, because $type is an invalid argument');
         }
         
         if ($rawType === null) {
@@ -217,8 +222,8 @@ trait CodeGenerationHelperTrait
         }
         
         $result = [];
-        foreach ($rawType instanceof \ReflectionUnionType ? $rawType->getTypes() : [$rawType] as $type) {
-            $typeName = $type instanceof \ReflectionNamedType ? $type->getName() : (string)$type;
+        foreach ($rawType instanceof ReflectionUnionType ? $rawType->getTypes() : [$rawType] as $type) {
+            $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string)$type;
             
             if ($type->isBuiltin()) {
                 $result[] = $typeName;
@@ -232,7 +237,7 @@ trait CodeGenerationHelperTrait
                 continue;
             }
             
-            if (! $typeOrParent instanceof \ReflectionFunction && ! $typeOrParent instanceof ReflectionMethod) {
+            if (! $typeOrParent instanceof ReflectionFunction && ! $typeOrParent instanceof ReflectionMethod) {
                 continue;
             }
             
