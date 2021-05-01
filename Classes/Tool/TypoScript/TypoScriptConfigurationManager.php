@@ -111,8 +111,6 @@ class TypoScriptConfigurationManager extends BackendConfigurationManager
         $wrapper = new class extends TemplateService implements SingletonInterface {
         };
         GeneralUtility::setSingletonInstance(TemplateService::class, $wrapper);
-        // @todo see if this still works
-        $wrapper->backend_info = true;
         $setup = parent::getTypoScriptSetup();
         GeneralUtility::removeSingletonInstance(TemplateService::class, $wrapper);
         
