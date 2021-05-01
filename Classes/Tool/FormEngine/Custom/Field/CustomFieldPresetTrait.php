@@ -39,10 +39,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
 
 use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
 use LaborDigital\T3BA\Tool\Sql\SqlFieldLength;
 use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
 use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
 use Neunerlei\Arrays\Arrays;
@@ -63,13 +63,13 @@ trait CustomFieldPresetTrait
      * and passes them into this helper afterwards. It will take care of all the heavy lifting and class
      * validation for you.
      *
-     * @param   string                 $customElementClass  The class name of the custom element you want to register.
-     *                                                      The class has to implement the CustomElementInterface
-     *                                                      interface
-     * @param   array |null            $options             Any options you want to specify for your custom element
-     * @param   AbstractField|null     $field               The reference of the field you currently configure.
-     *                                                      Typically $this->field
-     * @param   ExtConfigContext|null  $context             The ext config context. Typically $this->context
+     * @param   string                  $customElementClass  The class name of the custom element you want to register.
+     *                                                       The class has to implement the CustomElementInterface
+     *                                                       interface
+     * @param   array |null             $options             Any options you want to specify for your custom element
+     * @param   AbstractField|null      $field               The reference of the field you currently configure.
+     *                                                       Typically $this->field
+     * @param   TcaBuilderContext|null  $context             The tca builder context. Typically $this->context
      *
      * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
      */
@@ -77,7 +77,7 @@ trait CustomFieldPresetTrait
         string $customElementClass,
         ?array $options = null,
         ?AbstractField $field = null,
-        ?ExtConfigContext $context = null
+        ?TcaBuilderContext $context = null
     ): void
     {
         $options = $options ?? [];
