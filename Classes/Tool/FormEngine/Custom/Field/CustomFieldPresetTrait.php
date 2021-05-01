@@ -119,13 +119,12 @@ trait CustomFieldPresetTrait
             $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT);
         }
         
-        $field->setDataHookOptions(
-            array_merge(
-                $field->getDataHookOptions(),
-                ['contextClass' => CustomFieldDataHookContext::class]
-            )
-        );
+        $dataHookOptions = $field->getDataHookOptions();
+        $field->setDataHookOptions(array_merge($dataHookOptions,
+            ['contextClass' => CustomFieldDataHookContext::class]));
         
         call_user_func([$customElementClass, 'configureField'], $field, $options, $context);
+        
+        $field->setDataHookOptions($dataHookOptions);
     }
 }
