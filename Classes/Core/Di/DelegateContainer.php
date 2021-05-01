@@ -114,6 +114,7 @@ class DelegateContainer implements ContainerInterface
     
     /**
      * @inheritDoc
+     * @return mixed
      */
     public function get($id)
     {
