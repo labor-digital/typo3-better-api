@@ -1030,9 +1030,6 @@ class Link
         // Inject the language into the args
         if (! empty($this->language)) {
             $this->args['L'] = $this->language->getLanguageId();
-        } else {
-            // @todo can this else be removed?
-//            $this->args['L'] = $typoContext->language()->getCurrentFrontendLanguage()->getLanguageId();
         }
         
         // Validate required elements
