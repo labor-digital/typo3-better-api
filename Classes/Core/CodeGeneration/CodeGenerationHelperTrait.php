@@ -58,8 +58,7 @@ trait CodeGenerationHelperTrait
             
             // Add type definition
             if ($param->hasType()) {
-                /** @noinspection NullPointerExceptionInspection */
-                $type = $param->getType()->getName();
+                $type = implode('|', $this->parseType($param));
                 
                 // Make sure the type of classes starts with a backslash...
                 if (strpos($type, '\\') !== false || class_exists($type)) {
@@ -141,9 +140,9 @@ trait CodeGenerationHelperTrait
         // Build return type
         $returnType = '';
         if ($method->hasReturnType()) {
-            $type = $method->getReturnType();
-            if ($type !== null) {
-                $typeName = (string)$type->getName();
+            $type = $this->parseType($method);
+            if (! empty($type)) {
+                $typeName = implode('|', $type);
                 $isObjectOrInterface = class_exists($typeName) || interface_exists($typeName);
                 $returnType = ':' . ($isObjectOrInterface ? '\\' : '') . $typeName;
             }
@@ -178,5 +177,72 @@ trait CodeGenerationHelperTrait
         }
         
         return implode(PHP_EOL . '	 * ', array_filter($linesFiltered));
+    }
+    
+    /**
+     * Helper to parse a multitude of data type options into an array of all possible options
+     *
+     * @param   string|array|object  $typeOrParent
+     *
+     * @return array|string[]
+     */
+    protected function parseType($typeOrParent): array
+    {
+        if (empty($typeOrParent)) {
+            return [];
+        }
+        
+        if ($typeOrParent instanceof \ReflectionParameter) {
+            if (! $typeOrParent->hasType()) {
+                return [];
+            }
+            
+            $rawType = $typeOrParent->getType();
+        } elseif ($typeOrParent instanceof \ReflectionFunction || $typeOrParent instanceof ReflectionMethod) {
+            if (! $typeOrParent->hasReturnType()) {
+                return [];
+            }
+            
+            $rawType = $typeOrParent->getReturnType();
+        } elseif (is_string($typeOrParent)) {
+            return explode('|', $typeOrParent);
+        } elseif (is_array($typeOrParent)) {
+            return array_map([$this, 'parseType'], $typeOrParent);
+        } else {
+            throw new \InvalidArgumentException('Could not parse the type, because $type is an invalid argument');
+        }
+        
+        if ($rawType === null) {
+            return [];
+        }
+        
+        $result = [];
+        foreach ($rawType instanceof \ReflectionUnionType ? $rawType->getTypes() : [$rawType] as $type) {
+            $typeName = $type instanceof \ReflectionNamedType ? $type->getName() : (string)$type;
+            
+            if ($type->isBuiltin()) {
+                $result[] = $typeName;
+                continue;
+            }
+            
+            $lcTypeName = strtolower($typeName);
+            
+            if ('self' !== $lcTypeName && 'parent' !== $lcTypeName) {
+                $result[] = '\\' . $typeName;
+                continue;
+            }
+            
+            if (! $typeOrParent instanceof \ReflectionFunction && ! $typeOrParent instanceof ReflectionMethod) {
+                continue;
+            }
+            
+            if ('self' === $lcTypeName) {
+                $result[] = '\\' . $typeOrParent->getDeclaringClass()->name;
+            } else {
+                $result[] = ($parent = $typeOrParent->getDeclaringClass()->getParentClass()) ? '\\' . $parent->name : null;
+            }
+        }
+        
+        return $result;
     }
 }
