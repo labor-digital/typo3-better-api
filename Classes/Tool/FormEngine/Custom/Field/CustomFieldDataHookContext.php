@@ -23,10 +23,8 @@ namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
 use LaborDigital\T3BA\Tool\DataHook\DataHookContext;
 use Neunerlei\Arrays\Arrays;
 
-// @todo finish this
 class CustomFieldDataHookContext extends DataHookContext
 {
-    
     /**
      * Returns the list of additional options that were passed when the field
      * was applied using the fieldPreset applier.
@@ -35,9 +33,7 @@ class CustomFieldDataHookContext extends DataHookContext
      */
     public function getOptions(): array
     {
-        dbge($this);
-        
-        return Arrays::getPath($this->config, ['config', 'customElementOptions'], []);
+        return $this->handlerDefinition->tca['config']['t3ba'] ?? [];
     }
     
     /**
@@ -62,9 +58,7 @@ class CustomFieldDataHookContext extends DataHookContext
      */
     public function getElementClass(): string
     {
-        dbge($this);
-        
-        return Arrays::getPath($this->config, ['config', 'customElementClass'], '');
+        return $this->handlerDefinition->tca['config']['t3baClass'] ?? '';
     }
     
     /**
