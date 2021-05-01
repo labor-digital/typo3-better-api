@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\Core\Di\CompilerPass;
 
 
+use LaborDigital\T3BA\Core\CodeGeneration\CodeGenerationHelperTrait;
 use LaborDigital\T3BA\EventHandler\CacheClearing;
 use LaborDigital\T3BA\Tool\Cache\CacheFactory;
 use LaborDigital\T3BA\Tool\Cache\CacheInterface;
@@ -34,12 +35,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
 use Symfony\Component\DependencyInjection\Reference;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 class CacheConfigurationPass implements CompilerPassInterface
 {
+    use CodeGenerationHelperTrait;
+    
     protected const TRACKED_INTERFACES
         = [
             CacheInterface::class,
@@ -163,8 +165,7 @@ class CacheConfigurationPass implements CompilerPassInterface
     ): void
     {
         foreach ($reflectionMethod->getParameters() as $parameter) {
-            // todo implement this in the CodeGenerationHelperTrait
-            $types = explode('|', (string)ProxyHelper::getTypeHint($reflectionMethod, $parameter, true));
+            $types = $this->parseType($parameter);
             
             if (empty(array_intersect($types, static::TRACKED_INTERFACES))) {
                 continue;
