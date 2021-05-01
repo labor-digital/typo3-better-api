@@ -132,9 +132,9 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
     /**
      * Returns the data fields to update when a record is copied
      *
-     * @return array
+     * @return mixed
      */
-    public function getPasteSpecialData(): array
+    public function getPasteSpecialData()
     {
         return $this->pasteSpecialData;
     }
@@ -146,7 +146,7 @@ abstract class AbstractActionEvent implements CoreHookEventInterface
      *
      * @return $this
      */
-    public function setPasteSpecialData(array $pasteSpecialData): self
+    public function setPasteSpecialData($pasteSpecialData): self
     {
         $this->pasteSpecialData = $pasteSpecialData;
         
