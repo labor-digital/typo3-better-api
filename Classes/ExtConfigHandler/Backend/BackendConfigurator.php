@@ -24,20 +24,14 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
 
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3BA\ExtConfigHandler\Common\Assets\AssetCollectorTrait;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
-use Neunerlei\PathUtil\Path;
 
 class BackendConfigurator extends AbstractExtConfigConfigurator
 {
     use RteConfigTrait;
-    
-    /**
-     * The list of backend assets to register
-     *
-     * @var array
-     */
-    protected $assets = [];
+    use AssetCollectorTrait;
     
     /**
      * The list of registered rte configuration arrays
@@ -59,38 +53,6 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
      * @var array
      */
     protected $globals = [];
-    
-    /**
-     * Registers a new css file to the backend renderer.
-     *
-     * @param   string  $cssFile  Use something like EXT:ext_key/Resources/Public/Styles/style.css
-     *                            You can use fully qualified urls as well.
-     *
-     * @return $this
-     */
-    public function registerCss(string $cssFile): self
-    {
-        return $this->addAssetInternal('addCssFile', [$cssFile, 'stylesheet', 'all', '', false], 0);
-    }
-    
-    /**
-     * Registers a new js file to the backend renderer.
-     *
-     * @param   string  $jsFile       Use something like EXT:ext_key/Resources/Public/Scripts/script.js
-     *                                You can use fully qualified urls as well.
-     * @param   bool    $atTheFooter  By default the script will be added to the page head. If you want to add it to the
-     *                                footer of the page, set this to true
-     *
-     * @return $this
-     */
-    public function registerJs(string $jsFile, bool $atTheFooter = false): self
-    {
-        return $this->addAssetInternal(
-            $atTheFooter ? 'addJsFile' : 'addJsFooterFile',
-            [$jsFile, 'text/javascript', false, false, '', true],
-            0
-        );
-    }
     
     /**
      * Use this method to register your custom RTE configuration for the Typo3 backend.
@@ -192,49 +154,11 @@ class BackendConfigurator extends AbstractExtConfigConfigurator
     }
     
     /**
-     * Internal helper to register a new asset registration on the page renderer
-     *
-     * @param   string    $method         The method of the page renderer to use as target for the registered asset
-     * @param   array     $args           The arguments to pass to the given method in order to register the asset
-     * @param   int|null  $assetArgIndex  Optional index of the asset url inside of $args, which will be
-     *                                    parsed for TYPO3 path definitions
-     *
-     * @return $this
-     * @throws \JsonException
-     */
-    protected function addAssetInternal(string $method, array $args, ?int $assetArgIndex): self
-    {
-        $args = $this->context->replaceMarkers($args);
-        
-        if ($assetArgIndex !== null) {
-            $assetUrl = $args[$assetArgIndex];
-            
-            /** @noinspection BypassedUrlValidationInspection */
-            if (! (bool)filter_var($assetUrl, FILTER_VALIDATE_URL)) {
-                $p = $this->context->getTypoContext()->path();
-                $assetUrl = $p->typoPathToRealPath($assetUrl);
-                $assetUrl = Path::makeRelative($assetUrl, $p->getPublicPath());
-                
-                if (! empty($assetUrl) && ! in_array($assetUrl[0], ['/', '.'], true)) {
-                    $assetUrl = '/' . $assetUrl;
-                }
-                
-                $args[$assetArgIndex] = $assetUrl;
-            }
-        }
-        
-        $this->assets[md5($method . '.' . json_encode($args, JSON_THROW_ON_ERROR))] = [$method, $args];
-        
-        return $this;
-    }
-    
-    
-    /**
      * @inheritDoc
      */
     public function finish(ConfigState $state): void
     {
-        $state->setAsJson('assets', $this->assets);
+        $this->storeAssetCollectorConfiguration($state);
         
         $state->useNamespace(null, function (ConfigState $state) {
             if (! empty($this->rteConfig)) {

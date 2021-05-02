@@ -25,28 +25,26 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
 
 use LaborDigital\T3BA\Event\Backend\BackendAssetFilterEvent;
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3BA\ExtConfigHandler\Common\Assets\AssetApplierTrait;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier
 {
+    use AssetApplierTrait;
+    
     /**
      * @inheritDoc
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
-        $subscription->subscribe(BackendAssetFilterEvent::class, 'onBackendAssets');
+        $subscription->subscribe(BackendAssetFilterEvent::class, 'onAssetFilter', ['priority' => -5000]);
     }
     
-    public function onBackendAssets(BackendAssetFilterEvent $event): void
+    /**
+     * Executes the asset collector configuration
+     */
+    public function onAssetFilter(): void
     {
-        $list = $this->state->get('typo.backend.assets');
-        if (! empty($list)) {
-            $renderer = $event->getPageRenderer();
-            foreach (Arrays::makeFromJson($list) as $asset) {
-                call_user_func_array([$renderer, $asset[0]], $asset[1]);
-            }
-        }
+        $this->executeAssetCollectorActions('typo.backend');
     }
-    
 }
