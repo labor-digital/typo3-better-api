@@ -39,11 +39,6 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
     use RouteEnhancerConfigTrait;
     
     /**
-     * @var \TYPO3\CMS\Core\Site\Entity\Site
-     */
-    protected $site;
-    
-    /**
      * The list of registered route enhancers
      *
      * @var array
@@ -57,7 +52,6 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
      */
     public function __construct(Site $site)
     {
-        $this->site = $site;
         $this->routeEnhancers = $site->getConfiguration()['routeEnhancers'] ?? [];
     }
     
