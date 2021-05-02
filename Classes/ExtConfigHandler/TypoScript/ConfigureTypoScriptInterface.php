@@ -34,6 +34,6 @@ interface ConfigureTypoScriptInterface
      * @param   \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator  $configurator
      * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
      */
-    public static function configure(TypoScriptConfigurator $configurator, ExtConfigContext $context): void;
+    public static function configureTypoScript(TypoScriptConfigurator $configurator, ExtConfigContext $context): void;
     
 }

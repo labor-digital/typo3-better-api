@@ -28,6 +28,8 @@ use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler
 {
+    protected $configureMethod = 'configureTypoScript';
+    
     /**
      * @var \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
