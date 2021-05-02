@@ -131,7 +131,7 @@ class ConfigDefinition extends DefaultConfigDefinition
             unset($data['root']);
         }
         
-        $state->set('typo.site.' . $siteKey, $data);
+        $state->mergeIntoArray('typo.site.' . $siteKey, $data);
     }
     
     
