@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3BA\ExtConfigHandler\Frontend;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext;
 
 interface ConfigureFrontendInterface
 {
@@ -31,7 +31,7 @@ interface ConfigureFrontendInterface
      * Allows you to configure TYPO3 frontend related options
      *
      * @param   \LaborDigital\T3BA\ExtConfigHandler\Frontend\FrontendConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                      $context
+     * @param   \LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext           $context
      */
-    public static function configureFrontend(FrontendConfigurator $configurator, ExtConfigContext $context): void;
+    public static function configureFrontend(FrontendConfigurator $configurator, SiteConfigContext $context): void;
 }
