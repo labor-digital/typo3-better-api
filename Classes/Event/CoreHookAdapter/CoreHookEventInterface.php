@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\CoreHookAdapter;
+namespace LaborDigital\T3ba\Event\CoreHookAdapter;
 
 interface CoreHookEventInterface
 {

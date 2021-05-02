@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
 
 trait DumperDataHookTrait
 {

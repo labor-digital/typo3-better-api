@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 
 use Neunerlei\Configuration\Loader\Loader;

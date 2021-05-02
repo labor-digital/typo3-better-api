@@ -37,14 +37,14 @@ declare(strict_types=1);
  */
 
 
-namespace LaborDigital\T3BA\Core\Kint;
+namespace LaborDigital\T3ba\Core\Kint;
 
 use Kint\Object\BasicObject;
 use Kint\Object\InstanceObject;
 use Kint\Parser\IteratorPlugin;
 use Kint\Parser\Parser;
 use Kint\Parser\Plugin;
-use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\LazyLoadingUtil;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;

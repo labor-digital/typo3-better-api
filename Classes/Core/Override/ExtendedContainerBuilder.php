@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\CreateDiContainerEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\CreateDiContainerEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\DependencyInjection\T3BA__Copy__ContainerBuilder;
+use TYPO3\CMS\Core\DependencyInjection\T3BaCopyContainerBuilder;
 use TYPO3\CMS\Core\Package\PackageManager;
 
-class ExtendedContainerBuilder extends T3BA__Copy__ContainerBuilder
+class ExtendedContainerBuilder extends T3BaCopyContainerBuilder
 {
     /**
      * @inheritDoc

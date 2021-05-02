@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Common\Assets;
+namespace LaborDigital\T3ba\ExtConfigHandler\Common\Assets;
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
 
@@ -31,7 +31,7 @@ use Neunerlei\Options\Options;
  *
  * MUST BE Applied to a class that extends AbstractExtConfigConfigurator
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Common\Assets
+ * @package LaborDigital\T3ba\ExtConfigHandler\Common\Assets
  * @see     AbstractExtConfigConfigurator
  */
 trait AssetCollectorTrait

@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\TypoScript\FileImportFilterEvent;
-use TYPO3\CMS\Core\TypoScript\Parser\T3BA__Copy__TypoScriptParser;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\TypoScript\FileImportFilterEvent;
+use TYPO3\CMS\Core\TypoScript\Parser\T3BaCopyTypoScriptParser;
 
-class ExtendedTypoScriptParser extends T3BA__Copy__TypoScriptParser
+class ExtendedTypoScriptParser extends T3BaCopyTypoScriptParser
 {
     /**
      * @inheritDoc

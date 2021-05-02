@@ -20,23 +20,23 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\TypoContext;
+namespace LaborDigital\T3ba\Tool\TypoContext;
 
 
-use LaborDigital\T3BA\Core\Di\CommonServices;
+use LaborDigital\T3ba\Core\Di\CommonServices;
 use Psr\Container\ContainerInterface;
 
 trait TypoContextAwareTrait
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $__typoContext;
     
     /**
      * Injects the typo context instance
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $typoContext
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $typoContext
      */
     public function injectTypoContext(TypoContext $typoContext): void
     {

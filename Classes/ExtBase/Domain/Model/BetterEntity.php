@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\ExtBase\Domain\Model;
+namespace LaborDigital\T3ba\ExtBase\Domain\Model;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\LazyLoadingTrait;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 abstract class BetterEntity extends AbstractEntity

@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine\Adapter;
+namespace LaborDigital\T3ba\Event\FormEngine\Adapter;
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
-use LaborDigital\T3BA\Event\FormEngine\LateFormFilterEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\FormEngine\LateFormFilterEvent;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineConfiguration;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineIsOnSymmetricSide;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInputPlaceholders;

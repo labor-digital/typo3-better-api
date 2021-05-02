@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigGenerator;
-use LaborDigital\T3BA\Tool\Translation\Translator;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigGenerator;
+use LaborDigital\T3ba\Tool\Translation\Translator;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
@@ -53,14 +53,14 @@ class ConfigGenerator extends AbstractConfigGenerator
     use TypoContextAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Translation\Translator
+     * @var \LaborDigital\T3ba\Tool\Translation\Translator
      */
     protected $translator;
     
     /**
      * ModuleConfigGenerator constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Translation\Translator  $translator
+     * @param   \LaborDigital\T3ba\Tool\Translation\Translator  $translator
      */
     public function __construct(Translator $translator)
     {
@@ -70,8 +70,8 @@ class ConfigGenerator extends AbstractConfigGenerator
     /**
      * Generates the configuration array
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module\ModuleConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      */
@@ -87,7 +87,7 @@ class ConfigGenerator extends AbstractConfigGenerator
      * Makes sure the module translation file exists or creates a new one
      *
      * @param   ModuleConfigurator                             $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $context
      */
     protected function makeTranslationFileIfRequired(ModuleConfigurator $configurator, ExtConfigContext $context): void
     {
@@ -134,7 +134,7 @@ class ConfigGenerator extends AbstractConfigGenerator
      * backend.
      *
      * @param   ModuleConfigurator                             $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $context
      *
      * @return array
      *

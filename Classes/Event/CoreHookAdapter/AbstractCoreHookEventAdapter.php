@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\CoreHookAdapter;
+namespace LaborDigital\T3ba\Event\CoreHookAdapter;
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 
 abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInterface
 {
@@ -49,7 +49,7 @@ abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInter
     }
     
     /**
-     * @return \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @return \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     public function EventBus(): TypoEventBus
     {
@@ -57,7 +57,7 @@ abstract class AbstractCoreHookEventAdapter implements CoreHookEventAdapterInter
     }
     
     /**
-     * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     public function TypoContext(): TypoContext
     {

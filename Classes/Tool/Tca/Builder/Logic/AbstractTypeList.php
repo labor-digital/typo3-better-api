@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractTypeList
 {
@@ -40,14 +40,14 @@ abstract class AbstractTypeList
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/DataFormats/T3datastructure/SheetReferences/Index.html
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType[]
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType[]
      */
     protected $types = [];
     
     /**
      * AbstractTypeList constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext  $context
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext  $context
      */
     public function __construct(TcaBuilderContext $context)
     {
@@ -57,7 +57,7 @@ abstract class AbstractTypeList
     /**
      * Returns the context object
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext
      */
     public function getContext(): TcaBuilderContext
     {
@@ -131,7 +131,7 @@ abstract class AbstractTypeList
     /**
      * Allows you to completely replace all type instances for this list.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType[]  $types
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType[]  $types
      *
      * @return $this
      */
@@ -163,7 +163,7 @@ abstract class AbstractTypeList
     /**
      * Returns the list of all types
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType[]
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType[]
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Types/Index.html#types
      */
@@ -186,7 +186,7 @@ abstract class AbstractTypeList
      *
      * @param $typeName
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType
      */
     abstract protected function loadType($typeName): AbstractType;
 }

@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Abstracts;
+namespace LaborDigital\T3ba\ExtConfig\Abstracts;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\ExtConfig\Interfaces\ElementKeyProviderInterface;
-use LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ElementKeyProviderInterface;
+use LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextTrait;
 use Neunerlei\Configuration\Handler\AbstractGroupConfigHandler;
 use Neunerlei\PathUtil\Path;
 
@@ -45,7 +45,7 @@ abstract class AbstractGroupExtConfigHandler extends AbstractGroupConfigHandler 
      *                                           be used
      *
      * @return string
-     * @see \LaborDigital\T3BA\ExtConfig\Interfaces\ElementKeyProviderInterface
+     * @see \LaborDigital\T3ba\ExtConfig\Interfaces\ElementKeyProviderInterface
      */
     protected function getElementKeyForClass(
         string $class,

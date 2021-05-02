@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 /**
  * Interface TcaTableNameProviderInterface
@@ -28,8 +28,8 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Table;
  * Extension for the ConfigureTcaTableInterface to provide a specific table name that should not be
  * inferred by the tables PHP namespace.
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Table
- * @see     \LaborDigital\T3BA\ExtConfigHandler\Table\ConfigureTcaTableInterface
+ * @package LaborDigital\T3ba\ExtConfigHandler\Table
+ * @see     \LaborDigital\T3ba\ExtConfigHandler\Table\ConfigureTcaTableInterface
  */
 interface TcaTableNameProviderInterface
 {

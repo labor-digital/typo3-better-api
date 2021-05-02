@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing\Traits;
+namespace LaborDigital\T3ba\ExtConfigHandler\Routing\Traits;
 
 
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Throwable;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;

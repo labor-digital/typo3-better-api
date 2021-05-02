@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:49
  */
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
+namespace LaborDigital\T3ba\ExtConfigHandler\Backend;
 
-use LaborDigital\T3BA\Core\VarFs\Mount;
+use LaborDigital\T3ba\Core\VarFs\Mount;
 use Symfony\Component\Yaml\Yaml;
 
 trait RteConfigTrait

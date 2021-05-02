@@ -20,25 +20,25 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task;
+namespace LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 /**
  * Interface ConfigureTaskInterface
  *
  * All classes that implement this interface MUST be located at /Classes/Scheduler in order to be found!
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task
+ * @package LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task
  */
 interface ConfigureTaskInterface
 {
     /**
      * Allows you to configure this scheduler task
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task\TaskConfigurator  $taskConfigurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                        $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task\TaskConfigurator  $taskConfigurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                        $context
      */
     public static function configure(TaskConfigurator $taskConfigurator, ExtConfigContext $context): void;
 }

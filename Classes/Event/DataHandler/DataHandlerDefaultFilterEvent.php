@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * Allows you to filter the list of fields that have defaults applied to them
  * when a new record gets created.
  *
- * @package LaborDigital\T3BA\Event\DataHandler
+ * @package LaborDigital\T3ba\Event\DataHandler
  */
 class DataHandlerDefaultFilterEvent
 {

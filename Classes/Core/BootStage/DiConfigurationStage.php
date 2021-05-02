@@ -20,23 +20,23 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\Di\DelegateContainer;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
-use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
-use LaborDigital\T3BA\Event\CreateDiContainerEvent;
-use LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent;
-use LaborDigital\T3BA\Event\Di\DiContainerFilterEvent;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\EventSubscriberBridge;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\DelegateContainer;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\EventBus\TypoListenerProvider;
+use LaborDigital\T3ba\Core\Kernel;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Event\Core\PackageManagerCreatedEvent;
+use LaborDigital\T3ba\Event\CreateDiContainerEvent;
+use LaborDigital\T3ba\Event\Di\DiContainerBeingBuildEvent;
+use LaborDigital\T3ba\Event\Di\DiContainerFilterEvent;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigService;
+use LaborDigital\T3ba\ExtConfigHandler\EventSubscriber\EventSubscriberBridge;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -75,7 +75,7 @@ class DiConfigurationStage implements BootStageInterface
      * Stores the package manager reference and registers the composer autoload
      * capabilities for the Configuration directories of each activated package.
      *
-     * @param   \LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Core\PackageManagerCreatedEvent  $event
      */
     public function onPackageManagerCreated(PackageManagerCreatedEvent $event): void
     {
@@ -87,7 +87,7 @@ class DiConfigurationStage implements BootStageInterface
     /**
      * Executes the configuration for the di container builder and related stuff, like event registration and so on.
      *
-     * @param   \LaborDigital\T3BA\Event\Di\DiContainerBeingBuildEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Di\DiContainerBeingBuildEvent  $event
      */
     public function onDiContainerBeingBuild(DiContainerBeingBuildEvent $event): void
     {
@@ -103,7 +103,7 @@ class DiConfigurationStage implements BootStageInterface
      * Injects the early dependencies into the real di container instance
      * and runs the "runtime" container configuration handler
      *
-     * @param   \LaborDigital\T3BA\Event\CreateDiContainerEvent  $event
+     * @param   \LaborDigital\T3ba\Event\CreateDiContainerEvent  $event
      */
     public function onDiContainerBeingInstantiated(CreateDiContainerEvent $event): void
     {

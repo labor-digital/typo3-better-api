@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Common;
+namespace LaborDigital\T3ba\Event\Common;
 
 use TYPO3\CMS\Core\Page\PageRenderer;
 

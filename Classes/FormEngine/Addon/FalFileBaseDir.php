@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\FormEngine\Addon;
+namespace LaborDigital\T3ba\FormEngine\Addon;
 
 use GuzzleHttp\Psr7\Query;
-use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
 
 class FalFileBaseDir
 {
@@ -50,7 +50,7 @@ class FalFileBaseDir
     /**
      * This handler adds the baseDir constraints to the javascript of the element browser
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
      */
     public static function onPostProcess(BackendFormNodePostProcessorEvent $event): void
     {
@@ -77,7 +77,7 @@ class FalFileBaseDir
      * This applier is used to allow file relation files to define a "baseDir".
      * The given directory is opened by default if the file browser is opened.
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodeFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent  $event
      */
     public static function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {

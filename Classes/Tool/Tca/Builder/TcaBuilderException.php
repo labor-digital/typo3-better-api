@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:29
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder;
+namespace LaborDigital\T3ba\Tool\Tca\Builder;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class TcaBuilderException extends T3BAException
+class TcaBuilderException extends T3baException
 {
 
 }

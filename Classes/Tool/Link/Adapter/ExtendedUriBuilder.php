@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\Link\Adapter;
+namespace LaborDigital\T3ba\Tool\Link\Adapter;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -47,7 +47,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  *
  * A wrapper which allows us to manually inject a content object renderer if non is present
  *
- * @package LaborDigital\T3BA\Tool\Link\Adapter
+ * @package LaborDigital\T3ba\Tool\Link\Adapter
  */
 class ExtendedUriBuilder extends UriBuilder implements PublicServiceInterface
 {

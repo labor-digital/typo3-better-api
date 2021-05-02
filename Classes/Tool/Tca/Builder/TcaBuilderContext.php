@@ -20,24 +20,24 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder;
+namespace LaborDigital\T3ba\Tool\Tca\Builder;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Inflection\Inflector;
 
 class TcaBuilderContext
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderServices
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderServices
      */
     protected $commonServices;
     
     /**
      * TcaBuilderContext constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $extConfigContext
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $extConfigContext
      */
     public function __construct(ExtConfigContext $extConfigContext)
     {
@@ -47,7 +47,7 @@ class TcaBuilderContext
     /**
      * Returns the ext config context used to run this builder
      *
-     * @return \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @return \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     public function getExtConfigContext(): ExtConfigContext
     {
@@ -58,7 +58,7 @@ class TcaBuilderContext
      * Returns a extended version of the normal CommonServices object which contains
      * additional services specific to the tca builder context
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderServices
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderServices
      * @see cs() for a short hand
      */
     public function getCommonServices(): TcaBuilderServices
@@ -71,7 +71,7 @@ class TcaBuilderContext
      * Returns a extended version of the normal CommonServices object which contains
      * additional services specific to the tca builder context
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderServices
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderServices
      * @see getCommonServices()
      */
     public function cs(): TcaBuilderServices

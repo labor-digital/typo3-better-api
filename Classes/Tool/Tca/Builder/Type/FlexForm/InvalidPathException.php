@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 
 class InvalidPathException extends TcaBuilderException
 {

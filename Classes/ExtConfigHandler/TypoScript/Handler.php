@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
+namespace LaborDigital\T3ba\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler
@@ -31,7 +31,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     protected $configureMethod = 'configureTypoScript';
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     protected $configurator;
     

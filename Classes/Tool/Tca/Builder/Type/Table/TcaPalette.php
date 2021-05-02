@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractContainer;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractContainer;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
 
 class TcaPalette extends AbstractContainer
 {

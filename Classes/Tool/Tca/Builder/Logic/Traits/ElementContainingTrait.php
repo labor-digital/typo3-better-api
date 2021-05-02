@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractContainer;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractContainer;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 
 trait ElementContainingTrait
 {
@@ -35,7 +35,7 @@ trait ElementContainingTrait
      */
     public function getChildren(): iterable
     {
-        /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node $node */
+        /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node $node */
         $node = $this->node;
         foreach ($node->getChildren() as $child) {
             yield $child->getEl();
@@ -50,11 +50,11 @@ trait ElementContainingTrait
      * @param   string  $id  The id of the child to retrieve
      *
      * @return AbstractField|AbstractContainer|mixed
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     public function getChild(string $id)
     {
-        /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node $node */
+        /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node $node */
         $node = $this->node;
         $children = $node->getChildren();
         $child = $children[$id] ?? $children['_' . $id] ?? null;
@@ -116,7 +116,7 @@ trait ElementContainingTrait
      */
     public function addMultiple(callable $definition)
     {
-        /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node $node */
+        /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node $node */
         $node = $this->node;
         $tree = $node->getTree();
         

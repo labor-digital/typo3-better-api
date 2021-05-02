@@ -20,19 +20,19 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
-use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator as CeGenerator;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ConfigureContentElementInterface;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ContentElementConfigurator;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator as PluginGenerator;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\ConfigurePluginInterface;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator as CeGenerator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ConfigureContentElementInterface;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ContentElementConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator as PluginGenerator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigurePluginInterface;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\PathUtil\Path;
 
@@ -42,17 +42,17 @@ class Handler extends AbstractGroupExtConfigHandler
     use DelayedConfigExecutionTrait;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\SharedConfig
      */
     protected $config;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator
      */
     protected $pluginGenerator;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator
      */
     protected $ceGenerator;
     
@@ -62,7 +62,7 @@ class Handler extends AbstractGroupExtConfigHandler
     protected $generator;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator|\LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ContentElementConfigurator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator|\LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ContentElementConfigurator
      */
     protected $configurator;
     
@@ -97,8 +97,8 @@ class Handler extends AbstractGroupExtConfigHandler
     /**
      * ExtBasePluginConfigHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator          $pluginGenerator
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator  $ceGenerator
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator          $pluginGenerator
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ConfigGenerator  $ceGenerator
      */
     public function __construct(PluginGenerator $pluginGenerator, CeGenerator $ceGenerator)
     {
@@ -115,8 +115,8 @@ class Handler extends AbstractGroupExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $configurator->registerLocation('Classes/Controller');
-        $configurator->executeThisHandlerAfter(\LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler::class);
-        $configurator->executeThisHandlerAfter(\LaborDigital\T3BA\ExtConfigHandler\Table\Handler::class);
+        $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler::class);
+        $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\Table\Handler::class);
         $configurator->registerInterface(ConfigurePluginInterface::class);
         $configurator->registerInterface(ConfigureContentElementInterface::class);
     }
@@ -141,7 +141,7 @@ class Handler extends AbstractGroupExtConfigHandler
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function getGroupKeyOfClass(string $class): string
     {

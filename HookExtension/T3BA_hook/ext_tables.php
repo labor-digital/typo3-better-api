@@ -14,10 +14,12 @@
  * limitations under the License.
  *
  * Last modified: 2021.04.29 at 21:56
- */ /** @noinspection PhpMissingStrictTypesDeclarationInspection */
+ */
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
+/** @noinspection PhpMissingStrictTypesDeclarationInspection */
+
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\ExtTablesLoadedEvent;
 
 TypoEventBus::getInstance()->dispatch(
     new ExtTablesLoadedEvent());

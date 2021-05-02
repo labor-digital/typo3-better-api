@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\FormEngine\FieldPreset;
+namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
-use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 
 class Inline extends AbstractFieldPreset

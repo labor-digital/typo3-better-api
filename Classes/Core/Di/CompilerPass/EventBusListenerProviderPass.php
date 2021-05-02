@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Di\CompilerPass;
+namespace LaborDigital\T3ba\Core\Di\CompilerPass;
 
 
-use LaborDigital\T3BA\Core\Di\ServiceFactory;
-use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
+use LaborDigital\T3ba\Core\Di\ServiceFactory;
+use LaborDigital\T3ba\Core\EventBus\TypoListenerProvider;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;

@@ -36,15 +36,15 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 02:59
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
 use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3BA\Tool\Sql\SqlFieldLength;
-use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
+use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 use Neunerlei\Arrays\Arrays;
 
 /**
@@ -53,7 +53,7 @@ use Neunerlei\Arrays\Arrays;
  * This trait can be used to create your own preset appliers for your custom form elements.
  * It encapsulates all logic that is required to apply a custom form element to an abstract field instance
  *
- * @package LaborDigital\T3BA\Tool\FormEngine\Custom\Field
+ * @package LaborDigital\T3ba\Tool\FormEngine\Custom\Field
  */
 trait CustomFieldPresetTrait
 {
@@ -71,7 +71,7 @@ trait CustomFieldPresetTrait
      *                                                       Typically $this->field
      * @param   TcaBuilderContext|null  $context             The tca builder context. Typically $this->context
      *
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     protected function applyCustomElementPreset(
         string $customElementClass,

@@ -20,18 +20,18 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 
 /**
  * Trait TypeAwareDataHookCollectorTrait
  *
  * IMPORTANT: Use this trait only if your class already used the DataHookCollectorTrait
  *
- * @package LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits
- * @see     \LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait
+ * @package LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits
+ * @see     \LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait
  */
 trait TcaDataHookCollectorAddonTrait
 {

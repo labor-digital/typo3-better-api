@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\TypoScript;
+namespace LaborDigital\T3ba\Tool\TypoScript;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
@@ -48,7 +48,7 @@ use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager;
  *
  * Extends the default configuration manager to make the pid publicly changeable for our API to work correctly.
  *
- * @package LaborDigital\T3BA\Tool\TypoScript
+ * @package LaborDigital\T3ba\Tool\TypoScript
  */
 class TypoScriptConfigurationManager extends BackendConfigurationManager
 {
@@ -73,7 +73,7 @@ class TypoScriptConfigurationManager extends BackendConfigurationManager
      *
      * @param   int  $pid
      *
-     * @return \LaborDigital\T3BA\Tool\TypoScript\TypoScriptConfigurationManager
+     * @return \LaborDigital\T3ba\Tool\TypoScript\TypoScriptConfigurationManager
      */
     public function setCurrentPid(int $pid): self
     {
@@ -86,7 +86,7 @@ class TypoScriptConfigurationManager extends BackendConfigurationManager
     /**
      * Resets the last page id to the value we used before "setCurrentPid()"
      *
-     * @return \LaborDigital\T3BA\Tool\TypoScript\TypoScriptConfigurationManager
+     * @return \LaborDigital\T3ba\Tool\TypoScript\TypoScriptConfigurationManager
      */
     public function resetCurrentPid(): self
     {

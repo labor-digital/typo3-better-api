@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexTab;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexSection;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexTab;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 
 class Dumper implements PublicServiceInterface
@@ -39,7 +39,7 @@ class Dumper implements PublicServiceInterface
     protected $tools;
     
     /**
-     * @var \LaborDigital\T3BA\Core\VarFs\VarFs|null
+     * @var \LaborDigital\T3ba\Core\VarFs\VarFs|null
      */
     protected $fsMount;
     
@@ -47,7 +47,7 @@ class Dumper implements PublicServiceInterface
      * Dumper constructor.
      *
      * @param   \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools  $tools
-     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs|null              $fs
+     * @param   \LaborDigital\T3ba\Core\VarFs\VarFs|null              $fs
      */
     public function __construct(FlexFormTools $tools, VarFs $fs)
     {
@@ -58,7 +58,7 @@ class Dumper implements PublicServiceInterface
     /**
      * Dumps the given flex form object back into an array
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
      *
      * @return array
      */
@@ -136,7 +136,7 @@ class Dumper implements PublicServiceInterface
     /**
      * Dumps the given flex form object back into an xml string
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
      *
      * @return string
      */
@@ -150,7 +150,7 @@ class Dumper implements PublicServiceInterface
     /**
      * Dumps the given flex form into a file on the disk and returns the absolute filepath to its location.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
      *
      * @return string
      */

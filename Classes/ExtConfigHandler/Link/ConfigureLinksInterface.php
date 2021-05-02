@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Link;
+namespace LaborDigital\T3ba\ExtConfigHandler\Link;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureLinksInterface
 {

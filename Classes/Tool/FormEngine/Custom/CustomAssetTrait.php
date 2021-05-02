@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Backend\BackendAssetFilterEvent;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Backend\BackendAssetFilterEvent;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\PathUtil\Path;
 
 trait CustomAssetTrait

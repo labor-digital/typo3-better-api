@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache;
+namespace LaborDigital\T3ba\Tool\Cache;
 
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface;
 use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 

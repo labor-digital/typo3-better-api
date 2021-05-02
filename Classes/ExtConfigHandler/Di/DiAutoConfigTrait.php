@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;

@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing\Exceptions;
+namespace LaborDigital\T3ba\ExtConfigHandler\Routing\Exceptions;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
 
 class NotFoundException extends ExtConfigException
 {

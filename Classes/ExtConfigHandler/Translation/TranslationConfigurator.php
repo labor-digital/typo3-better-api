@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Translation;
+namespace LaborDigital\T3ba\ExtConfigHandler\Translation;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use Neunerlei\Configuration\State\ConfigState;
 
 class TranslationConfigurator extends AbstractExtConfigConfigurator
@@ -60,7 +60,7 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
      *                              automatically be prepended. So: locallang_custom.xlf becomes
      *                              EXT:{{extKey}}/Resources/Private/Language/locallang_custom.xlf
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Translation\TranslationConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Translation\TranslationConfigurator
      * @see TranslationService::addContext()
      */
     public function registerNamespace(
@@ -86,7 +86,7 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $override  The path to the file you want to override the original with
      * @param   string  $lang      The language to override the file in
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Translation\TranslationConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Translation\TranslationConfigurator
      */
     public function registerOverrideFile(
         string $original,
@@ -110,7 +110,7 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $original  The label to override
      * @param   string  $override  The label to override $original with
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Translation\TranslationConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Translation\TranslationConfigurator
      */
     public function registerOverride(string $original, string $override): self
     {
@@ -126,7 +126,7 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator
      *
      * @param   array  $overrides
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Translation\TranslationConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Translation\TranslationConfigurator
      * @see registerOverride()
      */
     public function registerMultipleOverrides(array $overrides): self

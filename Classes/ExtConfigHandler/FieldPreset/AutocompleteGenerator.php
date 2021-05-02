@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\FieldPreset;
+namespace LaborDigital\T3ba\ExtConfigHandler\FieldPreset;
 
 
-use LaborDigital\T3BA\Core\CodeGeneration\CodeGenerationHelperTrait;
-use LaborDigital\T3BA\Core\VarFs\Mount;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerationHelperTrait;
+use LaborDigital\T3ba\Core\VarFs\Mount;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use ReflectionMethod;
 
 class AutocompleteGenerator
@@ -33,14 +33,14 @@ class AutocompleteGenerator
     use CodeGenerationHelperTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Core\VarFs\Mount
+     * @var \LaborDigital\T3ba\Core\VarFs\Mount
      */
     protected $fs;
     
     /**
      * FieldPresetAutocompleteGenerator constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\VarFs\Mount  $fsMount
+     * @param   \LaborDigital\T3ba\Core\VarFs\Mount  $fsMount
      */
     public function __construct(Mount $fsMount)
     {
@@ -104,7 +104,7 @@ class AutocompleteGenerator
         return '<?php
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder;
+namespace LaborDigital\T3ba\Tool\Tca\Builder;
 
 /**
  * ATTENTION: This is a autocomplete helper! It will only be generated in a development environment!

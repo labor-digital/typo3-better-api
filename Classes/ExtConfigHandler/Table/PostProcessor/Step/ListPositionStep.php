@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
 use Neunerlei\Arrays\Arrays;
 
 /**
@@ -31,7 +31,7 @@ use Neunerlei\Arrays\Arrays;
  *
  * Generates the ts config script for the backend list ordering
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step
+ * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
  */
 class ListPositionStep implements TcaPostProcessorStepInterface
 {

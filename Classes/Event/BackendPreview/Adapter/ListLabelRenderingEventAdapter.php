@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\BackendPreview\Adapter;
+namespace LaborDigital\T3ba\Event\BackendPreview\Adapter;
 
 
-use LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent;
-use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent;
+use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 
 class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
 {

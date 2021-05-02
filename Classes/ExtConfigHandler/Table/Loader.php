@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Dumper;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 
 class Loader implements PublicServiceInterface
 {
@@ -46,17 +46,17 @@ class Loader implements PublicServiceInterface
     protected $loaded = [];
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Dumper
      */
     protected $tableDumper;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $configContext;
     

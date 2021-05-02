@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Cache;
+namespace LaborDigital\T3ba\Event\Cache;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 
 /**
  * Class EnvironmentCacheKeyArgFilterEvent
@@ -30,7 +30,7 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
  * Receives the prepared list of environment cache key arguments that you can enhance for your project's requirements.
  * Note: This is executed everytime a cache key is generated!
  *
- * @package LaborDigital\T3BA\Event\Cache
+ * @package LaborDigital\T3ba\Event\Cache
  */
 class EnvironmentCacheKeyArgFilterEvent
 {
@@ -42,7 +42,7 @@ class EnvironmentCacheKeyArgFilterEvent
     protected $args;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
     
@@ -84,7 +84,7 @@ class EnvironmentCacheKeyArgFilterEvent
     /**
      * Returns the TypoContext object
      *
-     * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     public function getContext(): TypoContext
     {

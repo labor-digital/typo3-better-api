@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 
 class InvalidFlexFormException extends TcaBuilderException
 {

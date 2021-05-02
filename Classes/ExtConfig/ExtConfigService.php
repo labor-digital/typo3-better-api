@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3ba\ExtConfig;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\VarFs\Mount;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Event\ConfigLoaderFilterEvent;
-use LaborDigital\T3BA\ExtConfig\Loader\DiLoader;
-use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\VarFs\Mount;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Event\ConfigLoaderFilterEvent;
+use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
 use Neunerlei\Configuration\Loader\Loader;
 use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
@@ -59,12 +59,12 @@ class ExtConfigService
     protected $packageManager;
     
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
     
     /**
-     * @var \LaborDigital\T3BA\Core\VarFs\VarFs
+     * @var \LaborDigital\T3ba\Core\VarFs\VarFs
      */
     protected $fs;
     
@@ -92,7 +92,7 @@ class ExtConfigService
     /**
      * The config context we use as a singleton on all loaders
      *
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $context;
     
@@ -107,8 +107,8 @@ class ExtConfigService
      * ExtConfigService constructor.
      *
      * @param   \TYPO3\CMS\Core\Package\PackageManager         $packageManager
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
-     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs            $fs
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\Core\VarFs\VarFs            $fs
      * @param   \Psr\Container\ContainerInterface              $container
      */
     public function __construct(
@@ -127,7 +127,7 @@ class ExtConfigService
     /**
      * Returns the local storage filesystem instance
      *
-     * @return \LaborDigital\T3BA\Core\VarFs\VarFs
+     * @return \LaborDigital\T3ba\Core\VarFs\VarFs
      */
     public function getFs(): VarFs
     {
@@ -137,7 +137,7 @@ class ExtConfigService
     /**
      * Returns the fs mount were ext config related data should be stored
      *
-     * @return \LaborDigital\T3BA\Core\VarFs\Mount
+     * @return \LaborDigital\T3ba\Core\VarFs\Mount
      */
     public function getFsMount(): Mount
     {
@@ -147,7 +147,7 @@ class ExtConfigService
     /**
      * Returns the singleton of the ext config context object
      *
-     * @return \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @return \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     public function getContext(): ExtConfigContext
     {
@@ -159,7 +159,7 @@ class ExtConfigService
     /**
      * Returns the loader instance that runs when the di container is build and/or instantiated
      *
-     * @return \LaborDigital\T3BA\ExtConfig\Loader\DiLoader
+     * @return \LaborDigital\T3ba\ExtConfig\Loader\DiLoader
      */
     public function getDiLoader(): DiLoader
     {
@@ -171,7 +171,7 @@ class ExtConfigService
     /**
      * Returns the loader instance that loads the main ext config files after ext_localconf.php has been loaded
      *
-     * @return \LaborDigital\T3BA\ExtConfig\Loader\MainLoader
+     * @return \LaborDigital\T3ba\ExtConfig\Loader\MainLoader
      */
     public function getMainLoader(): MainLoader
     {

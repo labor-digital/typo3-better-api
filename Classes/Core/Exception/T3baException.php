@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Exception;
+namespace LaborDigital\T3ba\Core\Exception;
 
 
 use Exception;
 
-class T3BAException extends Exception
+class T3baException extends Exception
 {
 
 }

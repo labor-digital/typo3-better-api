@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 11:41
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\PathUtil\Path;
 use Throwable;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
@@ -51,7 +51,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 /**
  * Class SiteFacet
  *
- * @package LaborDigital\T3BA\Tool\TypoContext\Facet
+ * @package LaborDigital\T3ba\Tool\TypoContext\Facet
  */
 class SiteFacet implements FacetInterface
 {
@@ -62,7 +62,7 @@ class SiteFacet implements FacetInterface
     protected $siteFinder;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
     
@@ -90,7 +90,7 @@ class SiteFacet implements FacetInterface
      *
      * @param   \TYPO3\CMS\Core\Site\SiteFinder                  $siteFinder
      * @param   \TYPO3\CMS\Core\Routing\SiteMatcher              $siteMatcher
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
      */
     public function __construct(SiteFinder $siteFinder, SiteMatcher $siteMatcher, TypoContext $context)
     {

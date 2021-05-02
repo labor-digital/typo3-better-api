@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Link;
+namespace LaborDigital\T3ba\ExtConfigHandler\Link;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3BA\ExtConfigHandler\Pid\Handler as PidHandler;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler as TsHandler;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3ba\ExtConfigHandler\Pid\Handler as PidHandler;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler as TsHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler

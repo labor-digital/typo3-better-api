@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -277,7 +277,7 @@ abstract class AbstractConfigurator
      * @param   array  $actions
      *
      * @return $this
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function setActions(array $actions): self
     {
@@ -305,7 +305,7 @@ abstract class AbstractConfigurator
      * @param   array  $actions
      *
      * @return array
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function actionsProcessor(array $actions): array
     {
@@ -370,7 +370,7 @@ abstract class AbstractConfigurator
      *
      * @param   string  $controllerClass
      *
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function setControllerClass(string $controllerClass): void
     {

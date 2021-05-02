@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin;
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigurePluginInterface
 {

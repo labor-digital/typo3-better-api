@@ -37,24 +37,24 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext;
+namespace LaborDigital\T3ba\Tool\TypoContext;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Util\SingletonInstanceTrait;
-use LaborDigital\T3BA\Tool\TypoContext\Aspect\BetterLanguageAspect;
-use LaborDigital\T3BA\Tool\TypoContext\Aspect\BetterVisibilityAspect;
-use LaborDigital\T3BA\Tool\TypoContext\Aspect\BeUserAspect;
-use LaborDigital\T3BA\Tool\TypoContext\Aspect\FacetAspect;
-use LaborDigital\T3BA\Tool\TypoContext\Aspect\FeUserAspect;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\ConfigFacet;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\FacetInterface;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\PathFacet;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\PidFacet;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\RequestFacet;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\SiteFacet;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Util\SingletonInstanceTrait;
+use LaborDigital\T3ba\Tool\TypoContext\Aspect\BetterLanguageAspect;
+use LaborDigital\T3ba\Tool\TypoContext\Aspect\BetterVisibilityAspect;
+use LaborDigital\T3ba\Tool\TypoContext\Aspect\BeUserAspect;
+use LaborDigital\T3ba\Tool\TypoContext\Aspect\FacetAspect;
+use LaborDigital\T3ba\Tool\TypoContext\Aspect\FeUserAspect;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\ConfigFacet;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\DependencyInjectionFacet;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\FacetInterface;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\PathFacet;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\PidFacet;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\SiteFacet;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\WorkspaceAspect;
@@ -207,7 +207,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     /**
      * Repository to all dependency injection capabilities of typo3
      *
-     * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet
+     * @return \LaborDigital\T3ba\Tool\TypoContext\Facet\DependencyInjectionFacet
      */
     public function di(): DependencyInjectionFacet
     {

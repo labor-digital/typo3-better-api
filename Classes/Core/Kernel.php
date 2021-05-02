@@ -20,26 +20,26 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core;
+namespace LaborDigital\T3ba\Core;
 
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\BootStage\BootStageInterface;
-use LaborDigital\T3BA\Core\BootStage\ClassOverrideStage;
-use LaborDigital\T3BA\Core\BootStage\DbgConfigurationStage;
-use LaborDigital\T3BA\Core\BootStage\DiConfigurationStage;
-use LaborDigital\T3BA\Core\BootStage\EnsureExtLocalConfOnTcaLoadStage;
-use LaborDigital\T3BA\Core\BootStage\ErrorHandlerAdapterRegistrationStage;
-use LaborDigital\T3BA\Core\BootStage\ErrorHandlerDevStage;
-use LaborDigital\T3BA\Core\BootStage\FailsafeWrapperPreparationStage;
-use LaborDigital\T3BA\Core\BootStage\HookPackageRegistrationStage;
-use LaborDigital\T3BA\Core\Di\DelegateContainer;
-use LaborDigital\T3BA\Core\Di\MiniContainer;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
-use LaborDigital\T3BA\Core\Exception\KernelNotInitializedException;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Event\KernelBootEvent;
+use LaborDigital\T3ba\Core\BootStage\BootStageInterface;
+use LaborDigital\T3ba\Core\BootStage\ClassOverrideStage;
+use LaborDigital\T3ba\Core\BootStage\DbgConfigurationStage;
+use LaborDigital\T3ba\Core\BootStage\DiConfigurationStage;
+use LaborDigital\T3ba\Core\BootStage\EnsureExtLocalConfOnTcaLoadStage;
+use LaborDigital\T3ba\Core\BootStage\ErrorHandlerAdapterRegistrationStage;
+use LaborDigital\T3ba\Core\BootStage\ErrorHandlerDevStage;
+use LaborDigital\T3ba\Core\BootStage\FailsafeWrapperPreparationStage;
+use LaborDigital\T3ba\Core\BootStage\HookPackageRegistrationStage;
+use LaborDigital\T3ba\Core\Di\DelegateContainer;
+use LaborDigital\T3ba\Core\Di\MiniContainer;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\EventBus\TypoListenerProvider;
+use LaborDigital\T3ba\Core\Exception\KernelNotInitializedException;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Event\KernelBootEvent;
 use Neunerlei\EventBus\Dispatcher\EventListenerListItem;
 use Psr\SimpleCache\CacheInterface;
 
@@ -142,7 +142,7 @@ class Kernel
      * Registers a new boot stage instance to be executed, while the better api package
      * hooks itself into the TYPO3 core.
      *
-     * @param   \LaborDigital\T3BA\Core\BootStage\BootStageInterface  $stage
+     * @param   \LaborDigital\T3ba\Core\BootStage\BootStageInterface  $stage
      */
     public static function addBootStage(BootStageInterface $stage): void
     {
@@ -169,7 +169,7 @@ class Kernel
      * Returns the singleton instance of the kernel, after it was initialized in using the init() method
      *
      * @return static
-     * @throws \LaborDigital\T3BA\Core\Exception\KernelNotInitializedException
+     * @throws \LaborDigital\T3ba\Core\Exception\KernelNotInitializedException
      */
     public static function getInstance(): self
     {
@@ -193,7 +193,7 @@ class Kernel
     /**
      * Returns the event bus instance
      *
-     * @return \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @return \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     public function getEventBus(): TypoEventBus
     {
@@ -203,7 +203,7 @@ class Kernel
     /**
      * Returns the file system instance
      *
-     * @return \LaborDigital\T3BA\Core\VarFs\VarFs
+     * @return \LaborDigital\T3ba\Core\VarFs\VarFs
      */
     public function getFs(): VarFs
     {
@@ -213,7 +213,7 @@ class Kernel
     /**
      * Returns the delegate container that is shared in this application
      *
-     * @return \LaborDigital\T3BA\Core\Di\DelegateContainer
+     * @return \LaborDigital\T3ba\Core\Di\DelegateContainer
      */
     public function getContainer(): DelegateContainer
     {
@@ -223,7 +223,7 @@ class Kernel
     /**
      * Creates the typo event bus instance
      *
-     * @return \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @return \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected function makeEventBus(): TypoEventBus
     {

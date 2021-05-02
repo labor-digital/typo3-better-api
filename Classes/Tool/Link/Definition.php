@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\Link;
+namespace LaborDigital\T3ba\Tool\Link;
 
 use Closure;
-use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBrowserHandler;
+use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkBrowserHandler;
 use TypeError;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
@@ -175,7 +175,7 @@ class Definition
      *                                                refer to the TYPO3 callback syntax, or provide a static callback
      *
      * @return $this
-     * @see \LaborDigital\T3BA\Tool\Link\Link::withPid() for the list of possible options that can
+     * @see \LaborDigital\T3ba\Tool\Link\Link::withPid() for the list of possible options that can
      *                                                       be applied for $pid.
      */
     public function setPid($pid): self
@@ -331,7 +331,7 @@ class Definition
      * @param   string|null|array  $fragment
      *
      * @return Definition
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     public function setFragment($fragment): self
     {
@@ -350,7 +350,7 @@ class Definition
      * @param   mixed   $value  The value to set for the given key
      *
      * @return $this
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     public function addToFragment(string $key, $value): self
     {
@@ -705,9 +705,9 @@ class Definition
     /**
      * Internal helper which is called by the link to create a new link instance with this link set applied to it
      *
-     * @param   \LaborDigital\T3BA\Tool\Link\Link  $link
+     * @param   \LaborDigital\T3ba\Tool\Link\Link  $link
      *
-     * @return \LaborDigital\T3BA\Tool\Link\Link
+     * @return \LaborDigital\T3ba\Tool\Link\Link
      */
     public function applyToLink(Link $link): Link
     {

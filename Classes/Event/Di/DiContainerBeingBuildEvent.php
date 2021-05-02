@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Di;
+namespace LaborDigital\T3ba\Event\Di;
 
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -32,7 +32,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
  * Dispatched when the TYPO3 / symfony container is being build.
  * This event can be used like your Services.php
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class DiContainerBeingBuildEvent
 {

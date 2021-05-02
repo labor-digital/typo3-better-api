@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 
 interface CustomElementInterface
 {

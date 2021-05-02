@@ -20,16 +20,16 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
-use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
+use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -40,12 +40,12 @@ class TcaTableType extends AbstractType
     use TcaDataHookCollectorAddonTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable
      */
     protected $parent;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
     
@@ -103,7 +103,7 @@ class TcaTableType extends AbstractType
      *                                           against TYPO3s field naming schema
      *
      * @return TcaField
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\InvalidFieldIdException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\InvalidFieldIdException
      */
     public function getField(string $id, ?bool $ignoreFieldIdIssues = null): TcaField
     {
@@ -122,7 +122,7 @@ class TcaTableType extends AbstractType
         }
         
         return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) use ($id, $ignoreFieldIdIssues) {
-            /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField $i */
+            /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField $i */
             $i = $this->context->cs()->di->makeInstance(
                 TcaField::class, [
                     $node,
@@ -157,7 +157,7 @@ class TcaTableType extends AbstractType
     /**
      * Returns the list of all registered fields that are currently inside the layout
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField[]
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField[]
      */
     public function getFields(): iterable
     {
@@ -175,7 +175,7 @@ class TcaTableType extends AbstractType
     public function getPalette(string $id): TcaPalette
     {
         return $this->findOrCreateChild($id, Node::TYPE_CONTAINER, function (Node $node) {
-            /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaPalette $i */
+            /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaPalette $i */
             $i = $this->context->cs()->di->makeInstance(
                 TcaPalette::class, [$node, $this]
             );
@@ -200,7 +200,7 @@ class TcaTableType extends AbstractType
     /**
      * Returns the list of all palettes that are used inside of this form
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaPalette[]|iterable
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaPalette[]|iterable
      */
     public function getPalettes(): iterable
     {
@@ -263,7 +263,7 @@ class TcaTableType extends AbstractType
     
     /**
      * @inheritDoc
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTab
      */
     public function getNewTab(): TcaTab
     {
@@ -272,7 +272,7 @@ class TcaTableType extends AbstractType
     
     /**
      * @inheritDoc
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab[]
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTab[]
      */
     public function getTabs(): iterable
     {

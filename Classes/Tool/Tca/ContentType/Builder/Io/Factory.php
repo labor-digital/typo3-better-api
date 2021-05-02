@@ -20,30 +20,30 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\ContentType;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType;
 
 class Factory
 {
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $extConfigContext;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable|null
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable|null
      */
     protected $table;
     

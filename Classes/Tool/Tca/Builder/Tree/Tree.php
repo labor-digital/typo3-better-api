@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:27
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Tree;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Tree;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractForm;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTab;
 
 class Tree
 {
@@ -62,21 +62,21 @@ class Tree
     /**
      * The form that is linked with this tree
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractForm
      */
     protected $form;
     
     /**
      * A list of form nodes by their type and their id for direct lookup
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[][]
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node[][]
      */
     protected $nodes = [];
     
     /**
      * The root node that stores the sorted tabs
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     protected $root;
     
@@ -85,14 +85,14 @@ class Tree
      * root node. The class MUST extend the AbstractFormTab class!
      *
      * @var string
-     * @see \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab
+     * @see \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTab
      */
     protected $tabClass;
     
     /**
      * The node in which all new nodes should be automatically added to.
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node|null
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node|null
      */
     protected $defaultNode;
     
@@ -130,8 +130,8 @@ class Tree
      *                           If the node already exist
      * @param   int         $type
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Tree\NonUniqueIdException
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Tree\NonUniqueIdException
      */
     public function makeNewNode($id, int $type): Node
     {
@@ -178,7 +178,7 @@ class Tree
      *                             narrow down the list of retrievable node
      *                             types.
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node|null
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node|null
      */
     public function getNode($id, ?int $type = null): ?Node
     {
@@ -226,7 +226,7 @@ class Tree
      * @param   int  $type  One of FormNode::TYPE_ to select the type
      *                      of elements to retrieve
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[]|iterable
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node[]|iterable
      */
     public function getSortedNodes(int $type): iterable
     {
@@ -380,7 +380,7 @@ class Tree
     /**
      * Completely removes a node from the tree
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node  $node
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node  $node
      */
     public function removeNode(Node $node): void
     {
@@ -414,7 +414,7 @@ class Tree
     /**
      * Sets the node to which all new nodes will be automatically added
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node|null  $node
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node|null  $node
      */
     public function setDefaultNode(?Node $node): void
     {
@@ -428,7 +428,7 @@ class Tree
     /**
      * Returns the node that is currently configured as "default".
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     public function getDefaultNode(): Node
     {

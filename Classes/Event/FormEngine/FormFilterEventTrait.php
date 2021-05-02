@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine;
+namespace LaborDigital\T3ba\Event\FormEngine;
 
 trait FormFilterEventTrait
 {

@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Implementation;
+namespace LaborDigital\T3ba\Tool\Cache\Implementation;
 
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 
 /**
  * Class FrontendCache
@@ -33,7 +33,7 @@ use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
  * or the http-pragma header is set to "no-cache" and a backend user is logged in.
  * Additionally it is automatically aware of the "environment"
  *
- * @package LaborDigital\T3BA\Tool\Cache\Implementation
+ * @package LaborDigital\T3ba\Tool\Cache\Implementation
  */
 class FrontendCache extends AbstractExtendedCache
 {

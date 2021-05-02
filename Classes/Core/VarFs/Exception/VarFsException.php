@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.22 at 22:36
  */
 
-namespace LaborDigital\T3BA\Core\VarFs\Exception;
+namespace LaborDigital\T3ba\Core\VarFs\Exception;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class VarFsException extends T3BAException
+class VarFsException extends T3baException
 {
 }

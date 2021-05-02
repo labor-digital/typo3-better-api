@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\Translation;
+namespace LaborDigital\T3ba\Tool\Translation;
 
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;

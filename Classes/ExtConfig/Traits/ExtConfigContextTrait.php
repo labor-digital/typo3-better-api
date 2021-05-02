@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Traits;
+namespace LaborDigital\T3ba\ExtConfig\Traits;
 
 
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
@@ -33,7 +33,7 @@ trait ExtConfigContextTrait
     /**
      * The configuration context we are working with
      *
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $context;
     

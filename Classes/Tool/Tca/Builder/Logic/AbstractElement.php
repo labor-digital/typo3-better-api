@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:34
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractElement
 {
@@ -50,14 +50,14 @@ abstract class AbstractElement
     /**
      * The tree node that represents this element
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     protected $node;
     
     /**
      * The form this element is part of
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractForm
      */
     protected $form;
     
@@ -71,8 +71,8 @@ abstract class AbstractElement
     /**
      * AbstractFormElement constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node           $node
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm  $form
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node           $node
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractForm  $form
      */
     public function __construct(Node $node, AbstractForm $form)
     {

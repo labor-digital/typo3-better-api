@@ -20,26 +20,26 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Event\Core\CacheClearedEvent;
+use LaborDigital\T3ba\Event\Core\CacheClearedEvent;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
 class VarFs implements LazyEventSubscriberInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Core\VarFs\VarFs
+     * @var \LaborDigital\T3ba\Core\VarFs\VarFs
      */
     protected $fs;
     
     /**
      * VarFsEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs  $fs
+     * @param   \LaborDigital\T3ba\Core\VarFs\VarFs  $fs
      */
-    public function __construct(\LaborDigital\T3BA\Core\VarFs\VarFs $fs)
+    public function __construct(\LaborDigital\T3ba\Core\VarFs\VarFs $fs)
     {
         $this->fs = $fs;
     }
@@ -55,7 +55,7 @@ class VarFs implements LazyEventSubscriberInterface
     /**
      * Flushes all temp fs data from the drive when all caches were cleared
      *
-     * @param   \LaborDigital\T3BA\Event\Core\CacheClearedEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Core\CacheClearedEvent  $event
      */
     public function onCacheClear(CacheClearedEvent $event): void
     {

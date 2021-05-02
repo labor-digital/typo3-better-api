@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\EventSubscriber;
+namespace LaborDigital\T3ba\ExtConfigHandler\EventSubscriber;
 
 
 use Composer\EventDispatcher\EventSubscriberInterface;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3ba\Core\Exception\NotImplementedException;
 use Neunerlei\EventBus\EventBusInterface;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
@@ -75,7 +75,7 @@ class CompiledEventSubscription implements EventSubscriptionInterface
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function getBus(): EventBusInterface
     {

@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Fluid;
+namespace LaborDigital\T3ba\ExtConfigHandler\Fluid;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureFluidInterface
 {
@@ -31,8 +31,8 @@ interface ConfigureFluidInterface
     /**
      * Allows you to configure the TYPO3 fluid template engine
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\Fluid\FluidConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                $context
      */
     public static function configureFluid(FluidConfigurator $configurator, ExtConfigContext $context): void;
     

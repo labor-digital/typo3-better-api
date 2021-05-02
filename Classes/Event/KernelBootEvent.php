@@ -20,31 +20,31 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 
-use LaborDigital\T3BA\Core\Kernel;
+use LaborDigital\T3ba\Core\Kernel;
 
 /**
  * Class KernelBootEvent
  *
  * Emitted after the Better Api Kernel prepared all registered boot stages and is ready to turn on the lights ;)
  *
- * @package LaborDigital\T3BA\Event
+ * @package LaborDigital\T3ba\Event
  */
 class KernelBootEvent
 {
     /**
      * The kernel instance which is being initialized
      *
-     * @var \LaborDigital\T3BA\Core\Kernel
+     * @var \LaborDigital\T3ba\Core\Kernel
      */
     protected $kernel;
     
     /**
      * KernelBootEvent constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\Kernel  $kernel
+     * @param   \LaborDigital\T3ba\Core\Kernel  $kernel
      */
     public function __construct(Kernel $kernel)
     {
@@ -54,7 +54,7 @@ class KernelBootEvent
     /**
      * Returns the kernel instance which is being initialized
      *
-     * @return \LaborDigital\T3BA\Core\Kernel
+     * @return \LaborDigital\T3ba\Core\Kernel
      */
     public function getKernel(): Kernel
     {

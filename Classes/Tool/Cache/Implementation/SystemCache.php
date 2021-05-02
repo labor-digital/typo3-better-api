@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Implementation;
+namespace LaborDigital\T3ba\Tool\Cache\Implementation;
 
 /**
  * Class SystemCache
  *
  * Static system cache, that is NOT aware of the environment.
  *
- * @package LaborDigital\T3BA\Tool\Cache\Implementation
+ * @package LaborDigital\T3ba\Tool\Cache\Implementation
  */
 class SystemCache extends AbstractExtendedCache
 {

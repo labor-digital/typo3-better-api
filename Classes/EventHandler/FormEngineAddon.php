@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent;
-use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
-use LaborDigital\T3BA\FormEngine\Addon\DbBaseId;
-use LaborDigital\T3BA\FormEngine\Addon\FalFileBaseDir;
-use LaborDigital\T3BA\FormEngine\Addon\FieldDefaultAndPlaceholderTranslation;
-use LaborDigital\T3BA\FormEngine\Addon\GroupElementsCanTriggerReload;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerDefaultFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
+use LaborDigital\T3ba\FormEngine\Addon\DbBaseId;
+use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
+use LaborDigital\T3ba\FormEngine\Addon\FieldDefaultAndPlaceholderTranslation;
+use LaborDigital\T3ba\FormEngine\Addon\GroupElementsCanTriggerReload;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 

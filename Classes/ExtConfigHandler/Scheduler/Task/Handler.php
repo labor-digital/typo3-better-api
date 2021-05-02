@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task;
+namespace LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -57,7 +57,7 @@ class Handler extends AbstractExtConfigHandler
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function handle(string $class): void
     {
@@ -67,7 +67,7 @@ class Handler extends AbstractExtConfigHandler
                 . ' because it does not extend the ' . AbstractTask::class . ' class!');
         }
         
-        /** @var \LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task\TaskConfigurator $configurator */
+        /** @var \LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task\TaskConfigurator $configurator */
         $configurator = $this->getInstanceWithoutDi(
             TaskConfigurator::class, [
                 Inflector::toHuman($this->context->getExtKey()) . ': '

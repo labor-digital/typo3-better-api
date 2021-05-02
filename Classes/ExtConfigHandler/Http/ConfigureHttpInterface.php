@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Http;
+namespace LaborDigital\T3ba\ExtConfigHandler\Http;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureHttpInterface
 {
@@ -31,8 +31,8 @@ interface ConfigureHttpInterface
     /**
      * Allows you to register http request related options, like middlewares or route aspect handlers.
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\Http\HttpConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext              $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\Http\HttpConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext              $context
      */
     public static function configureHttp(HttpConfigurator $configurator, ExtConfigContext $context): void;
 }

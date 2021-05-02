@@ -36,17 +36,17 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 13:59
  */
 
-namespace LaborDigital\T3BA\Tool\Simulation;
+namespace LaborDigital\T3ba\Tool\Simulation;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Simulation\Pass\AdminSimulationPass;
-use LaborDigital\T3BA\Tool\Simulation\Pass\LanguageSimulationPass;
-use LaborDigital\T3BA\Tool\Simulation\Pass\SimulatorPassInterface;
-use LaborDigital\T3BA\Tool\Simulation\Pass\SiteSimulationPass;
-use LaborDigital\T3BA\Tool\Simulation\Pass\TsfeSimulationPass;
-use LaborDigital\T3BA\Tool\Simulation\Pass\VisibilitySimulationPass;
-use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Simulation\Pass\AdminSimulationPass;
+use LaborDigital\T3ba\Tool\Simulation\Pass\LanguageSimulationPass;
+use LaborDigital\T3ba\Tool\Simulation\Pass\SimulatorPassInterface;
+use LaborDigital\T3ba\Tool\Simulation\Pass\SiteSimulationPass;
+use LaborDigital\T3ba\Tool\Simulation\Pass\TsfeSimulationPass;
+use LaborDigital\T3ba\Tool\Simulation\Pass\VisibilitySimulationPass;
+use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -73,7 +73,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         ];
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tsfe\TsfeService
+     * @var \LaborDigital\T3ba\Tool\Tsfe\TsfeService
      */
     protected $tsfeService;
     
@@ -108,7 +108,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     /**
      * EnvironmentSimulator constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tsfe\TsfeService  $tsfeService
+     * @param   \LaborDigital\T3ba\Tool\Tsfe\TsfeService  $tsfeService
      */
     public function __construct(TsfeService $tsfeService)
     {

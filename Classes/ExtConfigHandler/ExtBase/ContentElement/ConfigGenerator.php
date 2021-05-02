@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigGenerator;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigGenerator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 

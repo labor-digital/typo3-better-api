@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
+namespace LaborDigital\T3ba\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
-use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;

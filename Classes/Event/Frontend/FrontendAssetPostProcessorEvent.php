@@ -19,19 +19,19 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Frontend;
+namespace LaborDigital\T3ba\Event\Frontend;
 
 
-use LaborDigital\T3BA\Event\Common\AssetEventTrait;
-use LaborDigital\T3BA\Event\Common\AssetPostProcessorEventAdapter;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\Common\AssetEventTrait;
+use LaborDigital\T3ba\Event\Common\AssetPostProcessorEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 
 /**
  * Class FrontendAssetPostProcessorEvent
  *
  * Is triggered, after typo3 compiled the assets for the FRONTEND, before the page renderer builds the html
  *
- * @package LaborDigital\T3BA\Event\Frontend;
+ * @package LaborDigital\T3ba\Event\Frontend;
  */
 class FrontendAssetPostProcessorEvent implements CoreHookEventInterface
 {

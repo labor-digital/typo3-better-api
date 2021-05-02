@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Core;
+namespace LaborDigital\T3ba\Event\Core;
 
 /**
  * Class TcaCompletelyLoadedEvent
@@ -34,7 +34,7 @@ namespace LaborDigital\T3BA\Event\Core;
  * 200: EXT_CONFIG_DYNAMIC_TYPO_SCRIPT
  * 100: PID_TCA_FILTER
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class TcaCompletelyLoadedEvent
 {

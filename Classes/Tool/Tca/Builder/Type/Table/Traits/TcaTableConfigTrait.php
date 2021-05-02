@@ -19,12 +19,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits;
 
 
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -542,7 +542,7 @@ trait TcaTableConfigTrait
      * @param   string|null  $columnName        The name of the database column
      * @param   array|null   $types             A list of types as $id => $label array. This follows the same logic as
      *                                          a select preset:
-     *                                          {@link \LaborDigital\T3BA\FormEngine\FieldPreset\Basics::applySelect()}
+     *                                          {@link \LaborDigital\T3ba\FormEngine\FieldPreset\Basics::applySelect()}
      * @param   array|null   $typeFieldOptions  Allows to provide additional options for the generated field. See
      *                                          the link above to learn more about the possible options
      *

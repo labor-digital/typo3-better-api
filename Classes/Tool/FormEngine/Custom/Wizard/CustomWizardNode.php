@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormException;
-use LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldInterface;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldInterface;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 
@@ -50,7 +50,7 @@ class CustomWizardNode extends AbstractFormElement
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormException
+     * @throws \LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException
      */
     public function render()
     {

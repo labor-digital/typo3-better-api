@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard;
 
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomAssetTrait;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomAssetTrait;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Form\NodeInterface;
 

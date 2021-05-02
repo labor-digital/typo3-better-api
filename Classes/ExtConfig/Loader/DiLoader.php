@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Loader;
+namespace LaborDigital\T3ba\ExtConfig\Loader;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
-use LaborDigital\T3BA\ExtConfig\Interfaces\DiRunTimeHandlerInterface;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\ExtConfig\ExtConfigService;
+use LaborDigital\T3ba\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\DiRunTimeHandlerInterface;
 use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
 
 class DiLoader
@@ -34,14 +34,14 @@ class DiLoader
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
     
     /**
      * DiLoader constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigService  $extConfigService
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigService  $extConfigService
      */
     public function __construct(ExtConfigService $extConfigService)
     {

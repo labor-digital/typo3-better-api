@@ -37,10 +37,10 @@ declare(strict_types=1);
  */
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
 
 class ModuleConfigurator extends AbstractConfigurator
 {

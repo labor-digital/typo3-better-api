@@ -18,11 +18,11 @@
 
 /** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
 use Closure;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
@@ -32,7 +32,7 @@ class ExtConfigLoader extends PhpFileLoader
      * Wraps around the ext config loading process
      *
      * @param   string                                         $class
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $context
      * @param   string                                         $packagePath
      * @param   callable                                       $callback
      */

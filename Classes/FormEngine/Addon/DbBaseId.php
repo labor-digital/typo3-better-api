@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 15:38
  */
 
-namespace LaborDigital\T3BA\FormEngine\Addon;
+namespace LaborDigital\T3ba\FormEngine\Addon;
 
 use GuzzleHttp\Psr7\Query;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
 use TYPO3\CMS\Backend\Form\NodeExpansion\FieldWizard;
 
 class DbBaseId
@@ -48,7 +48,7 @@ class DbBaseId
     /**
      * This element adds the basePid constraints to the javascript of the element browser
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
      */
     public static function onPostProcess(BackendFormNodePostProcessorEvent $event): void
     {

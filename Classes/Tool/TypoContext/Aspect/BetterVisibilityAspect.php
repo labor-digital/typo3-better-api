@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
+namespace LaborDigital\T3ba\Tool\TypoContext\Aspect;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\VisibilityAspect;
 
 class BetterVisibilityAspect extends VisibilityAspect implements PublicServiceInterface
@@ -53,7 +53,7 @@ class BetterVisibilityAspect extends VisibilityAspect implements PublicServiceIn
     /**
      * Inject the typo context instance
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
      */
     public function injectContext(TypoContext $context): void
     {

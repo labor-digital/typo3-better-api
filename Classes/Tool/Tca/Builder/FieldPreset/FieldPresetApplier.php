@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -72,8 +72,8 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
     /**
      * Called when a field executed the "applyPreset" to set the context for the preset to be applied
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField  $field
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext    $context
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField  $field
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext    $context
      *
      * @return $this
      *
@@ -101,7 +101,7 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
     }
     
     /**
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     public function __call($name, $arguments)
     {
@@ -118,7 +118,7 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
         
         $definition = $this->presets[$name] ?? null;
         
-        /** @var \LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface $i */
+        /** @var \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetInterface $i */
         $i = $this->getService($definition[0]);
         $i->setContext($this->context);
         $i->setField($this->field);

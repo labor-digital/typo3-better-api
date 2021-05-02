@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 /**
  * Class BootstrapFailsafeDefinitionEvent
@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event;
  * This event informs all it's listeners about the failsafe state of the current
  * typo3 installation.
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class BootstrapFailsafeDefinitionEvent
 {

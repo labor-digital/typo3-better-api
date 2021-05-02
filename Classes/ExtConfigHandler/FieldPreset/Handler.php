@@ -20,26 +20,26 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\FieldPreset;
+namespace LaborDigital\T3ba\ExtConfigHandler\FieldPreset;
 
 
-use LaborDigital\T3BA\Event\ExtConfig\FieldPresetFilterEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface;
+use LaborDigital\T3ba\Event\ExtConfig\FieldPresetFilterEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractExtConfigHandler
 {
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\FieldPreset\ListGenerator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\FieldPreset\ListGenerator
      */
     protected $listGenerator;
     
     /**
      * FieldPresetHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\FieldPreset\ListGenerator  $listGenerator
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\FieldPreset\ListGenerator  $listGenerator
      */
     public function __construct(ListGenerator $listGenerator)
     {
@@ -95,7 +95,7 @@ class Handler extends AbstractExtConfigHandler
      */
     protected function makeAutocompleteHelper(array $presets): void
     {
-        /** @var \LaborDigital\T3BA\ExtConfigHandler\FieldPreset\AutocompleteGenerator $generator */
+        /** @var \LaborDigital\T3ba\ExtConfigHandler\FieldPreset\AutocompleteGenerator $generator */
         $generator = $this->getInstanceWithoutDi(
             AutocompleteGenerator::class,
             [$this->context->getExtConfigService()->getFsMount()]

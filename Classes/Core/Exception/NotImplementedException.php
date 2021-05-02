@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Exception;
+namespace LaborDigital\T3ba\Core\Exception;
 
 
-class NotImplementedException extends T3BAException
+class NotImplementedException extends T3baException
 {
 
 }

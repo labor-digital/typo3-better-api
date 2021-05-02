@@ -20,16 +20,16 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
-use LaborDigital\T3BA\Tool\BackendPreview\Hook\ContentPreviewRenderer;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\SharedConfig;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
+use LaborDigital\T3ba\Tool\BackendPreview\Hook\ContentPreviewRenderer;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
@@ -39,7 +39,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
 {
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\SharedConfig
      */
     protected $config;
     
@@ -56,8 +56,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      *
      * @param   array                                                                           $list
      * @param   string                                                                          $extensionName
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
      */
     abstract protected function setRegistrationArgs(
         array &$list,
@@ -97,7 +97,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Injects the shared config object on which the data is stored
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element\SharedConfig  $config
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\SharedConfig  $config
      */
     public function setConfig(SharedConfig $config): void
     {
@@ -107,10 +107,10 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Generates the required configuration to register the plugin defined in the given $configurator
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      *
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function generate(AbstractElementConfigurator $configurator, ExtConfigContext $context): void
     {
@@ -128,8 +128,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Generates the required configuration for a single plugin variant
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      * @param   string|null                                                                     $variantName
      */
     protected function generateForSingleVariant(
@@ -154,7 +154,7 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Registers the required typo script configuration into the ext base templates file
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
      */
     protected function registerTypoScript(AbstractElementConfigurator $configurator): void
     {
@@ -168,8 +168,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Generates and registers the arguments that are required to register the plugin/content element in the TYPO3 api
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      */
     protected function registerElementInTypoHooks(
         AbstractElementConfigurator $configurator,
@@ -209,8 +209,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Generates a new set of arguments that have to be used to register the plugin's icon in the icon registry
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      */
     protected function registerIconDefinition(
         AbstractElementConfigurator $configurator,
@@ -229,8 +229,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * Generates and registers the ts config snippet that is required to register a new content element wizard icon for
      * this plugin
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      */
     protected function registerNewCEWizardTsConfig(
         AbstractElementConfigurator $configurator,
@@ -265,8 +265,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
      * Registers both the backend preview renderer and the backend list label renderer definitions in the
      * configuration state
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      */
     protected function registerBackendPreviewAndListLabelRenderer(
         AbstractElementConfigurator $configurator,
@@ -304,8 +304,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Builds and registers the arguments for the flex form definition of content elements and plugins
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      */
     protected function registerFlexFormConfig(
         AbstractElementConfigurator $configurator,
@@ -332,8 +332,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
     /**
      * Internal helper to create the icon identifier for this plugin
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
      *
      * @return string
      */

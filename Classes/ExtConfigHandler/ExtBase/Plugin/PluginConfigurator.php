@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin;
 
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException;
 use Neunerlei\Inflection\Inflector;
 
 class PluginConfigurator extends AbstractElementConfigurator
@@ -69,7 +69,7 @@ class PluginConfigurator extends AbstractElementConfigurator
      * Returns the flex form structure object for this plugin.
      * You have to call this method at least once to register a flex form file for an element
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex
      */
     public function getFlexForm(): Flex
     {

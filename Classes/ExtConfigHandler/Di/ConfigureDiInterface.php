@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -53,7 +53,7 @@ interface ConfigureDiInterface
      * dynamic/synthetic services into the container if required
      *
      * @param   \Symfony\Component\DependencyInjection\Container  $container
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext     $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext     $context
      */
     public static function configureRuntime(Container $container, ExtConfigContext $context): void;
     

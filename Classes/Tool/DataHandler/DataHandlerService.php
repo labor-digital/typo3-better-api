@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHandler;
+namespace LaborDigital\T3ba\Tool\DataHandler;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Throwable;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -50,7 +50,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      *
      * @param   string  $tableName  The name of the database table to get the record handler for
      *
-     * @return \LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler
+     * @return \LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler
      * @see RecordDataHandler
      */
     public function getRecordDataHandler(string $tableName): RecordDataHandler
@@ -100,7 +100,7 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      * @param   bool   $handleData  True if process_datamap() should be executed, false for process_cmdmap()
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
-     * @throws \LaborDigital\T3BA\Tool\DataHandler\DataHandlerException
+     * @throws \LaborDigital\T3ba\Tool\DataHandler\DataHandlerException
      */
     protected function doProcessing(array $data, array $commands, bool $handleData, ?bool $force = null): DataHandler
     {

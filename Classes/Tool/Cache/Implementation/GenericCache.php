@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Implementation;
+namespace LaborDigital\T3ba\Tool\Cache\Implementation;
 
 /**
  * Class GenericCache
@@ -28,7 +28,7 @@ namespace LaborDigital\T3BA\Tool\Cache\Implementation;
  * General purpose cache implementation that is used when only a TYPO3 cache identifier is
  * used as parameter name in a CacheConsumerInterface
  *
- * @package LaborDigital\T3BA\Tool\Cache\Implementation
+ * @package LaborDigital\T3ba\Tool\Cache\Implementation
  */
 class GenericCache extends AbstractExtendedCache
 {

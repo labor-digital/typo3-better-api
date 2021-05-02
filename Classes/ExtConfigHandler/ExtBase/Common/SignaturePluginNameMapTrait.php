@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\PathUtil\Path;
 
 /**
@@ -32,7 +32,7 @@ use Neunerlei\PathUtil\Path;
  *
  * Used in config handlers to create the signature-plugin name map for extbase plugins/modules/content elements
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common
+ * @package LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common
  */
 trait SignaturePluginNameMapTrait
 {

@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
+namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\SiteBasedHandlerInterface;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface

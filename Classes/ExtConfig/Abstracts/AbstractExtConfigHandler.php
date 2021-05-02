@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Abstracts;
+namespace LaborDigital\T3ba\ExtConfig\Abstracts;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextTrait;
 use Neunerlei\Configuration\Handler\AbstractConfigHandler;
 
 abstract class AbstractExtConfigHandler extends AbstractConfigHandler implements PublicServiceInterface

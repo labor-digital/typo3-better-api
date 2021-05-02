@@ -19,16 +19,16 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHook;
+namespace LaborDigital\T3ba\Event\DataHook;
 
-use LaborDigital\T3BA\Tool\DataHook\DataHookContext;
+use LaborDigital\T3ba\Tool\DataHook\DataHookContext;
 
 /**
  * Class PostProcessorEvent
  *
  * Triggered once for every data hook handler that was processed by the data hook dispatcher
  *
- * @package LaborDigital\T3BA\Event\DataHook
+ * @package LaborDigital\T3ba\Event\DataHook
  */
 class PostProcessorEvent
 {
@@ -42,7 +42,7 @@ class PostProcessorEvent
     /**
      * BackendFormActionPostProcessorEvent constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\DataHookContext  $context
+     * @param   \LaborDigital\T3ba\Tool\DataHook\DataHookContext  $context
      */
     public function __construct(DataHookContext $context)
     {
@@ -52,7 +52,7 @@ class PostProcessorEvent
     /**
      * Returns the instance of the context that was used by the applied data hook
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\DataHookContext
+     * @return \LaborDigital\T3ba\Tool\DataHook\DataHookContext
      */
     public function getContext(): DataHookContext
     {

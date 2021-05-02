@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomAssetTrait;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomAssetTrait;
 use Neunerlei\Arrays\Arrays;
 
 class CustomFieldContext
@@ -55,7 +55,7 @@ class CustomFieldContext
     /**
      * The real node in the form engine, that serves as a wrapper for our easier interface to form elements
      *
-     * @var \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldNode
+     * @var \LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldNode
      */
     protected $rootNode;
     
@@ -129,7 +129,7 @@ class CustomFieldContext
     /**
      * Returns the form factory node, that serves as a wrapper for your field node
      *
-     * @return \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldNode
+     * @return \LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldNode
      */
     public function getRootNode(): CustomFieldNode
     {

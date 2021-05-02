@@ -19,14 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3ba\Core\Di;
 
 /**
  * Interface PublicServiceInterface
  *
  * Automatically makes this class as public in the di container
  *
- * @package LaborDigital\T3BA\Core\ExtConfig
+ * @package LaborDigital\T3ba\Core\ExtConfig
  */
 interface PublicServiceInterface
 {

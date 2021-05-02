@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
-use LaborDigital\T3BA\Event\DataHandler\Adapter\SaveEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\DataHandler\Adapter\SaveEventAdapter;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 abstract class AbstractLateSaveEvent implements CoreHookEventInterface

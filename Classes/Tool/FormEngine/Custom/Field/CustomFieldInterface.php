@@ -37,10 +37,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
 
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomElementInterface;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomElementInterface;
 
 interface CustomFieldInterface extends CustomElementInterface
 {
@@ -48,7 +48,7 @@ interface CustomFieldInterface extends CustomElementInterface
     /**
      * Used to inject the field context
      *
-     * @param   \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldContext  $context
+     * @param   \LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldContext  $context
      */
     public function setContext(CustomFieldContext $context): void;
     

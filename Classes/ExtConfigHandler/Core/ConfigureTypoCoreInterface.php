@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Core;
+namespace LaborDigital\T3ba\ExtConfigHandler\Core;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureTypoCoreInterface
 {
@@ -31,8 +31,8 @@ interface ConfigureTypoCoreInterface
     /**
      * Allows you to configure TYPO3 core options, that did not fit in other categories
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                  $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\Core\TypoCoreConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                  $context
      */
     public static function configureCore(TypoCoreConfigurator $configurator, ExtConfigContext $context): void;
     

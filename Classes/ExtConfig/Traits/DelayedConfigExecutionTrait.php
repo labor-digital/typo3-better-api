@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Traits;
+namespace LaborDigital\T3ba\ExtConfig\Traits;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 
@@ -34,7 +34,7 @@ use Neunerlei\Configuration\State\ConfigState;
  * that have to be executed sometime later. A good example usage are the TCA classes, they are collected when the
  * ext config is generated, but only executed if and when TYPO3 actually builds the TCA.
  *
- * @package LaborDigital\T3BA\ExtConfig\Traits
+ * @package LaborDigital\T3ba\ExtConfig\Traits
  */
 trait DelayedConfigExecutionTrait
 {

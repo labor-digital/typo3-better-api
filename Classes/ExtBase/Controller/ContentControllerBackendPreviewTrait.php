@@ -36,14 +36,14 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\ExtBase\Controller;
+namespace LaborDigital\T3ba\ExtBase\Controller;
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
-use LaborDigital\T3BA\Tool\OddsAndEnds\ReflectionUtil;
-use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewException;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererContext;
+use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
+use LaborDigital\T3ba\Tool\Rendering\TemplateRenderingService;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
 use RuntimeException;
 use Throwable;
@@ -61,7 +61,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  *
  * This trait helps you to render the backend preview in extbase controllers
  *
- * @package LaborDigital\T3BA\ExtBase\Controller
+ * @package LaborDigital\T3ba\ExtBase\Controller
  */
 trait ContentControllerBackendPreviewTrait
 {
@@ -184,7 +184,7 @@ trait ContentControllerBackendPreviewTrait
      * @param   array  $options           The same options you can pass for {@link simulateRequest()}
      *
      * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
-     * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
+     * @throws \LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewException
      */
     protected function simulateVariantRequest(array $variantActionMap, array $options = []): ResponseInterface
     {

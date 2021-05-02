@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Http;
+namespace LaborDigital\T3ba\ExtConfigHandler\Http;
 
 
-use LaborDigital\T3BA\Event\Configuration\MiddlewareRegistrationEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
@@ -41,7 +41,7 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Inject our middleware configuration into the TYPO3 configuration option
      *
-     * @param   \LaborDigital\T3BA\Event\Configuration\MiddlewareRegistrationEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent  $event
      */
     public function onMiddlewareRegistration(MiddlewareRegistrationEvent $event): void
     {

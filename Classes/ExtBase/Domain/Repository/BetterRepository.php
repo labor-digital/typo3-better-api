@@ -36,14 +36,14 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\ExtBase\Domain\Repository;
+namespace LaborDigital\T3ba\ExtBase\Domain\Repository;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\ExtBase\Domain\DomainException;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\BetterQueryPreparationTrait;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\ExtBase\Domain\DomainException;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\BetterQueryPreparationTrait;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;

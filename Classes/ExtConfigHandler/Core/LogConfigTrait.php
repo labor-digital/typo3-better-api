@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Core;
+namespace LaborDigital\T3ba\ExtConfigHandler\Core;
 
 
 use Neunerlei\Arrays\Arrays;

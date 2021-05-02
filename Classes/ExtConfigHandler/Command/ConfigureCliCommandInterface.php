@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Command;
+namespace LaborDigital\T3ba\ExtConfigHandler\Command;
 
 
 interface ConfigureCliCommandInterface

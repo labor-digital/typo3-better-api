@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Abstracts;
+namespace LaborDigital\T3ba\ExtConfig\Abstracts;
 
 
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigApplierInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigApplierInterface;
 use Neunerlei\Configuration\State\ConfigState;
 
 abstract class AbstractExtConfigApplier implements ExtConfigApplierInterface

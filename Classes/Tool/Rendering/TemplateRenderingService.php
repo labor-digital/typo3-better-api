@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:35
  */
 
-namespace LaborDigital\T3BA\Tool\Rendering;
+namespace LaborDigital\T3ba\Tool\Rendering;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\VarFs\Mount;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\VarFs\Mount;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use LightnCandy\LightnCandy;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
@@ -69,7 +69,7 @@ class TemplateRenderingService implements SingletonInterface
     /**
      * TemplateRenderingService constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs  $fs
+     * @param   \LaborDigital\T3ba\Core\VarFs\VarFs  $fs
      */
     public function __construct(VarFs $fs)
     {
@@ -211,7 +211,7 @@ class TemplateRenderingService implements SingletonInterface
                         return '';
                     }
                     
-                    return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+                    return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
                         ::getInstance()->di()->cs()->translator->translate($selector);
                 },
             ],

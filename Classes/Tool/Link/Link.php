@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:45
  */
 
-namespace LaborDigital\T3BA\Tool\Link;
+namespace LaborDigital\T3ba\Tool\Link;
 
 use GuzzleHttp\Psr7\Query;
-use LaborDigital\T3BA\Tool\Link\Adapter\CacheHashCalculatorAdapter;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Link\Adapter\CacheHashCalculatorAdapter;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -52,12 +52,12 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  *
  * Please note that this class is immutable!
  *
- * @package LaborDigital\T3BA\Tool\Link
+ * @package LaborDigital\T3ba\Tool\Link
  */
 class Link
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Link\LinkContext
+     * @var \LaborDigital\T3ba\Tool\Link\LinkContext
      */
     protected $context;
     
@@ -226,7 +226,7 @@ class Link
     /**
      * Link constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Link\LinkContext  $context
+     * @param   \LaborDigital\T3ba\Tool\Link\LinkContext  $context
      * @param   \TYPO3\CMS\Extbase\Mvc\Request|null       $controllerRequest
      */
     public function __construct(LinkContext $context, ?Request $controllerRequest)
@@ -545,7 +545,7 @@ class Link
      * @param   string|null|array  $fragment
      *
      * @return Link
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     public function withFragment($fragment): self
     {
@@ -565,7 +565,7 @@ class Link
      * @param   mixed   $value  The value to set for the given key
      *
      * @return $this
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     public function withAddedToFragment(string $key, $value): self
     {
@@ -823,7 +823,7 @@ class Link
      * @param   \TYPO3\CMS\Core\Site\Entity\SiteLanguage|null|int|string  $language
      *
      * @return $this
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     public function withLanguage($language): self
     {
@@ -918,7 +918,7 @@ class Link
      *                           action. The latter is the typo3 default way which I found really counter intuitive.
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     public function build(array $options = []): string
     {
@@ -1152,7 +1152,7 @@ class Link
      * Internal helper to resolve the pid of the link into an actual, numeric value
      *
      * @return int|null
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     protected function resolvePid(): ?int
     {

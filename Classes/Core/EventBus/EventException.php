@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\EventBus;
+namespace LaborDigital\T3ba\Core\EventBus;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class EventException extends T3BAException
+class EventException extends T3baException
 {
 }

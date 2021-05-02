@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook;
+namespace LaborDigital\T3ba\Tool\DataHook;
 
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class DataHookException extends T3BAException
+class DataHookException extends T3baException
 {
 
 }

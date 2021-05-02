@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Event\Core\CacheClearedEvent;
-use LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent;
-use LaborDigital\T3BA\Event\DataHandler\SavePostProcessorEvent;
-use LaborDigital\T3BA\Tool\Cache\Util\CacheUtil;
+use LaborDigital\T3ba\Event\Core\CacheClearedEvent;
+use LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent;
+use LaborDigital\T3ba\Event\DataHandler\SavePostProcessorEvent;
+use LaborDigital\T3ba\Tool\Cache\Util\CacheUtil;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -69,7 +69,7 @@ class CacheClearing implements LazyEventSubscriberInterface
     /**
      * Flushes the caches for a single page if the "flash" icon is clicked on a page
      *
-     * @param   \LaborDigital\T3BA\Event\Core\CacheClearedEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Core\CacheClearedEvent  $event
      */
     public function onCacheCleared(CacheClearedEvent $event): void
     {

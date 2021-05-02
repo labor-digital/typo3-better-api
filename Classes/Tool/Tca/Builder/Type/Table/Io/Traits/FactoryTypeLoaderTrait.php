@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
 use Neunerlei\Arrays\Arrays;

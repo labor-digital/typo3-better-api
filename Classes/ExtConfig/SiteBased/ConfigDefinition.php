@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\SiteBased;
+namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 
 
-use LaborDigital\T3BA\ExtConfig\Interfaces\SiteKeyProviderInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface;
 use Neunerlei\Configuration\Loader\ConfigDefinition as DefaultConfigDefinition;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Site\Entity\Site;

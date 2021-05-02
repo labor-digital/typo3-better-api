@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 
 use Psr\Container\ContainerInterface;
@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Package\PackageManager;
  *
  * Gets dispatched when the container builder instantiates a container instance
  *
- * @package LaborDigital\T3BA\Event
+ * @package LaborDigital\T3ba\Event
  */
 class CreateDiContainerEvent
 {

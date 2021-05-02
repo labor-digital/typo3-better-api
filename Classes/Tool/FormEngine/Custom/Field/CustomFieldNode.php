@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 02:59
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\FormEngine\CustomFieldPostProcessorEvent;
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormException;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\FormEngine\CustomFieldPostProcessorEvent;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -52,13 +52,13 @@ class CustomFieldNode extends AbstractFormElement
     /**
      * Holds the current context to be able to update our local data if required
      *
-     * @var \LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldContext
+     * @var \LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldContext
      */
     protected $context;
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormException
+     * @throws \LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException
      */
     public function render()
     {
@@ -151,7 +151,7 @@ HTML;
      * @param   array   $args
      *
      * @return mixed
-     * @throws \LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormException
+     * @throws \LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException
      */
     public function callMethod(string $method, array $args = [])
     {

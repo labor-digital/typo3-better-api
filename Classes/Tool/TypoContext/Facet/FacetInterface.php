@@ -36,16 +36,16 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 12:46
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 
 /**
  * Class FacetInterface
  *
  * A facet is basically an aspect without the stupid "get()" method
  *
- * @package LaborDigital\T3BA\Tool\TypoContext\Facet
+ * @package LaborDigital\T3ba\Tool\TypoContext\Facet
  */
 interface FacetInterface extends PublicServiceInterface
 {

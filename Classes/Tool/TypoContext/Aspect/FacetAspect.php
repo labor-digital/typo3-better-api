@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
+namespace LaborDigital\T3ba\Tool\TypoContext\Aspect;
 
-use LaborDigital\T3BA\Tool\TypoContext\Facet\FacetInterface;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\FacetInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 
 /**
@@ -29,7 +29,7 @@ use TYPO3\CMS\Core\Context\AspectInterface;
  *
  * A wrapper to store our facets inside the root context's aspect storage
  *
- * @package LaborDigital\T3BA\Tool\TypoContext\Aspect
+ * @package LaborDigital\T3ba\Tool\TypoContext\Aspect
  * @see     FacetInterface
  */
 class FacetAspect implements AspectInterface

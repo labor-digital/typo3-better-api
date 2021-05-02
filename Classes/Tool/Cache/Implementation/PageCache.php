@@ -20,18 +20,18 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Implementation;
+namespace LaborDigital\T3ba\Tool\Cache\Implementation;
 
 
 use Closure;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 
 /**
  * Class PageCache
  *
  * Similar to FrontendCache but the generated key is always tied to the current PID
  *
- * @package LaborDigital\T3BA\Tool\Cache\Implementation
+ * @package LaborDigital\T3ba\Tool\Cache\Implementation
  */
 class PageCache extends FrontendCache
 {

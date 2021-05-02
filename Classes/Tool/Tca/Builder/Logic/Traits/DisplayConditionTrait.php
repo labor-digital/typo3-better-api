@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 02:52
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 use Neunerlei\Arrays\Arrays;
 
 trait DisplayConditionTrait
@@ -58,7 +58,7 @@ trait DisplayConditionTrait
      * @param   string|array  $condition
      *
      * @return $this
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     public function setDisplayCondition($condition)
     {

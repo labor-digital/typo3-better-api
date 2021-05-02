@@ -18,12 +18,12 @@ declare(strict_types=1);
  * Last modified: 2021.04.29 at 22:17
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\Options\Options;
 
@@ -52,7 +52,7 @@ trait CustomWizardPresetTrait
      *                                                Typically $this->field
      * @param   TcaBuilderContext|null  $context      The ext config context. Typically $this->context
      *
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     protected function applyCustomWizardPreset(
         string $wizardClass,

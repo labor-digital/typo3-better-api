@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook\Definition\Traverser;
+namespace LaborDigital\T3ba\Tool\DataHook\Definition\Traverser;
 
 
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
 use Neunerlei\Arrays\Arrays;
 use Throwable;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;

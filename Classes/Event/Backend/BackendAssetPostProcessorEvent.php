@@ -19,19 +19,19 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Backend;
+namespace LaborDigital\T3ba\Event\Backend;
 
 
-use LaborDigital\T3BA\Event\Common\AssetEventTrait;
-use LaborDigital\T3BA\Event\Common\AssetPostProcessorEventAdapter;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\Common\AssetEventTrait;
+use LaborDigital\T3ba\Event\Common\AssetPostProcessorEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 
 /**
  * Class BackendAssetPostProcessorEvent
  *
  * Is triggered, after typo3 compiled the assets for the BACKEND, before the page renderer builds the html
  *
- * @package LaborDigital\T3BA\Event\Backend
+ * @package LaborDigital\T3ba\Event\Backend
  */
 class BackendAssetPostProcessorEvent implements CoreHookEventInterface
 {

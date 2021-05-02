@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing\Traits;
+namespace LaborDigital\T3ba\ExtConfigHandler\Routing\Traits;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
 use Neunerlei\Arrays\Arrays;
 
 trait RouteEnhancerConfigTrait
@@ -78,7 +78,7 @@ trait RouteEnhancerConfigTrait
      * @param   array  $options
      *
      * @return array
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function injectDbArgsConfig(array $config, array $options): array
     {
@@ -141,7 +141,7 @@ trait RouteEnhancerConfigTrait
      * @param   array  $options
      *
      * @return array
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function injectLocaleArgsConfig(array $config, array $options): array
     {
@@ -192,7 +192,7 @@ trait RouteEnhancerConfigTrait
      * @param   array  $options
      *
      * @return array
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function injectStaticArgsConfig(array $config, array $options): array
     {

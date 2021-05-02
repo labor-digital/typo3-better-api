@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\SiteBased;
+namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\ExtConfig\SiteBased\ConfigDefinition as SiteConfigDefinition;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\ExtConfig\SiteBased\ConfigDefinition as SiteConfigDefinition;
 use Neunerlei\Configuration\Finder\ConfigFinder as DefaultConfigFinder;
 use Neunerlei\Configuration\Handler\HandlerDefinition;
 use Neunerlei\Configuration\Loader\ConfigContext;

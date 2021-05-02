@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendListLabelRendererInterface;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
-use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererInterface;
+use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Inflection\Inflector;
 
 abstract class AbstractElementConfigurator extends AbstractConfigurator
@@ -384,8 +384,8 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
      *
      * @param   string  $name  A unique name/key for the variant to generate
      *
-     * @return $this|\LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @return $this|\LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function getVariant(string $name)
     {
@@ -418,7 +418,7 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
     /**
      * Returns the list of all registered variants for this
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator[]
+     * @return \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator[]
      */
     public function getVariants(): array
     {

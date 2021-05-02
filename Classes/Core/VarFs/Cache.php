@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\VarFs;
+namespace LaborDigital\T3ba\Core\VarFs;
 
 
 use DateInterval;
@@ -31,14 +31,14 @@ use Psr\SimpleCache\CacheInterface;
 class Cache implements CacheInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Core\VarFs\Mount
+     * @var \LaborDigital\T3ba\Core\VarFs\Mount
      */
     protected $mount;
     
     /**
      * Cache constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\VarFs\Mount  $mount
+     * @param   \LaborDigital\T3ba\Core\VarFs\Mount  $mount
      */
     public function __construct(Mount $mount)
     {

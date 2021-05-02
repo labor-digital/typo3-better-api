@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:34
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 
-use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
-use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetApplier;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\DisplayConditionTrait;
+use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetApplier;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\DisplayConditionTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -212,7 +212,7 @@ abstract class AbstractField extends AbstractElement
     /**
      * Completely overrides the configuration of this field with the configuration of another field.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField  $field
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField  $field
      *
      * @return $this
      */
@@ -230,7 +230,7 @@ abstract class AbstractField extends AbstractElement
      * This makes it a lot easier to configure your table fields, without the hassle of doing the configuration over
      * and over again.
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetApplier|\LaborDigital\T3BA\Tool\Tca\Builder\FieldPresetAutocompleteHelper
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetApplier|\LaborDigital\T3ba\Tool\Tca\Builder\FieldPresetAutocompleteHelper
      */
     public function applyPreset()
     {

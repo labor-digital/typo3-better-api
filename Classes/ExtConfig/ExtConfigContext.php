@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3ba\ExtConfig;
 
 
-use LaborDigital\T3BA\Core\Di\DelegateContainer;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\DelegateContainer;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\Loader\ConfigContext;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Package\Package;
@@ -36,7 +36,7 @@ use TYPO3\CMS\Core\Package\PackageManager;
 class ExtConfigContext extends ConfigContext implements PublicServiceInterface
 {
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
     
@@ -55,7 +55,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * ExtConfigContext constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigService  $extConfigService
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigService  $extConfigService
      */
     public function __construct(ExtConfigService $extConfigService)
     {
@@ -65,8 +65,8 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * Returns the typo context instance if it was provided by the lifecycle yet
      *
-     * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function getTypoContext(): TypoContext
     {
@@ -80,7 +80,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * Allows to inject the typo context instance
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $typoContext
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $typoContext
      *
      * @return $this
      */
@@ -94,7 +94,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * Returns multiple environment related constraint helpers
      *
-     * @return \LaborDigital\T3BA\Tool\TypoContext\Facet\EnvFacet
+     * @return \LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet
      */
     public function env(): EnvFacet
     {
@@ -109,7 +109,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
     /**
      * Returns the instance of the ext config service
      *
-     * @return \LaborDigital\T3BA\ExtConfig\ExtConfigService
+     * @return \LaborDigital\T3ba\ExtConfig\ExtConfigService
      */
     public function getExtConfigService(): ExtConfigService
     {
@@ -182,7 +182,7 @@ class ExtConfigContext extends ConfigContext implements PublicServiceInterface
      *                                       If not given, the method will throw an exception on a missing pid
      *
      * @return array|int
-     * @see \LaborDigital\T3BA\Tool\TypoContext\Facet\PidFacet::get()
+     * @see \LaborDigital\T3ba\Tool\TypoContext\Facet\PidFacet::get()
      */
     public function resolvePids($keys, int $fallback = -1)
     {

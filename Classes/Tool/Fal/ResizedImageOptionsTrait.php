@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\Fal;
+namespace LaborDigital\T3ba\Tool\Fal;
 
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;

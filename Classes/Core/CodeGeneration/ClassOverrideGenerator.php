@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 18:39
  */
 
-namespace LaborDigital\T3BA\Core\CodeGeneration;
+namespace LaborDigital\T3ba\Core\CodeGeneration;
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\VarFs\Mount;
-use LaborDigital\T3BA\Event\ClassOverrideContentFilterEvent;
-use LaborDigital\T3BA\Event\ClassOverrideStackFilterEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\VarFs\Mount;
+use LaborDigital\T3ba\Event\ClassOverrideContentFilterEvent;
+use LaborDigital\T3ba\Event\ClassOverrideStackFilterEvent;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -84,7 +84,7 @@ class ClassOverrideGenerator
      * and to register our event handler
      *
      * @param   \Composer\Autoload\ClassLoader       $composerClassLoader
-     * @param   \LaborDigital\T3BA\Core\VarFs\Mount  $fsMount
+     * @param   \LaborDigital\T3ba\Core\VarFs\Mount  $fsMount
      */
     public static function init(ClassLoader $composerClassLoader, Mount $fsMount): void
     {
@@ -148,7 +148,7 @@ class ClassOverrideGenerator
      * @param   bool    $overrule             If this is set to true already registered overrides can be changed to a
      *                                        different definition
      *
-     * @throws \LaborDigital\T3BA\Core\CodeGeneration\ClassOverridesException
+     * @throws \LaborDigital\T3ba\Core\CodeGeneration\ClassOverridesException
      */
     public static function registerOverride(
         string $classToOverride,
@@ -237,7 +237,7 @@ class ClassOverrideGenerator
             if (! static::$fsMount->hasFile($aliasFilename) || ! static::$fsMount->hasFile($cloneFilename)) {
                 // Make the class name
                 $namespace = Path::classNamespace($classToOverride);
-                $copyClassName = 'T3BA__Copy__' . Path::classBasename($classToOverride);
+                $copyClassName = 'T3BaCopy' . Path::classBasename($classToOverride);
                 $copyClassFullName = ltrim($namespace . '\\' . $copyClassName, '\\');
                 
                 // Create content
@@ -332,7 +332,7 @@ if(!class_exists('\\$classToOverride', false)) {
      * @param   string  $copyClassName  The new name of the class after the copy took place
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Core\CodeGeneration\ClassOverridesException
+     * @throws \LaborDigital\T3ba\Core\CodeGeneration\ClassOverridesException
      */
     protected static function getClassCloneContentOf(string $of, string $copyClassName): string
     {

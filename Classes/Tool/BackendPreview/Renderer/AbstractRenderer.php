@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Throwable;
 
 abstract class AbstractRenderer implements PublicServiceInterface

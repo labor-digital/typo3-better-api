@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

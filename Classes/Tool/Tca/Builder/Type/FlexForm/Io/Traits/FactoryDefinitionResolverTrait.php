@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Traits;
 
 
-use LaborDigital\T3BA\Core\Di\CommonServices;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\GeneralUtilityAdapter;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException;
+use LaborDigital\T3ba\Core\Di\CommonServices;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\GeneralUtilityAdapter;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
 
@@ -44,10 +44,10 @@ trait FactoryDefinitionResolverTrait
      * The result is the already parsed array representation.
      *
      * @param   string                                         $definition
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $context
      *
      * @return array
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException
      */
     protected function resolveDefinitionToArray(string $definition, ExtConfigContext $context): array
     {
@@ -67,10 +67,10 @@ trait FactoryDefinitionResolverTrait
      * Internal helper to resolve a file definition into an actual flex form definition string.
      *
      * @param   string                                         $definition
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $context
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\MissingFlexFormFileException
      */
     protected function resolveFlexFormFileContent(string $definition, ExtConfigContext $context): string
     {
@@ -114,7 +114,7 @@ trait FactoryDefinitionResolverTrait
      * @param   array  $def
      *
      * @return array
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\InvalidFlexFormException
      */
     protected function resolveSheetsArray(array $def): array
     {

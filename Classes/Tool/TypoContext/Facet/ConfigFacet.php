@@ -37,12 +37,12 @@ declare(strict_types=1);
  */
 
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextException;
-use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextException;
+use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Psr\Http\Message\ServerRequestInterface;
@@ -56,14 +56,14 @@ class ConfigFacet implements FacetInterface
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
     
     /**
      * ConfigFacet constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
@@ -95,7 +95,7 @@ class ConfigFacet implements FacetInterface
      * Returns the compiled ExtConfig state object.
      *
      * @return \Neunerlei\Configuration\State\ConfigState
-     * @throws \LaborDigital\T3BA\Tool\TypoContext\TypoContextException
+     * @throws \LaborDigital\T3ba\Tool\TypoContext\TypoContextException
      */
     public function getConfigState(): ConfigState
     {
@@ -160,7 +160,7 @@ class ConfigFacet implements FacetInterface
      *
      * @return mixed|null
      * @see \Psr\Http\Message\ServerRequestInterface
-     * @see \LaborDigital\T3BA\Tool\TypoContext\Facet\RequestFacet
+     * @see \LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet
      */
     public function getRequestAttribute(string $attributeName, $fallback = null)
     {
@@ -185,7 +185,7 @@ class ConfigFacet implements FacetInterface
      *
      * @return ServerRequestInterface|null
      * @see \Psr\Http\Message\ServerRequestInterface
-     * @see \LaborDigital\T3BA\Tool\TypoContext\Facet\RequestFacet
+     * @see \LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet
      */
     public function setRequestAttribute(string $attributeName, $value): ?ServerRequestInterface
     {

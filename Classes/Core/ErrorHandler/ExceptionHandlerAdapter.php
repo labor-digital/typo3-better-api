@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\ErrorHandler;
+namespace LaborDigital\T3ba\Core\ErrorHandler;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Exception\T3BAException;
-use LaborDigital\T3BA\Event\Core\ErrorFilterEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Exception\T3baException;
+use LaborDigital\T3ba\Event\Core\ErrorFilterEvent;
 use Throwable;
 use TYPO3\CMS\Core\Error\ExceptionHandlerInterface;
 use TYPO3\CMS\Core\Error\ProductionExceptionHandler;
@@ -48,12 +48,12 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
+     * @throws \LaborDigital\T3ba\Core\Exception\T3baException
      */
     public function __construct()
     {
         if (empty(static::$defaultExceptionHandler)) {
-            throw new T3BAException(
+            throw new T3baException(
                 'Could not create instance of: ' . static::class
                 . ' because no default exception handler was registered!');
         }

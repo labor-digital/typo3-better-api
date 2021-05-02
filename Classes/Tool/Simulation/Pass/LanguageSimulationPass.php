@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Simulation\Pass;
+namespace LaborDigital\T3ba\Tool\Simulation\Pass;
 
 
 use GuzzleHttp\Psr7\Uri;
 use InvalidArgumentException;
-use LaborDigital\T3BA\Tool\Translation\Translator;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\Translation\Translator;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -40,7 +40,7 @@ class LanguageSimulationPass implements SimulatorPassInterface
     protected $translator;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     private $typoContext;
     

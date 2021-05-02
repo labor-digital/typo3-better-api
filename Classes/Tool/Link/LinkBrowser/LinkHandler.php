@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Link\LinkBrowser;
+namespace LaborDigital\T3ba\Tool\Link\LinkBrowser;
 
 
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use TYPO3\CMS\Backend\Form\Element\InputLinkElement;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\LinkHandling\RecordLinkHandler;

@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:42
  */
 
-namespace LaborDigital\T3BA\Tool\Log;
+namespace LaborDigital\T3ba\Tool\Log;
 
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;

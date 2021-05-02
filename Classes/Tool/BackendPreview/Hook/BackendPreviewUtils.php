@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Hook;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Hook;
 
 
 class BackendPreviewUtils
@@ -79,7 +79,7 @@ class BackendPreviewUtils
      * @param   string|null  $tableName  The name of the table to render the fields for
      *
      * @return string
-     * @see \LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldListRenderer::render()
+     * @see \LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer::render()
      */
     public function renderFieldList(array $fields, ?string $tableName = null): string
     {

@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Backend\Adapter;
+namespace LaborDigital\T3ba\Event\Backend\Adapter;
 
-use LaborDigital\T3BA\Event\Backend\DbListQueryFilterEvent;
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\Backend\DbListQueryFilterEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
 
 class DbListQueryFilterEventAdapter extends AbstractCoreHookEventAdapter

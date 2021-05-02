@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
+namespace LaborDigital\T3ba\Tool\TypoContext\Aspect;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextException;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextException;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class FeUserAspect extends AbstractBetterUserAspect implements PublicServiceInterface
@@ -49,7 +49,7 @@ class FeUserAspect extends AbstractBetterUserAspect implements PublicServiceInte
      * Returns the frontend user authentication object
      *
      * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
-     * @throws \LaborDigital\T3BA\Tool\TypoContext\TypoContextException
+     * @throws \LaborDigital\T3ba\Tool\TypoContext\TypoContextException
      */
     public function getUser(): FrontendUserAuthentication
     {

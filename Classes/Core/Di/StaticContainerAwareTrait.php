@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3ba\Core\Di;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * The same as ContainerAwareTrait, but for static classes
  *
- * @package LaborDigital\T3BA\Core\Di
+ * @package LaborDigital\T3ba\Core\Di
  */
 trait StaticContainerAwareTrait
 {
@@ -89,7 +89,7 @@ trait StaticContainerAwareTrait
     /**
      * Returns the instance of the container
      *
-     * @return \LaborDigital\T3BA\Core\Di\DelegateContainer
+     * @return \LaborDigital\T3ba\Core\Di\DelegateContainer
      */
     protected static function getContainer(): DelegateContainer
     {
@@ -116,7 +116,7 @@ trait StaticContainerAwareTrait
     /**
      * Returns a list of commonly used services as a "lazy" lookup method.
      *
-     * @return \LaborDigital\T3BA\Core\Di\CommonServices
+     * @return \LaborDigital\T3ba\Core\Di\CommonServices
      * @see cs() for a short hand
      */
     protected static function getCommonServices(): CommonServices
@@ -128,7 +128,7 @@ trait StaticContainerAwareTrait
      * Shorthand alias of: getCommonServices()
      * Returns a list of commonly used services as a "lazy" lookup method.
      *
-     * @return \LaborDigital\T3BA\Core\Di\CommonServices
+     * @return \LaborDigital\T3ba\Core\Di\CommonServices
      * @see getCommonServices()
      */
     protected static function cs(): CommonServices

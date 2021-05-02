@@ -20,19 +20,19 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Kernel;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Kernel;
 
 interface BootStageInterface
 {
     /**
      * Should prepare the boot stage in order to hook itself into the event bus
      *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
-     * @param   \LaborDigital\T3BA\Core\Kernel                 $kernel
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\Core\Kernel                 $kernel
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void;
 }

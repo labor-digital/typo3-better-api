@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\KeyGenerator;
+namespace LaborDigital\T3ba\Tool\Cache\KeyGenerator;
 
-use LaborDigital\T3BA\Tool\OddsAndEnds\ReflectionUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
 
 class CallableCacheKeyGenerator implements CacheKeyGeneratorInterface
 {

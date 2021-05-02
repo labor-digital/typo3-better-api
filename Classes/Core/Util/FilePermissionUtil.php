@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 18:03
  */
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3ba\Core\Util;
 
 use Exception;
 use Neunerlei\FileSystem\Fs;

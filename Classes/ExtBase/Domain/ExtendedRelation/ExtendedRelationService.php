@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 16:24
  */
 
-namespace LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation;
+namespace LaborDigital\T3ba\ExtBase\Domain\ExtendedRelation;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\ExtBase\Persistence\DataMapperQueryFilterEvent;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\ExtBase\Persistence\DataMapperQueryFilterEvent;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
@@ -49,7 +49,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 /**
  * Class ExtendedRelationService
  *
- * @package LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation
+ * @package LaborDigital\T3ba\ExtBase\Domain\ExtendedRelation
  */
 class ExtendedRelationService implements PublicServiceInterface
 {
@@ -82,7 +82,7 @@ class ExtendedRelationService implements PublicServiceInterface
     /**
      * ExtendedRelationService constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
      */
     public function __construct(TypoEventBus $eventBus)
     {
@@ -204,7 +204,7 @@ class ExtendedRelationService implements PublicServiceInterface
     /**
      * Event listener to inject or special configuration into the generated query object
      *
-     * @param   \LaborDigital\T3BA\Event\ExtBase\Persistence\DataMapperQueryFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\ExtBase\Persistence\DataMapperQueryFilterEvent  $event
      */
     public function onDataMapperQueryFilter(DataMapperQueryFilterEvent $event): void
     {

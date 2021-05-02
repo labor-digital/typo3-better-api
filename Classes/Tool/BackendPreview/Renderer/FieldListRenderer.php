@@ -20,23 +20,23 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeUtil;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 
 class FieldListRenderer implements PublicServiceInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository
+     * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository
      */
     protected $contentRepository;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldRenderer
+     * @var \LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldRenderer
      */
     protected $fieldRenderer;
     

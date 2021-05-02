@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Simulation;
+namespace LaborDigital\T3ba\Tool\Simulation;
 
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,7 +30,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  *
  * The internal frontend controller to load instead of the default one if the simulator creates a new frontend instance
  *
- * @package LaborDigital\T3BA\Tool\Simulation
+ * @package LaborDigital\T3ba\Tool\Simulation
  */
 class SimulatedTypoScriptFrontendController extends TypoScriptFrontendController
 {

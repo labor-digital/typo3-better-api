@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Util;
+namespace LaborDigital\T3ba\Tool\Cache\Util;
 
 
-use LaborDigital\T3BA\Tool\Cache\CacheTagProviderInterface;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Cache\CacheTagProviderInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\PathUtil\Path;
 use Throwable;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;

@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Tca;
+namespace LaborDigital\T3ba\Event\Tca;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 
 /**
  * Class ExtConfigTableAfterBuildEvent
@@ -29,7 +29,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  * Dispatched after a table instance was converted into it's array form.
  * Can be used to apply last-minute changes to the generated tca before it is cached
  *
- * @package LaborDigital\T3BA\Event\Tca
+ * @package LaborDigital\T3ba\Event\Tca
  */
 class TableDumperAfterBuildEvent
 {

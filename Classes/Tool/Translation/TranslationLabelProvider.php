@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\Translation;
+namespace LaborDigital\T3ba\Tool\Translation;
 
-use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
 
 class TranslationLabelProvider
 {

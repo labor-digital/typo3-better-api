@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHandler;
+namespace LaborDigital\T3ba\Tool\DataHandler;
 
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 use Throwable;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
-class DataHandlerException extends T3BAException
+class DataHandlerException extends T3baException
 {
     /**
      * The data handler that threw the exception

@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\EventBus;
+namespace LaborDigital\T3ba\Core\EventBus;
 
-use LaborDigital\T3BA\Core\Di\MiniContainer;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventAdapterInterface;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\MiniContainer;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventAdapterInterface;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\EventBus\Dispatcher\EventBusListenerProvider;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
@@ -125,7 +125,7 @@ class TypoListenerProvider extends ListenerProvider
      *
      * @param   string  $eventClass
      *
-     * @throws \LaborDigital\T3BA\Core\EventBus\EventException
+     * @throws \LaborDigital\T3ba\Core\EventBus\EventException
      * @see CoreHookEventInterface
      */
     protected function registerCoreHookEventIfRequired(string $eventClass): void

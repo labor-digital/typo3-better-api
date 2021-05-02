@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.08.22 at 21:56
  */
 
-namespace LaborDigital\T3BA\Core\ErrorHandler;
+namespace LaborDigital\T3ba\Core\ErrorHandler;
 
 class DebugExceptionHandler extends ExceptionHandlerAdapter
 {

@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Common\Assets;
+namespace LaborDigital\T3ba\ExtConfigHandler\Common\Assets;
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * MUST be applied in a class that extends AbstractExtConfigApplier
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Common\Assets
+ * @package LaborDigital\T3ba\ExtConfigHandler\Common\Assets
  * @see     AbstractExtConfigApplier
  */
 trait AssetApplierTrait

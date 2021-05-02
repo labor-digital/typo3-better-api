@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtBase\Controller;
+namespace LaborDigital\T3ba\ExtBase\Controller;
 
 
 class BetterContentActionController extends BetterActionController

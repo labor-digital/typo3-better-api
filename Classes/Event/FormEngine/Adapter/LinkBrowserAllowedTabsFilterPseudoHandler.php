@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\FormEngine\Adapter;
+namespace LaborDigital\T3ba\Event\FormEngine\Adapter;
 
 
 use Psr\Http\Message\ServerRequestInterface;

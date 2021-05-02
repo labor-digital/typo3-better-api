@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\BackendPreview;
+namespace LaborDigital\T3ba\Tool\BackendPreview;
 
-use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
-use LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils;
+use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
+use LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils;
 
 class BackendPreviewRendererContext
 {
@@ -68,7 +68,7 @@ class BackendPreviewRendererContext
     /**
      * The raw typo event instance
      *
-     * @var \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent
+     * @var \LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent
      */
     protected $event;
     
@@ -92,7 +92,7 @@ class BackendPreviewRendererContext
     /**
      * BackendPreviewRendererContext constructor.
      *
-     * @param   \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent  $event
+     * @param   \LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent  $event
      */
     public function __construct(PreviewRenderingEvent $event)
     {
@@ -123,7 +123,7 @@ class BackendPreviewRendererContext
     /**
      * Some additional utilities that help when rendering a backend preview
      *
-     * @return \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils
+     * @return \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils
      */
     public function getUtils(): BackendPreviewUtils
     {
@@ -133,7 +133,7 @@ class BackendPreviewRendererContext
     /**
      * Returns the raw typo event instance
      *
-     * @return \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent
+     * @return \LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent
      */
     public function getEvent(): PreviewRenderingEvent
     {

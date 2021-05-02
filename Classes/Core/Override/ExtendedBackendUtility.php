@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Backend\BackendUtilityRecordFilterEvent;
-use TYPO3\CMS\Backend\Utility\T3BA__Copy__BackendUtility;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Backend\BackendUtilityRecordFilterEvent;
+use TYPO3\CMS\Backend\Utility\T3BaCopyBackendUtility;
 
-class ExtendedBackendUtility extends T3BA__Copy__BackendUtility
+class ExtendedBackendUtility extends T3BaCopyBackendUtility
 {
     /**
      * @inheritDoc

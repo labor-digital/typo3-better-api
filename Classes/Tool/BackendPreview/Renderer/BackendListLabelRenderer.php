@@ -20,33 +20,33 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendListLabelRendererInterface;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
-use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeUtil;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewException;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 use Throwable;
 
 class BackendListLabelRenderer extends AbstractRenderer
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository
+     * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository
      */
     protected $contentRepository;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldRenderer
+     * @var \LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldRenderer
      */
     protected $fieldRenderer;
     
     /**
      * BackendListLabelRenderer constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository  $contentRepository
+     * @param   \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository  $contentRepository
      */
     public function __construct(ContentRepository $contentRepository, FieldRenderer $fieldRenderer)
     {
@@ -58,7 +58,7 @@ class BackendListLabelRenderer extends AbstractRenderer
      * Tries to render the backend list label of a specific content element based on the data provided
      * in the given preview rendering event
      *
-     * @param   \LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent  $event
+     * @param   \LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent  $event
      */
     public function render(ListLabelRenderingEvent $event): void
     {
@@ -175,7 +175,7 @@ class BackendListLabelRenderer extends AbstractRenderer
     /**
      * Renders an automatic fallback label based on the most commonly used columns of the tt_content table
      *
-     * @param   \LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent  $event
+     * @param   \LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent  $event
      *
      * @return string
      */

@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Http;
+namespace LaborDigital\T3ba\ExtConfigHandler\Http;
 
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\Options\Options;

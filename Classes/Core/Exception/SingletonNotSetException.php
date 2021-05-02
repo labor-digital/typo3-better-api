@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Exception;
+namespace LaborDigital\T3ba\Core\Exception;
 
-class SingletonNotSetException extends T3BAException
+class SingletonNotSetException extends T3baException
 {
 
 }

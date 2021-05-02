@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:35
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 abstract class AbstractType extends AbstractForm
 {
@@ -48,7 +48,7 @@ abstract class AbstractType extends AbstractForm
     /**
      * The parent instance that holds the information about all available types
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTypeList
      */
     protected $parent;
     
@@ -62,9 +62,9 @@ abstract class AbstractType extends AbstractForm
     /**
      * AbstractForm constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList  $parent
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTypeList  $parent
      * @param   string|int                                                  $typeName
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext       $context
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext       $context
      */
     public function __construct(AbstractTypeList $parent, $typeName, TcaBuilderContext $context)
     {

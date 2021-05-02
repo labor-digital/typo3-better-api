@@ -20,16 +20,16 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererInterface;
-use LaborDigital\T3BA\Tool\BackendPreview\ContextAwareBackendPreviewRendererInterface;
-use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
-use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
+use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewException;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererContext;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererInterface;
+use LaborDigital\T3ba\Tool\BackendPreview\ContextAwareBackendPreviewRendererInterface;
+use LaborDigital\T3ba\Tool\Simulation\EnvironmentSimulator;
+use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
 use Throwable;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -51,7 +51,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
      * Tries to render the backend preview of a specific content element based on the data provided
      * in the given preview rendering event
      *
-     * @param   \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent  $event
+     * @param   \LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent  $event
      */
     public function render(PreviewRenderingEvent $event): void
     {
@@ -74,9 +74,9 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
      * It has also limited error handling capabilities that catch exceptions and render them as pretty message.
      *
      * @param   string                                                         $rendererClass
-     * @param   \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent  $event
+     * @param   \LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent  $event
      *
-     * @throws \LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewException
+     * @throws \LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewException
      */
     protected function callConcreteRenderer(string $rendererClass, PreviewRenderingEvent $event): void
     {

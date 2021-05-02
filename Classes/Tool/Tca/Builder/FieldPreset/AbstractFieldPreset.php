@@ -36,23 +36,23 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 14:28
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset;
 
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\StringType;
 use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Sql\SqlFieldLength;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexSection;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -78,14 +78,14 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     /**
      * Holds the instance of the form field to configure
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField
      */
     protected $field;
     
     /**
      * The context of the field
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext
      */
     protected $context;
     
@@ -578,7 +578,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      * @param   string|array  $tableInput
      *
      * @return array
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     protected function generateTableNameList($tableInput): array
     {
@@ -619,7 +619,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     /**
      * Returns the instance of the tca table, even if this field is part of a flex form
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable
      */
     protected function getTcaTable(): TcaTable
     {
@@ -640,7 +640,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     /**
      * Returns the tca field, even if the currently configured field is part of a flex form
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField
      */
     protected function getTcaField(): TcaField
     {

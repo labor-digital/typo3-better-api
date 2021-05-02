@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtBase\Controller;
+namespace LaborDigital\T3ba\ExtBase\Controller;
 
 
-use LaborDigital\T3BA\Tool\BackendPreview\BackendPreviewRendererContext;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\AbstractDataModel;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererContext;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\AbstractDataModel;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
 
 trait ContentControllerDataTrait
 {
@@ -93,7 +93,7 @@ trait ContentControllerDataTrait
     /**
      * Returns the instance of the content repository, to read and write the tt_content records with.
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ContentRepository
+     * @return \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository
      */
     protected function getContentRepository(): ContentRepository
     {

@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\Fal;
+namespace LaborDigital\T3ba\Tool\Fal;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo;
-use LaborDigital\T3BA\Tool\Fal\FileInfo\ProcessedFileAdapter;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
+use LaborDigital\T3ba\Tool\Fal\FileInfo\ProcessedFileAdapter;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
@@ -217,7 +217,7 @@ class FalService implements SingletonInterface
      * @param   string         $table  The table of the record that should be linked with this file
      *
      * @return \TYPO3\CMS\Core\Resource\FileReference
-     * @throws \LaborDigital\T3BA\Tool\Fal\FalException
+     * @throws \LaborDigital\T3ba\Tool\Fal\FalException
      */
     public function addFileReference(
         FileInterface $file,
@@ -337,7 +337,7 @@ class FalService implements SingletonInterface
      *                                    fileSize of the uploaded file. 0 means no limit.
      *
      * @return \TYPO3\CMS\Core\Resource\FileInterface|null
-     * @throws \LaborDigital\T3BA\Tool\Fal\FalUploadException
+     * @throws \LaborDigital\T3ba\Tool\Fal\FalUploadException
      * @throws \TYPO3\CMS\Core\Resource\Exception\UploadSizeException
      */
     public function addUploadedFile(string $uploadFieldName, string $falPath, array $options = []): ?FileInterface
@@ -434,7 +434,7 @@ class FalService implements SingletonInterface
      * @param   string|int|FileReference|File|mixed  $file  Can either be the instance of a file or anything that is
      *                                                      valid as a $uid when using getFile()
      *
-     * @return \LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo
+     * @return \LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo
      */
     public function getFileInfo($file): FileInfo
     {

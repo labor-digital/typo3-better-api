@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3ba\Core\Util;
 
 
-use LaborDigital\T3BA\Core\Exception\SingletonNotSetException;
+use LaborDigital\T3ba\Core\Exception\SingletonNotSetException;
 
 trait SingletonInstanceTrait
 {
@@ -36,7 +36,7 @@ trait SingletonInstanceTrait
      * Returns the singleton instance for the class using this trait
      *
      * @return self
-     * @throws \LaborDigital\T3BA\Core\Exception\SingletonNotSetException
+     * @throws \LaborDigital\T3ba\Core\Exception\SingletonNotSetException
      */
     public static function getInstance(): self
     {

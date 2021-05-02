@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  *
  * Emitted when the data handler writes or updates a row into the database
  *
- * @package LaborDigital\T3BA\Event\DataHandler
+ * @package LaborDigital\T3ba\Event\DataHandler
  */
 class DataHandlerDbFieldsFilterEvent
 {

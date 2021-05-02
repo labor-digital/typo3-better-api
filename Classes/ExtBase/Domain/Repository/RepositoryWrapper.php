@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 18:04
  */
 
-namespace LaborDigital\T3BA\ExtBase\Domain\Repository;
+namespace LaborDigital\T3ba\ExtBase\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;

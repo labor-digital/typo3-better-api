@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Domain;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Domain;
 
 
-use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeException;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeException;
 
 class MissingCTypeException extends ContentTypeException
 {

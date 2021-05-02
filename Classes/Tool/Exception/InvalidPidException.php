@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Exception;
+namespace LaborDigital\T3ba\Tool\Exception;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class InvalidPidException extends T3BAException
+class InvalidPidException extends T3baException
 {
 }

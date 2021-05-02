@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 
 
 use Closure;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Core\Exception\NotImplementedException;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Tree;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 
 abstract class AbstractForm
 {
@@ -43,7 +43,7 @@ abstract class AbstractForm
     /**
      * The tree that holds the forms' structural data
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Tree
      */
     protected $tree;
     
@@ -72,7 +72,7 @@ abstract class AbstractForm
     /**
      * AbstractTreeHolder constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext  $context
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext  $context
      */
     public function __construct(TcaBuilderContext $context)
     {
@@ -85,7 +85,7 @@ abstract class AbstractForm
     /**
      * Returns the context object
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext
      */
     public function getContext(): TcaBuilderContext
     {
@@ -130,7 +130,7 @@ abstract class AbstractForm
     /**
      * Returns a list of all elements in the sorted order
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement|null[]|iterable
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement|null[]|iterable
      */
     public function getAllChildren(): iterable
     {
@@ -200,8 +200,8 @@ abstract class AbstractForm
     /**
      * Similar to "getTab()" but always returns a new tab with a new id added to it
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTab|mixed
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTab|mixed
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function getNewTab()
     {
@@ -292,7 +292,7 @@ abstract class AbstractForm
      * @param   int         $type     One of Node::TYPE_
      * @param   \Closure    $factory  The factory to create the new element instance to return
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement|mixed
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement|mixed
      */
     protected function findOrCreateChild($id, int $type, Closure $factory): AbstractElement
     {

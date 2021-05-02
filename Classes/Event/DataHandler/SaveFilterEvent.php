@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
-use LaborDigital\T3BA\Event\DataHandler\Adapter\SaveEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\DataHandler\Adapter\SaveEventAdapter;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 /**
@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * Is triggered when the Typo3 backend saves any kind of record to the database using the data handler.
  * Can be used to prepare the data before it is handled by the data handler
  *
- * @package LaborDigital\T3BA\Event\DataHandler
+ * @package LaborDigital\T3ba\Event\DataHandler
  */
 class SaveFilterEvent implements CoreHookEventInterface
 {

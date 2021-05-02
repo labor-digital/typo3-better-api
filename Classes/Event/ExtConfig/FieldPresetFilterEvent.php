@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\ExtConfig;
+namespace LaborDigital\T3ba\Event\ExtConfig;
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 /**
  * Class FieldPresetFilterEvent
@@ -30,7 +30,7 @@ use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
  * Executed when the list of field presets is loaded in the ext config,
  * allows you to programmatically register or filter the list before it is persisted in the configuration.
  *
- * @package LaborDigital\T3BA\Event\ExtConfig
+ * @package LaborDigital\T3ba\Event\ExtConfig
  */
 class FieldPresetFilterEvent
 {
@@ -42,7 +42,7 @@ class FieldPresetFilterEvent
     protected $presets;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $context;
     
@@ -96,7 +96,7 @@ class FieldPresetFilterEvent
     /**
      * Returns the currently active ext config context instance
      *
-     * @return \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @return \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     public function getContext(): ExtConfigContext
     {

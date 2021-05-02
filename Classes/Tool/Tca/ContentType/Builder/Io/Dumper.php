@@ -20,35 +20,35 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
-use LaborDigital\T3BA\Tool\Sql\ColumnAdapter;
-use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper as TableDumper;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\ContentType;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\DefaultDataModel;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
+use LaborDigital\T3ba\Tool\Sql\ColumnAdapter;
+use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Dumper as TableDumper;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\DefaultDataModel;
 use Neunerlei\Inflection\Inflector;
 
 class Dumper
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Dumper
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Dumper
      */
     protected $tableDumper;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
+     * @var \LaborDigital\T3ba\Tool\Sql\SqlRegistry
      */
     protected $sqlRegistry;
     
@@ -69,7 +69,7 @@ class Dumper
     /**
      * Adds a new content type definition to the list of dumped types
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\ContentType\Builder\ContentType  $type
+     * @param   \LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType  $type
      */
     public function registerType(ContentType $type): void
     {

@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\ExtBase\Persistence;
+namespace LaborDigital\T3ba\Event\ExtBase\Persistence;
 
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -29,7 +29,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  *
  * Emitted when the extBase dataMapper generated a "prepared" query object
  *
- * @package LaborDigital\T3BA\Event\ExtBase\Persistence
+ * @package LaborDigital\T3ba\Event\ExtBase\Persistence
  */
 class DataMapperQueryFilterEvent
 {

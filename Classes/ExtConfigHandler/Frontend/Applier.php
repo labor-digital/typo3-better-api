@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Frontend;
+namespace LaborDigital\T3ba\ExtConfigHandler\Frontend;
 
 
-use LaborDigital\T3BA\Event\Frontend\FrontendAssetFilterEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use LaborDigital\T3BA\ExtConfigHandler\Common\Assets\AssetApplierTrait;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Event\Frontend\FrontendAssetFilterEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfigHandler\Common\Assets\AssetApplierTrait;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier

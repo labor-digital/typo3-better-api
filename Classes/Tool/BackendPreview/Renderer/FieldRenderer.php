@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Fal\FalService;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\Translation\Translator;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Translation\Translator;
 use Neunerlei\Inflection\Inflector;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -39,12 +39,12 @@ class FieldRenderer implements PublicServiceInterface
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Translation\Translator
+     * @var \LaborDigital\T3ba\Tool\Translation\Translator
      */
     protected $translator;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Fal\FalService
+     * @var \LaborDigital\T3ba\Tool\Fal\FalService
      */
     protected $falService;
     

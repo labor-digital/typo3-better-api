@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
-use LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\Handler as TsHandler;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractGroupExtConfigHandler;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\SignaturePluginNameMapTrait;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler as TsHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractGroupExtConfigHandler
@@ -41,12 +41,12 @@ class Handler extends AbstractGroupExtConfigHandler
     }
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ConfigGenerator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module\ConfigGenerator
      */
     protected $generator;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ModuleConfigurator
+     * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module\ModuleConfigurator
      */
     protected $configurator;
     
@@ -60,7 +60,7 @@ class Handler extends AbstractGroupExtConfigHandler
     /**
      * ExtBaseModuleConfigHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module\ConfigGenerator  $generator
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module\ConfigGenerator  $generator
      */
     public function __construct(ConfigGenerator $generator)
     {
@@ -87,7 +87,7 @@ class Handler extends AbstractGroupExtConfigHandler
      */
     public function finishHandler(): void
     {
-        /** @see \LaborDigital\T3BA\ExtConfigHandler\ExtBase\Applier::registerModules() */
+        /** @see \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Applier::registerModules() */
         $this->context->getState()->setAsJson('typo.extBase.module.args', $this->registerModuleArgs, true);
     }
     

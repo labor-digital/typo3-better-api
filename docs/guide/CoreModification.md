@@ -167,7 +167,7 @@ return "$this," and you should be good to go for 99% of the time.
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\OddsAndEnds\InternalAccessTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\InternalAccessTrait;
 class YourClass {
     use InternalAccessTrait;
 

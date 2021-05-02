@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 16:40
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine;
+namespace LaborDigital\T3ba\Tool\FormEngine;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent;
-use LaborDigital\T3BA\Tool\OddsAndEnds\InternalAccessTrait;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\Tool\OddsAndEnds\InternalAccessTrait;
 use TYPO3\CMS\Backend\Form\AbstractNode;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -52,7 +52,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This proxy is wrapped around every form node that is created by our extended node factory.
  * It is used to allow filtering of the form node before it is rendered.
  *
- * @package LaborDigital\T3BA\Tool\FormEngine
+ * @package LaborDigital\T3ba\Tool\FormEngine
  */
 class FormNodeEventProxy extends AbstractNode
 {
@@ -135,11 +135,11 @@ class FormNodeEventProxy extends AbstractNode
     /**
      * Creates a new node proxy instance
      *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
      * @param   \TYPO3\CMS\Backend\Form\NodeFactory            $nodeFactory
      * @param   \TYPO3\CMS\Backend\Form\AbstractNode           $node
      *
-     * @return \LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy
+     * @return \LaborDigital\T3ba\Tool\FormEngine\FormNodeEventProxy
      */
     public static function makeInstance(
         TypoEventBus $eventBus,

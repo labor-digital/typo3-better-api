@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.03.31 at 13:33
  */
 
-namespace LaborDigital\T3BA\Tool\Fal\FileInfo;
+namespace LaborDigital\T3ba\Tool\Fal\FileInfo;
 
-use LaborDigital\T3BA\Tool\Fal\FalException;
-use LaborDigital\T3BA\Tool\Fal\FalFileUrlUtil;
-use LaborDigital\T3BA\Tool\Fal\FalService;
-use LaborDigital\T3BA\Tool\OddsAndEnds\LazyLoadingUtil;
+use LaborDigital\T3ba\Tool\Fal\FalException;
+use LaborDigital\T3ba\Tool\Fal\FalFileUrlUtil;
+use LaborDigital\T3ba\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\OddsAndEnds\LazyLoadingUtil;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
@@ -58,7 +58,7 @@ class FileInfo
     protected $nestedInfo;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Fal\FalService
+     * @var \LaborDigital\T3ba\Tool\Fal\FalService
      */
     protected $falService;
     
@@ -87,9 +87,9 @@ class FileInfo
      * FileInfo constructor.
      *
      * @param   string|int|FileReference|File|mixed     $file
-     * @param   \LaborDigital\T3BA\Tool\Fal\FalService  $falService
+     * @param   \LaborDigital\T3ba\Tool\Fal\FalService  $falService
      *
-     * @throws \LaborDigital\T3BA\Tool\Fal\FalException
+     * @throws \LaborDigital\T3ba\Tool\Fal\FalException
      */
     public function __construct($file, FalService $falService)
     {

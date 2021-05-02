@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Adapter;
+namespace LaborDigital\T3ba\ExtConfig\Adapter;
 
 
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;

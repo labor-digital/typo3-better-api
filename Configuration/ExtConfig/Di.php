@@ -20,30 +20,30 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Configuration\ExtConfig;
+namespace LaborDigital\T3ba\Configuration\ExtConfig;
 
 
-use LaborDigital\T3BA\Core\Di\CompilerPass\CacheConfigurationPass;
-use LaborDigital\T3BA\Core\Di\CompilerPass\EventBusListenerProviderPass;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Di\ServiceFactory;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\EventBus\TypoListenerProvider;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigApplierInterface;
-use LaborDigital\T3BA\ExtConfig\Loader\DiLoader;
-use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
-use LaborDigital\T3BA\ExtConfigHandler\Di\ConfigureDiInterface;
-use LaborDigital\T3BA\ExtConfigHandler\Di\DiAutoConfigTrait;
-use LaborDigital\T3BA\ExtConfigHandler\Di\DiCommonConfigTrait;
-use LaborDigital\T3BA\Tool\Cache\CacheConsumerInterface;
-use LaborDigital\T3BA\Tool\Cache\Implementation\FrontendCache;
-use LaborDigital\T3BA\Tool\Cache\Implementation\PageCache;
-use LaborDigital\T3BA\Tool\Cache\Implementation\SystemCache;
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyEnhancerInterface;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\CompilerPass\CacheConfigurationPass;
+use LaborDigital\T3ba\Core\Di\CompilerPass\EventBusListenerProviderPass;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Di\ServiceFactory;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\EventBus\TypoListenerProvider;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigService;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigApplierInterface;
+use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
+use LaborDigital\T3ba\ExtConfigHandler\Di\ConfigureDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Di\DiAutoConfigTrait;
+use LaborDigital\T3ba\ExtConfigHandler\Di\DiCommonConfigTrait;
+use LaborDigital\T3ba\Tool\Cache\CacheConsumerInterface;
+use LaborDigital\T3ba\Tool\Cache\Implementation\FrontendCache;
+use LaborDigital\T3ba\Tool\Cache\Implementation\PageCache;
+use LaborDigital\T3ba\Tool\Cache\Implementation\SystemCache;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyEnhancerInterface;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\EventBus\EventBusInterface;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
@@ -59,7 +59,7 @@ class Di implements ConfigureDiInterface
 {
     use DiAutoConfigTrait;
     use DiCommonConfigTrait;
-
+    
     /**
      * @inheritDoc
      */
@@ -67,17 +67,18 @@ class Di implements ConfigureDiInterface
         ContainerConfigurator $configurator,
         ContainerBuilder $containerBuilder,
         ExtConfigContext $context
-    ): void {
+    ): void
+    {
         static::autoWire([
             'Classes/Core/{Adapter,BootStage,CodeGeneration,DependencyInjection,Override,VarFs,Event}',
             'Classes/ExtConfig/ExtConfigService.php',
             'Classes/Tool/Cache/off',
             'Classes/**/functions.php',
         ]);
-
+        
         // CUSTOM COMPILER PASSES
         $containerBuilder->addCompilerPass(new EventBusListenerProviderPass(), PassConfig::TYPE_OPTIMIZE, -500);
-
+        
         // CACHE PROVIDER
         $containerBuilder->registerForAutoconfiguration(EnvironmentCacheKeyEnhancerInterface::class)
                          ->addTag('t3ba.cacheKeyEnhancer');
@@ -89,38 +90,38 @@ class Di implements ConfigureDiInterface
                          ->addTag('t3ba.cache', ['identifier' => 'frontend', 'cacheIdentifier' => 't3ba_frontend']);
         $containerBuilder->getDefinition(PageCache::class)
                          ->addTag('t3ba.cache', [
-                             'identifier'      => 'page,pageBased,pageAware',
+                             'identifier' => 'page,pageBased,pageAware',
                              'cacheIdentifier' => 't3ba_frontend',
                          ]);
         $containerBuilder->addCompilerPass(new CacheConfigurationPass());
-
+        
         // PUBLIC EVENT SUBSCRIBER
         $containerBuilder->registerForAutoconfiguration(ExtConfigApplierInterface::class)->addTag('t3ba.public');
         $containerBuilder->registerForAutoconfiguration(LazyEventSubscriberInterface::class)->addTag('t3ba.public');
         $containerBuilder->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('t3ba.public');
-
+        
         // PUBLIC SERVICE INTERFACE
         $containerBuilder->registerForAutoconfiguration(PublicServiceInterface::class)->addTag('t3ba.public');
         $containerBuilder->addCompilerPass(new PublicServicePass('t3ba.public'));
-
+        
         // ALIASES
         $containerBuilder->setAlias(EventBusInterface::class, TypoEventBus::class)->setPublic(true);
-
+        
         // FACTORIES
         foreach (
             [
-                MainLoader::class       => [ServiceFactory::class, 'getMainExtConfigLoader'],
-                DiLoader::class         => [ServiceFactory::class, 'getDiConfigLoader'],
+                MainLoader::class => [ServiceFactory::class, 'getMainExtConfigLoader'],
+                DiLoader::class => [ServiceFactory::class, 'getDiConfigLoader'],
                 ExtConfigContext::class => [ServiceFactory::class, 'getExtConfigContext'],
             ] as $id => $factory
         ) {
             $containerBuilder->findDefinition($id)->setFactory($factory);
         }
-
+        
         // CACHES
         static::registerCache($configurator, 't3ba_system');
         static::registerCache($configurator, 't3ba_frontend');
-
+        
         // SYNTHETICS
         foreach (
             [
@@ -135,7 +136,7 @@ class Di implements ConfigureDiInterface
             $containerBuilder->setDefinition($service, new Definition($service))->setPublic(true)->setSynthetic(true);
         }
     }
-
+    
     /**
      * @inheritDoc
      */

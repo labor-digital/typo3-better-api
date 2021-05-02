@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\ErrorHandler;
+namespace LaborDigital\T3ba\Core\ErrorHandler;
 
 class ProductionExceptionHandler extends ExceptionHandlerAdapter
 {

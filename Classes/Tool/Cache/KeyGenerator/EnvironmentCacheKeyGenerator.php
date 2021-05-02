@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\KeyGenerator;
+namespace LaborDigital\T3ba\Tool\Cache\KeyGenerator;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\Cache\EnvironmentCacheKeyArgFilterEvent;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\Cache\EnvironmentCacheKeyArgFilterEvent;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use TYPO3\CMS\Core\Authentication\CommandLineUserAuthentication;
 
@@ -37,12 +37,12 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
     /**
      * A list of all registered cache key enhancers
      *
-     * @var \LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyEnhancerInterface[]
+     * @var \LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyEnhancerInterface[]
      */
     protected $enhancers = [];
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
     

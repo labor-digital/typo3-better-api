@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone;
 
 use Doctrine\DBAL\Connection;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Exception\NotImplementedException;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -43,7 +43,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
      * @param   string                                                         $tableName
      * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext                $context
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext                $context
      */
     public function __construct(
         string $tableName,
@@ -114,7 +114,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function getQuery(): QueryInterface
     {

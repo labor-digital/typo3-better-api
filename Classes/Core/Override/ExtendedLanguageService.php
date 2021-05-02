@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 17:49
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 
-use LaborDigital\T3BA\Tool\Translation\TranslationLabelProvider;
-use TYPO3\CMS\Core\Localization\T3BA__Copy__LanguageService;
+use LaborDigital\T3ba\Tool\Translation\TranslationLabelProvider;
+use TYPO3\CMS\Core\Localization\T3BaCopyLanguageService;
 
-class ExtendedLanguageService extends T3BA__Copy__LanguageService
+class ExtendedLanguageService extends T3BaCopyLanguageService
 {
     
     /**

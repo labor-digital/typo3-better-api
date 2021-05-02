@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\TypoScript;
+namespace LaborDigital\T3ba\Tool\TypoScript;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Exception\T3BAException;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Exception\T3baException;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -39,14 +39,14 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     use TypoContextAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoScript\TypoScriptConfigurationManager
+     * @var \LaborDigital\T3ba\Tool\TypoScript\TypoScriptConfigurationManager
      */
     protected $configurationManager;
     
     /**
      * TypoScriptService constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoScript\TypoScriptConfigurationManager  $configurationManager
+     * @param   \LaborDigital\T3ba\Tool\TypoScript\TypoScriptConfigurationManager  $configurationManager
      */
     public function __construct(TypoScriptConfigurationManager $configurationManager)
     {
@@ -261,14 +261,14 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      * @param   string|array  $selector  The access path where to find the content element in typoScript
      *
      * @return string
-     * @throws T3BAException
+     * @throws T3baException
      */
     public function renderContentObjectWith($selector): string
     {
         $type = $this->get($selector, ['getType']);
         $config = $this->get($selector);
         if (empty($type) || empty($config)) {
-            throw new T3BAException("The given selector $selector is not a valid cObject");
+            throw new T3baException("The given selector $selector is not a valid cObject");
         }
         
         return $this->renderContentObject($type, $config);

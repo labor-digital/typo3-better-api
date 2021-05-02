@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 14:07
  */
 
-namespace LaborDigital\T3BA\Tool\Rendering;
+namespace LaborDigital\T3ba\Tool\Rendering;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Backend\DbListQueryFilterEvent;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Backend\DbListQueryFilterEvent;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;

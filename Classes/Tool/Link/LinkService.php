@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:43
  */
 
-namespace LaborDigital\T3BA\Tool\Link;
+namespace LaborDigital\T3ba\Tool\Link;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -49,7 +49,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 class LinkService implements SingletonInterface, PublicServiceInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Link\LinkContext
+     * @var \LaborDigital\T3ba\Tool\Link\LinkContext
      */
     protected $context;
     
@@ -70,7 +70,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     /**
      * LinkService constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Link\LinkContext  $context
+     * @param   \LaborDigital\T3ba\Tool\Link\LinkContext  $context
      */
     public function __construct(LinkContext $context)
     {
@@ -84,7 +84,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      * @param   string  $key  The key/name of the link definition to check for
      *
      * @return bool
-     * @see \LaborDigital\T3BA\ExtConfigHandler\Link\ConfigureLinksInterface
+     * @see \LaborDigital\T3ba\ExtConfigHandler\Link\ConfigureLinksInterface
      */
     public function hasDefinition(string $key): bool
     {
@@ -105,7 +105,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      * @param   iterable|null  $fragmentArgs  If you have a definition specified, you can use this parameter to supply
      *                                        arguments to your fragment of the created link instance directly
      *
-     * @return \LaborDigital\T3BA\Tool\Link\Link
+     * @return \LaborDigital\T3ba\Tool\Link\Link
      */
     public function getLink(?string $definition = null, ?iterable $args = [], ?iterable $fragmentArgs = []): Link
     {
@@ -225,7 +225,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      * @param   bool  $withProtocol  True to add the default http or https protocol to the front of the host name
      *
      * @return string
-     * @see        \LaborDigital\T3BA\Tool\TypoContext\Facet\RequestFacet::getHost()
+     * @see        \LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet::getHost()
      * @deprecated will be removed in v11
      */
     public function getHost(bool $withProtocol = true): string

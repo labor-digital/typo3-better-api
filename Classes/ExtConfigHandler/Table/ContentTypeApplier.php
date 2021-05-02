@@ -20,31 +20,31 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 
-use LaborDigital\T3BA\Event\Backend\BackendUtilityRecordFilterEvent;
-use LaborDigital\T3BA\Event\Core\RefIndexRecordDataFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\ActionFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoWithPermsFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent;
-use LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use LaborDigital\T3BA\ExtConfigHandler\Table\ContentType\DataHandlerAdapter;
-use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
-use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeUtil;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ExtensionRowRepository;
+use LaborDigital\T3ba\Event\Backend\BackendUtilityRecordFilterEvent;
+use LaborDigital\T3ba\Event\Core\RefIndexRecordDataFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\ActionFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoWithPermsFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\SaveAfterDbOperationsEvent;
+use LaborDigital\T3ba\Event\DataHandler\SaveFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\DataHandlerAdapter;
+use LaborDigital\T3ba\Tool\DataHandler\DataHandlerService;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ExtensionRowRepository;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 class ContentTypeApplier extends AbstractExtConfigApplier
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ExtensionRowRepository
+     * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ExtensionRowRepository
      */
     protected $repository;
     
@@ -94,7 +94,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
     /**
      * Makes sure that the internal cache gets cleared when we start to save a new tt_content record
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\SaveFilterEvent  $event
      */
     public function onDataSave(SaveFilterEvent $event): void
     {
@@ -142,7 +142,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
     /**
      * Is used to block database requests to virtual columns when the data handler processes the record
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoFilterEvent  $event
      */
     public function onRecordInfoFilter(DataHandlerRecordInfoFilterEvent $event): void
     {
@@ -171,7 +171,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
      * This method will extract our extension columns from the main table and instead write
      * their data into the extension table.
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\DataHandlerDbFieldsFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\DataHandlerDbFieldsFilterEvent  $event
      */
     public function onDbFieldFilter(DataHandlerDbFieldsFilterEvent $event): void
     {
@@ -237,7 +237,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
      * the onDbFieldFilter() can delay the relation creation between the table and the extension table.
      * If that happens this method will clear up the remaining work to link both tables together.
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\SaveAfterDbOperationsEvent  $event
      */
     public function onSaveDbOperations(SaveAfterDbOperationsEvent $event): void
     {
@@ -261,7 +261,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
     /**
      * Makes sure the ref-index has access to all our extension columns in addition to the default tt_content columns
      *
-     * @param   \LaborDigital\T3BA\Event\Core\RefIndexRecordDataFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Core\RefIndexRecordDataFilterEvent  $event
      */
     public function onRefIndexFilter(RefIndexRecordDataFilterEvent $event): void
     {
@@ -276,7 +276,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
      * Injects the extension fields into the database row when the form engine builds the backend form
      * of the tt_content table
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\FormFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\FormFilterEvent  $event
      */
     public function onFormFilter(FormFilterEvent $event): void
     {

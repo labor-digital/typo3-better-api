@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 /**
  * Class BootstrapInitializesErrorHandlingEvent
  *
  * Emitted when the TYPO3 bootstrap initializes the error handling
  *
- * @package LaborDigital\T3BA\Core\Event\Misc
+ * @package LaborDigital\T3ba\Core\Event\Misc
  */
 class BootstrapInitializesErrorHandlingEvent
 {

@@ -18,7 +18,7 @@
 /** @noinspection TraitsPropertiesConflictsInspection */
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtConfig\Traits;
+namespace LaborDigital\T3ba\ExtConfig\Traits;
 
 use Neunerlei\Configuration\Util\ConfigContextAwareTrait;
 
@@ -29,7 +29,7 @@ trait ExtConfigContextAwareTrait
     /**
      * The config context
      *
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $context;
     

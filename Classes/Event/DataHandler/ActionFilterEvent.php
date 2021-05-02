@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
@@ -31,8 +31,8 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  *
  * >>This does NOT include the saving of entries!<<
  *
- * @package LaborDigital\T3BA\Event\Events
- * @see     \LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent
+ * @package LaborDigital\T3ba\Event\Events
+ * @see     \LaborDigital\T3ba\Event\DataHandler\SaveFilterEvent
  */
 class ActionFilterEvent extends AbstractActionEvent
 {

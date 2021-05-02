@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Adapter;
+namespace LaborDigital\T3ba\Core\Adapter;
 
 
 use TYPO3\CMS\Core\Package\PackageInterface;

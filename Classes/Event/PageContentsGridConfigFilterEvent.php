@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 /**
  * Class PageContentsGridConfigFilterEvent
@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event;
  * Dispatched when the page service renders the list of all contents on a page.
  * This can be used to add custom grid types to the mapping
  *
- * @package LaborDigital\T3BA\Event
+ * @package LaborDigital\T3ba\Event
  */
 class PageContentsGridConfigFilterEvent
 {

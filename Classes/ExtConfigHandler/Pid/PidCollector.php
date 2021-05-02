@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Pid;
+namespace LaborDigital\T3ba\ExtConfigHandler\Pid;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
-use LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextAwareTrait;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
+use LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;

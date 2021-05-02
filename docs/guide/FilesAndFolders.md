@@ -35,7 +35,7 @@ This method has two modes of operation.
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -69,7 +69,7 @@ find in the database.
 <?php
 use LaborDigital\Typo3BetterApi\Container\TypoContainer;
 use LaborDigital\Typo3BetterApi\FileAndFolder\FalFileService;
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -97,7 +97,7 @@ This method creates a new file reference. It expects to receive a FAL file insta
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -126,7 +126,7 @@ Adds a file on your local file system to the FAL file system.
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -163,7 +163,7 @@ Handles the upload of files and adds them to the FAL storage.
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -193,7 +193,7 @@ metadata like dimensions, description and platform video id's
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -223,7 +223,7 @@ Returns the url of a given file object
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -258,7 +258,7 @@ at [imageResource.width](https://docs.typo3.org/m/typo3/reference-typoscript/8.7
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -294,7 +294,7 @@ file is returned!
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -319,7 +319,7 @@ Checks if a certain fal folder exists or not.
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -344,7 +344,7 @@ Retrieves a fal folder object from the storage and returns it. Throws an excepti
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -366,7 +366,7 @@ Creates a new directory at the given path. This method handles the path recursiv
 
 ```php
 <?php
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

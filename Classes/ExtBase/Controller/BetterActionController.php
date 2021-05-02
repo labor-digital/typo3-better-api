@@ -19,13 +19,13 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtBase\Controller;
+namespace LaborDigital\T3ba\ExtBase\Controller;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\ExtBase\ActionController\MethodNameFilterEvent;
-use LaborDigital\T3BA\Event\ExtBase\ActionController\RequestFilterEvent;
-use LaborDigital\T3BA\Tool\Link\LinkService;
-use LaborDigital\T3BA\Tool\Rendering\FlashMessageRenderingService;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\ExtBase\ActionController\MethodNameFilterEvent;
+use LaborDigital\T3ba\Event\ExtBase\ActionController\RequestFilterEvent;
+use LaborDigital\T3ba\Tool\Link\LinkService;
+use LaborDigital\T3ba\Tool\Rendering\FlashMessageRenderingService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;

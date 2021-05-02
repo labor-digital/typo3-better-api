@@ -36,16 +36,16 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 13:25
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerRecordInfoWithPermsFilterEvent;
-use TYPO3\CMS\Core\DataHandling\T3BA__Copy__DataHandler;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerDefaultFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoWithPermsFilterEvent;
+use TYPO3\CMS\Core\DataHandling\T3BaCopyDataHandler;
 
-class ExtendedDataHandler extends T3BA__Copy__DataHandler
+class ExtendedDataHandler extends T3BaCopyDataHandler
 {
     /**
      * @inheritDoc

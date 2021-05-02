@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\ExtBase\ActionController;
+namespace LaborDigital\T3ba\Event\ExtBase\ActionController;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
  *
  * Called twice. Once before and once after the request was processed.
  *
- * @package LaborDigital\T3BA\Event\ExtBase\ActionController
+ * @package LaborDigital\T3ba\Event\ExtBase\ActionController
  */
 class RequestFilterEvent
 {

@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine;
+namespace LaborDigital\T3ba\Event\FormEngine;
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
-use LaborDigital\T3BA\Event\FormEngine\Adapter\FormFilterEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\FormEngine\Adapter\FormFilterEventAdapter;
 
 /**
  * Class BackendFormFilterEvent

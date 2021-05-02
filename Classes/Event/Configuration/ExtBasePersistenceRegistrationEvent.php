@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Configuration;
+namespace LaborDigital\T3ba\Event\Configuration;
 
 
 class ExtBasePersistenceRegistrationEvent

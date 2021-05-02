@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Tca\TableDumperAfterBuildEvent;
-use LaborDigital\T3BA\Event\Tca\TableDumperBeforeBuildEvent;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperDataHookTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperGenericTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTypeGeneratorTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Tca\TableDumperAfterBuildEvent;
+use LaborDigital\T3ba\Event\Tca\TableDumperBeforeBuildEvent;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\DumperDataHookTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\DumperGenericTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTypeGeneratorTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 class Dumper
 {
@@ -39,14 +39,14 @@ class Dumper
     use DumperDataHookTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
     
     /**
      * TableDumper constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
      */
     public function __construct(TypoEventBus $eventBus)
     {

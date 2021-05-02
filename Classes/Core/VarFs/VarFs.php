@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.22 at 21:56
  */
 
-namespace LaborDigital\T3BA\Core\VarFs;
+namespace LaborDigital\T3ba\Core\VarFs;
 
-use LaborDigital\T3BA\Core\Util\FilePermissionUtil;
-use LaborDigital\T3BA\Core\VarFs\Exception\InvalidRootPathException;
+use LaborDigital\T3ba\Core\Util\FilePermissionUtil;
+use LaborDigital\T3ba\Core\VarFs\Exception\InvalidRootPathException;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -55,7 +55,7 @@ use Psr\SimpleCache\CacheInterface;
  * Therefore all data that is dynamically generated is now stored in a separate
  * temporary directory tree, which is abstracted by this class.
  *
- * @package LaborDigital\T3BA\Core\VarFs
+ * @package LaborDigital\T3ba\Core\VarFs
  */
 class VarFs
 {
@@ -75,14 +75,14 @@ class VarFs
     /**
      * The list of all loaded mounts
      *
-     * @var \LaborDigital\T3BA\Core\VarFs\Mount[]
+     * @var \LaborDigital\T3ba\Core\VarFs\Mount[]
      */
     protected $mounts = [];
     
     /**
      * VarFs constructor.
      *
-     * @throws \LaborDigital\T3BA\Core\VarFs\Exception\InvalidRootPathException
+     * @throws \LaborDigital\T3ba\Core\VarFs\Exception\InvalidRootPathException
      */
     public function __construct()
     {
@@ -119,7 +119,7 @@ class VarFs
      *
      * @param   string  $id  A unique id for the mount to retrieve
      *
-     * @return \LaborDigital\T3BA\Core\VarFs\Mount
+     * @return \LaborDigital\T3ba\Core\VarFs\Mount
      */
     public function getMount(string $id): Mount
     {

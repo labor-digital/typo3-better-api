@@ -20,20 +20,20 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder;
+namespace LaborDigital\T3ba\Tool\Tca\Builder;
 
 
-use LaborDigital\T3BA\Core\Di\CommonServices;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
+use LaborDigital\T3ba\Core\Di\CommonServices;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
 use Psr\Container\ContainerInterface;
 
 /**
  * Class TcaBuilderServices
  *
- * @package LaborDigital\T3BA\Tool\Tca\Builder
+ * @package LaborDigital\T3ba\Tool\Tca\Builder
  *
  * @property ExtConfigContext $extConfigContext
  * @property SqlRegistry      $sqlRegistry

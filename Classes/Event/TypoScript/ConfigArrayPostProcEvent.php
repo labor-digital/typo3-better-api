@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\TypoScript;
+namespace LaborDigital\T3ba\Event\TypoScript;
 
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
-use LaborDigital\T3BA\Event\TypoScript\Adapter\ConfigArrayPostProcEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\TypoScript\Adapter\ConfigArrayPostProcEventAdapter;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -33,7 +33,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  * Executed at the $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['configArrayPostProc'] hook.
  * Allows you to modify the typoScript config array after it was loaded
  *
- * @package LaborDigital\T3BA\Event
+ * @package LaborDigital\T3ba\Event
  */
 class ConfigArrayPostProcEvent implements CoreHookEventInterface
 {

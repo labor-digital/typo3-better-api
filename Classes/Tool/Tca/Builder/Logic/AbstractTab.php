@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:36
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Logic;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\ElementContainingTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\ElementContainingTrait;
 
 abstract class AbstractTab extends AbstractElement implements FormElementContainingInterface
 {

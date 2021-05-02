@@ -20,16 +20,16 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Util\CTypeRegistrationTrait;
-use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
-use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
-use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Util\CTypeRegistrationTrait;
+use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3ba\Event\Core\ExtTablesLoadedEvent;
+use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use TYPO3\CMS\Core\Imaging\IconRegistry;

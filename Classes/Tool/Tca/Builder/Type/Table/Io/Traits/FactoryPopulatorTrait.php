@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\FormElementContainingInterface;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\FormElementContainingInterface;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTab;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 use Neunerlei\Arrays\Arrays;
 
 trait FactoryPopulatorTrait
@@ -38,7 +38,7 @@ trait FactoryPopulatorTrait
      * @param   TcaTableType  $type
      * @param   array         $tca
      *
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      */
     protected function populateElements(TcaTableType $type, array $tca): void
     {
@@ -146,7 +146,7 @@ trait FactoryPopulatorTrait
      * @param   array         $layoutMeta
      * @param   int           $id
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTab
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTab
      */
     protected function populateTab(TcaTableType $type, array $layoutMeta, int $id): TcaTab
     {
@@ -162,8 +162,8 @@ trait FactoryPopulatorTrait
     /**
      * Creates and populates a new palette / container instance in the table object
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType               $type
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\FormElementContainingInterface  $target
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType               $type
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\FormElementContainingInterface  $target
      * @param   array                                                                     $layoutMeta
      * @param   string                                                                    $id
      * @param   array                                                                     $cols

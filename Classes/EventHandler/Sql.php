@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
+use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 use TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent;
@@ -44,7 +44,7 @@ class Sql implements LazyEventSubscriberInterface
     /**
      * The dynamic sql storage registry
      *
-     * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
+     * @var \LaborDigital\T3ba\Tool\Sql\SqlRegistry
      */
     protected $registry;
     
@@ -58,8 +58,8 @@ class Sql implements LazyEventSubscriberInterface
     /**
      * SqlEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Sql\SqlRegistry  $registry
-     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs      $fs
+     * @param   \LaborDigital\T3ba\Tool\Sql\SqlRegistry  $registry
+     * @param   \LaborDigital\T3ba\Core\VarFs\VarFs      $fs
      */
     public function __construct(SqlRegistry $registry, VarFs $fs)
     {

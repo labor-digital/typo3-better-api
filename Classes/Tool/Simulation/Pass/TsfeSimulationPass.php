@@ -19,14 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Simulation\Pass;
+namespace LaborDigital\T3ba\Tool\Simulation\Pass;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Page\PageService;
-use LaborDigital\T3BA\Tool\Simulation\SimulatedTypoScriptFrontendController;
-use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Page\PageService;
+use LaborDigital\T3ba\Tool\Simulation\SimulatedTypoScriptFrontendController;
+use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;

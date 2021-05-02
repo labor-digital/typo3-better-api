@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery;
 
-use LaborDigital\T3BA\Tool\Database\DatabaseException;
+use LaborDigital\T3ba\Tool\Database\DatabaseException;
 
 class BetterQueryException extends DatabaseException
 {

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview;
+namespace LaborDigital\T3ba\Tool\BackendPreview;
 
 /**
  * Interface ContextAwareBackendPreviewRendererInterface
@@ -28,7 +28,7 @@ namespace LaborDigital\T3BA\Tool\BackendPreview;
  * Extension to the BackendListLabelRendererInterface, that allows injection of the context object
  * into the preview renderer instance when it is created
  *
- * @package LaborDigital\T3BA\Tool\BackendPreview
+ * @package LaborDigital\T3ba\Tool\BackendPreview
  */
 interface ContextAwareBackendPreviewRendererInterface
 {

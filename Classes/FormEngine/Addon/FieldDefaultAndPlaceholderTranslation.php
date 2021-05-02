@@ -36,14 +36,14 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 13:54
  */
 
-namespace LaborDigital\T3BA\FormEngine\Addon;
+namespace LaborDigital\T3ba\FormEngine\Addon;
 
-use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
-use LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeFilterEvent;
-use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerDefaultFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 
 class FieldDefaultAndPlaceholderTranslation
 {
@@ -52,7 +52,7 @@ class FieldDefaultAndPlaceholderTranslation
     /**
      * We have to make sure that default values in the form engine get translated
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\FormFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\FormFilterEvent  $event
      */
     public static function onFormFilter(FormFilterEvent $event): void
     {
@@ -66,7 +66,7 @@ class FieldDefaultAndPlaceholderTranslation
     /**
      * This applier is used to translate the "placeholder" value of form elements.
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodeFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent  $event
      */
     public static function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {
@@ -85,7 +85,7 @@ class FieldDefaultAndPlaceholderTranslation
     /**
      * Handles the default data generation in the data handler
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\DataHandlerDefaultFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\DataHandlerDefaultFilterEvent  $event
      */
     public static function onDefaultFilter(DataHandlerDefaultFilterEvent $event): void
     {

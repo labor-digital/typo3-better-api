@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Common;
+namespace LaborDigital\T3ba\Event\Common;
 
 
-use LaborDigital\T3BA\Event\Backend\BackendAssetFilterEvent;
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
-use LaborDigital\T3BA\Event\Frontend\FrontendAssetFilterEvent;
+use LaborDigital\T3ba\Event\Backend\BackendAssetFilterEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\Frontend\FrontendAssetFilterEvent;
 
 class AssetFilterEventAdapter extends AbstractCoreHookEventAdapter
 {

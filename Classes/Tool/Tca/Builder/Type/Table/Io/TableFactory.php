@@ -20,18 +20,18 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Event\Tca\TableDefaultTcaFilterEvent;
-use LaborDigital\T3BA\Event\Tca\TableFactoryTcaFilterEvent;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Event\Tca\TableDefaultTcaFilterEvent;
+use LaborDigital\T3ba\Event\Tca\TableFactoryTcaFilterEvent;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -40,20 +40,20 @@ class TableFactory implements PublicServiceInterface
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Sql\SqlRegistry
+     * @var \LaborDigital\T3ba\Tool\Sql\SqlRegistry
      */
     protected $sqlRegistry;
     
     /**
      * TableFactory constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory  $typeFactory
-     * @param   \LaborDigital\T3BA\Tool\Sql\SqlRegistry                        $sqlRegistry
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory  $typeFactory
+     * @param   \LaborDigital\T3ba\Tool\Sql\SqlRegistry                        $sqlRegistry
      */
     public function __construct(TypeFactory $typeFactory, SqlRegistry $sqlRegistry)
     {
@@ -65,9 +65,9 @@ class TableFactory implements PublicServiceInterface
      * Creates a new, empty instance for a certain TCA table
      *
      * @param   string                                         $tableName
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $configContext
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $configContext
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable
      */
     public function create(string $tableName, ExtConfigContext $configContext): TcaTable
     {
@@ -85,7 +85,7 @@ class TableFactory implements PublicServiceInterface
      * Either loads the tca for the given tca table from the global configuration or creates,
      * a new, default configuration for it.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable  $table
      *
      * @return void
      */
@@ -120,7 +120,7 @@ class TableFactory implements PublicServiceInterface
     /**
      * Internal helper to generate a blank "default" TCA for a new table.
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable  $table
      *
      * @return array
      */

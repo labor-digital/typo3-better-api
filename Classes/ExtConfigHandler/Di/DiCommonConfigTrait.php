@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;

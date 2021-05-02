@@ -19,19 +19,19 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Backend;
+namespace LaborDigital\T3ba\Event\Backend;
 
 
-use LaborDigital\T3BA\Event\Common\AssetEventTrait;
-use LaborDigital\T3BA\Event\Common\AssetFilterEventAdapter;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\Common\AssetEventTrait;
+use LaborDigital\T3ba\Event\Common\AssetFilterEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 
 /**
  * Class BackendAssetFilterEvent
  *
  * Is triggered when the assets (css/js) of typo3 are compiled in the BACKEND
  *
- * @package LaborDigital\T3BA\Event\Backend
+ * @package LaborDigital\T3ba\Event\Backend
  */
 class BackendAssetFilterEvent implements CoreHookEventInterface
 {

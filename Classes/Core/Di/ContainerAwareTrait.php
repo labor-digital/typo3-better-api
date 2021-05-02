@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3ba\Core\Di;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -29,7 +29,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Makes any class container aware even if your class was loaded without dependency injection
  * the Container() method will return the container instance!
  *
- * @package LaborDigital\T3BA\Core\Di
+ * @package LaborDigital\T3ba\Core\Di
  */
 trait ContainerAwareTrait
 {
@@ -87,7 +87,7 @@ trait ContainerAwareTrait
     /**
      * Returns the instance of the container
      *
-     * @return \LaborDigital\T3BA\Core\Di\DelegateContainer
+     * @return \LaborDigital\T3ba\Core\Di\DelegateContainer
      */
     protected function getContainer(): DelegateContainer
     {
@@ -114,7 +114,7 @@ trait ContainerAwareTrait
     /**
      * Returns a list of commonly used services as a "lazy" lookup method.
      *
-     * @return \LaborDigital\T3BA\Core\Di\CommonServices
+     * @return \LaborDigital\T3ba\Core\Di\CommonServices
      * @see cs() for a short hand
      */
     protected function getCommonServices(): CommonServices
@@ -126,7 +126,7 @@ trait ContainerAwareTrait
      * Shorthand alias of: getCommonServices()
      * Returns a list of commonly used services as a "lazy" lookup method.
      *
-     * @return \LaborDigital\T3BA\Core\Di\CommonServices
+     * @return \LaborDigital\T3ba\Core\Di\CommonServices
      * @see getCommonServices()
      */
     protected function cs(): CommonServices

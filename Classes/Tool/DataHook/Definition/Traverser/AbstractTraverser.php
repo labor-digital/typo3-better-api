@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook\Definition\Traverser;
+namespace LaborDigital\T3ba\Tool\DataHook\Definition\Traverser;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\DataHook\DataHookException;
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookHandlerDefinition;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\DataHook\DataHookException;
+use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookHandlerDefinition;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 
 abstract class AbstractTraverser
@@ -36,16 +36,16 @@ abstract class AbstractTraverser
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
      */
     protected $definition;
     
     /**
      * Prepares the traverser with the required data to traverse
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition  $definition
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition  $definition
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\AbstractTraverser
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\AbstractTraverser
      */
     public function initialize(DataHookDefinition $definition): self
     {
@@ -68,7 +68,7 @@ abstract class AbstractTraverser
      * @param   array   $path     The path through the multi-dimensional data structure to select the value with
      *                            This MUST be empty if the handlers for a whole table are registered
      *
-     * @throws \LaborDigital\T3BA\Tool\DataHook\DataHookException
+     * @throws \LaborDigital\T3ba\Tool\DataHook\DataHookException
      */
     protected function registerHandlerDefinitions(string $nodeKey, array $tca, array $path = []): void
     {

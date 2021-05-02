@@ -36,22 +36,22 @@ declare(strict_types=1);
  * Last modified: 2020.03.21 at 20:48
  */
 
-namespace LaborDigital\T3BA\Tool\DataHook;
+namespace LaborDigital\T3ba\Tool\DataHook;
 
-use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookHandlerDefinition;
+use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookHandlerDefinition;
 
 class DataHookContext
 {
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
      */
     protected $hookDefinition;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookHandlerDefinition
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookHandlerDefinition
      */
     protected $handlerDefinition;
     
@@ -264,7 +264,7 @@ class DataHookContext
     /**
      * Returns the data hook definition object if you need access to the root configuration object
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
      */
     public function getHookDefinition(): DataHookDefinition
     {
@@ -274,7 +274,7 @@ class DataHookContext
     /**
      * Returns the definition of this context's handler
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookHandlerDefinition
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookHandlerDefinition
      */
     public function getHandlerDefinition(): DataHookHandlerDefinition
     {

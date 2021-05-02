@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook;
+namespace LaborDigital\T3ba\Tool\DataHook;
 
 
 use InvalidArgumentException;
@@ -95,7 +95,7 @@ trait DataHookCollectorTrait
      * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
-     * @see \LaborDigital\T3BA\Tool\DataHook\DataHookTypes
+     * @see \LaborDigital\T3ba\Tool\DataHook\DataHookTypes
      */
     public function registerDataHook(
         string $type,

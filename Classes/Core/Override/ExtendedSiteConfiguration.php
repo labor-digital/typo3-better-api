@@ -36,17 +36,17 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 17:36
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Core\SiteConfigFilterEvent;
-use LaborDigital\T3BA\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
-use LaborDigital\T3BA\Tool\OddsAndEnds\ReflectionUtil;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\SiteConfigFilterEvent;
+use LaborDigital\T3ba\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
+use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Backend\Controller\SiteConfigurationController;
-use TYPO3\CMS\Core\Configuration\T3BA__Copy__SiteConfiguration;
+use TYPO3\CMS\Core\Configuration\T3BaCopySiteConfiguration;
 
-class ExtendedSiteConfiguration extends T3BA__Copy__SiteConfiguration
+class ExtendedSiteConfiguration extends T3BaCopySiteConfiguration
 {
     use TypoContextAwareTrait;
     

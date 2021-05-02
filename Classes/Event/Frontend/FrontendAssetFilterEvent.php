@@ -19,19 +19,19 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Frontend;
+namespace LaborDigital\T3ba\Event\Frontend;
 
 
-use LaborDigital\T3BA\Event\Common\AssetEventTrait;
-use LaborDigital\T3BA\Event\Common\AssetFilterEventAdapter;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\Common\AssetEventTrait;
+use LaborDigital\T3ba\Event\Common\AssetFilterEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 
 /**
  * Class FrontendAssetFilterEvent
  *
  * Is triggered when the assets (css/js) of typo3 are compiled in the FRONTEND
  *
- * @package LaborDigital\T3BA\Event\Frontend;
+ * @package LaborDigital\T3ba\Event\Frontend;
  */
 class FrontendAssetFilterEvent implements CoreHookEventInterface
 {

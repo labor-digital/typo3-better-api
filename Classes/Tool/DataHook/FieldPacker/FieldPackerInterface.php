@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook\FieldPacker;
+namespace LaborDigital\T3ba\Tool\DataHook\FieldPacker;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
 
 interface FieldPackerInterface extends PublicServiceInterface
 {
@@ -35,7 +35,7 @@ interface FieldPackerInterface extends PublicServiceInterface
      * The method MUST modify $definition->data after it deserialized the fields.
      * The method MUST return a sequential array containing the keys of all fields that have been unpacked
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition  $definition
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition  $definition
      *
      * @return array
      */
@@ -49,7 +49,7 @@ interface FieldPackerInterface extends PublicServiceInterface
      * The method MUST only serialize the fields that are given $fieldsToPack, all other
      * fields are kept in their original state and therefore don't need to be re-serialized.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition  $definition
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition  $definition
      * @param   array                                                           $fieldsToPack
      */
     public function packFields(DataHookDefinition $definition, array $fieldsToPack): void;

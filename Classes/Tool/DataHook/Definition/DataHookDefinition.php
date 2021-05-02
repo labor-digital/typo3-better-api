@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook\Definition;
+namespace LaborDigital\T3ba\Tool\DataHook\Definition;
 
 
-use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FieldPackerInterface;
+use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FieldPackerInterface;
 
 class DataHookDefinition
 {
@@ -31,7 +31,7 @@ class DataHookDefinition
      * One of DataHookTypes::TYPE_ that defines which kind of hook is processed
      *
      * @var string
-     * @see \LaborDigital\T3BA\Tool\DataHook\DataHookTypes
+     * @see \LaborDigital\T3ba\Tool\DataHook\DataHookTypes
      */
     public $type;
     

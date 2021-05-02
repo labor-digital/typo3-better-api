@@ -19,16 +19,16 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Tca;
+namespace LaborDigital\T3ba\Event\Tca;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 
 /**
  * Class ExtConfigTableBeforeBuildEvent
  *
  * Emitted before the a table instance is converted into the tca array
  *
- * @package LaborDigital\T3BA\Event\Tca
+ * @package LaborDigital\T3ba\Event\Tca
  */
 class TableDumperBeforeBuildEvent
 {

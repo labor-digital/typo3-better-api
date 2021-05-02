@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.08.22 at 21:56
  */
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3ba\Core\Util;
 
 use Throwable;
 
@@ -46,7 +46,7 @@ use Throwable;
  * This wrapper is used to allow failsafe execution of the core system
  * without us breaking the code with exceptions...
  *
- * @package LaborDigital\T3BA\Core\Util
+ * @package LaborDigital\T3ba\Core\Util
  */
 class FailsafeWrapper
 {

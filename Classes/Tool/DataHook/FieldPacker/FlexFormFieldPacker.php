@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook\FieldPacker;
+namespace LaborDigital\T3ba\Tool\DataHook\FieldPacker;
 
 
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

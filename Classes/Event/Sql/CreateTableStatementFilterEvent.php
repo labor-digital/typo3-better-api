@@ -19,14 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Sql;
+namespace LaborDigital\T3ba\Event\Sql;
 
 /**
  * Class CreateTableStatementFilterEvent
  *
  * Triggered when the TCA sql-table definition is generated
  *
- * @package LaborDigital\T3BA\Event\Tca
+ * @package LaborDigital\T3ba\Event\Tca
  */
 class CreateTableStatementFilterEvent
 {

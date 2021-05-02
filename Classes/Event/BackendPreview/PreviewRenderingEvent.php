@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\BackendPreview;
+namespace LaborDigital\T3ba\Event\BackendPreview;
 
-use LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils;
+use LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 
 /**
@@ -30,7 +30,7 @@ use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
  * Is called when the backend tries to draw a preview for a single content element.
  * Mostly for use in the backend preview renderer
  *
- * @package LaborDigital\T3BA\Event\BackendPreview
+ * @package LaborDigital\T3ba\Event\BackendPreview
  */
 class PreviewRenderingEvent
 {
@@ -44,7 +44,7 @@ class PreviewRenderingEvent
     /**
      * The utility class for hooks into the TYPO3 core, default content preview renderer
      *
-     * @var \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils
+     * @var \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils
      */
     protected $utils;
     
@@ -80,7 +80,7 @@ class PreviewRenderingEvent
      * BackendPreviewRenderingEvent constructor.
      *
      * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem        $item
-     * @param   \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils  $utils
+     * @param   \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils  $utils
      * @param   string|null                                                      $pluginVariant
      */
     public function __construct(GridColumnItem $item, BackendPreviewUtils $utils, ?string $pluginVariant)
@@ -196,7 +196,7 @@ class PreviewRenderingEvent
     /**
      * Returns the utility class for hooks into the TYPO3 core, default content preview renderer
      *
-     * @return \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils
+     * @return \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils
      */
     public function getUtils(): BackendPreviewUtils
     {

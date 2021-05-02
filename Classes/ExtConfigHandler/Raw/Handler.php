@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Raw;
+namespace LaborDigital\T3ba\ExtConfigHandler\Raw;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractExtConfigHandler

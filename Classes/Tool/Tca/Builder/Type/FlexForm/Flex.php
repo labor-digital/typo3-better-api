@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm;
 
 
 use Closure;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractForm;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractForm;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 use Neunerlei\Arrays\Arrays;
 
 class Flex extends AbstractForm
@@ -45,7 +45,7 @@ class Flex extends AbstractForm
     /**
      * The form field reference which holds this flex form
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField
      */
     protected $containingField;
     
@@ -96,7 +96,7 @@ class Flex extends AbstractForm
     /**
      * Returns the context object
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext
      */
     public function getContext(): TcaBuilderContext
     {
@@ -142,7 +142,7 @@ class Flex extends AbstractForm
     /**
      * Allows the outside world to update the field linked with this flex form structure
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField  $field
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField  $field
      *
      * @return $this
      */
@@ -204,12 +204,12 @@ class Flex extends AbstractForm
      *
      * @param   string  $id  The id / column name of this field in the database
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexField
      */
     public function getField(string $id): FlexField
     {
         return $this->findOrCreateChild($id, Node::TYPE_FIELD, function (Node $node) {
-            /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField $i */
+            /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexField $i */
             return $this->context->cs()->di->makeInstance(
                 FlexField::class, [
                     $node,
@@ -222,7 +222,7 @@ class Flex extends AbstractForm
     /**
      * Returns the list of all registered fields that are currently inside the layout
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexField[]
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexField[]
      */
     public function getFields(): iterable
     {
@@ -240,7 +240,7 @@ class Flex extends AbstractForm
     public function getSection(string $id): FlexSection
     {
         return $this->findOrCreateChild($id, Node::TYPE_CONTAINER, function (Node $node) {
-            /** @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection $i */
+            /** @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexSection $i */
             $i = $this->context->cs()->di->makeInstance(
                 FlexSection::class, [$node, $this]
             );
@@ -265,7 +265,7 @@ class Flex extends AbstractForm
     /**
      * Returns the list of all sections that are used inside of this form
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexSection[]|iterable
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexSection[]|iterable
      */
     public function getSections(): iterable
     {
@@ -302,7 +302,7 @@ class Flex extends AbstractForm
      *
      * @param   string|null  $id  Either the name of the tab, or null if the default tab "sDEF" should be returned
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexTab
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexTab
      */
     public function getTab(?string $id = null): FlexTab
     {
@@ -359,7 +359,7 @@ class Flex extends AbstractForm
      * @param   string|int|array  $id
      * @param   int|null          $type
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node|null
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node|null
      */
     protected function findNodeByPath($id, ?int $type = null): ?Node
     {
@@ -381,7 +381,7 @@ class Flex extends AbstractForm
      *
      * @return array
      * @throws \JsonException
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\InvalidPathException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\InvalidPathException
      */
     protected function parsePath($path): array
     {

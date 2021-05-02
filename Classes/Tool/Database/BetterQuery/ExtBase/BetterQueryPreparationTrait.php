@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.28 at 10:52
  */
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase;
 
-use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\TinyTimy\DateTimy;

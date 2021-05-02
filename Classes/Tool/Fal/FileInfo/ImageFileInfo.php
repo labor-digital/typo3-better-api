@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.31 at 22:13
  */
 
-namespace LaborDigital\T3BA\Tool\Fal\FileInfo;
+namespace LaborDigital\T3ba\Tool\Fal\FileInfo;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
 
 class ImageFileInfo
 {
@@ -52,15 +52,15 @@ class ImageFileInfo
     protected $parent;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Fal\FalService
+     * @var \LaborDigital\T3ba\Tool\Fal\FalService
      */
     protected $falService;
     
     /**
      * ImageFileInfo constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Fal\FileInfo\FileInfo  $parent
-     * @param   \LaborDigital\T3BA\Tool\Fal\FalService         $falFileService
+     * @param   \LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo  $parent
+     * @param   \LaborDigital\T3ba\Tool\Fal\FalService         $falFileService
      */
     public function __construct(FileInfo $parent, FalService $falFileService)
     {

@@ -20,18 +20,18 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Loader;
+namespace LaborDigital\T3ba\ExtConfig\Loader;
 
 use Closure;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
-use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfig\Interfaces\SiteBasedHandlerInterface;
-use LaborDigital\T3BA\ExtConfig\Interfaces\StandAloneHandlerInterface;
-use LaborDigital\T3BA\ExtConfig\SiteBased\ConfigFinder;
-use LaborDigital\T3BA\ExtConfig\SiteBased\SiteConfigContext;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
+use LaborDigital\T3ba\ExtConfig\ExtConfigService;
+use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\StandAloneHandlerInterface;
+use LaborDigital\T3ba\ExtConfig\SiteBased\ConfigFinder;
+use LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
 use Neunerlei\Configuration\Event\BeforeStateCachingEvent;
@@ -46,20 +46,20 @@ class MainLoader
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigService
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigService
      */
     protected $extConfigService;
     
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
     
     /**
      * MainConfigLoader constructor.
      *
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigService  $extConfigService
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigService  $extConfigService
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
      */
     public function __construct(
         ExtConfigService $extConfigService,

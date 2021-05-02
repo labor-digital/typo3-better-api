@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\BackendPreview\Hook;
+namespace LaborDigital\T3ba\Tool\BackendPreview\Hook;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
-use LaborDigital\T3BA\Tool\BackendPreview\Renderer\FieldListRenderer;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
+use LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
@@ -39,7 +39,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  * It can be registered in a type configuration of a TCA (of the tt_content table).
  * It will then trigger the actual preview renderer that has access to the mapped configuration array
  *
- * @package LaborDigital\T3BA\Tool\BackendPreview\Hook
+ * @package LaborDigital\T3ba\Tool\BackendPreview\Hook
  */
 class ContentPreviewRenderer extends StandardContentPreviewRenderer implements SingletonInterface
 {
@@ -91,7 +91,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
      *
      * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem  $item
      *
-     * @return \LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent
+     * @return \LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent
      */
     protected function getEvent(GridColumnItem $item): PreviewRenderingEvent
     {
@@ -114,7 +114,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
      *
      * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem  $item
      *
-     * @return \LaborDigital\T3BA\Tool\BackendPreview\Hook\BackendPreviewUtils
+     * @return \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils
      */
     protected function makeUtilsInstance(GridColumnItem $item): BackendPreviewUtils
     {

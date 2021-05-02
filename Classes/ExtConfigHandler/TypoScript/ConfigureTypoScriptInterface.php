@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
+namespace LaborDigital\T3ba\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureTypoScriptInterface
 {
@@ -31,8 +31,8 @@ interface ConfigureTypoScriptInterface
     /**
      * Used to add typoScript and tsConfig to your setup
      *
-     * @param   \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator  $configurator
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                          $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                          $context
      */
     public static function configureTypoScript(TypoScriptConfigurator $configurator, ExtConfigContext $context): void;
     

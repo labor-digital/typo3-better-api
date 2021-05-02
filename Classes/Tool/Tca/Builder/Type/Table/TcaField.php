@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
 use Doctrine\DBAL\Schema\Column;
-use LaborDigital\T3BA\Tool\Sql\ColumnAdapter;
-use LaborDigital\T3BA\Tool\Sql\FallbackType;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
+use LaborDigital\T3ba\Tool\Sql\ColumnAdapter;
+use LaborDigital\T3ba\Tool\Sql\FallbackType;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
 
 class TcaField extends AbstractField
@@ -39,7 +39,7 @@ class TcaField extends AbstractField
     /**
      * Holds the flexForm configuration if there is one
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaFieldFlexFormConfig
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaFieldFlexFormConfig
      */
     protected $flex;
     

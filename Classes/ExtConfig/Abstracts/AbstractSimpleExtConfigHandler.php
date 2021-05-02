@@ -20,22 +20,22 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Abstracts;
+namespace LaborDigital\T3ba\ExtConfig\Abstracts;
 
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
-use LaborDigital\T3BA\ExtConfig\InvalidConfiguratorException;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
+use LaborDigital\T3ba\ExtConfig\InvalidConfiguratorException;
 
 /**
  * Class AbstractSimpleExtConfigHandler
  *
  * Use this for simple ext config handlers where you just
  *
- * @package LaborDigital\T3BA\ExtConfig
+ * @package LaborDigital\T3ba\ExtConfig
  */
 abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
 {
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
+     * @var \LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
      */
     protected $configurator;
     
@@ -48,7 +48,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\ExtConfig\InvalidConfiguratorException
+     * @throws \LaborDigital\T3ba\ExtConfig\InvalidConfiguratorException
      */
     public function prepare(): void
     {
@@ -82,7 +82,7 @@ abstract class AbstractSimpleExtConfigHandler extends AbstractExtConfigHandler
      * The class has to implement the ExtConfigConfiguratorInterface!
      *
      * @return string
-     * @see \LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
+     * @see \LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigConfiguratorInterface
      */
     abstract protected function getConfiguratorClass(): string;
     

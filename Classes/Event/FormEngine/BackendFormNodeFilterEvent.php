@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine;
+namespace LaborDigital\T3ba\Event\FormEngine;
 
 /**
  * Class BackendFormNodeFilterEvent
@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  * This event is emitted once for every backend form node before it is rendered.
  * It allows to modify the renderer instance or to render a node replacement directly.
  *
- * @package LaborDigital\T3BA\Event\FormEngine
+ * @package LaborDigital\T3ba\Event\FormEngine
  */
 class BackendFormNodeFilterEvent
 {

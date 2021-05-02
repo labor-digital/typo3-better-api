@@ -20,21 +20,21 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Event\Configuration\ExtBasePersistenceRegistrationEvent;
-use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
-use LaborDigital\T3BA\Event\Core\ExtTablesLoadedEvent;
-use LaborDigital\T3BA\Event\Core\TcaCompletelyLoadedEvent;
-use LaborDigital\T3BA\Event\Core\TcaWithoutOverridesLoadedEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use LaborDigital\T3BA\ExtConfigHandler\Table\ContentType\Loader as ContentTypeLoader;
-use LaborDigital\T3BA\ExtConfigHandler\Table\Loader as TableLoader;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Event\Configuration\ExtBasePersistenceRegistrationEvent;
+use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3ba\Event\Core\ExtTablesLoadedEvent;
+use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
+use LaborDigital\T3ba\Event\Core\TcaWithoutOverridesLoadedEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader as ContentTypeLoader;
+use LaborDigital\T3ba\ExtConfigHandler\Table\Loader as TableLoader;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -53,7 +53,7 @@ class TableApplier extends AbstractExtConfigApplier
     /**
      * ConfigureTcaTableApplier constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\VarFs\VarFs  $fs
+     * @param   \LaborDigital\T3ba\Core\VarFs\VarFs  $fs
      */
     public function __construct(VarFs $fs)
     {
@@ -122,7 +122,7 @@ class TableApplier extends AbstractExtConfigApplier
     /**
      * Injects the persistence configuration into the extbase domain mapper
      *
-     * @param   \LaborDigital\T3BA\Event\Configuration\ExtBasePersistenceRegistrationEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Configuration\ExtBasePersistenceRegistrationEvent  $event
      */
     public function onPersistenceRegistration(ExtBasePersistenceRegistrationEvent $event): void
     {

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Element;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element;
 
 
 use Neunerlei\Configuration\State\ConfigState;

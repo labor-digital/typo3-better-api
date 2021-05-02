@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\EventSubscriber;
+namespace LaborDigital\T3ba\ExtConfigHandler\EventSubscriber;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 
 /**
@@ -33,24 +33,24 @@ use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
  * This is only used to bind static event subscribers into the listener provider at runtime.
  * It should not be used in your code,
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\EventSubscriber
+ * @package LaborDigital\T3ba\ExtConfigHandler\EventSubscriber
  */
 class EventSubscriberBridge
 {
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
     
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoListenerProvider
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoListenerProvider
      */
     protected $provider;
     
     /**
      * EventSubscriberBridge constructor.
      *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus  $eventBus
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
      */
     public function __construct(TypoEventBus $eventBus)
     {

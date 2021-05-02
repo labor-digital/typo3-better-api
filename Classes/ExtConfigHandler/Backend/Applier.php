@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
+namespace LaborDigital\T3ba\ExtConfigHandler\Backend;
 
 
-use LaborDigital\T3BA\Event\Backend\BackendAssetFilterEvent;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use LaborDigital\T3BA\ExtConfigHandler\Common\Assets\AssetApplierTrait;
+use LaborDigital\T3ba\Event\Backend\BackendAssetFilterEvent;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfigHandler\Common\Assets\AssetApplierTrait;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier

@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Tca;
+namespace LaborDigital\T3ba\Event\Tca;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 
 /**
  * Class TableDefaultTcaFilterEvent
@@ -29,7 +29,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  * Dispatched when the defaults are applied to a tca table instance.
  * Can be used to modify the defaults on a global or per table scope
  *
- * @package LaborDigital\T3BA\Event\Tca
+ * @package LaborDigital\T3ba\Event\Tca
  */
 class TableDefaultTcaFilterEvent
 {

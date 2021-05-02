@@ -20,23 +20,23 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3ba\Core\Di;
 
 
 use Closure;
-use LaborDigital\T3BA\Core\VarFs\VarFs;
-use LaborDigital\T3BA\Tool\Database\DbService;
-use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
-use LaborDigital\T3BA\Tool\Fal\FalService;
-use LaborDigital\T3BA\Tool\Link\LinkService;
-use LaborDigital\T3BA\Tool\Page\PageService;
-use LaborDigital\T3BA\Tool\Session\SessionService;
-use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
-use LaborDigital\T3BA\Tool\Translation\Translator;
-use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
-use LaborDigital\T3BA\Tool\TypoContext\Facet\DependencyInjectionFacet;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
+use LaborDigital\T3ba\Core\VarFs\VarFs;
+use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\DataHandler\DataHandlerService;
+use LaborDigital\T3ba\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Link\LinkService;
+use LaborDigital\T3ba\Tool\Page\PageService;
+use LaborDigital\T3ba\Tool\Session\SessionService;
+use LaborDigital\T3ba\Tool\Simulation\EnvironmentSimulator;
+use LaborDigital\T3ba\Tool\Translation\Translator;
+use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
+use LaborDigital\T3ba\Tool\TypoContext\Facet\DependencyInjectionFacet;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\DependencyInjection\NotFoundException;
@@ -58,10 +58,10 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  * The $generator is used to allow overrides in a testing context and to utilize the internal
  * singleton storage when used in a ContainerAwareTrait
  *
- * @package LaborDigital\T3BA\Core\DependencyInjection
+ * @package LaborDigital\T3ba\Core\DependencyInjection
  *
- * @see     \LaborDigital\T3BA\Core\Di\ContainerAwareTrait
- * @see     \LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait
+ * @see     \LaborDigital\T3ba\Core\Di\ContainerAwareTrait
+ * @see     \LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait
  *
  * @property DbService                $db
  * @property LinkService              $links

@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Link\LinkBrowser;
+namespace LaborDigital\T3ba\Tool\Link\LinkBrowser;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Link\LinkException;
-use LaborDigital\T3BA\Tool\Link\LinkService;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Link\LinkException;
+use LaborDigital\T3ba\Tool\Link\LinkService;
 use TYPO3\CMS\Frontend\Typolink\AbstractTypolinkBuilder;
 use TYPO3\CMS\Frontend\Typolink\UnableToLinkException;
 

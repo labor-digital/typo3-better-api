@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Sql\Io;
+namespace LaborDigital\T3ba\Tool\Sql\Io;
 
 
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\Sql\CreateTableStatementFilterEvent;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\Sql\CreateTableStatementFilterEvent;
 
 class Dumper
 {
@@ -40,7 +40,7 @@ class Dumper
      * @param   Table[]  $tables
      *
      * @return string
-     * @see \LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor::findTableDiff()
+     * @see \LaborDigital\T3ba\Tool\Sql\Io\DefinitionProcessor::findTableDiff()
      */
     public function dump(array $tables): string
     {

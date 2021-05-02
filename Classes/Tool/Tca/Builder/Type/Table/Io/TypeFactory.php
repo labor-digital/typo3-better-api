@@ -20,19 +20,19 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryDataHookTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryPopulatorTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryTypeLoaderTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TableDefaults;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryDataHookTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryPopulatorTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\FactoryTypeLoaderTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 
 class TypeFactory implements PublicServiceInterface
 {
@@ -71,7 +71,7 @@ class TypeFactory implements PublicServiceInterface
     /**
      * Populates the type based on the TCA showitem string
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType  $type
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType  $type
      * @param   array|null                                                   $typeTca
      */
     public function populate(TcaTableType $type, ?array $typeTca = null): void

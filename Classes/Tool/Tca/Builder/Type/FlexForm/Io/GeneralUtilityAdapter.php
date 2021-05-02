@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

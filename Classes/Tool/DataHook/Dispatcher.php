@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook;
+namespace LaborDigital\T3ba\Tool\DataHook;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\DataHook\PostProcessorEvent;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
-use LaborDigital\T3BA\Tool\DataHook\Definition\DefinitionResolver;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\DataHook\PostProcessorEvent;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DefinitionResolver;
 use Neunerlei\Arrays\Arrays;
 
 class Dispatcher implements PublicServiceInterface
@@ -36,19 +36,19 @@ class Dispatcher implements PublicServiceInterface
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DefinitionResolver
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\DefinitionResolver
      */
     protected $definitionResolver;
     
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
     
     /**
      * Dispatcher constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DefinitionResolver  $definitionResolver
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DefinitionResolver  $definitionResolver
      */
     public function __construct(DefinitionResolver $definitionResolver, TypoEventBus $eventBus)
     {
@@ -69,9 +69,9 @@ class Dispatcher implements PublicServiceInterface
      * @param   array   $data       The array containing the record to be processed by the hook
      * @param   object  $event      The original PSR-14 event which was used to trigger this dispatcher
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
-     * @throws \LaborDigital\T3BA\Tool\DataHook\DataHookException
-     * @see \LaborDigital\T3BA\Tool\DataHook\DataHookTypes
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
+     * @throws \LaborDigital\T3ba\Tool\DataHook\DataHookException
+     * @see \LaborDigital\T3ba\Tool\DataHook\DataHookTypes
      */
     public function dispatch(string $type, string $tableName, array $data, object $event): DataHookDefinition
     {
@@ -89,7 +89,7 @@ class Dispatcher implements PublicServiceInterface
                 throw new DataHookException('Invalid data hook context class given: ' . $contextClass
                                             . ' The class has to extend the ' . DataHookContext::class . ' class!');
             }
-            /** @var \LaborDigital\T3BA\Tool\DataHook\DataHookContext $context */
+            /** @var \LaborDigital\T3ba\Tool\DataHook\DataHookContext $context */
             $context = $this->makeInstance($contextClass, [$definition, $handlerDefinition, $event]);
             
             // Execute the handler

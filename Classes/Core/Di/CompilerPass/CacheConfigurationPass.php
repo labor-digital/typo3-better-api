@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Di\CompilerPass;
+namespace LaborDigital\T3ba\Core\Di\CompilerPass;
 
 
-use LaborDigital\T3BA\Core\CodeGeneration\CodeGenerationHelperTrait;
-use LaborDigital\T3BA\EventHandler\CacheClearing;
-use LaborDigital\T3BA\Tool\Cache\CacheFactory;
-use LaborDigital\T3BA\Tool\Cache\CacheInterface;
-use LaborDigital\T3BA\Tool\Cache\Implementation\GenericCache;
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator;
+use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerationHelperTrait;
+use LaborDigital\T3ba\EventHandler\CacheClearing;
+use LaborDigital\T3ba\Tool\Cache\CacheFactory;
+use LaborDigital\T3ba\Tool\Cache\CacheInterface;
+use LaborDigital\T3ba\Tool\Cache\Implementation\GenericCache;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator;
 use Neunerlei\Arrays\Arrays;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3ba\Core\Di;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\ExtConfigService;
-use LaborDigital\T3BA\ExtConfig\Loader\DiLoader;
-use LaborDigital\T3BA\ExtConfig\Loader\MainLoader;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigService;
+use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
@@ -36,7 +36,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
  *
  * Factory to create service instances in the dependency injection container
  *
- * @package LaborDigital\T3BA\Core\DependencyInjection
+ * @package LaborDigital\T3ba\Core\DependencyInjection
  */
 class ServiceFactory
 {

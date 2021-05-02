@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\OddsAndEnds;
+namespace LaborDigital\T3ba\Tool\OddsAndEnds;
 
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 use ReflectionObject;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
@@ -69,12 +69,12 @@ class LazyLoadingUtil
      * @param $object
      *
      * @return int
-     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
+     * @throws \LaborDigital\T3ba\Core\Exception\T3baException
      */
     public static function getObjectUid($object): int
     {
         if (! is_object($object)) {
-            throw new T3BAException('getObjectUid() accepts only object instances!');
+            throw new T3baException('getObjectUid() accepts only object instances!');
         }
         if ($object instanceof AbstractEntity || method_exists($object, 'getUid')) {
             return $object->getUid();
@@ -86,8 +86,8 @@ class LazyLoadingUtil
             if (is_numeric($value)) {
                 return (int)$value;
             }
-            throw new T3BAException('The given object\'s proxy did not return a numeric value for its uid!');
+            throw new T3baException('The given object\'s proxy did not return a numeric value for its uid!');
         }
-        throw new T3BAException('getObjectUid() could not find an option to return the entities UID');
+        throw new T3baException('getObjectUid() could not find an option to return the entities UID');
     }
 }

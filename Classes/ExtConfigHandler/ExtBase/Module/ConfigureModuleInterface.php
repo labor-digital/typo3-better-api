@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Module;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureModuleInterface
 {

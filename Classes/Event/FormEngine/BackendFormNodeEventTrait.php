@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine;
+namespace LaborDigital\T3ba\Event\FormEngine;
 
-use LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy;
+use LaborDigital\T3ba\Tool\FormEngine\FormNodeEventProxy;
 use TYPO3\CMS\Backend\Form\AbstractNode;
 
 trait BackendFormNodeEventTrait
@@ -30,7 +30,7 @@ trait BackendFormNodeEventTrait
     /**
      * The instance of the proxy that dispatched this event
      *
-     * @var \LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy
+     * @var \LaborDigital\T3ba\Tool\FormEngine\FormNodeEventProxy
      */
     protected $proxy;
     
@@ -52,7 +52,7 @@ trait BackendFormNodeEventTrait
     /**
      * BackendFormNodeFilterEvent constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy  $proxy
+     * @param   \LaborDigital\T3ba\Tool\FormEngine\FormNodeEventProxy  $proxy
      * @param   \TYPO3\CMS\Backend\Form\AbstractNode                   $node
      * @param   array|null                                             $result
      */
@@ -66,7 +66,7 @@ trait BackendFormNodeEventTrait
     /**
      * Returns the instance of the proxy that dispatched this event
      *
-     * @return \LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy
+     * @return \LaborDigital\T3ba\Tool\FormEngine\FormNodeEventProxy
      */
     public function getProxy(): FormNodeEventProxy
     {

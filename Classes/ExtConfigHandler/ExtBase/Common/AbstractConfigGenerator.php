@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 19:37
  */
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\Common;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
 use Iterator;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 abstract class AbstractConfigGenerator
 {

@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 15:45
  */
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase;
 
-use LaborDigital\T3BA\ExtBase\Domain\ExtendedRelation\ExtendedRelationQueryResult;
-use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\ExtBase\Domain\ExtendedRelation\ExtendedRelationQueryResult;
+use LaborDigital\T3ba\ExtBase\Domain\Repository\BetterRepository;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -52,7 +52,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  *
  * NOTE: This class is immutable! If you extend it keep in mind that your extension should be immutable as well!
  *
- * @package LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase
+ * @package LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase
  */
 class ExtBaseBetterQuery extends AbstractBetterQuery
 {

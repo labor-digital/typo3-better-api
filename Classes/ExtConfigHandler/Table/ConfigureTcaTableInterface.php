@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 
 /**
  * Interface ConfigureTcaTableInterface
@@ -32,9 +32,9 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  * Allows you to configure the Table Configuration Array (TCA) of a specific database table.
  * The name of the table will be automatically inferred by the PHP namespace.
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Table
+ * @package LaborDigital\T3ba\ExtConfigHandler\Table
  *
- * @see     \LaborDigital\T3BA\ExtConfigHandler\Table\TcaTableNameProviderInterface Allows you to define a specifc
+ * @see     \LaborDigital\T3ba\ExtConfigHandler\Table\TcaTableNameProviderInterface Allows you to define a specifc
  *          table name without being dependent on the PHP namespace.
  */
 interface ConfigureTcaTableInterface
@@ -43,8 +43,8 @@ interface ConfigureTcaTableInterface
     /**
      * Should be used to configure the table that is passed to it
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext            $context
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext            $context
      */
     public static function configureTable(TcaTable $table, ExtConfigContext $context): void;
 }

@@ -37,7 +37,7 @@ declare(strict_types=1);
  */
 
 
-namespace LaborDigital\T3BA\FormEngine\Util;
+namespace LaborDigital\T3ba\FormEngine\Util;
 
 use Neunerlei\Options\Options;
 

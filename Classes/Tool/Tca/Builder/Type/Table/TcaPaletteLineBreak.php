@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement;
 
 class TcaPaletteLineBreak extends AbstractElement
 {

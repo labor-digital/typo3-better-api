@@ -20,9 +20,9 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Log;
+namespace LaborDigital\T3ba\Tool\Log;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogLevel;
@@ -37,7 +37,7 @@ use TYPO3\CMS\Core\Log\Writer\WriterInterface;
  * and the old-school $GLOBALS['BE_USER']->writelog() logger. It writes the log entries always in the
  * sys_log table, but fills the field sets of both implementations, while doing so.
  *
- * @package LaborDigital\T3BA\Tool\Log
+ * @package LaborDigital\T3ba\Tool\Log
  */
 class BeLogWriter extends AbstractWriter
 {

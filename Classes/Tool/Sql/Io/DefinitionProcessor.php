@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Sql\Io;
+namespace LaborDigital\T3ba\Tool\Sql\Io;
 
 
 use Doctrine\DBAL\ParameterType;
@@ -31,13 +31,13 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\Sql\TableFilterEvent;
-use LaborDigital\T3BA\Tool\Sql\Definition;
-use LaborDigital\T3BA\Tool\Sql\FallbackType;
-use LaborDigital\T3BA\Tool\Sql\SqlFieldLength;
-use LaborDigital\T3BA\Tool\Sql\SqlRegistry;
-use LaborDigital\T3BA\Tool\Sql\TableOverride;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\Sql\TableFilterEvent;
+use LaborDigital\T3ba\Tool\Sql\Definition;
+use LaborDigital\T3ba\Tool\Sql\FallbackType;
+use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
+use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
+use LaborDigital\T3ba\Tool\Sql\TableOverride;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Database\Schema\DefaultTcaSchema;
 
@@ -59,7 +59,7 @@ class DefinitionProcessor
      * Receives the sql registry definition object and generates a list with tables
      * containing differences to be dumped into an SQL string
      *
-     * @param   \LaborDigital\T3BA\Tool\Sql\Definition  $definition
+     * @param   \LaborDigital\T3ba\Tool\Sql\Definition  $definition
      *
      * @return array
      */
@@ -102,7 +102,7 @@ class DefinitionProcessor
      * The result is a list of pseudo tables that are used to build the extension SQL
      *
      * @param   array                                   $tables
-     * @param   \LaborDigital\T3BA\Tool\Sql\Definition  $definition
+     * @param   \LaborDigital\T3ba\Tool\Sql\Definition  $definition
      *
      * @return array
      */
@@ -192,7 +192,7 @@ class DefinitionProcessor
      * Merges the registered table overrides into the $combined table object
      *
      * @param   \Doctrine\DBAL\Schema\Table                $combined
-     * @param   \LaborDigital\T3BA\Tool\Sql\TableOverride  $override
+     * @param   \LaborDigital\T3ba\Tool\Sql\TableOverride  $override
      */
     protected function mergeOverride(Table $combined, TableOverride $override): void
     {
@@ -211,7 +211,7 @@ class DefinitionProcessor
      *
      * @param   \Doctrine\DBAL\Schema\Table             $combined
      * @param   \Doctrine\DBAL\Schema\Table             $initial
-     * @param   \LaborDigital\T3BA\Tool\Sql\Definition  $definition
+     * @param   \LaborDigital\T3ba\Tool\Sql\Definition  $definition
      *
      * @return \Doctrine\DBAL\Schema\Table|null
      */

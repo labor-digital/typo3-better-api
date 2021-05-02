@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Link;
+namespace LaborDigital\T3ba\Tool\Link;
 
 
 class DefinitionNotFoundException extends LinkException

@@ -20,16 +20,16 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Implementation;
+namespace LaborDigital\T3ba\Tool\Cache\Implementation;
 
 
 use Closure;
-use LaborDigital\T3BA\Tool\Cache\CacheInterface;
-use LaborDigital\T3BA\Tool\Cache\InvalidArgumentException;
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\ArrayBasedCacheKeyGenerator;
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface;
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\CallableCacheKeyGenerator;
-use LaborDigital\T3BA\Tool\Cache\Util\CacheUtil;
+use LaborDigital\T3ba\Tool\Cache\CacheInterface;
+use LaborDigital\T3ba\Tool\Cache\InvalidArgumentException;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\ArrayBasedCacheKeyGenerator;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\CallableCacheKeyGenerator;
+use LaborDigital\T3ba\Tool\Cache\Util\CacheUtil;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
@@ -44,7 +44,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     protected $concreteFrontend;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface
+     * @var \LaborDigital\T3ba\Tool\Cache\KeyGenerator\CacheKeyGeneratorInterface
      */
     protected $environmentCacheKeyGenerator;
     

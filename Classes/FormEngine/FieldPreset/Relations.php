@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\FormEngine\FieldPreset;
+namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
-use LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Category\CategoryRegistry;
@@ -491,7 +491,7 @@ class Relations extends AbstractFieldPreset
      *    ]
      *  ]
      *
-     * @throws \LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/ImageManipulation.html
      */
     public function applyRelationImage(array $options = []): void

@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
 use ArgumentCountError;
 use Error;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Event\Core\ErrorFilterEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Kernel;
+use LaborDigital\T3ba\Event\Core\ErrorFilterEvent;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Exception\ConfigClassNotAutoloadableException;
 use Neunerlei\FileSystem\Fs;
@@ -60,7 +60,7 @@ class ErrorHandlerDevStage implements BootStageInterface
      * Special development only error handling helpers.
      * This clears your container cache if it failed to resolve something, which allows you easier debugging.
      *
-     * @param   \LaborDigital\T3BA\Event\Core\ErrorFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\Core\ErrorFilterEvent  $event
      */
     public function onError(ErrorFilterEvent $event): void
     {
@@ -71,7 +71,7 @@ class ErrorHandlerDevStage implements BootStageInterface
         // Flush the DI cache if a service was not defined, or changed
         $error = $event->getError();
         if ($error instanceof ConfigClassNotAutoloadableException
-            || $error instanceof \LaborDigital\T3BA\Tool\Cache\InvalidArgumentException
+            || $error instanceof \LaborDigital\T3ba\Tool\Cache\InvalidArgumentException
             || $error instanceof InvalidArgumentException
             || ($error instanceof \InvalidArgumentException
                 && preg_match('~Event listener ".*?" is not callable~i', $error->getMessage()))

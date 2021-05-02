@@ -20,18 +20,18 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
 use Doctrine\DBAL\Schema\Table;
-use LaborDigital\T3BA\Tool\DataHook\DataHookCollectorTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractType;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractTypeList;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Traits\TcaTableConfigTrait;
+use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTypeList;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\TcaTableConfigTrait;
 use Neunerlei\Arrays\Arrays;
 
 class TcaTable extends AbstractTypeList
@@ -41,12 +41,12 @@ class TcaTable extends AbstractTypeList
     use DataHookCollectorTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TypeFactory
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory
      */
     protected $typeFactory;
     
@@ -87,7 +87,7 @@ class TcaTable extends AbstractTypeList
      * Used to provide the correct auto-complete information
      *
      * @inheritDoc
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType
      */
     public function getType($typeName = null): AbstractType
     {

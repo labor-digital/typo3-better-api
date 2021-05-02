@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Di;
+namespace LaborDigital\T3ba\Event\Di;
 
 use Psr\Container\ContainerInterface;
 
@@ -30,7 +30,7 @@ use Psr\Container\ContainerInterface;
  * Emitted after the dependency injection container was instantiated (not build!)
  * This is emitted every time TYPO3 boots up
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class DiContainerFilterEvent
 {

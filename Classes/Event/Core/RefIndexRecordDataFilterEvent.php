@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Event\Core;
+namespace LaborDigital\T3ba\Event\Core;
 
 /**
  * Class RefIndexRecordDataFilterEvent
@@ -44,7 +44,7 @@ namespace LaborDigital\T3BA\Event\Core;
  * Emitted when the ref index class requests a record from the database to resolve the references for
  * This process is cached, so the event is only emitted once per call!
  *
- * @package LaborDigital\T3BA\Event\Core
+ * @package LaborDigital\T3ba\Event\Core
  */
 class RefIndexRecordDataFilterEvent
 {

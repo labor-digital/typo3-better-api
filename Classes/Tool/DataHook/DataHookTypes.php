@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook;
+namespace LaborDigital\T3ba\Tool\DataHook;
 
 
 interface DataHookTypes

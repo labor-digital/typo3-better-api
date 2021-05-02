@@ -19,14 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\DataHook\Definition;
+namespace LaborDigital\T3ba\Tool\DataHook\Definition;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\DataHook\DataHookException;
-use LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\TcaTraverser;
-use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FieldPackerInterface;
-use LaborDigital\T3BA\Tool\Tca\TcaUtil;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\DataHook\DataHookException;
+use LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\TcaTraverser;
+use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FieldPackerInterface;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 
 class DefinitionResolver
@@ -35,14 +35,14 @@ class DefinitionResolver
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\TcaTraverser
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\TcaTraverser
      */
     protected $traverser;
     
     /**
      * DefinitionResolver constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\TcaTraverser  $traverser
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\TcaTraverser  $traverser
      */
     public function __construct(TcaTraverser $traverser)
     {
@@ -57,7 +57,7 @@ class DefinitionResolver
      * @param   string  $tableName  The name of the table to traverse the tca for
      * @param   array   $data       The given data to match against the tca of the table
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
      */
     public function resolve(string $type, string $tableName, array $data): DataHookDefinition
     {
@@ -75,8 +75,8 @@ class DefinitionResolver
      * @param   string  $tableName
      * @param   array   $data
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
-     * @throws \LaborDigital\T3BA\Tool\DataHook\DataHookException '
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
+     * @throws \LaborDigital\T3ba\Tool\DataHook\DataHookException '
      */
     protected function resolveBasicDefinitionObject(string $type, string $tableName, array $data): DataHookDefinition
     {
@@ -102,9 +102,9 @@ class DefinitionResolver
      * Resolves the field packer classes and instantiates them on the definition object.
      * It also executes the unpacking of the given data
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition  $definition
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition  $definition
      *
-     * @throws \LaborDigital\T3BA\Tool\DataHook\DataHookException
+     * @throws \LaborDigital\T3ba\Tool\DataHook\DataHookException
      */
     protected function applyFieldPackers(DataHookDefinition $definition): void
     {
@@ -124,7 +124,7 @@ class DefinitionResolver
     /**
      * Resolves the definition, containing the handler instances for the current data hook
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition  $definition
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition  $definition
      */
     protected function resolveHandlerDefinitions(DataHookDefinition $definition): void
     {

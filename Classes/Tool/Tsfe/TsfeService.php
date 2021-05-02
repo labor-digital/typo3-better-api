@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:21
  */
 
-namespace LaborDigital\T3BA\Tool\Tsfe;
+namespace LaborDigital\T3ba\Tool\Tsfe;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Simulation\EnvironmentSimulator;
-use LaborDigital\T3BA\Tool\Simulation\SimulatedTypoScriptFrontendController;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Simulation\EnvironmentSimulator;
+use LaborDigital\T3ba\Tool\Simulation\SimulatedTypoScriptFrontendController;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -80,7 +80,7 @@ class TsfeService implements SingletonInterface, PublicServiceInterface
      * If we have to forcefully initialize it, we will do that.
      *
      * @return TypoScriptFrontendController
-     * @throws \LaborDigital\T3BA\Tool\Tsfe\TsfeNotLoadedException
+     * @throws \LaborDigital\T3ba\Tool\Tsfe\TsfeNotLoadedException
      */
     public function getTsfe(): TypoScriptFrontendController
     {

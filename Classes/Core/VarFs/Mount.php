@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\VarFs;
+namespace LaborDigital\T3ba\Core\VarFs;
 
 
-use LaborDigital\T3BA\Core\Util\FilePermissionUtil;
-use LaborDigital\T3BA\Core\VarFs\Exception\FileNotFoundException;
-use LaborDigital\T3BA\Core\VarFs\Exception\InvalidFilePathException;
+use LaborDigital\T3ba\Core\Util\FilePermissionUtil;
+use LaborDigital\T3ba\Core\VarFs\Exception\FileNotFoundException;
+use LaborDigital\T3ba\Core\VarFs\Exception\InvalidFilePathException;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
 use SplFileInfo;
@@ -90,7 +90,7 @@ class Mount
      * @param   string  $filePath  The name / relative path of the file to retrieve
      *
      * @return \SplFileInfo
-     * @throws \LaborDigital\T3BA\Core\VarFs\Exception\FileNotFoundException
+     * @throws \LaborDigital\T3ba\Core\VarFs\Exception\FileNotFoundException
      */
     public function getFile(string $filePath): SplFileInfo
     {
@@ -109,7 +109,7 @@ class Mount
      * @param   string  $filePath  The name / relative path of the file to read
      *
      * @return mixed
-     * @throws \LaborDigital\T3BA\Core\VarFs\Exception\FileNotFoundException
+     * @throws \LaborDigital\T3ba\Core\VarFs\Exception\FileNotFoundException
      */
     public function getFileContent(string $filePath)
     {
@@ -163,7 +163,7 @@ class Mount
      *                             include is used instead.
      *
      * @return mixed
-     * @throws \LaborDigital\T3BA\Core\VarFs\Exception\FileNotFoundException
+     * @throws \LaborDigital\T3ba\Core\VarFs\Exception\FileNotFoundException
      */
     public function includeFile(string $filePath, bool $once = true)
     {
@@ -233,7 +233,7 @@ class Mount
      * @param   string  $path
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Core\VarFs\Exception\InvalidFilePathException
+     * @throws \LaborDigital\T3ba\Core\VarFs\Exception\InvalidFilePathException
      */
     protected function resolvePath(string $path): string
     {

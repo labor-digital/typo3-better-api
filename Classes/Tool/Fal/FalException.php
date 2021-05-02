@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\Fal;
+namespace LaborDigital\T3ba\Tool\Fal;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class FalException extends T3BAException
+class FalException extends T3baException
 {
 }

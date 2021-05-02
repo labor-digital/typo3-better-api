@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset;
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 
 /**
  * Interface FieldPresetInterface
@@ -47,8 +47,8 @@ use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
  *      public function applyMyPreset(){}
  * }
  *
- * @package LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset
- * @see     \LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset
+ * @package LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset
+ * @see     \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset
  */
 interface FieldPresetInterface extends PublicServiceInterface
 {

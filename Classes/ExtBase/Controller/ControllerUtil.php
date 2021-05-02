@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtBase\Controller;
+namespace LaborDigital\T3ba\ExtBase\Controller;
 
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -32,7 +32,7 @@ class ControllerUtil
      *
      * @param $controller
      *
-     * @throws \LaborDigital\T3BA\ExtBase\Controller\NotAControllerException
+     * @throws \LaborDigital\T3ba\ExtBase\Controller\NotAControllerException
      */
     public static function requireActionController($controller): void
     {

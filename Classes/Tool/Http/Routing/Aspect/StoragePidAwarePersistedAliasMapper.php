@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Http\Routing\Aspect;
+namespace LaborDigital\T3ba\Tool\Http\Routing\Aspect;
 
 
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;

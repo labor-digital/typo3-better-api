@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine;
+namespace LaborDigital\T3ba\Event\FormEngine;
 
 /**
  * Class BackendFormNodePostProcessorEvent
@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  * This event is emitted once for every backend form node after it was rendered.
  * You can use this to modify or replace the result of the renderer dynamically
  *
- * @package LaborDigital\T3BA\Event\FormEngine
+ * @package LaborDigital\T3ba\Event\FormEngine
  */
 class BackendFormNodePostProcessorEvent
 {

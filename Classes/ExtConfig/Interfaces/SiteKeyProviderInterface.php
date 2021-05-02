@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Interfaces;
+namespace LaborDigital\T3ba\ExtConfig\Interfaces;
 
 /**
  * Interface SiteKeyProviderInterface
@@ -29,7 +29,7 @@ namespace LaborDigital\T3BA\ExtConfig\Interfaces;
  * In other handlers this interface is not used. It is optional to filter configs to apply only to specific
  * sites.
  *
- * @package LaborDigital\T3BA\ExtConfig\Interfaces
+ * @package LaborDigital\T3ba\ExtConfig\Interfaces
  */
 interface SiteKeyProviderInterface
 {

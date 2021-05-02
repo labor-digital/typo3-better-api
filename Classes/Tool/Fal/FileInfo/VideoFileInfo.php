@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.31 at 21:54
  */
 
-namespace LaborDigital\T3BA\Tool\Fal\FileInfo;
+namespace LaborDigital\T3ba\Tool\Fal\FileInfo;
 
 class VideoFileInfo
 {

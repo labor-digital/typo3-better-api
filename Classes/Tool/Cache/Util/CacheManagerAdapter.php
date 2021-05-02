@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\Util;
+namespace LaborDigital\T3ba\Tool\Cache\Util;
 
 
 use TYPO3\CMS\Core\Cache\CacheManager;

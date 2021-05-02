@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Tca;
+namespace LaborDigital\T3ba\Event\Tca;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 
 /**
  * Class ExtConfigTableRawTcaTypeFilterEvent
@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
  * Dispatched when a tca table instance is converted into it's array form
  * Can be used to filter the raw type tca before it is merged with the table defaults
  *
- * @package LaborDigital\T3BA\Event\Tca
+ * @package LaborDigital\T3ba\Event\Tca
  */
 class TableDumperTypeFilterEvent
 {
@@ -60,7 +60,7 @@ class TableDumperTypeFilterEvent
      * ExtConfigTableRawTcaTypeFilterEvent constructor.
      *
      * @param   array                                                        $typeTca
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType  $type
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType  $type
      * @param   TcaTable                                                     $table
      */
     public function __construct(array $typeTca, TcaTableType $type, TcaTable $table)

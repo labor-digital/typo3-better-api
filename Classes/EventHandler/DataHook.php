@@ -20,37 +20,37 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent;
-use LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent;
-use LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\SavePostProcessorEvent;
-use LaborDigital\T3BA\Event\FormEngine\FormFilterEvent;
-use LaborDigital\T3BA\Tool\Database\DbService;
-use LaborDigital\T3BA\Tool\DataHook\DataHookTypes;
-use LaborDigital\T3BA\Tool\DataHook\Dispatcher;
+use LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent;
+use LaborDigital\T3ba\Event\DataHandler\SaveAfterDbOperationsEvent;
+use LaborDigital\T3ba\Event\DataHandler\SaveFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\SavePostProcessorEvent;
+use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
+use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\DataHook\Dispatcher;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
 class DataHook implements LazyEventSubscriberInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Dispatcher
+     * @var \LaborDigital\T3ba\Tool\DataHook\Dispatcher
      */
     protected $dispatcher;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Database\DbService
+     * @var \LaborDigital\T3ba\Tool\Database\DbService
      */
     protected $dbService;
     
     /**
      * DataHookEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Dispatcher  $dispatcher
-     * @param   \LaborDigital\T3BA\Tool\Database\DbService   $dbService
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Dispatcher  $dispatcher
+     * @param   \LaborDigital\T3ba\Tool\Database\DbService   $dbService
      */
     public function __construct(Dispatcher $dispatcher, DbService $dbService)
     {
@@ -73,7 +73,7 @@ class DataHook implements LazyEventSubscriberInterface
     /**
      * Run the save hook queue
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\SaveFilterEvent  $event
      */
     public function onSaveFilter(SaveFilterEvent $event): void
     {
@@ -87,7 +87,7 @@ class DataHook implements LazyEventSubscriberInterface
     /**
      * Run the save post processor queue
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\SavePostProcessorEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\SavePostProcessorEvent  $event
      */
     public function onSavePostProcessor(SavePostProcessorEvent $event): void
     {
@@ -101,7 +101,7 @@ class DataHook implements LazyEventSubscriberInterface
     /**
      * Run the after db operations queue
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\SaveAfterDbOperationsEvent  $event
      */
     public function onAfterDbOperations(SaveAfterDbOperationsEvent $event): void
     {
@@ -112,7 +112,7 @@ class DataHook implements LazyEventSubscriberInterface
     /**
      * Run the action (copy, delete, ...) hook queue
      *
-     * @param   \LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent  $event
+     * @param   \LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent  $event
      */
     public function onActionPostProcessor(ActionPostProcessorEvent $event): void
     {
@@ -127,7 +127,7 @@ class DataHook implements LazyEventSubscriberInterface
     /**
      * Run the form filter hook queue
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\FormFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\FormFilterEvent  $event
      */
     public function onFormFilter(FormFilterEvent $event): void
     {

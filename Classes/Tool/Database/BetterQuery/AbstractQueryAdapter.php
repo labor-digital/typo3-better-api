@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -184,7 +184,7 @@ abstract class AbstractQueryAdapter
      * @param   string            $field  The name of the validated field for the speaking exception
      *
      * @return array
-     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     public function ensureArrayValue($value, string $field): array
     {

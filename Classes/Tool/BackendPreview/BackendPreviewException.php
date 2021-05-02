@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\BackendPreview;
+namespace LaborDigital\T3ba\Tool\BackendPreview;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class BackendPreviewException extends T3BAException
+class BackendPreviewException extends T3baException
 {
 }

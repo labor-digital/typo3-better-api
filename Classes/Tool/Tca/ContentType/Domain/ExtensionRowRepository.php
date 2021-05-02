@@ -20,23 +20,23 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Domain;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Domain;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Database\DbService;
-use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
-use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeUtil;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\DataHandler\DataHandlerService;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 
 class ExtensionRowRepository implements PublicServiceInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\Database\DbService
+     * @var \LaborDigital\T3ba\Tool\Database\DbService
      */
     protected $dbService;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
+     * @var \LaborDigital\T3ba\Tool\DataHandler\DataHandlerService
      */
     protected $dataHandlerService;
     
@@ -137,7 +137,7 @@ class ExtensionRowRepository implements PublicServiceInterface
      * @param   int     $parentUid
      *
      * @return array
-     * @throws \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\UnknownChildTableException
+     * @throws \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\UnknownChildTableException
      */
     protected function resolveTableNameAndUid(string $cType, int $parentUid): array
     {

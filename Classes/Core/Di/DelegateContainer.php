@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\Di;
+namespace LaborDigital\T3ba\Core\Di;
 
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\Util\SingletonInstanceTrait;
+use LaborDigital\T3ba\Core\Util\SingletonInstanceTrait;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
@@ -36,7 +36,7 @@ class DelegateContainer implements ContainerInterface
     use SingletonInstanceTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Core\Di\MiniContainer
+     * @var \LaborDigital\T3ba\Core\Di\MiniContainer
      */
     protected $internal;
     
@@ -105,7 +105,7 @@ class DelegateContainer implements ContainerInterface
     /**
      * Returns the internal mini container for our root services
      *
-     * @return \LaborDigital\T3BA\Core\Di\MiniContainer
+     * @return \LaborDigital\T3ba\Core\Di\MiniContainer
      */
     public function getInternal(): MiniContainer
     {

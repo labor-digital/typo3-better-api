@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Tca;
+namespace LaborDigital\T3ba\Event\Tca;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 
 /**
  * Class TableFactoryTcaFilterEvent
@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
  * Dispatched when the TCA builder factory loads the TCA of a specific table.
  * Can be used to modify the configuration on a global or per table scope
  *
- * @package LaborDigital\T3BA\Event\Tca
+ * @package LaborDigital\T3ba\Event\Tca
  */
 class TableFactoryTcaFilterEvent
 {

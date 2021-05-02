@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\BackendPreview;
+namespace LaborDigital\T3ba\Event\BackendPreview;
 
 
-use LaborDigital\T3BA\Event\BackendPreview\Adapter\ListLabelRenderingEventAdapter;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\BackendPreview\Adapter\ListLabelRenderingEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 
 /**
  * Class BackendListLabelFilterEvent
@@ -31,7 +31,7 @@ use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
  * Called when the backend tries to render the label of a list entry of a tt_content element.
  * Mostly for use in the backend preview renderer
  *
- * @package LaborDigital\T3BA\Event\BackendPreview
+ * @package LaborDigital\T3ba\Event\BackendPreview
  */
 class ListLabelRenderingEvent implements CoreHookEventInterface
 {

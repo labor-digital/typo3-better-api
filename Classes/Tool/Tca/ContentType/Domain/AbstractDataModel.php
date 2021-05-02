@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Domain;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Domain;
 
 
 use InvalidArgumentException;

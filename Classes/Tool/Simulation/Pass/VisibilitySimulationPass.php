@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Simulation\Pass;
+namespace LaborDigital\T3ba\Tool\Simulation\Pass;
 
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 
 class VisibilitySimulationPass implements SimulatorPassInterface
 {

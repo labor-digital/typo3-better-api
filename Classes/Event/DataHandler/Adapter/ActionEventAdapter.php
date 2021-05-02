@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHandler\Adapter;
+namespace LaborDigital\T3ba\Event\DataHandler\Adapter;
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
-use LaborDigital\T3BA\Event\DataHandler\ActionFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\ActionPostProcessorEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\DataHandler\ActionFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 

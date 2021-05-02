@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Page;
+namespace LaborDigital\T3ba\Tool\Page;
 
-use LaborDigital\T3BA\Core\Di\StaticContainerAwareTrait;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 

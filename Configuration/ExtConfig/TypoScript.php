@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Configuration\ExtConfig;
+namespace LaborDigital\T3ba\Configuration\ExtConfig;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\ConfigureTypoScriptInterface;
-use LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\ConfigureTypoScriptInterface;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 
 class TypoScript implements ConfigureTypoScriptInterface
 {

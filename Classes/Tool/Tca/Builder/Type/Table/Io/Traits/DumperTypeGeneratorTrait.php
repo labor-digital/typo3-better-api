@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 use Neunerlei\Inflection\Inflector;
 
 trait DumperTypeGeneratorTrait
@@ -73,7 +73,7 @@ trait DumperTypeGeneratorTrait
      * @param                                                            $typeName
      * @param   array                                                    $tca
      * @param   array                                                    $typeTca
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTable  $table
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable  $table
      *
      * @return void
      */

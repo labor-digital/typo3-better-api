@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\BackendPreview\ListLabelRenderingEvent;
-use LaborDigital\T3BA\Event\BackendPreview\PreviewRenderingEvent;
-use LaborDigital\T3BA\Tool\BackendPreview\Renderer\BackendListLabelRenderer;
-use LaborDigital\T3BA\Tool\BackendPreview\Renderer\BackendPreviewRenderer;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent;
+use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
+use LaborDigital\T3ba\Tool\BackendPreview\Renderer\BackendListLabelRenderer;
+use LaborDigital\T3ba\Tool\BackendPreview\Renderer\BackendPreviewRenderer;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 

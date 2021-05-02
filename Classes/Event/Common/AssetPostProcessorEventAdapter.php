@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Common;
+namespace LaborDigital\T3ba\Event\Common;
 
 
-use LaborDigital\T3BA\Event\Backend\BackendAssetPostProcessorEvent;
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
-use LaborDigital\T3BA\Event\Frontend\FrontendAssetPostProcessorEvent;
+use LaborDigital\T3ba\Event\Backend\BackendAssetPostProcessorEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\Frontend\FrontendAssetPostProcessorEvent;
 
 class AssetPostProcessorEventAdapter extends AbstractCoreHookEventAdapter
 {

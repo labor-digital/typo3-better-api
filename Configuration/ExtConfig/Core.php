@@ -20,25 +20,25 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Configuration\ExtConfig;
+namespace LaborDigital\T3ba\Configuration\ExtConfig;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\Core\ConfigureTypoCoreInterface;
-use LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator;
-use LaborDigital\T3BA\ExtConfigHandler\Fluid\ConfigureFluidInterface;
-use LaborDigital\T3BA\ExtConfigHandler\Fluid\FluidConfigurator;
-use LaborDigital\T3BA\ExtConfigHandler\Http\ConfigureHttpInterface;
-use LaborDigital\T3BA\ExtConfigHandler\Http\HttpConfigurator;
-use LaborDigital\T3BA\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
-use LaborDigital\T3BA\FormEngine\Addon\FalFileBaseDir;
-use LaborDigital\T3BA\Middleware\RequestCollectorMiddleware;
-use LaborDigital\T3BA\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
-use LaborDigital\T3BA\Tool\FormEngine\Custom\Field\CustomFieldNode;
-use LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard\CustomWizardNode;
-use LaborDigital\T3BA\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapper;
-use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkBuilder;
-use LaborDigital\T3BA\Tool\Link\LinkBrowser\LinkHandler;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\Core\ConfigureTypoCoreInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Core\TypoCoreConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Fluid\ConfigureFluidInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Fluid\FluidConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Http\ConfigureHttpInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Http\HttpConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
+use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
+use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
+use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldNode;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardNode;
+use LaborDigital\T3ba\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapper;
+use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkBuilder;
+use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkHandler;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
@@ -46,7 +46,7 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureHttpInterface,
                       ConfigureTypoCoreInterface
 {
-
+    
     /**
      * @inheritDoc
      */
@@ -60,32 +60,32 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
                 ],
             ],
         ]);
-
+        
         // Register globals configuration for the TYPO3 core api
         $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS', [
-            'SYS'        => [
+            'SYS' => [
                 'linkHandler' => [
                     'linkSetRecord' => LinkHandler::class,
                 ],
-                'formEngine'  => [
-                    'linkHandler'  => [
+                'formEngine' => [
+                    'linkHandler' => [
                         'linkSetRecord' => LinkHandler::class,
                     ],
                     'nodeRegistry' => [
-                        't3baField'  => [
+                        't3baField' => [
                             'nodeName' => 't3baField',
                             'priority' => 40,
-                            'class'    => CustomFieldNode::class,
+                            'class' => CustomFieldNode::class,
                         ],
                         't3baWizard' => [
                             'nodeName' => 't3baWizard',
                             'priority' => 40,
-                            'class'    => CustomWizardNode::class,
+                            'class' => CustomWizardNode::class,
                         ],
                     ],
                 ],
             ],
-            'FE'         => [
+            'FE' => [
                 'typolinkBuilder' => [
                     'linkSetRecord' => LinkBuilder::class,
                 ],
@@ -98,10 +98,10 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
                 ],
             ],
         ]);
-
-
+        
+        
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -109,19 +109,19 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
     {
         // Register our cache service cache
         $configurator->registerCache('t3ba_frontend', VariableFrontend::class, Typo3DatabaseBackend::class, [
-            'groups'  => 'pages',
+            'groups' => 'pages',
             'options' => [
                 'compression' => true,
             ],
         ]);
         $configurator->registerCache('t3ba_system', VariableFrontend::class, Typo3DatabaseBackend::class, [
-            'groups'  => 'system',
+            'groups' => 'system',
             'options' => [
                 'compression' => true,
             ],
         ]);
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -129,7 +129,7 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
     {
         $configurator->registerViewHelpers();
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -139,10 +139,10 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
             'T3BAStoragePidAwarePersistedAliasMapper',
             StoragePidAwarePersistedAliasMapper::class
         );
-
+        
         $configurator
             ->registerMiddleware(RequestCollectorMiddleware::class, [
-                'after'  => 'typo3/cms-frontend/site',
+                'after' => 'typo3/cms-frontend/site',
                 'before' => 'typo3/cms-frontend/base-redirect-resolver',
             ])
             ->registerMiddleware(RequestCollectorMiddleware::class, [

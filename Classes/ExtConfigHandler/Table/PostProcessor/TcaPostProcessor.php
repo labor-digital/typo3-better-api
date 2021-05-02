@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
-use LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 
 /**
  * Class TcaPostProcessor
@@ -40,7 +40,7 @@ use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
  *
  * Feel free to add your own steps to create custom TCA configuration options.
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor
+ * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor
  */
 class TcaPostProcessor implements PublicServiceInterface
 {

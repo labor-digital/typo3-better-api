@@ -37,8 +37,8 @@ declare(strict_types=1);
  * Last modified: 2020.03.18 at 18:40
  */
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Core\TcaWithoutOverridesLoadedEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\TcaWithoutOverridesLoadedEvent;
 
 TypoEventBus::getInstance()->dispatch(
     new TcaWithoutOverridesLoadedEvent());

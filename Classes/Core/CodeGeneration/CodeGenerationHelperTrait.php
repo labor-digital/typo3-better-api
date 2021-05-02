@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Core\CodeGeneration;
+namespace LaborDigital\T3ba\Core\CodeGeneration;
 
 use InvalidArgumentException;
 use ReflectionFunction;

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Sql;
+namespace LaborDigital\T3ba\Event\Sql;
 
 
 use Doctrine\DBAL\Schema\Table;
@@ -38,7 +38,7 @@ use Doctrine\DBAL\Schema\Table;
  * In a normal world you would only want to edit $tableNew, but I give you $tableOld as well,
  * so you can use it if required.
  *
- * @package LaborDigital\T3BA\Event\Sql
+ * @package LaborDigital\T3ba\Event\Sql
  */
 class TableFilterEvent
 {

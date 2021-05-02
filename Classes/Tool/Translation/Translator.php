@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\Translation;
+namespace LaborDigital\T3ba\Tool\Translation;
 
-use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
@@ -63,7 +63,7 @@ class Translator implements SingletonInterface
     protected $eventBus;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tsfe\TsfeService
+     * @var \LaborDigital\T3ba\Tool\Tsfe\TsfeService
      */
     protected $tsfe;
     
@@ -105,7 +105,7 @@ class Translator implements SingletonInterface
      * TranslationService constructor.
      *
      * @param   \Neunerlei\EventBus\EventBusInterface       $eventBus
-     * @param   \LaborDigital\T3BA\Tool\Tsfe\TsfeService    $tsfe
+     * @param   \LaborDigital\T3ba\Tool\Tsfe\TsfeService    $tsfe
      * @param   \Neunerlei\Configuration\State\ConfigState  $configState
      */
     public function __construct(EventBusInterface $eventBus, TsfeService $tsfe, ConfigState $configState)
@@ -376,7 +376,7 @@ class Translator implements SingletonInterface
      * @param   string  $selector  The selector to resolve
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Tool\Translation\TranslationException
+     * @throws \LaborDigital\T3ba\Tool\Translation\TranslationException
      */
     protected function resolveOverride(string $selector): string
     {
@@ -416,7 +416,7 @@ class Translator implements SingletonInterface
      * @param   string|null  $selector       Optional value to render the failing selector in the message
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Tool\Translation\TranslationException
+     * @throws \LaborDigital\T3ba\Tool\Translation\TranslationException
      */
     protected function requireNamespace(string $namespaceName, ?string $selector = null): string
     {

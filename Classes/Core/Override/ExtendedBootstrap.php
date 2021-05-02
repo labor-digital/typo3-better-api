@@ -36,19 +36,19 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 16:47
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\BootstrapFailsafeDefinitionEvent;
-use LaborDigital\T3BA\Event\BootstrapInitializesErrorHandlingEvent;
-use LaborDigital\T3BA\Event\Core\PackageManagerCreatedEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\BootstrapFailsafeDefinitionEvent;
+use LaborDigital\T3ba\Event\BootstrapInitializesErrorHandlingEvent;
+use LaborDigital\T3ba\Event\Core\PackageManagerCreatedEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Core\T3BA__Copy__Bootstrap;
+use TYPO3\CMS\Core\Core\T3BaCopyBootstrap;
 use TYPO3\CMS\Core\Package\PackageManager;
 
-class ExtendedBootstrap extends T3BA__Copy__Bootstrap
+class ExtendedBootstrap extends T3BaCopyBootstrap
 {
     /**
      * @inheritDoc

@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\Tool\Session;
+namespace LaborDigital\T3ba\Tool\Session;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class SessionService implements SingletonInterface

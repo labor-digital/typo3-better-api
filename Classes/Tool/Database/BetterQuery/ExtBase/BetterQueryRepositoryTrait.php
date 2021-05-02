@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.28 at 10:52
  */
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase;
 
-use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
+use LaborDigital\T3ba\ExtBase\Domain\Repository\BetterRepository;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 trait BetterQueryRepositoryTrait
@@ -62,8 +62,8 @@ trait BetterQueryRepositoryTrait
      * If your current repository has a prepareQuery() method it will be called every time
      * the query object is requested with this method
      *
-     * @return \LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery
-     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
+     * @return \LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     public function getQuery(): ExtBaseBetterQuery
     {

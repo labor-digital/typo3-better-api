@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Backend;
+namespace LaborDigital\T3ba\Event\Backend;
 
 
 class BackendUtilityRecordFilterEvent extends AbstractBackendUtilityRecordEvent

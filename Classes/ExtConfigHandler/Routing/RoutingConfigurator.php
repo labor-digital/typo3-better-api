@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Routing;
+namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
-use LaborDigital\T3BA\ExtConfigHandler\Routing\Exceptions\NotFoundException;
-use LaborDigital\T3BA\ExtConfigHandler\Routing\Traits\RouteEnhancerConfigTrait;
-use LaborDigital\T3BA\ExtConfigHandler\Routing\Traits\RouteEnhancerSchemaTrait;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Routing\Exceptions\NotFoundException;
+use LaborDigital\T3ba\ExtConfigHandler\Routing\Traits\RouteEnhancerConfigTrait;
+use LaborDigital\T3ba\ExtConfigHandler\Routing\Traits\RouteEnhancerSchemaTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
@@ -79,7 +79,7 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $key  The unique key of the route enhancer to retrieve
      *
      * @return array
-     * @throws \LaborDigital\T3BA\ExtConfigHandler\Routing\Exceptions\NotFoundException
+     * @throws \LaborDigital\T3ba\ExtConfigHandler\Routing\Exceptions\NotFoundException
      */
     public function getRouteEnhancer(string $key): array
     {

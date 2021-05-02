@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\TypoScript\Adapter;
+namespace LaborDigital\T3ba\Event\TypoScript\Adapter;
 
 
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
-use LaborDigital\T3BA\Event\TypoScript\ConfigArrayPostProcEvent;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\TypoScript\ConfigArrayPostProcEvent;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ConfigArrayPostProcEventAdapter extends AbstractCoreHookEventAdapter

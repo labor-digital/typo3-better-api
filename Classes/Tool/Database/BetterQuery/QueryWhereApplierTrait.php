@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery;
 
 use Closure;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\ExtBase\ExtBaseQueryAdapter;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone\DoctrineQueryAdapter;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseQueryAdapter;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\DoctrineQueryAdapter;
 use Neunerlei\Arrays\Arrays;
 
 /**
@@ -33,9 +33,9 @@ use Neunerlei\Arrays\Arrays;
  * Internal helper for the better query instances to convert the array based "where" constraints
  * to doctrine / extbase constraints.
  *
- * @package LaborDigital\T3BA\Tool\Database\BetterQuery
+ * @package LaborDigital\T3ba\Tool\Database\BetterQuery
  * @internal
- * @see     \LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery
+ * @see     \LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery
  */
 trait QueryWhereApplierTrait
 {
@@ -86,7 +86,7 @@ trait QueryWhereApplierTrait
      * @param   AbstractQueryAdapter  $adapter
      *
      * @return mixed
-     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     protected function whereConstraintBuilder(array $query, AbstractQueryAdapter $adapter)
     {
@@ -205,10 +205,10 @@ trait QueryWhereApplierTrait
      * Internal helper which is used to apply the configured where constraints to the current query object
      * The result is the completely configured query instance
      *
-     * @param   \LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
+     * @param   \LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
      *
      * @return void
-     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     protected
     function applyWhere(

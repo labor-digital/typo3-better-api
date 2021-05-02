@@ -20,22 +20,22 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\DataHook;
+namespace LaborDigital\T3ba\Event\DataHook;
 
 
-use LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
 
 /**
  * Class CustomDataHookTraverserEvent
  *
  * Allows you to build your own, custom data hook traverser which should traverse the TCA to find data hook handlers.
  *
- * @package LaborDigital\T3BA\Event\DataHook
+ * @package LaborDigital\T3ba\Event\DataHook
  */
 class CustomDataHookTraverserEvent
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
      */
     protected $definition;
     
@@ -47,7 +47,7 @@ class CustomDataHookTraverserEvent
     /**
      * CustomDataHookTraverserEvent constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition  $definition
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition  $definition
      * @param   callable                                                        $registerHook
      */
     public function __construct(DataHookDefinition $definition, callable $registerHook)
@@ -59,7 +59,7 @@ class CustomDataHookTraverserEvent
     /**
      * Returns the definition of the data hook we should traverse the TCA for
      *
-     * @return \LaborDigital\T3BA\Tool\DataHook\Definition\DataHookDefinition
+     * @return \LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition
      */
     public function getDefinition(): DataHookDefinition
     {
@@ -77,7 +77,7 @@ class CustomDataHookTraverserEvent
      * @param   array   $path     The path through the multi-dimensional data structure to select the value with
      *                            This MUST be empty if the handlers for a whole table are registered
      *
-     * @see \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\AbstractTraverser::registerHandlerDefinitions()
+     * @see \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\AbstractTraverser::registerHandlerDefinitions()
      */
     public function registerHandlerDefinitions(string $nodeKey, array $tca, array $path = []): void
     {

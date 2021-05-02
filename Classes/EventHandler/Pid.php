@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
 
-use LaborDigital\T3BA\Event\TypoScript\ConfigArrayPostProcEvent;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
-use LaborDigital\T3BA\Tool\TypoScript\TypoScriptService;
+use LaborDigital\T3ba\Event\TypoScript\ConfigArrayPostProcEvent;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
@@ -33,20 +33,20 @@ use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 class Pid implements LazyEventSubscriberInterface
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoScript\TypoScriptService
+     * @var \LaborDigital\T3ba\Tool\TypoScript\TypoScriptService
      */
     protected $typoScriptService;
     
     /**
      * PidEventHandler constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext       $context
-     * @param   \LaborDigital\T3BA\Tool\TypoScript\TypoScriptService  $typoScriptService
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext       $context
+     * @param   \LaborDigital\T3ba\Tool\TypoScript\TypoScriptService  $typoScriptService
      */
     public function __construct(
         TypoContext $context,
@@ -69,7 +69,7 @@ class Pid implements LazyEventSubscriberInterface
      * Reads the pids from typo script and re-injects their values into the pid aspect.
      * This allows the pid aspect to be modified using typoScript
      *
-     * @param   \LaborDigital\T3BA\Event\TypoScript\ConfigArrayPostProcEvent  $event
+     * @param   \LaborDigital\T3ba\Event\TypoScript\ConfigArrayPostProcEvent  $event
      *
      */
     public function onTypoScriptConfigPostProcessing(ConfigArrayPostProcEvent $event): void

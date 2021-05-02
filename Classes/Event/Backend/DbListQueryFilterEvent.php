@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Backend;
+namespace LaborDigital\T3ba\Event\Backend;
 
-use LaborDigital\T3BA\Event\Backend\Adapter\DbListQueryFilterEventAdapter;
-use LaborDigital\T3BA\Event\CoreHookAdapter\CoreHookEventInterface;
+use LaborDigital\T3ba\Event\Backend\Adapter\DbListQueryFilterEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 
 /**
@@ -31,9 +31,9 @@ use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
  * This filter is used when the backend renders a list of database entries.
  * It can be used to append additional where clauses to the current request in the BackendRenderingService class
  *
- * @see     \LaborDigital\T3BA\Tool\Rendering\BackendRenderingService
+ * @see     \LaborDigital\T3ba\Tool\Rendering\BackendRenderingService
  *
- * @package LaborDigital\T3BA\Event\Backend
+ * @package LaborDigital\T3ba\Event\Backend
  */
 class DbListQueryFilterEvent implements CoreHookEventInterface
 {

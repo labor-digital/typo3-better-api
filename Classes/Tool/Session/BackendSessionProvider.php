@@ -18,7 +18,7 @@ declare(strict_types=1);
  * Last modified: 2021.04.29 at 22:17
  */
 
-namespace LaborDigital\T3BA\Tool\Session;
+namespace LaborDigital\T3ba\Tool\Session;
 
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;

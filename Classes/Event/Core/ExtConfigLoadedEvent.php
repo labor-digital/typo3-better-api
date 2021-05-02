@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\Core;
+namespace LaborDigital\T3ba\Event\Core;
 
 /**
  * Class ExtConfigLoadedEvent
  *
  * Emitted when the ext config gets loaded, when the ext local conf files were loaded
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class ExtConfigLoadedEvent
 {

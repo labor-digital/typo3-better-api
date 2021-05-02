@@ -20,16 +20,16 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table\ContentType;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table\ContentType;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Dumper;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Factory;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Dumper;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Factory;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 
 class Loader implements PublicServiceInterface
 {
@@ -40,17 +40,17 @@ class Loader implements PublicServiceInterface
     protected const EXT_CONTENT_DEFAULT_TYPE = '__extContentDefaultType__';
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Factory
+     * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Factory
      */
     protected $factory;
     
     /**
-     * @var \LaborDigital\T3BA\ExtConfig\ExtConfigContext
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext
      */
     protected $configContext;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io\Dumper
+     * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Dumper
      */
     protected $dumper;
     

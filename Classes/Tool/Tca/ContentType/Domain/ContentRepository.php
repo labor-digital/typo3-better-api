@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Domain;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Domain;
 
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
-use LaborDigital\T3BA\Tool\Database\DbService;
-use LaborDigital\T3BA\Tool\Tca\ContentType\ContentTypeUtil;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -38,12 +38,12 @@ class ContentRepository implements PublicServiceInterface
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Database\DbService
+     * @var \LaborDigital\T3ba\Tool\Database\DbService
      */
     protected $dbService;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\ExtensionRowRepository
+     * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ExtensionRowRepository
      */
     protected $rowRepository;
     
@@ -117,7 +117,7 @@ class ContentRepository implements PublicServiceInterface
     /**
      * @param $rowOrUid
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\ContentType\Domain\AbstractDataModel
+     * @return \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\AbstractDataModel
      */
     public function hydrateModel($rowOrUid): AbstractDataModel
     {

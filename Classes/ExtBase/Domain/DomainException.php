@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.16 at 18:42
  */
 
-namespace LaborDigital\T3BA\ExtBase\Domain;
+namespace LaborDigital\T3ba\ExtBase\Domain;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class DomainException extends T3BAException
+class DomainException extends T3baException
 {
 }

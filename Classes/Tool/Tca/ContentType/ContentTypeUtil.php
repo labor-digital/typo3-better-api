@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType;
 
 
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\DefaultDataModel;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\DefaultDataModel;
 
 class ContentTypeUtil
 {

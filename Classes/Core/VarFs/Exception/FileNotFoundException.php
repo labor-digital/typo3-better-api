@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\VarFs\Exception;
+namespace LaborDigital\T3ba\Core\VarFs\Exception;
 
 
 class FileNotFoundException extends VarFsException

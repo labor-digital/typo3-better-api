@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 03:00
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService;
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Rendering\TemplateRenderingService;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 
 trait CustomFormElementTrait
 {
@@ -104,7 +104,7 @@ trait CustomFormElementTrait
     /**
      * Returns the instance of the template rendering service
      *
-     * @return \LaborDigital\T3BA\Tool\Rendering\TemplateRenderingService
+     * @return \LaborDigital\T3ba\Tool\Rendering\TemplateRenderingService
      */
     protected function getTemplateRenderer(): TemplateRenderingService
     {

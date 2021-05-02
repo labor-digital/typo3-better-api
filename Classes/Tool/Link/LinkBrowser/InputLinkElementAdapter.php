@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Link\LinkBrowser;
+namespace LaborDigital\T3ba\Tool\Link\LinkBrowser;
 
 
 use TYPO3\CMS\Backend\Form\Element\InputLinkElement;

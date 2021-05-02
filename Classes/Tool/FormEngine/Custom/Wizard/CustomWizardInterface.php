@@ -36,16 +36,16 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard;
 
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomElementInterface;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomElementInterface;
 
 interface CustomWizardInterface extends CustomElementInterface
 {
     /**
      * Used to inject the wizard context
      *
-     * @param   \LaborDigital\T3BA\Tool\FormEngine\Custom\Wizard\CustomWizardContext  $context
+     * @param   \LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardContext  $context
      */
     public function setContext(CustomWizardContext $context): void;
 }

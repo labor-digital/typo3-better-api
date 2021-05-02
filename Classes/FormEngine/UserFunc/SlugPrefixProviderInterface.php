@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\FormEngine\UserFunc;
+namespace LaborDigital\T3ba\FormEngine\UserFunc;
 
 
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSlug;

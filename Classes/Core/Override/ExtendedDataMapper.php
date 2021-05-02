@@ -36,15 +36,15 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 02:04
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\ExtBase\Persistence\DataMapperQueryFilterEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\ExtBase\Persistence\DataMapperQueryFilterEvent;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\T3BA__Copy__DataMapper;
+use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\T3BaCopyDataMapper;
 
-class ExtendedDataMapper extends T3BA__Copy__DataMapper
+class ExtendedDataMapper extends T3BaCopyDataMapper
 {
     /**
      * @inheritDoc

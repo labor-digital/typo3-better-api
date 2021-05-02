@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache;
+namespace LaborDigital\T3ba\Tool\Cache;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator;
-use LaborDigital\T3BA\Tool\Cache\Util\CacheManagerAdapter;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator;
+use LaborDigital\T3ba\Tool\Cache\Util\CacheManagerAdapter;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Cache\CacheManager;
 
@@ -34,7 +34,7 @@ class CacheFactory
     use ContainerAwareTrait;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Cache\CacheInterface[]
+     * @var \LaborDigital\T3ba\Tool\Cache\CacheInterface[]
      */
     protected $instances = [];
     
@@ -51,7 +51,7 @@ class CacheFactory
     protected $cacheManager;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator
+     * @var \LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator
      */
     protected $environmentCacheKeyGenerator;
     
@@ -74,7 +74,7 @@ class CacheFactory
      *                               The class must extend the AbstractExtendedCache class
      * @param   string  $identifier  The TYPO3 cache identifier that should be injected into the implementaion class
      *
-     * @return \LaborDigital\T3BA\Tool\Cache\CacheInterface
+     * @return \LaborDigital\T3ba\Tool\Cache\CacheInterface
      */
     public function makeCacheImplementation(string $class, string $identifier): CacheInterface
     {

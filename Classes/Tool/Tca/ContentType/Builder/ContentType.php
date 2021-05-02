@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Builder;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Builder;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaTableType;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\AbstractDataModel;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Domain\DefaultDataModel;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\AbstractDataModel;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\DefaultDataModel;
 
 class ContentType extends TcaTableType
 {

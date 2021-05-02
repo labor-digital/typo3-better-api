@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\ExtBase\ContentElement;
+namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\ExtConfigHandler\Table\ContentType\ContentTypeConfigInterface;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\ContentTypeConfigInterface;
 
 interface ConfigureContentElementInterface extends ContentTypeConfigInterface
 {

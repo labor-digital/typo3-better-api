@@ -37,9 +37,9 @@ declare(strict_types=1);
  */
 
 
-namespace LaborDigital\T3BA\Tool\Rendering;
+namespace LaborDigital\T3ba\Tool\Rendering;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;

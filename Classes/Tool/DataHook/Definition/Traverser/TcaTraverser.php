@@ -20,28 +20,28 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHook\Definition\Traverser;
+namespace LaborDigital\T3ba\Tool\DataHook\Definition\Traverser;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\DataHook\CustomDataHookTraverserEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\DataHook\CustomDataHookTraverserEvent;
 
 class TcaTraverser extends AbstractTraverser
 {
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\FlexFormTraverser
+     * @var \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\FlexFormTraverser
      */
     protected $flexFormTraverser;
     
     /**
-     * @var \LaborDigital\T3BA\Core\EventBus\TypoEventBus
+     * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus
      */
     protected $eventBus;
     
     /**
      * TcaTraverser constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\DataHook\Definition\Traverser\FlexFormTraverser  $flexFormTraverser
+     * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\FlexFormTraverser  $flexFormTraverser
      */
     public function __construct(FlexFormTraverser $flexFormTraverser, TypoEventBus $eventBus)
     {

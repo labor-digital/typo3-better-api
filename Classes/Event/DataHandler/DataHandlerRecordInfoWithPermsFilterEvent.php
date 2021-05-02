@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * Similar to DataHandlerRecordInfoFilterEvent, but works on the recordInfoWithPermissionCheck() method
  * instead of the recordInfo method. This is allows you to modify the data retrieved by the datahandler.
  *
- * @package LaborDigital\T3BA\Event\DataHandler
+ * @package LaborDigital\T3ba\Event\DataHandler
  */
 class DataHandlerRecordInfoWithPermsFilterEvent
 {

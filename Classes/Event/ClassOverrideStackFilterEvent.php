@@ -19,14 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event;
+namespace LaborDigital\T3ba\Event;
 
 /**
  * Class ClassOverrideStackFilterEvent
  * Can be used to filter the class override generator stack
  * right before the override is build
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class ClassOverrideStackFilterEvent
 {

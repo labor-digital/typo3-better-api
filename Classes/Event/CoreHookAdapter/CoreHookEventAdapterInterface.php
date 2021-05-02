@@ -19,18 +19,18 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\CoreHookAdapter;
+namespace LaborDigital\T3ba\Event\CoreHookAdapter;
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 
 interface CoreHookEventAdapterInterface
 {
     /**
      * Provides some dependencies that are likely to be required in the event adapter implementation
      *
-     * @param   \LaborDigital\T3BA\Core\EventBus\TypoEventBus    $bus
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus    $bus
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
      *
      * @return void
      */

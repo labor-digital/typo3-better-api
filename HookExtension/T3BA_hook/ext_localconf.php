@@ -18,9 +18,9 @@
 
 /** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Core\ExtConfigLoadedEvent;
-use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\ExtConfigLoadedEvent;
+use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
 
 (static function () {
     $bus = TypoEventBus::getInstance();

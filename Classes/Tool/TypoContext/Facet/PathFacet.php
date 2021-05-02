@@ -36,14 +36,14 @@ declare(strict_types=1);
  * Last modified: 2020.03.23 at 20:58
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
 
 use Composer\Autoload\ClassLoader;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Exception\T3BAException;
-use LaborDigital\T3BA\Tool\Database\DbService;
-use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Exception\T3baException;
+use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -57,7 +57,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 /**
  * Class PathFacet
  *
- * @package LaborDigital\T3BA\Tool\TypoContext\Facet
+ * @package LaborDigital\T3ba\Tool\TypoContext\Facet
  */
 class PathFacet implements FacetInterface
 {
@@ -78,7 +78,7 @@ class PathFacet implements FacetInterface
     /**
      * PathFacet constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
      */
     public function __construct(TypoContext $context)
     {
@@ -305,7 +305,7 @@ class PathFacet implements FacetInterface
      *
      * @return string
      * @throws \JsonException
-     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
+     * @throws \LaborDigital\T3ba\Core\Exception\T3baException
      */
     public function realPathToTypoExt(string $path): string
     {
@@ -353,7 +353,7 @@ class PathFacet implements FacetInterface
             }
             
             // Try to find the path by looking
-            throw new T3BAException('Could not resolve path: ' . $path . ' to a relative EXT: path!');
+            throw new T3baException('Could not resolve path: ' . $path . ' to a relative EXT: path!');
         }
         
         // Looking inside the ext directory

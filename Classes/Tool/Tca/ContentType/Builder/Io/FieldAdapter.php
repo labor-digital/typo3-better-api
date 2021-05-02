@@ -20,20 +20,20 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\ContentType\Builder\Io;
+namespace LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
+use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
 
 class FieldAdapter extends AbstractField
 {
     /**
      * Returns the logic node of a given field instance
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractField  $field
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField  $field
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     public static function getNode(AbstractField $field): Node
     {

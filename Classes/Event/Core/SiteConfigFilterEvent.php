@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Core;
+namespace LaborDigital\T3ba\Event\Core;
 
 /**
  * Class SiteConfigFilterEvent
@@ -27,7 +27,7 @@ namespace LaborDigital\T3BA\Event\Core;
  * Dispatched when TYPO3 builds it's site configuration and before it is passed down
  * to other core internals.
  *
- * @package LaborDigital\T3BA\Event\Core
+ * @package LaborDigital\T3ba\Event\Core
  */
 class SiteConfigFilterEvent
 {

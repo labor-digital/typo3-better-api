@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
-use LaborDigital\T3BA\Core\Di\DelegateContainer;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\DiRunTimeHandlerInterface;
+use LaborDigital\T3ba\Core\Di\DelegateContainer;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\Interfaces\DiRunTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class RunTimeHandler extends AbstractExtConfigHandler implements DiRunTimeHandlerInterface

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 
 /**
@@ -28,7 +28,7 @@ namespace LaborDigital\T3BA\Event\DataHandler;
  *
  * Executed once for every table record that was processed in the data handler
  *
- * @package LaborDigital\T3BA\Event\DataHandler
+ * @package LaborDigital\T3ba\Event\DataHandler
  */
 class SaveAfterDbOperationsEvent extends AbstractLateSaveEvent
 {

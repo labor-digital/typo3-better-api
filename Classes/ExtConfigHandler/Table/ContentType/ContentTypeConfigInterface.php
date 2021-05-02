@@ -20,19 +20,19 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table\ContentType;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table\ContentType;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Tca\ContentType\Builder\ContentType;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType;
 
 interface ContentTypeConfigInterface
 {
     /**
      * Used to configure the tt_content type form for a content element
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\ContentType\Builder\ContentType  $type
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext                $context
+     * @param   \LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType  $type
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                $context
      */
     public static function configureContentType(ContentType $type, ExtConfigContext $context): void;
 }

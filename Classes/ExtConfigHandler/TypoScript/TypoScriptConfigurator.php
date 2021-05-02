@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\TypoScript;
+namespace LaborDigital\T3ba\ExtConfigHandler\TypoScript;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use Neunerlei\Inflection\Inflector;
 
 class TypoScriptConfigurator extends AbstractExtConfigConfigurator
@@ -74,7 +74,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      *                               be any path inside the given extension. The path is relative to EXT:$_EXTKEY/
      * @param   string  $title       An optional title to be displayed in the backend
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     public function registerStaticTsDirectory(
         string $path = 'Configuration/TypoScript/',
@@ -110,7 +110,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $content  The typoScript configuration to add for the key
      *
      * @return $this
-     * @see \LaborDigital\T3BA\Tool\TypoScript\DynamicTypoScriptRegistry
+     * @see \LaborDigital\T3ba\Tool\TypoScript\DynamicTypoScriptRegistry
      */
     public function registerDynamicContent(string $key, string $content): self
     {
@@ -140,7 +140,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      *
      * @param   string  $setup  The typoScript you want to add to your template
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     public function registerSetup(string $setup): self
     {
@@ -155,7 +155,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      *
      * @param   string  $constants  The typoScript you want to add to your template
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     public function registerConstants(string $constants): self
     {
@@ -170,7 +170,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      *
      * @param   string  $path  The path to the file you want to include in your setup.
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
      */
     public function registerImport(string $path): self
@@ -184,7 +184,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      *
      * @param   string  $config  The page ts config to append
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     public function registerUserTsConfig(string $config): self
     {
@@ -207,7 +207,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $path  The path of the file to include.
      *                         The path should start with EXT:$_EXTKEY/...
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
      */
     public function registerUserTsConfigImport(string $path): self
@@ -221,7 +221,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      *
      * @param   string  $config  The page ts config to append
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     public function registerPageTsConfig(string $config): self
     {
@@ -244,7 +244,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $path  The path of the file to include.
      *                         The path should start with EXT:$_EXTKEY/...
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
      */
     public function registerPageTsConfigImport(string $path): self
@@ -261,7 +261,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator
      * @param   string|null  $title  Can be used to define a visible label for the file in the backend.
      *                               If omitted one is auto-generated for you
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\TypoScript\TypoScriptConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      */
     public function registerSelectablePageTsConfigFile(string $path, ?string $title = null): self
     {

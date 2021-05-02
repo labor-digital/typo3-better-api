@@ -18,9 +18,9 @@ declare(strict_types=1);
  * Last modified: 2021.04.29 at 22:17
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
-use LaborDigital\T3BA\Tool\DataHook\DataHookContext;
+use LaborDigital\T3ba\Tool\DataHook\DataHookContext;
 use Neunerlei\Arrays\Arrays;
 
 class CustomFieldDataHookContext extends DataHookContext

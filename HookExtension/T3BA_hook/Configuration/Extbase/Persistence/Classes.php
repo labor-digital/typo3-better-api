@@ -19,8 +19,8 @@
 
 declare(strict_types=1);
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Configuration\ExtBasePersistenceRegistrationEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Configuration\ExtBasePersistenceRegistrationEvent;
 
 return TypoEventBus::getInstance()->dispatch(
     new ExtBasePersistenceRegistrationEvent())->getClasses();

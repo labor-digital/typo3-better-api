@@ -20,19 +20,19 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Traits;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Traits;
 
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\FormElementContainingInterface;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexTab;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\FormElementContainingInterface;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexTab;
 
 trait FactoryPopulatorTrait
 {
     /**
      * Creates the child instances of the flex form based on the given definition array
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex  $flex
      * @param   array                                                   $def
      */
     protected function populateElements(Flex $flex, array $def): void
@@ -91,8 +91,8 @@ trait FactoryPopulatorTrait
     /**
      * Creates and populates a new section / container instance in the flex form object
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex     $flex
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\FlexTab  $tab
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex     $flex
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexTab  $tab
      * @param   string                                                     $id
      * @param   array                                                      $config
      */

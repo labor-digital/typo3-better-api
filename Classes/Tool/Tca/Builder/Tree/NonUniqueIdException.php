@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 18:10
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Tree;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Tree;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 
 class NonUniqueIdException extends TcaBuilderException
 {

@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Core;
+namespace LaborDigital\T3ba\ExtConfigHandler\Core;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
-use LaborDigital\T3BA\Tool\Log\BeLogWriter;
-use LaborDigital\T3BA\Tool\Log\BetterFileWriter;
-use LaborDigital\T3BA\Tool\Log\StreamWriter;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\Tool\Log\BeLogWriter;
+use LaborDigital\T3ba\Tool\Log\BetterFileWriter;
+use LaborDigital\T3ba\Tool\Log\StreamWriter;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
@@ -57,7 +57,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      * @param   string  $classToOverride      The class to override with the xClass
      * @param   string  $classToOverrideWith  The class to use as a xClass
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Core\TypoCoreConfigurator
      * @see https://docs.typo3.org/typo3cms/CoreApiReference/ApiOverview/Xclasses/Index.html
      */
     public function registerXClass(string $classToOverride, string $classToOverrideWith): self
@@ -81,7 +81,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      *                               - groups: (array|string) default: [] | One or multiple cache groups that should
      *                               be able to flush this cache. Allowed values are "all", "system" and "pages"
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Core\TypoCoreConfigurator
      *
      * @see https://stackoverflow.com/a/39446841
      * @see https://docs.typo3.org/typo3cms/CoreApiReference/latest/ApiOverview/CachingFramework/Developer/Index.html
@@ -274,7 +274,7 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator
      *                           - writer array: the writer configuration array for the configured loglevel
      *                           - processor array: the processor configuration array for the configured loglevel
      *
-     * @return \LaborDigital\T3BA\ExtConfigHandler\Core\TypoCoreConfigurator
+     * @return \LaborDigital\T3ba\ExtConfigHandler\Core\TypoCoreConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html
      * @see \TYPO3\CMS\Core\Log\LogLevel
      */

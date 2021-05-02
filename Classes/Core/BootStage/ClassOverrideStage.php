@@ -20,25 +20,25 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
-use LaborDigital\T3BA\Core\CodeGeneration\ClassOverrideGenerator;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Core\Override\ExtendedBackendUtility;
-use LaborDigital\T3BA\Core\Override\ExtendedBootstrap;
-use LaborDigital\T3BA\Core\Override\ExtendedCacheManager;
-use LaborDigital\T3BA\Core\Override\ExtendedContainerBuilder;
-use LaborDigital\T3BA\Core\Override\ExtendedDataHandler;
-use LaborDigital\T3BA\Core\Override\ExtendedDataMapper;
-use LaborDigital\T3BA\Core\Override\ExtendedLanguageService;
-use LaborDigital\T3BA\Core\Override\ExtendedLocalizationUtility;
-use LaborDigital\T3BA\Core\Override\ExtendedNodeFactory;
-use LaborDigital\T3BA\Core\Override\ExtendedReferenceIndex;
-use LaborDigital\T3BA\Core\Override\ExtendedSiteConfiguration;
-use LaborDigital\T3BA\Core\Override\ExtendedTypoScriptParser;
-use LaborDigital\T3BA\Event\KernelBootEvent;
+use LaborDigital\T3ba\Core\CodeGeneration\ClassOverrideGenerator;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Kernel;
+use LaborDigital\T3ba\Core\Override\ExtendedBackendUtility;
+use LaborDigital\T3ba\Core\Override\ExtendedBootstrap;
+use LaborDigital\T3ba\Core\Override\ExtendedCacheManager;
+use LaborDigital\T3ba\Core\Override\ExtendedContainerBuilder;
+use LaborDigital\T3ba\Core\Override\ExtendedDataHandler;
+use LaborDigital\T3ba\Core\Override\ExtendedDataMapper;
+use LaborDigital\T3ba\Core\Override\ExtendedLanguageService;
+use LaborDigital\T3ba\Core\Override\ExtendedLocalizationUtility;
+use LaborDigital\T3ba\Core\Override\ExtendedNodeFactory;
+use LaborDigital\T3ba\Core\Override\ExtendedReferenceIndex;
+use LaborDigital\T3ba\Core\Override\ExtendedSiteConfiguration;
+use LaborDigital\T3ba\Core\Override\ExtendedTypoScriptParser;
+use LaborDigital\T3ba\Event\KernelBootEvent;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;

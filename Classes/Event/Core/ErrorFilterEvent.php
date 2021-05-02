@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\Core;
+namespace LaborDigital\T3ba\Event\Core;
 
 use Throwable;
 
@@ -29,7 +29,7 @@ use Throwable;
  * Dispatched when the typo3 exception handler is executed.
  * Can be used to run additional logging actions
  *
- * @package LaborDigital\T3BA\Core\Event
+ * @package LaborDigital\T3ba\Core\Event
  */
 class ErrorFilterEvent
 {

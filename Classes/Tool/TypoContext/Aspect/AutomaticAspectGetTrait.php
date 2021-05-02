@@ -36,7 +36,7 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 13:04
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Aspect;
+namespace LaborDigital\T3ba\Tool\TypoContext\Aspect;
 
 use Neunerlei\Inflection\Inflector;
 use ReflectionMethod;

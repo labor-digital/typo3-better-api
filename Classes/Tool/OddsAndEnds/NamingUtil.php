@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\Tool\OddsAndEnds;
+namespace LaborDigital\T3ba\Tool\OddsAndEnds;
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\ExtBase\Domain\Repository\BetterRepository;
-use LaborDigital\T3BA\ExtConfigHandler\Table\ConfigureTcaTableInterface;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\ExtBase\Domain\Repository\BetterRepository;
+use LaborDigital\T3ba\ExtConfigHandler\Table\ConfigureTcaTableInterface;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use ReflectionMethod;
 use RuntimeException;
 use TYPO3\CMS\Core\Utility\ClassNamingUtility;

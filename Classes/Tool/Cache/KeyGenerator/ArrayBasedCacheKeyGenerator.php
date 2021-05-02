@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache\KeyGenerator;
+namespace LaborDigital\T3ba\Tool\Cache\KeyGenerator;
 
 
 use Neunerlei\Arrays\Arrays;

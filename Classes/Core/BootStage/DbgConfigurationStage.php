@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
 use Doctrine\DBAL\Driver\Mysqli\MysqliConnection;
 use Doctrine\DBAL\Driver\Mysqli\MysqliStatement;
 use Kint\Kint;
 use Kint\Parser\BlacklistPlugin;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Core\Kint\LazyLoadingPlugin;
-use LaborDigital\T3BA\Core\Kint\TypoInstanceTypePlugin;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Kernel;
+use LaborDigital\T3ba\Core\Kint\LazyLoadingPlugin;
+use LaborDigital\T3ba\Core\Kint\TypoInstanceTypePlugin;
 use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;

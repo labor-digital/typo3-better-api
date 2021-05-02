@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.08.23 at 23:23
  */
 
-namespace LaborDigital\T3BA\ExtConfig;
+namespace LaborDigital\T3ba\ExtConfig;
 
-use LaborDigital\T3BA\Core\Exception\T3BAException;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-class ExtConfigException extends T3BAException
+class ExtConfigException extends T3baException
 {
 }

@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 02:52
  */
 
-namespace LaborDigital\T3BA\Tool\FormEngine\Custom\Field;
+namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
-use LaborDigital\T3BA\Tool\FormEngine\Custom\CustomFormElementTrait;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormElementTrait;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

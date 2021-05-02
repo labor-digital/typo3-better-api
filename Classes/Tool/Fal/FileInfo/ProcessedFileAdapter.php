@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Fal\FileInfo;
+namespace LaborDigital\T3ba\Tool\Fal\FileInfo;
 
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 

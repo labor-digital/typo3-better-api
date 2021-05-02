@@ -36,15 +36,15 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 13:50
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodeDataFilterEvent;
-use LaborDigital\T3BA\Tool\FormEngine\FormNodeEventProxy;
-use TYPO3\CMS\Backend\Form\T3BA__Copy__NodeFactory;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodeDataFilterEvent;
+use LaborDigital\T3ba\Tool\FormEngine\FormNodeEventProxy;
+use TYPO3\CMS\Backend\Form\T3BaCopyNodeFactory;
 
-class ExtendedNodeFactory extends T3BA__Copy__NodeFactory
+class ExtendedNodeFactory extends T3BaCopyNodeFactory
 {
     
     /**

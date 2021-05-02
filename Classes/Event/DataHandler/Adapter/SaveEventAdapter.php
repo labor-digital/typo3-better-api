@@ -19,15 +19,15 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHandler\Adapter;
+namespace LaborDigital\T3ba\Event\DataHandler\Adapter;
 
 
 use ArgumentCountError;
-use LaborDigital\T3BA\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
-use LaborDigital\T3BA\Event\DataHandler\SaveAfterDbOperationsEvent;
-use LaborDigital\T3BA\Event\DataHandler\SaveFilterEvent;
-use LaborDigital\T3BA\Event\DataHandler\SavePostProcessorEvent;
-use LaborDigital\T3BA\Tool\Translation\Translator;
+use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
+use LaborDigital\T3ba\Event\DataHandler\SaveAfterDbOperationsEvent;
+use LaborDigital\T3ba\Event\DataHandler\SaveFilterEvent;
+use LaborDigital\T3ba\Event\DataHandler\SavePostProcessorEvent;
+use LaborDigital\T3ba\Tool\Translation\Translator;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Throwable;
 use TYPO3\CMS\Core\DataHandling\DataHandler;

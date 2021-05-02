@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\FormEngine;
+namespace LaborDigital\T3ba\Event\FormEngine;
 
 /**
  * Class BackendFormNodeDataFilterEvent
@@ -28,7 +28,7 @@ namespace LaborDigital\T3BA\Event\FormEngine;
  * This is a last minute hook to modify the field configuration before the node factory
  * creates the renderer object
  *
- * @package LaborDigital\T3BA\Event\FormEngine
+ * @package LaborDigital\T3ba\Event\FormEngine
  */
 class BackendFormNodeDataFilterEvent
 {

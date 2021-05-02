@@ -20,15 +20,15 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
-use LaborDigital\T3BA\Core\ErrorHandler\DebugExceptionHandler;
-use LaborDigital\T3BA\Core\ErrorHandler\ProductionExceptionHandler;
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Event\BootstrapInitializesErrorHandlingEvent;
-use LaborDigital\T3BA\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3ba\Core\ErrorHandler\DebugExceptionHandler;
+use LaborDigital\T3ba\Core\ErrorHandler\ProductionExceptionHandler;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Kernel;
+use LaborDigital\T3ba\Event\BootstrapInitializesErrorHandlingEvent;
+use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
 
 class ErrorHandlerAdapterRegistrationStage implements BootStageInterface
 {

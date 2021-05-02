@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Interfaces;
+namespace LaborDigital\T3ba\ExtConfig\Interfaces;
 
 
 interface DiRunTimeHandlerInterface extends StandAloneHandlerInterface

@@ -19,15 +19,15 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractBetterQuery;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
-use LaborDigital\T3BA\Tool\Database\DbService;
-use LaborDigital\T3BA\Tool\Page\PageService;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
+use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\Page\PageService;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Throwable;

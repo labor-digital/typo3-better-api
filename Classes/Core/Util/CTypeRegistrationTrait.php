@@ -18,7 +18,7 @@
  */
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Core\Util;
+namespace LaborDigital\T3ba\Core\Util;
 
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;

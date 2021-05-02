@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\DataHook\Definition;
+namespace LaborDigital\T3ba\Tool\DataHook\Definition;
 
 class DataHookHandlerDefinition
 {

@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Sql;
+namespace LaborDigital\T3ba\Tool\Sql;
 
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\EventHandler\Sql;
-use LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor;
-use LaborDigital\T3BA\Tool\Sql\Io\Dumper;
-use LaborDigital\T3BA\Tool\Sql\Io\TableAdapter;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\EventHandler\Sql;
+use LaborDigital\T3ba\Tool\Sql\Io\DefinitionProcessor;
+use LaborDigital\T3ba\Tool\Sql\Io\Dumper;
+use LaborDigital\T3ba\Tool\Sql\Io\TableAdapter;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Database\Schema\SchemaMigrator;
 use TYPO3\CMS\Core\Database\Schema\SqlReader;
@@ -54,17 +54,17 @@ class SqlRegistry implements SingletonInterface
     protected $migrator;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor
+     * @var \LaborDigital\T3ba\Tool\Sql\Io\DefinitionProcessor
      */
     protected $processor;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Sql\Io\Dumper
+     * @var \LaborDigital\T3ba\Tool\Sql\Io\Dumper
      */
     protected $dumper;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Sql\Definition
+     * @var \LaborDigital\T3ba\Tool\Sql\Definition
      */
     protected $definition;
     
@@ -73,8 +73,8 @@ class SqlRegistry implements SingletonInterface
      *
      * @param   \TYPO3\CMS\Core\Database\Schema\SqlReader           $reader
      * @param   \TYPO3\CMS\Core\Database\Schema\SchemaMigrator      $migrator
-     * @param   \LaborDigital\T3BA\Tool\Sql\Io\DefinitionProcessor  $processor
-     * @param   \LaborDigital\T3BA\Tool\Sql\Io\Dumper               $dumper
+     * @param   \LaborDigital\T3ba\Tool\Sql\Io\DefinitionProcessor  $processor
+     * @param   \LaborDigital\T3ba\Tool\Sql\Io\Dumper               $dumper
      */
     public function __construct(
         SqlReader $reader,
@@ -161,7 +161,7 @@ class SqlRegistry implements SingletonInterface
      *
      * @param   string  $tableName
      *
-     * @return \LaborDigital\T3BA\Tool\Sql\TableOverride
+     * @return \LaborDigital\T3ba\Tool\Sql\TableOverride
      */
     public function getTableOverride(string $tableName): TableOverride
     {

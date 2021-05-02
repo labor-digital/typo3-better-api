@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone;
 
-use LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
@@ -31,7 +31,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
  *
  * The default result when StandaloneBetterQuery::findRelated() is used to find related rows
  *
- * @package LaborDigital\T3BA\Tool\Database\BetterQuery\Standalone
+ * @package LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone
  */
 class RelatedRecordRow
 {
@@ -114,7 +114,7 @@ class RelatedRecordRow
      * Returns the row as a mapped extbase object
      *
      * @return \TYPO3\CMS\Extbase\DomainObject\AbstractEntity|mixed
-     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     public function getModel(): AbstractEntity
     {

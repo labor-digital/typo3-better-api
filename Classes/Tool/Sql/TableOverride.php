@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Sql;
+namespace LaborDigital\T3ba\Tool\Sql;
 
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
-use LaborDigital\T3BA\Core\Exception\NotImplementedException;
+use LaborDigital\T3ba\Core\Exception\NotImplementedException;
 
 class TableOverride extends Table
 {
@@ -107,7 +107,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function getPrimaryKeyColumns()
     {
@@ -116,7 +116,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function dropColumn($name)
     {
@@ -129,7 +129,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function getColumn($name, bool $useAnyway = false): Column
     {
@@ -142,7 +142,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function hasColumn($name, bool $useAnyway = false): bool
     {
@@ -159,7 +159,7 @@ class TableOverride extends Table
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\Core\Exception\NotImplementedException
+     * @throws \LaborDigital\T3ba\Core\Exception\NotImplementedException
      */
     public function getColumns(bool $useAnyway = false): array
     {

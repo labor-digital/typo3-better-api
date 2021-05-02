@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Tool\Database\BetterQuery;
+namespace LaborDigital\T3ba\Tool\Database\BetterQuery;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -42,7 +42,7 @@ abstract class AbstractBetterQuery
     protected $session;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $typoContext;
     
@@ -64,8 +64,8 @@ abstract class AbstractBetterQuery
     /**
      * BetterQuery constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext                    $typoContext
+     * @param   \LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext                    $typoContext
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\Session                     $session
      */
     public function __construct(
@@ -203,7 +203,7 @@ abstract class AbstractBetterQuery
      *                                                   {@link QuerySettingsInterface::setLanguageOverlayMode()}
      *
      * @return $this
-     * @throws \LaborDigital\T3BA\Tool\Database\BetterQuery\BetterQueryException
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     public function withLanguage($language, array $options = [])
     {

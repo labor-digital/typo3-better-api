@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\FormEngine\UserFunc;
+namespace LaborDigital\T3ba\FormEngine\UserFunc;
 
 
 use InvalidArgumentException;
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSlug;
 
 class SlugPrefixProvider implements SlugPrefixProviderInterface

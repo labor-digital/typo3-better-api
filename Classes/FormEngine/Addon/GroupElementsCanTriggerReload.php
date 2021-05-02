@@ -36,10 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 18:43
  */
 
-namespace LaborDigital\T3BA\FormEngine\Addon;
+namespace LaborDigital\T3ba\FormEngine\Addon;
 
-use LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent;
-use LaborDigital\T3BA\FormEngine\Util\FormEngineChangeFunctionBuilder;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\FormEngine\Util\FormEngineChangeFunctionBuilder;
 use TYPO3\CMS\Backend\Form\Element\GroupElement;
 
 class GroupElementsCanTriggerReload
@@ -48,7 +48,7 @@ class GroupElementsCanTriggerReload
     /**
      * This applier allows group elements to emit the page reload when they have changed.
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
      */
     public static function onPostProcess(BackendFormNodePostProcessorEvent $event): void
     {

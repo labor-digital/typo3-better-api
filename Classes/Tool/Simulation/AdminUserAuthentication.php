@@ -36,12 +36,12 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 13:57
  */
 
-namespace LaborDigital\T3BA\Tool\Simulation;
+namespace LaborDigital\T3ba\Tool\Simulation;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\Core\Exception\T3BAException;
-use LaborDigital\T3BA\Tool\Database\DbService;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Exception\T3baException;
+use LaborDigital\T3ba\Tool\Database\DbService;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 
@@ -50,7 +50,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     public const ADMIN_USERNAME = '_t3ba_adminUser_';
     
     /**
-     * @var \LaborDigital\T3BA\Tool\Database\DbService
+     * @var \LaborDigital\T3ba\Tool\Database\DbService
      */
     protected $dbService;
     
@@ -104,7 +104,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     }
     
     /**
-     * @throws \LaborDigital\T3BA\Core\Exception\T3BAException
+     * @throws \LaborDigital\T3ba\Core\Exception\T3baException
      */
     protected function loginUser(): void
     {
@@ -126,7 +126,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
             // Failed ?
             /** @noinspection NotOptimalIfConditionsInspection */
             if (empty($this->user['uid'])) {
-                throw new T3BAException('Could not automatically create an admin user for you to use!');
+                throw new T3baException('Could not automatically create an admin user for you to use!');
             }
         }
         

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table\ContentType;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table\ContentType;
 
 
 use TYPO3\CMS\Core\DataHandling\DataHandler;

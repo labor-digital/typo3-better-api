@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Raw;
+namespace LaborDigital\T3ba\ExtConfigHandler\Raw;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Neunerlei\Configuration\State\ConfigState;
 
 interface ConfigureRawSettingsInterface
@@ -34,7 +34,7 @@ interface ConfigureRawSettingsInterface
      * This is useful for project configuration or other settings you don't need more than once or twice in a decade.
      *
      * @param   \Neunerlei\Configuration\State\ConfigState     $state
-     * @param   \LaborDigital\T3BA\ExtConfig\ExtConfigContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext  $context
      */
     public static function configureRaw(ConfigState $state, ExtConfigContext $context): void;
     

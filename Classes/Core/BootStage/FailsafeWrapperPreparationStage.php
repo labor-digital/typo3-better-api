@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Core\BootStage;
+namespace LaborDigital\T3ba\Core\BootStage;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Core\Kernel;
-use LaborDigital\T3BA\Core\Util\FailsafeWrapper;
-use LaborDigital\T3BA\Event\BootstrapFailsafeDefinitionEvent;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Core\Kernel;
+use LaborDigital\T3ba\Core\Util\FailsafeWrapper;
+use LaborDigital\T3ba\Event\BootstrapFailsafeDefinitionEvent;
 
 class FailsafeWrapperPreparationStage implements BootStageInterface
 {

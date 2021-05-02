@@ -36,11 +36,11 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 00:37
  */
 
-namespace LaborDigital\T3BA\Tool\Page;
+namespace LaborDigital\T3ba\Tool\Page;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Event\PageContentsGridConfigFilterEvent;
-use LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Event\PageContentsGridConfigFilterEvent;
+use LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
@@ -50,7 +50,7 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 /**
  * Class PageService
  *
- * @package LaborDigital\T3BA\Tool\Page
+ * @package LaborDigital\T3ba\Tool\Page
  */
 class PageService implements SingletonInterface
 {
@@ -59,7 +59,7 @@ class PageService implements SingletonInterface
     /**
      * The record data handler instance after it was created at least once
      *
-     * @var \LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler;
+     * @var \LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler;
      */
     protected $recordHandler;
     
@@ -67,7 +67,7 @@ class PageService implements SingletonInterface
      * Returns the record data handler for the pages table.
      * Which allows you root level access to the TYPO3 data handler.
      *
-     * @return \LaborDigital\T3BA\Tool\DataHandler\Record\RecordDataHandler
+     * @return \LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler
      */
     public function getPageDataHandler(): RecordDataHandler
     {

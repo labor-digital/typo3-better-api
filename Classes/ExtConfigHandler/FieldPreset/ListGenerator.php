@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\FieldPreset;
+namespace LaborDigital\T3ba\ExtConfigHandler\FieldPreset;
 
 
 use Psr\Log\LoggerAwareInterface;
@@ -46,7 +46,7 @@ class ListGenerator implements LoggerAwareInterface
      *                                  The class MUST implement the FieldPresetInterface
      * @param   bool    $allowOverride  If set to true presets can be overwritten
      *
-     * @see \LaborDigital\T3BA\Tool\Tca\Builder\FieldPreset\FieldPresetInterface
+     * @see \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetInterface
      */
     public function registerClass(string $class, bool $allowOverride = false): void
     {

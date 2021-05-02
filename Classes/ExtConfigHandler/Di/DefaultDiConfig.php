@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Di;
+namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -34,7 +34,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
  * Automatically sets up the auto wiring for your dependency injection container, this is perfect if you don't
  * want to to anything with the container.
  *
- * @package LaborDigital\T3BA\ExtConfigHandler\DependencyInjection
+ * @package LaborDigital\T3ba\ExtConfigHandler\DependencyInjection
  */
 abstract class DefaultDiConfig implements ConfigureDiInterface
 {

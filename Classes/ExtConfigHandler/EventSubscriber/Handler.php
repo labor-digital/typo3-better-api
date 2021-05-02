@@ -20,12 +20,12 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\EventSubscriber;
+namespace LaborDigital\T3ba\ExtConfigHandler\EventSubscriber;
 
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
@@ -37,7 +37,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInterface
 {
     /**
-     * @var \LaborDigital\T3BA\ExtConfigHandler\EventSubscriber\CompiledEventSubscription
+     * @var \LaborDigital\T3ba\ExtConfigHandler\EventSubscriber\CompiledEventSubscription
      */
     protected $lazySubscription;
     

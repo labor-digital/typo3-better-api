@@ -36,9 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.05.24 at 11:27
  */
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Tree;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Tree;
 
-use LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement;
 
 class Node
 {
@@ -63,14 +63,14 @@ class Node
     /**
      * Contains the ordered list of direct children
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[]
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node[]
      */
     public $children = [];
     
     /**
      * The linked logic element represented by this node
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement
      */
     protected $el;
     
@@ -84,7 +84,7 @@ class Node
     /**
      * The parent node of the current node
      *
-     * @var \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     protected $parent;
     
@@ -119,7 +119,7 @@ class Node
     /**
      * Returns the tree this node is a part of
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Tree
      */
     public function getTree(): Tree
     {
@@ -129,7 +129,7 @@ class Node
     /**
      * Returns the linked logic element represented by this node
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement|mixed
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement|mixed
      */
     public function getEl(): AbstractElement
     {
@@ -139,7 +139,7 @@ class Node
     /**
      * Sets the linked logic element represented by this node
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Logic\AbstractElement  $el
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement  $el
      */
     public function setEl(AbstractElement $el): void
     {
@@ -215,7 +215,7 @@ class Node
     /**
      * Returns the parent node of the current node
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     public function getParent(): Node
     {
@@ -225,7 +225,7 @@ class Node
     /**
      * Updates the parent node of the current node
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node  $node
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node  $node
      */
     public function setParent(Node $node): void
     {
@@ -235,7 +235,7 @@ class Node
     /**
      * Returns the node of the closest tab node that contains this node
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node
      */
     public function getContainingTab(): Node
     {
@@ -298,7 +298,7 @@ class Node
     /**
      * Removes a given node from this node's children
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node  $node
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node  $node
      */
     public function removeChild(Node $node): void
     {
@@ -328,7 +328,7 @@ class Node
     /**
      * Returns the lift of all children contained by this node
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Node[]
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node[]
      */
     public function getChildren(): array
     {
@@ -340,7 +340,7 @@ class Node
      *
      * @param   string  $position  The position to move the node to
      *
-     * @see \LaborDigital\T3BA\Tool\Tca\Builder\Tree\Tree::parseMovePosition()
+     * @see \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Tree::parseMovePosition()
      */
     public function moveTo(string $position): void
     {

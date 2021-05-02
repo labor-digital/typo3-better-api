@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:43
  */
 
-namespace LaborDigital\T3BA\Tool\Link;
+namespace LaborDigital\T3ba\Tool\Link;
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Tool\Fal\FalService;
-use LaborDigital\T3BA\Tool\Link\Adapter\ExtendedUriBuilder;
-use LaborDigital\T3BA\Tool\Tsfe\TsfeService;
-use LaborDigital\T3BA\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Link\Adapter\ExtendedUriBuilder;
+use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Backend\Routing\Router;
@@ -67,7 +67,7 @@ class LinkContext implements SingletonInterface
     protected $initialized = false;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $typoContext;
     
@@ -81,7 +81,7 @@ class LinkContext implements SingletonInterface
     /**
      * LinkContext constructor.
      *
-     * @param   \LaborDigital\T3BA\Tool\TypoContext\TypoContext  $typoContext
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $typoContext
      */
     public function __construct(TypoContext $typoContext)
     {
@@ -95,7 +95,7 @@ class LinkContext implements SingletonInterface
     /**
      * Returns the instance of the typo context
      *
-     * @return \LaborDigital\T3BA\Tool\TypoContext\TypoContext
+     * @return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     public function getTypoContext(): TypoContext
     {
@@ -181,7 +181,7 @@ class LinkContext implements SingletonInterface
     /**
      * Returns the instance of the FAL service to generate file urls with
      *
-     * @return \LaborDigital\T3BA\Tool\Fal\FalService
+     * @return \LaborDigital\T3ba\Tool\Fal\FalService
      */
     public function getFalService(): FalService
     {
@@ -205,7 +205,7 @@ class LinkContext implements SingletonInterface
      * @param   string  $key  The key/name of the link definition to check for
      *
      * @return bool
-     * @see \LaborDigital\T3BA\ExtConfigHandler\Link\ConfigureLinksInterface
+     * @see \LaborDigital\T3ba\ExtConfigHandler\Link\ConfigureLinksInterface
      */
     public function hasDefinition(string $key): bool
     {
@@ -218,9 +218,9 @@ class LinkContext implements SingletonInterface
      *
      * @param   string  $key  The key/name of the link definition to retrieve
      *
-     * @return \LaborDigital\T3BA\Tool\Link\Definition
-     * @throws \LaborDigital\T3BA\Tool\Link\DefinitionNotFoundException
-     * @see \LaborDigital\T3BA\ExtConfigHandler\Link\ConfigureLinksInterface
+     * @return \LaborDigital\T3ba\Tool\Link\Definition
+     * @throws \LaborDigital\T3ba\Tool\Link\DefinitionNotFoundException
+     * @see \LaborDigital\T3ba\ExtConfigHandler\Link\ConfigureLinksInterface
      */
     public function getDefinitions(string $key): Definition
     {

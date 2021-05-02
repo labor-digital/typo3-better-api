@@ -20,14 +20,14 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Interfaces;
+namespace LaborDigital\T3ba\ExtConfig\Interfaces;
 
 /**
  * Interface StandAloneHandlerInterface
  *
  * Implement this interface to all handlers you don't want to trigger on the ExtLocalConf configuration point
  *
- * @package LaborDigital\T3BA\ExtConfig
+ * @package LaborDigital\T3ba\ExtConfig
  */
 interface StandAloneHandlerInterface
 {

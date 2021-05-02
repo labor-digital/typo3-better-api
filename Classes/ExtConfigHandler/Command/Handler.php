@@ -20,13 +20,13 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Command;
+namespace LaborDigital\T3ba\ExtConfigHandler\Command;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
-use LaborDigital\T3BA\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
-use LaborDigital\T3BA\ExtConfigHandler\Di\BuildTimeHandler;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfig\Interfaces\DiBuildTimeHandlerInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Di\BuildTimeHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -58,7 +58,7 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
     
     /**
      * @inheritDoc
-     * @throws \LaborDigital\T3BA\ExtConfig\ExtConfigException
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function handle(string $class): void
     {

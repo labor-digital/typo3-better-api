@@ -36,13 +36,13 @@ declare(strict_types=1);
  * Last modified: 2020.03.20 at 18:04
  */
 
-namespace LaborDigital\T3BA\Core\Override;
+namespace LaborDigital\T3ba\Core\Override;
 
-use LaborDigital\T3BA\Core\EventBus\TypoEventBus;
-use LaborDigital\T3BA\Event\Core\CacheClearedEvent;
-use TYPO3\CMS\Core\Cache\T3BA__Copy__CacheManager;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\CacheClearedEvent;
+use TYPO3\CMS\Core\Cache\T3BaCopyCacheManager;
 
-class ExtendedCacheManager extends T3BA__Copy__CacheManager
+class ExtendedCacheManager extends T3BaCopyCacheManager
 {
     
     /**

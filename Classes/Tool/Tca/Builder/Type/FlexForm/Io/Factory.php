@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io;
 
 
-use LaborDigital\T3BA\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
-use LaborDigital\T3BA\ExtConfig\ExtConfigContext;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Traits\FactoryDefinitionResolverTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\FlexForm\Io\Traits\FactoryPopulatorTrait;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\Io\TableFactory;
-use LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField;
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Traits\FactoryDefinitionResolverTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Traits\FactoryPopulatorTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 
 class Factory implements PublicServiceInterface
 {
@@ -41,7 +41,7 @@ class Factory implements PublicServiceInterface
     /**
      * Creates a new, empty flex form data structure representation
      *
-     * @param   \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField|null  $field
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField|null  $field
      *
      * @return Flex
      */
@@ -77,7 +77,7 @@ class Factory implements PublicServiceInterface
     /**
      * If no field was provided we create a dummy table with a field that will never be used anywhere.
      *
-     * @return \LaborDigital\T3BA\Tool\Tca\Builder\Type\Table\TcaField
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField
      */
     protected function makeStandaloneField(): TcaField
     {

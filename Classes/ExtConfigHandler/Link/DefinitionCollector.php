@@ -19,14 +19,14 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Link;
+namespace LaborDigital\T3ba\ExtConfigHandler\Link;
 
 
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
-use LaborDigital\T3BA\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
-use LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextAwareTrait;
-use LaborDigital\T3BA\Tool\Link\Definition;
-use LaborDigital\T3BA\Tool\Link\LinkException;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
+use LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextAwareTrait;
+use LaborDigital\T3ba\Tool\Link\Definition;
+use LaborDigital\T3ba\Tool\Link\LinkException;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -49,7 +49,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
      *
      * @param   string  $key
      *
-     * @return \LaborDigital\T3BA\Tool\Link\Definition
+     * @return \LaborDigital\T3ba\Tool\Link\Definition
      */
     public function getDefinition(string $key): Definition
     {
@@ -99,7 +99,7 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
      * Builds the link browser ts config entries for the registered definitions
      *
      * @return string
-     * @throws \LaborDigital\T3BA\Tool\Link\LinkException
+     * @throws \LaborDigital\T3ba\Tool\Link\LinkException
      */
     protected function generateLinkBrowserTsConfig(): string
     {

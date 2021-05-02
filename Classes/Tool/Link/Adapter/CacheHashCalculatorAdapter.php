@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Link\Adapter;
+namespace LaborDigital\T3ba\Tool\Link\Adapter;
 
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

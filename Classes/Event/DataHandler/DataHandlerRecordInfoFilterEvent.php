@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\Event\DataHandler;
+namespace LaborDigital\T3ba\Event\DataHandler;
 
 use Closure;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  * Dispatched when the data handler requests information about a record from the database (recordInfo())
  * Can be used to modify the requested fields or table name
  *
- * @package LaborDigital\T3BA\Event\DataHandler
+ * @package LaborDigital\T3ba\Event\DataHandler
  */
 class DataHandlerRecordInfoFilterEvent
 {

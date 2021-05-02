@@ -20,11 +20,11 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Backend;
+namespace LaborDigital\T3ba\ExtConfigHandler\Backend;
 
 
-use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
-use LaborDigital\T3BA\ExtConfigHandler\Common\Assets\AssetCollectorTrait;
+use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Common\Assets\AssetCollectorTrait;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
 

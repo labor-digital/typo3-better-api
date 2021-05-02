@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Cache;
+namespace LaborDigital\T3ba\Tool\Cache;
 
 
 class InvalidArgumentException extends \InvalidArgumentException

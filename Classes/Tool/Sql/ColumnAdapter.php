@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Sql;
+namespace LaborDigital\T3ba\Tool\Sql;
 
 
 use Doctrine\DBAL\Schema\Column;

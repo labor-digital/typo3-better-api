@@ -37,9 +37,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:19
  */
 
-namespace LaborDigital\T3BA\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
 
-use LaborDigital\T3BA\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
@@ -48,7 +48,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Class RequestFacet
  *
- * @package LaborDigital\T3BA\Tool\TypoContext\Facet
+ * @package LaborDigital\T3ba\Tool\TypoContext\Facet
  */
 class RequestFacet implements FacetInterface
 {

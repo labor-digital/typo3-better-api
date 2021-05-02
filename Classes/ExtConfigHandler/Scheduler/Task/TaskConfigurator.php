@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Scheduler\Task;
+namespace LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task;
 
 
 class TaskConfigurator

@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfig\Interfaces;
+namespace LaborDigital\T3ba\ExtConfig\Interfaces;
 
 
 use Neunerlei\Configuration\Util\ConfigContextAwareInterface;
@@ -30,8 +30,8 @@ use Neunerlei\Configuration\Util\ConfigContextAwareInterface;
  *
  * Use this interface to make your configuration class context aware
  *
- * @package LaborDigital\T3BA\ExtConfig
- * @see     \LaborDigital\T3BA\ExtConfig\Traits\ExtConfigContextAwareTrait
+ * @package LaborDigital\T3ba\ExtConfig
+ * @see     \LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextAwareTrait
  */
 interface ExtConfigContextAwareInterface extends ConfigContextAwareInterface
 {

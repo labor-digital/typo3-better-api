@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\Log;
+namespace LaborDigital\T3ba\Tool\Log;
 
 use Exception;
 use TYPO3\CMS\Core\Log\Exception\InvalidLogWriterConfigurationException;
@@ -37,7 +37,7 @@ use UnexpectedValueException;
  *
  * NOTE: This is writer is a combination of the MonoLog StreamHandler and TYPO3s SyslogWriter
  *
- * @package LaborDigital\T3BA\Tool\Log
+ * @package LaborDigital\T3ba\Tool\Log
  */
 class StreamWriter extends AbstractWriter
 {

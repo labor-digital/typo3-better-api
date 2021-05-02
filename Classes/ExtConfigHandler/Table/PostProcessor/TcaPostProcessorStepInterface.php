@@ -20,10 +20,10 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\ExtConfigHandler\Table\PostProcessor;
+namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor;
 
 
-use LaborDigital\T3BA\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 
 interface TcaPostProcessorStepInterface extends PublicServiceInterface
 {

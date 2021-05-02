@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3BA\EventHandler;
+namespace LaborDigital\T3ba\EventHandler;
 
-use LaborDigital\T3BA\Event\FormEngine\LinkBrowserAllowedTabsFilterEvent;
+use LaborDigital\T3ba\Event\FormEngine\LinkBrowserAllowedTabsFilterEvent;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
@@ -42,7 +42,7 @@ class Links implements LazyEventSubscriberInterface
      * We "utilize"/"rape" the "blindLinkOptions" parameter here, so we don't need to put our own
      * javascript everywhere.
      *
-     * @param   \LaborDigital\T3BA\Event\FormEngine\LinkBrowserAllowedTabsFilterEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\LinkBrowserAllowedTabsFilterEvent  $event
      */
     public function onAllowedItemsFilter(LinkBrowserAllowedTabsFilterEvent $event): void
     {

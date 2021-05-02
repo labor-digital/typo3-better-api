@@ -20,17 +20,17 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3BA\Tool\DataHandler\Record;
+namespace LaborDigital\T3ba\Tool\DataHandler\Record;
 
 
-use LaborDigital\T3BA\Tool\DataHandler\DataHandlerService;
+use LaborDigital\T3ba\Tool\DataHandler\DataHandlerService;
 
 /**
  * Class RecordDataHandler
  *
  * A simple abstraction to perform record actions using the data handler in an object oriented way
  *
- * @package LaborDigital\T3BA\Tool\DataHandler\Record
+ * @package LaborDigital\T3ba\Tool\DataHandler\Record
  */
 class RecordDataHandler
 {
@@ -43,7 +43,7 @@ class RecordDataHandler
     protected $tableName;
     
     /**
-     * @var \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
+     * @var \LaborDigital\T3ba\Tool\DataHandler\DataHandlerService
      */
     protected $handlerService;
     
@@ -51,7 +51,7 @@ class RecordDataHandler
      * RecordDataHandler constructor.
      *
      * @param   string                                                  $tableName
-     * @param   \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService  $handlerService
+     * @param   \LaborDigital\T3ba\Tool\DataHandler\DataHandlerService  $handlerService
      */
     public function __construct(string $tableName, DataHandlerService $handlerService)
     {
@@ -62,7 +62,7 @@ class RecordDataHandler
     /**
      * Returns the instance of the data handler service
      *
-     * @return \LaborDigital\T3BA\Tool\DataHandler\DataHandlerService
+     * @return \LaborDigital\T3ba\Tool\DataHandler\DataHandlerService
      */
     public function getHandlerService(): DataHandlerService
     {
