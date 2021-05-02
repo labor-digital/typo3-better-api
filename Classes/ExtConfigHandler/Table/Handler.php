@@ -24,7 +24,6 @@ namespace LaborDigital\T3BA\ExtConfigHandler\Table;
 
 
 use LaborDigital\T3BA\ExtConfig\Abstracts\AbstractExtConfigHandler;
-use LaborDigital\T3BA\ExtConfig\ExtConfigException;
 use LaborDigital\T3BA\ExtConfig\Traits\DelayedConfigExecutionTrait;
 use LaborDigital\T3BA\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
@@ -98,27 +97,25 @@ class Handler extends AbstractExtConfigHandler
             return call_user_func([$class, 'getTableName']);
         }
         
-        // Remove the unwanted prefixes from the namespace
-        $extName = NamingUtil::extensionNameFromExtKey($this->context->getExtKey());
-        $pattern = '(?:\\\\)?' . preg_quote($this->context->getVendor(), '~') . '\\\\' .
-                   preg_quote($extName, '~') . '\\\\' .
-                   'Configuration\\\\Table\\\\' .
-                   '(?:Overrides?\\\\)?';
-        $pattern = '~' . $pattern . '~';
-        $tableNamespace = preg_replace($pattern, '', $class);
+        $namespaceParts = explode('\\', $class);
         
-        // Check if the transformation was successful
-        if ($tableNamespace === $class) {
-            throw new ExtConfigException(
-                'The TCA table config class ' . $class . ' MUST start with the following PHP namespace: '
-                . $this->context->getVendor() . '\\' . $extName . '\\'
-                . 'Configuration\\Table\\...');
+        // Remove optional vendor and extKey
+        $part = array_shift($namespaceParts);
+        if ($part === $this->context->getVendor()) {
+            array_shift($namespaceParts);
         }
         
-        // Remove optional "table" suffix
-        if (substr($tableNamespace, -5) === 'Table') {
-            $tableNamespace = substr($tableNamespace, 0, -5);
-        }
+        // Remove Configuration and Table parts
+        $namespaceParts = array_filter($namespaceParts, function (string $part) {
+            return ! in_array($part, ['Configuration', 'Table'], true);
+        });
+        
+        $tableNamespace = implode('\\', $namespaceParts);
+        $tableNamespace = preg_replace(
+            ['~\\\\Overrides?\\\\~', '~(?:Overrides?)?(?:Tables?)?(?:Overrides?)?$~'],
+            ['\\', ''],
+            $tableNamespace
+        );
         
         // Compile table name
         return $this->context->resolveTableName(
