@@ -32,12 +32,12 @@ class TypoScript implements ConfigureTypoScriptInterface
     /**
      * @inheritDoc
      */
-    public static function configure(TypoScriptConfigurator $configurator, ExtConfigContext $context): void
+    public static function configureTypoScript(TypoScriptConfigurator $configurator, ExtConfigContext $context): void
     {
         $configurator->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'T3BA - Generic TypoScript');
         $configurator->registerStaticTsDirectory('Configuration/TypoScript/Pids', 'T3BA - PID Mapping');
         $configurator->registerStaticTsDirectory(
             'Configuration/TypoScript/ExtBaseTemplates', 'T3BA - ExtBase Templates');
     }
-
+    
 }
