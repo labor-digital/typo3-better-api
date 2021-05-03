@@ -52,7 +52,6 @@
 		"neunerlei/options": "^1.0",
 		"neunerlei/inflection": "^1.2",
 		"neunerlei/filesystem": "^5.2",
-		"whitecube/lingua": "^1.0",
 		"zordius/lightncandy": "^1.2",
 		"labor-digital/typo3-better-api-composer-plugin": "4.0.0-beta.1"
 	},
