@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.3](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.2...v10.0.0-beta.3) (2021-05-03)
+
+
+### Bug Fixes
+
+* **ContentTypeUtil:** runWithRemappedTca() will no longer fail if CType could not be resolved ([b88ae38](https://github.com/labor-digital/typo3-better-api/commit/b88ae38b359de5c1dd94f18b6315bfd44a9d9bb4))
+* **ExtConfig\Fluid:** generate viewHelper key as camelBack instead of CamelCase ([6efc8f5](https://github.com/labor-digital/typo3-better-api/commit/6efc8f52acaa7b25af3ffb23d075c667aeb8a5e3))
+* **ExtConfig\Table:** harden new table name resolution ([1127288](https://github.com/labor-digital/typo3-better-api/commit/1127288f26a8eee87df337e975a863a7241b91b0))
+
 ## [10.0.0-beta.2](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.1...v10.0.0-beta.2) (2021-05-03)
 
 
