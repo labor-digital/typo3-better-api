@@ -178,7 +178,7 @@ class ContentTypeUtil
             $cType = '';
         }
         
-        if (! static::hasExtensionTable($cType)) {
+        if (!is_string($cType) || ! static::hasExtensionTable($cType)) {
             return $wrapper();
         }
         
