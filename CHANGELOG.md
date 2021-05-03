@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.2](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.1...v10.0.0-beta.2) (2021-05-03)
+
+
+### Bug Fixes
+
+* multiple fixes after namespace change ([a6f044a](https://github.com/labor-digital/typo3-better-api/commit/a6f044adb9925d70972323a5c4f407ea2be2bdf6))
+
 ## [10.0.0-beta.1](https://github.com/labor-digital/typo3-better-api/compare/v9.20.0...v10.0.0-beta.1) (2021-05-03)
 
 
