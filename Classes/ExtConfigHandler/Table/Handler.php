@@ -110,7 +110,7 @@ class Handler extends AbstractExtConfigHandler
             return ! in_array($part, ['Configuration', 'Table'], true);
         });
         
-        $tableNamespace = implode('\\', $namespaceParts);
+        $tableNamespace = '\\' . implode('\\', $namespaceParts);
         $tableNamespace = preg_replace(
             ['~\\\\Overrides?\\\\~', '~(?:Overrides?)?(?:Tables?)?(?:Overrides?)?$~'],
             ['\\', ''],
@@ -124,7 +124,9 @@ class Handler extends AbstractExtConfigHandler
                     static function (string $part) {
                         return strtolower(Inflector::toCamelBack($part));
                     },
-                    explode('\\', $tableNamespace)
+                    array_filter(
+                        explode('\\', $tableNamespace)
+                    )
                 )
             )
         );
