@@ -52,7 +52,7 @@ class FluidConfigurator extends AbstractExtConfigConfigurator
     public function registerViewHelpers(?string $key = null, ?string $namespace = null): self
     {
         if (empty($key)) {
-            $key = Inflector::toCamelCase($this->context->getExtKey());
+            $key = Inflector::toCamelBack($this->context->getExtKey());
         }
         
         if (empty($namespace)) {
