@@ -40,7 +40,7 @@ class ExtConfigLoader extends PhpFileLoader
     {
         $this->setCurrentDir($packagePath);
         $this->container->fileExists($packagePath);
-        $hookExtensionServicesPhp = dirname(__DIR__, 5) . '/HookExtension/T3BA_hook/Configuration/Services.php';
+        $hookExtensionServicesPhp = dirname(__DIR__, 5) . '/HookExtension/t3ba_hook/Configuration/Services.php';
         
         try {
             $callback(

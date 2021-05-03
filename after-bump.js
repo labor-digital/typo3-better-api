@@ -29,5 +29,6 @@ function updateEmConfVersion(filename, version)
 }
 
 updateEmConfVersion(path.join(__dirname, 'ext_emconf.php'), version);
-updateEmConfVersion(path.join(__dirname, 'HookExtension', 'T3BA_hook', 'ext_emconf.php'), version);
+updateEmConfVersion(path.join(__dirname, 'HookExtension', 't3ba_hook', 'ext_emconf.php'), version);
+updateEmConfVersion(path.join(__dirname, 'HookExtension', 't3ba_hook', 'composer.json'), version);
 

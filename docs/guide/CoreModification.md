@@ -106,7 +106,7 @@ With that in place, every part of the code will now use your implementation inst
 
 Registers a new class override. The override will completely replace the original source class. The overwritten class will be copied and is available in the
 same namespace but with the
-"T3BA__Copy__" prefix in front of it's class name. The overwritten class has all it's private properties and function changed to protected for easier overrides.
+"T3BaCopy" prefix in front of it's class name. The overwritten class has all it's private properties and function changed to protected for easier overrides.
 This method throws an exception if another class already overwrites the class
 
 ::: details Arguments
