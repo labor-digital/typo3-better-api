@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "9912e984f8f3314da9fa02eb4dac564d",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -701,31 +701,35 @@
         },
         {
             "name": "labor-digital/typo3-better-api-composer-plugin",
-            "version": "3.1.0",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labor-digital/typo3-better-api-composer-plugin.git",
-                "reference": "67c7d36dd07863026e2a9efe074f112caa174834"
+                "reference": "d7d02cdc36f59d35eca822a6fc1bdfa1ee1e2af7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labor-digital/typo3-better-api-composer-plugin/zipball/67c7d36dd07863026e2a9efe074f112caa174834",
-                "reference": "67c7d36dd07863026e2a9efe074f112caa174834",
+                "url": "https://api.github.com/repos/labor-digital/typo3-better-api-composer-plugin/zipball/d7d02cdc36f59d35eca822a6fc1bdfa1ee1e2af7",
+                "reference": "d7d02cdc36f59d35eca822a6fc1bdfa1ee1e2af7",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.1",
+                "composer-plugin-api": "^1.0 || ^2.0",
                 "neunerlei/filesystem": "^5.2",
                 "neunerlei/path-util": "^2.4",
                 "typo3/class-alias-loader": "^1.1.1"
             },
+            "require-dev": {
+                "composer/composer": "^1.1@dev || ^2.0@dev",
+                "roave/security-advisories": "dev-latest"
+            },
             "type": "composer-plugin",
             "extra": {
-                "class": "LaborDigital\\Typo3BetterApiComposerPlugin\\Plugin"
+                "class": "LaborDigital\\T3ba\\ComposerPlugin\\Plugin"
             },
             "autoload": {
                 "psr-4": {
-                    "LaborDigital\\Typo3BetterApiComposerPlugin\\": "Classes"
+                    "LaborDigital\\T3ba\\ComposerPlugin\\": "Classes"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -747,7 +751,7 @@
                 }
             ],
             "description": "TYPO3: Provides a global auto-loader hook which runs before TYPO3's class alias loader",
-            "time": "2020-05-25T10:46:20+00:00"
+            "time": "2021-05-03T06:52:59+00:00"
         },
         {
             "name": "league/uri",
@@ -4988,6 +4992,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6510,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6563,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.29.4"
+    "plugin-api-version": "1.1.0"
 }

@@ -53,7 +53,7 @@
         "neunerlei/filesystem": "^5.2",
         "whitecube/lingua": "^1.0",
         "zordius/lightncandy": "^1.2",
-        "labor-digital/typo3-better-api-composer-plugin": "^3.1"
+        "labor-digital/typo3-better-api-composer-plugin": "^4.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
