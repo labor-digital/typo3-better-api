@@ -41,12 +41,12 @@ namespace LaborDigital\T3ba\Tool\OddsAndEnds;
 use InvalidArgumentException;
 use LaborDigital\T3ba\ExtBase\Domain\Repository\BetterRepository;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ConfigureTcaTableInterface;
+use LaborDigital\T3ba\Tool\ExtBase\Hydrator\Hydrator;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use ReflectionMethod;
 use RuntimeException;
 use TYPO3\CMS\Core\Utility\ClassNamingUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
@@ -252,8 +252,8 @@ class NamingUtil
                 // Resolve entity class
                 if (in_array(AbstractEntity::class, class_parents($selector), true)) {
                     return static::$resolvedTableNames[$selector]
-                        = TypoContext::getInstance()->di()->getService(DataMapper::class)
-                                     ->getDataMap($selector)->getTableName();
+                        = TypoContext::getInstance()->di()->getService(Hydrator::class)
+                                     ->getDataMapper()->getDataMap($selector)->getTableName();
                 }
             }
             

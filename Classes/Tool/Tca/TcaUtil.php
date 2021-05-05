@@ -135,4 +135,26 @@ class TcaUtil
         }
     }
     
+    /**
+     * Helper to extract a value from a given row, which handles all possible oddities of TYPO3
+     *
+     * @param   array   $row  The database row to extract the value from
+     * @param   string  $key  The column name that should be extracted
+     *
+     * @return int|string
+     */
+    public static function getRowValue(array $row, string $key)
+    {
+        $value = $row[$key] ?? '';
+        
+        if (is_array($value)) {
+            $value = reset($value);
+        }
+        
+        if (! is_string($value) && ! is_numeric($value)) {
+            $value = '';
+        }
+        
+        return $value;
+    }
 }

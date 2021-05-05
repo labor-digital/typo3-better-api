@@ -28,9 +28,9 @@ use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
 use LaborDigital\T3ba\Tool\Database\DbService;
+use LaborDigital\T3ba\Tool\ExtBase\Hydrator\Hydrator;
 use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
-use TYPO3\CMS\Core\Service\FlexFormService;
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class ContentRepository implements PublicServiceInterface
@@ -48,15 +48,15 @@ class ContentRepository implements PublicServiceInterface
     protected $rowRepository;
     
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper
+     * @var \LaborDigital\T3ba\Tool\ExtBase\Hydrator\Hydrator
      */
-    protected $dataMapper;
+    protected $hydrator;
     
-    public function __construct(DbService $dbService, ExtensionRowRepository $rowRepository, DataMapper $dataMapper)
+    public function __construct(DbService $dbService, ExtensionRowRepository $rowRepository, Hydrator $hydrator)
     {
         $this->dbService = $dbService;
         $this->rowRepository = $rowRepository;
-        $this->dataMapper = $dataMapper;
+        $this->hydrator = $hydrator;
     }
     
     /**
@@ -115,6 +115,10 @@ class ContentRepository implements PublicServiceInterface
     }
     
     /**
+     * Recevies either a single tt_content uid, or a whole tt_content row which will get extended
+     * and converted into its matched domain model. If no explicit domain model was configured, the
+     * DefaultDataModel is used instead.
+     *
      * @param $rowOrUid
      *
      * @return \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\AbstractDataModel
@@ -128,19 +132,10 @@ class ContentRepository implements PublicServiceInterface
             $row = $this->getByQuery($this->dbService->getQuery('tt_content')->withWhere(['uid' => $rowOrUid]));
         }
         
-        $cType = $row['CType'] ?? '';
-        $class = ContentTypeUtil::getModelClass($cType);
+        $cType = TcaUtil::getRowValue($row, 'CType');
+        $modelClass = is_string($cType) ? ContentTypeUtil::getModelClass($cType) : DefaultDataModel::class;
         
-        return ContentTypeUtil::runWithRemappedTca($cType, function () use ($row, $class) {
-            $mapped = $this->dataMapper->map($class, [$row]);
-            /** @var AbstractDataModel $model */
-            $model = reset($mapped);
-            
-            $model->_setProperty('__raw', $row);
-            $model->_setProperty('__flex', $this->resolveFlexFormColumns($row));
-            
-            return $model;
-        });
+        return $this->hydrator->hydrateObject($modelClass, $row);
     }
     
     /**
@@ -186,29 +181,5 @@ class ContentRepository implements PublicServiceInterface
         $row = array_merge($row, ContentTypeUtil::convertChildForParent($childRow, $row['CType']));
         
         return $remapped ? ContentTypeUtil::remapColumns($row, $row['CType']) : $row;
-    }
-    
-    /**
-     * Internal helper to resolve the flex form columns into the __flex magic storage key
-     *
-     * @param   array  $row
-     *
-     * @return array
-     */
-    protected function resolveFlexFormColumns(array $row): array
-    {
-        $flexFormService = $this->getService(FlexFormService::class);
-        $colConfig = $GLOBALS['TCA']['tt_content']['columns'] ?? [];
-        $flexCols = [];
-        foreach ($colConfig as $col => $conf) {
-            if (empty($row[$col])
-                || ($conf['config']['type'] ?? null) !== 'flex') {
-                continue;
-            }
-            
-            $flexCols[$col] = $flexFormService->convertFlexFormContentToArray($row[$col]);
-        }
-        
-        return $flexCols;
     }
 }

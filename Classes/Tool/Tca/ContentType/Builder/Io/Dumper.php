@@ -244,6 +244,11 @@ class Dumper
             $tableTca['ctrl'][DomainModelMapStep::CONFIG_KEY][$className] = $mapping;
         }
         
+        // Attach default class mapping
+        if (! isset($tableTca['ctrl'][DomainModelMapStep::CONFIG_KEY][DefaultDataModel::class])) {
+            $tableTca['ctrl'][DomainModelMapStep::CONFIG_KEY][DefaultDataModel::class] = [];
+        }
+        
         return $tableTca;
     }
     

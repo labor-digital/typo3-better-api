@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\ContentType;
 
 
 use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\DefaultDataModel;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 
 class ContentTypeUtil
 {
@@ -169,16 +170,12 @@ class ContentTypeUtil
         if (is_string($rowOrCType)) {
             $cType = $rowOrCType;
         } elseif (is_array($rowOrCType)) {
-            $cType = $rowOrCType['CType'] ?? '';
-            // In BackendListLabelRenderer cType is an array we have to resolve specially.
-            if (is_array($cType)) {
-                $cType = reset($cType);
-            }
+            $cType = TcaUtil::getRowValue($rowOrCType, 'CType');
         } else {
             $cType = '';
         }
         
-        if (!is_string($cType) || ! static::hasExtensionTable($cType)) {
+        if (! is_string($cType) || ! static::hasExtensionTable($cType)) {
             return $wrapper();
         }
         
@@ -221,4 +218,5 @@ class ContentTypeUtil
         
         return $row;
     }
+    
 }
