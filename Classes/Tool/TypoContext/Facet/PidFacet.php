@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.05 at 21:08
  */
 
 declare(strict_types=1);
@@ -71,7 +71,7 @@ class PidFacet implements FacetInterface
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
-        $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState());
+        $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState(), null, []);
     }
     
     /**
