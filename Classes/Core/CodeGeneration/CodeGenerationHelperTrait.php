@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 11:43
  */
 
 declare(strict_types=1);
@@ -197,6 +197,14 @@ trait CodeGenerationHelperTrait
             return [];
         }
         
+        $slashStripper = function ($v) {
+            if (is_string($v)) {
+                return ltrim($v, '\\');
+            }
+            
+            return $v;
+        };
+        
         if ($typeOrParent instanceof ReflectionParameter) {
             if (! $typeOrParent->hasType()) {
                 return [];
@@ -210,7 +218,7 @@ trait CodeGenerationHelperTrait
             
             $rawType = $typeOrParent->getReturnType();
         } elseif (is_string($typeOrParent)) {
-            return explode('|', $typeOrParent);
+            return array_map($slashStripper, explode('|', $typeOrParent));
         } elseif (is_array($typeOrParent)) {
             return array_map([$this, 'parseType'], $typeOrParent);
         } else {
@@ -233,7 +241,7 @@ trait CodeGenerationHelperTrait
             $lcTypeName = strtolower($typeName);
             
             if ('self' !== $lcTypeName && 'parent' !== $lcTypeName) {
-                $result[] = '\\' . $typeName;
+                $result[] = $typeName;
                 continue;
             }
             
@@ -242,12 +250,12 @@ trait CodeGenerationHelperTrait
             }
             
             if ('self' === $lcTypeName) {
-                $result[] = '\\' . $typeOrParent->getDeclaringClass()->name;
+                $result[] = $typeOrParent->getDeclaringClass()->name;
             } else {
-                $result[] = ($parent = $typeOrParent->getDeclaringClass()->getParentClass()) ? '\\' . $parent->name : null;
+                $result[] = ($parent = $typeOrParent->getDeclaringClass()->getParentClass()) ? $parent->name : null;
             }
         }
         
-        return $result;
+        return array_map($slashStripper, $result);
     }
 }
