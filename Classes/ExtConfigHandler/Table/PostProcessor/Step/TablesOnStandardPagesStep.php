@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:57
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
 
 /**
@@ -32,7 +33,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepI
  *
  * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
  */
-class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface
+class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface, NoDiInterface
 {
     public const CONFIG_KEY = 'allowOnStandardPages';
     

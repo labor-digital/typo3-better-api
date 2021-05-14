@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.12 at 14:03
  */
 
 declare(strict_types=1);
@@ -24,7 +24,6 @@ namespace LaborDigital\T3ba\Core\Di;
 
 
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
-use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
 use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
@@ -54,10 +53,5 @@ class ServiceFactory
     public static function getDiConfigLoader(ContainerInterface $container): DiLoader
     {
         return $container->get(ExtConfigService::class)->getDiLoader();
-    }
-    
-    public static function getExtConfigContext(ContainerInterface $container): ExtConfigContext
-    {
-        return $container->get(ExtConfigService::class)->getContext();
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.01 at 20:40
+ * Last modified: 2021.05.10 at 17:55
  */
 
 declare(strict_types=1);
@@ -23,11 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Frontend;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
+class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface, NoDiInterface
 {
     protected $configureMethod = 'configureFrontend';
     

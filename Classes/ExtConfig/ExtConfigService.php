@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.12 at 14:00
  */
 
 declare(strict_types=1);
@@ -261,8 +261,6 @@ class ExtConfigService
                 },
             ];
         }
-        
-        logFile('root locations', $rootLocations);
         
         return $this->rootLocations = $rootLocations;
     }

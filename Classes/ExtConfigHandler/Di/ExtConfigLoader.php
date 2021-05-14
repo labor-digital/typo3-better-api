@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:51
  */
 
 /** @noinspection PhpMissingStrictTypesDeclarationInspection */
@@ -22,11 +22,12 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Di;
 
 
 use Closure;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
-class ExtConfigLoader extends PhpFileLoader
+class ExtConfigLoader extends PhpFileLoader implements NoDiInterface
 {
     /**
      * Wraps around the ext config loading process

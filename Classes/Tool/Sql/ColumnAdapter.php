@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -24,8 +24,9 @@ namespace LaborDigital\T3ba\Tool\Sql;
 
 
 use Doctrine\DBAL\Schema\Column;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 
-class ColumnAdapter extends Column
+class ColumnAdapter extends Column implements NoDiInterface
 {
     
     /**

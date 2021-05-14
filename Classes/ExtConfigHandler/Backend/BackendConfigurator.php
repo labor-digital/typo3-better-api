@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:49
  */
 
 declare(strict_types=1);
@@ -23,12 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Backend;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use LaborDigital\T3ba\ExtConfigHandler\Common\Assets\AssetCollectorTrait;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
 
-class BackendConfigurator extends AbstractExtConfigConfigurator
+class BackendConfigurator extends AbstractExtConfigConfigurator implements NoDiInterface
 {
     use RteConfigTrait;
     use AssetCollectorTrait;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:57
  */
 
 declare(strict_types=1);
@@ -23,9 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Table\ContentType;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
-class DataHandlerAdapter extends DataHandler
+class DataHandlerAdapter extends DataHandler implements NoDiInterface
 {
     /**
      * Because TYPO3 gives me no good angle of attack to in DataHandler::compareFieldArrayWithCurrentAndUnset,

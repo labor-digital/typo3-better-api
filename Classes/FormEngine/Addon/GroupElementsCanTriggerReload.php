@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:35
  */
 
 declare(strict_types=1);
@@ -38,11 +38,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\FormEngine\Addon;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
 use LaborDigital\T3ba\FormEngine\Util\FormEngineChangeFunctionBuilder;
 use TYPO3\CMS\Backend\Form\Element\GroupElement;
 
-class GroupElementsCanTriggerReload
+class GroupElementsCanTriggerReload implements NoDiInterface
 {
     
     /**

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -26,9 +26,10 @@ namespace LaborDigital\T3ba\Tool\Sql;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\Exception\NotImplementedException;
 
-class TableOverride extends Table
+class TableOverride extends Table implements NoDiInterface
 {
     protected $locked = true;
     

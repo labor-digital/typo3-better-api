@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 19:00
  */
 
 declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\TypoContext\Aspect;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\TypoContext\Facet\FacetInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 
@@ -32,7 +33,7 @@ use TYPO3\CMS\Core\Context\AspectInterface;
  * @package LaborDigital\T3ba\Tool\TypoContext\Aspect
  * @see     FacetInterface
  */
-class FacetAspect implements AspectInterface
+class FacetAspect implements AspectInterface, NoDiInterface
 {
     
     /**

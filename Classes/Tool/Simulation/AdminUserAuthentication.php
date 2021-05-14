@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 19:04
  */
 
 declare(strict_types=1);
@@ -124,7 +124,6 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
             $this->setBeUserByName(static::ADMIN_USERNAME);
             
             // Failed ?
-            /** @noinspection NotOptimalIfConditionsInspection */
             if (empty($this->user['uid'])) {
                 throw new T3baException('Could not automatically create an admin user for you to use!');
             }

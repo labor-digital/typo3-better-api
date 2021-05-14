@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:35
  */
 
 declare(strict_types=1);
@@ -23,13 +23,14 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 
-class Handler extends AbstractExtConfigHandler
+class Handler extends AbstractExtConfigHandler implements NoDiInterface
 {
     use DelayedConfigExecutionTrait;
     

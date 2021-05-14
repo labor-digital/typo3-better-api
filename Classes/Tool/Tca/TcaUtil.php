@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 19:00
  */
 
 declare(strict_types=1);
@@ -23,12 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 
-class TcaUtil
+class TcaUtil implements NoDiInterface
 {
     /**
      * Contains the tca columns for the last 20 requested types to save performance

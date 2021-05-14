@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:55
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Http;
 
 
 use InvalidArgumentException;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
@@ -31,7 +32,7 @@ use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
 use Psr\Http\Server\MiddlewareInterface;
 
-class HttpConfigurator extends AbstractExtConfigConfigurator
+class HttpConfigurator extends AbstractExtConfigConfigurator implements NoDiInterface
 {
     protected const MIDDLEWARE_STACK_SCHEMA
         = [

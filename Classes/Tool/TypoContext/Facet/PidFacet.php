@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.05 at 21:08
+ * Last modified: 2021.05.10 at 18:47
  */
 
 declare(strict_types=1);
@@ -39,7 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
 
 use GuzzleHttp\Psr7\Query;
-use LaborDigital\T3ba\Tool\Exception\InvalidPidException;
+use LaborDigital\T3ba\Tool\TypoContext\InvalidPidException;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
@@ -110,7 +110,7 @@ class PidFacet implements FacetInterface
      * @param   array  $pids  A list of pids as $path => $pid or as multidimensional array
      *
      * @return $this
-     * @throws \LaborDigital\T3ba\Tool\Exception\InvalidPidException
+     * @throws \LaborDigital\T3ba\Tool\TypoContext\InvalidPidException
      */
     public function setMultiple(array $pids): self
     {
@@ -144,7 +144,7 @@ class PidFacet implements FacetInterface
      *                                     exception if the pid was not found in the registry
      *
      * @return int
-     * @throws \LaborDigital\T3ba\Tool\Exception\InvalidPidException
+     * @throws \LaborDigital\T3ba\Tool\TypoContext\InvalidPidException
      */
     public function get($key, int $fallback = -1): int
     {
@@ -209,7 +209,7 @@ class PidFacet implements FacetInterface
      * @param   string  $key  The key of a subset to retrieve, use a typical path to retrieve nested subsets
      *
      * @return array
-     * @throws \LaborDigital\T3ba\Tool\Exception\InvalidPidException
+     * @throws \LaborDigital\T3ba\Tool\TypoContext\InvalidPidException
      */
     public function getSubSet(string $key): array
     {

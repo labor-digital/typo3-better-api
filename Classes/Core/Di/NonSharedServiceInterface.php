@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:06
+ * Last modified: 2021.05.10 at 17:16
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Core\Di;
 
-
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-
-class InvalidFieldIdException extends TcaBuilderException implements NoDiInterface
+/**
+ * Interface NonSharedServiceInterface
+ *
+ * Marks the class that has this interface as not shared, meaning
+ * every time you request it from the container, a new instance is created.
+ *
+ * @package LaborDigital\T3ba\Core\Di
+ * @see     https://symfony.com/doc/current/service_container/shared.html
+ */
+interface NonSharedServiceInterface
 {
-
+    
 }

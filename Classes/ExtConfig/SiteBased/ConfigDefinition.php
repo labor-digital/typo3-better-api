@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:47
  */
 
 declare(strict_types=1);
@@ -23,12 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface;
 use Neunerlei\Configuration\Loader\ConfigDefinition as DefaultConfigDefinition;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
-class ConfigDefinition extends DefaultConfigDefinition
+class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
 {
     /**
      * @var \TYPO3\CMS\Core\Site\Entity\Site[]
