@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.07 at 10:22
  */
 
 declare(strict_types=1);
@@ -198,7 +198,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         
         // Set up the simulation
         $rollBackPasses = [];
-        $result = null;
         try {
             foreach ($this->passes as $pass) {
                 $storage = [];
@@ -212,7 +211,7 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
             $this->isInSimulation = $this->isInSimulation || ! empty($rollBackPasses);
             
             // Run the handler
-            $result = $handler();
+            return $handler();
             
         } finally {
             // Roll back
@@ -225,9 +224,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
             $this->childSimulationsIgnored = $parentIgnoresChildSimulations;
             $this->isInSimulation = $parentIsInSimulation;
         }
-        
-        // Done
-        return $result;
     }
     
     /**

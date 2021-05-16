@@ -14,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:06
+ * Last modified: 2021.05.10 at 18:47
  */
 
 declare(strict_types=1);
 
+namespace LaborDigital\T3ba\Tool\TypoContext;
 
-namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 
-
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-
-class InvalidFieldIdException extends TcaBuilderException implements NoDiInterface
+class InvalidPidException extends T3baException
 {
-
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:49
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Core;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use LaborDigital\T3ba\Tool\Log\BeLogWriter;
 use LaborDigital\T3ba\Tool\Log\BetterFileWriter;
@@ -32,7 +33,7 @@ use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Options\Options;
 
-class TypoCoreConfigurator extends AbstractExtConfigConfigurator
+class TypoCoreConfigurator extends AbstractExtConfigConfigurator implements NoDiInterface
 {
     use TypoContextAwareTrait;
     use LogConfigTrait;

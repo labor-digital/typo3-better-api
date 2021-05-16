@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:48
  */
 
 declare(strict_types=1);
@@ -38,6 +38,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Fal\FileInfo;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\Fal\FalException;
 use LaborDigital\T3ba\Tool\Fal\FalFileUrlUtil;
 use LaborDigital\T3ba\Tool\Fal\FalService;
@@ -48,7 +49,7 @@ use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-class FileInfo
+class FileInfo implements NoDiInterface
 {
     /**
      * Additional, detail info based on the current file type

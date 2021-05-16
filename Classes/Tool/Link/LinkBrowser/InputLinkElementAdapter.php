@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.20 at 11:02
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -23,9 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Link\LinkBrowser;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use TYPO3\CMS\Backend\Form\Element\InputLinkElement;
 
-class InputLinkElementAdapter extends InputLinkElement
+class InputLinkElementAdapter extends InputLinkElement implements NoDiInterface
 {
     /**
      * Used to forward the link explanation request to another url.

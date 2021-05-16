@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.12 at 14:08
  */
 
 declare(strict_types=1);
@@ -144,6 +144,7 @@ class DiConfigurationStage implements BootStageInterface
         $symfony->get(EventSubscriberBridge::class);
         
         $extConfigService = $miniContainer->get(ExtConfigService::class);
+        $symfony->set(ExtConfigContext::class, $extConfigService->getContext());
         $symfony->set(ExtConfigService::class, $extConfigService);
         $symfony->set(ConfigState::class, new ConfigState([]));
         $extConfigService->getContext()->setTypoContext($context);

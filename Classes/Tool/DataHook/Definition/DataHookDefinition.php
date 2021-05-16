@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:47
  */
 
 declare(strict_types=1);
@@ -23,9 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\DataHook\Definition;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FieldPackerInterface;
 
-class DataHookDefinition
+class DataHookDefinition implements NoDiInterface
 {
     /**
      * One of DataHookTypes::TYPE_ that defines which kind of hook is processed

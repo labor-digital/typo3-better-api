@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\OddsAndEnds;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\Exception\T3baException;
 use ReflectionObject;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -30,7 +31,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-class LazyLoadingUtil
+class LazyLoadingUtil implements NoDiInterface
 {
     /**
      * Helper that always returns the real value of a given object.

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:55
  */
 
 declare(strict_types=1);
@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Pid;
 
 use InvalidArgumentException;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigConfiguratorInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
 use LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextAwareTrait;
@@ -29,7 +30,7 @@ use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
 
-class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfiguratorInterface
+class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfiguratorInterface, NoDiInterface
 {
     use ExtConfigContextAwareTrait;
     

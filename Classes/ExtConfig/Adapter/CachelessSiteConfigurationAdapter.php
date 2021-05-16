@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:40
  */
 
 declare(strict_types=1);
@@ -23,12 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfig\Adapter;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class CachelessSiteConfigurationAdapter extends SiteConfiguration
+class CachelessSiteConfigurationAdapter extends SiteConfiguration implements NoDiInterface
 {
     /**
      * @inheritDoc
@@ -49,9 +50,11 @@ class CachelessSiteConfigurationAdapter extends SiteConfiguration
      * @param   \TYPO3\CMS\Core\Configuration\SiteConfiguration  $siteConfiguration
      *
      * @return static
+     * @noinspection ExposingInternalClassesInspection
      */
     public static function makeInstance(?SiteConfiguration $siteConfiguration = null): self
     {
+        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         $siteConfiguration = $siteConfiguration ?? GeneralUtility::makeInstance(SiteConfiguration::class);
         $configPath = $siteConfiguration->configPath;
         

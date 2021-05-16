@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -81,8 +81,8 @@ class Factory implements PublicServiceInterface
      */
     protected function makeStandaloneField(): TcaField
     {
-        $tableFactory = $this->makeInstance(TableFactory::class);
-        $table = $tableFactory->create('flex-form-dummy-table', $this->getService(ExtConfigContext::class));
+        $table = $this->getService(TableFactory::class)
+                      ->create('flex-form-dummy-table', $this->getService(ExtConfigContext::class));
         
         return $table->getType()->getField('flex');
     }

@@ -14,15 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.20 at 11:02
+ * Last modified: 2021.05.10 at 17:16
  */
 
 declare(strict_types=1);
 
-namespace LaborDigital\T3ba\Tool\Exception;
 
-use LaborDigital\T3ba\Core\Exception\T3baException;
+namespace LaborDigital\T3ba\Core\Di;
 
-class InvalidPidException extends T3baException
+/**
+ * Interface NonSharedServiceInterface
+ *
+ * Marks the class that has this interface as not shared, meaning
+ * every time you request it from the container, a new instance is created.
+ *
+ * @package LaborDigital\T3ba\Core\Di
+ * @see     https://symfony.com/doc/current/service_container/shared.html
+ */
+interface NonSharedServiceInterface
 {
+    
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.12 at 13:54
  */
 
 declare(strict_types=1);
@@ -159,6 +159,14 @@ class MainLoader
     protected function loadSiteBasedConfig(ConfigState $state): void
     {
         $loader = $this->extConfigService->makeLoader(ExtConfigService::SITE_BASED_LOADER_KEY);
+        $container = $this->getContainer();
+        
+        $configContext = $this->makeInstance(SiteConfigContext::class, [
+            $this->extConfigService,
+            $this->getTypoContext(),
+        ]);
+        $container->set(SiteConfigContext::class, $configContext);
+        
         $loader->setConfigContextClass(SiteConfigContext::class);
         $loader->setCache(null);
         $loader->setContainer($this->getContainer());

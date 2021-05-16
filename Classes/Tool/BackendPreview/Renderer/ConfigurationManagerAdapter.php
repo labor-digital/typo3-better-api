@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:42
  */
 
 declare(strict_types=1);
@@ -23,10 +23,11 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 
-class ConfigurationManagerAdapter extends ConfigurationManager
+class ConfigurationManagerAdapter extends ConfigurationManager implements NoDiInterface
 {
     /**
      * Runs the given callback while the configuration manager assumes to run in a frontend environment
@@ -41,9 +42,8 @@ class ConfigurationManagerAdapter extends ConfigurationManager
         $concreteBackup = $configurationManager->concreteConfigurationManager;
         try {
             if (! $concreteBackup instanceof FrontendConfigurationManager) {
-                $objectManager = $configurationManager->objectManager;
                 $configurationManager->concreteConfigurationManager
-                    = $objectManager->get(FrontendConfigurationManager::class);
+                    = $configurationManager->objectManager->get(FrontendConfigurationManager::class);
             }
             
             return $callback();

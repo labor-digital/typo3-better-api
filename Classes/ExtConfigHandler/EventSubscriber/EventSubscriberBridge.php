@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:18
+ * Last modified: 2021.05.10 at 17:52
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\EventSubscriber;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
 
@@ -35,7 +36,7 @@ use Neunerlei\EventBus\Subscription\EventSubscriberInterface;
  *
  * @package LaborDigital\T3ba\ExtConfigHandler\EventSubscriber
  */
-class EventSubscriberBridge
+class EventSubscriberBridge implements NoDiInterface
 {
     /**
      * @var \LaborDigital\T3ba\Core\EventBus\TypoEventBus

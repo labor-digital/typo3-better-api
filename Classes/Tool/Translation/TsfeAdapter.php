@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.20 at 11:02
+ * Last modified: 2021.05.10 at 19:00
  */
 
 declare(strict_types=1);
@@ -38,10 +38,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Translation;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class TsfeAdapter extends TypoScriptFrontendController
+class TsfeAdapter extends TypoScriptFrontendController implements NoDiInterface
 {
     /**
      * Adapter to extract the language service from a TypoScriptFrontendController instance

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -39,6 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Link;
 
 use GuzzleHttp\Psr7\Query;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\Link\Adapter\CacheHashCalculatorAdapter;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Options\Options;
@@ -54,7 +55,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  *
  * @package LaborDigital\T3ba\Tool\Link
  */
-class Link
+class Link implements NoDiInterface
 {
     /**
      * @var \LaborDigital\T3ba\Tool\Link\LinkContext

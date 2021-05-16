@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.12 at 14:05
  */
 
 declare(strict_types=1);
@@ -114,7 +114,7 @@ class TableApplier extends AbstractExtConfigApplier
         $this->getService(TableLoader::class)->loadTableOverrides();
         $this->getService(ContentTypeLoader::class)->load();
         $this->cache->set(static::TCA_META_CACHE_KEY,
-            $this->getService(TcaPostProcessor::class)->process()
+            $this->makeInstance(TcaPostProcessor::class)->process()
         );
         $this->applyMeta();
     }
@@ -149,10 +149,5 @@ class TableApplier extends AbstractExtConfigApplier
         if (is_array($list)) {
             NamingUtil::$tcaTableClassNameMap = array_merge(NamingUtil::$tcaTableClassNameMap, $list);
         }
-    }
-    
-    protected function getTableLoader(): Loader
-    {
-        return $this->getService(Loader::class);
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:57
  */
 
 declare(strict_types=1);
@@ -39,6 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\OddsAndEnds;
 
 use InvalidArgumentException;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtBase\Domain\Repository\BetterRepository;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ConfigureTcaTableInterface;
 use LaborDigital\T3ba\Tool\ExtBase\Hydrator\Hydrator;
@@ -50,7 +51,7 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-class NamingUtil
+class NamingUtil implements NoDiInterface
 {
     /**
      * A list of tca configuration class names and their matching db table names

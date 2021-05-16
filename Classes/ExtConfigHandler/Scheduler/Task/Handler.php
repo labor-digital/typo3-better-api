@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:57
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Scheduler\Task;
 
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3ba\ExtConfig\ExtConfigException;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
@@ -31,7 +32,7 @@ use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
-class Handler extends AbstractExtConfigHandler
+class Handler extends AbstractExtConfigHandler implements NoDiInterface
 {
     /**
      * The list of all gathered task definitions

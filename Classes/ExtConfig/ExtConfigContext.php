@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.12 at 14:06
  */
 
 declare(strict_types=1);
@@ -24,7 +24,7 @@ namespace LaborDigital\T3ba\ExtConfig;
 
 
 use LaborDigital\T3ba\Core\Di\DelegateContainer;
-use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
@@ -33,7 +33,7 @@ use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
 
-class ExtConfigContext extends ConfigContext implements PublicServiceInterface
+class ExtConfigContext extends ConfigContext implements NoDiInterface
 {
     /**
      * @var \LaborDigital\T3ba\ExtConfig\ExtConfigService

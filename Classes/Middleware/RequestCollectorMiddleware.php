@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:40
  */
 
 declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Middleware;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class RequestCollectorMiddleware implements MiddlewareInterface
+class RequestCollectorMiddleware implements MiddlewareInterface, NoDiInterface
 {
     
     /**

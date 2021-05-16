@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 18:41
  */
 
 declare(strict_types=1);
@@ -38,10 +38,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\BackendPreview;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils;
 
-class BackendPreviewRendererContext
+class BackendPreviewRendererContext implements NoDiInterface
 {
     
     /**

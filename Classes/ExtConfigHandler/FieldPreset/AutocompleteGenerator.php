@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:18
+ * Last modified: 2021.05.10 at 17:54
  */
 
 declare(strict_types=1);
@@ -24,11 +24,12 @@ namespace LaborDigital\T3ba\ExtConfigHandler\FieldPreset;
 
 
 use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerationHelperTrait;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\VarFs\Mount;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use ReflectionMethod;
 
-class AutocompleteGenerator
+class AutocompleteGenerator implements NoDiInterface
 {
     use CodeGenerationHelperTrait;
     

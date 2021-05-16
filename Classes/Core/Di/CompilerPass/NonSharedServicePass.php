@@ -14,29 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:47
+ * Last modified: 2021.05.10 at 19:14
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\Cache\Util;
+namespace LaborDigital\T3ba\Core\Di\CompilerPass;
 
 
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class CacheManagerAdapter extends CacheManager implements NoDiInterface
+class NonSharedServicePass implements CompilerPassInterface
 {
     /**
-     * Extracts the list of all cache identifiers
-     *
-     * @param   \TYPO3\CMS\Core\Cache\CacheManager  $cacheManager
-     *
-     * @return array
+     * @inheritDoc
      */
-    public static function getAllCacheIdentifiers(CacheManager $cacheManager): array
+    public function process(ContainerBuilder $container)
     {
-        return array_keys($cacheManager->cacheConfigurations);
+        foreach ($container->findTaggedServiceIds('t3ba.nonShared') as $id => $tags) {
+            try {
+                $container->getDefinition($id)->setShared(false);
+            } catch (\Throwable $e) {
+                // Silence
+                dbge($id, $e);
+            }
+        }
     }
+    
 }

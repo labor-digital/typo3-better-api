@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:06
+ * Last modified: 2021.05.10 at 17:20
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
+namespace LaborDigital\T3ba\Core\Di;
 
-
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-
-class InvalidFieldIdException extends TcaBuilderException implements NoDiInterface
+/**
+ * Interface NoDiInterface
+ *
+ * Tells the container compiler to not handle this service. This is quite useful if you don't want
+ * to specifically exclude 50 files in your DI configuration.
+ *
+ * @package LaborDigital\T3ba\Core\Di
+ */
+interface NoDiInterface
 {
-
+    
 }

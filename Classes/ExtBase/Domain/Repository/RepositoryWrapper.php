@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.10 at 17:46
  */
 
 declare(strict_types=1);
@@ -38,11 +38,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\ExtBase\Domain\Repository;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-class RepositoryWrapper extends BetterRepository
+class RepositoryWrapper extends BetterRepository implements NoDiInterface
 {
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Repository
