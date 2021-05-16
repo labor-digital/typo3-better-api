@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:57
+ * Last modified: 2021.05.16 at 16:14
  */
 
 declare(strict_types=1);
@@ -25,10 +25,9 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface, NoDiInterface
+class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
 {
     protected $configureMethod = 'configureRouting';
     
@@ -44,17 +43,9 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
     /**
      * @inheritDoc
      */
-    public function prepare(): void
-    {
-        $this->configurator = $this->getInstanceWithoutDi(RoutingConfigurator::class, [$this->context->getSite()]);
-    }
-    
-    /**
-     * @inheritDoc
-     */
     protected function getConfiguratorClass(): string
     {
-        return '';
+        return RoutingConfigurator::class;
     }
     
     /**
@@ -62,6 +53,6 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
      */
     protected function getStateNamespace(): string
     {
-        return '';
+        return 'typo';
     }
 }

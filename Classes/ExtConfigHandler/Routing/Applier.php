@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 16:14
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 
+use LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent;
 use LaborDigital\T3ba\Event\Core\SiteConfigFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use Neunerlei\Arrays\Arrays;
@@ -30,13 +31,43 @@ use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier
 {
-    
     /**
      * @inheritDoc
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
+        $subscription->subscribe(MiddlewareRegistrationEvent::class, 'onMiddlewareRegistration');
         $subscription->subscribe(SiteConfigFilterEvent::class, 'onSiteConfigFilter');
+    }
+    
+    /**
+     * Inject our middleware configuration into the TYPO3 configuration option
+     *
+     * @param   \LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent  $event
+     */
+    public function onMiddlewareRegistration(MiddlewareRegistrationEvent $event): void
+    {
+        $config = $this->state->get('typo.middleware', []);
+        
+        $middlewares = $event->getMiddlewares();
+        
+        if (! empty($config['list'])) {
+            foreach (Arrays::makeFromJson($config['list']) as $stack => $list) {
+                foreach ($list as $identifier => $middleware) {
+                    $middlewares[$stack][$identifier] = $middleware;
+                }
+            }
+        }
+        
+        if (! empty($config['disabled'])) {
+            foreach (Arrays::makeFromJson($config['disabled']) as $stack => $list) {
+                foreach ($list as $identifier => $foo) {
+                    $middlewares[$stack][$identifier]['disabled'] = true;
+                }
+            }
+        }
+        
+        $event->setMiddlewares($middlewares);
     }
     
     /**
@@ -47,15 +78,17 @@ class Applier extends AbstractExtConfigApplier
     public function onSiteConfigFilter(SiteConfigFilterEvent $e): void
     {
         $routeEnhancers = $this->state->get('typo.site.*.routeEnhancers');
-        $filtered = $e->getConfig();
+        $config = $e->getConfig();
         
-        foreach ($filtered as $key => $config) {
+        foreach (array_keys($config) as $key) {
             if (! is_string($routeEnhancers[$key])) {
                 continue;
             }
-            $filtered[$key]['routeEnhancers'] = Arrays::makeFromJson($routeEnhancers[$key]);
+            
+            $config[$key]['routeEnhancers'] = Arrays::makeFromJson($routeEnhancers[$key]);
         }
         
-        $e->setConfig($filtered);
+        $e->setConfig($config);
     }
+    
 }

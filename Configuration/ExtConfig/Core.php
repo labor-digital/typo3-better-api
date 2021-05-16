@@ -28,9 +28,9 @@ use LaborDigital\T3ba\ExtConfigHandler\Core\ConfigureTypoCoreInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Core\TypoCoreConfigurator;
 use LaborDigital\T3ba\ExtConfigHandler\Fluid\ConfigureFluidInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Fluid\FluidConfigurator;
-use LaborDigital\T3ba\ExtConfigHandler\Http\ConfigureHttpInterface;
-use LaborDigital\T3ba\ExtConfigHandler\Http\HttpConfigurator;
 use LaborDigital\T3ba\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Routing\ConfigureRoutingInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
 use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
@@ -43,7 +43,7 @@ use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
-class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureHttpInterface,
+class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureRoutingInterface,
                       ConfigureTypoCoreInterface
 {
     
@@ -133,7 +133,7 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
     /**
      * @inheritDoc
      */
-    public static function configureHttp(HttpConfigurator $configurator, ExtConfigContext $context): void
+    public static function configureRouting(RoutingConfigurator $configurator, ExtConfigContext $context): void
     {
         $configurator->registerRouteAspectHandler(
             'T3BAStoragePidAwarePersistedAliasMapper',

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 16:14
  */
 
 declare(strict_types=1);
@@ -23,18 +23,20 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 
-use LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
 interface ConfigureRoutingInterface
 {
     
     /**
-     * Allows you to configure the site aware routing options. Currently, this is mostly the configuration
-     * of route enhancers on a specific side in your sites.yml
+     * Allows you to register global routing related options, like middlewares or route aspect handlers.
      *
      * @param   \LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator  $configurator
-     * @param   \LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext         $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                    $context
+     *
+     * @see ConfigureSiteRoutingInterface if you want to configure actual routes and how they are handled
+     *                                    on a specific site.
      */
-    public static function configureRouting(RoutingConfigurator $configurator, SiteConfigContext $context): void;
+    public static function configureRouting(RoutingConfigurator $configurator, ExtConfigContext $context): void;
     
 }

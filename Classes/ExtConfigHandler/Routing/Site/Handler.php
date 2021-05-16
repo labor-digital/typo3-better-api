@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:55
+ * Last modified: 2021.05.16 at 16:01
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\ExtConfigHandler\Http;
+namespace LaborDigital\T3ba\ExtConfigHandler\Routing\Site;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
-class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
+class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface, NoDiInterface
 {
-    protected $configureMethod = 'configureHttp';
+    protected $configureMethod = 'configureSiteRouting';
     
     /**
      * @inheritDoc
@@ -37,7 +38,15 @@ class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->registerInterface(ConfigureHttpInterface::class);
+        $configurator->registerInterface(ConfigureSiteRoutingInterface::class);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function prepare(): void
+    {
+        $this->configurator = $this->getInstanceWithoutDi(SiteRoutingConfigurator::class, [$this->context->getSite()]);
     }
     
     /**
@@ -45,7 +54,7 @@ class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
      */
     protected function getConfiguratorClass(): string
     {
-        return HttpConfigurator::class;
+        return '';
     }
     
     /**
@@ -53,6 +62,6 @@ class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
      */
     protected function getStateNamespace(): string
     {
-        return 'typo';
+        return '';
     }
 }
