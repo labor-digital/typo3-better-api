@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.4](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.3...v10.0.0-beta.4) (2021-05-03)
+
+
+### Bug Fixes
+
+* fix composer v2 issues ([5b5776b](https://github.com/labor-digital/typo3-better-api/commit/5b5776b57129174cb75a11a723cb2cf9e057c608))
+
 ## [10.0.0-beta.3](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.2...v10.0.0-beta.3) (2021-05-03)
 
 
