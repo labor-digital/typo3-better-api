@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.6](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.5...v10.0.0-beta.6) (2021-05-17)
+
+
+### Features
+
+* **TypoContext:** make registration of facets dynamic, so extensions can add their own ([0d52464](https://github.com/labor-digital/typo3-better-api/commit/0d524648af4065ab21e5cc5891202e09f41263be))
+
 ## [10.0.0-beta.5](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.4...v10.0.0-beta.5) (2021-05-16)
 
 
