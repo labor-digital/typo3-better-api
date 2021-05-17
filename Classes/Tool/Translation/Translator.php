@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.17 at 17:32
  */
 
 declare(strict_types=1);
@@ -156,6 +156,25 @@ class Translator implements SingletonInterface
         $result = $this->requireNamespace($namespaceName);
         
         return $withTripleLPrefix ? 'LLL:' . $result : $result;
+    }
+    
+    /**
+     * Allows you to register an override of a specific label with another one.
+     * You should do this using the ConfigureTranslatorInterface in the ExtConfig,
+     * but sometimes this will be needed in edge cases.
+     *
+     * @param   string  $original  The full label to override
+     * @param   string  $override  The label to override with
+     *
+     * @return $this
+     * @see \LaborDigital\T3ba\ExtConfigHandler\Translation\TranslationConfigurator::registerOverride()
+     */
+    public function registerOverride(string $original, string $override): self
+    {
+        $this->getTypoContext()->config()->getConfigState()
+             ->mergeIntoArray('typo.translation.overrideLabels', [$original => $this->getLabelKey($override)]);
+        
+        return $this;
     }
     
     /**
