@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.5](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.4...v10.0.0-beta.5) (2021-05-16)
+
+
+### Features
+
+* implement NoDiInterface and NonSharedServiceInterface ([ad5d4e9](https://github.com/labor-digital/typo3-better-api/commit/ad5d4e9daf7c5f6a389c993cf7e7760a69ae3e49))
+
+
+### Bug Fixes
+
+* **CodeGenerationHelperTrait:** remove unwanted leading slash in parseType() ([575ec5c](https://github.com/labor-digital/typo3-better-api/commit/575ec5c048f86524e0502ecb6e7ba0a92e284ddc))
+* **PidFacet:** don't break when feature is not enabled ([dc1d9db](https://github.com/labor-digital/typo3-better-api/commit/dc1d9db40b36fd1d2a41784037e9bccd72d4f3ff))
+
 ## [10.0.0-beta.4](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.3...v10.0.0-beta.4) (2021-05-03)
 
 
