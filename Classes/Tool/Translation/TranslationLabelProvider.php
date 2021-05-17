@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:00
+ * Last modified: 2021.05.17 at 16:26
  */
 
 declare(strict_types=1);
@@ -53,6 +53,13 @@ class TranslationLabelProvider implements NoDiInterface
     protected static $labelCache = [];
     
     /**
+     * The instance of the translator for faster lookups
+     *
+     * @var \LaborDigital\T3ba\Tool\Translation\Translator
+     */
+    protected static $translator;
+    
+    /**
      * Bridge for the translation service, used in the core modding classes
      *
      * @param             $input
@@ -76,7 +83,8 @@ class TranslationLabelProvider implements NoDiInterface
         
         // Resolve our label
         $inputRaw = $input;
-        $input = static::getService(Translator::class)->getLabelKey($input);
+        $translator = static::$translator ?? static::$translator = static::getService(Translator::class);
+        $input = $translator->getLabelKey($input);
         static::$labelCache[$input] = $inputRaw === $input ? true : $input;
         
         // Do the translation
