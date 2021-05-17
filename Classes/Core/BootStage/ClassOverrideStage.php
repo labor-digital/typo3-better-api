@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.17 at 16:12
  */
 
 declare(strict_types=1);
@@ -29,6 +29,7 @@ use LaborDigital\T3ba\Core\Kernel;
 use LaborDigital\T3ba\Core\Override\ExtendedBackendUtility;
 use LaborDigital\T3ba\Core\Override\ExtendedBootstrap;
 use LaborDigital\T3ba\Core\Override\ExtendedCacheManager;
+use LaborDigital\T3ba\Core\Override\ExtendedConfigurationController;
 use LaborDigital\T3ba\Core\Override\ExtendedContainerBuilder;
 use LaborDigital\T3ba\Core\Override\ExtendedDataHandler;
 use LaborDigital\T3ba\Core\Override\ExtendedDataMapper;
@@ -51,6 +52,7 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Lowlevel\Controller\ConfigurationController;
 
 class ClassOverrideStage implements BootStageInterface
 {
@@ -69,6 +71,7 @@ class ClassOverrideStage implements BootStageInterface
             DataHandler::class => ExtendedDataHandler::class,
             ReferenceIndex::class => ExtendedReferenceIndex::class,
             DataMapper::class => ExtendedDataMapper::class,
+            ConfigurationController::class => ExtendedConfigurationController::class,
         ];
     
     /**
