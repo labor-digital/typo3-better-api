@@ -78,11 +78,12 @@ class AutocompleteGenerator implements NoDiInterface
      */
     protected function makePresetSrc(string $key, ReflectionMethod $method): string
     {
-        $docBlock = $method->getDocComment();
+        $comment = $this->sanitizeDesc((string)$method->getDocComment());
+        $comment = array_map(function ($line) { return '	 * ' . $line; }, $comment);
         
         return '
 	/**
-	 * ' . $this->sanitizeDesc(is_string($docBlock) ? $docBlock : '') . '
+' . implode(PHP_EOL, $comment) . '
 	 * @return \\' . AbstractField::class . '
 	 *
 	 * @see \\' . $method->getDeclaringClass()->getName() . '::' . $method->getName() . '();

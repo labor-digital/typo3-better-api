@@ -14,17 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.20 at 11:02
+ * Last modified: 2021.05.16 at 23:56
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 
+/**
+ * Repository of all dependency injection capabilities of TYPO3
+ */
 class DependencyInjectionFacet implements FacetInterface
 {
     use ContainerAwareTrait {
@@ -33,5 +37,13 @@ class DependencyInjectionFacet implements FacetInterface
         makeInstance as public;
         getCommonServices as public;
         cs as public;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getIdentifier(): string
+    {
+        return 'di';
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 23:57
  */
 
 declare(strict_types=1);
@@ -36,8 +36,9 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 11:41
  */
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\PathUtil\Path;
 use Throwable;
@@ -49,9 +50,7 @@ use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
- * Class SiteFacet
- *
- * @package LaborDigital\T3ba\Tool\TypoContext\Facet
+ * Repository of information about the current TYPO3 site
  */
 class SiteFacet implements FacetInterface
 {
@@ -97,6 +96,14 @@ class SiteFacet implements FacetInterface
         $this->siteFinder = $siteFinder;
         $this->context = $context;
         $this->siteMatcher = $siteMatcher;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getIdentifier(): string
+    {
+        return 'site';
     }
     
     /**

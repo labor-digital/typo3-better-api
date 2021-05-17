@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 23:57
  */
 
 declare(strict_types=1);
@@ -36,13 +36,17 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 13:50
  */
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
 use LaborDigital\T3ba\Core\Exception\T3baException;
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
+/**
+ * Repository of information about the environment
+ */
 class EnvFacet implements FacetInterface
 {
     
@@ -71,23 +75,11 @@ class EnvFacet implements FacetInterface
     }
     
     /**
-     * Returns true if the current typo3 version is LTS 9.x
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function is9(): bool
+    public static function getIdentifier(): string
     {
-        return $this->isVersion(9);
-    }
-    
-    /**
-     * Returns true if the current typo3 version is LTS 10.x
-     *
-     * @return bool
-     */
-    public function is10(): bool
-    {
-        return $this->isVersion(10);
+        return 'env';
     }
     
     /**

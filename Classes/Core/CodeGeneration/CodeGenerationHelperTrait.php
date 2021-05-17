@@ -162,26 +162,44 @@ trait CodeGenerationHelperTrait
      *
      * @param   string  $desc
      *
-     * @return string
+     * @return array
      */
-    protected function sanitizeDesc(string $desc): string
+    protected function sanitizeDesc(string $desc): array
     {
         $lines = preg_split("/\r?\n/", $desc);
         $linesFiltered = [];
         foreach ($lines as $line) {
-            if (stripos($line, '@package') !== false) {
+            if (stripos($line, '@package') !== false || stripos($line, '@return') !== false) {
                 continue;
             }
+            
             if (stripos($line, '* Class ') !== false) {
                 continue;
             }
-            if (stripos($line, '@return') !== false) {
-                break;
-            }
-            $linesFiltered[] = preg_replace('/\\s*[\\/*]+\\s?/', '', $line);
+            
+            $linesFiltered[] = preg_replace('/\s*[\\/*]+\s?/', '', $line);
         }
         
-        return implode(PHP_EOL . '	 * ', array_filter($linesFiltered));
+        // Only keep a single empty line, drop all others
+        $lines = $linesFiltered;
+        $linesFiltered = [];
+        // We start with true, to make sure the first line (which should always be empty) is removed
+        $lastWasEmpty = true;
+        foreach ($lines as $line) {
+            if (empty(trim($line))) {
+                if ($lastWasEmpty) {
+                    continue;
+                }
+                
+                $lastWasEmpty = true;
+            } else {
+                $lastWasEmpty = false;
+            }
+            
+            $linesFiltered[] = $line;
+        }
+        
+        return $linesFiltered;
     }
     
     /**

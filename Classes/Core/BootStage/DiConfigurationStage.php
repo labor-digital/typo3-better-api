@@ -36,6 +36,7 @@ use LaborDigital\T3ba\Event\Di\DiContainerFilterEvent;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfigHandler\EventSubscriber\EventSubscriberBridge;
+use LaborDigital\T3ba\Tool\TypoContext\FacetProvider;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\EventBus\EventBusInterface;
@@ -135,7 +136,13 @@ class DiConfigurationStage implements BootStageInterface
         $symfony->set(ListenerProviderInterface::class, $listenerProvider);
         $symfony->set(TypoListenerProvider::class, $listenerProvider);
         
-        $context = TypoContext::setInstance(new TypoContext());
+        $extConfigService = $miniContainer->get(ExtConfigService::class);
+        $symfony->set(ExtConfigContext::class, $extConfigService->getContext());
+        $symfony->set(ExtConfigService::class, $extConfigService);
+        
+        $context = TypoContext::setInstance(new TypoContext(
+            $symfony->get(FacetProvider::class)->getAll()
+        ));
         $symfony->set(TypoContext::class, $context);
         
         // This is required to link the new event bus into the TYPO3 core and to load the registered event handlers
@@ -143,9 +150,6 @@ class DiConfigurationStage implements BootStageInterface
         $symfony->get(ListenerProvider::class);
         $symfony->get(EventSubscriberBridge::class);
         
-        $extConfigService = $miniContainer->get(ExtConfigService::class);
-        $symfony->set(ExtConfigContext::class, $extConfigService->getContext());
-        $symfony->set(ExtConfigService::class, $extConfigService);
         $symfony->set(ConfigState::class, new ConfigState([]));
         $extConfigService->getContext()->setTypoContext($context);
         $extConfigService->getDiLoader()->loadForRuntime();

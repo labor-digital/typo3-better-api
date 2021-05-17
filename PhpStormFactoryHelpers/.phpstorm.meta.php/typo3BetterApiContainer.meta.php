@@ -21,7 +21,7 @@ namespace PHPSTORM_META {
     
     use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
     use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
-    use LaborDigital\T3ba\Tool\TypoContext\Facet\DependencyInjectionFacet;
+    use LaborDigital\T3ba\TypoContext\DependencyInjectionFacet;
     use Neunerlei\EventBus\EventBusInterface;
     use Psr\Container\ContainerInterface;
     use Psr\EventDispatcher\EventDispatcherInterface;

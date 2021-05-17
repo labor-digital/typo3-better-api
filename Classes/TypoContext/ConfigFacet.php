@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 23:56
  */
 
 declare(strict_types=1);
@@ -37,9 +37,10 @@ declare(strict_types=1);
  */
 
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextException;
 use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
@@ -51,6 +52,9 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExis
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Registry;
 
+/**
+ * Repository for the different, global configuration options in TYPO3
+ */
 class ConfigFacet implements FacetInterface
 {
     use ContainerAwareTrait;
@@ -59,6 +63,13 @@ class ConfigFacet implements FacetInterface
      * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
+    
+    /**
+     * Holds the request attributes for all actions where we don't have a HTTP request
+     *
+     * @var array
+     */
+    protected $requestAttributeFallbackStorage = [];
     
     /**
      * ConfigFacet constructor.
@@ -71,11 +82,12 @@ class ConfigFacet implements FacetInterface
     }
     
     /**
-     * Holds the request attributes for all actions where we don't have a HTTP request
-     *
-     * @var array
+     * @inheritDoc
      */
-    protected $requestAttributeFallbackStorage = [];
+    public static function getIdentifier(): string
+    {
+        return 'config';
+    }
     
     /**
      * Allows you to retrieve data from the ExtConfig config state object.
@@ -160,7 +172,7 @@ class ConfigFacet implements FacetInterface
      *
      * @return mixed|null
      * @see \Psr\Http\Message\ServerRequestInterface
-     * @see \LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet
+     * @see \LaborDigital\T3ba\TypoContext\RequestFacet
      */
     public function getRequestAttribute(string $attributeName, $fallback = null)
     {
@@ -185,7 +197,7 @@ class ConfigFacet implements FacetInterface
      *
      * @return ServerRequestInterface|null
      * @see \Psr\Http\Message\ServerRequestInterface
-     * @see \LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet
+     * @see \LaborDigital\T3ba\TypoContext\RequestFacet
      */
     public function setRequestAttribute(string $attributeName, $value): ?ServerRequestInterface
     {

@@ -26,8 +26,8 @@ namespace LaborDigital\T3ba\ExtConfig;
 use LaborDigital\T3ba\Core\Di\DelegateContainer;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\TypoContext\EnvFacet;
 use Neunerlei\Configuration\Loader\ConfigContext;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Package\Package;
@@ -94,7 +94,7 @@ class ExtConfigContext extends ConfigContext implements NoDiInterface
     /**
      * Returns multiple environment related constraint helpers
      *
-     * @return \LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet
+     * @return \LaborDigital\T3ba\TypoContext\EnvFacet
      */
     public function env(): EnvFacet
     {
@@ -182,7 +182,7 @@ class ExtConfigContext extends ConfigContext implements NoDiInterface
      *                                       If not given, the method will throw an exception on a missing pid
      *
      * @return array|int
-     * @see \LaborDigital\T3ba\Tool\TypoContext\Facet\PidFacet::get()
+     * @see \LaborDigital\T3ba\TypoContext\PidFacet::get()
      */
     public function resolvePids($keys, int $fallback = -1)
     {

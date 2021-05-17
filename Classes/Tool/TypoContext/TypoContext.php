@@ -47,14 +47,6 @@ use LaborDigital\T3ba\Tool\TypoContext\Aspect\BetterVisibilityAspect;
 use LaborDigital\T3ba\Tool\TypoContext\Aspect\BeUserAspect;
 use LaborDigital\T3ba\Tool\TypoContext\Aspect\FacetAspect;
 use LaborDigital\T3ba\Tool\TypoContext\Aspect\FeUserAspect;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\ConfigFacet;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\DependencyInjectionFacet;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\EnvFacet;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\FacetInterface;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\PathFacet;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\PidFacet;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\SiteFacet;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\WorkspaceAspect;
@@ -69,6 +61,18 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      * @var \TYPO3\CMS\Core\Context\Context
      */
     protected $rootContext;
+    
+    /**
+     * A list of available facet classes by their shortname
+     *
+     * @var array
+     */
+    protected $facetClasses;
+    
+    public function __construct(array $facetClasses)
+    {
+        $this->facetClasses = $facetClasses;
+    }
     
     /**
      * Returns the TYPO3 root context
@@ -138,80 +142,26 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
         return $this->getOrMakeAspect('backend.betterUser', BeUserAspect::class);
     }
     
-    /** ====================================================
-     *
-     * FACETS
-     *
-     * ==================================================== */
-    
     /**
-     * Repository of path information and path resolving functions
-     *
-     * @return PathFacet
+     * Handles the lookup of dynamic facets based on the given facet classes
      */
-    public function path(): PathFacet
+    public function __call($name, $arguments)
     {
-        return $this->getOrMakeFacet('path', PathFacet::class);
-    }
-    
-    /**
-     * Repository of information about the environment
-     *
-     * @return EnvFacet
-     */
-    public function env(): EnvFacet
-    {
-        return $this->getOrMakeFacet('env', EnvFacet::class);
-    }
-    
-    /**
-     * Repository of information about the current typo3 site
-     *
-     * @return SiteFacet
-     */
-    public function site(): SiteFacet
-    {
-        return $this->getOrMakeFacet('site', SiteFacet::class);
-    }
-    
-    /**
-     * Repository of information about the current HTTP request
-     *
-     * @return RequestFacet
-     */
-    public function request(): RequestFacet
-    {
-        return $this->getOrMakeFacet('request', RequestFacet::class);
-    }
-    
-    /**
-     * Repository of information about registered PIDs and the local page id
-     *
-     * @return PidFacet
-     */
-    public function pid(): PidFacet
-    {
-        return $this->getOrMakeFacet('pid', PidFacet::class);
-    }
-    
-    /**
-     * Repository for the different, global configuration options in TYPO3
-     *
-     * @return ConfigFacet
-     */
-    public function config(): ConfigFacet
-    {
-        return $this->getOrMakeFacet('globalConfig', ConfigFacet::class);
-    }
-    
-    /**
-     * Repository to all dependency injection capabilities of typo3
-     *
-     * @return \LaborDigital\T3ba\Tool\TypoContext\Facet\DependencyInjectionFacet
-     */
-    public function di(): DependencyInjectionFacet
-    {
-        return $this->getOrMakeFacet('di', DependencyInjectionFacet::class);
+        if (isset($this->facetClasses[$name])) {
+            $context = $this->getRootContext();
+            $aspectKey = 'facet.' . $name;
+            
+            if ($context->hasAspect($aspectKey)) {
+                return $context->getAspect($aspectKey)->get('');
+            }
+            
+            $facet = $this->getService($this->facetClasses[$name]);
+            $context->setAspect($aspectKey, $this->makeInstance(FacetAspect::class, [$facet]));
+            
+            return $facet;
+        }
+        
+        return null;
     }
     
     /**
@@ -236,30 +186,5 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
         $context->setAspect($aspectKey, $aspect);
         
         return $aspect;
-    }
-    
-    /**
-     * Facets are basically the same as an aspect but without the stupid get() method.
-     * To store a facet on our root context we have to warp them in a pseudo-aspect called a FacetAspect
-     *
-     * @param   string  $facetKey    A unique name for this facet
-     * @param   string  $facetClass  The name of the facet class to instantiate if it does not exist yet
-     *
-     * @return FacetInterface|mixed
-     * @see getOrMakeAspect()
-     * @see FacetInterface
-     */
-    protected function getOrMakeFacet(string $facetKey, string $facetClass): FacetInterface
-    {
-        $context = $this->getRootContext();
-        $aspectKey = "facet.$facetKey";
-        if ($context->hasAspect($aspectKey)) {
-            return $context->getAspect($aspectKey)->get('');
-        }
-        $facet = $this->getService($facetClass);
-        $aspect = $this->makeInstance(FacetAspect::class, [$facet]);
-        $context->setAspect($aspectKey, $aspect);
-        
-        return $facet;
     }
 }

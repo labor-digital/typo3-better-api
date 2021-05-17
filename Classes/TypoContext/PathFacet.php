@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 23:57
  */
 
 declare(strict_types=1);
@@ -36,13 +36,14 @@ declare(strict_types=1);
  * Last modified: 2020.03.23 at 20:58
  */
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
 use Composer\Autoload\ClassLoader;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Exception\T3baException;
 use LaborDigital\T3ba\Tool\Database\DbService;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
@@ -55,9 +56,9 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
- * Class PathFacet
+ * Repository of path information and
  *
- * @package LaborDigital\T3ba\Tool\TypoContext\Facet
+ *                  path resolving functions
  */
 class PathFacet implements FacetInterface
 {
@@ -83,6 +84,14 @@ class PathFacet implements FacetInterface
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getIdentifier(): string
+    {
+        return 'path';
     }
     
     /**

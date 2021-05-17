@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.16 at 23:57
  */
 
 /** @noinspection TypoSafeNamingInspection */
@@ -37,8 +37,9 @@ declare(strict_types=1);
  * Last modified: 2020.03.19 at 01:19
  */
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
@@ -46,9 +47,7 @@ use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class RequestFacet
- *
- * @package LaborDigital\T3ba\Tool\TypoContext\Facet
+ * Repository of information about the current HTTP request
  */
 class RequestFacet implements FacetInterface
 {
@@ -60,6 +59,14 @@ class RequestFacet implements FacetInterface
      * @var array
      */
     protected $hostCache = [];
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getIdentifier(): string
+    {
+        return 'request';
+    }
     
     /**
      * Returns the http request object that was passed through the middleware stack.

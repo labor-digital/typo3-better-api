@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.20 at 11:02
+ * Last modified: 2021.05.02 at 19:11
  */
 
 declare(strict_types=1);
@@ -36,18 +36,24 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 12:46
  */
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\Tool\TypoContext;
 
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 
 /**
  * Class FacetInterface
  *
- * A facet is basically an aspect without the stupid "get()" method
+ * A facet is basically an aspect without the strange "get()" method
  *
- * @package LaborDigital\T3ba\Tool\TypoContext\Facet
+ * @package LaborDigital\T3ba\Tool\TypoContext
  */
 interface FacetInterface extends PublicServiceInterface
 {
-    // Silence :)
+    /**
+     * MUST return a unique, not empty identifier that will be used as method name on the context object
+     * Example: An identifier: "foo" will be selectable at $typoContext->foo()
+     *
+     * @return string
+     */
+    public static function getIdentifier(): string;
 }

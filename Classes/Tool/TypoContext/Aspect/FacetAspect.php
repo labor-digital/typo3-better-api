@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\TypoContext\Aspect;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use LaborDigital\T3ba\Tool\TypoContext\Facet\FacetInterface;
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 
 /**
@@ -39,14 +39,14 @@ class FacetAspect implements AspectInterface, NoDiInterface
     /**
      * The linked facet
      *
-     * @var FacetInterface
+     * @var \LaborDigital\T3ba\Tool\TypoContext\FacetInterface
      */
     protected $facet;
     
     /**
      * FacetAspect constructor.
      *
-     * @param   FacetInterface  $facet
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\FacetInterface  $facet
      */
     public function __construct(FacetInterface $facet)
     {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:47
+ * Last modified: 2021.05.16 at 23:57
  */
 
 declare(strict_types=1);
@@ -36,9 +36,10 @@ declare(strict_types=1);
  * Last modified: 2020.05.12 at 12:58
  */
 
-namespace LaborDigital\T3ba\Tool\TypoContext\Facet;
+namespace LaborDigital\T3ba\TypoContext;
 
 use GuzzleHttp\Psr7\Query;
+use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\InvalidPidException;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
@@ -47,6 +48,9 @@ use Neunerlei\PathUtil\Path;
 use RuntimeException;
 use Throwable;
 
+/**
+ * Repository of information about registered PIDs and the local page id
+ */
 class PidFacet implements FacetInterface
 {
     use LocallyCachedStatePropertyTrait;
@@ -72,6 +76,14 @@ class PidFacet implements FacetInterface
     {
         $this->context = $context;
         $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState(), null, []);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function getIdentifier(): string
+    {
+        return 'pid';
     }
     
     /**

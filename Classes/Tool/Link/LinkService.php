@@ -225,7 +225,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      * @param   bool  $withProtocol  True to add the default http or https protocol to the front of the host name
      *
      * @return string
-     * @see        \LaborDigital\T3ba\Tool\TypoContext\Facet\RequestFacet::getHost()
+     * @see        \LaborDigital\T3ba\TypoContext\RequestFacet::getHost()
      * @deprecated will be removed in v11
      */
     public function getHost(bool $withProtocol = true): string
