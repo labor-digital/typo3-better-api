@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.20 at 13:27
  */
 
 declare(strict_types=1);
@@ -23,12 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Core\Di\CompilerPass;
 
 
-use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerationHelperTrait;
 use LaborDigital\T3ba\EventHandler\CacheClearing;
 use LaborDigital\T3ba\Tool\Cache\CacheFactory;
 use LaborDigital\T3ba\Tool\Cache\CacheInterface;
 use LaborDigital\T3ba\Tool\Cache\Implementation\GenericCache;
 use LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyGenerator;
+use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
 use Neunerlei\Arrays\Arrays;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -40,7 +40,6 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 class CacheConfigurationPass implements CompilerPassInterface
 {
-    use CodeGenerationHelperTrait;
     
     protected const TRACKED_INTERFACES
         = [
@@ -165,7 +164,7 @@ class CacheConfigurationPass implements CompilerPassInterface
     ): void
     {
         foreach ($reflectionMethod->getParameters() as $parameter) {
-            $types = $this->parseType($parameter);
+            $types = ReflectionUtil::parseType($parameter);
             
             if (empty(array_intersect($types, static::TRACKED_INTERFACES))) {
                 continue;

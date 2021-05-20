@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:31
+ * Last modified: 2021.05.20 at 13:28
  */
 
 declare(strict_types=1);
@@ -23,14 +23,14 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\TypoContext;
 
 
-use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerationHelperTrait;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\VarFs\Mount;
+use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
 use Neunerlei\PathUtil\Path;
+use ReflectionClass;
 
 class AutocompleteGenerator implements NoDiInterface
 {
-    use CodeGenerationHelperTrait;
     
     protected const CONTEXT_CLASS = TypoContext::class;
     
@@ -85,9 +85,7 @@ class AutocompleteGenerator implements NoDiInterface
      */
     protected function makeMethodSrc(string $facetClass, string $shortName): string
     {
-        $ref = new \ReflectionClass($facetClass);
-        
-        $comment = $this->sanitizeDesc((string)$ref->getDocComment());
+        $comment = ReflectionUtil::sanitizeDesc((new ReflectionClass($facetClass))->getDocComment());
         $comment = array_map(static function ($line) { return '     * ' . $line; }, $comment);
         
         return '

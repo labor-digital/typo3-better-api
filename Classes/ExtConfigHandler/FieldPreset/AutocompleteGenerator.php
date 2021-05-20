@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:54
+ * Last modified: 2021.05.20 at 13:27
  */
 
 declare(strict_types=1);
@@ -23,15 +23,14 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\FieldPreset;
 
 
-use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerationHelperTrait;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\VarFs\Mount;
+use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use ReflectionMethod;
 
 class AutocompleteGenerator implements NoDiInterface
 {
-    use CodeGenerationHelperTrait;
     
     /**
      * @var \LaborDigital\T3ba\Core\VarFs\Mount
@@ -78,7 +77,7 @@ class AutocompleteGenerator implements NoDiInterface
      */
     protected function makePresetSrc(string $key, ReflectionMethod $method): string
     {
-        $comment = $this->sanitizeDesc((string)$method->getDocComment());
+        $comment = ReflectionUtil::sanitizeDesc((string)$method->getDocComment());
         $comment = array_map(function ($line) { return '	 * ' . $line; }, $comment);
         
         return '
@@ -89,7 +88,7 @@ class AutocompleteGenerator implements NoDiInterface
 	 * @see \\' . $method->getDeclaringClass()->getName() . '::' . $method->getName() . '();
 	 */
 	public function ' . $key
-               . '(' . $this->generateMethodArgs($method) . '): \\'
+               . '(' . ReflectionUtil::generateMethodArgs($method) . '): \\'
                . AbstractField::class . ';
 ';
     }

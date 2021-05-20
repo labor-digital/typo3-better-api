@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.17 at 18:18
  */
 
 declare(strict_types=1);
@@ -466,13 +466,12 @@ class PageService implements SingletonInterface
      * If you want more fields in the rootline records than default such can be added
      * by listing them in $GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']
      *
-     * @param   int         $pageId
-     * @param   array|bool  $options  Additional options for the root line renderer
-     *                                In v9 this can be a bool to set $includeAllNotDeleted for legacy compatibility
-     *                                - includeAllNotDeleted bool (FALSE): If set to true this will generate the
-     *                                rootline without caring for permissions
-     *                                - additionalFields array: A list of additional fields to fetch for the
-     *                                generated root line
+     * @param   int    $pageId
+     * @param   array  $options  Additional options for the root line renderer
+     *                           - includeAllNotDeleted bool (FALSE): If set to true this will generate the
+     *                           rootline without caring for permissions
+     *                           - additionalFields array: A list of additional fields to fetch for the
+     *                           generated root line
      *
      * @return array|mixed
      */

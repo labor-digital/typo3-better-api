@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:57
+ * Last modified: 2021.05.17 at 21:45
  */
 
 declare(strict_types=1);
@@ -114,7 +114,7 @@ class SiteFacet implements FacetInterface
      */
     public function getCurrent(): SiteInterface
     {
-        // Check if we can fetch a better site
+        // Check if we can fetch a site
         $site = $this->context->config()->getRequestAttribute('site');
         if (! empty($site) && ! $site instanceof NullSite) {
             // Make sure to reset the current site if we suddenly get a site
