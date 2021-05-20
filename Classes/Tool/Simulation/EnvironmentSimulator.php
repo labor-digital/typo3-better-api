@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.07 at 10:22
+ * Last modified: 2021.05.20 at 16:09
  */
 
 declare(strict_types=1);
@@ -224,33 +224,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
             $this->childSimulationsIgnored = $parentIgnoresChildSimulations;
             $this->isInSimulation = $parentIsInSimulation;
         }
-    }
-    
-    /**
-     * ATTENTION: This method is extremely powerful and you should really consider twice if you want to use it
-     * for whatever you want to achieve.
-     *
-     * What it does: This method allows execution of the given $callback as an administrator user!
-     * This will allow you to circumvent all permissions, access rights and user groups that are configured in the
-     * backend. There are no safeguards here! It's like writing data directly into the database; If you don't know what
-     * you do inside the scope of this method's callback you can break a lot of stuff...
-     *
-     * This works in the Frontend, in the Backend in the CLI and wherever else.
-     *
-     * It will create a new backend user called _t3ba_adminUser_ for you which is used as user object
-     * inside the closure. Every action performed, and logged will be executed as this user; except you are
-     * already logged in as an administrator, in that case we just use your account!
-     *
-     * So again. Use it, but please use it with care!
-     *
-     * @param   callable  $handler  A callback to be executed in the context of an administrator
-     *
-     * @return mixed
-     * @deprecated will be removed in v10 use runWithEnvironment(['asAdmin'], function(){}) instead!
-     */
-    public function runAsAdmin(callable $handler)
-    {
-        return $this->runWithEnvironment(['asAdmin'], $handler);
     }
     
     /**
