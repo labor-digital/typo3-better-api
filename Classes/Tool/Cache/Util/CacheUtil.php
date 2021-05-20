@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:47
+ * Last modified: 2021.05.20 at 14:09
  */
 
 declare(strict_types=1);
@@ -55,7 +55,7 @@ class CacheUtil implements NoDiInterface
         }
         
         if (is_string($tag) || is_numeric($tag)) {
-            return [(string)$tag];
+            return [static::ensureTagValidity((string)$tag)];
         }
         
         if (is_object($tag)) {
@@ -78,18 +78,46 @@ class CacheUtil implements NoDiInterface
             }
             
             if (! empty($tags)) {
-                return $tags;
+                return array_map([static::class, 'ensureTagValidity'], $tags);
             }
         }
         
         try {
-            return [gettype($tag) . '_' . md5(serialize($tag))];
+            return [
+                static::ensureTagValidity(
+                    gettype($tag) . '_' . md5(serialize($tag))
+                ),
+            ];
         } catch (Throwable $e) {
             try {
-                return [gettype($tag) . '_' . md5(\GuzzleHttp\json_encode($tag))];
+                return [
+                    static::ensureTagValidity(
+                        gettype($tag) . '_' . md5(\GuzzleHttp\json_encode($tag))
+                    ),
+                ];
             } catch (Throwable $e) {
                 return [];
             }
         }
+    }
+    
+    /**
+     * Makes sure that a given tag does not contain invalid chars and is not to long for a tag
+     *
+     * @param   string  $tag
+     *
+     * @return string
+     */
+    protected static function ensureTagValidity(string $tag): string
+    {
+        $tag = preg_replace_callback('~[^a-zA-Z0-9_%\\-&]~', static function ($char) {
+            return mb_ord(reset($char));
+        }, $tag);
+        
+        if (strlen($tag) > 250) {
+            $tag = substr($tag, 0, 250 - 32 - 1) . '_' . md5($tag);
+        }
+        
+        return $tag;
     }
 }

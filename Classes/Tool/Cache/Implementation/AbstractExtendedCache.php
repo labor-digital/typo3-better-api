@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.20 at 14:09
  */
 
 declare(strict_types=1);
@@ -328,7 +328,8 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             return $value;
         }
         
-        $tags = empty($options['tags']) ? $this->prepareTags($keyArgs) : $options['tags'];
+        $tags = empty($options['tags']) ? $keyArgs : $options['tags'];
+        
         $ttl = null;
         $enabled = true;
         $value = $this->wrapGeneratorCall(function (?int &$ttl, bool &$enabled) use ($callback, $options) {
