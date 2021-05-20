@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:57
+ * Last modified: 2021.05.20 at 16:08
  */
 
 declare(strict_types=1);
@@ -200,22 +200,6 @@ class Link implements NoDiInterface
      * @var array
      */
     protected $requiredElements = [];
-    
-    /**
-     * Used if a link set was applied which requires specific arguments to be present
-     *
-     * @var array
-     * @deprecated will be removed in v10
-     */
-    protected $requiredArgs = [];
-    
-    /**
-     * Used if a link set was applied which requires specific fragments-arguments to be present
-     *
-     * @var array
-     * @deprecated will be removed in v10
-     */
-    protected $requiredFragmentArgs = [];
     
     /**
      * Holds the language this link should be generated for
