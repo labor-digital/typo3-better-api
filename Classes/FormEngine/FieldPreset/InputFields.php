@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.20 at 23:40
  */
 
 declare(strict_types=1);
@@ -84,8 +84,7 @@ class InputFields extends AbstractFieldPreset
      * @param   array  $options  Additional options for this preset
      *                           - default string|number|DateTime: A default value for your input field
      *                           - withTime bool (FALSE): If set to true this field can also have the time set, not
-     *                           only
-     *                           the date
+     *                           only the date
      *                           - asInt bool (FALSE): By default the database value will be written as "datetime"
      *                           type. If you however want the database to store the date as integer you can set this
      *                           to true
@@ -139,6 +138,12 @@ class InputFields extends AbstractFieldPreset
         $options[$options['withTime'] ? 'datetime' : 'date'] = true;
         
         $config = $this->addEvalConfig($config, $options);
+        
+        if ($options['withTime']) {
+            $config['eval'] = ($config['eval'] ?? '') . ',datetime';
+        } else {
+            $config['eval'] = ($config['eval'] ?? '') . ',date';
+        }
         
         if (! $options['asInt']) {
             $config['dbType'] = 'datetime';
