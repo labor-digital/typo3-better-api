@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.27 at 12:00
+ * Last modified: 2021.05.25 at 16:53
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtBase\Controller;
 
 
-class BetterContentActionController extends BetterActionController
+abstract class BetterContentActionController extends BetterActionController
 {
     use ContentControllerDataTrait;
     use ContentControllerBackendPreviewTrait;
