@@ -98,6 +98,14 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
             'type' => 'array',
             'default' => [],
             'preFilter' => static function ($v) { return is_string($v) ? [$v] : $v; },
+            'filter' => function(array $v){
+                foreach ($v as $k => $identifier){
+                    if(class_exists($identifier)){
+                        $v[$k] = $this->makeMiddlewareIdentifier($identifier);
+                    }
+                }
+                return $v;
+            }
         ];
         
         $options = Options::make($options, [
