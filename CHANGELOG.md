@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.7](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.6...v10.0.0-beta.7) (2021-05-26)
+
+
+### Bug Fixes
+
+* **RoutingConfigurator:** convert middleware classes to identifiers in "before" & "after" ([ffd91f4](https://github.com/labor-digital/typo3-better-api/commit/ffd91f4bc2e0efb0ccce2e8ffeff719ea05db414))
+
 ## [10.0.0-beta.6](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.5...v10.0.0-beta.6) (2021-05-17)
 
 
