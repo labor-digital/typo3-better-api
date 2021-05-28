@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.12 at 14:00
+ * Last modified: 2021.05.28 at 11:12
  */
 
 declare(strict_types=1);
@@ -265,8 +265,45 @@ class ExtConfigService
         return $this->rootLocations = $rootLocations;
     }
     
+    /**
+     * Resolves the ext config namespace (containing the ext key and the vendor name) for a given class.
+     * If Null is returned the class is not part of an extension we know of
+     *
+     * @param   string  $className
+     *
+     * @return string|null
+     */
+    public function resolveNamespaceForClass(string $className): ?string
+    {
+        if (isset($this->classNamespaceCache[$className])) {
+            return $this->classNamespaceCache[$className];
+        }
+        
+        $className = ltrim($className, '\\');
+        foreach ($this->getExtKeyNamespaceMap() as $extKey => $namespaces) {
+            foreach ($namespaces as $namespace => $_) {
+                if (str_starts_with($className, $namespace)) {
+                    $classParts = array_filter(explode('\\', $className));
+                    if (count($classParts) === 1) {
+                        return $this->classNamespaceCache[$className] = $extKey;
+                    }
+                    
+                    return $this->classNamespaceCache[$className] = reset($classParts) . '.' . $extKey;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Resets all internal caches to an empty state
+     *
+     * @internal
+     */
     public function reset(): void
     {
+        $this->classNamespaceCache = [];
         $this->rootLocations = null;
         $this->loaders = [];
     }
