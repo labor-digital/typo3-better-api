@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 16:09
+ * Last modified: 2021.05.28 at 20:35
  */
 
 declare(strict_types=1);
@@ -46,7 +46,6 @@ use LaborDigital\T3ba\Tool\Simulation\Pass\SimulatorPassInterface;
 use LaborDigital\T3ba\Tool\Simulation\Pass\SiteSimulationPass;
 use LaborDigital\T3ba\Tool\Simulation\Pass\TsfeSimulationPass;
 use LaborDigital\T3ba\Tool\Simulation\Pass\VisibilitySimulationPass;
-use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -71,11 +70,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
             LanguageSimulationPass::class,
             TsfeSimulationPass::class,
         ];
-    
-    /**
-     * @var \LaborDigital\T3ba\Tool\Tsfe\TsfeService
-     */
-    protected $tsfeService;
     
     /**
      * This is true when we are currently running inside a transformation
@@ -106,16 +100,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
     protected $optionDefinition;
     
     /**
-     * EnvironmentSimulator constructor.
-     *
-     * @param   \LaborDigital\T3ba\Tool\Tsfe\TsfeService  $tsfeService
-     */
-    public function __construct(TsfeService $tsfeService)
-    {
-        $this->tsfeService = $tsfeService;
-    }
-    
-    /**
      * Can be used to run a function in a different environment.
      * You can use this method to render frontend content's in the backend or in the CLI,
      * but you can also use it in the frontend to change the context PID / the language to something different.
@@ -130,17 +114,11 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
      *                              language for the current site is used as fallback
      *                              - site string: Can be set to a valid site identifier to simulate the request
      *                              on a specific TYPO3 site.
-     *                              - bootTsfe bool (TRUE): By default the simulator will start a dummy version of
-     *                              the frontend controller and populate the $GLOBALS["TSFE"] variable with it.
-     *                              If you set this to false, the TSFE is not booted; it may already exist tho!
      *                              - ignoreChildSimulations bool (FALSE): If this is set to true nested calls
      *                              of this simulator will be skipped and the handler will be executed in the
      *                              environment of the parent simulator
      *                              - ignoreInSimulations bool (FALSE): If this is set to TRUE the simulation
      *                              will not be done when the script is currently running inside another simulation.
-     *                              - ignoreIfFrontendExists bool (FALSE): If this is set to true there will be no
-     *                              simulation if we detect an already initialized TSFE. Useful to let frontend
-     *                              code run in the backend without adding overhead to the frontend
      *                              - includeHiddenPages bool (FALSE): If this is set to true the closure will
      *                              have access to all hidden pages.
      *                              - includeHiddenContent bool (FALSE): If this is set to true the closure will
@@ -179,10 +157,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
         if (
             ($this->isInSimulation && $earlyOptions['ignoreInSimulations'])
             || ($this->isInSimulation && $this->childSimulationsIgnored)
-            || (
-                $earlyOptions['ignoreIfFrontendExists']
-                && $this->tsfeService->hasTsfe()
-            )
         ) {
             return $handler();
         }
