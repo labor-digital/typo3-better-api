@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.28 at 21:33
  */
 
 declare(strict_types=1);
@@ -27,6 +27,7 @@ use LaborDigital\T3ba\Tool\Page\PageService;
 use LaborDigital\T3ba\Tool\Simulation\SimulatedTypoScriptFrontendController;
 use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
+use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -72,10 +73,6 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     public function addOptionDefinition(array $options): array
     {
-        $options['bootTsfe'] = [
-            'type' => 'bool',
-            'default' => true,
-        ];
         $options['pid'] = [
             'type' => ['int', 'null'],
             'default' => null,
@@ -89,14 +86,13 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     public function requireSimulation(array $options, array &$storage): bool
     {
-        return $options['bootTsfe']
-               || (
-                   ! $this->getService(TsfeService::class)->hasTsfe()
-                   || (
-                       $options['pid'] !== null
-                       && $this->getTypoContext()->pid()->getCurrent() !== $options['pid']
-                   )
-               );
+        return (
+            ! $this->getService(TsfeService::class)->hasTsfe()
+            || (
+                $options['pid'] !== null
+                && $this->getTypoContext()->pid()->getCurrent() !== $options['pid']
+            )
+        );
     }
     
     /**
@@ -145,11 +141,33 @@ class TsfeSimulationPass implements SimulatorPassInterface
             return $this->instanceCache[$key];
         }
         
+        /** @var TypoScriptFrontendController|null $tsfe */
+        $tsfe = $GLOBALS['TSFE'];
+        
+        if ($tsfe instanceof TypoScriptFrontendController) {
+            $args = $tsfe->getPageArguments();
+            $pageArguments = $this->makeInstance(
+                PageArguments::class,
+                [
+                    $pid,
+                    $args->getPageType(),
+                    $args->getRouteArguments(),
+                    $args->getStaticArguments(),
+                    $args->getDynamicArguments(),
+                ]
+            );
+        } else {
+            $pageArguments = $this->makeInstance(PageArguments::class, [$pid, '0', [], [], []]);
+        }
+        
+        $context = $this->getTypoContext();
         $controller = $this->makeInstance(
             SimulatedTypoScriptFrontendController::class, [
-                null,
-                $pid,
-                $this->getTypoContext()->language()->getCurrentFrontendLanguage(),
+                $context->getRootContext(),
+                $context->site()->getCurrent(),
+                $context->language()->getCurrentFrontendLanguage(),
+                $pageArguments,
+                $this->makeInstance(FrontendUserAuthentication::class),
             ]
         );
         $GLOBALS['TSFE'] = $controller;
@@ -159,8 +177,6 @@ class TsfeSimulationPass implements SimulatorPassInterface
         $controller->getConfigArray();
         $controller->settingLanguage();
         $controller->cObj = $this->makeInstance(ContentObjectRenderer::class, [$controller, $this->getContainer()]);
-        $controller->fe_user = $this->makeInstance(FrontendUserAuthentication::class);
-        
         
         return $this->instanceCache[$key] = $controller;
     }
