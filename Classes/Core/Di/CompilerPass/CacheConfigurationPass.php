@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 13:27
+ * Last modified: 2021.05.31 at 20:34
  */
 
 declare(strict_types=1);
@@ -237,6 +237,6 @@ class CacheConfigurationPass implements CompilerPassInterface
         }
         
         $container->getDefinition(EnvironmentCacheKeyGenerator::class)
-                  ->setArgument('$enhancers', [$enhancers]);
+                  ->setArgument('$enhancers', $enhancers);
     }
 }
