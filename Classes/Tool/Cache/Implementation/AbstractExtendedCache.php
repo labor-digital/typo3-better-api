@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 14:09
+ * Last modified: 2021.05.31 at 20:06
  */
 
 declare(strict_types=1);
@@ -407,7 +407,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @return bool
      * @see remember()
      */
-    protected function useEnvironment(): bool { return false; }
+    protected function useEnvironment(): bool { return true; }
     
     /**
      * Hook method for child classes to implement. Allows children to wrap the generator
