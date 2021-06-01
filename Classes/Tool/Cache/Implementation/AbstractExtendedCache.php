@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.01 at 11:44
+ * Last modified: 2021.06.01 at 15:34
  */
 
 declare(strict_types=1);
@@ -309,7 +309,6 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
     public function remember(callable $callback, ?array $keyArgs = null, array $options = [])
     {
         $options = Options::make($options, $this->getRememberOptions($callback, $keyArgs));
-        
         if ($options['enabled'] === false) {
             return $callback();
         }
@@ -330,27 +329,23 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
         
         $tags = empty($options['tags']) ? ($keyArgs ?? []) : $options['tags'];
         
-        $ttl = null;
-        $enabled = true;
-        $value = $this->wrapGeneratorCall($key, function (?int &$ttl, bool &$enabled) use ($callback, $options) {
+        $lifetime = is_int($options['lifetime']) ? $options['lifetime'] : null;
+        $enabled = is_bool($options['enabled']) ? $options['enabled'] : true;
+        $value = $this->wrapGeneratorCall($key, function (?int &$lifetime, bool &$enabled) use ($callback, $options) {
             $value = $callback();
             
-            if (is_bool($options['enabled'])) {
-                $enabled = $options['enabled'];
-            } elseif (is_callable($options['enabled'])) {
+            if (is_callable($options['enabled'])) {
                 $enabled = (bool)call_user_func($options['enabled'], $value);
             }
             
-            if (is_int($options['ttl'])) {
-                $ttl = $options['ttl'];
-            } elseif (is_callable($options['ttl'])) {
-                $_ttl = call_user_func($options['ttl'], $value);
-                $ttl = $_ttl === null ? null : (int)$_ttl;
-                unset($_ttl);
+            if (is_callable($options['lifetime'])) {
+                $_lifetime = call_user_func($options['lifetime'], $value);
+                $lifetime = $_lifetime === null ? null : (int)$_lifetime;
+                unset($_lifetime);
             }
             
             return $value;
-        }, $options, $tags, $ttl, $enabled);
+        }, $options, $tags, $lifetime, $enabled);
         
         // Skip, if the the caching was disabled on the fly
         if (! $enabled) {
@@ -362,9 +357,9 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             $frozen = call_user_func($options['onFreeze'], $frozen);
         }
         
-        $frozen = $this->afterFreeze($key, $frozen, $value, $options, $tags, $ttl);
+        $frozen = $this->afterFreeze($key, $frozen, $value, $options, $tags, $lifetime);
         
-        $this->set($key, $frozen, $tags, $ttl);
+        $this->set($key, $frozen, $tags, $lifetime);
         
         return $value;
     }
