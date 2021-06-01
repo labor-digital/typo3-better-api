@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.05.31 at 21:33
  */
 
 declare(strict_types=1);
@@ -113,7 +113,7 @@ interface CacheInterface extends \Psr\SimpleCache\CacheInterface
      *                                 You can omit this parameter if you are supplying your own keyGenerator
      *                                 implementation in the options
      * @param   array       $options   Additional options
-     *                                 - ttl int|callable: The numeric value in seconds for how long the cache entry
+     *                                 - lifetime int|callable: The numeric value in seconds for how long the cache entry
      *                                 should be stored. Can be a callable which receives the $callback result,
      *                                 to create a ttl based on the output. Is inherited to outer scopes.
      *                                 - enabled bool|callable (true): Allows you to dynamically disable the cache
