@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.01 at 11:37
  */
 
 declare(strict_types=1);
@@ -49,6 +49,7 @@ class PageCache extends FrontendCache
      * @inheritDoc
      */
     protected function wrapGeneratorCall(
+        string $key,
         Closure $generator,
         array $options,
         array &$tags,
@@ -58,7 +59,7 @@ class PageCache extends FrontendCache
     {
         $tags[] = 'page_' . $this->getPageUid();
         
-        return parent::wrapGeneratorCall($generator, $options, $tags, $lifetime, $enabled);
+        return parent::wrapGeneratorCall($key, $generator, $options, $tags, $lifetime, $enabled);
     }
     
     

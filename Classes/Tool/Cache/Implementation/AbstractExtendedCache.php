@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.31 at 20:06
+ * Last modified: 2021.06.01 at 11:44
  */
 
 declare(strict_types=1);
@@ -314,12 +314,12 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             return $callback();
         }
         
-        $identifier = $this->getCacheKey($options['keyGenerator'], $options['useEnvironment']);
+        $key = $this->getCacheKey($options['keyGenerator'], $options['useEnvironment']);
         
-        if ($this->has($identifier)) {
-            $value = $this->get($identifier);
+        if ($this->has($key)) {
+            $value = $this->get($key);
             
-            $value = $this->beforeWarmup($value, $options);
+            $value = $this->beforeWarmup($key, $value, $options);
             
             if ($options['onWarmup'] !== null) {
                 $value = call_user_func($options['onWarmup'], $value);
@@ -328,11 +328,11 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             return $value;
         }
         
-        $tags = empty($options['tags']) ? $keyArgs : $options['tags'];
+        $tags = empty($options['tags']) ? ($keyArgs ?? []) : $options['tags'];
         
         $ttl = null;
         $enabled = true;
-        $value = $this->wrapGeneratorCall(function (?int &$ttl, bool &$enabled) use ($callback, $options) {
+        $value = $this->wrapGeneratorCall($key, function (?int &$ttl, bool &$enabled) use ($callback, $options) {
             $value = $callback();
             
             if (is_bool($options['enabled'])) {
@@ -362,9 +362,9 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             $frozen = call_user_func($options['onFreeze'], $frozen);
         }
         
-        $frozen = $this->afterFreeze($frozen, $value, $options, $tags, $ttl);
+        $frozen = $this->afterFreeze($key, $frozen, $value, $options, $tags, $ttl);
         
-        $this->set($identifier, $frozen, $tags, $ttl);
+        $this->set($key, $frozen, $tags, $ttl);
         
         return $value;
     }
@@ -423,6 +423,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * @see remember()
      */
     protected function wrapGeneratorCall(
+        string $key,
         Closure $generator,
         array $options,
         array &$tags,
@@ -437,18 +438,20 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * Hook method for child classes to implement. Allows your child to modify a value
      * that was retrieved from the cache
      *
-     * @param   mixed  $value
-     * @param   array  $options
+     * @param   string  $key
+     * @param   mixed   $value
+     * @param   array   $options
      *
      * @return mixed
      * @see remember()
      */
-    protected function beforeWarmup($value, array $options) { return $value; }
+    protected function beforeWarmup(string $key, $value, array $options) { return $value; }
     
     /**
      * Hook method for child classes to implement. Allows your child to modify a value
      * right before it will be stored into the cache
      *
+     * @param   string    $key
      * @param   mixed     $frozen
      * @param   mixed     $value
      * @param   array     $options
@@ -457,7 +460,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      *
      * @return mixed
      */
-    protected function afterFreeze($frozen, $value, array $options, array &$tags, ?int &$lifetime) { return $frozen; }
+    protected function afterFreeze(string $key, $frozen, $value, array $options, array &$tags, ?int &$lifetime) { return $frozen; }
     
     /**
      * Hook method to build the option definition for the remember() method.
