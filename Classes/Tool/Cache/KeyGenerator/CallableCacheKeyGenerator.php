@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.01 at 11:36
  */
 
 declare(strict_types=1);
@@ -22,9 +22,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Cache\KeyGenerator;
 
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
 
-class CallableCacheKeyGenerator implements CacheKeyGeneratorInterface
+class CallableCacheKeyGenerator implements CacheKeyGeneratorInterface, NoDiInterface
 {
     
     /**
