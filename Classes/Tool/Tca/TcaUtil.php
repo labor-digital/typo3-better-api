@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:00
+ * Last modified: 2021.06.01 at 14:24
  */
 
 declare(strict_types=1);
@@ -79,11 +79,21 @@ class TcaUtil implements NoDiInterface
         $tableName = NamingUtil::resolveTableName($table);
         
         try {
-            return BackendUtility::getTCAtypeValue($tableName, $row);
-        } catch (Throwable $e) {
             // This is a bugfix, because sometimes we might encounter an array where we would
             // normally expect a value. e.g. CType in the list label renderer... I don't know why this happens
             // but this will fix the issue
+            $rowPrepared = array_map(static function ($v) {
+                // The fields in question are always an array of a single element with a numeric index
+                if (is_array($v) && isset($v[0]) && count($v) === 1) {
+                    return reset($v);
+                }
+                
+                return $v;
+            }, $row);
+            
+            return BackendUtility::getTCAtypeValue($tableName, $rowPrepared);
+        } catch (Throwable $e) {
+            // Forcefully reset all tca fields that contain arrays
             return BackendUtility::getTCAtypeValue($table, array_map(static function ($v) {
                 return is_array($v) ? reset($v) : $v;
             }, $row));
