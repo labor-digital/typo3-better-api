@@ -211,7 +211,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator implements No
      * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
      */
-    public function registerUserTsConfigImport(string $path): self
+    public function registerUserTsConfigImport(string $path = 'EXT:{{extKey}}/Configuration/TsConfig/User/'): self
     {
         return $this->registerUserTsConfig('@import "' . $path . '"');
     }
@@ -248,7 +248,7 @@ class TypoScriptConfigurator extends AbstractExtConfigConfigurator implements No
      * @return \LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator
      * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/TypoScriptSyntax/Syntax/Includes.html#includes
      */
-    public function registerPageTsConfigImport(string $path): self
+    public function registerPageTsConfigImport(string $path = 'EXT:{{extKey}}/Configuration/TsConfig/Page/'): self
     {
         return $this->registerPageTsConfig('@import "' . $path . '"');
     }

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.8](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.7...v10.0.0-beta.8) (2021-05-26)
+
+
+### Features
+
+* **ExtConfig\TypoScript:** set default paths for page and user ts imports ([8612b49](https://github.com/labor-digital/typo3-better-api/commit/8612b49e00f043b1f71060d12ac9f19d0c7aacf6))
+
+
+### Bug Fixes
+
+* **ExtConfig\TypoScript:** set CORRECT default paths for page and user ts imports ([55019cb](https://github.com/labor-digital/typo3-better-api/commit/55019cbee62c83150512f4c9407a607ca48fa451))
+
+## [10.0.0-beta.7](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.6...v10.0.0-beta.7) (2021-05-26)
+
+
+### Bug Fixes
+
+* **RoutingConfigurator:** convert middleware classes to identifiers in "before" & "after" ([ffd91f4](https://github.com/labor-digital/typo3-better-api/commit/ffd91f4bc2e0efb0ccce2e8ffeff719ea05db414))
+
 ## [10.0.0-beta.6](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.5...v10.0.0-beta.6) (2021-05-17)
 
 
