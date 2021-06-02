@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:57
+ * Last modified: 2021.06.02 at 17:43
  */
 
 declare(strict_types=1);
@@ -44,7 +44,7 @@ use LaborDigital\T3ba\ExtBase\Domain\Repository\BetterRepository;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ConfigureTcaTableInterface;
 use LaborDigital\T3ba\Tool\ExtBase\Hydrator\Hydrator;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
-use ReflectionMethod;
+use ReflectionClass;
 use RuntimeException;
 use TYPO3\CMS\Core\Utility\ClassNamingUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -320,7 +320,14 @@ class NamingUtil implements NoDiInterface
             }
             
             // Check if we have to instantiate the class first
-            if (! (new ReflectionMethod($callable[0], $callable[1]))->isStatic()) {
+            $ref = new ReflectionClass($callable[0]);
+            if (! $ref->hasMethod($callable[1]) || ! $ref->getMethod($callable[1])->isPublic()) {
+                throw new InvalidArgumentException(
+                    'Invalid callback given: "' . $callable[0] . '::' . $callable[1]
+                    . '". The method does not exist, or is not public.'
+                );
+            }
+            if (! $ref->getMethod($callable[1])->isStatic()) {
                 $di = TypoContext::getInstance()->di();
                 $container = $di->getContainer();
                 
