@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.02 at 17:55
  */
 
 declare(strict_types=1);
@@ -240,7 +240,13 @@ class Mount
         if (! $this->isInitialized) {
             $this->isInitialized = true;
             if (! is_dir($this->mountPath)) {
-                Fs::remove($this->mountPath);
+                try {
+                    Fs::remove($this->mountPath);
+                } catch (\Throwable $e) {
+                    if (! is_dir($this->mountPath)) {
+                        Fs::remove($this->mountPath);
+                    }
+                }
             }
             
             if (! is_writable($this->mountPath)) {
