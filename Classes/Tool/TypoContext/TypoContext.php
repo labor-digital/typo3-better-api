@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.02 at 20:03
  */
 
 declare(strict_types=1);
@@ -49,6 +49,7 @@ use LaborDigital\T3ba\Tool\TypoContext\Aspect\FacetAspect;
 use LaborDigital\T3ba\Tool\TypoContext\Aspect\FeUserAspect;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\DateTimeAspect;
 use TYPO3\CMS\Core\Context\WorkspaceAspect;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -89,6 +90,16 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      * DEFAULT ASPECTS AND EXTENSIONS
      *
      * ==================================================== */
+    
+    /**
+     * Returns the date aspect which holds time, date and timezone information for the current request
+     *
+     * @return \TYPO3\CMS\Core\Context\DateTimeAspect|mixed
+     */
+    public function date(): DateTimeAspect
+    {
+        return $this->rootContext->getAspect('date');
+    }
     
     /**
      * Returns the workspace aspect which holds information about the currently accessed workspace.
