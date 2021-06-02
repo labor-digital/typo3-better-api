@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:35
+ * Last modified: 2021.06.02 at 13:55
  */
 
 declare(strict_types=1);
@@ -144,8 +144,10 @@ class TranslationConfigurator extends AbstractExtConfigConfigurator implements N
      */
     public function finish(ConfigState $state): void
     {
-        $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS.SYS.locallangXMLOverride', $this->overrideFiles);
-        $this->overrideFiles = null;
+        $state->useNamespace(null, function (ConfigState $state) {
+            $state->mergeIntoArray('typo.globals.TYPO3_CONF_VARS.SYS.locallangXMLOverride', $this->overrideFiles);
+            $this->overrideFiles = null;
+        });
         
         parent::finish($state);
     }
