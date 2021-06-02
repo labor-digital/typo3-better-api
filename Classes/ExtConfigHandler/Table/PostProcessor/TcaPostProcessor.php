@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:35
+ * Last modified: 2021.06.02 at 13:51
  */
 
 declare(strict_types=1);
@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor;
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\CshLabelStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
@@ -58,6 +59,7 @@ class TcaPostProcessor implements NoDiInterface
             DomainModelMapStep::class,
             ListPositionStep::class,
             TablesOnStandardPagesStep::class,
+            CshLabelStep::class,
         ];
     
     /**

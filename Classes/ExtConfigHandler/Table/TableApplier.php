@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.12 at 14:05
+ * Last modified: 2021.06.02 at 14:13
  */
 
 declare(strict_types=1);
@@ -95,6 +95,14 @@ class TableApplier extends AbstractExtConfigApplier
         $list = $this->state->get('tca.meta.onStandardPages');
         if (is_array($list)) {
             array_map([ExtensionManagementUtility::class, 'allowTableOnStandardPages'], $list);
+        }
+        
+        // Apply table csh files
+        $list = $this->state->get('tca.meta.cshLabels');
+        if (is_array($list)) {
+            foreach ($list as $args) {
+                ExtensionManagementUtility::addLLrefForTCAdescr(...$args);
+            }
         }
     }
     

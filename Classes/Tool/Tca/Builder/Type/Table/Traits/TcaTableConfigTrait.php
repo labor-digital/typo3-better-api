@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.01 at 19:01
+ * Last modified: 2021.06.02 at 14:09
  */
 /** @noinspection ReturnTypeCanBeDeclaredInspection */
 declare(strict_types=1);
@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits;
 
 
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\CshLabelStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
@@ -750,4 +751,38 @@ trait TcaTableConfigTrait
         return $this->config['ctrl']['iconfile'] ?? null;
     }
     
+    /**
+     * Registers a new context sensitive help file for this TCA table.
+     *
+     * @param   string  $filename   The full filename which should begin with EXT:ext_key/....
+     *                              If there is no path but only a filename is given, the default path will
+     *                              automatically be prepended. So: locallang_custom.xlf becomes
+     *                              EXT:{{extKey}}/Resources/Private/Language/locallang_custom.xlf
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/ContextSensitiveHelp/Index.html
+     */
+    public function registerCSHFile(string $filename): self
+    {
+        if (basename($filename) === $filename) {
+            $filename = 'EXT:{{extKey}}/Resources/Private/Language/' . $filename;
+        }
+        
+        $this->config['ctrl'][CshLabelStep::CONFIG_KEY][md5($filename)]
+            = $this->getContext()->getExtConfigContext()->replaceMarkers($filename);
+        
+        return $this;
+    }
+    
+    /**
+     * Returns the context sensitive help files that have been registered for this TCA table.
+     *
+     * WARNING: This only includes the files that were registered through the table classes!
+     *
+     * @return array
+     */
+    public function getCSHFiles(): array
+    {
+        return array_values($this->config['ctrl'][CshLabelStep::CONFIG_KEY] ?? []);
+    }
 }
