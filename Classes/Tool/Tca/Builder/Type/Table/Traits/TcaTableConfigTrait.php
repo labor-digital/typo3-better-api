@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.01 at 19:01
  */
 /** @noinspection ReturnTypeCanBeDeclaredInspection */
 declare(strict_types=1);
@@ -142,8 +142,23 @@ trait TcaTableConfigTrait
      *                              for extbase models
      *
      * @return $this
+     * @deprecated will be removed in v11
      */
     public function addModelClass(string $className, array $columnMap = [])
+    {
+        return $this->registerModelClass($className, $columnMap);
+    }
+    
+    /**
+     * This allows you to set a class of the model which then will be mapped to this table
+     *
+     * @param   string  $className  The name of the model class to map to this table
+     * @param   array   $columnMap  Optional list of fieldNames => propertyNames to be mapped
+     *                              for extbase models
+     *
+     * @return $this
+     */
+    public function registerModelClass(string $className, array $columnMap = [])
     {
         $this->config['ctrl'][DomainModelMapStep::CONFIG_KEY][$className] = $columnMap;
         
