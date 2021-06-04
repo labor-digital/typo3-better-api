@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 19:22
  */
 
 declare(strict_types=1);
@@ -387,7 +387,7 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
      * @return $this|\LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator
      * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
-    public function getVariant(string $name)
+    public function getVariant(string $name): self
     {
         if ($this->isVariant) {
             throw new ExtConfigException('A variant can\'t currently have variants itself!');
@@ -413,6 +413,20 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
         }
         
         return $this->variants[$name] = $v;
+    }
+    
+    /**
+     * Removes a previously created variant from the list of possible variants again
+     *
+     * @param   string  $name  A unique name/key for the variant to remove
+     *
+     * @return $this
+     */
+    public function removeVariant(string $name): self
+    {
+        unset($this->variants[$name]);
+        
+        return $this;
     }
     
     /**
