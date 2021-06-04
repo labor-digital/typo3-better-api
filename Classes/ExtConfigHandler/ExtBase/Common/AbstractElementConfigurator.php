@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 19:22
+ * Last modified: 2021.06.04 at 19:26
  */
 
 declare(strict_types=1);
@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
 
+use InvalidArgumentException;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
-use LaborDigital\T3ba\ExtConfig\ExtConfigException;
 use LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface;
 use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererInterface;
 use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
@@ -385,12 +385,11 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
      * @param   string  $name  A unique name/key for the variant to generate
      *
      * @return $this|\LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator
-     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     public function getVariant(string $name): self
     {
         if ($this->isVariant) {
-            throw new ExtConfigException('A variant can\'t currently have variants itself!');
+            throw new InvalidArgumentException('A variant can\'t currently have variants itself!');
         }
         
         if (isset($this->variants[$name])) {
@@ -430,9 +429,9 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
     }
     
     /**
-     * Returns the list of all registered variants for this
+     * Returns the list of all registered variants for this element
      *
-     * @return \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator[]
+     * @return self[]
      */
     public function getVariants(): array
     {
