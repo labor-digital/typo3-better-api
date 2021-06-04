@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:25
  */
 
 declare(strict_types=1);
@@ -39,6 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
 use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormElementTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -97,11 +98,11 @@ abstract class AbstractCustomField implements CustomFieldInterface
                 'hasDefaultValue',
             ]),
             'data-formengine-validation-rules' => $jsonValidation,
-            'data-formengine-input-params' => json_encode([
+            'data-formengine-input-params' => SerializerUtil::serializeJson([
                 'field' => $this->context->getRenderName(),
                 'evalList' => $evalList,
                 'is_in' => $isIn,
-            ], JSON_THROW_ON_ERROR),
+            ]),
             'data-formengine-input-name' => $this->context->getRenderName(),
         ];
         

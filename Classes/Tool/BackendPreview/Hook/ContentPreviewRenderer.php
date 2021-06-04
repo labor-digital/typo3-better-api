@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:24
  */
 
 declare(strict_types=1);
@@ -27,7 +27,7 @@ use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -156,7 +156,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
         if (! isset($this->pluginVariantMap)) {
             $variants = $this->cs()->typoContext->config()->getConfigValue('typo.extBase.element.variants');
             if (! empty($variants)) {
-                $variants = Arrays::makeFromJson($variants);
+                $variants = SerializerUtil::unserializeJson($variants);
             }
             $this->pluginVariantMap = $variants ?? [];
         }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.02 at 17:55
+ * Last modified: 2021.06.04 at 16:30
  */
 
 declare(strict_types=1);
@@ -26,9 +26,11 @@ namespace LaborDigital\T3ba\Core\VarFs;
 use LaborDigital\T3ba\Core\Util\FilePermissionUtil;
 use LaborDigital\T3ba\Core\VarFs\Exception\FileNotFoundException;
 use LaborDigital\T3ba\Core\VarFs\Exception\InvalidFilePathException;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
 use SplFileInfo;
+use Throwable;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Mount
@@ -124,8 +126,7 @@ class Mount
         
         // Deserialize serialized content
         if (str_starts_with($content, static::SERIALIZED_MARKER)) {
-            /** @noinspection UnserializeExploitsInspection */
-            $content = unserialize(substr($content, strlen(static::SERIALIZED_MARKER)));
+            return SerializerUtil::unserialize(substr($content, strlen(static::SERIALIZED_MARKER)));
         }
         
         // Done
@@ -242,7 +243,7 @@ class Mount
             if (! is_dir($this->mountPath)) {
                 try {
                     Fs::remove($this->mountPath);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     if (! is_dir($this->mountPath)) {
                         Fs::remove($this->mountPath);
                     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.28 at 21:33
+ * Last modified: 2021.06.04 at 16:29
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ namespace LaborDigital\T3ba\Tool\Simulation\Pass;
 
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Page\PageService;
 use LaborDigital\T3ba\Tool\Simulation\SimulatedTypoScriptFrontendController;
 use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
@@ -136,7 +137,7 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     protected function makeSimulatedTsfe(int $pid, array $storage): TypoScriptFrontendController
     {
-        $key = md5(serialize($storage['languageAspect']) . '_' . $pid);
+        $key = md5(SerializerUtil::serialize($storage['languageAspect']) . '_' . $pid);
         if (isset($this->instanceCache[$key])) {
             return $this->instanceCache[$key];
         }

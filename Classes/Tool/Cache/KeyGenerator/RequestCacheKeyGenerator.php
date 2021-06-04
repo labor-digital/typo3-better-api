@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.01 at 11:36
+ * Last modified: 2021.06.04 at 16:25
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Cache\KeyGenerator;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
@@ -89,8 +90,8 @@ class RequestCacheKeyGenerator implements CacheKeyGeneratorInterface, NoDiInterf
         }
         
         return md5(implode('-', [
-            \GuzzleHttp\json_encode($params),
-            \GuzzleHttp\json_encode($headers),
+            SerializerUtil::serializeJson($params),
+            SerializerUtil::serializeJson($headers),
             $request->getMethod(),
             $request->getUri()->getPath(),
             $typoContext->language()->getCurrentFrontendLanguage()->getTwoLetterIsoCode(),

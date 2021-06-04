@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:29
  */
 
 declare(strict_types=1);
@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 use LaborDigital\T3ba\Event\Tca\TableDumperTypeFilterEvent;
 use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaPalette;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaPaletteLineBreak;
@@ -44,8 +45,9 @@ trait DumperGenericTrait
      */
     protected function dumpRootTca(TcaTable $table): array
     {
-        /** @noinspection UnserializeExploitsInspection */
-        $tca = unserialize(serialize($table->getRaw(true)));
+        $tca = SerializerUtil::unserializeJson(
+            SerializerUtil::serializeJson($table->getRaw(true))
+        );
         $tca[DataHookTypes::TCA_DATA_HOOK_KEY] = $table->getRegisteredDataHooks();
         
         $defaultType = $table->getType();

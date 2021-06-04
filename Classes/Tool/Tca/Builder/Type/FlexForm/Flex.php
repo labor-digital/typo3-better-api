@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:27
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm;
 
 
 use Closure;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractForm;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
@@ -391,7 +392,7 @@ class Flex extends AbstractForm
         }
         
         if (! is_array($path) || empty($path)) {
-            throw new InvalidPathException('Invalid path given! ' . json_encode($path, JSON_THROW_ON_ERROR));
+            throw new InvalidPathException('Invalid path given! ' . SerializerUtil::serializeJson($path));
         }
         
         return $path;

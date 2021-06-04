@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:27
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
 use Doctrine\DBAL\Schema\Column;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Sql\ColumnAdapter;
 use LaborDigital\T3ba\Tool\Sql\FallbackType;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
@@ -103,11 +104,11 @@ class TcaField extends AbstractField
     public function setRaw(array $raw)
     {
         // Store ds values to allow automatic config flushing
-        $dsOld = json_encode(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
+        $dsOld = SerializerUtil::serializeJson(Arrays::getPath($this->config, 'config.[ds,ds_pointerField]'));
         
         // Load flex form configuration
         if ($raw['config']['type'] === 'flex' && ! empty($this->flex)) {
-            $dsNew = json_encode(Arrays::getPath($raw, 'config.[ds,ds_pointerField]'), JSON_THROW_ON_ERROR);
+            $dsNew = SerializerUtil::serializeJson(Arrays::getPath($raw, 'config.[ds,ds_pointerField]'));
             // Reset the flex configuration
             if ($dsNew !== $dsOld) {
                 $this->flex = null;

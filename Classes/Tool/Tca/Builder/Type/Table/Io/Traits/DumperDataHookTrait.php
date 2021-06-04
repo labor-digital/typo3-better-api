@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:29
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
 use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 
 trait DumperDataHookTrait
 {
@@ -117,7 +118,7 @@ trait DumperDataHookTrait
                     continue;
                 }
                 
-                $key = md5(serialize($hook));
+                $key = md5(SerializerUtil::serialize($hook));
                 $callback($type, $key, $hook);
             }
         }

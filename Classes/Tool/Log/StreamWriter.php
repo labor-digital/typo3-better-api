@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.30 at 15:44
+ * Last modified: 2021.06.04 at 16:26
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Log;
 
 use Exception;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use TYPO3\CMS\Core\Log\Exception\InvalidLogWriterConfigurationException;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Writer\AbstractWriter;
@@ -94,9 +95,7 @@ class StreamWriter extends AbstractWriter
                 $recordData['exception'] = (string)$recordData['exception'];
             }
             
-            
-            /** @noinspection JsonEncodingApiUsageInspection */
-            $data = @json_encode($recordData);
+            $data = SerializerUtil::serializeJson($recordData);
             if (! is_string($data)) {
                 $data = '[]';
             }

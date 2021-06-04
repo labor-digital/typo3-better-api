@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 14:09
+ * Last modified: 2021.06.04 at 16:25
  */
 
 declare(strict_types=1);
@@ -26,6 +26,7 @@ namespace LaborDigital\T3ba\Tool\Cache\Util;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\Cache\CacheTagProviderInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\PathUtil\Path;
 use Throwable;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -85,14 +86,14 @@ class CacheUtil implements NoDiInterface
         try {
             return [
                 static::ensureTagValidity(
-                    gettype($tag) . '_' . md5(serialize($tag))
+                    gettype($tag) . '_' . md5(SerializerUtil::serialize($tag))
                 ),
             ];
         } catch (Throwable $e) {
             try {
                 return [
                     static::ensureTagValidity(
-                        gettype($tag) . '_' . md5(\GuzzleHttp\json_encode($tag))
+                        gettype($tag) . '_' . md5(SerializerUtil::serializeJson($tag))
                     ),
                 ];
             } catch (Throwable $e) {

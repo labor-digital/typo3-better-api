@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:25
  */
 
 declare(strict_types=1);
@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\Tool\Database\BetterQuery;
 use Closure;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseQueryAdapter;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\DoctrineQueryAdapter;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Arrays\Arrays;
 
 /**
@@ -194,7 +195,7 @@ trait QueryWhereApplierTrait
         // Combine the conditions
         if (empty($conditions)) {
             throw new BetterQueryException('Failed to convert the query into a constraint! The given query was: '
-                                           . json_encode($query, JSON_THROW_ON_ERROR));
+                                           . SerializerUtil::serializeJson($query));
         }
         
         return $adapter->makeAnd($conditions);

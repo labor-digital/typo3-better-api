@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.01 at 20:49
+ * Last modified: 2021.06.04 at 16:23
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Common\Assets;
 
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -45,7 +45,7 @@ trait AssetApplierTrait
         $list = $this->state->get($configPath . '.assets');
         if (! empty($list)) {
             $collector = GeneralUtility::makeInstance(AssetCollector::class);
-            foreach (Arrays::makeFromJson($list) as $action) {
+            foreach (SerializerUtil::unserializeJson($list) as $action) {
                 [$method, $args] = $action;
                 $collector->$method(...$args);
             }

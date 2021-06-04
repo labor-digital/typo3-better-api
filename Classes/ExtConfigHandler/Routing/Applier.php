@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 16:14
+ * Last modified: 2021.06.04 at 16:24
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 use LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent;
 use LaborDigital\T3ba\Event\Core\SiteConfigFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier
@@ -52,7 +52,7 @@ class Applier extends AbstractExtConfigApplier
         $middlewares = $event->getMiddlewares();
         
         if (! empty($config['list'])) {
-            foreach (Arrays::makeFromJson($config['list']) as $stack => $list) {
+            foreach (SerializerUtil::unserializeJson($config['list']) ?? [] as $stack => $list) {
                 foreach ($list as $identifier => $middleware) {
                     $middlewares[$stack][$identifier] = $middleware;
                 }
@@ -60,7 +60,7 @@ class Applier extends AbstractExtConfigApplier
         }
         
         if (! empty($config['disabled'])) {
-            foreach (Arrays::makeFromJson($config['disabled']) as $stack => $list) {
+            foreach (SerializerUtil::unserializeJson($config['disabled']) ?? [] as $stack => $list) {
                 foreach ($list as $identifier => $foo) {
                     $middlewares[$stack][$identifier]['disabled'] = true;
                 }
@@ -85,7 +85,7 @@ class Applier extends AbstractExtConfigApplier
                 continue;
             }
             
-            $config[$key]['routeEnhancers'] = Arrays::makeFromJson($routeEnhancers[$key]);
+            $config[$key]['routeEnhancers'] = SerializerUtil::unserializeJson($routeEnhancers[$key]) ?? [];
         }
         
         $e->setConfig($config);

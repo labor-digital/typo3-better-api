@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 23:40
+ * Last modified: 2021.06.04 at 16:25
  */
 
 declare(strict_types=1);
@@ -27,6 +27,7 @@ use Doctrine\DBAL\Types\DateTimeType;
 use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\FormEngine\UserFunc\SlugPrefixProvider;
 use LaborDigital\T3ba\FormEngine\UserFunc\SlugPrefixProviderInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 use Neunerlei\TinyTimy\DateTimy;
@@ -237,7 +238,7 @@ class InputFields extends AbstractFieldPreset
             $blindFields[] = 'folder';
         }
         
-        $blindFields[] = '@linkSets:' . urlencode(\GuzzleHttp\json_encode($options['allowLinkSets']));
+        $blindFields[] = '@linkSets:' . urlencode(SerializerUtil::serializeJson($options['allowLinkSets']));
         $blindFields = implode(',', $blindFields);
         
         // Prepare the config

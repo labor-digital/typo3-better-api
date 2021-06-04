@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:20
  */
 
 declare(strict_types=1);
@@ -24,7 +24,7 @@ namespace LaborDigital\T3ba\ExtConfig\Traits;
 
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Configuration\State\ConfigState;
 
 /**
@@ -88,7 +88,7 @@ trait DelayedConfigExecutionTrait
     {
         $loadable = $state->get($storageKey);
         
-        return is_string($loadable) ? Arrays::makeFromJson($loadable) : [];
+        return is_string($loadable) ? SerializerUtil::unserializeJson($loadable) : [];
     }
     
     /**

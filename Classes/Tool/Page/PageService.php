@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.17 at 18:18
+ * Last modified: 2021.06.04 at 16:26
  */
 
 declare(strict_types=1);
@@ -41,6 +41,7 @@ namespace LaborDigital\T3ba\Tool\Page;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\PageContentsGridConfigFilterEvent;
 use LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
@@ -451,7 +452,9 @@ class PageService implements SingletonInterface
         }
         
         // Done (make sure we break the references)
-        return json_decode(json_encode($output, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
+        return SerializerUtil::unserializeJson(
+            SerializerUtil::serializeJson($output)
+        );
     }
     
     /**

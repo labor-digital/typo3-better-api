@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 16:24
  */
 
 declare(strict_types=1);
@@ -30,6 +30,7 @@ use LaborDigital\T3ba\Event\Core\ExtTablesLoadedEvent;
 use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
@@ -77,7 +78,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $argDefinition = $this->state->get('typo.extBase.module.args');
         if (! empty($argDefinition)) {
-            foreach (Arrays::makeFromJson($argDefinition) as $args) {
+            foreach (SerializerUtil::unserializeJson($argDefinition) ?? [] as $args) {
                 ExtensionUtility::registerModule(...$args);
             }
         }
@@ -91,7 +92,7 @@ class Applier extends AbstractExtConfigApplier
         $argDefinition = $this->state->get('typo.extBase.element.iconArgs');
         if (! empty($argDefinition)) {
             $iconRegistry = $this->getService(IconRegistry::class);
-            foreach (Arrays::makeFromJson($argDefinition) as $args) {
+            foreach (SerializerUtil::unserializeJson($argDefinition) ?? [] as $args) {
                 $iconRegistry->registerIcon(...$args);
             }
         }
@@ -104,7 +105,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $hookDefinition = $this->state->get('typo.extBase.element.dataHooks');
         if (! empty($hookDefinition)) {
-            $dataHooks = Arrays::makeFromJson($hookDefinition);
+            $dataHooks = SerializerUtil::unserializeJson($hookDefinition) ?? [];
             $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
                 'tt_content' => [
                     DataHookTypes::TCA_DATA_HOOK_KEY => $dataHooks,
@@ -120,7 +121,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $hookDefinition = $this->state->get('typo.extBase.element.backendPreviewHooks');
         if (! empty($hookDefinition)) {
-            $hooks = Arrays::makeFromJson($hookDefinition);
+            $hooks = SerializerUtil::unserializeJson($hookDefinition) ?? [];
             $GLOBALS['TCA'] = Arrays::merge($GLOBALS['TCA'], [
                 'tt_content' => $hooks,
             ], 'noNumericMerge');
@@ -148,7 +149,7 @@ class Applier extends AbstractExtConfigApplier
         // Register the plugins in the TYPO3 api
         $argDefinition = $this->state->get('typo.extBase.element.args');
         if (! empty($argDefinition)) {
-            $args = Arrays::makeFromJson($argDefinition);
+            $args = SerializerUtil::unserializeJson($argDefinition) ?? [];
             
             // Plugin registration
             if (is_array($args['plugin'])) {
@@ -171,7 +172,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $definition = $this->state->get('typo.extBase.element.flexForms');
         if (! empty($definition)) {
-            foreach (Arrays::makeFromJson($definition) as $def) {
+            foreach (SerializerUtil::unserializeJson($definition) ?? [] as $def) {
                 ExtensionManagementUtility::addPiFlexFormValue(...$def['args']);
                 
                 $signature = $def['signature'];

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.01 at 11:36
+ * Last modified: 2021.06.04 at 16:19
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Cache\KeyGenerator;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Arrays\Arrays;
 use Throwable;
 
@@ -55,9 +56,9 @@ class ArrayBasedCacheKeyGenerator implements CacheKeyGeneratorInterface, NoDiInt
         ksort($dataList);
         
         try {
-            return md5(serialize($dataList));
+            return md5(SerializerUtil::serialize($dataList));
         } catch (Throwable $exception) {
-            return md5(Arrays::dumpToJson($dataList));
+            return md5(SerializerUtil::serializeJson($dataList));
         }
     }
     
