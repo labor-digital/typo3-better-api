@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:47
+ * Last modified: 2021.06.04 at 17:43
  */
 
 declare(strict_types=1);
@@ -59,9 +59,9 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
      */
     public function process(): void
     {
-        foreach ($this->sites as $siteKey => $site) {
+        foreach ($this->sites as $identifier => $site) {
             $this->runWithSiteBasedDefinition(
-                $siteKey, $site,
+                $identifier, $site,
                 function () {
                     parent::process();
                 }
@@ -72,16 +72,16 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
     /**
      * Internal helper to run the "process" method for a single site
      *
-     * @param   string                            $siteKey
+     * @param   string                            $identifier
      * @param   \TYPO3\CMS\Core\Site\Entity\Site  $site
      * @param   callable                          $callback
      */
-    protected function runWithSiteBasedDefinition(string $siteKey, Site $site, callable $callback): void
+    protected function runWithSiteBasedDefinition(string $identifier, Site $site, callable $callback): void
     {
         $clone = clone $this;
         
         if ($this->configContext instanceof SiteConfigContext) {
-            $this->configContext->initializeSite($siteKey, $site);
+            $this->configContext->initializeSite($identifier, $site);
         }
         
         $state = $this->configContext->getState();
@@ -94,9 +94,23 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
         foreach ($this->configClasses as $class) {
             // Allow filtering of the configuration based on a site key
             if (in_array(SiteKeyProviderInterface::class, class_implements($class), true)) {
+                // Extract sites using the site key provider
                 $result = $class::getSiteKeys($siteKeys);
-                if (! empty($result) && ! in_array($siteKey, $result, true)) {
+                if (! empty($result) && ! in_array($identifier, $result, true)) {
                     continue;
+                }
+            } elseif (str_contains($class, '\\Site\\')) {
+                // Extract site based on namespace convention
+                foreach ($this->handlerDefinition->locations as $handlerLocation) {
+                    $nsPattern = '\\' . trim(str_replace('/', '\\', $handlerLocation), '\\') . '\\Site\\';
+                    $nsPattern = preg_quote($nsPattern, '~') . '(.*?)\\\\';
+                    preg_match('~' . $nsPattern . '~', $class, $m);
+                    if (! empty($m) && ! empty($m[1])) {
+                        $thisIdentifier = strtolower($m[1]);
+                        if ($thisIdentifier !== 'common' && strtolower($identifier) !== $thisIdentifier) {
+                            continue 2;
+                        }
+                    }
                 }
             }
             
@@ -132,7 +146,7 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
             unset($data['root']);
         }
         
-        $state->mergeIntoArray('typo.site.' . $siteKey, $data);
+        $state->mergeIntoArray('typo.site.' . $identifier, $data);
     }
     
     
