@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 13:48
  */
 
 declare(strict_types=1);
@@ -241,9 +241,8 @@ abstract class AbstractElementConfigGenerator extends AbstractConfigGenerator
             return;
         }
         
-        $header = ! empty($configurator->getWizardTabLabel()) ? 'header = '
-                                                                . $configurator->getWizardTabLabel()
-            : '';
+        $header = ! empty($configurator->getWizardTabLabel())
+            ? 'header = ' . $configurator->getWizardTabLabel() : '';
         $this->config->tsConfig[] = 'mod.wizards.newContentElement.wizardItems.' . $configurator->getWizardTab() . ' {
 			' . $header . '
 			elements {
