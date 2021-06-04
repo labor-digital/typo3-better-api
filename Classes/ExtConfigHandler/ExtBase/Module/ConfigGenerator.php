@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 13:21
  */
 
 declare(strict_types=1);
@@ -42,7 +42,6 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigGenerator;
 use LaborDigital\T3ba\Tool\Translation\Translator;
-use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
@@ -50,7 +49,6 @@ use Neunerlei\TinyTimy\DateTimy;
 
 class ConfigGenerator extends AbstractConfigGenerator
 {
-    use TypoContextAwareTrait;
     
     /**
      * @var \LaborDigital\T3ba\Tool\Translation\Translator
@@ -92,7 +90,7 @@ class ConfigGenerator extends AbstractConfigGenerator
     protected function makeTranslationFileIfRequired(ModuleConfigurator $configurator, ExtConfigContext $context): void
     {
         // Check if the file exists
-        $translationFile = $this->getTypoContext()->path()->typoPathToRealPath($configurator->getTranslationFile());
+        $translationFile = $context->getTypoContext()->path()->typoPathToRealPath($configurator->getTranslationFile());
         if (file_exists($translationFile)) {
             return;
         }

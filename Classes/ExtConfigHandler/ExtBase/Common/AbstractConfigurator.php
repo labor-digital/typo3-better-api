@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 13:18
  */
 
 declare(strict_types=1);
@@ -23,7 +23,6 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common;
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigException;
-use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
@@ -31,8 +30,6 @@ use SplStack;
 
 abstract class AbstractConfigurator
 {
-    use TypoContextAwareTrait;
-    
     /**
      * The context to create the plugin with
      *
@@ -108,7 +105,7 @@ abstract class AbstractConfigurator
     {
         $this->context = $context;
         $extKey = $context->getExtKey();
-        $pathAspect = $this->getTypoContext()->path();
+        $pathAspect = $context->getTypoContext()->path();
         
         $this->templateRootPaths = new SplStack();
         $this->templateRootPaths->push($pathAspect->getTemplatePath($extKey));
@@ -381,7 +378,7 @@ abstract class AbstractConfigurator
         $this->controllerClass = $controllerClass;
         
         // Update the template root paths
-        $pathAspect = $this->getTypoContext()->path();
+        $pathAspect = $this->context->getTypoContext()->path();
         $controllerBaseName = Inflector::toCamelCase(
             preg_replace('~controller$~i', '', Path::classBasename($controllerClass))
         );

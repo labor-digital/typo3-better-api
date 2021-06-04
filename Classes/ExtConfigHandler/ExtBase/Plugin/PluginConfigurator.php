@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:54
+ * Last modified: 2021.06.04 at 13:18
  */
 
 declare(strict_types=1);
@@ -79,7 +79,7 @@ class PluginConfigurator extends AbstractElementConfigurator implements NoDiInte
             return $this->flexForm;
         }
         
-        $this->flexForm = $this->getTypoContext()->di()->getService(Factory::class)->create();
+        $this->flexForm = $this->context->getTypoContext()->di()->getService(Factory::class)->create();
         
         // Try to load the default definition
         try {
