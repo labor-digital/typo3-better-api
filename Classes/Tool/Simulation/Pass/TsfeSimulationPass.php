@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:29
+ * Last modified: 2021.06.04 at 22:21
  */
 
 declare(strict_types=1);
@@ -74,6 +74,14 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     public function addOptionDefinition(array $options): array
     {
+        $options['bootTsfe'] = [
+            'type' => 'bool',
+            'default' => true,
+        ];
+        $options['forceDummyTsfe'] = [
+            'type' => 'bool',
+            'default' => true,
+        ];
         $options['pid'] = [
             'type' => ['int', 'null'],
             'default' => null,
@@ -87,12 +95,23 @@ class TsfeSimulationPass implements SimulatorPassInterface
      */
     public function requireSimulation(array $options, array &$storage): bool
     {
+        // Never boot the dummy frontend
+        if ($options['bootTsfe'] === false) {
+            return false;
+        }
+        
+        // Always boot the dummy frontend
+        if ($options['bootTsfe'] === true) {
+            return true;
+        }
+        
+        if (! $this->tsfeService->hasTsfe()) {
+            return true;
+        }
+        
         return (
-            ! $this->getService(TsfeService::class)->hasTsfe()
-            || (
-                $options['pid'] !== null
-                && $this->getTypoContext()->pid()->getCurrent() !== $options['pid']
-            )
+            $options['pid'] !== null
+            && $this->getTypoContext()->pid()->getCurrent() !== $options['pid']
         );
     }
     

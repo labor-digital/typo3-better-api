@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.02 at 21:40
+ * Last modified: 2021.06.04 at 22:22
  */
 
 declare(strict_types=1);
@@ -114,6 +114,11 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
      *                              language for the current site is used as fallback
      *                              - site string: Can be set to a valid site identifier to simulate the request
      *                              on a specific TYPO3 site.
+     *                              - bootTsfe bool (NULL): By default the simulator will start a dummy version of
+     *                              the frontend controller and populate the $GLOBALS["TSFE"] variable with it
+     *                              ONLY IF there is NOT ALREADY a frontend controller instance available.
+     *                              If FALSE is set, the frontend simulation is disabled. This disables the "pid" option as well.
+     *                              If TRUE is set, a dummy frontend is ALWAYS booted, even if there is currently an active frontend instance
      *                              - ignoreChildSimulations bool (FALSE): If this is set to true nested calls
      *                              of this simulator will be skipped and the handler will be executed in the
      *                              environment of the parent simulator
@@ -237,11 +242,6 @@ class EnvironmentSimulator implements SingletonInterface, PublicServiceInterface
                 'default' => $this->childSimulationsIgnored,
             ],
             'ignoreInSimulations' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            // @todo remove this in v11 or reimplement it properly
-            'ignoreIfFrontendExists' => [
                 'type' => 'bool',
                 'default' => false,
             ],
