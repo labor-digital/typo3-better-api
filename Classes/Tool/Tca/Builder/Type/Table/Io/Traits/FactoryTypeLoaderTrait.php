@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:56
  */
 
 declare(strict_types=1);
@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
-
-use Neunerlei\Arrays\Arrays;
 
 trait FactoryTypeLoaderTrait
 {
@@ -37,7 +35,7 @@ trait FactoryTypeLoaderTrait
     protected function findTypes(array $tca): array
     {
         $types = [];
-        foreach (Arrays::getPath($tca, 'types', []) as $k => $v) {
+        foreach ($tca['types'] ?? [] as $k => $v) {
             if (! is_array($v)) {
                 continue;
             }

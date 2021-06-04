@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:53
  */
 
 declare(strict_types=1);
@@ -24,7 +24,6 @@ namespace LaborDigital\T3ba\Event\DataHandler\Adapter;
 use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 use LaborDigital\T3ba\Event\DataHandler\ActionFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent;
-use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 class ActionEventAdapter extends AbstractCoreHookEventAdapter
@@ -63,7 +62,7 @@ class ActionEventAdapter extends AbstractCoreHookEventAdapter
         // Make sure to extract the new uid when a record was copied
         $newElementId = -1;
         if ($command === 'copy' || $command === 'copyToLanguage') {
-            $newElementId = Arrays::getPath($parent->copyMappingArray, [$table, $id], $newElementId);
+            $newElementId = $parent->copyMappingArray[$table][$id] ?? $newElementId;
         }
         
         // Emit the event

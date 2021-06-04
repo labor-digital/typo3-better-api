@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.17 at 17:32
+ * Last modified: 2021.06.04 at 20:56
  */
 
 declare(strict_types=1);
@@ -40,7 +40,6 @@ namespace LaborDigital\T3ba\Tool\Translation;
 
 use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\EventBus\EventBusInterface;
@@ -342,7 +341,7 @@ class Translator implements SingletonInterface
         $backupLang = $languageService->lang;
         $languageService->lang = 'default';
         $labels = $languageService->includeLLFile($filename, false);
-        $labels = array_keys(Arrays::getPath($labels, ['default'], []));
+        $labels = array_keys($labels['default'] ?? []);
         $labels = array_combine($labels, $labels);
         $labels = array_map(static function ($v) use ($filename) {
             return $filename . ':' . $v;

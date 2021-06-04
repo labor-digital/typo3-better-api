@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:51
  */
 declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Core\Util;
 
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
 trait CTypeRegistrationTrait
@@ -36,7 +35,7 @@ trait CTypeRegistrationTrait
     protected function registerCTypesForElements(array &$tca, array $elements): void
     {
         // Get the correct slot in the tca
-        $itemList = Arrays::getPath($tca, ['tt_content', 'columns', 'CType', 'config', 'items'], []);
+        $itemList = $tca['tt_content']['columns']['CType']['config']['items'] ?? [];
         
         // Build the section list from all entries
         $sectionList = [];
@@ -95,6 +94,7 @@ trait CTypeRegistrationTrait
                 $newItemList[] = $option;
             }
         }
-        $tca = Arrays::setPath($tca, ['tt_content', 'columns', 'CType', 'config', 'items'], $newItemList);
+        
+        $tca['tt_content']['columns']['CType']['config']['items'] = $newItemList;
     }
 }

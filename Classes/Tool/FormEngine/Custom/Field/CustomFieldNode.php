@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:55
  */
 
 declare(strict_types=1);
@@ -41,7 +41,6 @@ namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\FormEngine\CustomFieldPostProcessorEvent;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException;
-use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
@@ -117,7 +116,7 @@ class CustomFieldNode extends AbstractFormElement
             $config = $this->context->getConfig()['config'] ?? [];
             
             // Calculate field size
-            $size = Arrays::getPath($config, ['size'], $this->context->getDefaultInputWidth());
+            $size = $config['size'] ?? $this->context->getDefaultInputWidth();
             $size = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(),
                 $this->context->getMaxInputWidth());
             $width = (int)$this->context->getRootNode()->callMethod('formMaxWidth', [$size]);

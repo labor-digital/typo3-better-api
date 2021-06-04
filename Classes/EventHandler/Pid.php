@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:51
  */
 
 declare(strict_types=1);
@@ -26,7 +26,6 @@ namespace LaborDigital\T3ba\EventHandler;
 use LaborDigital\T3ba\Event\TypoScript\ConfigArrayPostProcEvent;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
@@ -74,7 +73,7 @@ class Pid implements LazyEventSubscriberInterface
      */
     public function onTypoScriptConfigPostProcessing(ConfigArrayPostProcEvent $event): void
     {
-        $pidConfig = Arrays::getPath($event->getConfig(), ['t3ba.', 'pid.'], []);
+        $pidConfig = $event->getConfig()['t3ba.']['pid.'] ?? [];
         $pidConfig = $this->typoScriptService->removeDots($pidConfig);
         $this->context->pid()->setMultiple($pidConfig);
     }

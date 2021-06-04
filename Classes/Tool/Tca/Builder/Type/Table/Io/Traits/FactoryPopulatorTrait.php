@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:56
  */
 
 declare(strict_types=1);
@@ -69,7 +69,7 @@ trait FactoryPopulatorTrait
                         
                         // Ignore the field if we don't have a configuration for it
                         // or the palette is already loaded
-                        $config = Arrays::getPath($palettes, [$id]);
+                        $config = $palettes[$id] ?? null;
                         if (empty($config) || $type->hasPalette($id)) {
                             break;
                         }
@@ -101,7 +101,7 @@ trait FactoryPopulatorTrait
             }
             
             // Ignore the field if we don't have a configuration for it
-            $config = Arrays::getPath($tca['columns'], [$id], []);
+            $config = $tca['columns'][$id] ?? [];
             if (empty($config)) {
                 continue;
             }

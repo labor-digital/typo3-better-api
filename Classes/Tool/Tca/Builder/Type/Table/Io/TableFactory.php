@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:56
  */
 
 declare(strict_types=1);
@@ -32,7 +32,6 @@ use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
-use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
 class TableFactory implements PublicServiceInterface
@@ -92,7 +91,7 @@ class TableFactory implements PublicServiceInterface
     public function initialize(TcaTable $table): void
     {
         // Load the tca from globals...
-        $tca = Arrays::getPath($GLOBALS, ['TCA', $table->getTableName()], []);
+        $tca = $GLOBALS['TCA'][$table->getTableName()] ?? [];
         
         // ... or find the default tca
         if (empty($tca)) {

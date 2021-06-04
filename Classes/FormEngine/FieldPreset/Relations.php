@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 20:52
  */
 
 declare(strict_types=1);
@@ -828,8 +828,7 @@ class Relations extends AbstractFieldPreset
     public function applySetMmTable(): void
     {
         $raw = $this->field->getRaw();
-        $config = Arrays::getPath($raw, 'config', []);
-        $raw['config'] = $this->addMmTableConfig($config, []);
+        $raw['config'] = $this->addMmTableConfig($raw['config'] ?? [], []);
         $this->field->setRaw($raw);
     }
 }

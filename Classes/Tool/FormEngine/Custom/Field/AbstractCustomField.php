@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:25
+ * Last modified: 2021.06.04 at 20:54
  */
 
 declare(strict_types=1);
@@ -86,8 +86,8 @@ abstract class AbstractCustomField implements CustomFieldInterface
         
         // Build required attribute values
         $jsonValidation = $this->context->getRootNode()->callMethod('getValidationDataAsJsonString', [$config]);
-        $evalList = implode(',', array_unique(Arrays::makeFromStringList(Arrays::getPath($config, 'eval', ''))));
-        $isIn = trim(Arrays::getPath($config, 'is_in', ''));
+        $evalList = implode(',', array_unique(Arrays::makeFromStringList($config['eval'] ?? '')));
+        $isIn = trim($config['is_in'] ?? '');
         
         // Build default attributes
         $attributes = [
