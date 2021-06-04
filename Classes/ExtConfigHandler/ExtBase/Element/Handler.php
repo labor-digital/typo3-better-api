@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 13:49
  */
 
 declare(strict_types=1);
@@ -196,7 +196,8 @@ class Handler extends AbstractGroupExtConfigHandler
      */
     public function handleGroupItem(string $class): void
     {
-        call_user_func([$class, $this->configMethod], $this->configurator, $this->context);
+        $method = $this->configMethod;
+        $class::$method($this->configurator, $this->context);
         
         // The TCA form gets processed independently so we simply store the value for
         // the content elements for when the TCA gets build
