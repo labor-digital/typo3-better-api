@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "b56ab9aed1d80fc8f8786800ff501e35",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -701,23 +701,27 @@
         },
         {
             "name": "labor-digital/typo3-better-api-composer-plugin",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labor-digital/typo3-better-api-composer-plugin.git",
-                "reference": "67c7d36dd07863026e2a9efe074f112caa174834"
+                "reference": "af801ca7a549a3da92d81b108943d58cbfaf8fdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labor-digital/typo3-better-api-composer-plugin/zipball/67c7d36dd07863026e2a9efe074f112caa174834",
-                "reference": "67c7d36dd07863026e2a9efe074f112caa174834",
+                "url": "https://api.github.com/repos/labor-digital/typo3-better-api-composer-plugin/zipball/af801ca7a549a3da92d81b108943d58cbfaf8fdd",
+                "reference": "af801ca7a549a3da92d81b108943d58cbfaf8fdd",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.1",
+                "composer-plugin-api": "^1.0 || ^2.0",
                 "neunerlei/filesystem": "^5.2",
                 "neunerlei/path-util": "^2.4",
                 "typo3/class-alias-loader": "^1.1.1"
+            },
+            "require-dev": {
+                "composer/composer": "^1.1@dev || ^2.0@dev",
+                "roave/security-advisories": "dev-master"
             },
             "type": "composer-plugin",
             "extra": {
@@ -747,7 +751,7 @@
                 }
             ],
             "description": "TYPO3: Provides a global auto-loader hook which runs before TYPO3's class alias loader",
-            "time": "2020-05-25T10:46:20+00:00"
+            "time": "2021-05-04T07:17:10+00:00"
         },
         {
             "name": "league/uri",
@@ -2393,6 +2397,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "use `EnglishInflector` from the String component instead",
             "time": "2020-03-27T16:56:45+00:00"
         },
         {
@@ -4988,6 +4993,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6511,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6564,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.29.4"
+    "plugin-api-version": "1.1.0"
 }
