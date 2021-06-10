@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db0b7699d16426f66c619eb48598cfd",
+    "content-hash": "b56ab9aed1d80fc8f8786800ff501e35",
     "packages": [
         {
             "name": "cogpowered/finediff",
@@ -1142,23 +1142,23 @@
         },
         {
             "name": "neunerlei/options",
-            "version": "1.0.3",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Neunerlei/options-php.git",
-                "reference": "8fc61beb3a2ec114eed2a76603e9daa8e2984d7e"
+                "reference": "0e8793bc29340b2d6bf42ce095c0396f3fd83e63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Neunerlei/options-php/zipball/8fc61beb3a2ec114eed2a76603e9daa8e2984d7e",
-                "reference": "8fc61beb3a2ec114eed2a76603e9daa8e2984d7e",
+                "url": "https://api.github.com/repos/Neunerlei/options-php/zipball/0e8793bc29340b2d6bf42ce095c0396f3fd83e63",
+                "reference": "0e8793bc29340b2d6bf42ce095c0396f3fd83e63",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.3"
             },
             "require-dev": {
-                "neunerlei/dbg": "^1.8",
+                "neunerlei/dbg": "^1.9.2",
                 "phpunit/phpunit": "^9.0"
             },
             "type": "library",
@@ -1186,7 +1186,7 @@
                 }
             ],
             "description": "A little helper which can be used to apply a schema to any given array",
-            "time": "2020-05-23T08:55:30+00:00"
+            "time": "2021-06-09T16:20:18+00:00"
         },
         {
             "name": "neunerlei/path-util",
@@ -2393,6 +2393,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "use `EnglishInflector` from the String component instead",
             "time": "2020-03-27T16:56:45+00:00"
         },
         {
@@ -4988,6 +4989,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-05-06T09:56:31+00:00"
         },
         {
@@ -6505,12 +6507,12 @@
             "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "reference": "ab2cb0b3b559010b75981b1bdce728da3ee90ad6",
                 "shasum": ""
             },
@@ -6558,6 +6560,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0",
-    "version": "9.29.4"
+    "plugin-api-version": "1.1.0"
 }
