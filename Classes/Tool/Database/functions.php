@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.11 at 13:52
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAda
 use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3ba\Tool\Database\DatabaseException;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
@@ -31,7 +32,7 @@ if (! function_exists('dbgQuery')) {
     /**
      * Helper to debug a typo3 query. Will render the sql statement, the result, and exceptions to the screen to see.
      *
-     * @param   QueryInterface|ExtBaseBetterQuery|StandaloneBetterQuery  $query  The query to debug
+     * @param   QueryInterface|ExtBaseBetterQuery|StandaloneBetterQuery|QueryBuilder  $query  The query to debug
      *
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -46,10 +47,14 @@ if (! function_exists('dbgQuery')) {
             $query = $query->getQuery();
         }
         if (! $query instanceof QueryInterface) {
-            if (! $query instanceof StandaloneBetterQuery) {
-                throw new DatabaseException('The given query object can not be used!');
+            if (! $query instanceof QueryBuilder) {
+                if (! $query instanceof StandaloneBetterQuery) {
+                    throw new DatabaseException('The given query object can not be used!');
+                }
+                $dQuery = $query->getQueryBuilder();
+            } else {
+                $dQuery = $query;
             }
-            $dQuery = $query->getQueryBuilder();
             $isStandalone = true;
         } else {
             $dQuery = BetterQueryTypo3DbQueryParserAdapter::getConcreteQueryParser()
@@ -81,7 +86,7 @@ if (! function_exists('dbgQuery')) {
         try {
             if ($isStandalone) {
                 $first = $dQuery->getFirstResult();
-                $result = $dQuery->execute();
+                $result = $dQuery->execute()->fetchAssociative();
             } else {
                 $first = $query->execute()->getFirst();
                 $result = $query->execute(true);
