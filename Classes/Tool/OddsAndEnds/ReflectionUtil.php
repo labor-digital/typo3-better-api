@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 13:28
+ * Last modified: 2021.06.09 at 12:40
  */
 
 declare(strict_types=1);
@@ -31,6 +31,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionParameter;
+use ReflectionProperty;
 use ReflectionUnionType;
 
 class ReflectionUtil implements NoDiInterface
@@ -226,7 +227,15 @@ class ReflectionUtil implements NoDiInterface
             return $v;
         };
         
-        if ($typeOrParent instanceof ReflectionParameter) {
+        if ($typeOrParent instanceof ReflectionProperty) {
+            if (! is_callable([$typeOrParent, 'hasType'])
+                || ! is_callable([$typeOrParent, 'getType'])
+                || ! $typeOrParent->hasType()) {
+                return [];
+            }
+            
+            $rawType = $typeOrParent->getType();
+        } elseif ($typeOrParent instanceof ReflectionParameter) {
             if (! $typeOrParent->hasType()) {
                 return [];
             }
@@ -243,7 +252,7 @@ class ReflectionUtil implements NoDiInterface
         } elseif (is_array($typeOrParent)) {
             return array_map([static::class, 'parseType'], $typeOrParent);
         } else {
-            throw new InvalidArgumentException('Could not parse the type, because $type is an invalid argument');
+            throw new InvalidArgumentException('Could not parse the type, because ' . SerializerUtil::serializeJson($typeOrParent) . ' is an invalid argument');
         }
         
         if ($rawType === null) {
