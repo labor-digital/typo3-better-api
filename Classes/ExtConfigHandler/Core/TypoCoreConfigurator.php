@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:49
+ * Last modified: 2021.06.11 at 14:20
  */
 
 declare(strict_types=1);
@@ -71,7 +71,36 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator implements NoDi
     }
     
     /**
+     * Returns the list of registered x classes, where the key is the class to be overwritten, and the value the class to overwrite with.
+     *
+     * @return array
+     */
+    public function getXClasses(): array
+    {
+        return array_column($this->xClasses, 'className');
+    }
+    
+    /**
+     * Removes the override for a previously registered x class
+     *
+     * @param   string  $classToOverride
+     *
+     * @return $this
+     */
+    public function removeXClass(string $classToOverride): self
+    {
+        unset($this->xClasses[$classToOverride]);
+        
+        return $this;
+    }
+    
+    /**
      * Registers a new cache configuration to TYPO3's caching framework.
+     *
+     * Pro Tip: If you want to override an existing cache implementation do it like this:
+     * $config = $configuratior->getCacheconfig('foo');
+     * $config['options']['groups'] = ['pages'];
+     * $configurator->registerCache(...$config);
      *
      * @param   string  $identifier  The cache identifier which is used to retrieve the cache instance later
      * @param   string  $frontend    The classname of the frontend to use
@@ -123,6 +152,34 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator implements NoDi
         ];
         
         return $this;
+    }
+    
+    /**
+     * Retrieves a previously configured cache configuration.
+     *
+     * @param   string  $identifier
+     *
+     * @return array|null
+     */
+    public function getCacheConfig(string $identifier): ?array
+    {
+        $identifier = $this->context->replaceMarkers($identifier);
+        
+        if (! isset($this->cacheConfigurations[$identifier])) {
+            return null;
+        }
+        
+        $config = $this->cacheConfigurations[$identifier];
+        
+        return [
+            'identifier' => $identifier,
+            'frontend' => $config['frontend'],
+            'backend' => $config['backend'],
+            'options' => [
+                'options' => $config['options'],
+                'groups' => $config['groups'],
+            ],
+        ];
     }
     
     /**
