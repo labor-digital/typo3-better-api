@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:57
+ * Last modified: 2021.06.11 at 17:01
  */
 
 declare(strict_types=1);
@@ -44,6 +44,11 @@ class DataHandlerAdapter extends DataHandler implements NoDiInterface
     public static function rewriteHistory(DataHandler $dataHandler, int $id, array $childFields): void
     {
         $record = &$dataHandler->historyRecords['tt_content:' . $id];
+        
+        if (! $record) {
+            return;
+        }
+        
         $record['oldRecord'] = array_merge(
             $record['oldRecord'],
             array_filter($childFields)
