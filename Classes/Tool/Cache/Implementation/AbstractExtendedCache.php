@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.01 at 15:34
+ * Last modified: 2021.06.10 at 16:27
  */
 
 declare(strict_types=1);
@@ -335,11 +335,11 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
             $value = $callback();
             
             if (is_callable($options['enabled'])) {
-                $enabled = (bool)call_user_func($options['enabled'], $value);
+                $enabled = (bool)call_user_func($options['enabled'], $value, $enabled);
             }
             
             if (is_callable($options['lifetime'])) {
-                $_lifetime = call_user_func($options['lifetime'], $value);
+                $_lifetime = call_user_func($options['lifetime'], $value, $lifetime);
                 $lifetime = $_lifetime === null ? null : (int)$_lifetime;
                 unset($_lifetime);
             }
