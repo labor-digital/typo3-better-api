@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 22:17
  */
 
 declare(strict_types=1);
@@ -250,7 +250,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function renderContentObject(string $type, array $config): string
     {
-        return $this->cs()->simulator->runWithEnvironment(['ignoreIfFrontendExists'], function () use ($type, $config) {
+        return $this->cs()->simulator->runWithEnvironment([], function () use ($type, $config) {
             return $this->cs()->tsfe->getContentObjectRenderer()->cObjGetSingle($type, $config);
         });
     }
