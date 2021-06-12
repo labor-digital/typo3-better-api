@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 20:56
+ * Last modified: 2021.06.11 at 16:37
  */
 
 declare(strict_types=1);
@@ -58,7 +58,7 @@ trait FactoryPopulatorTrait
             $id = reset($layoutMeta);
             
             // Check for modifiers
-            if (strpos($id, '--') === 0) {
+            if (str_starts_with($id, '--')) {
                 array_shift($layoutMeta);
                 switch (strtolower(substr($id, 2, -2))) {
                     case 'div':
@@ -72,6 +72,10 @@ trait FactoryPopulatorTrait
                         $config = $palettes[$id] ?? null;
                         if (empty($config) || $type->hasPalette($id)) {
                             break;
+                        }
+                        
+                        if ($target === null) {
+                            $target = $this->populateInferredTab($type, $tabCounter++);
                         }
                         
                         $this->populatePalette(
@@ -97,7 +101,7 @@ trait FactoryPopulatorTrait
             
             // If we don't have a target, this is wrong!
             if ($target === null) {
-                $target = $this->populateTab($type, [], $tabCounter++);
+                $target = $this->populateInferredTab($type, $tabCounter++);
             }
             
             // Ignore the field if we don't have a configuration for it
@@ -137,6 +141,23 @@ trait FactoryPopulatorTrait
         }
         
         return $parts;
+    }
+    
+    /**
+     * Helper to create a new tab, that was not defined in the showitem string.
+     *
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType  $type
+     * @param   int                                                          $id
+     *
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTab
+     */
+    protected function populateInferredTab(TcaTableType $type, int $id): TcaTab
+    {
+        return $this->populateTab(
+            $type,
+            [],
+            $id
+        );
     }
     
     /**
