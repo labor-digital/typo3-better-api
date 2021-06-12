@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.12 at 18:05
  */
 
 declare(strict_types=1);
@@ -97,6 +97,20 @@ class TcaTable extends AbstractTypeList
     /**
      * @inheritDoc
      */
+    public function getTypeNames(): array
+    {
+        // @todo this could theoretically lead to issues. The class should have a flag that tells it
+        // that it should retrieve the types from the config (while it is still being populated)
+        // and after it has been populated it should only be aware of the actually loaded types
+        $tcaTypes = array_keys($this->config['types'] ?? []);
+        $loadedTypes = array_diff(array_keys($this->types), $tcaTypes);
+        
+        return array_merge($tcaTypes, $loadedTypes);
+    }
+    
+    /**
+     * @inheritDoc
+     */
     public function clear(): void
     {
         parent::clear();
@@ -167,6 +181,9 @@ class TcaTable extends AbstractTypeList
      */
     protected function loadType($typeName): AbstractType
     {
+        if (($typeName === 0 || $typeName === '0') && $this->getTableName() === 'tt_content') {
+            dbge($typeName, $this->getTableName());
+        }
         $type = $this->typeFactory->create($typeName, $this);
         $this->typeFactory->populate($type);
         
