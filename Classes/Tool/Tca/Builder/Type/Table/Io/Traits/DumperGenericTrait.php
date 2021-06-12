@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:29
+ * Last modified: 2021.06.12 at 18:09
  */
 
 declare(strict_types=1);
@@ -116,6 +116,12 @@ trait DumperGenericTrait
         foreach ($type->getAllChildren() as $child) {
             if ($child instanceof TcaTab) {
                 $meta = $child->getLayoutMeta();
+                
+                // Special handling if the first tab is untitled -> don't print it to enforce the TYPO3 defaults
+                if (empty($showItem) && $child->getLabel() === 't3ba.tab.untitled') {
+                    continue;
+                }
+                
                 $meta[0] = $child->getLabel();
                 $pointer[] = '--div--;' . implode(';', $meta);
                 
