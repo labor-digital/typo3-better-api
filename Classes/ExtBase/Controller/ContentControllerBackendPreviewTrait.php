@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.12 at 17:17
  */
 
 declare(strict_types=1);
@@ -190,7 +190,7 @@ trait ContentControllerBackendPreviewTrait
     {
         ControllerUtil::requireActionController($this);
         
-        $variant = $this->previewRendererContext->getPluginVariant();
+        $variant = $this->previewRendererContext->getVariant();
         $action = $variantActionMap[$variant] ?? $variantActionMap['default'] ?? null;
         
         if ($action === null) {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 21:25
+ * Last modified: 2021.06.12 at 17:22
  */
 
 declare(strict_types=1);
@@ -139,7 +139,7 @@ class Loader implements PublicServiceInterface
                         // This is useful to inflect the model class based on the controller name
                         if (is_string($additionalData[static::MODEL_SUGGESTION_OPTION])
                             && class_exists($additionalData[static::MODEL_SUGGESTION_OPTION])) {
-                            $type->setModelClass($additionalData[static::MODEL_SUGGESTION_OPTION]);
+                            $type->setDataModelClass($additionalData[static::MODEL_SUGGESTION_OPTION]);
                         }
                         
                         // Inject the provided variant name if possible
