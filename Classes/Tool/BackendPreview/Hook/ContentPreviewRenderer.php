@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:24
+ * Last modified: 2021.06.11 at 21:15
  */
 
 declare(strict_types=1);
@@ -24,7 +24,6 @@ namespace LaborDigital\T3ba\Tool\BackendPreview\Hook;
 
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
@@ -101,7 +100,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
         
         $this->item = $item;
         
-        $this->getService(TypoEventBus::class)->dispatch($this->event = new PreviewRenderingEvent(
+        $this->cs()->eventBus->dispatch($this->event = new PreviewRenderingEvent(
             $item, $this->makeUtilsInstance($item), $this->getPluginVariant($item)
         ));
         
@@ -118,6 +117,7 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
      */
     protected function makeUtilsInstance(GridColumnItem $item): BackendPreviewUtils
     {
+        // @todo apply changes to LegacyContext as well
         return $this->makeInstance(BackendPreviewUtils::class, [
             [
                 'renderDefaultHeader' => function () use ($item) {

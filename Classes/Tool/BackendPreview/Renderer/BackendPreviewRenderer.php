@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.12 at 17:12
  */
 
 declare(strict_types=1);
@@ -112,7 +112,9 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                                 $configManager->setContentObject($cObj);
                             }
                             
-                            $renderer = $this->getService($rendererClass);
+                            $renderer = $this->getContainer()->has($rendererClass)
+                                ? $this->getService($rendererClass) : $this->makeInstance($rendererClass);
+                            
                             if (! $renderer instanceof BackendPreviewRendererInterface) {
                                 throw new BackendPreviewException
                                 ('The given renderer class: ' . $rendererClass
@@ -139,6 +141,8 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                                 : (string)$event->getFooter());
                             $context->setBody((string)$event->getBody());
                             $context->setLinkPreview(empty($event->getBody()));
+                            
+                            // @todo implement variant based name resolution
                             
                             $result = $renderer->renderBackendPreview($context);
                             

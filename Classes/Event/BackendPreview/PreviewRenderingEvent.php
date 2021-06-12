@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.11 at 21:10
  */
 
 declare(strict_types=1);
@@ -36,8 +36,9 @@ class PreviewRenderingEvent
 {
     /**
      * The column item that should be rendered
+     * Might be null in a legacy context
      *
-     * @var \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem
+     * @var \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem|null
      */
     protected $item;
     
@@ -83,7 +84,7 @@ class PreviewRenderingEvent
      * @param   \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils  $utils
      * @param   string|null                                                      $pluginVariant
      */
-    public function __construct(GridColumnItem $item, BackendPreviewUtils $utils, ?string $pluginVariant)
+    public function __construct(?GridColumnItem $item, BackendPreviewUtils $utils, ?string $pluginVariant)
     {
         $this->item = $item;
         $this->utils = $utils;
@@ -188,7 +189,7 @@ class PreviewRenderingEvent
      *
      * @return \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem
      */
-    public function getItem(): GridColumnItem
+    public function getItem(): ?GridColumnItem
     {
         return $this->item;
     }

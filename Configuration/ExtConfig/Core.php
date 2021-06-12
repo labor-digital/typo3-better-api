@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:13
+ * Last modified: 2021.06.11 at 21:42
  */
 
 declare(strict_types=1);
@@ -33,6 +33,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Routing\ConfigureRoutingInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
+use LaborDigital\T3ba\Tool\BackendPreview\Hook\Legacy\ItemPreviewRenderer;
 use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldNode;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardNode;
@@ -43,7 +44,9 @@ use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
-class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, ConfigureRoutingInterface,
+class Core implements ConfigureRawSettingsInterface,
+                      ConfigureFluidInterface,
+                      ConfigureRoutingInterface,
                       ConfigureTypoCoreInterface
 {
     
@@ -94,6 +97,13 @@ class Core implements ConfigureRawSettingsInterface, ConfigureFluidInterface, Co
                 't3lib/class.t3lib_userauthgroup.php' => [
                     'getDefaultUploadFolder' => [
                         FalFileBaseDir::class => FalFileBaseDir::class . '->applyConfiguredFalFolders',
+                    ],
+                ],
+                
+                // Configuration to support legacy backend preview renderering which is used for gridelements
+                'cms/layout/class.tx_cms_layout.php' => [
+                    'tt_content_drawItem' => [
+                        ItemPreviewRenderer::class => ItemPreviewRenderer::class,
                     ],
                 ],
             ],
