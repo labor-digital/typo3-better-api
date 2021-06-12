@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.08 at 20:18
+ * Last modified: 2021.06.12 at 17:22
  */
 
 declare(strict_types=1);
@@ -65,9 +65,8 @@ class ContentType extends TcaTableType
      *
      * @return ContentType
      */
-    public function setModelClass(string $modelClass): ContentType
+    public function setDataModelClass(string $modelClass): ContentType
     {
-        // @todo rename this to setDataModelClass
         if (! class_exists($modelClass) || ! in_array(AbstractDataModel::class, class_parents($modelClass), true)) {
             throw new InvalidArgumentException(
                 'The given model class ' . $modelClass . ' must extend ' . AbstractDataModel::class);
