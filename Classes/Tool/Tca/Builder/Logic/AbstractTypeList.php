@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:00
+ * Last modified: 2021.06.12 at 17:58
  */
 
 declare(strict_types=1);
@@ -92,7 +92,7 @@ abstract class AbstractTypeList implements NoDiInterface
      */
     public function hasType($typeName): bool
     {
-        return in_array($typeName, $this->getTypeNames(), false);
+        return isset($this->types[$typeName]);
     }
     
     /**
