@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.12 at 18:05
  */
 
 declare(strict_types=1);
@@ -131,8 +131,7 @@ class TcaTableType extends AbstractType
             );
             
             // Inherit the configuration for a field
-            /** @noinspection TypeUnsafeComparisonInspection */
-            if ($this->getTypeName() != $this->parent->getDefaultTypeName()) {
+            if ((string)$this->getTypeName() !== (string)$this->parent->getDefaultTypeName()) {
                 // Special handling if we are not in the default type
                 $defaultType = $this->parent->getType();
                 if ($defaultType->hasField($id)) {
