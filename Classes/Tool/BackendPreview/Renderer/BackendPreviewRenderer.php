@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.12 at 17:12
+ * Last modified: 2021.06.12 at 17:17
  */
 
 declare(strict_types=1);
@@ -30,6 +30,7 @@ use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererInterface;
 use LaborDigital\T3ba\Tool\BackendPreview\ContextAwareBackendPreviewRendererInterface;
 use LaborDigital\T3ba\Tool\Simulation\EnvironmentSimulator;
 use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
+use Neunerlei\Inflection\Inflector;
 use Throwable;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -142,9 +143,16 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                             $context->setBody((string)$event->getBody());
                             $context->setLinkPreview(empty($event->getBody()));
                             
-                            // @todo implement variant based name resolution
+                            // Check if variant method exists
+                            $renderMethod = 'renderBackendPreview';
+                            if ($context->getVariant() !== null) {
+                                $variantRenderMethod = 'render' . Inflector::toCamelCase($context->getVariant()) . 'BackendPreview';
+                                if (is_callable([$renderer, $variantRenderMethod])) {
+                                    $renderMethod = $variantRenderMethod;
+                                }
+                            }
                             
-                            $result = $renderer->renderBackendPreview($context);
+                            $result = $renderer->$renderMethod($context);
                             
                             if ($result instanceof ViewInterface) {
                                 $result = $result->render();

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:41
+ * Last modified: 2021.06.12 at 17:17
  */
 
 declare(strict_types=1);
@@ -106,7 +106,7 @@ class BackendPreviewRendererContext implements NoDiInterface
      *
      * @return string|null
      */
-    public function getPluginVariant(): ?string
+    public function getVariant(): ?string
     {
         return $this->event->getPluginVariant();
     }
