@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.04 at 21:25
  */
 
 declare(strict_types=1);
@@ -27,9 +27,12 @@ use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Dumper;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Factory;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
+use Neunerlei\Inflection\Inflector;
+use ReflectionClass;
 
 class Loader implements PublicServiceInterface
 {
@@ -38,6 +41,17 @@ class Loader implements PublicServiceInterface
     use DelayedConfigExecutionTrait;
     
     protected const EXT_CONTENT_DEFAULT_TYPE = '__extContentDefaultType__';
+    
+    /**
+     * Key in "additionalData" that will be used as suggested data model if
+     * it contains a class and said class exists
+     */
+    public const MODEL_SUGGESTION_OPTION = '@modelSuggestion';
+    
+    /**
+     * Key in "additionalData" that will be used as element variant key if a string is provided
+     */
+    public const VARIANT_NAME_OPTION = '@variantName';
     
     /**
      * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Builder\Io\Factory
@@ -120,15 +134,33 @@ class Loader implements PublicServiceInterface
                 if ($type === null) {
                     $type = $this->factory->getType($signature);
                     
-                    // Allow the registering class to provide us with a suggested model class name.
-                    // This is useful to inflect the model class based on the controller name
-                    if (is_array($additionalData) && is_string($additionalData['modelSuggestion'])
-                        && class_exists($additionalData['modelSuggestion'])) {
-                        $type->setModelClass($additionalData['modelSuggestion']);
+                    if (is_array($additionalData)) {
+                        // Allow the registering class to provide us with a suggested model class name.
+                        // This is useful to inflect the model class based on the controller name
+                        if (is_string($additionalData[static::MODEL_SUGGESTION_OPTION])
+                            && class_exists($additionalData[static::MODEL_SUGGESTION_OPTION])) {
+                            $type->setModelClass($additionalData[static::MODEL_SUGGESTION_OPTION]);
+                        }
+                        
+                        // Inject the provided variant name if possible
+                        if (! empty($additionalData[static::VARIANT_NAME_OPTION]) &&
+                            is_string($additionalData[static::VARIANT_NAME_OPTION])) {
+                            ContentType::bindVariant($type, $additionalData[static::VARIANT_NAME_OPTION]);
+                        }
                     }
                 }
                 
-                call_user_func([$className, 'configureContentType'], $type, $this->configContext);
+                // Check if variant method exists
+                $configMethod = 'configureContentType';
+                if ($type->getVariant() !== null) {
+                    $variantConfigMethod = 'configure' . Inflector::toCamelCase($type->getVariant()) . 'ContentType';
+                    if (method_exists($className, $variantConfigMethod) &&
+                        (new ReflectionClass($className))->getMethod($variantConfigMethod)->isStatic()) {
+                        $configMethod = $variantConfigMethod;
+                    }
+                }
+                
+                $className::$configMethod($type, $this->configContext);
                 
                 $this->dumper->registerType($type);
                 

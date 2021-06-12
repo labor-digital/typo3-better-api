@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.08 at 20:18
  */
 
 declare(strict_types=1);
@@ -38,6 +38,15 @@ class ContentType extends TcaTableType
     protected $dataModelClass = DefaultDataModel::class;
     
     /**
+     * Contains the variant name of a content element/plugin which is currently configured.
+     * This allows you to create a switch inside your type configuration method.
+     * Null if the default variant is being configured
+     *
+     * @var string|null
+     */
+    protected $variant;
+    
+    /**
      * Returns the name of the class to use as data model.
      *
      * @return string
@@ -58,6 +67,7 @@ class ContentType extends TcaTableType
      */
     public function setModelClass(string $modelClass): ContentType
     {
+        // @todo rename this to setDataModelClass
         if (! class_exists($modelClass) || ! in_array(AbstractDataModel::class, class_parents($modelClass), true)) {
             throw new InvalidArgumentException(
                 'The given model class ' . $modelClass . ' must extend ' . AbstractDataModel::class);
@@ -75,5 +85,30 @@ class ContentType extends TcaTableType
     public function getSignature(): string
     {
         return $this->typeName;
+    }
+    
+    /**
+     * Returns the variant name of a content element/plugin which is currently configured.
+     * This allows you to create a switch inside your type configuration method.
+     * Null if the default variant is being configured
+     *
+     * @return string|null
+     */
+    public function getVariant(): ?string
+    {
+        return $this->variant;
+    }
+    
+    /**
+     * Internal helper to inject the variant into the given type object
+     *
+     * @param   ContentType  $type
+     * @param   string       $variant
+     *
+     * @internal
+     */
+    public static function bindVariant(ContentType $type, string $variant): void
+    {
+        $type->variant = $variant;
     }
 }

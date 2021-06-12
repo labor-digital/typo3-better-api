@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 13:49
+ * Last modified: 2021.06.11 at 18:12
  */
 
 declare(strict_types=1);
@@ -33,6 +33,7 @@ use LaborDigital\T3ba\ExtConfigHandler\ExtBase\ContentElement\ContentElementConf
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator as PluginGenerator;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigurePluginInterface;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\PathUtil\Path;
 
@@ -202,13 +203,22 @@ class Handler extends AbstractGroupExtConfigHandler
         // The TCA form gets processed independently so we simply store the value for
         // the content elements for when the TCA gets build
         if ($this->isContentElement) {
-            $this->saveDelayedConfig(
-                $this->context,
-                'tca.contentTypes',
-                $class,
-                $this->configurator->getSignature(),
-                ['modelSuggestion' => $this->makeContentModelClassSuggestion($class)]
-            );
+            foreach (
+                array_merge([$this->configurator], $this->configurator->getVariants()) as $key => $variant
+            ) {
+                $this->saveDelayedConfig(
+                    $this->context,
+                    'tca.contentTypes',
+                    $class,
+                    $variant->getReplacementSignature() ?? $variant->getSignature(),
+                    [
+                        Loader::MODEL_SUGGESTION_OPTION => $this->makeContentModelClassSuggestion(
+                            $variant->getControllerClass() ?? $class
+                        ),
+                        Loader::VARIANT_NAME_OPTION => $key === 0 ? null : $key,
+                    ]
+                );
+            }
         }
     }
     
