@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.11 at 16:08
  */
 
 declare(strict_types=1);
@@ -142,7 +142,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             $tableName = $this->adapter->getTableName();
             
             return $this->handleTranslationAndVersionOverlay($tableName, $row);
-        }, $qb->execute()->fetchAll());
+        }, $qb->execute()->fetchAllAssociative());
     }
     
     
@@ -172,7 +172,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             $qb->select(...$fieldList);
         }
         
-        $result = $qb->execute()->fetch();
+        $result = $qb->execute()->fetchAssociative();
         if (is_array($result)) {
             $result = $this->handleTranslationAndVersionOverlay($this->adapter->getTableName(), $result);
         }
