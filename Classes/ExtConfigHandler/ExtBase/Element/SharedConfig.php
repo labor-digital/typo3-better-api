@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 17:53
+ * Last modified: 2021.06.13 at 20:11
  */
 
 declare(strict_types=1);
@@ -68,6 +68,13 @@ class SharedConfig implements NoDiInterface
      *
      * @var array
      */
+    public $backendPreviewRenderers = [];
+    
+    /**
+     * The list of preview hooks that have to be registered in the TCA table in order for $backendPreviewRenderers to be executed correctly
+     *
+     * @var array
+     */
     public $backendPreviewHooks = [];
     
     /**
@@ -105,13 +112,20 @@ class SharedConfig implements NoDiInterface
             $state->setAsJson('iconArgs', $this->iconArgs);
             $state->setAsJson('dataHooks', $this->dataHooks);
             $state->setAsJson('backendPreviewHooks', $this->backendPreviewHooks);
-            $state->setAsJson('flexForms', $this->flexFormArgs);
+            $state->setAsJson('flexForms', array_filter($this->flexFormArgs));
             $state->setAsJson('variants', $this->variantMap);
         });
         
+        if (! empty($this->backendPreviewRenderers['preview'])) {
+            $state->mergeIntoArray('t3ba.backendPreview.previewRenderers', $this->backendPreviewRenderers['preview']);
+        }
+        if (! empty($this->backendPreviewRenderers['listLabel'])) {
+            $state->mergeIntoArray('t3ba.backendPreview.listLabelRenderers', $this->backendPreviewRenderers['listLabel']);
+        }
+        
         $state->attachToString('typo.typoScript.pageTsConfig',
-            implode(PHP_EOL, $this->tsConfig), true);
-        $state->attachToString('typo.typoScript.dynamicTypoScript.extBaseTemplates\.setup',
-            implode(PHP_EOL, $this->tsConfig), true);
+            implode(PHP_EOL, array_filter($this->tsConfig)), true);
+        $state->attachToString('typo.typoScript.dynamicTypoScript.extBase\.setup',
+            implode(PHP_EOL, array_filter($this->typoScript)), true);
     }
 }

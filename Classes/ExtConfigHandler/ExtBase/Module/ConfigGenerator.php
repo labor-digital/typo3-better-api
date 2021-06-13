@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 13:21
+ * Last modified: 2021.06.13 at 19:59
  */
 
 declare(strict_types=1);
@@ -40,14 +40,14 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
-use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigGenerator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\ConfigBuilder\FluidTemplateBuilder;
 use LaborDigital\T3ba\Tool\Translation\Translator;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\TinyTimy\DateTimy;
 
-class ConfigGenerator extends AbstractConfigGenerator
+class ConfigGenerator
 {
     
     /**
@@ -76,7 +76,12 @@ class ConfigGenerator extends AbstractConfigGenerator
     public function generate(ModuleConfigurator $configurator, ExtConfigContext $context): array
     {
         $this->makeTranslationFileIfRequired($configurator, $context);
-        $this->registerTemplateDefinition('module', $configurator, $context);
+        
+        $context->getState()->attachToString(
+            'typo.typoScript.dynamicTypoScript.extBase\.setup',
+            FluidTemplateBuilder::build('module', $configurator->getSignature(), $configurator),
+            true
+        );
         
         return $this->makeRegisterModuleArgs($configurator, $context);
     }

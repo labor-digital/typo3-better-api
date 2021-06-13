@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.13 at 20:14
  */
 
 declare(strict_types=1);
@@ -24,45 +24,96 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin;
 
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
-use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigGenerator;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\ConfigBuilder\FluidTemplateBuilder;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\ConfigBuilder\IconBuilder;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\AbstractConfigGenerator;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\ConfigBuilder\BackendPreviewBuilder;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\ConfigBuilder\ConfigurePluginBuilder;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\ConfigBuilder\TsBuilder;
+use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\ConfigBuilder\TsConfigBuilder;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-class ConfigGenerator extends AbstractElementConfigGenerator
+class ConfigGenerator extends AbstractConfigGenerator
 {
-    protected function getExtensionUtilityType(): string
+    /**
+     * @inheritDoc
+     */
+    public function generateForVariant(AbstractElementConfigurator $configurator, ExtConfigContext $context, ?string $variantName): void
     {
-        return ExtensionUtility::PLUGIN_TYPE_PLUGIN;
+        /** @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator $configurator */
+        $signature = $configurator->getSignature();
+        
+        $config = $this->config;
+        
+        $config->typoScript[] = FluidTemplateBuilder::build('plugin', $signature, $configurator);
+        $config->typoScript[] = TsBuilder::build($signature, $configurator);
+        $config->configureArgs[] = ConfigurePluginBuilder::build(
+            $configurator, $context, ExtensionUtility::PLUGIN_TYPE_PLUGIN);
+        
+        $renderers = BackendPreviewBuilder::buildRendererList($configurator);
+        $config->backendPreviewRenderers
+            = BackendPreviewBuilder::mergeRendererList($config->backendPreviewRenderers, $renderers);
+        $config->backendPreviewHooks
+            = BackendPreviewBuilder::addHookToList($config->backendPreviewHooks, 'list', $signature);
+        
+        $config->dataHooks = array_merge($config->dataHooks, $configurator->getRegisteredDataHooks());
+        
+        $config->iconArgs[] = IconBuilder::buildIconRegistrationArgs($configurator, $context);
+        $config->flexFormArgs[] = $this->buildFlexFormArgs($configurator, $context);
+        $config->registrationArgs['plugin'][] = $this->buildRegistrationArgs($configurator, $context);
+        $config->tsConfig[] = TsConfigBuilder::buildNewCeWizardConfig(
+            $configurator, $context, $signature, 'CType = list' . PHP_EOL . 'list_type = ' . $signature);
+        
+        $config->variantMap[$signature] = $variantName;
+        
     }
     
-    protected function setRegistrationArgs(
-        array &$list,
-        string $extensionName,
-        ExtConfigContext $context,
-        AbstractElementConfigurator $configurator
-    ): void
+    /**
+     * Generates the arguments for the registration as an extbase plugin
+     *
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
+     *
+     * @return array
+     * @see \LaborDigital\T3ba\Core\Util\CTypeRegistrationTrait::registerCTypesForElements()
+     */
+    protected function buildRegistrationArgs(PluginConfigurator $configurator, ExtConfigContext $context): array
     {
-        $list['plugin'][] = array_values([
-            'extensionName' => $extensionName,
+        return array_values([
+            'extensionName' => NamingUtil::extensionNameFromExtKey($context->getExtKey()),
             'pluginName' => $configurator->getPluginName(),
             'pluginTitle' => $configurator->getTitle(),
-            'pluginIconPathAndFilename' => $this->makeIconIdentifier($configurator, $context),
+            'pluginIconPathAndFilename' => IconBuilder::buildIconIdentifier($configurator, $context),
         ]);
     }
     
-    protected function getCeWizardValues(string $signature): string
+    /**
+     * Builds the arguments to register a possibly configured flex form for the plugin
+     *
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                          $context
+     *
+     * @return array|null
+     */
+    protected function buildFlexFormArgs(PluginConfigurator $configurator, ExtConfigContext $context): ?array
     {
-        return 'CType = list' . PHP_EOL . 'list_type = ' . $signature;
+        if (! $configurator->hasFlexForm()) {
+            return null;
+        }
+        
+        $flexFormFile = $context->getTypoContext()->di()->getService(Dumper::class)
+                                ->dumpToFile($configurator->getFlexForm());
+        
+        return [
+            'signature' => $configurator->getSignature(),
+            'args' => array_values([
+                'piKeyToMatch' => $configurator->getSignature(),
+                'value' => 'FILE:' . $flexFormFile,
+                'CTypeToMatch' => 'list',
+            ]),
+        ];
     }
-    
-    protected function setPreviewHooks(array &$list, string $signature, string $class): void
-    {
-        $list['list']['previewRenderer'][$signature] = $class;
-    }
-    
-    protected function getFlexFormCType(string $signature): string
-    {
-        return 'list';
-    }
-    
 }

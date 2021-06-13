@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 19:26
+ * Last modified: 2021.06.11 at 20:07
  */
 
 declare(strict_types=1);
@@ -283,8 +283,7 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
     
     /**
      * Can be used to define the backend preview renderer class.
-     * The given class should implement the BackendPreviewRendererInterface, may be the same class as the plugin
-     * configuration and/or the plugin controller.
+     * The given class MUST implement the BackendPreviewRendererInterface.
      *
      * NOTE: If either your controller class implements the BackendPreviewRendererInterface
      * it is automatically selected as backend preview renderer.
@@ -351,6 +350,7 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
     /**
      * Similar to setAdditionalTypoScript() but keeps the existing typoScript setup and
      * just appends the given value to it.
+     * Note: This is raw typo script, meaning you have to do plugin.tx_... {} yourselves!
      *
      * @param   string  $setup
      *

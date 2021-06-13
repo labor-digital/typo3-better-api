@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.11 at 17:20
  */
 
 declare(strict_types=1);
@@ -47,14 +47,20 @@ trait SignaturePluginNameMapTrait
     /**
      * Helper to generate an extbase signature out of a given controller class name
      *
-     * @param   string  $classBaseName
+     * @param   string  $elementClass
+     * @param   string  $elementKey
+     * @param   bool    $hasKeyProvider
      *
      * @return string
      */
-    protected function getSignatureFromClass(string $classBaseName): string
+    protected function getSignatureFromClass(string $elementClass, string $elementKey, bool $hasKeyProvider): string
     {
-        $name = preg_replace('/Controller$/i', '', Path::classBasename($classBaseName));
-        $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
+        $name = preg_replace('/Controller$/i', '', Path::classBasename($elementClass));
+        if ($hasKeyProvider) {
+            $signature = $elementKey;
+        } else {
+            $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
+        }
         
         $this->signaturePluginNameMap[$signature] = $name;
         
