@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.13 at 20:29
+ * Last modified: 2021.06.13 at 21:10
  */
 
 declare(strict_types=1);
@@ -52,7 +52,7 @@ trait SiteConfigAwareTrait
     protected function registerConfig(string $configPath, ?callable $callback = null): void
     {
         $this->registerCachedProperty(
-            'config',
+            'locallyCachedConfig',
             'typo.site.*.' . $configPath,
             $this->context->config()->getConfigState(),
             $callback !== null ? function ($v) use ($callback) {
