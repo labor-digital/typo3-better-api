@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:13
+ * Last modified: 2021.06.13 at 19:39
  */
 
 declare(strict_types=1);
@@ -36,8 +36,7 @@ class TypoScript implements ConfigureTypoScriptInterface
     {
         $configurator->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'T3BA - Generic TypoScript');
         $configurator->registerStaticTsDirectory('Configuration/TypoScript/Pids', 'T3BA - PID Mapping');
-        $configurator->registerStaticTsDirectory(
-            'Configuration/TypoScript/ExtBaseTemplates', 'T3BA - ExtBase Templates');
+        $configurator->registerStaticTsDirectory('Configuration/TypoScript/ExtBase', 'T3BA - ExtBase');
     }
     
 }
