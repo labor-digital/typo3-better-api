@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:57
+ * Last modified: 2021.06.13 at 22:54
  */
 
 declare(strict_types=1);
@@ -255,20 +255,23 @@ class PidFacet implements FacetInterface
      */
     public function getCurrent(): int
     {
+        if (isset($GLOBALS['TSFE'])) {
+            $id = TsfeAdapter::getCurrentId($GLOBALS['TSFE']);
+            if ($id) {
+                return $id;
+            }
+        }
+        
         $requestFacet = $this->context->request();
+        if ($requestFacet->hasGet('id')) {
+            return (int)$requestFacet->getGet('id');
+        }
+        
         if ($this->context->env()->isBackend()) {
-            // BACKEND
-            // ============
-            // Read current ID when in backend
-            if (isset($GLOBALS['TSFE']->id)) {
-                return (int)$GLOBALS['TSFE']->id;
-            }
-            if ($requestFacet->hasGet('id')) {
-                return (int)$requestFacet->getGet('id');
-            }
             if (isset($_REQUEST['id'])) {
                 return (int)$_REQUEST['id'];
             }
+            
             // Try to parse return url
             if ($requestFacet->hasGet('returnUrl')) {
                 $query = Query::parse(
@@ -279,16 +282,6 @@ class PidFacet implements FacetInterface
                 if (isset($query['id'])) {
                     return (int)$query['id'];
                 }
-            }
-        } else {
-            // FRONTEND
-            // ============
-            // Read current id when in frontend
-            if (isset($GLOBALS['TSFE']->id)) {
-                return $GLOBALS['TSFE']->id;
-            }
-            if ($requestFacet->hasGet('id')) {
-                return (int)$requestFacet->getGet('id');
             }
         }
         

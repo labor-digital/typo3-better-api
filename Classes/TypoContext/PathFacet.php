@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:57
+ * Last modified: 2021.06.13 at 22:51
  */
 
 declare(strict_types=1);
@@ -56,9 +56,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
- * Repository of path information and
- *
- *                  path resolving functions
+ * Repository of path information and  path resolving functions
  */
 class PathFacet implements FacetInterface
 {
