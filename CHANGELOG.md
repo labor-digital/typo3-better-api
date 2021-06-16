@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.9](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.8...v10.0.0-beta.9) (2021-06-02)
+
+
+### Features
+
+* **ExtConfig:** implement output of extConfig state into lowLevel extension ([2009735](https://github.com/labor-digital/typo3-better-api/commit/2009735c2e9fb575fbb2ea0f742715c89e644745))
+* **ExtConfigService:** implement resolveNamespaceForClass() ([41dff95](https://github.com/labor-digital/typo3-better-api/commit/41dff95115493be4de714c431811b7b81317f32f))
+* **Link:** remove deprecated link properties ([45ce447](https://github.com/labor-digital/typo3-better-api/commit/45ce447118879bcc90849549fff94d209d66a43a))
+* **RequestCacheKeyGenerator:** add $trackedHeaders and $excludedQueryParams options ([cbf93b7](https://github.com/labor-digital/typo3-better-api/commit/cbf93b742282d9d8b19fd4cbdc753bdc1f009b72))
+* **Simulation:** fix deprecation issues in TsfeSimulationPass ([d8e7287](https://github.com/labor-digital/typo3-better-api/commit/d8e728709bb5c8ad7bc6174feb3d74199426ba75))
+* **Simulation:** remove deprecated runAsAdmin method ([6e258fb](https://github.com/labor-digital/typo3-better-api/commit/6e258fbecd3a044389c392cacc858dfe00a796f7))
+* **Simulation:** remove tsfeService dependency in EnvironmentSimulator ([6ad37a7](https://github.com/labor-digital/typo3-better-api/commit/6ad37a799e5aa80512da852d44c22cc90806f7f1))
+* **TcaTable:** implement registration for CSH labels ([71f6f73](https://github.com/labor-digital/typo3-better-api/commit/71f6f73119e990b76d6a9b900959fe02b825ee57))
+* **Translation:** allow runtime label overrides ([04bce92](https://github.com/labor-digital/typo3-better-api/commit/04bce92f026e169ae403906b3e7717212a114546))
+* **TypoContext:** add "date" aspect getter ([11559fb](https://github.com/labor-digital/typo3-better-api/commit/11559fb16e230672dac2116dbdfe6e6772bd1e0e))
+* merge CodeGenerationHelperTrait into ReflectionUtil ([0bd9e8e](https://github.com/labor-digital/typo3-better-api/commit/0bd9e8eb903a28b8e6a067a15b870e69653fed25))
+
+
+### Bug Fixes
+
+* **AbstractExtendedCache:** enable useEnvironment as a default ([27e114d](https://github.com/labor-digital/typo3-better-api/commit/27e114dc4cadaaf1ccc0a94c770babf568fffa00))
+* **AbstractExtendedCache:** fix some issues with "enabled" and "lifetime" calculation ([77cabc5](https://github.com/labor-digital/typo3-better-api/commit/77cabc51cf9661e3ca9ed961ab291427f0908131))
+* **Cache:** harden cache tag generation ([2ee4879](https://github.com/labor-digital/typo3-better-api/commit/2ee487934965013ec47ae7ba98d1527bab631a15))
+* **Cache\Implementation:** add $key argument to all hook methods ([2203470](https://github.com/labor-digital/typo3-better-api/commit/22034706f2d5df3c52365221e8c077d6e4484545))
+* **Cache\KeyGenerator:** add NoDiInterface to key generators ([e07b6cb](https://github.com/labor-digital/typo3-better-api/commit/e07b6cb9561e697d669e34052d17156cc6f0fd3e))
+* **CacheConfigurationPass:** pass the correct array of cache key enhancers ([1138dca](https://github.com/labor-digital/typo3-better-api/commit/1138dca3854d3bea8abcd437bbcc473873efae41))
+* **Controller:** make BetterContentActionController abstract ([3be2fc2](https://github.com/labor-digital/typo3-better-api/commit/3be2fc294668dd3c2bd1870e7723136024bb4f6d))
+* **ExtendedCacheManager:** use flushCachesInGroupByTags instead of flushCachesInGroupByTag ([e606542](https://github.com/labor-digital/typo3-better-api/commit/e606542a0789dc958b0e7fe71852f90deff070c0))
+* **FieldPreset:** add correct eval rule to date field ([9a8933e](https://github.com/labor-digital/typo3-better-api/commit/9a8933e5e910ba86aa41c2399ae4c42ea37b8855))
+* **NamingUtil:** make missing method exception more speaking ([bec144a](https://github.com/labor-digital/typo3-better-api/commit/bec144aaade463934b1a1d801b9455e8304257b8))
+* **TcaUtil:** convert the array fields more reliable in getRecordType() ([aae38f8](https://github.com/labor-digital/typo3-better-api/commit/aae38f894d6bfd1e657ad13feed79acc7b076bff))
+* **Translation:** store translator instance locally in TranslationLabelProvider ([abfe9ed](https://github.com/labor-digital/typo3-better-api/commit/abfe9ed1f8be705f9a63314ddec07ed784f298fe))
+* **TranslationConfigurator:** persist overrides without a namespace ([e658111](https://github.com/labor-digital/typo3-better-api/commit/e65811183b6470627732a700f02d006e2c77b8d6))
+* **VarFs\Mount:** retry if mountPath could not be removed ([41e3e52](https://github.com/labor-digital/typo3-better-api/commit/41e3e52f50bb10bda8eb23069f08557519a40bc2))
+
 ## [10.0.0-beta.8](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.7...v10.0.0-beta.8) (2021-05-26)
 
 
