@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.11](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.10...v10.0.0-beta.11) (2021-06-16)
+
+
+### Features
+
+* **BackendPreview\FieldRenderer:** render images horizontally instead of a list ([f3fba74](https://github.com/labor-digital/typo3-better-api/commit/f3fba74908b0de9ebca5b16dbb1c8865363d8a54))
+* **Fal:** allow generation of relative image and file urls ([d5f7690](https://github.com/labor-digital/typo3-better-api/commit/d5f769037f24ea4f1d4bd5920ff8b969a92718c7))
+* **RoutingConfigurator:** unbind middleware name generation from current ext key and vendor ([484b0de](https://github.com/labor-digital/typo3-better-api/commit/484b0ded761867128cb32650ea9944533efac74f))
+
+
+### Bug Fixes
+
+* **BackendListLabelRenderer:** remove leading pipe to fix display in record edit screen ([f3b646c](https://github.com/labor-digital/typo3-better-api/commit/f3b646c8f09a335be2f36bb7254302be4bc8d364))
+* **ContentControllerDataTrait:** don't fail in getData() if configurationManager is not defined ([300066b](https://github.com/labor-digital/typo3-better-api/commit/300066b86ab057761094124c4f711cd4024fdbf3))
+* **ExtConfig\ExtBase:** only register preview hooks if preview renderers have been registered ([d1f2af3](https://github.com/labor-digital/typo3-better-api/commit/d1f2af3814c13a90233274133c08e2ea4b692aac))
+
 ## [10.0.0-beta.10](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.9...v10.0.0-beta.10) (2021-06-16)
 
 
