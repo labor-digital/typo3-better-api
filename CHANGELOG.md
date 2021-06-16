@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.10](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.9...v10.0.0-beta.10) (2021-06-16)
+
+
+### Features
+
+* **AbstractElementConfigurator:** implement missing removeVariant() method ([f4a7b3a](https://github.com/labor-digital/typo3-better-api/commit/f4a7b3af6357684c1c1015f5f647e684ca74cdef))
+* **AbstractExtendedCache:** callable "enabled" and "lifetime" options retrieve the current state ([a08b669](https://github.com/labor-digital/typo3-better-api/commit/a08b6697f87da9cfa66029d7a45edaef5427f795))
+* **AbstractGroupExtConfigHandler:** make getElementKeyForClass() $postProcessor more reliable ([0fe386d](https://github.com/labor-digital/typo3-better-api/commit/0fe386d79b833363c2e962293f08cca812fb9e47))
+* **BackendPreview:** implement legacy support for the hook based setup ([0fb65cf](https://github.com/labor-digital/typo3-better-api/commit/0fb65cf4b5d8ba0e6c3daea89960a096bd3b9b61))
+* **BackendPreview:** implement plugin variant based render method resolution ([4f100db](https://github.com/labor-digital/typo3-better-api/commit/4f100dbedbc44627699a6e0d16ed16fa66294078))
+* **ContentType:** rename setModelClass() to setDataModelClass() ([bd2105a](https://github.com/labor-digital/typo3-better-api/commit/bd2105ad3fb45449eb18f5c92b361ad0b75b9ece))
+* **ContentType:** standardize attribute names + implement variant support ([27c6bf5](https://github.com/labor-digital/typo3-better-api/commit/27c6bf5536e983d88dea48ebbeb1aa573d330ae7))
+* **dbgQuery:** support for typo3 query builder instances ([3384f24](https://github.com/labor-digital/typo3-better-api/commit/3384f2492d476d0fdcb7cd24fa4ced0c281a9626))
+* **ExtConfig:** implement SiteConfigAwareTrait helper trait ([99bc67d](https://github.com/labor-digital/typo3-better-api/commit/99bc67d5f22900ce94b7cb70c276c9e0ee1c5cd5))
+* **PidFacet:** fetch the current id on shortcut pages more reliably ([861d5cb](https://github.com/labor-digital/typo3-better-api/commit/861d5cb3d67f42baadf688e77ef3bece616e1259))
+* **ReflectionUtil:** implement support for properties in parseType() ([b7b82cc](https://github.com/labor-digital/typo3-better-api/commit/b7b82cc31132b3915df3116b12302e1fe9b26dff))
+* **TypoCoreConfigurator:** add getter and removal methods for existing options ([08e1749](https://github.com/labor-digital/typo3-better-api/commit/08e17493ba8fd6ba052d4fbc7890f7a59f743c99))
+* implement SerializerUtil ([12528c0](https://github.com/labor-digital/typo3-better-api/commit/12528c0a64b7de0ea280f2e839f5c72ef2dbfa35))
+* implement site based namespace convention ([5e947c1](https://github.com/labor-digital/typo3-better-api/commit/5e947c1cf0254fb45e6b2e5e936012867c308877))
+
+
+### Bug Fixes
+
+* **AbstractElementConfigurator:** throw invalid argument exception instead of ext config exception ([02c1477](https://github.com/labor-digital/typo3-better-api/commit/02c147790a50e939e202ca467cc6d7f65e0cdc8a))
+* **SiteConfigAwareTrait:** register correct property to store the cached value ([b741f94](https://github.com/labor-digital/typo3-better-api/commit/b741f94df868148d6bcab2dc54db6322a17a8446))
+* **TypoScript:** rename the extBase TS more generic ([d89554f](https://github.com/labor-digital/typo3-better-api/commit/d89554f9672c5705aaf4b830caa5090041a9d142))
+* add missing renamed file references to previous commits ([09ab35a](https://github.com/labor-digital/typo3-better-api/commit/09ab35a653ddaaca8d92580eaa9b439b1d53605b))
+* **ContentType\DataHandlerAdapter:** don't fail if the history record does not exist ([148d5d6](https://github.com/labor-digital/typo3-better-api/commit/148d5d608f593075e702438cdde344a593745be4))
+* **ContentType\FieldAdapter:** remove unnecessary NoDiInterface ([d8da9f9](https://github.com/labor-digital/typo3-better-api/commit/d8da9f9a30cc7f6157cc856f927bf8e4c5bb0c38))
+* **EnvironmentSimulator:** reimplement bootTsfe and make it more intuitive ([b2c9589](https://github.com/labor-digital/typo3-better-api/commit/b2c9589d95becd05a2b25eba7fac907cdad3d388))
+* **StandaloneBetterQuery:** avoid using deprecated fetch methods ([d6d771f](https://github.com/labor-digital/typo3-better-api/commit/d6d771f974fa48b987eba8c8ee536b0e437a41e2))
+* **Tca\AbstractTypeList:** lookup types type safe in hasType() ([2f59c3d](https://github.com/labor-digital/typo3-better-api/commit/2f59c3de46b5ca3f77af1beb8dc03c2ec66551e1))
+* **Tca\DumperGenericTrait:** drop default "untitled" tab at beginning of showitem string ([10df82f](https://github.com/labor-digital/typo3-better-api/commit/10df82fd64acb966878e2a073b8ab2618b3666b9))
+* **Tca\FactoryPopulatorTrait:** always create inferred tab if not target is present ([2f99c2a](https://github.com/labor-digital/typo3-better-api/commit/2f99c2a75b5f6afd7768ab0bef010152e5472ec8))
+* **TcaTable:** implement temporary hotfix to retrieve loaded tca types in getTypeNames() ([4457d93](https://github.com/labor-digital/typo3-better-api/commit/4457d9370d3e7b1102e29d36010e25c443905070))
+* **TcaTableType:** getField() now checks the default type name type save ([a0622a3](https://github.com/labor-digital/typo3-better-api/commit/a0622a3ba3cd6ed64a0b96cb55cd070f6ddef338))
+* **TypoScriptService:** remove deprecated 'ignoreIfFrontendExists' option in environment simulator ([65777a0](https://github.com/labor-digital/typo3-better-api/commit/65777a04b767e0cf0c2e6bac0e75ddb175cb660f))
+
 ## [10.0.0-beta.9](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.8...v10.0.0-beta.9) (2021-06-02)
 
 
