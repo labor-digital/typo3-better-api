@@ -233,7 +233,7 @@ class FileInfo implements NoDiInterface
      *
      * @return string
      */
-    public function getUrl(bool $withHash = true): string
+    public function getUrl(bool $withHash = true, bool $relative = false): string
     {
         if ($this->isProcessed()) {
             $url = $this->processedFile->getPublicUrl();
@@ -246,7 +246,11 @@ class FileInfo implements NoDiInterface
             $url .= 'hash=' . md5($this->getHash());
         }
         
-        return FalFileUrlUtil::makeAbsoluteUrl(ltrim($url, '/'));
+        if ($relative) {
+            return '/' . ltrim($url, '/');
+        }
+        
+        return FalFileUrlUtil::makeAbsoluteUrl($url);
     }
     
     /**
