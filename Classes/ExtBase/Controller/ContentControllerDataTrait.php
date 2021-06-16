@@ -51,7 +51,11 @@ trait ContentControllerDataTrait
         
         ControllerUtil::requireActionController($this);
         
-        $row = $this->configurationManager->getContentObject()->data;
+        $row = [];
+        
+        if (isset($this->configurationManager)) {
+            $row = $this->configurationManager->getContentObject()->data;
+        }
         
         // Interop helper when used in combination with the ContentControllerBackendPreviewTrait
         if (isset($this->previewRendererContext)
