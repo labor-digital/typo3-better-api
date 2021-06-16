@@ -190,10 +190,23 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
      */
     protected function makeMiddlewareIdentifier(string $className): string
     {
+        $nsPos = strpos($className, '\\');
+        
+        if($nsPos !== false){
+            $nsPos = strpos($className, '\\', $nsPos + 1);
+        }
+        
+        if($nsPos === false){
+            $classVendor = Inflector::toDashed($this->context->getExtKeyWithVendor());
+        } else {
+            $classParts = explode('\\', substr($className, 0, $nsPos));
+            $classVendor = Inflector::toDashed($classParts[0] ?? '') . '/' . Inflector::toDashed($classParts[1] ?? '');
+        }
+        
         return implode(
             '/',
             [
-                Inflector::toDashed($this->context->getExtKeyWithVendor()),
+                $classVendor,
                 Inflector::toDashed(Path::classBasename($className)),
                 md5($className),
             ]
