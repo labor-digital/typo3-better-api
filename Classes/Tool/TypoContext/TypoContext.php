@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.02 at 20:03
+ * Last modified: 2021.06.17 at 17:43
  */
 
 declare(strict_types=1);
@@ -52,6 +52,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\DateTimeAspect;
 use TYPO3\CMS\Core\Context\WorkspaceAspect;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Frontend\Aspect\PreviewAspect;
 
 class TypoContext implements SingletonInterface, PublicServiceInterface
 {
@@ -131,6 +132,16 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
     public function visibility(): BetterVisibilityAspect
     {
         return $this->getOrMakeAspect('betterVisibility', BetterVisibilityAspect::class);
+    }
+    
+    /**
+     * Returns the frontend preview aspect
+     *
+     * @return \TYPO3\CMS\Frontend\Aspect\PreviewAspect|mixed
+     */
+    public function preview(): PreviewAspect
+    {
+        return $this->rootContext->getAspect('frontend.preview');
     }
     
     /**

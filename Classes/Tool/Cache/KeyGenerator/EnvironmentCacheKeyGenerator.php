@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:18
+ * Last modified: 2021.06.17 at 17:44
  */
 
 declare(strict_types=1);
@@ -89,6 +89,7 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
             'languageCode' => $this->context->language()->getCurrentFrontendLanguage()->getTwoLetterIsoCode(),
             'isBeUser' => $this->context->beUser()->isLoggedIn(),
             'siteRootPid' => $this->context->site()->getCurrent()->getRootPageId(),
+            'isPreview' => $this->context->preview()->isPreview(),
         ];
         
     }
