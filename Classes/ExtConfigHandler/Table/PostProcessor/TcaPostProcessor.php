@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.02 at 13:51
+ * Last modified: 2021.06.21 at 13:15
  */
 
 declare(strict_types=1);
@@ -75,7 +75,7 @@ class TcaPostProcessor implements NoDiInterface
         // Create the steps
         $steps = [];
         foreach (static::$steps as $stepClass) {
-            $step = $this->hasService($stepClass) ? $this->getService($stepClass) : $this->makeInstance($stepClass);
+            $step = $this->getServiceOrInstance($stepClass);
             
             if (! $step instanceof TcaPostProcessorStepInterface) {
                 continue;

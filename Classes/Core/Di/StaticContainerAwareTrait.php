@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.21 at 13:14
  */
 
 declare(strict_types=1);
@@ -57,14 +57,29 @@ trait StaticContainerAwareTrait
     }
     
     /**
-     * Returns true if the object already has an instance of the given class or interface in store,
-     * false if not.
+     * Returns true if either this instance has an injected service with that class name,
+     * or the container knows how to provide it for us
      *
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance that should be checked
      *
      * @return bool
      */
-    public static function hasService(string $classOrInterfaceName): bool
+    protected static function hasService(string $classOrInterfaceName): bool
+    {
+        return static::hasSetService($classOrInterfaceName) || static::getContainer()->has($classOrInterfaceName);
+    }
+    
+    /**
+     * Returns true if there was an instance of the given class or interface injected into this class using
+     * the "setService()" method.
+     *
+     * Note: This only checks for locally available services! Use hasService()) to ask the container as well.
+     *
+     * @param   string  $classOrInterfaceName  The name of the interface / class this instance that should be checked
+     *
+     * @return bool
+     */
+    protected static function hasSetService(string $classOrInterfaceName): bool
     {
         return isset(static::$caServices[$classOrInterfaceName]);
     }
@@ -111,6 +126,22 @@ trait StaticContainerAwareTrait
     protected static function makeInstance(string $class, array $constructorArguments = [])
     {
         return GeneralUtility::makeInstance($class, ...$constructorArguments);
+    }
+    
+    /**
+     * This is a combination of getService() and makeInstance(). It first checks
+     * if the container knows the instance of the class or interface name, and if not
+     * automatically falls back to GeneralUtility::makeInstance()
+     *
+     * @param   string  $classOrInterfaceName  The class to instantiate
+     *
+     * @return object|mixed
+     */
+    protected static function getServiceOrInstance(string $classOrInterfaceName): object
+    {
+        return static::hasService($classOrInterfaceName) ?
+            static::getService($classOrInterfaceName)
+            : static::makeInstance($classOrInterfaceName);
     }
     
     /**

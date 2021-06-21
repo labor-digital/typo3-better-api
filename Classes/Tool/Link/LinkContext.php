@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:28
+ * Last modified: 2021.06.21 at 13:15
  */
 
 declare(strict_types=1);
@@ -122,7 +122,7 @@ class LinkContext implements SingletonInterface
      */
     public function getContentObject(): ContentObjectRenderer
     {
-        if ($this->hasService(ContentObjectRenderer::class)) {
+        if ($this->hasSetService(ContentObjectRenderer::class)) {
             return $this->getService(ContentObjectRenderer::class);
         }
         
@@ -142,7 +142,7 @@ class LinkContext implements SingletonInterface
      */
     public function getUriBuilder(): UriBuilder
     {
-        if ($this->hasService(UriBuilder::class)) {
+        if ($this->hasSetService(UriBuilder::class)) {
             return $this->getService(UriBuilder::class);
         }
         

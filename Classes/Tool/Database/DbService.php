@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.21 at 13:15
  */
 
 declare(strict_types=1);
@@ -72,7 +72,7 @@ class DbService implements SingletonInterface, PublicServiceInterface
      */
     public function getConnectionPool(): ConnectionPool
     {
-        if ($this->hasService(ConnectionPool::class)) {
+        if ($this->hasSetService(ConnectionPool::class)) {
             return $this->getService(ConnectionPool::class);
         }
         
