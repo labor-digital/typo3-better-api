@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 22:17
+ * Last modified: 2021.06.21 at 20:05
  */
 
 declare(strict_types=1);
@@ -251,7 +251,21 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
     public function renderContentObject(string $type, array $config): string
     {
         return $this->cs()->simulator->runWithEnvironment([], function () use ($type, $config) {
-            return $this->cs()->tsfe->getContentObjectRenderer()->cObjGetSingle($type, $config);
+            $result = $this->cs()->tsfe
+                ->getContentObjectRenderer()
+                ->cObjGetSingle($type, $config);
+            
+            if (is_string($result) && str_contains($result, '<!--INT_SCRIPT.')) {
+                $tsfe = $this->cs()->tsfe->getTsfe();
+                $contentBackup = $tsfe->content;
+                $tsfe->content = $result;
+                $tsfe->INTincScript();
+                $result = $tsfe->content;
+                $tsfe->content = $contentBackup;
+                unset($contentBackup);
+            }
+            
+            return $result;
         });
     }
     
