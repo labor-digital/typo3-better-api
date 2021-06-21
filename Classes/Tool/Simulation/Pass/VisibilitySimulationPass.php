@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.21 at 15:25
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Simulation\Pass;
 
 
+use LaborDigital\T3ba\Tool\Simulation\Adapter\PageRepositoryAdapter;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 
 class VisibilitySimulationPass implements SimulatorPassInterface
@@ -76,6 +77,13 @@ class VisibilitySimulationPass implements SimulatorPassInterface
         $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
         $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
         $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
+        
+        // Update page repository
+        if (isset($GLOBALS['TSFE']->sys_page)) {
+            $storage['pageRepoAccess'] = PageRepositoryAdapter::reinitializeWithState(
+                $GLOBALS['TSFE']->sys_page, $options['includeHiddenPages']
+            );
+        }
     }
     
     /**
@@ -84,6 +92,10 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     public function rollBack(array $storage): void
     {
         $this->getTypoContext()->getRootContext()->setAspect('visibility', $storage['aspect']);
+        
+        if (isset($storage['pageRepoAccess']) && isset($GLOBALS['TSFE']->sys_page)) {
+            PageRepositoryAdapter::restoreAccessRules($GLOBALS['TSFE']->sys_page, $storage['pageRepoAccess']);
+        }
     }
     
 }
