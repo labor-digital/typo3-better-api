@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:29
+ * Last modified: 2021.06.17 at 19:04
  */
 
 declare(strict_types=1);
@@ -54,7 +54,6 @@ class FacetProvider implements PublicServiceInterface
      * Returns all registered facet classes by their short name
      * It will also make sure that the autocomplete helper will be generated in a dev environment
      *
-     *
      * @return array
      */
     public function getAll(): array
@@ -78,8 +77,6 @@ class FacetProvider implements PublicServiceInterface
     
     /**
      * Loads and triggers the autocomplete helper generator for development environments
-     *
-     * @param   array  $presets
      */
     protected function makeAutocompleteHelper(): void
     {

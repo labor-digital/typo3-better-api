@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:13
+ * Last modified: 2021.06.17 at 19:00
  */
 
 declare(strict_types=1);
@@ -67,11 +67,11 @@ class Handler extends AbstractExtConfigHandler implements DiBuildTimeHandlerInte
         }
         
         if (preg_match('~^(?=_*[A-Za-z]+)[A-Za-z0-9_]+$~', $identifier) === false) {
-            throw new ExtConfigException('The given facet identifier: "' . $identifier . '" contains invalid chars. Only alphanumeric characters an _ are allowed!');
+            throw new ExtConfigException('The given facet identifier: "' . $identifier . '" contains invalid chars. Only alphanumeric characters and _ are allowed!');
         }
         
         if (isset($this->facets[$identifier]) && $this->facets[$identifier] !== $class) {
-            throw new ExtConfigException('A facet overlap occurred. The identifier: "' . $identifier . '" should be registered for multiple classes: ' . $class . ', and ' . $this->facets[$identifier]);
+            throw new ExtConfigException('A facet overlap occurred. The identifier: "' . $identifier . '" was registered for multiple classes: ' . $class . ', and ' . $this->facets[$identifier]);
         }
         
         $this->facets[$identifier] = $class;
