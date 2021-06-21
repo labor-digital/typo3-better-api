@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:25
+ * Last modified: 2021.06.21 at 13:45
  */
 
 declare(strict_types=1);
@@ -29,6 +29,8 @@ use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\PathUtil\Path;
 use Throwable;
+use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class CacheUtil implements NoDiInterface
@@ -74,8 +76,21 @@ class CacheUtil implements NoDiInterface
             
             if ($tag instanceof AbstractEntity) {
                 $tags[] = NamingUtil::resolveTableName($tag) . '_' . $tag->getUid();
+            } elseif ($tag instanceof FileReference || $tag instanceof \TYPO3\CMS\Extbase\Domain\Model\FileReference) {
+                $tags[] = 'sys_file_reference_' . $tag->getUid();
+            } elseif ($tag instanceof File || $tag instanceof \TYPO3\CMS\Extbase\Domain\Model\File) {
+                $tags[] = 'sys_file_' . $tag->getUid();
             } else {
-                $tags[] = Path::classBasename(get_class($tag)) . '_' . md5(get_class($tag));
+                if (is_callable([$tag, 'getId'])) {
+                    $id = $tag->getId();
+                } elseif (is_callable([$tag, 'getUid'])) {
+                    $id = $tag->getUid();
+                } elseif (is_callable([$tag, 'getIdentifier'])) {
+                    $id = $tag->getIdentifier();
+                } else {
+                    $id = md5(get_class($tag));
+                }
+                $tags[] = lcfirst(Path::classBasename(get_class($tag))) . '_' . $id;
             }
             
             if (! empty($tags)) {
@@ -86,14 +101,14 @@ class CacheUtil implements NoDiInterface
         try {
             return [
                 static::ensureTagValidity(
-                    gettype($tag) . '_' . md5(SerializerUtil::serialize($tag))
+                    lcfirst(gettype($tag)) . '_' . md5(SerializerUtil::serialize($tag))
                 ),
             ];
         } catch (Throwable $e) {
             try {
                 return [
                     static::ensureTagValidity(
-                        gettype($tag) . '_' . md5(SerializerUtil::serializeJson($tag))
+                        lcfirst(gettype($tag)) . '_' . md5(SerializerUtil::serializeJson($tag))
                     ),
                 ];
             } catch (Throwable $e) {
