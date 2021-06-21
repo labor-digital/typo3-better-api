@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:56
+ * Last modified: 2021.06.21 at 13:19
  */
 
 declare(strict_types=1);
@@ -111,7 +111,7 @@ class ConfigFacet implements FacetInterface
      */
     public function getConfigState(): ConfigState
     {
-        if (! isset($this->caServices[ConfigState::class]) && ! $this->getContainer()->has(ConfigState::class)) {
+        if (! $this->hasService(ConfigState::class)) {
             throw new TypoContextException('The ConfigState object was not built and injected, yet! You are to early in the lifecycle!');
         }
         

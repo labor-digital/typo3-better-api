@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.12 at 17:17
+ * Last modified: 2021.06.21 at 13:19
  */
 
 declare(strict_types=1);
@@ -113,8 +113,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                                 $configManager->setContentObject($cObj);
                             }
                             
-                            $renderer = $this->getContainer()->has($rendererClass)
-                                ? $this->getService($rendererClass) : $this->makeInstance($rendererClass);
+                            $renderer = $this->getServiceOrInstance($rendererClass);
                             
                             if (! $renderer instanceof BackendPreviewRendererInterface) {
                                 throw new BackendPreviewException

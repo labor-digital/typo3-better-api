@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 20:55
+ * Last modified: 2021.06.21 at 13:19
  */
 
 declare(strict_types=1);
@@ -85,8 +85,7 @@ class CustomFieldNode extends AbstractFormElement
                 . '. Because the class does not exist!');
         }
         
-        $i = $this->getContainer()->has($className) ?
-            $this->getService($className) : $this->makeInstance($className);
+        $i = $this->getServiceOrInstance($className);
         
         if (! $i instanceof CustomFieldInterface) {
             throw new CustomFormException(

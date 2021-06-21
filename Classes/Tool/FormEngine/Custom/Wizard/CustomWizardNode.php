@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.21 at 13:19
  */
 
 declare(strict_types=1);
@@ -71,8 +71,7 @@ class CustomWizardNode extends AbstractFormElement
                 'Could not create the custom wizard, because it has no configured class!');
         }
         
-        $i = $this->getContainer()->has($className) ?
-            $this->getService($className) : $this->makeInstance($className);
+        $i = $this->getServiceOrInstance($className);
         
         if (! $i instanceof CustomWizardInterface) {
             throw new CustomFormException(
