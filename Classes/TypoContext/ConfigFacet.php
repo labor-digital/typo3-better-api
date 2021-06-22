@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.21 at 13:19
+ * Last modified: 2021.06.22 at 10:42
  */
 
 declare(strict_types=1);
@@ -101,6 +101,23 @@ class ConfigFacet implements FacetInterface
     public function getConfigValue(string $key, $fallback = null)
     {
         return $this->getConfigState()->get($key, $fallback);
+    }
+    
+    /**
+     * Allows you to retrieve site based data from the config state object.
+     * This is basically the same as getConfigValue() but automatically applies the typo.site.$SITE. prefix
+     * to your key.
+     *
+     * @param   string      $key       Either a simple key or a colon separated path to find the value at
+     * @param   null|mixed  $fallback  Returned if the $key was not found in the state
+     *
+     * @return mixed|null
+     */
+    public function getSiteBasedConfigValue(string $key, $fallback = null)
+    {
+        $site = $this->context->site()->getCurrent()->getIdentifier();
+        
+        return $this->getConfigValue('typo.site.' . $site . '.' . $key, $fallback);
     }
     
     /**
