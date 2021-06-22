@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.21 at 13:19
+ * Last modified: 2021.06.22 at 18:31
  */
 
 declare(strict_types=1);
@@ -156,7 +156,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                             if ($result instanceof ViewInterface) {
                                 $result = $result->render();
                             } elseif ($result instanceof Response) {
-                                $result = $result->getContent();
+                                $result = (string)$result->getContent();
                             }
                             
                             if (is_string($result)) {
