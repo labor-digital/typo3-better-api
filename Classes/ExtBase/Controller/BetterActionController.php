@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.22 at 12:05
  */
 
 declare(strict_types=1);
@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\ExtBase\Controller;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\ExtBase\ActionController\MethodNameFilterEvent;
 use LaborDigital\T3ba\Event\ExtBase\ActionController\RequestFilterEvent;
+use LaborDigital\T3ba\Tool\Link\Link;
 use LaborDigital\T3ba\Tool\Link\LinkService;
 use LaborDigital\T3ba\Tool\Rendering\FlashMessageRenderingService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -53,11 +54,6 @@ abstract class BetterActionController extends ActionController
             $this->data = $this->configurationManager->getContentObject()->data;
         }
         
-        // Inject the this controller's request into the links object
-        $this->setService(
-            LinkService::class, $this->cs()->links->makeControllerClone($request)
-        );
-        
         // Update the messaging service
         $messagingService = $this->getService(FlashMessageRenderingService::class);
         $extensionService = $this->getService(ExtensionService::class);
@@ -81,6 +77,33 @@ abstract class BetterActionController extends ActionController
         
         // Allow filtering
         $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, false));
+    }
+    
+    /**
+     * Creates a new link instance which is a better version of the typo3 extbase query builder.
+     * You can use this method anywhere, no matter if you are in an extbase controller, the cli
+     * or somewhere in a hook you can always create links. For that we forcefully instantiate
+     * the typo3 frontend if required.
+     *
+     * NOTE: Contrary to the getLink() method on LinkService the links generated through this method
+     * already are aware of the controller context.
+     *
+     * @param   string|null    $definition    Allows you to provide the key of a link definition, which was
+     *                                        configured using the ConfigureLinksInterface. The definition will
+     *                                        automatically be applied to the new link instance
+     * @param   iterable|null  $args          If you have a definition specified, you can use this parameter to supply
+     *                                        additional arguments to the created link instance directly
+     * @param   iterable|null  $fragmentArgs  If you have a definition specified, you can use this parameter to supply
+     *                                        arguments to your fragment of the created link instance directly
+     *
+     * @return \LaborDigital\T3ba\Tool\Link\Link
+     * @see LinkService::getLink()
+     */
+    protected function getLink(?string $definition = null, ?iterable $args = [], ?iterable $fragmentArgs = []): Link
+    {
+        return $this->getService(LinkService::class)
+                    ->getLink($definition, $args, $fragmentArgs)
+                    ->withRequest($this->request);
     }
     
     /**

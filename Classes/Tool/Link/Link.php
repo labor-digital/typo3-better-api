@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.20 at 16:08
+ * Last modified: 2021.06.22 at 12:04
  */
 
 declare(strict_types=1);
@@ -212,12 +212,10 @@ class Link implements NoDiInterface
      * Link constructor.
      *
      * @param   \LaborDigital\T3ba\Tool\Link\LinkContext  $context
-     * @param   \TYPO3\CMS\Extbase\Mvc\Request|null       $controllerRequest
      */
-    public function __construct(LinkContext $context, ?Request $controllerRequest)
+    public function __construct(LinkContext $context)
     {
         $this->context = $context;
-        $this->controllerRequest = $controllerRequest;
     }
     
     /**
@@ -296,11 +294,11 @@ class Link implements NoDiInterface
      * $link->withPid(['table' => MyExtBaseModel::class, 10 => 20, 11 => 21])->withArgs(['model' => 2])->build();
      *
      * // This will fail, because there are multiple arguments present, and the first argument, "foo" is numeric
-     * $link->withPid([10 => 20, 11 => 21])->withArgs(['foo' => 123, 'model' => $myExtbaseModel, ])->build();
+     * $link->withPid([10 => 20, 11 => 21])->withArgs(['foo' => 123, 'model' => $myExtbaseModel])->build();
      *
      * // To make this work, either use 'model' as the first argument:
-     * $link->withPid(['argument' => 'model', 10 => 20, 11 => 21])
-     *      ->withArgs(['model' => $myExtbaseModel, 'foo' => 123, ])->build();
+     * $link->withPid([10 => 20, 11 => 21])
+     *      ->withArgs(['model' => $myExtbaseModel, 'foo' => 123 ])->build();
      * // or define the argument which should be used for pid resolution:
      * $link->withPid(['argument' => 'model', 10 => 20, 11 => 21])
      *      ->withArgs(['foo' => 123, 'model' => $myExtbaseModel])->build();

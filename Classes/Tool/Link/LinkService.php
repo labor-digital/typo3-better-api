@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.22 at 12:04
  */
 
 declare(strict_types=1);
@@ -42,8 +42,6 @@ use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Request;
-use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class LinkService implements SingletonInterface, PublicServiceInterface
@@ -52,13 +50,6 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      * @var \LaborDigital\T3ba\Tool\Link\LinkContext
      */
     protected $context;
-    
-    /**
-     * If used inside a better action controller this will hold the controller's request object
-     *
-     * @var Request|null
-     */
-    protected $controllerRequest;
     
     /**
      * Holds the host name and protocol, once it was generated
@@ -109,7 +100,7 @@ class LinkService implements SingletonInterface, PublicServiceInterface
      */
     public function getLink(?string $definition = null, ?iterable $args = [], ?iterable $fragmentArgs = []): Link
     {
-        $link = GeneralUtility::makeInstance(Link::class, $this->context, $this->controllerRequest);
+        $link = GeneralUtility::makeInstance(Link::class, $this->context);
         
         // Inject link set and args if given
         if (! empty($definition)) {
@@ -253,22 +244,5 @@ class LinkService implements SingletonInterface, PublicServiceInterface
     public function getUriBuilder(): UriBuilder
     {
         return $this->context->getUriBuilder();
-    }
-    
-    /**
-     * Internal helper to create a clone of this service for an extbase controller
-     * that also holds the request object of the current controller.
-     * This is used inside the BetterActionController.
-     *
-     * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface  $request
-     *
-     * @return $this
-     */
-    public function makeControllerClone(RequestInterface $request): self
-    {
-        $clone = clone $this;
-        $clone->controllerRequest = $request;
-        
-        return $clone;
     }
 }
