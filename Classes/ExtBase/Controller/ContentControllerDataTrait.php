@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.22 at 18:39
  */
 
 declare(strict_types=1);
@@ -51,12 +51,12 @@ trait ContentControllerDataTrait
         
         ControllerUtil::requireActionController($this);
         
-        $row = $this->configurationManager->getContentObject()->data;
-        
         // Interop helper when used in combination with the ContentControllerBackendPreviewTrait
         if (isset($this->previewRendererContext)
             && $this->previewRendererContext instanceof BackendPreviewRendererContext) {
             $row = $this->previewRendererContext->getRow();
+        } else {
+            $row = $this->configurationManager->getContentObject()->data;
         }
         
         return $this->__dataCache['raw'] = $this->getContentRepository()->getExtendedRow($row);
