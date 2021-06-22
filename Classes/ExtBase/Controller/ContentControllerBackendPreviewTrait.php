@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.12 at 17:17
+ * Last modified: 2021.06.22 at 18:55
  */
 
 declare(strict_types=1);
@@ -54,6 +54,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Dispatcher;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
+use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -151,10 +152,17 @@ trait ContentControllerBackendPreviewTrait
         // Create a new request
         $objectManager = $this->objectManager;
         /** @noinspection PhpParamsInspection */
+        /** @var \TYPO3\CMS\Extbase\Mvc\Request $request */
         $request = $objectManager->get(RequestInterface::class, static::class);
-        $request->setPluginName($this->previewRendererContext->getRow()['list_type']);
+        
         $request->setControllerObjectName(static::class);
         $request->setControllerActionName($actionName);
+        $pluginName = $this->getService(ExtensionService::class)->getPluginNameByAction(
+            $request->getControllerExtensionName(),
+            $request->getControllerName(),
+            $actionName
+        );
+        $request->setPluginName($pluginName);
         $request->setArguments(static::$transfer['options']['additionalArgs']);
         $request->setFormat('html');
         
