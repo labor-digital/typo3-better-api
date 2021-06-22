@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.22 at 12:04
+ * Last modified: 2021.06.22 at 12:14
  */
 
 declare(strict_types=1);
@@ -164,6 +164,15 @@ class Link implements NoDiInterface
      * @var string
      */
     protected $pluginName;
+    
+    /**
+     * If set to true the link will always build using the "forMe" option in the build method.
+     * This will try to add all ext base plugin arguments to the query.
+     * This requires either the $request or the $controller... properties to be set
+     *
+     * @var bool
+     */
+    protected $isPluginTarget = false;
     
     /**
      * The arguments to build the link with
@@ -719,6 +728,35 @@ class Link implements NoDiInterface
     }
     
     /**
+     * If set to true the link will always be build using the "forMe" option in the build method.
+     * This will try to add all ext base plugin arguments to the query.
+     * This requires either the $request or the $controller... properties to be set.
+     *
+     * Can be overwritten by setting the "forMe" option to false when the link is build
+     *
+     * @param   bool  $state
+     *
+     * @return $this
+     */
+    public function withPluginTarget(bool $state): self
+    {
+        $clone = clone $this;
+        $clone->isPluginTarget = $state;
+        
+        return $clone;
+    }
+    
+    /**
+     * Returns true if the link should be build using the "forMe" option in the build method.
+     *
+     * @return bool
+     */
+    public function isPluginTarget(): bool
+    {
+        return $this->isPluginTarget;
+    }
+    
+    /**
      * Returns the list of arguments that should be excluded from cHash generation when the url is being build
      *
      * @return array
@@ -917,7 +955,7 @@ class Link implements NoDiInterface
             ],
             'forMe' => [
                 'type' => ['boolean'],
-                'default' => false,
+                'default' => $this->isPluginTarget(),
             ],
         ]);
         $typoContext = $this->context->getTypoContext();
