@@ -116,7 +116,7 @@ class BackendListLabelRenderer extends AbstractRenderer
             }
             
             return ContentTypeUtil::runWithRemappedTca($event->getRow(), function () use ($renderer, $event) {
-                return ' | ' . $renderer->renderBackendListLabel(
+                return ' ' . $renderer->renderBackendListLabel(
                         $this->contentRepository->getExtendedRow($event->getRow()),
                         $event->getOptions()
                     );
@@ -166,7 +166,7 @@ class BackendListLabelRenderer extends AbstractRenderer
                 return '';
             }
             
-            return ' | ' . implode(' | ', $result);
+            return ' ' . implode(' | ', $result);
         });
         
         

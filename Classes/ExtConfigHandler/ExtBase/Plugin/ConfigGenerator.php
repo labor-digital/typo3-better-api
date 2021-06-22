@@ -56,8 +56,11 @@ class ConfigGenerator extends AbstractConfigGenerator
         $renderers = BackendPreviewBuilder::buildRendererList($configurator);
         $config->backendPreviewRenderers
             = BackendPreviewBuilder::mergeRendererList($config->backendPreviewRenderers, $renderers);
-        $config->backendPreviewHooks
-            = BackendPreviewBuilder::addHookToList($config->backendPreviewHooks, 'list', $signature);
+        
+        if (! empty($renderers['preview'])) {
+            $config->backendPreviewHooks
+                = BackendPreviewBuilder::addHookToList($config->backendPreviewHooks, 'list', $signature);
+        }
         
         $config->dataHooks = array_merge($config->dataHooks, $configurator->getRegisteredDataHooks());
         

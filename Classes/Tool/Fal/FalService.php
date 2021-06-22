@@ -502,8 +502,7 @@ class FalService implements SingletonInterface
                 ? $file->getProperty('crop') : '';
             $cropArea = CropVariantCollection::create((string)$cropString)
                                              ->getCropArea($options['crop']);
-            $crop = $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($file);
-            $options['crop'] = $crop;
+            $options['crop'] = $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($file);
         } elseif (is_array($options['crop'])) {
             $options['crop'] = Area::createFromConfiguration($options['crop']);
         }
@@ -542,13 +541,26 @@ class FalService implements SingletonInterface
      */
     public function getResizedImageUrl($file, array $options = []): string
     {
+        if (isset($options['relative']) || in_array('relative', $options, true)) {
+            $relative = true;
+            unset($options['relative']);
+            $key = array_search('relative', $options, true);
+            if (is_numeric($key)) {
+                unset($options[$key]);
+            }
+        }
+        
         $processed = $this->getResizedImage($file, $options);
         
         $url = $processed->getPublicUrl(false);
-        $url .= strpos($url, '?') === false ? '?' : '&';
+        $url .= ! str_contains($url, '?') ? '?' : '&';
         $url .= 'hash=' . md5($processed->getSha1());
         
-        return FalFileUrlUtil::makeAbsoluteUrl(ltrim($url, '/'));
+        if (isset($relative)) {
+            return '/' . ltrim($url, '/');
+        }
+        
+        return FalFileUrlUtil::makeAbsoluteUrl($url);
     }
     
     /**

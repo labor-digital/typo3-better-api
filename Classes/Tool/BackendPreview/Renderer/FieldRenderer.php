@@ -134,7 +134,7 @@ class FieldRenderer implements PublicServiceInterface
         
         $content = [];
         foreach ($files as $c => $file) {
-            if ($c === $maxItems) {
+            if ($c > $maxItems) {
                 break;
             }
             
@@ -142,8 +142,8 @@ class FieldRenderer implements PublicServiceInterface
             if ($info->isImage()) {
                 $width = $info->getImageInfo() ? min(max($info->getImageInfo()->getWidth(), 50), 200) : 200;
                 $content[] = '<img src="' .
-                             $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width])) .
-                             '" style="width:100%; max-width:' . $width . 'px"' .
+                             $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width, 'relative'])) .
+                             '" style="width:100%; max-width:' . $width . 'px;"' .
                              ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
                              ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
             } else {
@@ -159,7 +159,7 @@ class FieldRenderer implements PublicServiceInterface
             return reset($content);
         }
         
-        return '<ul><li>' . implode('</li><li>', $content) . '</li></ul>';
+        return implode('&nbsp;', $content);
     }
     
     /**

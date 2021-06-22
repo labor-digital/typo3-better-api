@@ -119,8 +119,10 @@ class ConfigGenerator extends AbstractConfigGenerator
         
         $this->config->backendPreviewRenderers
             = BackendPreviewBuilder::mergeRendererList($this->config->backendPreviewRenderers, $renderers);
-        $this->config->backendPreviewHooks
-            = BackendPreviewBuilder::addHookToList($this->config->backendPreviewHooks, $signature);
+        if (! empty($renderers['preview'])) {
+            $this->config->backendPreviewHooks
+                = BackendPreviewBuilder::addHookToList($this->config->backendPreviewHooks, $signature);
+        }
     }
     
     /**
