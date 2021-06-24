@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.23 at 16:30
  */
 
 declare(strict_types=1);
@@ -67,6 +67,13 @@ class Kernel
     protected static $bootStages = [];
     
     /**
+     * A list of callables that get executed when the kernel gets initialized, but BEFORE any action is taken.
+     *
+     * @var callable[]
+     */
+    protected static $onInitHooks = [];
+    
+    /**
      * The event bus instance
      *
      * @var TypoEventBus
@@ -103,6 +110,10 @@ class Kernel
         // Create a new instance
         static::$instance = $i = new static();
         
+        foreach (static::$onInitHooks as $hook) {
+            $hook();
+        }
+        
         // Build our internal container
         $container = new DelegateContainer();
         $i->container = $container;
@@ -136,6 +147,16 @@ class Kernel
         
         // Dispatch the boot event
         $i->eventBus->dispatch(new KernelBootEvent($i));
+    }
+    
+    /**
+     * Registers a callable to be executed when the kernel gets initialized, but BEFORE any action is taken.
+     *
+     * @param   callable  $callable
+     */
+    public static function addOnInitHook(callable $callable): void
+    {
+        static::$onInitHooks[] = $callable;
     }
     
     /**
