@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.02 at 17:43
+ * Last modified: 2021.06.25 at 18:38
  */
 
 declare(strict_types=1);
@@ -289,7 +289,7 @@ class NamingUtil implements NoDiInterface
             }
             
             // Resolve a list of multiple callables -> FlexForms
-            if (strpos($callable, ';') !== false) {
+            if (str_contains($callable, ';')) {
                 return array_map(
                     [static::class, __FUNCTION__],
                     array_filter(array_map('trim', explode(';', $callable)))
@@ -297,7 +297,7 @@ class NamingUtil implements NoDiInterface
             }
             
             // Resolve typo callable
-            if (strpos($callable, '->') !== false) {
+            if (str_contains($callable, '->')) {
                 $parts = explode('->', $callable);
                 if (count($parts) !== 2) {
                     throw new InvalidArgumentException(
@@ -327,12 +327,10 @@ class NamingUtil implements NoDiInterface
                     . '". The method does not exist, or is not public.'
                 );
             }
+            
             if (! $ref->getMethod($callable[1])->isStatic()) {
-                $di = TypoContext::getInstance()->di();
-                $container = $di->getContainer();
-                
                 return [
-                    $container->has($callable[0]) ? $container->get($callable[0]) : $di->makeInstance($callable[0]),
+                    TypoContext::getInstance()->di()->getServiceOrInstance($callable[0]),
                     $callable[1],
                 ];
             }
