@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 23:56
+ * Last modified: 2021.06.24 at 19:04
  */
 
 declare(strict_types=1);
@@ -34,6 +34,7 @@ class DependencyInjectionFacet implements FacetInterface
     use ContainerAwareTrait {
         getContainer as public;
         getService as public;
+        getServiceOrInstance as public;
         makeInstance as public;
         getCommonServices as public;
         cs as public;
