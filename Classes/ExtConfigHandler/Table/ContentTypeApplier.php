@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.25 at 14:27
  */
 
 declare(strict_types=1);
@@ -202,6 +202,15 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             return;
         }
         
+        // Alternatively, if we don't have an extension table we drop everything and be done
+        if (! $hasExtensionTable) {
+            $row = ContentTypeUtil::removeAllExtensionColumns($row);
+            $row['ct_child'] = '';
+            $event->setRow($row);
+            
+            return;
+        }
+        
         $childRow = ContentTypeUtil::extractChildFromParent($row, $cType);
         
         // No child row -> go on
@@ -244,12 +253,12 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         if ($event->getTableName() !== 'tt_content') {
             return;
         }
-        
         if (empty($this->delayedChildRelation)) {
             return;
         }
         
         $row = $event->getRow();
+        dbge($row);
         $this->repository->saveChildRow($row['CType'], $event->getId(), [
             'uid' => $this->delayedChildRelation,
             'pid' => $row['pid'],
