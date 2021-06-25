@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.11 at 21:15
+ * Last modified: 2021.06.25 at 13:44
  */
 
 declare(strict_types=1);
@@ -27,6 +27,7 @@ use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use LaborDigital\T3ba\Tool\Rendering\BackendRenderingService;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -129,9 +130,14 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
                 'renderDefaultFooter' => function () use ($item) {
                     return parent::renderPageModulePreviewFooter($item);
                 },
-                'renderFieldList' => function (array $fields, ?string $tableName) use ($item) {
-                    return $this->getService(FieldListRenderer::class)->render(
-                        $tableName ?? 'tt_content', $item->getRecord(), $fields
+                'renderFieldList' => function (array $fields) use ($item) {
+                    return $this->getService(BackendRenderingService::class)->renderRecordFieldList(
+                        'tt_content', $item->getRecord(), $fields
+                    );
+                },
+                'renderRecordTable' => function (string $tableName, array $rows, array $fields) {
+                    return $this->getService(BackendRenderingService::class)->renderRecordTable(
+                        $tableName, $rows, $fields
                     );
                 },
                 'wrapWithEditLink' => function ($linkText) use ($item) {

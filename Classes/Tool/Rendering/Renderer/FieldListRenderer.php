@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.25 at 13:46
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\Rendering\Renderer;
 
 
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
 use LaborDigital\T3ba\Tool\Tca\TcaUtil;
@@ -36,7 +37,7 @@ class FieldListRenderer implements PublicServiceInterface
     protected $contentRepository;
     
     /**
-     * @var \LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldRenderer
+     * @var FieldRenderer
      */
     protected $fieldRenderer;
     
@@ -49,14 +50,16 @@ class FieldListRenderer implements PublicServiceInterface
     /**
      * Renders a list of field values as a HTML table
      *
-     * @param   string  $tableName  The name of the table to render the fields for
-     * @param   array   $row        The row to use as data source for the fields to render
-     * @param   array   $fields     The list of fields that should be rendered
+     * @param   string|mixed  $tableName  The name of the table to render the fields for
+     * @param   array         $row        The row to use as data source for the fields to render
+     * @param   array         $fields     The list of fields that should be rendered
      *
      * @return string
      */
-    public function render(string $tableName, array $row, array $fields): string
+    public function render($tableName, array $row, array $fields): string
     {
+        $tableName = NamingUtil::resolveTableName($tableName);
+        
         return TcaUtil::runWithResolvedTypeTca($row, $tableName, function () use ($tableName, $row, $fields) {
             if ($tableName === 'tt_content') {
                 return $this->renderTtContent($row, $fields);

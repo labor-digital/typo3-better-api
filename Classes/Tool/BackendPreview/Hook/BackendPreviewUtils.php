@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 18:41
+ * Last modified: 2021.06.25 at 13:51
  */
 
 declare(strict_types=1);
@@ -77,15 +77,30 @@ class BackendPreviewUtils implements NoDiInterface
     /**
      * Renders a list of fields as a nice html with both the value and the translated label
      *
-     * @param   array        $fields     The list of db fields that should be rendered
-     * @param   string|null  $tableName  The name of the table to render the fields for
+     * @param   array  $fields  The list of db fields that should be rendered
      *
      * @return string
-     * @see \LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer::render()
+     * @see \LaborDigital\T3ba\Tool\Rendering\BackendRenderingService::renderRecordFieldList()
      */
-    public function renderFieldList(array $fields, ?string $tableName = null): string
+    public function renderFieldList(array $fields): string
     {
-        return call_user_func($this->links[__FUNCTION__], $fields, $tableName);
+        return call_user_func($this->links[__FUNCTION__], $fields);
+    }
+    
+    /**
+     * Renders a HTML table of database record rows with their label as headers.
+     * Useful for rendering the backend preview of list modules.
+     *
+     * @param   string|mixed  $tableName  The name of the database table to render the records for
+     * @param   array         $rows       The list of rows that are used as data source to render the table with
+     * @param   array         $fields     The list of fields that should be rendered for each row
+     *
+     * @return string
+     * @see \LaborDigital\T3ba\Tool\Rendering\BackendRenderingService::renderRecordTable()
+     */
+    public function renderRecordTable($tableName, array $rows, array $fields): string
+    {
+        return call_user_func($this->links[__FUNCTION__], $tableName, $rows, $fields);
     }
     
     /**

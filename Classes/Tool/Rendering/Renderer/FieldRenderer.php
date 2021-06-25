@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.25 at 13:09
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
+namespace LaborDigital\T3ba\Tool\Rendering\Renderer;
 
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;

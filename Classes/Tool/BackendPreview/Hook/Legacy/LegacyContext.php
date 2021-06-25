@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.11 at 21:45
+ * Last modified: 2021.06.25 at 13:50
  */
 
 declare(strict_types=1);
@@ -26,8 +26,9 @@ namespace LaborDigital\T3ba\Tool\BackendPreview\Hook\Legacy;
 use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
 use LaborDigital\T3ba\Event\BackendPreview\LegacyPreviewRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils;
-use LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldListRenderer;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use LaborDigital\T3ba\Tool\Rendering\BackendRenderingService;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldListRenderer;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 
 /**
@@ -135,9 +136,14 @@ class LegacyContext
                 'renderDefaultFooter' => function () use ($row) {
                     return static::findDefaultFooter($row);
                 },
-                'renderFieldList' => function (array $fields, ?string $tableName) use ($row) {
-                    return static::getService(FieldListRenderer::class)->render(
-                        $tableName ?? 'tt_content', $row, $fields
+                'renderFieldList' => function (array $fields) use ($row) {
+                    return static::getService(BackendRenderingService::class)->renderRecordFieldList(
+                        'tt_content', $row, $fields
+                    );
+                },
+                'renderRecordTable' => function ($tableName, array $rows, array $fields) {
+                    return static::getService(BackendRenderingService::class)->renderRecordTable(
+                        $tableName, $rows, $fields
                     );
                 },
                 'wrapWithEditLink' => function ($linkText) use ($pageLayoutView, $row) {

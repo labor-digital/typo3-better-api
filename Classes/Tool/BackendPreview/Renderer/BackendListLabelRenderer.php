@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.25 at 13:49
  */
 
 declare(strict_types=1);
@@ -26,6 +26,7 @@ namespace LaborDigital\T3ba\Tool\BackendPreview\Renderer;
 use LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface;
 use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewException;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer;
 use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
 use LaborDigital\T3ba\Tool\Tca\TcaUtil;
@@ -39,7 +40,7 @@ class BackendListLabelRenderer extends AbstractRenderer
     protected $contentRepository;
     
     /**
-     * @var \LaborDigital\T3ba\Tool\BackendPreview\Renderer\FieldRenderer
+     * @var FieldRenderer
      */
     protected $fieldRenderer;
     
