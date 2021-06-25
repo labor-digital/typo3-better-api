@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 16:01
+ * Last modified: 2021.06.25 at 18:11
  */
 
 declare(strict_types=1);
@@ -23,9 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Routing\Site;
 
 
+use InvalidArgumentException;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
-use LaborDigital\T3ba\ExtConfigHandler\Routing\Exceptions\NotFoundException;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\Traits\RouteEnhancerConfigTrait;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\Traits\RouteEnhancerSchemaTrait;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
@@ -69,8 +69,8 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
             $this->getRouteEnhancer($key);
             
             return true;
-        } catch (NotFoundException $e) {
-            return true;
+        } catch (InvalidArgumentException $e) {
+            return false;
         }
     }
     
@@ -80,14 +80,13 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
      * @param   string  $key  The unique key of the route enhancer to retrieve
      *
      * @return array
-     * @throws \LaborDigital\T3ba\ExtConfigHandler\Routing\Exceptions\NotFoundException
      */
     public function getRouteEnhancer(string $key): array
     {
         $key = $this->context->replaceMarkers($key);
         
         if (! isset($this->routeEnhancers[$key])) {
-            throw new NotFoundException('There is no registered route enhancer with key: ' . $key);
+            throw new InvalidArgumentException('There is no registered route enhancer with key: ' . $key);
         }
         
         return $this->routeEnhancers[$key];
