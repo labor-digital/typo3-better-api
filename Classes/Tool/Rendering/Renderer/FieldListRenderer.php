@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.25 at 13:46
+ * Last modified: 2021.06.25 at 22:00
  */
 
 declare(strict_types=1);
@@ -144,12 +144,9 @@ class FieldListRenderer implements PublicServiceInterface
             return '';
         }
         
-        $class = 'be-preview-table-' . md5(random_bytes(25));
-        
         return
-            '<style>.' . $class . ' td {padding: 4px 15px 0 0; vertical-align: top;} ' .
-            '.' . $class . '{margin-top:10px;}</style>' .
-            '<table class="' . $class . '"><tr>' . implode('</tr><tr>', $rows) . '</tr></table>';
+            '<table class="table" style="{margin-top:10px;margin-bottom:0}">' .
+            '<tr>' . implode('</tr><tr>', $rows) . '</tr></table>';
     }
     
     /**

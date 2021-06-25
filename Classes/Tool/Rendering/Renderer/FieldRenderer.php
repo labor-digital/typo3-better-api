@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.25 at 13:09
+ * Last modified: 2021.06.25 at 21:36
  */
 
 declare(strict_types=1);
@@ -52,6 +52,23 @@ class FieldRenderer implements PublicServiceInterface
     {
         $this->translator = $translator;
         $this->falService = $falService;
+    }
+    
+    /**
+     * Renders the title of the table translated for the current user
+     *
+     * @param   string  $tableName
+     *
+     * @return string
+     */
+    public function renderTableTitle(string $tableName): string
+    {
+        $label = $GLOBALS['TCA'][$tableName]['ctrl']['title'] ?? null;
+        if ($label === null) {
+            return Inflector::toHuman($tableName);
+        }
+        
+        return $this->translator->translateBe($label);
     }
     
     /**

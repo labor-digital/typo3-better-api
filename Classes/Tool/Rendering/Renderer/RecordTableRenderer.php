@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.25 at 13:52
+ * Last modified: 2021.06.25 at 22:00
  */
 
 declare(strict_types=1);
@@ -23,11 +23,14 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Rendering\Renderer;
 
 
+use InvalidArgumentException;
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
 use LaborDigital\T3ba\Tool\Tca\TcaUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class RecordTableRenderer implements PublicServiceInterface
 {
@@ -65,6 +68,25 @@ class RecordTableRenderer implements PublicServiceInterface
         
         $tableName = NamingUtil::resolveTableName($tableName);
         
+        // Validate rows to be array, and automatically convert ext base entities into rows
+        foreach ($rows as $k => &$row) {
+            if (! is_array($row)) {
+                if ($row instanceof AbstractEntity) {
+                    $row = TypoContext::getInstance()->di()->cs()->db
+                        ->getQuery($tableName)->withWhere(['uid' => $row->getUid()])->getFirst();
+                    
+                    if (! is_array($row)) {
+                        throw new InvalidArgumentException(
+                            'Can\'t render a row (' . $k . '), because the data could not be resolved');
+                    }
+                    
+                } else {
+                    throw new InvalidArgumentException(
+                        'Can\'t render a row (' . $k . '), because it is not an array');
+                }
+            }
+        }
+        
         return TcaUtil::runWithResolvedTypeTca(reset($rows), $tableName, function () use ($tableName, $rows, $fields) {
             $renderedRows = [];
             
@@ -76,7 +98,7 @@ class RecordTableRenderer implements PublicServiceInterface
                 $renderedRows[] = $this->renderInternal($tableName, $row, $fields);
             }
             
-            return $this->renderTable($renderedRows, $this->renderHeaders($tableName, $fields));
+            return $this->renderTable($tableName, $renderedRows, $this->renderHeaders($tableName, $fields));
         });
     }
     
@@ -178,12 +200,14 @@ class RecordTableRenderer implements PublicServiceInterface
      *
      * @return string
      */
-    protected function renderTable(array $rows, string $headers): string
+    protected function renderTable(string $tableName, array $rows, string $headers): string
     {
-        return '<table class="table">' .
-               '<thead>' . $headers . '</thead>' .
-               '<tbody>' . implode($rows) . '</tbody>' .
-               '</table>';
+        return
+            '<table class="table" style="{margin-top:10px;margin-bottom:0}">' .
+            '<caption>' . $this->fieldRenderer->renderTableTitle($tableName) . '</caption>' .
+            '<thead>' . $headers . '</thead>' .
+            '<tbody>' . implode($rows) . '</tbody>' .
+            '</table>';
     }
     
     /**
