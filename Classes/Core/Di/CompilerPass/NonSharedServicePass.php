@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:14
+ * Last modified: 2021.06.25 at 21:07
  */
 
 declare(strict_types=1);
@@ -38,7 +38,6 @@ class NonSharedServicePass implements CompilerPassInterface
                 $container->getDefinition($id)->setShared(false);
             } catch (\Throwable $e) {
                 // Silence
-                dbge($id, $e);
             }
         }
     }

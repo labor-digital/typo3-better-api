@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.25 at 14:27
+ * Last modified: 2021.06.25 at 21:07
  */
 
 declare(strict_types=1);
@@ -258,7 +258,6 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         }
         
         $row = $event->getRow();
-        dbge($row);
         $this->repository->saveChildRow($row['CType'], $event->getId(), [
             'uid' => $this->delayedChildRelation,
             'pid' => $row['pid'],

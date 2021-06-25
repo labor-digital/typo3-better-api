@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.12 at 18:05
+ * Last modified: 2021.06.25 at 21:07
  */
 
 declare(strict_types=1);
@@ -181,9 +181,6 @@ class TcaTable extends AbstractTypeList
      */
     protected function loadType($typeName): AbstractType
     {
-        if (($typeName === 0 || $typeName === '0') && $this->getTableName() === 'tt_content') {
-            dbge($typeName, $this->getTableName());
-        }
         $type = $this->typeFactory->create($typeName, $this);
         $this->typeFactory->populate($type);
         
