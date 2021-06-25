@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:25
+ * Last modified: 2021.06.25 at 14:11
  */
 
 declare(strict_types=1);
@@ -86,9 +86,9 @@ class InputFields extends AbstractFieldPreset
      *                           - default string|number|DateTime: A default value for your input field
      *                           - withTime bool (FALSE): If set to true this field can also have the time set, not
      *                           only the date
-     *                           - asInt bool (FALSE): By default the database value will be written as "datetime"
-     *                           type. If you however want the database to store the date as integer you can set this
-     *                           to true
+     *                           - asInt bool (TRUE): By default the database value will be written as "integer"
+     *                           type. If you however want the database to store the date as datetime you can set this
+     *                           to false
      *                           - required, trim bool: Any of these values can be passed
      *                           to define their matching "eval" rules
      */
@@ -105,7 +105,7 @@ class InputFields extends AbstractFieldPreset
                     ],
                     'asInt' => [
                         'type' => 'bool',
-                        'default' => false,
+                        'default' => true,
                     ],
                 ], ['null', 'string', 'number', DateTime::class, DateTimy::class], null)
                 , ['required', 'trim']
@@ -140,14 +140,10 @@ class InputFields extends AbstractFieldPreset
         
         $config = $this->addEvalConfig($config, $options);
         
-        if ($options['withTime']) {
-            $config['eval'] = ($config['eval'] ?? '') . ',datetime';
-        } else {
-            $config['eval'] = ($config['eval'] ?? '') . ',date';
-        }
-        
         if (! $options['asInt']) {
             $config['dbType'] = 'datetime';
+        } else {
+            $config['eval'] .= ',int';
         }
         
         // Done
