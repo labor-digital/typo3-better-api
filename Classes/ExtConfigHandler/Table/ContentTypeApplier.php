@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.25 at 21:07
+ * Last modified: 2021.06.25 at 21:16
  */
 
 declare(strict_types=1);
@@ -193,25 +193,20 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         // but now has none, OR the CType was changed, we drop everything
         $hasExtensionTable = ContentTypeUtil::hasExtensionTable($cType);
         $oldCType = $this->resolveColumnValue('CType', ['uid' => $event->getId()]);
-        if (is_string($oldCType) && $oldCType !== $cType && $hasExtensionTable) {
+        if (! $hasExtensionTable || (is_string($oldCType) && $oldCType !== $cType && $hasExtensionTable)) {
             $row = ContentTypeUtil::removeAllExtensionColumns($row);
             $row['ct_child'] = '';
             $event->setRow($row);
-            $this->repository->deleteChildRow($oldCType, $event->getId());
             
-            return;
-        }
-        
-        // Alternatively, if we don't have an extension table we drop everything and be done
-        if (! $hasExtensionTable) {
-            $row = ContentTypeUtil::removeAllExtensionColumns($row);
-            $row['ct_child'] = '';
-            $event->setRow($row);
+            if ($hasExtensionTable) {
+                $this->repository->deleteChildRow($oldCType, $event->getId());
+            }
             
             return;
         }
         
         $childRow = ContentTypeUtil::extractChildFromParent($row, $cType);
+        $row = ContentTypeUtil::removeAllExtensionColumns($row);
         
         // No child row -> go on
         if (! $hasExtensionTable) {
@@ -227,6 +222,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         $childRow['pid'] = $this->resolveColumnValue('pid', $rowWithUid);
         $childRow['sys_language_uid'] = $this->resolveColumnValue('sys_language_uid', $rowWithUid);
         $row['ct_child'] = $this->repository->saveChildRow($cType, $parentId, $childRow);
+        
         $event->setRow($row);
         
         if ($parentId === -1) {
