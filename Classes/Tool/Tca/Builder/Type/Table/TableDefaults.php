@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.10 at 19:00
+ * Last modified: 2021.06.26 at 16:25
  */
 
 declare(strict_types=1);
@@ -235,7 +235,7 @@ class TableDefaults implements NoDiInterface
                     --div--;t3ba.tab.general,
 					--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,
 					--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
-					layout;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:layout_formlabel,
+					--palette--;;frames,
                     --div--;t3ba.tab.language,
 					--palette--;;language,
                     --div--;t3ba.tab.access,
