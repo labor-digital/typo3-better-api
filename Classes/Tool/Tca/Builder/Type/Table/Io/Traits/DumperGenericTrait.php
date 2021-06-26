@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.12 at 18:09
+ * Last modified: 2021.06.26 at 17:30
  */
 
 declare(strict_types=1);
@@ -160,7 +160,6 @@ trait DumperGenericTrait
                 $hasFieldsOrPallets = true;
                 $meta = $child->getLayoutMeta();
                 $meta[0] = $child->getId();
-                $meta[1] = $child->hasLabel() ? $child->getLabel() : '';
                 $pointer[] = rtrim(implode(';', $meta), ';');
             }
         }

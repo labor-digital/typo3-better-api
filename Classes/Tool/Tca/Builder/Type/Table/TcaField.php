@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.04 at 16:27
+ * Last modified: 2021.06.26 at 17:28
  */
 
 declare(strict_types=1);
@@ -31,6 +31,7 @@ use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
+use Neunerlei\Inflection\Inflector;
 
 class TcaField extends AbstractField
 {
@@ -43,6 +44,29 @@ class TcaField extends AbstractField
      * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaFieldFlexFormConfig
      */
     protected $flex;
+    
+    /**
+     * @inheritDoc
+     */
+    public function setLabel(?string $label)
+    {
+        $this->layoutMeta[1] = $label ?? '';
+        
+        return parent::setLabel($label);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getLabel(): string
+    {
+        $label = $this->label ?? $this->layoutMeta[1] ?? '';
+        if (empty($label)) {
+            return Inflector::toHuman($this->getId());
+        }
+        
+        return $label;
+    }
     
     /**
      * Returns the database table name for the current field

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.04.29 at 22:17
+ * Last modified: 2021.06.26 at 17:39
  */
 
 declare(strict_types=1);
@@ -24,7 +24,6 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
-use Neunerlei\Inflection\Inflector;
 
 trait DumperTypeGeneratorTrait
 {
@@ -146,16 +145,9 @@ trait DumperTypeGeneratorTrait
             }
             
             // Check if there is already a showitem for this palette
-            if (isset($palettes[$k]['showitem'])) {
-                // Ignore identical palette
-                if ($palettes[$k]['showitem'] === $showitem) {
-                    continue;
-                }
-                
-                // Compare a unified version of both
-                if (Inflector::toComparable($palettes[$k]['showitem']) === Inflector::toComparable($showitem)) {
-                    continue;
-                }
+            if (isset($palettes[$k]['showitem']) &&
+                $this->assertShowItemEquals($palettes[$k]['showitem'], $showitem, $tca)) {
+                continue;
             }
             
             // Create a new version of this palette for the type
@@ -176,5 +168,57 @@ trait DumperTypeGeneratorTrait
         $tca['palettes'] = $palettes;
     }
     
+    /**
+     * Validates that two showItem strings are the same
+     *
+     * @param   string  $a    The original show item string
+     * @param   string  $b    The new show item string
+     * @param   array   $tca  The TCA array of the table the strings apply to
+     *
+     * @return bool
+     */
+    protected function assertShowItemEquals(string $a, string $b, array $tca): bool
+    {
+        $a = trim(str_replace(PHP_EOL, '', $a), ' ,;');
+        $b = trim(str_replace(PHP_EOL, '', $b), ' ,;');
+        
+        if (str_replace(' ', '', $a) === str_replace(' ', '', $b)) {
+            return true;
+        }
+        
+        $tokenizer = static function (string $v): array {
+            return array_map(static function (string $t): array {
+                return array_map('trim', explode(';', $t));
+            }, explode(',', $v));
+        };
+        
+        $aTokens = $tokenizer($a);
+        $bTokens = $tokenizer($b);
+        
+        if (count($aTokens) !== count($bTokens)) {
+            return false;
+        }
+        
+        foreach ($aTokens as $k => $aToken) {
+            $bToken = $bTokens[$k];
+            if (($aToken[0] ?? null) !== ($bToken[0] ?? null)) {
+                return false;
+            }
+            
+            if (str_starts_with($aToken[0] ?? '', '--')) {
+                continue;
+            }
+            
+            if (($aToken[1] ?? null) !== ($bTokens[1] ?? null)) {
+                $aLabel = $aToken[1] ?? $tca['columns'][$aToken[0]]['label'] ?? null;
+                $bLabel = $bToken[1] ?? $tca['columns'][$bToken[1] ?? null]['label'] ?? null;
+                if ($aLabel !== $bLabel) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
     
 }

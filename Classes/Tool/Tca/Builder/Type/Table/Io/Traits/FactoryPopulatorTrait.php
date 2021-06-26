@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.11 at 16:37
+ * Last modified: 2021.06.26 at 17:40
  */
 
 declare(strict_types=1);
@@ -254,11 +254,8 @@ trait FactoryPopulatorTrait
         $target->addMultiple(static function () use ($type, $id, $layoutMeta, $config) {
             $i = $type->getField($id, true);
             $i->setLayoutMeta($layoutMeta);
+            $config['label'] = $config['label'] ?: $layoutMeta[1];
             $i->setRaw($config);
-            
-            if (! empty($layoutMeta[1])) {
-                $i->setLabel($layoutMeta[1]);
-            }
         });
     }
 }
