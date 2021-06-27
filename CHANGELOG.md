@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.12](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.11...v10.0.0-beta.12) (2021-06-22)
+
+
+### Features
+
+* **ContainerAwareTrait:** make hasService() more intuitive and introduce getServiceOrInstance() ([aea0d3e](https://github.com/labor-digital/typo3-better-api/commit/aea0d3e8bd0a7dcd54daaa7cd63faae97f792bd6))
+* **Link:** implement "pluginTarget" to set "forMe" build option on an object level ([9544c62](https://github.com/labor-digital/typo3-better-api/commit/9544c624059be6f25a7d515e3527ef11bfe7e7a3))
+* **Tool\Link:** introduce getLink() to BetterActionController. Better link integration ([f1c4e6d](https://github.com/labor-digital/typo3-better-api/commit/f1c4e6da05437a454adc9dedc524da0ecaa4c3cc))
+* **TypoContext:** implement getSiteBasedConfigValue to config facet ([9858d33](https://github.com/labor-digital/typo3-better-api/commit/9858d3396f653b148c57e1ccff7244777ab4812c))
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderer:** convert response content to string ([270ce11](https://github.com/labor-digital/typo3-better-api/commit/270ce1167a82dd40a76bb3dafdfd8218b563d532))
+* **Cache:** make EnvironmentCacheKeyGenerator aware of the current "preview" setting ([abbfd6e](https://github.com/labor-digital/typo3-better-api/commit/abbfd6e0f66481aef8b87f48a46ea728293938be))
+* **CacheUtil:** make cache tag generation more reliable for file references and generics ([687314b](https://github.com/labor-digital/typo3-better-api/commit/687314b96f8e99b55c447a68b46ba062eecac1fd))
+* **ContentControllerBackendPreviewTrait:** generate the plugin name correctly ([23b8f94](https://github.com/labor-digital/typo3-better-api/commit/23b8f940020e48ce33e39a46632725da02a52c21))
+* **ContentControllerDataTrait:** only resolve $row through content object if no preview renderer exists ([9cf8d03](https://github.com/labor-digital/typo3-better-api/commit/9cf8d03b816064f319120b6a819bbd614e8b562e))
+* **Simulation\Visibility:** reinitialize page repository when includeHiddenPages flag changes ([927afd9](https://github.com/labor-digital/typo3-better-api/commit/927afd9125d7052655f3979190c437e439120acd))
+* **TypoScriptService:** automatically replace INTintScripts in rendered output ([4c70249](https://github.com/labor-digital/typo3-better-api/commit/4c702498ff8ab48e9fb839a649e4f0dc60585938))
+
 ## [10.0.0-beta.11](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.10...v10.0.0-beta.11) (2021-06-16)
 
 
