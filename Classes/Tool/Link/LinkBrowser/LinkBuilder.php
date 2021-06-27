@@ -39,7 +39,7 @@ class LinkBuilder extends AbstractTypolinkBuilder
      */
     public function build(array &$linkDetails, string $linkText, string $target, array $conf): array
     {
-        $config = $this->cs()->typoContext->Config()->getTsConfigValue(
+        $config = $this->cs()->typoContext->config()->getTsConfigValue(
             'TCEMAIN.linkHandler.' . $linkDetails['identifier'] . '.configuration');
         
         try {
