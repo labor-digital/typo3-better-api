@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.05.16 at 16:09
+ * Last modified: 2021.06.27 at 16:27
  */
 
 declare(strict_types=1);
@@ -98,14 +98,15 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
             'type' => 'array',
             'default' => [],
             'preFilter' => static function ($v) { return is_string($v) ? [$v] : $v; },
-            'filter' => function(array $v){
-                foreach ($v as $k => $identifier){
-                    if(class_exists($identifier)){
+            'filter' => function (array $v) {
+                foreach ($v as $k => $identifier) {
+                    if (class_exists($identifier)) {
                         $v[$k] = $this->makeMiddlewareIdentifier($identifier);
                     }
                 }
+                
                 return $v;
-            }
+            },
         ];
         
         $options = Options::make($options, [
@@ -192,11 +193,11 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
     {
         $nsPos = strpos($className, '\\');
         
-        if($nsPos !== false){
+        if ($nsPos !== false) {
             $nsPos = strpos($className, '\\', $nsPos + 1);
         }
         
-        if($nsPos === false){
+        if ($nsPos === false) {
             $classVendor = Inflector::toDashed($this->context->getExtKeyWithVendor());
         } else {
             $classParts = explode('\\', substr($className, 0, $nsPos));

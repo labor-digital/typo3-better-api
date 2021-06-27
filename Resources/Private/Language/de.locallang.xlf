@@ -13,77 +13,77 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~
-  ~ Last modified: 2021.04.29 at 21:56
+  ~ Last modified: 2021.06.27 at 16:27
   -->
 
 <xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" date="2019-10-30T17:39:36Z" product-name="typo3_better_api" target-language="de">
-        <header/>
-        <body>
-            <trans-unit id="formPreset.editRecord">
-                <source>Edit Record</source>
-                <source>Datensatz bearbeiten</source>
-            </trans-unit>
-            <trans-unit id="formPreset.newRecord">
-                <source>New Record</source>
-                <source>Neuer Datensatz</source>
-            </trans-unit>
-            <trans-unit id="field.hidden">
-                <source>Hide this element</source>
-                <target>Element verbergen</target>
-            </trans-unit>
-            <trans-unit id="tab.access">
-                <source>Access</source>
-                <target>Zugriff</target>
-            </trans-unit>
-            <trans-unit id="tab.general">
-                <source>General</source>
-                <target>Allgemein</target>
-            </trans-unit>
-            <trans-unit id="tab.language">
-                <source>Language</source>
-                <target>Sprache</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment">
-                <source>Image Alignment</source>
-                <target>Bildausrichtung</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.bottomCenter">
-                <source>Bottom Center</source>
-                <target>Unten Mitte</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.bottomLeft">
-                <source>Bottom Left</source>
-                <target>Unten Links</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.bottomRight">
-                <source>Bottom Right</source>
-                <target>Unten Rechts</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.centerCenter">
-                <source>Center Center</source>
-                <target>Mitte Mitte</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.centerLeft">
-                <source>Center Left</source>
-                <target>Mitte Links</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.centerRight">
-                <source>Center Right</source>
-                <target>Mitte Rechts</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.topCenter">
-                <source>Top Center</source>
-                <target>Oben Mitte</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.topLeft">
-                <source>Top Left</source>
-                <target>Oben LinkService</target>
-            </trans-unit>
-            <trans-unit id="d.sys_file_reference.imageAlignment.topRight">
-                <source>Top Right</source>
-                <target>Oben Rechts</target>
-            </trans-unit>
-        </body>
-    </file>
+	<file source-language="en" datatype="plaintext" original="messages" date="2019-10-30T17:39:36Z" product-name="typo3_better_api" target-language="de">
+		<header/>
+		<body>
+			<trans-unit id="formPreset.editRecord">
+				<source>Edit Record</source>
+				<source>Datensatz bearbeiten</source>
+			</trans-unit>
+			<trans-unit id="formPreset.newRecord">
+				<source>New Record</source>
+				<source>Neuer Datensatz</source>
+			</trans-unit>
+			<trans-unit id="field.hidden">
+				<source>Hide this element</source>
+				<target>Element verbergen</target>
+			</trans-unit>
+			<trans-unit id="tab.access">
+				<source>Access</source>
+				<target>Zugriff</target>
+			</trans-unit>
+			<trans-unit id="tab.general">
+				<source>General</source>
+				<target>Allgemein</target>
+			</trans-unit>
+			<trans-unit id="tab.language">
+				<source>Language</source>
+				<target>Sprache</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment">
+				<source>Image Alignment</source>
+				<target>Bildausrichtung</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.bottomCenter">
+				<source>Bottom Center</source>
+				<target>Unten Mitte</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.bottomLeft">
+				<source>Bottom Left</source>
+				<target>Unten Links</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.bottomRight">
+				<source>Bottom Right</source>
+				<target>Unten Rechts</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.centerCenter">
+				<source>Center Center</source>
+				<target>Mitte Mitte</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.centerLeft">
+				<source>Center Left</source>
+				<target>Mitte Links</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.centerRight">
+				<source>Center Right</source>
+				<target>Mitte Rechts</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.topCenter">
+				<source>Top Center</source>
+				<target>Oben Mitte</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.topLeft">
+				<source>Top Left</source>
+				<target>Oben LinkService</target>
+			</trans-unit>
+			<trans-unit id="d.sys_file_reference.imageAlignment.topRight">
+				<source>Top Right</source>
+				<target>Oben Rechts</target>
+			</trans-unit>
+		</body>
+	</file>
 </xliff>
