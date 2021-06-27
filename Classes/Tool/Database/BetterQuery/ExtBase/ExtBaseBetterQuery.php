@@ -56,26 +56,26 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  */
 class ExtBaseBetterQuery extends AbstractBetterQuery
 {
-
+    
     /**
      * @var BetterRepository
      */
     protected $repository;
-
+    
     /**
      * The configuration for the inclusion of hidden children using the extended relation service
      *
      * @var mixed
      */
     protected $includeHiddenChildren;
-
+    
     /**
      * The configuration for the inclusion of deleted children using the extended relation service
      *
      * @var mixed
      */
     protected $includeDeletedChildren;
-
+    
     /**
      * @inheritDoc
      */
@@ -93,7 +93,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         );
         $this->repository = $repository;
     }
-
+    
     /**
      * This method can be used to include hidden child-relations in the resolved query result.
      *
@@ -116,10 +116,10 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         } else {
             $clone->includeHiddenChildren = $settings;
         }
-
+        
         return $clone;
     }
-
+    
     /**
      * This method can be used to include deleted child-relations in the resolved query result.
      *
@@ -142,10 +142,10 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         } else {
             $clone->includeDeletedChildren = $settings;
         }
-
+        
         return $clone;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -154,7 +154,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         return BetterQueryTypo3DbQueryParserAdapter::getConcreteQueryParser()
                                                    ->convertQueryToDoctrineQueryBuilder($this->getQuery());
     }
-
+    
     /**
      * Returns the preconfigured query object.
      *
@@ -166,10 +166,10 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         $this->adapter = $clone = clone $orgAdapter;
         $this->applyWhere($clone);
         $this->adapter = $orgAdapter;
-
+        
         return $clone->getQuery();
     }
-
+    
     /**
      * Executes the currently configured query and returns the results
      *
@@ -193,11 +193,11 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
                 ]
             );
         }
-
+        
         // Perform a normal query
         return $this->getQuery()->execute($returnAsArray);
     }
-
+    
     /**
      * Returns the first element from the queries result set that matches your criteria
      *
@@ -215,7 +215,7 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
         
         return $this->getAll()->getFirst();
     }
-
+    
     /**
      * @inheritDoc
      */

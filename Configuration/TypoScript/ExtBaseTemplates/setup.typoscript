@@ -1,2 +1,0 @@
-@import 'dynamic:extbase.plugin.setup'
-@import 'dynamic:extbase.module.setup'
