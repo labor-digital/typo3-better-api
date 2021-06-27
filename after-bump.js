@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.06.27 at 21:18
  */
 // This helper is used to automatically set the version in the ext_emconf.php file to the latest version
 // after the conventional release generated a new number for us
@@ -24,7 +24,7 @@ const version = process.argv[2];
 function updateEmConfVersion(filename, version)
 {
     let content = fs.readFileSync(filename).toString('utf-8');
-    content = content.replace(/("version"\s+=>\s+)(["'].*?["'])/, '$1"' + version + '"');
+    content = content.replace(/(["']version["']\s+=>\s+)(["'].*?["'])/, '$1"' + version + '"');
     fs.writeFileSync(filename, content);
 }
 
