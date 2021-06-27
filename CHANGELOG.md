@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.14](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.13...v10.0.0-beta.14) (2021-06-27)
+
+
+### Features
+
+* **ExtBase:** implement handleNotFound() method to BetterActionController ([82c1816](https://github.com/labor-digital/typo3-better-api/commit/82c1816792fed685445b7e57813bd5962c5a176b))
+
+
+### Bug Fixes
+
+* minor code style adjustments ([286a526](https://github.com/labor-digital/typo3-better-api/commit/286a5268a5be12a4ae893d8c5aa46602931fc26f))
+* **Link:** use lower case config facet ([c8494b6](https://github.com/labor-digital/typo3-better-api/commit/c8494b6983f2512155377cb7889f5f4f484430bc))
+* **Tca:** fix incorrect field layout meta sort order ([9b018fd](https://github.com/labor-digital/typo3-better-api/commit/9b018fd6a14b5447a7344982afe256cbd887a97e))
+
 ## [10.0.0-beta.13](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.12...v10.0.0-beta.13) (2021-06-27)
 
 
