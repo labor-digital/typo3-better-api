@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\ExtBase\Controller;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\ExtBase\ActionController\MethodNameFilterEvent;
 use LaborDigital\T3ba\Event\ExtBase\ActionController\RequestFilterEvent;
+use LaborDigital\T3ba\Tool\ExtBase\ExtBaseNotFoundHandler;
 use LaborDigital\T3ba\Tool\Link\Link;
 use LaborDigital\T3ba\Tool\Link\LinkService;
 use LaborDigital\T3ba\Tool\Rendering\FlashMessageRenderingService;
@@ -119,5 +120,32 @@ abstract class BetterActionController extends ActionController
         )));
         
         return $e->getActionMethodName();
+    }
+    
+    /**
+     * Allows you to handle not found errors easily inside your extbase plugin or content element.
+     * By default the TYPO3 default 404 handling will be executed when the method is triggered.
+     * However you have multiple options to configure the behaviour yourself
+     *
+     * @param   string|null  $message  An optional message to show when the error is handled.
+     *                                 This parameter is not used when redirectToPid or redirectToLink
+     *                                 are configured.
+     * @param   array        $options  Options to configure the error handling.
+     *                                 - redirectToPid int|string: If set to a pid or pid selector
+     *                                 the user will be redirected to the the page automatically.
+     *                                 - redirectToLink string: Retrieves a link set identifier to
+     *                                 redirect the user to. This is NOT used for absolute uris use redirectToUri instead.
+     *                                 - renderTemplate string: Allows you to render the given fluid template
+     *                                 and return the rendered content
+     *
+     * @return mixed|string
+     */
+    protected function handleNotFound(?string $message = null, array $options = [])
+    {
+        return $this->getService(ExtBaseNotFoundHandler::class)
+                    ->handle($message, $options, function (string $target) {
+                        /** @noinspection PhpVoidFunctionResultUsedInspection */
+                        return $this->redirectToUri($target);
+                    });
     }
 }
