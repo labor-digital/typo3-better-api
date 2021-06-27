@@ -20,18 +20,21 @@ Install this package using Composer:
 composer require labor-digital/typo3-better-api
 ```
 
-## Documentation
+[comment]: <> (## Documentation)
 
-The documentation can be found [here](https://typo3-better-api.labor.tools).
+[comment]: <> (The documentation can be found [here]&#40;https://typo3-better-api.labor.tools&#41;.)
 
-## Building the documentation
+[comment]: <> (## Building the documentation)
 
-The documentation is powered by [vuepress](https://vuepress.vuejs.org/), you can spin up a dev server like so:
+[comment]: <> (The documentation is powered by [vuepress]&#40;https://vuepress.vuejs.org/&#41;, you can spin up a dev server like so:)
 
-- Clone the repository
-- Navigate to ```docs```
-- Install the dependencies with ```npm install```
-- Run the dev server with ```npm run dev```
+[comment]: <> (- Clone the repository)
+
+[comment]: <> (- Navigate to ```docs```)
+
+[comment]: <> (- Install the dependencies with ```npm install```)
+
+[comment]: <> (- Run the dev server with ```npm run dev```)
 
 ## Postcardware
 
