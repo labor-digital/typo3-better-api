@@ -254,7 +254,7 @@ trait FactoryPopulatorTrait
         $target->addMultiple(static function () use ($type, $id, $layoutMeta, $config) {
             $i = $type->getField($id, true);
             $i->setLayoutMeta($layoutMeta);
-            $config['label'] = $config['label'] ?: $layoutMeta[1];
+            $config['label'] = $config['label'] ?: ($layoutMeta[1] ?? null);
             $i->setRaw($config);
         });
     }

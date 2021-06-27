@@ -160,6 +160,7 @@ trait DumperGenericTrait
                 $hasFieldsOrPallets = true;
                 $meta = $child->getLayoutMeta();
                 $meta[0] = $child->getId();
+                ksort($meta);
                 $pointer[] = rtrim(implode(';', $meta), ';');
             }
         }
