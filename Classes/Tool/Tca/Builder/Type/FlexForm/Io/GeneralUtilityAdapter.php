@@ -54,7 +54,7 @@ class GeneralUtilityAdapter extends GeneralUtility implements NoDiInterface
      * @return mixed
      * @see GeneralUtility::xml2array()
      */
-    public static function xml2arrayWithoutCache($string, $NSprefix = '', $reportDocTag = false)
+    public static function xml2arrayWithoutCache($string, string $NSprefix = '', bool $reportDocTag = false)
     {
         return GeneralUtility::xml2arrayProcess($string, $NSprefix, $reportDocTag);
     }

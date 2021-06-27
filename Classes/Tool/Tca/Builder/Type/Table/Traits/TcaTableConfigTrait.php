@@ -427,6 +427,7 @@ trait TcaTableConfigTrait
                 $order = is_numeric($k) ? 'ASC' : strtoupper($v);
                 $list[] = $column . ' ' . $order;
             }
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $columns = implode(', ', $list);
         }
         $this->config['ctrl']['default_sortby'] = $columns;

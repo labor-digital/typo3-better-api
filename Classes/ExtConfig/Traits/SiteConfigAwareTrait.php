@@ -55,7 +55,7 @@ trait SiteConfigAwareTrait
             'locallyCachedConfig',
             'typo.site.*.' . $configPath,
             $this->context->config()->getConfigState(),
-            $callback !== null ? function ($v) use ($callback) {
+            $callback !== null ? static function ($v) use ($callback) {
                 return $callback($v) ?? $v;
             } : null,
             []

@@ -93,6 +93,7 @@ trait CustomAssetTrait
         $this->bindEventHandlerIfRequired();
         
         // Helper to resolve urls
+        /** @noinspection BypassedUrlValidationInspection */
         if (! filter_var($path, FILTER_VALIDATE_URL)) {
             $pathAspect = TypoContext::getInstance()->path();
             $path = $pathAspect->typoPathToRealPath($path);

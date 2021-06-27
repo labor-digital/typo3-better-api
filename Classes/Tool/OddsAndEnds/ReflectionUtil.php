@@ -219,7 +219,7 @@ class ReflectionUtil implements NoDiInterface
             return [];
         }
         
-        $slashStripper = function ($v) {
+        $slashStripper = static function ($v) {
             if (is_string($v)) {
                 return ltrim($v, '\\');
             }

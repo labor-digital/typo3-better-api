@@ -104,11 +104,8 @@ class CustomFieldNode extends AbstractFormElement
         $this->refreshData();
         
         // Check if we can render the field wizard
-        $fieldWizardResult = ['html' => ''];
-        if (method_exists($this, 'renderFieldWizard')) {
-            $fieldWizardResult = $this->renderFieldWizard();
-            $result = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
-        }
+        $fieldWizardResult = $this->renderFieldWizard();
+        $result = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
         
         // Check if we should apply the outer wrap
         if ($this->context->isApplyOuterWrap()) {

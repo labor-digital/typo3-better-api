@@ -1115,17 +1115,15 @@ class Link implements NoDiInterface
                     $uri
                 );
             }
+        } elseif (! empty($this->cHashExcludedArgs)) {
+            // Simulate the ignored cHash fields
+            $uri = CacheHashCalculatorAdapter::runWithConfiguration([
+                'excludedParameters' => $this->cHashExcludedArgs,
+            ], function () use ($ub) {
+                return $ub->buildFrontendUri();
+            });
         } else {
-            if (! empty($this->cHashExcludedArgs)) {
-                // Simulate the ignored cHash fields
-                $uri = CacheHashCalculatorAdapter::runWithConfiguration([
-                    'excludedParameters' => $this->cHashExcludedArgs,
-                ], function () use ($ub) {
-                    return $ub->buildFrontendUri();
-                });
-            } else {
-                $uri = $ub->buildFrontendUri();
-            }
+            $uri = $ub->buildFrontendUri();
         }
         
         // Build the fragment / anchor

@@ -85,7 +85,7 @@ class TcaFieldFlexFormConfig
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Flex.html#ds-pointerfield
      *
      *
-     * @param   string|AbstractField|null  $field
+     * @param   string|int|AbstractField|null  $field
      *
      * @return $this
      */

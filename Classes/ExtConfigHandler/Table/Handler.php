@@ -106,7 +106,7 @@ class Handler extends AbstractExtConfigHandler implements NoDiInterface
         }
         
         // Remove Configuration and Table parts
-        $namespaceParts = array_filter($namespaceParts, function (string $part) {
+        $namespaceParts = array_filter($namespaceParts, static function (string $part) {
             return ! in_array($part, ['Configuration', 'Table'], true);
         });
         

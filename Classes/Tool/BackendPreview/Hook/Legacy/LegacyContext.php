@@ -214,6 +214,7 @@ class LegacyContext
             'tt_content', $row, ['starttime', 'endtime', 'fe_group', 'space_before_class', 'space_after_class']
         );
         if (! empty($GLOBALS['TCA']['tt_content']['ctrl']['descriptionColumn']) && ! empty($record[$GLOBALS['TCA']['tt_content']['ctrl']['descriptionColumn']])) {
+            /** @noinspection NonSecureHtmlspecialcharsUsageInspection */
             $info[] = htmlspecialchars($row[$GLOBALS['TCA']['tt_content']['ctrl']['descriptionColumn']]);
         }
         

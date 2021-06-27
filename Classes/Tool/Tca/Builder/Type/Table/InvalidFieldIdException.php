@@ -23,10 +23,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 
-class InvalidFieldIdException extends TcaBuilderException implements NoDiInterface
+class InvalidFieldIdException extends TcaBuilderException
 {
 
 }

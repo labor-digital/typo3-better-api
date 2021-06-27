@@ -97,14 +97,14 @@ class ExtBaseBetterQuery extends AbstractBetterQuery
     /**
      * This method can be used to include hidden child-relations in the resolved query result.
      *
-     * @param   bool  $settings  Defines which children to include in the result
-     *                           - TRUE: Include all hidden children in all entities
-     *                           - FALSE: Go back to the default behaviour
-     *                           - \Entity\Class\Name: Allow hidden children for all properties of a given entity class
-     *                           - [\Entity\Class\Name, \Entity\Class\AnotherName]: Allow hidden children for all
-     *                           properties of multiple entity classes
-     *                           - [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property", "foo"]:
-     *                           Allow hidden children for either a single property or a list of properties
+     * @param   mixed  $settings  Defines which children to include in the result
+     *                            - TRUE: Include all hidden children in all entities
+     *                            - FALSE: Go back to the default behaviour
+     *                            - \Entity\Class\Name: Allow hidden children for all properties of a given entity class
+     *                            - [\Entity\Class\Name, \Entity\Class\AnotherName]: Allow hidden children for all
+     *                            properties of multiple entity classes
+     *                            - [\Entity\Class\Name => "property", \Entity\Class\AnotherName => ["property", "foo"]:
+     *                            Allow hidden children for either a single property or a list of properties
      *
      * @return $this
      */

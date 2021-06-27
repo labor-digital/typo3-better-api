@@ -327,6 +327,7 @@ class Flex extends AbstractForm
             if (! $node) {
                 // Try to find the parent node
                 $path = $this->parsePath($id);
+                /** @noinspection CallableParameterUseCaseInTypeContextInspection */
                 $id = array_pop($path);
                 $parentNode = $this->findNodeByPath(implode(static::PATH_SEPARATOR, $path));
                 

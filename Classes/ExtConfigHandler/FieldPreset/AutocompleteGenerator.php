@@ -78,7 +78,7 @@ class AutocompleteGenerator implements NoDiInterface
     protected function makePresetSrc(string $key, ReflectionMethod $method): string
     {
         $comment = ReflectionUtil::sanitizeDesc((string)$method->getDocComment());
-        $comment = array_map(function ($line) { return '	 * ' . $line; }, $comment);
+        $comment = array_map(static function ($line) { return '	 * ' . $line; }, $comment);
         
         return '
 	/**

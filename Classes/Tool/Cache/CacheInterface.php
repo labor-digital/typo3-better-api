@@ -45,14 +45,14 @@ interface CacheInterface extends \Psr\SimpleCache\CacheInterface
     /**
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
-     * @param   string  $tag  The tag the entries must have
+     * @param   string|mixed  $tag  The tag the entries must have
      */
     public function flushByTag($tag): bool;
     
     /**
      * Removes all cache entries of this cache which are tagged by any of the specified tags.
      *
-     * @param   string[]  $tags  List of tags
+     * @param   array  $tags  List of tags
      */
     public function flushByTags(array $tags): bool;
     

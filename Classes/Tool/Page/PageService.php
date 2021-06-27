@@ -540,6 +540,10 @@ class PageService implements SingletonInterface
         $pageInfo = $this->getPageInfo($pageId);
         if (! empty($pageInfo['content_from_pid'])) {
             $pidList = Arrays::makeFromStringList($pageInfo['content_from_pid']);
+            if (empty($pidList)) {
+                return $pageId;
+            }
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $pageId = reset($pidList);
         }
         
