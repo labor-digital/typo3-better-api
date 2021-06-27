@@ -4,231 +4,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [10.1.0](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.15...v10.1.0) (2021-06-27)
 
-
-### Features
-
-* bump to stable v10 ([16bf5fa](https://github.com/labor-digital/typo3-better-api/commit/16bf5fa9a03fa087ee8684aa75bcb9e481847b25))
-
-### [9.29.4](https://github.com/labor-digital/typo3-better-api/compare/v9.29.3...v9.29.4) (2021-04-13)
-
-
-### Bug Fixes
-
-* **BeLogWriter:** ensure that %s gets not removed in be output ([2a216c7](https://github.com/labor-digital/typo3-better-api/commit/2a216c7eb08fa5b6a24babee7c2c59a7cf7de591))
-
-### [9.29.3](https://github.com/labor-digital/typo3-better-api/compare/v9.29.2...v9.29.3) (2021-04-13)
-
-
-### Bug Fixes
-
-* **BeLogWriter:** don't add data in the "log_data" field ([ee38e04](https://github.com/labor-digital/typo3-better-api/commit/ee38e04f86f68d5c5e6b5f64454841c8668e7fe9))
-* **BeLogWriter:** remove prepending dash in "data" field ([c234cb2](https://github.com/labor-digital/typo3-better-api/commit/c234cb239878a93d115c59253b6935315d9ed7c6))
-
-### [9.29.2](https://github.com/labor-digital/typo3-better-api/compare/v9.29.1...v9.29.2) (2021-03-18)
-
-
-### Bug Fixes
-
-* **Log:** make sure log configuration gets merged correctly ([044d9e4](https://github.com/labor-digital/typo3-better-api/commit/044d9e42cde71fbfd8f4db0b330798cc4e0d1b79))
-
-### [9.29.1](https://github.com/labor-digital/typo3-better-api/compare/v9.29.0...v9.29.1) (2021-03-18)
-
-## [9.29.0](https://github.com/labor-digital/typo3-better-api/compare/v9.28.2...v9.29.0) (2021-03-18)
-
-
-### Features
-
-* **Log:** implement BeLogWriter ([b436706](https://github.com/labor-digital/typo3-better-api/commit/b4367066e20a61d27d5304740f901cfc9084822e))
-* **Log:** implement StreamWriter + global logging option ([f437237](https://github.com/labor-digital/typo3-better-api/commit/f437237985e40ad2503cc3e4ed5f1de41ccb3e56))
-
-### [9.28.2](https://github.com/labor-digital/typo3-better-api/compare/v9.28.1...v9.28.2) (2021-02-18)
-
-
-### Bug Fixes
-
-* **LinkSetDefinition:** fix documentation issue ([de4b903](https://github.com/labor-digital/typo3-better-api/commit/de4b903cc2d524845446481c587b0c97e0a9dbbe))
-
-### [9.28.1](https://github.com/labor-digital/typo3-better-api/compare/v9.28.0...v9.28.1) (2021-02-03)
-
-
-### Bug Fixes
-
-* **TypoScriptService:** load pageTsConfig at the correct event ([976791f](https://github.com/labor-digital/typo3-better-api/commit/976791fd7fbbc1afa6edfc26e81153f92655d6c0))
-
-## [9.28.0](https://github.com/labor-digital/typo3-better-api/compare/v9.27.0...v9.28.0) (2021-01-21)
-
-
-### Features
-
-* **EnvFacet:** add isFeDebug() and isFeDebug() helpers ([0d13f57](https://github.com/labor-digital/typo3-better-api/commit/0d13f570d7200f46fecf3cb08e13501964cbd2cf))
-
-## [9.27.0](https://github.com/labor-digital/typo3-better-api/compare/v9.26.6...v9.27.0) (2020-12-07)
-
-
-### Features
-
-* **RelationPreset:** add additional options ([a0f807d](https://github.com/labor-digital/typo3-better-api/commit/a0f807d09a1c50243aa6510cd45907fe12250ffb))
-
-### [9.26.6](https://github.com/labor-digital/typo3-better-api/compare/v9.26.5...v9.26.6) (2020-12-02)
-
-
-### Bug Fixes
-
-* **LinkSetRecordLinkBuilder:** handle failing link generation correctly ([3e6328c](https://github.com/labor-digital/typo3-better-api/commit/3e6328c98a1b65994a78dc930744abecbc8221fa))
-
-### [9.26.5](https://github.com/labor-digital/typo3-better-api/compare/v9.26.4...v9.26.5) (2020-11-27)
-
-
-### Bug Fixes
-
-* **StandaloneBetterQuery:** handle empty results in getRelatedRecords correctly ([7a1ae35](https://github.com/labor-digital/typo3-better-api/commit/7a1ae35218f98c3498a917be50d0efd34c36fa67))
-
-### [9.26.4](https://github.com/labor-digital/typo3-better-api/compare/v9.26.3...v9.26.4) (2020-11-02)
-
-
-### Bug Fixes
-
-* **DisplayConditionTrait:** make array based condition handling more reliable ([43b0c52](https://github.com/labor-digital/typo3-better-api/commit/43b0c52da521460763854cd675f8040efd65c9e7))
-
-### [9.26.3](https://github.com/labor-digital/typo3-better-api/compare/v9.26.2...v9.26.3) (2020-10-30)
-
-
-### Bug Fixes
-
-* **SharedCustomElementTrait:** access the correct "customElementOptions" field to read the dataFunc definition ([36c0c9c](https://github.com/labor-digital/typo3-better-api/commit/36c0c9c6dd9f38a2b96d88a9ba4dd195dadad8be))
-
-### [9.26.2](https://github.com/labor-digital/typo3-better-api/compare/v9.26.1...v9.26.2) (2020-10-29)
-
-
-### Bug Fixes
-
-* **BackendPreviewRenderer:** add a linebreak to the beginning of the preview ([c244512](https://github.com/labor-digital/typo3-better-api/commit/c244512e331fc962a6f0af6f6a732f4a0408b62a))
-
-### [9.26.1](https://github.com/labor-digital/typo3-better-api/compare/v9.26.0...v9.26.1) (2020-10-29)
-
-
-### Bug Fixes
-
-* **Simulator:** update tsfe globals entry even if using a cached tsfe instance ([74f0f40](https://github.com/labor-digital/typo3-better-api/commit/74f0f400af62034b24c76847d006068e805aa75e))
-
-## [9.26.0](https://github.com/labor-digital/typo3-better-api/compare/v9.25.2...v9.26.0) (2020-10-29)
-
-
-### Features
-
-* **TypoScript:** backport the v10 dynamic typoScript injection method for v9 ([23c9b2f](https://github.com/labor-digital/typo3-better-api/commit/23c9b2fa6ed5286f8f4035908396277eb87f4f7e))
-
-### [9.25.2](https://github.com/labor-digital/typo3-better-api/compare/v9.25.1...v9.25.2) (2020-10-29)
-
-
-### Bug Fixes
-
-* **Simulation:** multiple performance improvements ([ae40483](https://github.com/labor-digital/typo3-better-api/commit/ae40483bd8f2b3d7654c8aa736955f2808c93cc1))
-
-### [9.25.1](https://github.com/labor-digital/typo3-better-api/compare/v9.25.0...v9.25.1) (2020-10-15)
-
-
-### Bug Fixes
-
-* **LinkSetRecordLinkBuilder:** only build external links if required ([6e06cef](https://github.com/labor-digital/typo3-better-api/commit/6e06cefbc942ad52519b0ada9e5fee036ff65a2c))
-* write cache key in lower case to prevent db issues ([b4d4e9e](https://github.com/labor-digital/typo3-better-api/commit/b4d4e9e4a4b9c3a712a17aab88faab7c99af7000))
-
-## [9.25.0](https://github.com/labor-digital/typo3-better-api/compare/v9.24.2...v9.25.0) (2020-10-14)
-
-
-### Features
-
-* **DbService:** add support to use extbase model name as table name in getQuery() ([259cdbc](https://github.com/labor-digital/typo3-better-api/commit/259cdbc3a215f4e948ab8d5f719c4f46b654d6fb))
-* **Link:** allow link browser registration if a required fragment is present ([560d744](https://github.com/labor-digital/typo3-better-api/commit/560d7444be10f5d9c5cf73a4b5602760d95d7138))
-* **Naming:** implement resolveTableName and resolveCallable methods ([1dbefc3](https://github.com/labor-digital/typo3-better-api/commit/1dbefc3d3f2105b37e014fd01b7fe312e1d8395a))
-* **TypoLink:** add support for complex pid types. ([f0016fc](https://github.com/labor-digital/typo3-better-api/commit/f0016fc370b568abdda04ad02b06ebe77f47a1c9))
-
-
-### Bug Fixes
-
-* **LinkSetGenerator:** add missing, closing brace ([9df3468](https://github.com/labor-digital/typo3-better-api/commit/9df34683f49251177737b99a803cb9e68a7c6f78))
-
-### [9.24.2](https://github.com/labor-digital/typo3-better-api/compare/v9.24.1...v9.24.2) (2020-10-09)
-
-
-### Bug Fixes
-
-* **SiteFacet:** make sure "NullSites" are ignored correctly ([3b0c483](https://github.com/labor-digital/typo3-better-api/commit/3b0c483dc371223ff8624f04aaa51217b787d1ac))
-
-### [9.24.1](https://github.com/labor-digital/typo3-better-api/compare/v9.24.0...v9.24.1) (2020-10-09)
-
-
-### Bug Fixes
-
-* **BetterQuery:** rework language handling ([162fcfa](https://github.com/labor-digital/typo3-better-api/commit/162fcfa505ddb14fb898e3455f9630ef9caceae3))
-
-## [9.24.0](https://github.com/labor-digital/typo3-better-api/compare/v9.23.0...v9.24.0) (2020-10-08)
-
-
-### Features
-
-* **BetterQuery:** allow advanced options on withLanguage() method ([89b5f80](https://github.com/labor-digital/typo3-better-api/commit/89b5f8018794a457ca72d307450898a316babc87))
-* **StandaloneBetterQuery:** add $forSelect property to getQueryBuilder() method ([3bb94e2](https://github.com/labor-digital/typo3-better-api/commit/3bb94e27787e9b95ace6f35126a07cfb87d50b38))
-
-
-### Bug Fixes
-
-* **StandaloneBetterQuery:** remove dev fragment ([83dd3be](https://github.com/labor-digital/typo3-better-api/commit/83dd3bea4f6ebc6cdef2740d5a8ce9c60148f144))
-
-## [9.23.0](https://github.com/labor-digital/typo3-better-api/compare/v9.22.0...v9.23.0) (2020-10-06)
-
-
-### Features
-
-* **TranslationService:** implement translateBe() + deprecate translateMaybe() ([793ca38](https://github.com/labor-digital/typo3-better-api/commit/793ca38d404e7c7103783d463b92e42ea07a99e9))
-* implements option to use "linkSets" as link handlers in the link browser using feature: [#79626](https://github.com/labor-digital/typo3-better-api/issues/79626) ([8c2c6ae](https://github.com/labor-digital/typo3-better-api/commit/8c2c6ae4c46be56a7c405440594567313b9197b2))
-* **ConfigFacet:** add getTsConfigValue() to retrieve tsConfig options ([bf61468](https://github.com/labor-digital/typo3-better-api/commit/bf61468287976b2fb50ed821517451d7816cfda3))
-* **CoreConfigOption:** implement registerRawConfig() to add global configuration through ExtConfig ([8995d12](https://github.com/labor-digital/typo3-better-api/commit/8995d12d0a128393bc4c5fb315400ed5e3b850be))
-* **Event:** implement LinkBrowserAllowedTabsFilterEvent to filter the link browser tabs ([1f5daaf](https://github.com/labor-digital/typo3-better-api/commit/1f5daaf1d9e74f2deeabec5705fb20ef1b7b64a5))
-
-
-### Bug Fixes
-
-* **BackendPreviewService:** render element labels in the backend and not the frontend language ([e069b06](https://github.com/labor-digital/typo3-better-api/commit/e069b065d6399cf68dc6a008ed62c02024e4cdbd))
-* **ExtendedSiteConfiguration:** don't pollute the site config yml files when saving the min the backend ([886e23b](https://github.com/labor-digital/typo3-better-api/commit/886e23b6bb4e4c4e91f4968442afb35627031543))
-* **LinkSetLinks:** add the missing link generator parts ([7a45d5f](https://github.com/labor-digital/typo3-better-api/commit/7a45d5fb45c5dea86dc64713569d14b6be393a45))
-* **PageService:** generate root line more reliably ([f5f630d](https://github.com/labor-digital/typo3-better-api/commit/f5f630d7085a7acfa5466157a6f05a5f6879fe72))
-* **TypoLink:** add exception if getUriBuilder() could not find an instance ([7a600fe](https://github.com/labor-digital/typo3-better-api/commit/7a600fe39bb4746f461b7ba0a67ea0cabe556917))
-
-## [9.22.0](https://github.com/labor-digital/typo3-better-api/compare/v9.21.1...v9.22.0) (2020-09-28)
-
-
-### Features
-
-* **Naming:** add tableNameFromModelClass() ([6f0901b](https://github.com/labor-digital/typo3-better-api/commit/6f0901b215514721c3cfa9886e64a6e98b7d80cf))
-* **PidFacet:** add getSubSet() to retrieve a pid sub-list ([f4f25a4](https://github.com/labor-digital/typo3-better-api/commit/f4f25a4bd2d031e4a345ca05e7325014e8a456ac))
-
-
-### Bug Fixes
-
-* **CacheClearedEvent:** use array for $tags instead of a single tag ([f6aa7fa](https://github.com/labor-digital/typo3-better-api/commit/f6aa7faf3139e15ff41a879e8a5bb6e5f330a559))
-* **ExtendedCacheManager:** add missing flushCachesInGroupByTags() and flushCachesByTags() overrides ([80c4075](https://github.com/labor-digital/typo3-better-api/commit/80c40755a50c4f2c58b99f017ca7e453b64140d0))
-* **TempFs:** only remove the temp fs cache data if the "all" cache is cleared without any tags ([8daf4de](https://github.com/labor-digital/typo3-better-api/commit/8daf4de9e9d83e4387d4798310f4395fc1c86c71))
-
-### [9.21.1](https://github.com/labor-digital/typo3-better-api/compare/v9.21.0...v9.21.1) (2020-09-10)
-
-
-### Bug Fixes
-
-* **BetterApiInit:** don't kill TYPO if no extension uses BetterApi ([3038f96](https://github.com/labor-digital/typo3-better-api/commit/3038f96995917e6aa294af4d799fc974e7fab058))
-
-## [9.21.0](https://github.com/labor-digital/typo3-better-api/compare/v9.20.0...v9.21.0) (2020-08-27)
-
-
-### Features
-
-* add setDefault() to form fields ([b45402c](https://github.com/labor-digital/typo3-better-api/commit/b45402c15ea8bf6d914d3e9d1b57739624f024e5))
-
-
-### Bug Fixes
-
-* **FalFileService:** generate file urls correctly even with external FAL drivers ([c60f03c](https://github.com/labor-digital/typo3-better-api/commit/c60f03c13a8a33c72b7ddf19303120b77ce98e8b))
-
 ## [10.0.0-beta.15](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.14...v10.0.0-beta.15) (2021-06-27)
 
 ## [10.0.0-beta.14](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.13...v10.0.0-beta.14) (2021-06-27)
@@ -780,6 +555,232 @@ All notable changes to this project will be documented in this file. See [standa
 * add get prefix to link context methods + implement getFileLink ([39f7917](https://github.com/labor-digital/typo3-better-api/commit/39f79179ebb2eebdd6a08c4c022ab35f06c76f34))
 * register ContainerAwareTraitPass for di ([8740cc1](https://github.com/labor-digital/typo3-better-api/commit/8740cc1d5ff71f2ddc90fd3ad2f7ce53c8af66a9))
 * remove functions.php's from di service resolution ([d5b41e3](https://github.com/labor-digital/typo3-better-api/commit/d5b41e32d9886004ef06b0e3693b7f369e9d6491))
+
+
+
+### Features
+
+* bump to stable v10 ([16bf5fa](https://github.com/labor-digital/typo3-better-api/commit/16bf5fa9a03fa087ee8684aa75bcb9e481847b25))
+
+### [9.29.4](https://github.com/labor-digital/typo3-better-api/compare/v9.29.3...v9.29.4) (2021-04-13)
+
+
+### Bug Fixes
+
+* **BeLogWriter:** ensure that %s gets not removed in be output ([2a216c7](https://github.com/labor-digital/typo3-better-api/commit/2a216c7eb08fa5b6a24babee7c2c59a7cf7de591))
+
+### [9.29.3](https://github.com/labor-digital/typo3-better-api/compare/v9.29.2...v9.29.3) (2021-04-13)
+
+
+### Bug Fixes
+
+* **BeLogWriter:** don't add data in the "log_data" field ([ee38e04](https://github.com/labor-digital/typo3-better-api/commit/ee38e04f86f68d5c5e6b5f64454841c8668e7fe9))
+* **BeLogWriter:** remove prepending dash in "data" field ([c234cb2](https://github.com/labor-digital/typo3-better-api/commit/c234cb239878a93d115c59253b6935315d9ed7c6))
+
+### [9.29.2](https://github.com/labor-digital/typo3-better-api/compare/v9.29.1...v9.29.2) (2021-03-18)
+
+
+### Bug Fixes
+
+* **Log:** make sure log configuration gets merged correctly ([044d9e4](https://github.com/labor-digital/typo3-better-api/commit/044d9e42cde71fbfd8f4db0b330798cc4e0d1b79))
+
+### [9.29.1](https://github.com/labor-digital/typo3-better-api/compare/v9.29.0...v9.29.1) (2021-03-18)
+
+## [9.29.0](https://github.com/labor-digital/typo3-better-api/compare/v9.28.2...v9.29.0) (2021-03-18)
+
+
+### Features
+
+* **Log:** implement BeLogWriter ([b436706](https://github.com/labor-digital/typo3-better-api/commit/b4367066e20a61d27d5304740f901cfc9084822e))
+* **Log:** implement StreamWriter + global logging option ([f437237](https://github.com/labor-digital/typo3-better-api/commit/f437237985e40ad2503cc3e4ed5f1de41ccb3e56))
+
+### [9.28.2](https://github.com/labor-digital/typo3-better-api/compare/v9.28.1...v9.28.2) (2021-02-18)
+
+
+### Bug Fixes
+
+* **LinkSetDefinition:** fix documentation issue ([de4b903](https://github.com/labor-digital/typo3-better-api/commit/de4b903cc2d524845446481c587b0c97e0a9dbbe))
+
+### [9.28.1](https://github.com/labor-digital/typo3-better-api/compare/v9.28.0...v9.28.1) (2021-02-03)
+
+
+### Bug Fixes
+
+* **TypoScriptService:** load pageTsConfig at the correct event ([976791f](https://github.com/labor-digital/typo3-better-api/commit/976791fd7fbbc1afa6edfc26e81153f92655d6c0))
+
+## [9.28.0](https://github.com/labor-digital/typo3-better-api/compare/v9.27.0...v9.28.0) (2021-01-21)
+
+
+### Features
+
+* **EnvFacet:** add isFeDebug() and isFeDebug() helpers ([0d13f57](https://github.com/labor-digital/typo3-better-api/commit/0d13f570d7200f46fecf3cb08e13501964cbd2cf))
+
+## [9.27.0](https://github.com/labor-digital/typo3-better-api/compare/v9.26.6...v9.27.0) (2020-12-07)
+
+
+### Features
+
+* **RelationPreset:** add additional options ([a0f807d](https://github.com/labor-digital/typo3-better-api/commit/a0f807d09a1c50243aa6510cd45907fe12250ffb))
+
+### [9.26.6](https://github.com/labor-digital/typo3-better-api/compare/v9.26.5...v9.26.6) (2020-12-02)
+
+
+### Bug Fixes
+
+* **LinkSetRecordLinkBuilder:** handle failing link generation correctly ([3e6328c](https://github.com/labor-digital/typo3-better-api/commit/3e6328c98a1b65994a78dc930744abecbc8221fa))
+
+### [9.26.5](https://github.com/labor-digital/typo3-better-api/compare/v9.26.4...v9.26.5) (2020-11-27)
+
+
+### Bug Fixes
+
+* **StandaloneBetterQuery:** handle empty results in getRelatedRecords correctly ([7a1ae35](https://github.com/labor-digital/typo3-better-api/commit/7a1ae35218f98c3498a917be50d0efd34c36fa67))
+
+### [9.26.4](https://github.com/labor-digital/typo3-better-api/compare/v9.26.3...v9.26.4) (2020-11-02)
+
+
+### Bug Fixes
+
+* **DisplayConditionTrait:** make array based condition handling more reliable ([43b0c52](https://github.com/labor-digital/typo3-better-api/commit/43b0c52da521460763854cd675f8040efd65c9e7))
+
+### [9.26.3](https://github.com/labor-digital/typo3-better-api/compare/v9.26.2...v9.26.3) (2020-10-30)
+
+
+### Bug Fixes
+
+* **SharedCustomElementTrait:** access the correct "customElementOptions" field to read the dataFunc definition ([36c0c9c](https://github.com/labor-digital/typo3-better-api/commit/36c0c9c6dd9f38a2b96d88a9ba4dd195dadad8be))
+
+### [9.26.2](https://github.com/labor-digital/typo3-better-api/compare/v9.26.1...v9.26.2) (2020-10-29)
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderer:** add a linebreak to the beginning of the preview ([c244512](https://github.com/labor-digital/typo3-better-api/commit/c244512e331fc962a6f0af6f6a732f4a0408b62a))
+
+### [9.26.1](https://github.com/labor-digital/typo3-better-api/compare/v9.26.0...v9.26.1) (2020-10-29)
+
+
+### Bug Fixes
+
+* **Simulator:** update tsfe globals entry even if using a cached tsfe instance ([74f0f40](https://github.com/labor-digital/typo3-better-api/commit/74f0f400af62034b24c76847d006068e805aa75e))
+
+## [9.26.0](https://github.com/labor-digital/typo3-better-api/compare/v9.25.2...v9.26.0) (2020-10-29)
+
+
+### Features
+
+* **TypoScript:** backport the v10 dynamic typoScript injection method for v9 ([23c9b2f](https://github.com/labor-digital/typo3-better-api/commit/23c9b2fa6ed5286f8f4035908396277eb87f4f7e))
+
+### [9.25.2](https://github.com/labor-digital/typo3-better-api/compare/v9.25.1...v9.25.2) (2020-10-29)
+
+
+### Bug Fixes
+
+* **Simulation:** multiple performance improvements ([ae40483](https://github.com/labor-digital/typo3-better-api/commit/ae40483bd8f2b3d7654c8aa736955f2808c93cc1))
+
+### [9.25.1](https://github.com/labor-digital/typo3-better-api/compare/v9.25.0...v9.25.1) (2020-10-15)
+
+
+### Bug Fixes
+
+* **LinkSetRecordLinkBuilder:** only build external links if required ([6e06cef](https://github.com/labor-digital/typo3-better-api/commit/6e06cefbc942ad52519b0ada9e5fee036ff65a2c))
+* write cache key in lower case to prevent db issues ([b4d4e9e](https://github.com/labor-digital/typo3-better-api/commit/b4d4e9e4a4b9c3a712a17aab88faab7c99af7000))
+
+## [9.25.0](https://github.com/labor-digital/typo3-better-api/compare/v9.24.2...v9.25.0) (2020-10-14)
+
+
+### Features
+
+* **DbService:** add support to use extbase model name as table name in getQuery() ([259cdbc](https://github.com/labor-digital/typo3-better-api/commit/259cdbc3a215f4e948ab8d5f719c4f46b654d6fb))
+* **Link:** allow link browser registration if a required fragment is present ([560d744](https://github.com/labor-digital/typo3-better-api/commit/560d7444be10f5d9c5cf73a4b5602760d95d7138))
+* **Naming:** implement resolveTableName and resolveCallable methods ([1dbefc3](https://github.com/labor-digital/typo3-better-api/commit/1dbefc3d3f2105b37e014fd01b7fe312e1d8395a))
+* **TypoLink:** add support for complex pid types. ([f0016fc](https://github.com/labor-digital/typo3-better-api/commit/f0016fc370b568abdda04ad02b06ebe77f47a1c9))
+
+
+### Bug Fixes
+
+* **LinkSetGenerator:** add missing, closing brace ([9df3468](https://github.com/labor-digital/typo3-better-api/commit/9df34683f49251177737b99a803cb9e68a7c6f78))
+
+### [9.24.2](https://github.com/labor-digital/typo3-better-api/compare/v9.24.1...v9.24.2) (2020-10-09)
+
+
+### Bug Fixes
+
+* **SiteFacet:** make sure "NullSites" are ignored correctly ([3b0c483](https://github.com/labor-digital/typo3-better-api/commit/3b0c483dc371223ff8624f04aaa51217b787d1ac))
+
+### [9.24.1](https://github.com/labor-digital/typo3-better-api/compare/v9.24.0...v9.24.1) (2020-10-09)
+
+
+### Bug Fixes
+
+* **BetterQuery:** rework language handling ([162fcfa](https://github.com/labor-digital/typo3-better-api/commit/162fcfa505ddb14fb898e3455f9630ef9caceae3))
+
+## [9.24.0](https://github.com/labor-digital/typo3-better-api/compare/v9.23.0...v9.24.0) (2020-10-08)
+
+
+### Features
+
+* **BetterQuery:** allow advanced options on withLanguage() method ([89b5f80](https://github.com/labor-digital/typo3-better-api/commit/89b5f8018794a457ca72d307450898a316babc87))
+* **StandaloneBetterQuery:** add $forSelect property to getQueryBuilder() method ([3bb94e2](https://github.com/labor-digital/typo3-better-api/commit/3bb94e27787e9b95ace6f35126a07cfb87d50b38))
+
+
+### Bug Fixes
+
+* **StandaloneBetterQuery:** remove dev fragment ([83dd3be](https://github.com/labor-digital/typo3-better-api/commit/83dd3bea4f6ebc6cdef2740d5a8ce9c60148f144))
+
+## [9.23.0](https://github.com/labor-digital/typo3-better-api/compare/v9.22.0...v9.23.0) (2020-10-06)
+
+
+### Features
+
+* **TranslationService:** implement translateBe() + deprecate translateMaybe() ([793ca38](https://github.com/labor-digital/typo3-better-api/commit/793ca38d404e7c7103783d463b92e42ea07a99e9))
+* implements option to use "linkSets" as link handlers in the link browser using feature: [#79626](https://github.com/labor-digital/typo3-better-api/issues/79626) ([8c2c6ae](https://github.com/labor-digital/typo3-better-api/commit/8c2c6ae4c46be56a7c405440594567313b9197b2))
+* **ConfigFacet:** add getTsConfigValue() to retrieve tsConfig options ([bf61468](https://github.com/labor-digital/typo3-better-api/commit/bf61468287976b2fb50ed821517451d7816cfda3))
+* **CoreConfigOption:** implement registerRawConfig() to add global configuration through ExtConfig ([8995d12](https://github.com/labor-digital/typo3-better-api/commit/8995d12d0a128393bc4c5fb315400ed5e3b850be))
+* **Event:** implement LinkBrowserAllowedTabsFilterEvent to filter the link browser tabs ([1f5daaf](https://github.com/labor-digital/typo3-better-api/commit/1f5daaf1d9e74f2deeabec5705fb20ef1b7b64a5))
+
+
+### Bug Fixes
+
+* **BackendPreviewService:** render element labels in the backend and not the frontend language ([e069b06](https://github.com/labor-digital/typo3-better-api/commit/e069b065d6399cf68dc6a008ed62c02024e4cdbd))
+* **ExtendedSiteConfiguration:** don't pollute the site config yml files when saving the min the backend ([886e23b](https://github.com/labor-digital/typo3-better-api/commit/886e23b6bb4e4c4e91f4968442afb35627031543))
+* **LinkSetLinks:** add the missing link generator parts ([7a45d5f](https://github.com/labor-digital/typo3-better-api/commit/7a45d5fb45c5dea86dc64713569d14b6be393a45))
+* **PageService:** generate root line more reliably ([f5f630d](https://github.com/labor-digital/typo3-better-api/commit/f5f630d7085a7acfa5466157a6f05a5f6879fe72))
+* **TypoLink:** add exception if getUriBuilder() could not find an instance ([7a600fe](https://github.com/labor-digital/typo3-better-api/commit/7a600fe39bb4746f461b7ba0a67ea0cabe556917))
+
+## [9.22.0](https://github.com/labor-digital/typo3-better-api/compare/v9.21.1...v9.22.0) (2020-09-28)
+
+
+### Features
+
+* **Naming:** add tableNameFromModelClass() ([6f0901b](https://github.com/labor-digital/typo3-better-api/commit/6f0901b215514721c3cfa9886e64a6e98b7d80cf))
+* **PidFacet:** add getSubSet() to retrieve a pid sub-list ([f4f25a4](https://github.com/labor-digital/typo3-better-api/commit/f4f25a4bd2d031e4a345ca05e7325014e8a456ac))
+
+
+### Bug Fixes
+
+* **CacheClearedEvent:** use array for $tags instead of a single tag ([f6aa7fa](https://github.com/labor-digital/typo3-better-api/commit/f6aa7faf3139e15ff41a879e8a5bb6e5f330a559))
+* **ExtendedCacheManager:** add missing flushCachesInGroupByTags() and flushCachesByTags() overrides ([80c4075](https://github.com/labor-digital/typo3-better-api/commit/80c40755a50c4f2c58b99f017ca7e453b64140d0))
+* **TempFs:** only remove the temp fs cache data if the "all" cache is cleared without any tags ([8daf4de](https://github.com/labor-digital/typo3-better-api/commit/8daf4de9e9d83e4387d4798310f4395fc1c86c71))
+
+### [9.21.1](https://github.com/labor-digital/typo3-better-api/compare/v9.21.0...v9.21.1) (2020-09-10)
+
+
+### Bug Fixes
+
+* **BetterApiInit:** don't kill TYPO if no extension uses BetterApi ([3038f96](https://github.com/labor-digital/typo3-better-api/commit/3038f96995917e6aa294af4d799fc974e7fab058))
+
+## [9.21.0](https://github.com/labor-digital/typo3-better-api/compare/v9.20.0...v9.21.0) (2020-08-27)
+
+
+### Features
+
+* add setDefault() to form fields ([b45402c](https://github.com/labor-digital/typo3-better-api/commit/b45402c15ea8bf6d914d3e9d1b57739624f024e5))
+
+
+### Bug Fixes
+
+* **FalFileService:** generate file urls correctly even with external FAL drivers ([c60f03c](https://github.com/labor-digital/typo3-better-api/commit/c60f03c13a8a33c72b7ddf19303120b77ce98e8b))
 
 ## [9.20.0](https://github.com/labor-digital/typo3-better-api/compare/v9.19.1...v9.20.0) (2020-08-18)
 
