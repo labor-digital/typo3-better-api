@@ -1,6 +1,7 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+declare(strict_types=1);
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.22 at 13:56
+ * Last modified: 2021.02.23 at 11:31
  */
 /** @var $_EXTKEY string */
 $EM_CONF[$_EXTKEY] = [
-	"title"            => "Better API",
-	"description"      => "A package that overhauls the way you work with TYPO3 providing you with a new, better core API",
-	"author"           => "Martin Neundorfer",
-	"author_email"     => "m.neundorfer@labor.digital",
-	"category"         => "misc",
-	"author_company"   => "LABOR.digital",
-	"shy"              => "",
-	"conflicts"        => "",
-	"priority"         => "",
-	"module"           => "",
-	"state"            => "stable",
-	"internal"         => "",
-	"uploadfolder"     => 0,
-	"createDirs"       => "",
-	"modify_tables"    => "",
-	"clearCacheOnLoad" => 1,
-	"lockType"         => "",
-	"version"          => "9.29.4",
-	"constraints"      => [
-		"depends"   => [
-			"typo3" => "9.0.0-9.99.99",
-		],
-		"conflicts" => [
-		],
-		"suggests"  => [
-		],
-	],
-	"suggests"         => [
-	],
+    'title' => 'T3BA',
+    'description' => 'A package that overhauls the way you work with TYPO3 providing you with a new, better core API',
+    'author' => 'Martin Neundorfer',
+    'author_email' => 'm.neundorfer@labor.digital',
+    'category' => 'misc',
+    'author_company' => 'LABOR.digital',
+    'shy' => '',
+    'conflicts' => '',
+    'priority' => '',
+    'module' => '',
+    'state' => 'beta',
+    'internal' => '',
+    'uploadfolder' => 0,
+    'createDirs' => '',
+    'modify_tables' => '',
+    'clearCacheOnLoad' => 1,
+    'lockType' => '',
+    'version' => '10.0.0',
+    'constraints' => [
+        'depends' => [
+            'typo3' => '10.0.0-10.99.99',
+        ],
+        'conflicts' => [
+        ],
+        'suggests' => [
+        ],
+    ],
+    'suggests' => [
+    ],
 ];

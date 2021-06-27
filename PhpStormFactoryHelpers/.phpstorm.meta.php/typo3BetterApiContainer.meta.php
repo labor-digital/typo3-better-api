@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.22 at 14:14
+ * Last modified: 2021.04.29 at 22:19
  */
 
 namespace PHPSTORM_META {
     
-    use LaborDigital\Typo3BetterApi\Container\CommonDependencyTrait;
-    use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-    use LaborDigital\Typo3BetterApi\Container\ContainerAwareTrait;
-    use LaborDigital\Typo3BetterApi\Container\LazyServiceDependencyTrait;
-    use LaborDigital\Typo3BetterApi\Container\TypoContainer;
-    use LaborDigital\Typo3BetterApi\Container\TypoContainerInterface;
-    use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
+    use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+    use LaborDigital\T3ba\Core\Di\StaticContainerAwareTrait;
+    use LaborDigital\T3ba\TypoContext\DependencyInjectionFacet;
+    use Neunerlei\EventBus\EventBusInterface;
     use Psr\Container\ContainerInterface;
+    use Psr\EventDispatcher\EventDispatcherInterface;
+    use TYPO3\CMS\Core\Utility\GeneralUtility;
     use TYPO3\CMS\Extbase\Object\ObjectManager;
     use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
     
@@ -34,20 +33,18 @@ namespace PHPSTORM_META {
     override(ObjectManager::get(0), type(0));
     override(ObjectManagerInterface::get(0), type(0));
     override(ContainerInterface::get(0), type(0));
+    override(GeneralUtility::makeInstance(0), type(0));
     
     // Better API
-    override(TypoContainer::get(0), type(0));
-    override(TypoContainer::getWithoutDi(0), type(0));
-    override(TypoContainerInterface::get(0), type(0));
-    override(TypoContainerInterface::getWithoutDi(0), type(0));
-    override(CommonDependencyTrait::getInstanceOf(0), type(0));
-    override(CommonDependencyTrait::getSingletonOf(0), type(0));
-    override(ContainerAwareTrait::getInstanceOf(0), type(0));
-    override(ContainerAwareTrait::getSingletonOf(0), type(0));
+    override(ContainerAwareTrait::getService(0), type(0));
+    override(StaticContainerAwareTrait::getService(0), type(0));
+    override(DependencyInjectionFacet::getService(0), type(0));
     
-    // Deprecated
-    override(CommonServiceLocatorTrait::getInstanceOf(0), type(0));
-    override(LazyServiceDependencyTrait::getInstanceOf(0), type(0));
-    override(LazyServiceDependencyTrait::getService(0), type(0));
-    override(ExtConfigContext::getInstanceOf(0), type(0));
+    override(ContainerAwareTrait::makeInstance(0), type(0));
+    override(StaticContainerAwareTrait::makeInstance(0), type(0));
+    override(DependencyInjectionFacet::makeInstance(0), type(0));
+    
+    override(TypoEventBus::dispatch(0), type(0));
+    override(EventBusInterface::dispatch(0), type(0));
+    override(EventDispatcherInterface::dispatch(0), type(0));
 }

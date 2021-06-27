@@ -1,6 +1,6 @@
 <?php
-/**
- * Copyright 2020 LABOR.digital
+/*
+ * Copyright 2021 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,76 +14,106 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2020.03.21 at 21:11
+ * Last modified: 2021.05.12 at 14:06
  */
 
-namespace LaborDigital\Typo3BetterApi\ExtConfig;
+declare(strict_types=1);
 
-use LaborDigital\Typo3BetterApi\BackendForms\TableSqlGenerator;
-use LaborDigital\Typo3BetterApi\Container\CommonServiceLocatorTrait;
-use LaborDigital\Typo3BetterApi\DataHandler\DataHandlerActionService;
-use LaborDigital\Typo3BetterApi\ExtConfig\Extension\ExtConfigExtensionRegistry;
-use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionList;
-use LaborDigital\Typo3BetterApi\FileAndFolder\TempFs\TempFs;
-use LaborDigital\Typo3BetterApi\TypoContext\TypoContext;
 
-/**
- * Class ExtConfigContext
- *
- * @package LaborDigital\Typo3BetterApi\ExtConfig
- *
- * @property TableSqlGenerator          $SqlGenerator
- * @property DataHandlerActionService   $DataHandlerActions
- * @property TypoContext                $TypoContext
- * @property TempFs                     $Fs
- * @property ExtConfigOptionList        $OptionList
- * @property ExtConfigExtensionRegistry $ExtensionRegistry
- */
-class ExtConfigContext
+namespace LaborDigital\T3ba\ExtConfig;
+
+
+use LaborDigital\T3ba\Core\Di\DelegateContainer;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\TypoContext\EnvFacet;
+use Neunerlei\Configuration\Loader\ConfigContext;
+use Psr\Container\ContainerInterface;
+use TYPO3\CMS\Core\Package\Package;
+use TYPO3\CMS\Core\Package\PackageManager;
+
+class ExtConfigContext extends ConfigContext implements NoDiInterface
 {
-    use CommonServiceLocatorTrait;
-    use ExtConfigContextPublicServiceTrait {
-        ExtConfigContextPublicServiceTrait::getInstanceOf insteadof CommonServiceLocatorTrait;
-        ExtConfigContextPublicServiceTrait::injectContainer insteadof CommonServiceLocatorTrait;
-    }
+    /**
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigService
+     */
+    protected $extConfigService;
     
     /**
-     * The vendor name for the currently configured extension
-     *
-     * @var string
+     * @var TypoContext
      */
-    protected $vendor = 'LIMBO';
+    protected $typoContext;
     
     /**
-     * The extKey for the currently configured extension
+     * Holds the cached namespace to ext key and vendor value map
      *
-     * @var string
+     * @var array
      */
-    protected $extKey = 'LIMBO';
+    protected $extKeyVendorCache = [];
     
     /**
      * ExtConfigContext constructor.
      *
-     * @param   \LaborDigital\Typo3BetterApi\TypoContext\TypoContext  $context
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigService  $extConfigService
      */
-    public function __construct(TypoContext $context)
+    public function __construct(ExtConfigService $extConfigService)
     {
-        $this->setLocalSingleton(TempFs::class, TempFs::makeInstance('extConfig'));
-        $this->setLocalSingleton(ExtConfigExtensionRegistry::class,
-            $this->getInstanceOf(ExtConfigExtensionRegistry::class, [$this]));
-        $this->addToServiceMap([
-            'SqlGenerator'       => function () {
-                return $this->SqlGenerator();
-            },
-            'DataHandlerActions' => function () {
-                return $this->DataHandlerActions();
-            },
-            'TypoContext'        => $context,
-            'Fs'                 => $this->getSingletonOf(TempFs::class),
-            'ExtensionRegistry'  => function () {
-                return $this->ExtensionRegistry();
-            },
-        ]);
+        $this->extConfigService = $extConfigService;
+    }
+    
+    /**
+     * Returns the typo context instance if it was provided by the lifecycle yet
+     *
+     * @return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
+     */
+    public function getTypoContext(): TypoContext
+    {
+        if (! $this->typoContext) {
+            throw new ExtConfigException('You can\'t access the TypoContext object here, because it is to early in the lifecycle!');
+        }
+        
+        return $this->typoContext;
+    }
+    
+    /**
+     * Allows to inject the typo context instance
+     *
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $typoContext
+     *
+     * @return $this
+     */
+    public function setTypoContext(TypoContext $typoContext): self
+    {
+        $this->typoContext = $typoContext;
+        
+        return $this;
+    }
+    
+    /**
+     * Returns multiple environment related constraint helpers
+     *
+     * @return \LaborDigital\T3ba\TypoContext\EnvFacet
+     */
+    public function env(): EnvFacet
+    {
+        if ($this->typoContext) {
+            return $this->typoContext->env();
+        }
+        
+        // Fallback if used to early in the lifecycle
+        return new EnvFacet();
+    }
+    
+    /**
+     * Returns the instance of the ext config service
+     *
+     * @return \LaborDigital\T3ba\ExtConfig\ExtConfigService
+     */
+    public function getExtConfigService(): ExtConfigService
+    {
+        return $this->extConfigService;
     }
     
     /**
@@ -91,19 +121,9 @@ class ExtConfigContext
      *
      * @return string
      */
-    public function getVendor(): string
+    public function getVendor(): ?string
     {
-        return $this->vendor;
-    }
-    
-    /**
-     * Can be used to set the vendor name of the current configuration
-     *
-     * @param   string  $vendor
-     */
-    public function setVendor(string $vendor): void
-    {
-        $this->vendor = $vendor;
+        return $this->getExtKeyAndVendorFromNamespace()[0];
     }
     
     /**
@@ -113,17 +133,7 @@ class ExtConfigContext
      */
     public function getExtKey(): string
     {
-        return $this->extKey;
-    }
-    
-    /**
-     * Is used to set the extension key for the current configuration
-     *
-     * @param   string  $extKey
-     */
-    public function setExtKey(string $extKey): void
-    {
-        $this->extKey = $extKey;
+        return $this->getExtKeyAndVendorFromNamespace()[1];
     }
     
     /**
@@ -140,9 +150,9 @@ class ExtConfigContext
      * This helper can be used to replace {{extKey}}, {{extKeyWithVendor}} and {{vendor}}
      * inside of keys and values with the proper value for the current context
      *
-     * @param   array|mixed  $raw  The value which should be traversed for markers
+     * @param   mixed  $raw  The value which should be traversed for markers
      *
-     * @return array|mixed
+     * @return mixed
      */
     public function replaceMarkers($raw)
     {
@@ -152,15 +162,70 @@ class ExtConfigContext
             }
         } elseif (is_string($raw)) {
             $markers = [
-                '{{extKey}}'           => $this->getExtKey(),
+                '{{extKey}}' => $this->getExtKey(),
                 '{{extKeyWithVendor}}' => $this->getExtKeyWithVendor(),
-                '{{vendor}}'           => $this->getVendor(),
+                '{{vendor}}' => $this->getVendor(),
             ];
             
             return str_ireplace(array_keys($markers), $markers, $raw);
         }
         
         return $raw;
+    }
+    
+    /**
+     * This helper allows you to resolve either a single pid entry or a list of multiple pids at once.
+     * It will also take replaceMarkers into account before requesting the pids
+     *
+     * @param   string|int|array  $keys      Either the single key or an array of keys to retrieve
+     * @param   int               $fallback  A fallback to use if the pid was not found.
+     *                                       If not given, the method will throw an exception on a missing pid
+     *
+     * @return array|int
+     * @see \LaborDigital\T3ba\TypoContext\PidFacet::get()
+     */
+    public function resolvePids($keys, int $fallback = -1)
+    {
+        if (empty($keys)) {
+            return $keys;
+        }
+        
+        $keys = $this->replaceMarkers($keys);
+        
+        if (is_array($keys)) {
+            return $this->getTypoContext()->pid()->getMultiple($keys, $fallback);
+        }
+        
+        return $this->getTypoContext()->pid()->get($keys, $fallback);
+    }
+    
+    /**
+     * Helper to resolve either a single or an array of table names into their real table name.
+     * It will unfold "..." prefixed table names to a valid ext base table name, or convert
+     * table/model class names to their table name using NamingUtil
+     *
+     * @param   array|string|object  $tableName
+     *
+     * @return array|string
+     * @see NamingUtil::resolveTableName()
+     */
+    public function resolveTableName($tableName)
+    {
+        if (is_array($tableName)) {
+            return array_map([$this, 'resolveTableName'], $tableName);
+        }
+        
+        if (is_string($tableName) && strpos($tableName, '...') === 0) {
+            return implode('_', array_filter([
+                'tx',
+                NamingUtil::flattenExtKey($this->getExtKey()),
+                'domain',
+                'model',
+                substr($tableName, 3),
+            ]));
+        }
+        
+        return NamingUtil::resolveTableName($tableName);
     }
     
     /**
@@ -176,81 +241,50 @@ class ExtConfigContext
      */
     public function runWithExtKeyAndVendor(string $extKey, ?string $vendor, callable $callback)
     {
-        // Store old context values
-        $backupExtKey = $this->getExtKey();
-        $backupVendor = $this->getVendor();
+        $namespace = empty($vendor) ? $extKey : $vendor . '.' . $extKey;
         
-        // Update the context
-        $this->setExtKey($extKey);
-        $this->setVendor((string)$vendor);
-        
-        // Call the callback
-        $result = call_user_func($callback);
-        
-        // Restore the context
-        $this->setExtKey($backupExtKey);
-        $this->setVendor($backupVendor);
-        
-        // Done
-        return $result;
+        return $this->runWithNamespace($namespace, $callback);
     }
     
     /**
-     * This method does essentially the same as runWithExtKeyAndVendor() but receives a "data" array
-     * that is passed to the extConfig's getCachedValueOrRun() callbacks.
+     * Returns the instance of the TYPO3 package configuration for the currently configured extension
      *
-     * It will automatically iterate over all elements in data and call the given $callback once,
-     * for each entry. Every time the callback is updated the extkey and vendor stored by the cached
-     * value is set for this context.
-     *
-     * The given callback will receive the $value and $key as arguments
-     *
-     * @param   array     $data
-     * @param   callable  $callback
+     * @return \TYPO3\CMS\Core\Package\Package
      */
-    public function runWithCachedValueDataScope(array $data, callable $callback)
+    public function getPackage(): Package
     {
-        foreach ($data as $k => $el) {
-            $this->runWithExtKeyAndVendor($el['extKey'], $el['vendor'], function () use ($callback, $el, $k) {
-                call_user_func($callback, $el['value'], $k);
-            });
-        }
+        return $this->getLoaderContext()
+                    ->getInstance(PackageManager::class)
+                    ->getPackage($this->getExtKey());
     }
     
     /**
-     * This method is quite similar to runWithCachedValueDataScope(). The main and only difference is,
-     * that it only uses the given $data stack to retrieve the first possible ext key and vendor to hydrate the context,
-     * before calling the given callback.
+     * Returns the instance of the dependency injection container
      *
-     * @param   array     $data
-     * @param   callable  $callback
-     *
-     * @return mixed|null
-     * @see runWithCachedValueDataScope()
+     * @return \Psr\Container\ContainerInterface
      */
-    public function runWithFirstCachedValueDataScope(array $data, callable $callback)
+    public function getContainer(): ContainerInterface
     {
-        foreach ($data as $k => $el) {
-            return $this->runWithExtKeyAndVendor($el['extKey'], $el['vendor'], function () use ($callback, $el, $k) {
-                return call_user_func($callback, $el['value'], $k);
-            });
+        return DelegateContainer::getInstance();
+    }
+    
+    /**
+     * Extracts ext key and vendor from the currently set configuration namespace
+     *
+     * @return array
+     */
+    protected function getExtKeyAndVendorFromNamespace(): array
+    {
+        $namespace = $this->getNamespace();
+        if (isset($this->extKeyVendorCache[$namespace])) {
+            return $this->extKeyVendorCache[$namespace];
         }
         
-        return null;
-    }
-    
-    /**
-     * Internal helper to bind the option list as late property
-     *
-     * @param $optionList
-     *
-     * @throws \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException
-     */
-    public function __injectOptionList($optionList)
-    {
-        if (! $optionList instanceof ExtConfigOptionList) {
-            throw new ExtConfigException('The given option list is not valid!');
-        }
-        $this->addToServiceMap(['OptionList' => $optionList]);
+        $parts = explode('.', $namespace);
+        
+        return $this->extKeyVendorCache[$namespace] = [
+            isset($parts[1]) ? (string)$parts[0] : null,
+            $parts[1] ?? $parts[0],
+        ];
     }
 }
