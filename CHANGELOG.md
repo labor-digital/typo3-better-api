@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-beta.13](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.12...v10.0.0-beta.13) (2021-06-27)
+
+
+### Features
+
+* **BackendPreview:** move FieldListRenderer to Tool\Rendering namespace ([065c968](https://github.com/labor-digital/typo3-better-api/commit/065c968bd6e19d11a9cfa387ce09f78bb44d92d3))
+* **Kernel:** implement onInitHooks ([c6f5de0](https://github.com/labor-digital/typo3-better-api/commit/c6f5de043f3ee153c3ff79e2687d0e41594c5681))
+* **Rendering:** improve field and record table renderer output ([2ae8e4a](https://github.com/labor-digital/typo3-better-api/commit/2ae8e4acbd14bff9e3df101f78076f6b52e24a48))
+
+
+### Bug Fixes
+
+* **ContentTypeApplier:** further harden virtual column removal ([0d39a30](https://github.com/labor-digital/typo3-better-api/commit/0d39a30f48c2bb840bb1773d0ec7226a168d1b0f))
+* **ContentTypeApplier:** make sure all virtual columns get dropped if no extension table exists ([4491f27](https://github.com/labor-digital/typo3-better-api/commit/4491f2773c7e44caa4fe5c8cd4845cb58db3e9e1))
+* **Event\SaveEventAdapter:** don't emit SaveAfterDbOperationsEvent if an error occurred ([9fff219](https://github.com/labor-digital/typo3-better-api/commit/9fff2191230302046091fd92d049bd5d0ef1cbbe))
+* **ExtConfigHandler:** remove unnecessary NotFoundException ([1a98329](https://github.com/labor-digital/typo3-better-api/commit/1a98329ee1760753bfb1f270ed2aa0c9e8a95bdf))
+* **FieldPreset:** fix visibility issue on date fields + automatically use "int" as storage type ([30b1548](https://github.com/labor-digital/typo3-better-api/commit/30b1548b808f2ac9b30fab90364f390697e3c84f))
+* **NamingUtil:** prefer using getServiceOrInstance() and use PHP8 function names ([949ec27](https://github.com/labor-digital/typo3-better-api/commit/949ec272f011e3168e1941819e9903e74bc5c986))
+* **TableDefaults:** use frames palette under tabs.appearance ([0dddf37](https://github.com/labor-digital/typo3-better-api/commit/0dddf37a2ae371acbca937ff72889f9f24114c80))
+* **Tca\Field:** generate palette variants more reliably ([cb5ee95](https://github.com/labor-digital/typo3-better-api/commit/cb5ee95ccc25fa06784b80ca708b5dd8fd85bed9))
+* **TypoContext:** make getServiceOrInstance public on DependencyInjectionFacet ([6b97f2c](https://github.com/labor-digital/typo3-better-api/commit/6b97f2ca3b62346c09205514f298cc33f58b4f66))
+
 ## [10.0.0-beta.12](https://github.com/labor-digital/typo3-better-api/compare/v10.0.0-beta.11...v10.0.0-beta.12) (2021-06-22)
 
 
