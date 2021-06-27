@@ -80,7 +80,7 @@ class PreviewRenderingEvent
     /**
      * BackendPreviewRenderingEvent constructor.
      *
-     * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem        $item
+     * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem|null   $item
      * @param   \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils  $utils
      * @param   string|null                                                      $pluginVariant
      */

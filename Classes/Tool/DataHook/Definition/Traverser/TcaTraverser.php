@@ -42,6 +42,7 @@ class TcaTraverser extends AbstractTraverser
      * TcaTraverser constructor.
      *
      * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\Traverser\FlexFormTraverser  $flexFormTraverser
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus                            $eventBus
      */
     public function __construct(FlexFormTraverser $flexFormTraverser, TypoEventBus $eventBus)
     {

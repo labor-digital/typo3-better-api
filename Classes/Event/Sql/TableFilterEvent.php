@@ -63,13 +63,6 @@ class TableFilterEvent
      */
     protected $tableToDump;
     
-    /**
-     * TableFilterEvent constructor.
-     *
-     * @param   string                       $tableName
-     * @param   \Doctrine\DBAL\Schema\Table  $initialTable
-     * @param   \Doctrine\DBAL\Schema\Table  $tableToDump
-     */
     public function __construct(string $tableName, Table $initialTable, ?Table $tableToDump)
     {
         $this->tableName = $tableName;

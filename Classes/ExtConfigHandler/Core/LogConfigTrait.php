@@ -42,8 +42,8 @@ trait LogConfigTrait
      * Internal helper to build the options array based on the given input.
      * Allows to add additional config definitions to be used for different log type.
      *
-     * @param   array  $options
-     * @param   array  $additionalDefinition
+     * @param   array|null  $options
+     * @param   array       $additionalDefinition
      *
      * @return array
      */

@@ -61,7 +61,6 @@ class Hydrator implements PublicServiceInterface
      * @param   array   $row         The row to map to the model class
      *
      * @return \TYPO3\CMS\Extbase\DomainObject\AbstractEntity|AbstractDataModel
-     * @throws \LaborDigital\T3ba\Tool\ExtBase\Hydrator\HydratorException
      */
     public function hydrateObject(string $modelClass, array $row): AbstractEntity
     {
@@ -212,7 +211,6 @@ class Hydrator implements PublicServiceInterface
      * @param   array   $row
      *
      * @return \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
-     * @throws \LaborDigital\T3ba\Tool\ExtBase\Hydrator\HydratorException
      */
     protected function executeHydration(string $modelClass, string $tableName, array $row): AbstractEntity
     {

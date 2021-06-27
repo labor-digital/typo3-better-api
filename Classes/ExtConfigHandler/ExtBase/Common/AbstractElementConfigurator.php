@@ -92,7 +92,7 @@ abstract class AbstractElementConfigurator extends AbstractConfigurator
     /**
      * The class that is responsible for rendering the backend list label for this plugin
      *
-     * @var string|null
+     * @var string|array|null
      */
     protected $backendListLabelRenderer;
     

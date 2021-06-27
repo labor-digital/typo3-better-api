@@ -83,11 +83,11 @@ class DbListQueryFilterEvent implements CoreHookEventInterface
     /**
      * BackendDbListQueryFilterEvent constructor.
      *
-     * @param   string  $tableName
-     * @param   int     $pid
-     * @param   string  $additionalWhereClause
-     * @param   string  $selectedFieldList
-     * @param           $listRenderer
+     * @param   string              $tableName
+     * @param   int                 $pid
+     * @param   string              $additionalWhereClause
+     * @param   string              $selectedFieldList
+     * @param   DatabaseRecordList  $listRenderer
      */
     public function __construct(
         string $tableName,

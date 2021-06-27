@@ -61,6 +61,8 @@ class RequestCacheKeyGenerator implements CacheKeyGeneratorInterface, NoDiInterf
      * RequestCacheKeyGenerator constructor.
      *
      * @param   \Psr\Http\Message\ServerRequestInterface  $request
+     * @param   array|null                                $trackedHeaders
+     * @param   array|null                                $excludedQueryParams
      */
     public function __construct(ServerRequestInterface $request, ?array $trackedHeaders = null, ?array $excludedQueryParams = null)
     {

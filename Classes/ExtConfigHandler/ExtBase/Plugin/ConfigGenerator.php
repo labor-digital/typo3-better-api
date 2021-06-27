@@ -77,8 +77,8 @@ class ConfigGenerator extends AbstractConfigGenerator
     /**
      * Generates the arguments for the registration as an extbase plugin
      *
-     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator  $configurator
-     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                                   $context
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                          $context
      *
      * @return array
      * @see \LaborDigital\T3ba\Core\Util\CTypeRegistrationTrait::registerCTypesForElements()

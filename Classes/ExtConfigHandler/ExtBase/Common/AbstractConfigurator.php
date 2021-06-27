@@ -98,6 +98,7 @@ abstract class AbstractConfigurator
     /**
      * AbstractExtBaseElementConfigurator constructor.
      *
+     * @param   string            $signature
      * @param   string            $pluginName
      * @param   ExtConfigContext  $context
      */

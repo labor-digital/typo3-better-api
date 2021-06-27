@@ -230,6 +230,7 @@ class FileInfo implements NoDiInterface
      * Returns the url of the file handled as absolute url
      *
      * @param   bool  $withHash  Set this to false to disable the cache buster hash that will be added to the file url
+     * @param   bool  $relative  True to return the relative url instead of the absolute one
      *
      * @return string
      */

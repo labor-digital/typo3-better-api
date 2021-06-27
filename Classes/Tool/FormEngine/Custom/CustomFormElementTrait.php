@@ -127,6 +127,7 @@ trait CustomFormElementTrait
      *
      * @param   string  $template      Either a full template file name or a file path as EXT:.../template.html, or a
      *                                 file that is relative to the given "templateRootPaths"
+     * @param   array   $data          Data to be passed to the fluid template
      * @param   array   $options       Additional configuration options
      *                                 {@link TemplateRenderingService::getFluidView()} for the options.
      *

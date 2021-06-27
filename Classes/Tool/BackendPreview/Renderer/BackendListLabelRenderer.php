@@ -48,6 +48,7 @@ class BackendListLabelRenderer extends AbstractRenderer
      * BackendListLabelRenderer constructor.
      *
      * @param   \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository  $contentRepository
+     * @param   \LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer          $fieldRenderer
      */
     public function __construct(ContentRepository $contentRepository, FieldRenderer $fieldRenderer)
     {
@@ -131,11 +132,11 @@ class BackendListLabelRenderer extends AbstractRenderer
     /**
      * Renders a list of selected columns as concatenated string
      *
-     * @param   array          $columns           the list of columns to render
-     * @param   array          $row               The database row to extract the columns from
-     * @param   callable|null  $additionalFilter  An optional filter to remove fields on the fly.
-     *                                            The callable must return a boolean: True to keep the value,
-     *                                            false to remove it!
+     * @param   array                    $columns           the list of columns to render
+     * @param   ListLabelRenderingEvent  $event             The event containing the data to render
+     * @param   callable|null            $additionalFilter  An optional filter to remove fields on the fly.
+     *                                                      The callable must return a boolean: True to keep the value,
+     *                                                      false to remove it!
      *
      * @return string
      */

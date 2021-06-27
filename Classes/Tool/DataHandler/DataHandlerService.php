@@ -65,8 +65,9 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      *
      * Occurring errors will throw a DataHandlerException
      *
-     * @param   array  $data      The data array to process
-     * @param   array  $commands  The commands to process
+     * @param   array      $data      The data array to process
+     * @param   array      $commands  The commands to process
+     * @param   bool|null  $force     True to force the execution as admin user
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @see DataHandler::process_datamap()
@@ -81,8 +82,9 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      *
      * Occurring errors will throw a DataHandlerException
      *
-     * @param   array  $commands  The commands to process
-     * @param   array  $data      Optional data if required for your commands
+     * @param   array      $commands  The commands to process
+     * @param   array      $data      Optional data if required for your commands
+     * @param   bool|null  $force     True to force the execution as admin user
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @see DataHandler::process_cmdmap()
@@ -95,9 +97,10 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
     /**
      * Internal handler to do the processing on a fresh data handler instance
      *
-     * @param   array  $data        The data array
-     * @param   array  $commands    the cmd array
-     * @param   bool   $handleData  True if process_datamap() should be executed, false for process_cmdmap()
+     * @param   array      $data        The data array
+     * @param   array      $commands    the cmd array
+     * @param   bool       $handleData  True if process_datamap() should be executed, false for process_cmdmap()
+     * @param   bool|null  $force       True to force the execution as admin user
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @throws \LaborDigital\T3ba\Tool\DataHandler\DataHandlerException

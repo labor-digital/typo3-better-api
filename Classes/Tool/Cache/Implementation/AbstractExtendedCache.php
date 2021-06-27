@@ -408,6 +408,7 @@ abstract class AbstractExtendedCache implements FrontendInterface, CacheInterfac
      * Hook method for child classes to implement. Allows children to wrap the generator
      * with additional code.
      *
+     * @param   string    $key
      * @param   \Closure  $generator
      * @param   array     $options
      * @param   array     $tags

@@ -40,12 +40,6 @@ class TableDumperBeforeBuildEvent
      */
     protected $table;
     
-    /**
-     * ExtConfigTableBeforeBuildEvent constructor.
-     *
-     * @param   string    $tableName
-     * @param   TcaTable  $table
-     */
     public function __construct(TcaTable $table)
     {
         $this->table = $table;

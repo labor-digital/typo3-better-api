@@ -47,7 +47,7 @@ class CachelessSiteConfigurationAdapter extends SiteConfiguration implements NoD
     /**
      * Creates a new instance of myself based on the given site config
      *
-     * @param   \TYPO3\CMS\Core\Configuration\SiteConfiguration  $siteConfiguration
+     * @param   \TYPO3\CMS\Core\Configuration\SiteConfiguration|null  $siteConfiguration
      *
      * @return static
      * @noinspection ExposingInternalClassesInspection

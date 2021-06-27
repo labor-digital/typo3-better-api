@@ -89,7 +89,6 @@ class Handler extends AbstractExtConfigHandler implements NoDiInterface
      * @param   string  $class
      *
      * @return string
-     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function getTableNameForClassName(string $class): string
     {

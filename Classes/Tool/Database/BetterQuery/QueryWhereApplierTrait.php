@@ -209,7 +209,6 @@ trait QueryWhereApplierTrait
      * @param   \LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
      *
      * @return void
-     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      */
     protected
     function applyWhere(

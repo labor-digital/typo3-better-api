@@ -130,8 +130,9 @@ class CommonServices implements PublicServiceInterface
      *
      * @param $name
      *
-     * @noinspection MagicMethodsValidityInspection
+     * @return mixed
      * @throws \TYPO3\CMS\Core\DependencyInjection\NotFoundException
+     * @noinspection MagicMethodsValidityInspection
      */
     public function __get($name)
     {

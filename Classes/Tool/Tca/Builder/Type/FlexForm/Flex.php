@@ -381,7 +381,6 @@ class Flex extends AbstractForm
      * @param   array|string  $path
      *
      * @return array
-     * @throws \JsonException
      * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\InvalidPathException
      */
     protected function parsePath($path): array

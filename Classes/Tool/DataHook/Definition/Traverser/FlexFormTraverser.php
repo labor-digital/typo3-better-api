@@ -50,9 +50,6 @@ class FlexFormTraverser extends AbstractTraverser
      */
     protected $data;
     
-    /**
-     * @inheritDoc
-     */
     public function __construct(FlexFormTools $tools)
     {
         $this->tools = $tools;

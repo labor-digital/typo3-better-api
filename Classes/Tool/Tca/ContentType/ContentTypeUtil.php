@@ -161,8 +161,8 @@ class ContentTypeUtil implements NoDiInterface
      * the tca. To provide a polyfill this helper will rewrite the extension columns of tt_content to their given
      * column name so TYPO3 can resolve the columns without problems.
      *
-     * @param   string    $cType
-     * @param   callable  $wrapper
+     * @param   array|string  $rowOrCType
+     * @param   callable      $wrapper
      *
      * @return mixed
      */

@@ -78,7 +78,6 @@ abstract class AbstractCustomField implements CustomFieldInterface
      * @param   array  $mergeAttributes
      *
      * @return string
-     * @throws \JsonException
      */
     protected function getInputAttributes(array $mergeAttributes = []): string
     {

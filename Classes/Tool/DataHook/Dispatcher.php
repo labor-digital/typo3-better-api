@@ -49,6 +49,7 @@ class Dispatcher implements PublicServiceInterface
      * Dispatcher constructor.
      *
      * @param   \LaborDigital\T3ba\Tool\DataHook\Definition\DefinitionResolver  $definitionResolver
+     * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus                   $eventBus
      */
     public function __construct(DefinitionResolver $definitionResolver, TypoEventBus $eventBus)
     {

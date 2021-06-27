@@ -84,6 +84,8 @@ trait CustomAssetTrait
      *
      * @param   string  $path
      * @param   bool    $css
+     *
+     * @return $this
      */
     protected function addAsset(string $path, bool $css = false): self
     {

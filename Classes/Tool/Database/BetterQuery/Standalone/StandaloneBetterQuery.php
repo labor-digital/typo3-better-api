@@ -60,6 +60,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      * @param   string                                                         $tableName
      * @param   \TYPO3\CMS\Core\Database\Query\QueryBuilder                    $queryBuilder
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface  $settings
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext                $typoContext
      * @param   \TYPO3\CMS\Extbase\Persistence\Generic\Session                 $session
      */
     public function __construct(

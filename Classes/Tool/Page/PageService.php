@@ -304,7 +304,6 @@ class PageService implements SingletonInterface
      *                           raw list of records instead of the sorted list of elements
      *
      * @return mixed
-     * @throws \JsonException
      */
     public function getPageContents(int $pageId, array $options = [])
     {

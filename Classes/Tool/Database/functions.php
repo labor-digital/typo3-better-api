@@ -34,7 +34,7 @@ if (! function_exists('dbgQuery')) {
      *
      * @param   QueryInterface|ExtBaseBetterQuery|StandaloneBetterQuery|QueryBuilder  $query  The query to debug
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \LaborDigital\T3ba\Tool\Database\DatabaseException
      */
     function dbgQuery($query)
     {

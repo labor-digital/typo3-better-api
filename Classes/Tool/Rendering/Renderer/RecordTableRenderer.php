@@ -195,6 +195,7 @@ class RecordTableRenderer implements PublicServiceInterface
     /**
      * Combines all elements of the table together in a html markup
      *
+     * @param   string  $tableName
      * @param   array   $rows
      * @param   string  $headers
      *

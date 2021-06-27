@@ -115,7 +115,10 @@ class LegacyContext
      * Generates the backend preview utils instance for the given item by linking
      * the internal methods to a public helper class.
      *
-     * @param   \TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem  $item
+     * @param   array                                   $row
+     * @param   \TYPO3\CMS\Backend\View\PageLayoutView  $pageLayoutView
+     * @param                                           $headerContent
+     * @param                                           $itemContent
      *
      * @return \LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils
      */

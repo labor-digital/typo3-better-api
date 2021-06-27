@@ -49,7 +49,8 @@ class EnvironmentCacheKeyArgFilterEvent
     /**
      * EnvironmentCacheKeyFilterEvent constructor.
      *
-     * @param   array  $args
+     * @param   array                                            $args
+     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
      */
     public function __construct(array $args, TypoContext $context)
     {

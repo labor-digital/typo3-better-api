@@ -47,13 +47,6 @@ class TableDumperAfterBuildEvent
      */
     protected $table;
     
-    /**
-     * ExtConfigTableAfterBuildEvent constructor.
-     *
-     * @param   array     $tca
-     * @param   string    $tableName
-     * @param   TcaTable  $table
-     */
     public function __construct(array $tca, TcaTable $table)
     {
         $this->tca = $tca;

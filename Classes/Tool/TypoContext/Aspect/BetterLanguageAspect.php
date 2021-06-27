@@ -87,6 +87,8 @@ class BetterLanguageAspect extends LanguageAspect implements PublicServiceInterf
     /**
      * Returns the instance of the current frontend object
      *
+     * @param   string|null  $siteIdentifier
+     *
      * @return \TYPO3\CMS\Core\Site\Entity\SiteLanguage
      */
     public function getCurrentFrontendLanguage(?string $siteIdentifier = null): SiteLanguage
