@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.29.5](https://github.com/labor-digital/typo3-better-api/compare/v9.29.4...v9.29.5) (2021-06-28)
+
 ### [9.29.4](https://github.com/labor-digital/typo3-better-api/compare/v9.29.3...v9.29.4) (2021-04-13)
 
 
