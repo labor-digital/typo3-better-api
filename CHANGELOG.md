@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.2.0](https://github.com/labor-digital/typo3-better-api/compare/v10.1.2...v10.2.0) (2021-06-28)
+
+
+### Features
+
+* bump typo3-better-api-composer-plugin to major version 4.0.0 ([e8e6fb0](https://github.com/labor-digital/typo3-better-api/commit/e8e6fb0acbd435ad9ba90dc53e230578d5519d6b))
+
 ### [10.1.2](https://github.com/labor-digital/typo3-better-api/compare/v10.1.1...v10.1.2) (2021-06-27)
 
 ### [10.1.1](https://github.com/labor-digital/typo3-better-api/compare/v10.1.0...v10.1.1) (2021-06-27)
