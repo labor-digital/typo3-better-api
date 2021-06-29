@@ -49,6 +49,20 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
     protected $metaTagManagers = [];
     
     /**
+     * Contains the registered html data to append to the page head section
+     *
+     * @var string|null
+     */
+    protected $headerHtml;
+    
+    /**
+     * Contains the registered html data to append to the page footer section
+     *
+     * @var string|null
+     */
+    protected $footerHtml;
+    
+    /**
      * Registers a new meta tag manager instance into the registry
      *
      * @param   string          $name       A unique identifier for the manager to register
@@ -72,7 +86,7 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
                                                $className . '" does not implement the required interface: "' . MetaTagManagerInterface::class . '"');
         }
         
-        $this->metaTagManagers[$name] = func_get_args();
+        $this->metaTagManagers[$name] = $this->context->replaceMarkers(func_get_args());
         
         return $this;
     }
@@ -99,7 +113,7 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
         string $type = ''
     ): self
     {
-        $this->metaTagActions['add'][$property] = func_get_args();
+        $this->metaTagActions['add'][$property] = $this->context->replaceMarkers(func_get_args());
         
         return $this;
     }
@@ -118,7 +132,37 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
      */
     public function removeMetaTag(string $property, string $type = ''): self
     {
-        $this->metaTagActions['remove'][] = func_get_args();
+        $this->metaTagActions['remove'][] = $this->context->replaceMarkers(func_get_args());
+        
+        return $this;
+    }
+    
+    /**
+     * Adds the given RAW html to be added to the header of your page.
+     * WARNING: THIS IS RAW HTML - So escape your stuffs!
+     *
+     * @param   string  $html
+     *
+     * @return $this
+     */
+    public function registerHeaderHtml(string $html): self
+    {
+        $this->headerHtml .= PHP_EOL . trim($this->context->replaceMarkers($html));
+        
+        return $this;
+    }
+    
+    /**
+     * Adds the given RAW html to be added to the footer of your page.
+     * WARNING: THIS IS RAW HTML - So escape your stuffs!
+     *
+     * @param   string  $html
+     *
+     * @return $this
+     */
+    public function registerFooterHtml(string $html): self
+    {
+        $this->footerHtml .= PHP_EOL . trim($this->context->replaceMarkers($html));
         
         return $this;
     }
@@ -131,6 +175,7 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
         $state->useNamespace('root', function (ConfigState $state) {
             $state->set('t3ba.frontend.metaTagManagers', array_values($this->metaTagManagers));
         });
+        $state->set('html', ['header' => $this->headerHtml, 'footer' => $this->footerHtml]);
         $state->set('metaTagActions', $this->metaTagActions);
         $this->storeAssetCollectorConfiguration($state);
     }

@@ -62,14 +62,52 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Executes the asset collector configuration
      */
-    public function onAssetFilter(): void
+    public function onAssetFilter(FrontendAssetFilterEvent $event): void
     {
         $siteIdentifier = $this->getTypoContext()->site()->getCurrent()->getIdentifier();
         
+        $this->applyAssetCollectorActions($siteIdentifier);
+        $this->applyMetaTagActions($siteIdentifier);
+        $this->applyHeaderAndFooterData($event, $siteIdentifier);
+        
+    }
+    
+    /**
+     * Applies the registered raw html configuration to the page renderer
+     *
+     * @param   \LaborDigital\T3ba\Event\Frontend\FrontendAssetFilterEvent  $event
+     * @param   string                                                      $siteIdentifier
+     */
+    protected function applyHeaderAndFooterData(FrontendAssetFilterEvent $event, string $siteIdentifier): void
+    {
+        $html = $this->state->get('typo.site.' . $siteIdentifier . '.frontend.html');
+        if (! empty($html['header'])) {
+            $event->getPageRenderer()->addHeaderData($html['header']);
+        }
+        if (! empty($html['footer'])) {
+            $event->getPageRenderer()->addFooterData($html['footer']);
+        }
+    }
+    
+    /**
+     * Injects the registered assets into the asset collector
+     *
+     * @param   string  $siteIdentifier
+     */
+    protected function applyAssetCollectorActions(string $siteIdentifier): void
+    {
         $this->executeAssetCollectorActions(
             'typo.site.' . $siteIdentifier . '.frontend'
         );
-        
+    }
+    
+    /**
+     * Injects the configured meta tags into the meta tag managers
+     *
+     * @param   string  $siteIdentifier
+     */
+    protected function applyMetaTagActions(string $siteIdentifier): void
+    {
         $metaTagActions = $this->state->get('typo.site.' . $siteIdentifier . '.frontend.metaTagActions');
         if (! empty($metaTagActions)) {
             $registry = $this->getMetaTagManagerRegistry();
