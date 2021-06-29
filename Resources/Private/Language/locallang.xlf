@@ -47,34 +47,34 @@
 			<trans-unit id="lowLevel.configLabel">
 				<source>T3BA: ExtConfig state</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment">
+			<trans-unit id="t.sys_file_reference.imageAlignment">
 				<source>Image Alignment</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.bottomCenter">
+			<trans-unit id="t.sys_file_reference.imageAlignment.bottomCenter">
 				<source>Bottom Center</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.bottomLeft">
+			<trans-unit id="t.sys_file_reference.imageAlignment.bottomLeft">
 				<source>Bottom Left</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.bottomRight">
+			<trans-unit id="t.sys_file_reference.imageAlignment.bottomRight">
 				<source>Bottom Right</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.centerCenter">
+			<trans-unit id="t.sys_file_reference.imageAlignment.centerCenter">
 				<source>Center Center</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.centerLeft">
+			<trans-unit id="t.sys_file_reference.imageAlignment.centerLeft">
 				<source>Center Left</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.centerRight">
+			<trans-unit id="t.sys_file_reference.imageAlignment.centerRight">
 				<source>Center Right</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.topCenter">
+			<trans-unit id="t.sys_file_reference.imageAlignment.topCenter">
 				<source>Top Center</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.topLeft">
+			<trans-unit id="t.sys_file_reference.imageAlignment.topLeft">
 				<source>Top Left</source>
 			</trans-unit>
-			<trans-unit id="d.sys_file_reference.imageAlignment.topRight">
+			<trans-unit id="t.sys_file_reference.imageAlignment.topRight">
 				<source>Top Right</source>
 			</trans-unit>
 		</body>

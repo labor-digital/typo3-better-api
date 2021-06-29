@@ -265,18 +265,18 @@ class Basics extends AbstractFieldPreset
     public function applyImageAlignment(): void
     {
         if (! $this->field->hasLabel()) {
-            $this->field->setLabel('tbbe.d.sys_file_reference.imageAlignment');
+            $this->field->setLabel('t3ba.t.sys_file_reference.imageAlignment');
         }
         $this->applySelect([
-            'tl' => 'tbbe.d.sys_file_reference.imageAlignment.topLeft',
-            'tc' => 'tbbe.d.sys_file_reference.imageAlignment.topCenter',
-            'tr' => 'tbbe.d.sys_file_reference.imageAlignment.topRight',
-            'cl' => 'tbbe.d.sys_file_reference.imageAlignment.centerLeft',
-            'cc' => 'tbbe.d.sys_file_reference.imageAlignment.centerCenter',
-            'cr' => 'tbbe.d.sys_file_reference.imageAlignment.centerRight',
-            'bl' => 'tbbe.d.sys_file_reference.imageAlignment.bottomLeft',
-            'bc' => 'tbbe.d.sys_file_reference.imageAlignment.bottomCenter',
-            'br' => 'tbbe.d.sys_file_reference.imageAlignment.bottomRight',
+            'tl' => 't3ba.t.sys_file_reference.imageAlignment.topLeft',
+            'tc' => 't3ba.t.sys_file_reference.imageAlignment.topCenter',
+            'tr' => 't3ba.t.sys_file_reference.imageAlignment.topRight',
+            'cl' => 't3ba.t.sys_file_reference.imageAlignment.centerLeft',
+            'cc' => 't3ba.t.sys_file_reference.imageAlignment.centerCenter',
+            'cr' => 't3ba.t.sys_file_reference.imageAlignment.centerRight',
+            'bl' => 't3ba.t.sys_file_reference.imageAlignment.bottomLeft',
+            'bc' => 't3ba.t.sys_file_reference.imageAlignment.bottomCenter',
+            'br' => 't3ba.t.sys_file_reference.imageAlignment.bottomRight',
         ], ['default' => 'cc']);
     }
     
