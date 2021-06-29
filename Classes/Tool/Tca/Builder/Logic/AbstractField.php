@@ -294,8 +294,8 @@ abstract class AbstractField extends AbstractElement
         if (! is_array($key)) {
             $key = [$key => $value];
         }
-        $this->config['config']
-            = Arrays::merge($this->config['config'] ?? [], $key, 'allowRemoval');
+        
+        $this->config['config'] = Arrays::merge($this->config['config'] ?? [], $key, 'r', 'sn');
         
         return $this;
     }
