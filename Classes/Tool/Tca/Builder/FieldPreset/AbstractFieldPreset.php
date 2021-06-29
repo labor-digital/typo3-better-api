@@ -436,11 +436,11 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      *
      * @param   array       $optionDefinition
      * @param   array|null  $type
-     * @param   string      $default
+     * @param   mixed      $default
      *
      * @return array
      */
-    protected function addDefaultOptions(array $optionDefinition, ?array $type = null, string $default = ''): array
+    protected function addDefaultOptions(array $optionDefinition, ?array $type = null, $default = ''): array
     {
         $optionDefinition['default'] = [
             'type' => $type ?? ['string'],
