@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.29.6](https://github.com/labor-digital/typo3-better-api/compare/v9.29.5...v9.29.6) (2021-07-01)
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderer:** avoid issues when previews of a hidden page are rendered ([9e08fc1](https://github.com/labor-digital/typo3-better-api/commit/9e08fc16088ab17437db68d5273628a8398b6a77))
+
 ### [9.29.5](https://github.com/labor-digital/typo3-better-api/compare/v9.29.4...v9.29.5) (2021-06-28)
 
 ### [9.29.4](https://github.com/labor-digital/typo3-better-api/compare/v9.29.3...v9.29.4) (2021-04-13)
