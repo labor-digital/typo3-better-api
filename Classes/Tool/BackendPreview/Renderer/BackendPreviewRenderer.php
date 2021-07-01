@@ -96,7 +96,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                 
                 $languageUid = $row['sys_language_uid'] ?? null;
                 $this->getService(EnvironmentSimulator::class)->runWithEnvironment(
-                    ['bootTsfe' => false, 'language' => $languageUid],
+                    ['bootTsfe' => false, 'language' => $languageUid, 'includeHiddenPages'],
                     function () use ($rendererClass, $configManager, $event, $row) {
                         try {
                             // When we have an action controller we perform additional setup
