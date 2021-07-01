@@ -273,7 +273,7 @@ class BackendPreviewService implements SingletonInterface, BackendPreviewService
         // Update the frontend language
         $languageUid = Arrays::getPath($row, ['sys_language_uid'], null);
         $this->container->get(EnvironmentSimulator::class)->runWithEnvironment(
-            ['bootTsfe' => false, 'language' => $languageUid],
+            ['bootTsfe' => false, 'language' => $languageUid, 'includeHiddenPages'],
             function () use ($renderer, $event, $row) {
                 try {
                     // Create the context and let the renderer run
