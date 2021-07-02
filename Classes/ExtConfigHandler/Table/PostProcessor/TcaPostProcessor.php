@@ -63,6 +63,18 @@ class TcaPostProcessor implements NoDiInterface
         ];
     
     /**
+     * Public api to register additional post processors that will be executed after all steps completed.
+     * The list contains the $nameOfTheTable => [$callable, $anotherCallable] where the callables are executed
+     * in their given order.
+     *
+     * The processor callable receives the $config, $extractedMeta and $tableName as parameters.
+     * It should create references to the given values in order to modify them.
+     *
+     * @var array
+     */
+    public static $additionalProcessors = [];
+    
+    /**
      * Executes all existing steps for the database tables
      *
      * @return array
@@ -88,6 +100,14 @@ class TcaPostProcessor implements NoDiInterface
         foreach ($GLOBALS['TCA'] as $tableName => &$config) {
             foreach ($steps as $step) {
                 $step->process($tableName, $config, $meta);
+            }
+            
+            if (is_array(static::$additionalProcessors[$tableName] ?? null)) {
+                foreach (static::$additionalProcessors[$tableName] as $processor) {
+                    if (is_callable($processor)) {
+                        $processor($config, $meta, $tableName);
+                    }
+                }
             }
         }
         
