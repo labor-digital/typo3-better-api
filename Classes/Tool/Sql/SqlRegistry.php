@@ -32,6 +32,8 @@ use LaborDigital\T3ba\Tool\Sql\Io\DefinitionProcessor;
 use LaborDigital\T3ba\Tool\Sql\Io\Dumper;
 use LaborDigital\T3ba\Tool\Sql\Io\TableAdapter;
 use Neunerlei\Inflection\Inflector;
+use TYPO3\CMS\Core\Cache\Backend\ApcuBackend;
+use TYPO3\CMS\Core\Cache\Backend\TransientMemoryBackend;
 use TYPO3\CMS\Core\Database\Schema\SchemaMigrator;
 use TYPO3\CMS\Core\Database\Schema\SqlReader;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -279,6 +281,17 @@ class SqlRegistry implements SingletonInterface
     {
         if ($this->definition) {
             return;
+        }
+        
+        // This is a hotfix, to prevent issues when the APCU Backend is disabled in the cli.
+        // This removes the apcu backends and replaces them with runtime backends instead
+        if (php_sapi_name() === 'cli') {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'] as &$config) {
+                if ($config['backend'] === ApcuBackend::class) {
+                    $config['backend'] = TransientMemoryBackend::class;
+                }
+            }
+            unset($config);
         }
         
         Sql::$enabled = false;
