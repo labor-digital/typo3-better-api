@@ -75,13 +75,6 @@ class Handler extends AbstractGroupExtConfigHandler
     protected $types = [];
     
     /**
-     * The collected form definitions for the TCA form loader (this is only used for content elements)
-     *
-     * @var array
-     */
-    protected $ceFormClasses = [];
-    
-    /**
      * Internal flag that defines which configuration method to use on the configuration class
      *
      * @var string
@@ -134,10 +127,6 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         $state = $this->context->getState();
         $this->config->dump($state);
-        
-        if (! empty($this->ceFormClasses)) {
-            $state->setAsJson('typo.extBase.element.ceFormClasses', $this->ceFormClasses);
-        }
     }
     
     /**
