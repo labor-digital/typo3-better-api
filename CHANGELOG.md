@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.3.0](https://github.com/labor-digital/typo3-better-api/compare/v10.2.0...v10.3.0) (2021-07-02)
+
+
+### Features
+
+* **ExtConfig\Frontend:** add configuration options for meta tags ([8ce8476](https://github.com/labor-digital/typo3-better-api/commit/8ce847628e96daba0721868494b9b71e55ad21ec))
+* **ExtConfig\Frontend:** add configuration options for raw footer and header html ([4f9dd91](https://github.com/labor-digital/typo3-better-api/commit/4f9dd91fd6952f9d1559928a8202fcd2bf1ecf9b))
+* **ViewHelpers:** implement tsValue view helper to extract ts from a path ([482307e](https://github.com/labor-digital/typo3-better-api/commit/482307e6d4ec4648e0161d1eeac6375e80be6734))
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderer:** avoid issues when previews of a hidden page are rendered ([2d70ca4](https://github.com/labor-digital/typo3-better-api/commit/2d70ca4370f00ece7193e24408020741a22bd491))
+* **FieldPreset:** fix translation labels of imageAlignment preset ([0df52e9](https://github.com/labor-digital/typo3-better-api/commit/0df52e9669fafc218af5920cf4beedd7f148e86b))
+* **Rendering\FieldRenderer:** catch exceptions if an image should be rendered but was not found ([f2249c8](https://github.com/labor-digital/typo3-better-api/commit/f2249c87df9319ca15cf54f3934afe20cbfe4b59))
+* **Tca\Builder:** addConfig() merges numeric array keys strictly now ([5e0d084](https://github.com/labor-digital/typo3-better-api/commit/5e0d084f248193eef6c4d5305917188ea73e7551))
+* **Tca\FieldPreset:** remove wrong type declaration for addDefaultOptions() $default ([54e81c2](https://github.com/labor-digital/typo3-better-api/commit/54e81c23c80eae9859e9240b73e50fa39561de20))
+
 ## [10.2.0](https://github.com/labor-digital/typo3-better-api/compare/v10.1.2...v10.2.0) (2021-06-28)
 
 
