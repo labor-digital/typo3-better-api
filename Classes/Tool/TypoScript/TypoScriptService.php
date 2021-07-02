@@ -97,8 +97,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      *                                       empty, the method will return the complete typoScript array.
      * @param   array              $options  Additional options
      *                                       - default (mixed): By default the method returns null, if the queried
-     *                                       value
-     *                                       was not found in the configuration. If this option is set, the given value
+     *                                       value was not found in the configuration. If this option is set, the given value
      *                                       will be returned instead.
      *                                       - pid (integer): An optional pid to query the typoScript for.
      *                                       - separator (string) ".": A separator trough which the path parts are
