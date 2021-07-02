@@ -222,7 +222,6 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         $childRow['pid'] = $this->resolveColumnValue('pid', $rowWithUid);
         $childRow['sys_language_uid'] = $this->resolveColumnValue('sys_language_uid', $rowWithUid);
         $row['ct_child'] = $this->repository->saveChildRow($cType, $parentId, $childRow);
-        dbge($row, $cType, $hasExtensionTable);
         $event->setRow($row);
         
         if ($parentId === -1) {
