@@ -436,7 +436,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      *
      * @param   array       $optionDefinition
      * @param   array|null  $type
-     * @param   mixed      $default
+     * @param   mixed       $default
      *
      * @return array
      */
@@ -558,9 +558,11 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
             $this->configureSqlColumn(static function (Column $column) use ($options) {
                 if ((int)$options['maxLength'] <= 4096) {
                     $column->setType(new StringType())
+                           ->setDefault('')
                            ->setLength((int)$options['maxLength']);
                 } else {
                     $column->setType(new TextType())
+                           ->setDefault(null)
                            ->setLength(null);
                 }
             });
