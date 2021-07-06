@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.4.0](https://github.com/labor-digital/typo3-better-api/compare/v10.3.0...v10.4.0) (2021-07-06)
+
+
+### Features
+
+* **Tca:** implement ConfigureContentTypeInterface config option ([e39df2d](https://github.com/labor-digital/typo3-better-api/commit/e39df2dc017d8ad10356d47ad2ec7166d9e28770))
+* **Tca\Table:** add raw post processor registration to table class ([de94233](https://github.com/labor-digital/typo3-better-api/commit/de94233e43c860be9b752e84cc901bf228d29ee6))
+
+
+### Bug Fixes
+
+* **dbgQuery:** dump less clutter when working in the CLI ([a986ab9](https://github.com/labor-digital/typo3-better-api/commit/a986ab99173a923413db6f89fa140c125ddc52b1))
+* **ExtConfig\ExtBase:** remove unused code fragment ([ffda7b4](https://github.com/labor-digital/typo3-better-api/commit/ffda7b444c7ac2842dd81aff7987ebdbd23c2229))
+* **SqlRegistry:** fix an issue that occurs in CLI environments with APCu disabled ([e1467db](https://github.com/labor-digital/typo3-better-api/commit/e1467db88686f5a64666536944453c100aef600a))
+* **Tca\Builder:** fix issues when showitem of palettes is empty ([0a74280](https://github.com/labor-digital/typo3-better-api/commit/0a742806bfe61e08e81e7d1277a1034a452edf82))
+* **Tca\ContentType:** don't apply ct_child field when no table maps exist ([f3d4576](https://github.com/labor-digital/typo3-better-api/commit/f3d45761df71239ccf915fb89b1a650cf694fa38))
+* **Tca\ContentType:** fix multiple issues when handling content type rows ([03d5909](https://github.com/labor-digital/typo3-better-api/commit/03d5909b7f6cc6c59277f312872ef0addb8d8968))
+* **Tca\FieldPreset:** add default value for SQL string types in input fields ([d7c926c](https://github.com/labor-digital/typo3-better-api/commit/d7c926c3b1cd99891f4a5539b9bc9decba2c03fa))
+* remove dev-only fragment ([c025575](https://github.com/labor-digital/typo3-better-api/commit/c02557551ee146ecac3665c01327250b4c8296d4))
+
 ## [10.3.0](https://github.com/labor-digital/typo3-better-api/compare/v10.2.0...v10.3.0) (2021-07-02)
 
 
