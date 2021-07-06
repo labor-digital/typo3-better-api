@@ -106,16 +106,19 @@ class Inline extends AbstractFieldPreset
         $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
         if (! $table->hasColumn($options['foreignField'], true)) {
             $table->addColumn($options['foreignField'], 'integer')
+                  ->setDefault(0)
                   ->setLength(11);
         }
         if (! $table->hasColumn($options['foreignSortByField'], true)) {
             $table->addColumn($options['foreignSortByField'], 'integer')
+                  ->setDefault(0)
                   ->setLength(11);
         }
         
         // Configure column on local table
         $this->configureSqlColumn(static function (Column $column) {
             $column->setType(new IntegerType())
+                   ->setDefault(0)
                    ->setLength(11);
         });
         
