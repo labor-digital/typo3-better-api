@@ -53,6 +53,16 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     }
 
     /**
+     * Returns true if the memory hack exists, false if not
+     *
+     * @return bool
+     */
+    public function hasMemory(): bool
+    {
+        return $this->fs->hasFile('memory');
+    }
+
+    /**
      * Adds a new snippet of dynamic typo script to the registry.
      * Dynamic typoScript can be included into virtually any typoScript or tsConfig file using
      * the (at)import statement.

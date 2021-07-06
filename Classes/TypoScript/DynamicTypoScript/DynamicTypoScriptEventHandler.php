@@ -22,8 +22,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\Typo3BetterApi\TypoScript\DynamicTypoScript;
 
+use LaborDigital\Typo3BetterApi\Container\TypoContainer;
+use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigInitEvent;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
 
 class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
 {
@@ -47,7 +50,21 @@ class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription)
     {
+        $subscription->subscribe(ExtConfigInitEvent::class, 'onExtConfigLoaded', ['priority' => 5000]);
         $subscription->subscribe(FileImportFilterEvent::class, 'onTypoScriptFileImport');
+    }
+
+    /**
+     * This is a major downside of the backport, because v10 handles a lot of inner logic differently
+     * and to other times in the TYPO3 lifecycle v9 sometimes forgets the memorized configuration state.
+     * This ugly hook detects those cases and flushes all TYPO3 caches to force the whole configuration
+     * to be re-written.
+     */
+    public function onExtConfigLoaded(): void
+    {
+        if (! $this->registry->hasMemory()) {
+            TypoContainer::getInstance()->get(CacheManager::class)->flushCaches();
+        }
     }
 
     /**
