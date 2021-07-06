@@ -83,7 +83,7 @@ class ExtensionRowRepository implements PublicServiceInterface
      */
     public function saveChildRow(string $cType, int $parentUid, array $data): int
     {
-        [$tableName, $uid] = $this->resolveTableNameAndUid($cType, $parentUid);
+        [$tableName, $uid] = $this->resolveTableNameAndUid($cType, $parentUid, 'save');
         
         if (! $data['uid'] && $uid !== null) {
             $data['uid'] = $uid;
@@ -102,7 +102,7 @@ class ExtensionRowRepository implements PublicServiceInterface
      */
     public function restoreChildRow(string $cType, int $parentUid): void
     {
-        [$tableName] = $this->resolveTableNameAndUid($cType, $parentUid);
+        [$tableName] = $this->resolveTableNameAndUid($cType, $parentUid, 'restore');
         $parentRow = $this->dataHandlerService->getEmptyDataHandler()->recordInfo('tt_content', $parentUid, 'ct_child');
         
         if (! is_array($parentRow) || ! is_numeric($parentRow['ct_child'])) {
@@ -120,7 +120,7 @@ class ExtensionRowRepository implements PublicServiceInterface
      */
     public function deleteChildRow(string $cType, int $parentUid): void
     {
-        [$tableName, $uid] = $this->resolveTableNameAndUid($cType, $parentUid);
+        [$tableName, $uid] = $this->resolveTableNameAndUid($cType, $parentUid, 'delete');
         
         if ($uid === null) {
             return;
@@ -135,17 +135,19 @@ class ExtensionRowRepository implements PublicServiceInterface
      *
      * @param   string  $cType
      * @param   int     $parentUid
+     * @param   string  $actionName
      *
      * @return array
+     * @throws \LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException
      * @throws \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\UnknownChildTableException
      */
-    protected function resolveTableNameAndUid(string $cType, int $parentUid): array
+    protected function resolveTableNameAndUid(string $cType, int $parentUid, string $actionName): array
     {
         $tableMap = ContentTypeUtil::getTableMap();
         $tableName = $tableMap[$cType] ?? null;
         if (! $tableName) {
             throw new UnknownChildTableException(
-                'Could not save the child row for cType: ' . $cType . ' on tt_content '
+                'Could not perform "' . $actionName . '" action on child row for cType: ' . $cType . ' on tt_content '
                 . $parentUid . ', because there is no mapped table for that');
         }
         
