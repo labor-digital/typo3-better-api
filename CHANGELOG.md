@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.29.7](https://github.com/labor-digital/typo3-better-api/compare/v9.29.6...v9.29.7) (2021-07-06)
+
+
+### Bug Fixes
+
+* adds a hacky emergency fallback if somehow there is no typoscript "memory" file ([1252031](https://github.com/labor-digital/typo3-better-api/commit/1252031d1bda1fdb81b75e3b06ba32f36b982e80))
+
 ### [9.29.6](https://github.com/labor-digital/typo3-better-api/compare/v9.29.5...v9.29.6) (2021-07-01)
 
 
