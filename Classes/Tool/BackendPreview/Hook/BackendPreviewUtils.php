@@ -24,24 +24,25 @@ namespace LaborDigital\T3ba\Tool\BackendPreview\Hook;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\Rendering\BackendRenderingService;
 
 class BackendPreviewUtils implements NoDiInterface
 {
-    /**
-     * A list of method links into the actual renderer instance
-     *
-     * @var callable[]
-     */
-    protected $links;
+    public const KEY_RENDERING_SERVICE = 0;
+    public const KEY_DEFAULT_HEADER = 1;
+    public const KEY_DEFAULT_CONTENT = 2;
+    public const KEY_DEFAULT_FOOTER = 3;
+    public const KEY_LINK_WRAP = 4;
+    public const KEY_ROW = 5;
     
     /**
-     * BackendPreviewUtils constructor.
-     *
-     * @param   array  $links
+     * @var \Closure
      */
-    public function __construct(array $links)
+    protected $bridge;
+    
+    public function __construct(\Closure $bridge)
     {
-        $this->links = $links;
+        $this->bridge = $bridge;
     }
     
     /**
@@ -51,7 +52,7 @@ class BackendPreviewUtils implements NoDiInterface
      */
     public function renderDefaultHeader(): string
     {
-        return call_user_func($this->links[__FUNCTION__]);
+        return ($this->bridge)(static::KEY_DEFAULT_HEADER);
     }
     
     /**
@@ -61,7 +62,7 @@ class BackendPreviewUtils implements NoDiInterface
      */
     public function renderDefaultContent(): string
     {
-        return call_user_func($this->links[__FUNCTION__]);
+        return ($this->bridge)(static::KEY_DEFAULT_CONTENT);
     }
     
     /**
@@ -71,7 +72,7 @@ class BackendPreviewUtils implements NoDiInterface
      */
     public function renderDefaultFooter(): string
     {
-        return call_user_func($this->links[__FUNCTION__]);
+        return ($this->bridge)(static::KEY_DEFAULT_FOOTER);
     }
     
     /**
@@ -84,7 +85,7 @@ class BackendPreviewUtils implements NoDiInterface
      */
     public function renderFieldList(array $fields): string
     {
-        return call_user_func($this->links[__FUNCTION__], $fields);
+        return $this->getRenderingService()->renderRecordFieldList('tt_content', $this->getRow(), $fields);
     }
     
     /**
@@ -100,7 +101,7 @@ class BackendPreviewUtils implements NoDiInterface
      */
     public function renderRecordTable($tableName, array $rows, array $fields): string
     {
-        return call_user_func($this->links[__FUNCTION__], $tableName, $rows, $fields);
+        return $this->getRenderingService()->renderRecordTable($tableName, $rows, $fields);
     }
     
     /**
@@ -112,6 +113,27 @@ class BackendPreviewUtils implements NoDiInterface
      */
     public function wrapWithEditLink(string $linkText): string
     {
-        return call_user_func($this->links[__FUNCTION__], $linkText);
+        return ($this->bridge)(static::KEY_LINK_WRAP, $linkText);
     }
+    
+    /**
+     * Returns the row of the item to be previewed
+     *
+     * @return array
+     */
+    protected function getRow(): array
+    {
+        return ($this->bridge)(static::KEY_ROW);
+    }
+    
+    /**
+     * Retrieves the instance of the backend rendering service
+     *
+     * @return \LaborDigital\T3ba\Tool\Rendering\BackendRenderingService
+     */
+    protected function getRenderingService(): BackendRenderingService
+    {
+        return ($this->bridge)(static::KEY_RENDERING_SERVICE);
+    }
+    
 }

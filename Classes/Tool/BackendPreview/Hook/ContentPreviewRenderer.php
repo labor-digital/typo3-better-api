@@ -118,32 +118,25 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer implements S
      */
     protected function makeUtilsInstance(GridColumnItem $item): BackendPreviewUtils
     {
-        // @todo apply changes to LegacyContext as well
         return $this->makeInstance(BackendPreviewUtils::class, [
-            [
-                'renderDefaultHeader' => function () use ($item) {
-                    return parent::renderPageModulePreviewHeader($item);
-                },
-                'renderDefaultContent' => function () use ($item) {
-                    return parent::renderPageModulePreviewContent($item);
-                },
-                'renderDefaultFooter' => function () use ($item) {
-                    return parent::renderPageModulePreviewFooter($item);
-                },
-                'renderFieldList' => function (array $fields) use ($item) {
-                    return $this->getService(BackendRenderingService::class)->renderRecordFieldList(
-                        'tt_content', $item->getRecord(), $fields
-                    );
-                },
-                'renderRecordTable' => function (string $tableName, array $rows, array $fields) {
-                    return $this->getService(BackendRenderingService::class)->renderRecordTable(
-                        $tableName, $rows, $fields
-                    );
-                },
-                'wrapWithEditLink' => function ($linkText) use ($item) {
-                    return $this->linkEditContent($linkText, $item->getRecord());
-                },
-            ],
+            function (int $key, $value = null) use ($item) {
+                switch ($key) {
+                    case BackendPreviewUtils::KEY_RENDERING_SERVICE:
+                        return $this->getService(BackendRenderingService::class);
+                    case BackendPreviewUtils::KEY_DEFAULT_HEADER:
+                        return parent::renderPageModulePreviewHeader($item);
+                    case BackendPreviewUtils::KEY_DEFAULT_CONTENT:
+                        return parent::renderPageModulePreviewContent($item);
+                    case BackendPreviewUtils::KEY_DEFAULT_FOOTER:
+                        return parent::renderPageModulePreviewFooter($item);
+                    case BackendPreviewUtils::KEY_LINK_WRAP:
+                        return $this->linkEditContent($value, $item->getRecord());
+                    case BackendPreviewUtils::KEY_ROW:
+                        return $item->getRecord();
+                    default:
+                        return null;
+                }
+            },
         ]);
     }
     
