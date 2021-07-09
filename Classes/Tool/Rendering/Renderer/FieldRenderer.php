@@ -251,13 +251,13 @@ class FieldRenderer implements PublicServiceInterface
                 return $linkData['url'] ?? $value;
             case LinkService::TYPE_FILE:
                 if (! empty($linkData['file'])) {
-                    $linkData['file']->getNameWithoutExtension() . ' [' . $linkData['file']->getUid() . ']';
+                    return $linkData['file']->getNameWithoutExtension() . ' [' . $linkData['file']->getUid() . ']';
                 }
                 
                 return $value;
             case LinkService::TYPE_FOLDER:
                 if (! empty($linkData['folder'])) {
-                    $linkData['folder']->getPublicUrl();
+                    return $linkData['folder']->getPublicUrl();
                 }
                 
                 return $value;
