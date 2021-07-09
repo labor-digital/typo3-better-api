@@ -227,10 +227,10 @@ class FalService implements SingletonInterface
     ): FileReference
     {
         // Ignore the access checks
-        $referenceUid = $this->cs()->simulator->runWithEnvironment(['asAdmin'],
+        $referenceUid = $this->cs()->simulator->runWithEnvironment(['asAdmin', 'includeHiddenContent'],
             function () use ($file, $uid, $field, $table) {
                 // Get the record from the database
-                $record = $this->cs()->db->getQuery($table)->withWhere(['uid' => $uid])->getFirst();
+                $record = $this->cs()->db->getQuery($table)->withIncludeHidden()->withWhere(['uid' => $uid])->getFirst();
                 if (empty($record)) {
                     throw new FalException(
                         'Invalid table: ' . $table . ' or uid: ' . $uid . ' to create a file reference for');
