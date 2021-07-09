@@ -464,10 +464,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         }
         
         return $this->pageRepository->getRecordOverlay(
-            $tableName,
-            $row,
-            $languageUid,
-            is_string($this->adapter->getSettings()->getLanguageOverlayMode()) ? 'hideNonTranslated' : '1'
-        );
+                $tableName,
+                $row,
+                $languageUid,
+                is_string($this->adapter->getSettings()->getLanguageOverlayMode()) ? 'hideNonTranslated' : '1'
+            ) ?? $row;
     }
 }
