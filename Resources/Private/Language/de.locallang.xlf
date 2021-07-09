@@ -84,6 +84,10 @@
 				<source>Top Right</source>
 				<target>Oben Rechts</target>
 			</trans-unit>
+			<trans-unit id="t.tt_content.colPos.inlineContent">
+				<source>Inline Content</source>
+				<target>Verschachtelter Inhalt</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

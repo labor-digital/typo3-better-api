@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
+use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosItemProcFunc;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 
@@ -141,12 +142,71 @@ class Inline extends AbstractFieldPreset
      *                                        extended by a field that holds the sorting order on the inline parent
      *                                        record. This defines the name
      *                                        of that field.
+     *                                        - defaultCType string: Allows you to define the default CType value
+     *                                        - defaultListType string: Allows you to define the default list type,
+     *                                        using this option will disable defaultCType
      *
      * @see applyInline() if you want to use other records
      */
     public function applyInlineContent(array $options = []): void
     {
+        $defaultCType = $options['defaultCType'] ?? null;
+        $defaultListType = $options['defaultListType'] ?? null;
+        unset($options['defaultCType'], $options['defaultListType']);
+        
         $this->applyInline('tt_content', $options);
+        
+        // Apply default values for CType or list_type
+        if ($defaultCType || $defaultListType) {
+            if ($defaultListType) {
+                $this->field->addConfig([
+                    'overrideChildTca' => [
+                        'columns' => [
+                            'CType' => [
+                                'config' => [
+                                    'default' => 'list',
+                                ],
+                            ],
+                            'list_type' => [
+                                'config' => [
+                                    'default' => $defaultListType,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            } else {
+                $this->field->addConfig([
+                    'overrideChildTca' => [
+                        'columns' => [
+                            'CType' => [
+                                'config' => [
+                                    'default' => $defaultCType,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            }
+        }
+        
+        // When we are creating an inline content relation on the tt_content table,
+        // we automatically inject a item proc func to the colPos column, so we can
+        // hide the contents on the "page" view.
+        if ($this->getTcaTable()->getTableName() === 'tt_content') {
+            $this->field->addConfig([
+                'overrideChildTca' => [
+                    'columns' => [
+                        'colPos' => [
+                            'config' => [
+                                'itemsProcFunc' => InlineColPosItemProcFunc::class . '->itemsProcFunc',
+                                'default' => '-88',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        }
     }
     
 }
