@@ -193,20 +193,18 @@ class Inline extends AbstractFieldPreset
         // When we are creating an inline content relation on the tt_content table,
         // we automatically inject a item proc func to the colPos column, so we can
         // hide the contents on the "page" view.
-        if ($this->getTcaTable()->getTableName() === 'tt_content') {
-            $this->field->addConfig([
-                'overrideChildTca' => [
-                    'columns' => [
-                        'colPos' => [
-                            'config' => [
-                                'itemsProcFunc' => InlineColPosHook::class . '->itemsProcFunc',
-                                'default' => '-88',
-                            ],
+        $this->field->addConfig([
+            'overrideChildTca' => [
+                'columns' => [
+                    'colPos' => [
+                        'config' => [
+                            'itemsProcFunc' => InlineColPosHook::class . '->itemsProcFunc',
+                            'default' => '-88',
                         ],
                     ],
                 ],
-            ]);
-        }
+            ],
+        ]);
     }
     
 }
