@@ -32,6 +32,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\ConfigureRoutingInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
+use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
 use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
 use LaborDigital\T3ba\Tool\BackendPreview\Hook\Legacy\ItemPreviewRenderer;
 use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
@@ -100,16 +101,18 @@ class Core implements ConfigureRawSettingsInterface,
                     ],
                 ],
                 
-                // Configuration to support legacy backend preview renderering which is used for gridelements
                 'cms/layout/class.tx_cms_layout.php' => [
+                    // Configuration to support legacy backend preview renderering which is used for gridelements
                     'tt_content_drawItem' => [
                         ItemPreviewRenderer::class => ItemPreviewRenderer::class,
+                    ],
+                    
+                    'record_is_used' => [
+                        InlineColPosHook::class => InlineColPosHook::class . '->isContentUsed',
                     ],
                 ],
             ],
         ]);
-        
-        
     }
     
     /**

@@ -26,10 +26,15 @@ namespace LaborDigital\T3ba\FormEngine\UserFunc;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 
-class InlineColPosItemProcFunc implements NoDiInterface
+class InlineColPosHook implements NoDiInterface
 {
     use ContainerAwareTrait;
     
+    /**
+     * Injects the -88 col pos for inline content elements in the given item array
+     *
+     * @param   array  $params
+     */
     public function itemsProcFunc(array &$params): void
     {
         $params['items'] = [
@@ -39,5 +44,23 @@ class InlineColPosItemProcFunc implements NoDiInterface
                 null,
             ],
         ];
+    }
+    
+    /**
+     * Checks if a content record is "used" as an inline element
+     *
+     * @param   array  $params
+     *
+     * @return bool
+     */
+    public function isContentUsed(array $params): bool
+    {
+        if ($params['used']) {
+            return true;
+        }
+        
+        $record = $params['record'];
+        
+        return ((int)$record['colPos']) === -88 && ! empty($record['t3ba_inline']);
     }
 }

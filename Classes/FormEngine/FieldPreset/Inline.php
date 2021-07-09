@@ -25,7 +25,7 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
-use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosItemProcFunc;
+use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 
@@ -199,7 +199,7 @@ class Inline extends AbstractFieldPreset
                     'columns' => [
                         'colPos' => [
                             'config' => [
-                                'itemsProcFunc' => InlineColPosItemProcFunc::class . '->itemsProcFunc',
+                                'itemsProcFunc' => InlineColPosHook::class . '->itemsProcFunc',
                                 'default' => '-88',
                             ],
                         ],
