@@ -145,7 +145,7 @@ class FieldListRenderer implements PublicServiceInterface
         }
         
         return
-            '<table class="table" style="{margin-top:10px;margin-bottom:0}">' .
+            '<table class="table" style="margin-top:10px;margin-bottom:0">' .
             '<tr>' . implode('</tr><tr>', $rows) . '</tr></table>';
     }
     
