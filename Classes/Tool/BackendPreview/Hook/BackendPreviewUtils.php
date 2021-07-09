@@ -105,6 +105,23 @@ class BackendPreviewUtils implements NoDiInterface
     }
     
     /**
+     * Renders a backend preview of inline related content elements. This is useful if you want to render the
+     * nested backend preview of IRRE related content elements, in another content element. For example, in a button group element,
+     * you can relate multiple button elements, which should be rendered in the backend preview.
+     *
+     * NOTE: The renderer will remove all link tags inside the rendered previews to avoid issues with the backend
+     * edit link tags.
+     *
+     * @param   string  $inlineField  A column/field name on the tt_content table that is used as inline field.
+     *
+     * @return string
+     */
+    public function renderInlineContentPreview(string $inlineField): string
+    {
+        return $this->getRenderingService()->renderInlineContentPreview($this->getRow(), $inlineField);
+    }
+    
+    /**
      * Wraps the given $linkText with a link to the edit mode of the record
      *
      * @param   string  $linkText
