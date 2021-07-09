@@ -65,7 +65,7 @@ class BackendListLabelRenderer extends AbstractRenderer
     public function render(ListLabelRenderingEvent $event): void
     {
         TcaUtil::runWithResolvedTypeTca($event->getRow(), $event->getTableName(), function () use ($event) {
-            $row = $event->getRow();
+            $row = array_map(static function ($v) { return is_array($v) ? reset($v) : $v; }, $event->getRow());
             $title = $this->findDefaultHeader($row);
             $foundLabel = false;
             
@@ -82,12 +82,13 @@ class BackendListLabelRenderer extends AbstractRenderer
                 
                 $foundLabel = true;
                 $title .= is_array($handler)
-                    ? $this->renderColumns($handler, $event)
-                    : $this->callConcreteRenderer($handler, $event);
+                    ? $this->renderColumns($handler, $event, $row)
+                    : $this->callConcreteRenderer($handler, $event, $row);
+                break;
             }
             
             if (! $foundLabel) {
-                $title .= $this->renderFallbackLabel($event);
+                $title .= $this->renderFallbackLabel($event, $row);
             }
             
             $event->setTitle($title);
@@ -100,8 +101,11 @@ class BackendListLabelRenderer extends AbstractRenderer
      *
      * @param   string                   $rendererClass
      * @param   ListLabelRenderingEvent  $event
+     * @param   array                    $row
+     *
+     * @return string
      */
-    protected function callConcreteRenderer(string $rendererClass, ListLabelRenderingEvent $event): string
+    protected function callConcreteRenderer(string $rendererClass, ListLabelRenderingEvent $event, array $row): string
     {
         try {
             // Check if the renderer class is valid
@@ -117,9 +121,9 @@ class BackendListLabelRenderer extends AbstractRenderer
                     . BackendListLabelRendererInterface::class);
             }
             
-            return ContentTypeUtil::runWithRemappedTca($event->getRow(), function () use ($renderer, $event) {
+            return ContentTypeUtil::runWithRemappedTca($row, function () use ($renderer, $event, $row) {
                 return ' ' . $renderer->renderBackendListLabel(
-                        $this->contentRepository->getExtendedRow($event->getRow()),
+                        $this->contentRepository->getExtendedRow($row),
                         $event->getOptions()
                     );
             });
@@ -134,6 +138,7 @@ class BackendListLabelRenderer extends AbstractRenderer
      *
      * @param   array                    $columns           the list of columns to render
      * @param   ListLabelRenderingEvent  $event             The event containing the data to render
+     * @param   array                    $row               The prepared database row to render the label for
      * @param   callable|null            $additionalFilter  An optional filter to remove fields on the fly.
      *                                                      The callable must return a boolean: True to keep the value,
      *                                                      false to remove it!
@@ -143,10 +148,11 @@ class BackendListLabelRenderer extends AbstractRenderer
     protected function renderColumns(
         array $columns,
         ListLabelRenderingEvent $event,
+        array $row,
         ?callable $additionalFilter = null
     ): string
     {
-        $row = $this->contentRepository->getExtendedRow($event->getRow());
+        $row = $this->contentRepository->getExtendedRow($row);
         
         return ContentTypeUtil::runWithRemappedTca($row, function () use ($columns, $row, $additionalFilter, $event) {
             $result = [];
@@ -177,16 +183,17 @@ class BackendListLabelRenderer extends AbstractRenderer
     /**
      * Renders an automatic fallback label based on the most commonly used columns of the tt_content table
      *
-     * @param   \LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent  $event
+     * @param   ListLabelRenderingEvent  $event
+     * @param   array                    $row
      *
      * @return string
      */
-    protected function renderFallbackLabel(ListLabelRenderingEvent $event): string
+    protected function renderFallbackLabel(ListLabelRenderingEvent $event, array $row): string
     {
         $isRendered = false;
         
         return $this->renderColumns(['headline', 'title', 'header', 'bodytext', 'content', 'description', 'desc'],
-            $event, static function (string $value) use (&$isRendered) {
+            $event, $row, static function (string $value) use (&$isRendered) {
                 if ($isRendered) {
                     return false;
                 }
