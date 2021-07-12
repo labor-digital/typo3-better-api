@@ -85,7 +85,7 @@ class Applier extends AbstractExtConfigApplier
      */
     protected function applyStaticDirectoryRegistration(): void
     {
-        foreach ($this->state->get('typo.typoScript.staticDirectories') as $directory) {
+        foreach ($this->state->get('typo.typoScript.staticDirectories', []) as $directory) {
             if (empty($directory[2])) {
                 $directory[2] = Inflector::toHuman($directory[0], true) . ' - Static TypoScript';
             }
