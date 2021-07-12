@@ -145,6 +145,11 @@ class Inline extends AbstractFieldPreset
      *                                        - defaultCType string: Allows you to define the default CType value
      *                                        - defaultListType string: Allows you to define the default list type,
      *                                        using this option will disable defaultCType
+     *                                        - newCeWizard bool: By default the element will replace the "create new"
+     *                                        button with the a "new content element wizard" that opens up in a modal.
+     *                                        To disable this feature set this option to FALSE.
+     *                                        Note: The wizard will be disabled if either "defaultCType" or
+     *                                        "defaultListType" is used.
      *
      * @see applyInline() if you want to use other records
      */
@@ -152,7 +157,8 @@ class Inline extends AbstractFieldPreset
     {
         $defaultCType = $options['defaultCType'] ?? null;
         $defaultListType = $options['defaultListType'] ?? null;
-        unset($options['defaultCType'], $options['defaultListType']);
+        $useNewCeWizard = ! ($defaultCType !== null || $defaultListType !== null) && ($options['newCeWizard'] ?? true);
+        unset($options['defaultCType'], $options['defaultListType'], $options['newCeWizard']);
         
         $this->applyInline('tt_content', $options);
         
@@ -205,6 +211,13 @@ class Inline extends AbstractFieldPreset
                 ],
             ],
         ]);
+        
+        // Add the extended render type if the new content element wizard should be used
+        if ($useNewCeWizard) {
+            $this->field->addConfig([
+                'renderType' => 't3baInlineWithNewCeWizard',
+            ]);
+        }
     }
     
 }

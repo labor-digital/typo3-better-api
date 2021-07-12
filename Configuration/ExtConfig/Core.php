@@ -32,7 +32,9 @@ use LaborDigital\T3ba\ExtConfigHandler\Raw\ConfigureRawSettingsInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\ConfigureRoutingInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
+use LaborDigital\T3ba\FormEngine\Node\InlineWithNewCeWizardNode;
 use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
+use LaborDigital\T3ba\FormEngine\UserFunc\InlineContentElementWizardDataProvider;
 use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
 use LaborDigital\T3ba\Tool\BackendPreview\Hook\Legacy\ItemPreviewRenderer;
 use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
@@ -42,6 +44,8 @@ use LaborDigital\T3ba\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapp
 use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkBuilder;
 use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkHandler;
 use Neunerlei\Configuration\State\ConfigState;
+use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
+use TYPO3\CMS\Backend\Form\FormDataProvider\InitializeProcessedTca;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
@@ -85,6 +89,19 @@ class Core implements ConfigureRawSettingsInterface,
                             'nodeName' => 't3baWizard',
                             'priority' => 40,
                             'class' => CustomWizardNode::class,
+                        ],
+                        't3baInlineWithNewCeWizard' => [
+                            'nodeName' => 't3baInlineWithNewCeWizard',
+                            'priority' => 40,
+                            'class' => InlineWithNewCeWizardNode::class,
+                        ],
+                    ],
+                    'formDataGroup' => [
+                        'tcaDatabaseRecord' => [
+                            InlineContentElementWizardDataProvider::class => [
+                                'before' => [DatabaseRowInitializeNew::class],
+                                'depends' => [InitializeProcessedTca::class],
+                            ],
                         ],
                     ],
                 ],
