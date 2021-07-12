@@ -78,6 +78,14 @@ class SharedConfig implements NoDiInterface
     public $backendPreviewHooks = [];
     
     /**
+     * Collects the list of element description labels, that will not be retrievable through the new ce wizard,
+     * because their entry was disabled.
+     *
+     * @var array
+     */
+    public $additionalPreviewDescriptions = [];
+    
+    /**
      * The list of all collected data hooks to be executed for the content elements
      *
      * @var array
@@ -118,6 +126,9 @@ class SharedConfig implements NoDiInterface
         
         if (! empty($this->backendPreviewRenderers['preview'])) {
             $state->mergeIntoArray('t3ba.backendPreview.previewRenderers', $this->backendPreviewRenderers['preview']);
+        }
+        if (! empty($this->additionalPreviewDescriptions)) {
+            $state->mergeIntoArray('t3ba.backendPreview.descriptions', $this->additionalPreviewDescriptions);
         }
         if (! empty($this->backendPreviewRenderers['listLabel'])) {
             $state->mergeIntoArray('t3ba.backendPreview.listLabelRenderers', $this->backendPreviewRenderers['listLabel']);
