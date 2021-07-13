@@ -615,10 +615,11 @@ abstract class AbstractBetterQuery
          *
          * @param   string|int  $key
          * @param   \Closure    $constraintGenerator
+         * @param   bool        $negated
          *
          * @return \TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression
          */
-        $uidSpecialConstraintWrapper = function ($key, Closure $constraintGenerator) {
+        $uidSpecialConstraintWrapper = function ($key, Closure $constraintGenerator, bool $negated) {
             $c = $constraintGenerator($key);
 
             // Ignore if this is not a uid field
@@ -636,6 +637,13 @@ abstract class AbstractBetterQuery
             }
 
             // Build the constraint
+            if ($negated) {
+                return $this->adapter->makeAnd([
+                    $constraintGenerator($key),
+                    $constraintGenerator($parentUidField),
+                ]);
+            }
+
             return $this->adapter->makeOr([
                 $constraintGenerator($key),
                 $constraintGenerator($parentUidField),
@@ -722,7 +730,7 @@ abstract class AbstractBetterQuery
                     if (! in_array($operator, $extBaseOperators)) {
                         $condition = $uidSpecialConstraintWrapper($k, function ($k) use ($operator, $v, $negated) {
                             return $this->adapter->makeCondition($operator, $k, $v, $negated);
-                        });
+                        }, $negated);
                     } else {
                         $condition = $this->adapter->makeCondition($operator, $k, $v, $negated);
                     }
