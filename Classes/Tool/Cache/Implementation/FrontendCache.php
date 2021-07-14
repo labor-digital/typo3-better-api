@@ -59,7 +59,13 @@ class FrontendCache extends AbstractExtendedCache
                 $isUpdate = true;
             }
             
-            if (! $isUpdate && $_SERVER['HTTP_PRAGMA'] === 'no-cache' && $typoContext->beUser()->isLoggedIn()) {
+            if (
+                // If not already an update and the user is logged in
+                (! $isUpdate && $typoContext->beUser()->isLoggedIn()) &&
+                // And we have a no cache header OR a no_cache get parameter
+                ($_SERVER['HTTP_PRAGMA'] === 'no-cache'
+                 || $typoContext->request()->hasGet('no_cache'))
+            ) {
                 $isUpdate = true;
             }
             
