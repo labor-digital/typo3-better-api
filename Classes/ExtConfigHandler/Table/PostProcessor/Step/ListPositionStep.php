@@ -47,12 +47,11 @@ class ListPositionStep implements TcaPostProcessorStepInterface, NoDiInterface
             return;
         }
         
-        if (! is_string($meta['backend']['listPosition'])) {
-            $meta['backend']['listPosition'] = '';
-        }
+        $meta['tsConfig'] = ($meta['tsConfig'] ?? '') . PHP_EOL .
+                            $this->buildOrderTsConfigString(
+                                $tableName, $config['ctrl'][static::CONFIG_KEY]
+                            );
         
-        $meta['backend']['listPosition'] .= PHP_EOL . $this->buildOrderTsConfigString(
-                $tableName, $config['ctrl'][static::CONFIG_KEY]);
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
     

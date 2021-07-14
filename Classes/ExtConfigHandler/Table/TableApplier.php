@@ -85,9 +85,11 @@ class TableApplier extends AbstractExtConfigApplier
      */
     public function onExtTablesLoaded(): void
     {
-        // Apply list positions
-        $def = $this->state->get('tca.meta.backend.listPosition');
-        if (is_string($def)) {
+        // Apply ts config
+        $def = $this->state->get('tca.meta.tsConfig', '');
+        // @todo remove this in v11
+        $def .= PHP_EOL . PHP_EOL . $this->state->get('tca.meta.backend.listPosition', '');
+        if (! empty(trim($def))) {
             ExtensionManagementUtility::addPageTSConfig($def);
         }
         
