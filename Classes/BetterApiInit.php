@@ -46,6 +46,7 @@ use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedBootstrap;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedCacheManager;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedDataHandler;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedDataMapper;
+use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedHiddenRestriction;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedLanguageService;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedLocalizationUtility;
 use LaborDigital\Typo3BetterApi\CoreModding\ClassOverrides\ExtendedNodeFactory;
@@ -93,6 +94,7 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -387,6 +389,7 @@ class BetterApiInit
         ClassOverrideGenerator::registerOverride(DataMapper::class, ExtendedDataMapper::class);
         ClassOverrideGenerator::registerOverride(SiteConfiguration::class, ExtendedSiteConfiguration::class);
         ClassOverrideGenerator::registerOverride(ReferenceIndex::class, ExtendedReferenceIndex::class);
+        ClassOverrideGenerator::registerOverride(HiddenRestriction::class, ExtendedHiddenRestriction::class);
 
         // Make sure we don't crash legacy code when changing the language service
         ClassOverrideGenerator::registerOverride(

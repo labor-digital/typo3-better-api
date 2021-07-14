@@ -22,12 +22,13 @@ namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Table;
 use LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
+use LaborDigital\Typo3BetterApi\Frontend\TablePreview\PreviewLinkHook;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class TableConfigGenerator implements SingletonInterface
 {
     use ExtBasePersistenceMapperTrait;
-    
+
     /**
      * Holds the additional config data for all tables we generated the config for.
      * This is used to hold the data until it is injected into table config object
@@ -35,7 +36,7 @@ class TableConfigGenerator implements SingletonInterface
      * @var array
      */
     protected $additionalConfig = [];
-    
+
     /**
      * Generates the TCA list for the given stack of Table configuration classes
      *
@@ -49,14 +50,14 @@ class TableConfigGenerator implements SingletonInterface
     {
         // Prepare the tca output
         $tcaList = [];
-        
+
         // Run through the stack
         foreach ($stack as $tableName => $data) {
             $context->runWithFirstCachedValueDataScope($data,
                 function () use ($data, $tableName, $context, $isOverride, &$tcaList) {
                     // Create the table instance
                     $table = TcaTable::makeInstance($tableName, $context);
-                    
+
                     // Run through table stack
                     $context->runWithCachedValueDataScope($data,
                         function (string $configClass) use ($tableName, $context, $table, $isOverride) {
@@ -72,21 +73,21 @@ class TableConfigGenerator implements SingletonInterface
                                                              . ' does not implement the required interface: '
                                                              . TableConfigurationInterface::class . '!');
                             }
-                            
+
                             // Run the configuration class
                             call_user_func([$configClass, 'configureTable'], $table, $context, $isOverride);
                         });
-                    
+
                     // Build the tca for this table
                     $tcaList[$tableName]                = $tca = $table->__build();
                     $this->additionalConfig[$tableName] = $tca['additionalConfig'];
                 });
         }
-        
+
         // Done
         return $tcaList;
     }
-    
+
     /**
      * Should be called after both the default TCA and the TCA override stack ran.
      * This will build the cachable table configuration object and return it.
@@ -98,33 +99,59 @@ class TableConfigGenerator implements SingletonInterface
     public function generateTableConfig(ExtConfigContext $context): TableConfig
     {
         $config = $context->getInstanceOf(TableConfig::class);
-        
+
         // Build the sql string
         $config->sql = $context->SqlGenerator->getFullSql();
         $context->SqlGenerator->flush();
-        
+
         // Build additional config
         $typoScript = $tableListPositions = [];
         foreach ($this->additionalConfig as $tableName => $additionalConfig) {
             // Build extbase model mapping
             $typoScript[] = $this->getPersistenceTs($additionalConfig['modelList'], $tableName);
-            
+
             // Build list of pages that are allowed on standard pages
             if ($additionalConfig['allowOnStandardPages']) {
                 $config->tablesOnStandardPages[] = $tableName;
             }
-            
+
             // Add list position definitions
             if (! empty($additionalConfig['listPosition'])) {
                 $tableListPositions[$tableName] = $additionalConfig['listPosition'];
             }
+
+            if (! empty($additionalConfig['previewLink'])) {
+                $config->tsConfig
+                    .= PHP_EOL . $this->generatePreviewLinkTsConfig($tableName, $additionalConfig['previewLink']);
+            }
         }
-        
+
         // Combine the config
         $config->typoScript         = implode(PHP_EOL, array_filter($typoScript));
         $config->tableListPositions = $tableListPositions;
-        
+
         // Done
         return $config;
+    }
+
+    protected function generatePreviewLinkTsConfig(string $tableName, array $configuration): string
+    {
+        $hiddenField = $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'] ?? 'hidden';
+        
+        return '
+        TCEMAIN.preview {
+            ' . $tableName . ' {
+                previewPageId = -1
+                fieldToParameterMap {
+                    uid = ' . PreviewLinkHook::UID_TRANSFER_MARKER . '
+                    ' . $hiddenField . ' = ' . PreviewLinkHook::HIDDEN_TRANSFER_MARKER . '
+                }
+                additionalGetParameters {
+                    ' . PreviewLinkHook::TABLE_TRANSFER_MARKER . ' = ' . $tableName . '
+                    ' . PreviewLinkHook::CONFIG_TRANSFER_MARKER . ' = '
+               . base64_encode(\GuzzleHttp\json_encode($configuration)) . '
+                }
+            }
+        }';
     }
 }

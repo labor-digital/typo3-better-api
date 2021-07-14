@@ -26,6 +26,7 @@ use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableDefaultTcaFilterEvent
 use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableRawTcaTypeFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtConfigTableTypeDefinitionFilterEvent;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
+use LaborDigital\Typo3BetterApi\Frontend\TablePreview\PreviewLinkGeneratorInterface;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\Options\Options;
@@ -57,7 +58,7 @@ class TcaTable extends AbstractTcaTable
                 ],
                 'delete'                   => 'deleted',
             ],
-            
+
             'columns'  => [
                 'sys_language_uid' => [
                     'exclude' => true,
@@ -228,7 +229,7 @@ class TcaTable extends AbstractTcaTable
                 ],
             ],
         ];
-    
+
     /**
      * Defines a list of additional properties that are not included
      * in a normal TCA array. We will automatically dump and reimport them into the "additionalConfig" node
@@ -238,8 +239,9 @@ class TcaTable extends AbstractTcaTable
             'allowOnStandardPages',
             'modelList',
             'listPosition',
+            'previewLink',
         ];
-    
+
     /**
      * Contains the list of all instantiated tca types of this table
      *
@@ -248,35 +250,42 @@ class TcaTable extends AbstractTcaTable
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableType[]
      */
     protected $types = [];
-    
+
     /**
      * The control configuration for this table
      *
      * @var \LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTableCtrl
      */
     protected $ctrl;
-    
+
     /**
      * If true the table will be allowed on pages, and not only in folder items
      *
      * @var bool
      */
     protected $allowOnStandardPages = false;
-    
+
     /**
      * An array of model classes that should be mapped to this table
      *
      * @var array
      */
     protected $modelList = [];
-    
+
     /**
      * Stores the position of this table when shown on the list mode
      *
      * @var array
      */
     protected $listPosition = [];
-    
+
+    /**
+     * Stores the configuration of the preview link to be rendered on the page edit backend page
+     *
+     * @var array|null;
+     */
+    protected $previewLink;
+
     /**
      * This allows you to set a class of the model which then will be mapped to this table
      *
@@ -287,10 +296,100 @@ class TcaTable extends AbstractTcaTable
     public function addModelClass(string $className): TcaTable
     {
         $this->modelList[] = $className;
-        
+
         return $this;
     }
-    
+
+    /**
+     * Enables the "preview" button in the edit record form of the TYPO3 backend.
+     * T3BA comes with built-in support to even show hidden records in the frontend.
+     *
+     * @param   string|int|array  $pidOrLinkSetKey  Either the uid of the page, to use for the preview of this record,
+     *                                              as string, integer or array
+     *                                              {@see TypoLink::withPid() for the usage as array}. Alternatively
+     *                                              you can set the key of a link set that will be used for the preview
+     *                                              link generation.
+     * @param   string|null       $uidParam         Defines the name of the parameter that should be mapped to the uid
+     *                                              of the record to be previewed. NOTE: If you use controllerClass and
+     *                                              controllerAction, you don't need to use the tx_signature[] prefix,
+     *                                              this is handled automatically. NOTE 2: If you set a linkSetKey
+     *                                              instead of a pid, you can omit this parameter when the linkset
+     *                                              contains a single required parameter
+     * @param   array             $options          The options to configure the preview
+     *                                              - controllerClass string: Optional extbase controller name to use
+     *                                              for the url
+     *                                              - controllerAction string: Optional action name in an extbase
+     *                                              controller to use for the url generation
+     *                                              - additionalTables array: Optional, additional tables that should
+     *                                              be allowed to show their hidden records on the preview page.
+     *                                              - additionalGetParameters array: Optional, additional get
+     *                                              parameters to append to the generated url
+     *                                              - generator string: If your preview link is a special kind of
+     *                                              noodle, you can specify a custom generator. Specify the class that
+     *                                              implements the PreviewLinkGeneratorInterface to do so.
+     *
+     * @return $this
+     * @see PreviewLinkGeneratorInterface
+     */
+    public function enablePreviewLink($pidOrLinkSetKey, ?string $uidParam = null, array $options = []): self
+    {
+        $this->previewLink = array_filter(Options::make($this->context->replaceMarkers(array_merge(
+            ['pidOrLinkSet' => $pidOrLinkSetKey, 'uidParam' => $uidParam], $options
+        )), [
+            'pidOrLinkSet'            => [
+                'type' => ['array', 'int', 'string'],
+            ],
+            'uidParam'                => [
+                'type'    => ['string', 'null'],
+                'default' => null,
+            ],
+            'controllerClass'         => [
+                'type'    => ['string', 'null'],
+                'default' => null,
+            ],
+            'controllerAction'        => [
+                'type'    => ['string', 'null'],
+                'default' => null,
+            ],
+            'additionalTables'        => [
+                'type'    => ['array', 'null'],
+                'default' => null,
+            ],
+            'additionalGetParameters' => [
+                'type'    => ['array', 'null'],
+                'default' => null,
+            ],
+            'generator'               => [
+                'type'      => ['string', 'null'],
+                'default'   => null,
+                'validator' => function (?string $class) {
+                    if ($class !== null
+                        && (! class_exists($class)
+                            || ! in_array(PreviewLinkGeneratorInterface::class, class_implements($class), true))) {
+                        return 'The given generator is invalid, because it either not exists, ' .
+                               'or does not implement the required ' . PreviewLinkGeneratorInterface::class;
+                    }
+
+                    return true;
+                },
+            ],
+        ]));
+
+        return $this;
+    }
+
+    /**
+     * Disables the preview link by resetting the configuration
+     *
+     * @return $this
+     */
+    public function disablePreviewLink(): self
+    {
+        $this->previewLink = null;
+
+        return $this;
+    }
+
     /**
      * Can be used to configure the order of tables when they are rendered in the "list" mode in the backend.
      * This table will be sorted either before or after the table with $otherTableName
@@ -305,10 +404,10 @@ class TcaTable extends AbstractTcaTable
     {
         $this->listPosition[$before ? 'before' : 'after'][] = $this->context->OptionList->table()
                                                                                         ->getRealTableName($otherTableName);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the list of currently configured model classes for this table
      *
@@ -318,7 +417,7 @@ class TcaTable extends AbstractTcaTable
     {
         return array_unique($this->modelList);
     }
-    
+
     /**
      * Returns the readable title of this table
      *
@@ -328,7 +427,7 @@ class TcaTable extends AbstractTcaTable
     {
         return $this->ctrl->getTitle();
     }
-    
+
     /**
      * Sets the system title / label for this table in the backend
      *
@@ -339,10 +438,10 @@ class TcaTable extends AbstractTcaTable
     public function setTitle(string $title): TcaTable
     {
         $this->ctrl->setTitle($title);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns an additional configuration object for the column "control" configuration
      *
@@ -354,7 +453,7 @@ class TcaTable extends AbstractTcaTable
     {
         return $this->ctrl;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -362,7 +461,7 @@ class TcaTable extends AbstractTcaTable
     {
         return $this->getTitle();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -370,7 +469,7 @@ class TcaTable extends AbstractTcaTable
     {
         return $this->setTitle($label . '');
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -378,7 +477,7 @@ class TcaTable extends AbstractTcaTable
     {
         return ! empty($this->getTitle());
     }
-    
+
     /**
      * Returns the instance of a certain tca type.
      *
@@ -393,7 +492,7 @@ class TcaTable extends AbstractTcaTable
     {
         return $this->getTypeInternal($id);
     }
-    
+
     /**
      * Returns the list of all known type keys of this table
      *
@@ -405,10 +504,10 @@ class TcaTable extends AbstractTcaTable
     {
         $types = array_keys(Arrays::getPath($this->config, ['types'], []));
         $types = Arrays::attach($types, array_keys($this->types));
-        
+
         return array_unique($types);
     }
-    
+
     /**
      * Returns true if a given type exists for this table
      *
@@ -422,7 +521,7 @@ class TcaTable extends AbstractTcaTable
     {
         return in_array($id, $this->getTypes(), true);
     }
-    
+
     /**
      * Returns true if the table is allowed on standard pages, and not only in folder items
      *
@@ -432,7 +531,7 @@ class TcaTable extends AbstractTcaTable
     {
         return $this->allowOnStandardPages;
     }
-    
+
     /**
      * Use this if you want to allow this table to have records on standard pages and not only in folder items
      *
@@ -443,10 +542,10 @@ class TcaTable extends AbstractTcaTable
     public function setAllowOnStandardPages(bool $state = true): TcaTable
     {
         $this->allowOnStandardPages = $state;
-        
+
         return $this;
     }
-    
+
     /**
      * This method is useful if you want to create a new database table,
      * but don't want to configure every column for typo3's versioning, sorting or translations
@@ -473,7 +572,7 @@ class TcaTable extends AbstractTcaTable
                 'default' => false,
             ],
         ]);
-        
+
         // Prepare the default tca
         $default                                                            = static::DEFAULT_TCA;
         $default['ctrl']['title']
@@ -487,34 +586,34 @@ class TcaTable extends AbstractTcaTable
         if ($options['sortable']) {
             $default['ctrl']['sortby'] = 'sorting';
         }
-        
+
         // Allow filtering
         $this->context->EventBus->dispatch(($e = new ExtConfigTableDefaultTcaFilterEvent($default, $this)));
         $default = $e->getDefaultTca();
-        
+
         // Inject the defaults into the current config
         $this->config = Arrays::merge($default, $this->config);
-        
+
         // Reinitialize the object
         $this->elements = [];
         $this->ensureInitialTab();
         $this->types = [];
         $this->initializeInstance();
-        
+
         // Done
         return $this;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function removeElement(string $id): bool
     {
         $this->context->SqlGenerator->removeDefinitionFor($this->getTableName(), $id);
-        
+
         return parent::removeElement($id);
     }
-    
+
     /**
      * Internal helper which generates the tca and additional, required configuration
      * based on the current table configuration
@@ -525,23 +624,23 @@ class TcaTable extends AbstractTcaTable
     {
         // Emit event
         $this->context->EventBus->dispatch(($e = new ExtConfigTableBeforeBuildEvent($this->tableName, $this)));
-        
+
         // Build the base tca
         $tca = parent::__build();
         unset($tca['@sql']);
-        
+
         // Inherit all missing columns from the existing tca
         foreach (Arrays::getPath($this->config, ['columns'], []) as $k => $v) {
             if (! isset($tca['columns'][$k])) {
                 $tca['columns'][$k] = $v;
             }
         }
-        
+
         // Build the loaded type TCA's
         foreach ($this->types as $key => $type) {
             $typeTca = $type->__build();
             unset($typeTca['ctrl']);
-            
+
             // Allow filtering
             $this->context->EventBus->dispatch(($e = new ExtConfigTableRawTcaTypeFilterEvent(
                 $typeTca,
@@ -550,18 +649,18 @@ class TcaTable extends AbstractTcaTable
                 $this
             )));
             $typeTca = $e->getTypeTca();
-            
+
             // Calculate columns overrides
             $overrides = $this->buildColumnOverrides($tca['columns'], $typeTca['columns']);
             if (! empty($overrides)) {
                 $tca['types'][$key]['columnsOverrides'] = $overrides;
             }
-            
+
             // Calculate changed palettes
             $typeShowItem = &$typeTca['types'][$key]['showitem'];
             $this->buildMergedPalettes($key, $typeShowItem, $tca['palettes'], $typeTca['palettes']);
             $tca['types'][$key]['showitem'] = $typeShowItem;
-            
+
             // Allow filtering
             $this->context->EventBus->dispatch(($e = new ExtConfigTableTypeDefinitionFilterEvent(
                 $tca['types'][$key],
@@ -571,27 +670,27 @@ class TcaTable extends AbstractTcaTable
             )));
             $tca['types'][$key] = $e->getTypeTca();
         }
-        
+
         // Update control object
         $tca['ctrl'] = $this->ctrl->getRaw();
-        
+
         // Add additional information to the tca
         $additionalConfig = [];
         foreach (static::ADDITIONAL_TCA_CONFIG_LIST as $property) {
             $additionalConfig[$property] = $this->$property;
         }
         $tca['additionalConfig'] = $additionalConfig;
-        
+
         // Allow filtering
         $this->context->EventBus->dispatch(($e = new ExtConfigTableAfterBuildEvent(
             $tca,
             $this->tableName,
             $this
         )));
-        
+
         return $e->getTca();
     }
-    
+
     /**
      * Internal helper which calculates the diff between the main table's columns and
      * the columns in a type. It will then result in a columnsOverrides array for this type
@@ -607,9 +706,9 @@ class TcaTable extends AbstractTcaTable
         if ($columns == $typeColumns) {
             return [];
         }
-        
+
         $overrides = [];
-        
+
         // Helper to find differences in multidimensional arrays
         $walker = function (array $a, array $b, $walker): array {
             $diff = [];
@@ -631,10 +730,10 @@ class TcaTable extends AbstractTcaTable
                     $diff[$k] = $v;
                 }
             }
-            
+
             return $diff;
         };
-        
+
         // Loop over all type columns and generate the diff to the main definition
         foreach ($typeColumns as $id => $col) {
             // Column does not exist in parent
@@ -650,12 +749,12 @@ class TcaTable extends AbstractTcaTable
                 }
                 continue;
             }
-            
+
             // Check if the column equals the other column
             if ($columns[$id] == $col) {
                 continue;
             }
-            
+
             // Calculate difference
             $diff = $walker($columns[$id], $col, $walker);
             if (empty($diff)) {
@@ -663,10 +762,10 @@ class TcaTable extends AbstractTcaTable
             }
             $overrides[$id] = $diff;
         }
-        
+
         return $overrides;
     }
-    
+
     /**
      * This internal helper is used to merge the type's palettes into the parent's palettes.
      * If it detects a mismatch it will create a new, separate palette for the type to avoid global pollution
@@ -686,41 +785,41 @@ class TcaTable extends AbstractTcaTable
         if ($palettes == $typePalettes) {
             return;
         }
-        
+
         // Loop over all type palettes
         foreach ($typePalettes as $k => $p) {
             $showitem = $p['showitem'];
-            
+
             // Add new palette
             if (! isset($palettes[$k])) {
                 $palettes[$k]['showitem'] = $showitem;
                 continue;
             }
-            
+
             // Check if there is already a showitem for this palette
             if (isset($palettes[$k]['showitem'])) {
                 // Ignore identical palette
                 if ($palettes[$k]['showitem'] === $showitem) {
                     continue;
                 }
-                
+
                 // Compare a unified version of both
                 if (Inflector::toComparable($palettes[$k]['showitem']) === Inflector::toComparable($showitem)) {
                     continue;
                 }
             }
-            
+
             // Create a new version of this palette for the type
             $newK                        = $type . '-' . $k;
             $palettes[$newK]['showitem'] = $showitem;
-            
+
             // Update type's show item...
             // Yay for string manipulation \o/...
             $typeShowitem = preg_replace('/(--palette--;[^;,]*;)' . preg_quote($k) . '(,|$)/si', "\${1}$newK,",
                 $typeShowitem);
         }
     }
-    
+
     /**
      * Internal helper to create retrieve or create a instance of a tca type representation
      *
@@ -734,13 +833,13 @@ class TcaTable extends AbstractTcaTable
         if (isset($this->types[$id])) {
             return $this->types[$id];
         }
-        
+
         // Merge columns overrides into the main tca
         $typeConfig = Arrays::getPath($this->config, ['types', $id], []);
         if (! isset($typeConfig['showitem'])) {
             $typeConfig['showitem'] = '';
         }
-        
+
         // Create real tca configuration for this type
         $typeTca = [
             'palettes' => Arrays::getPath($this->config, ['palettes'], []),
@@ -751,13 +850,13 @@ class TcaTable extends AbstractTcaTable
         }
         $columnsOverrides = Arrays::getPath($typeConfig, ['columnsOverrides'], []);
         $typeTca['types'] = [$id => ['showitem' => $typeConfig['showitem']]];
-        
+
         // Create the new type
         $type = $this->context->getInstanceOf(TcaTableType::class, [$this->tableName . '-' . $id, $this->context]);
         $type->setRaw($typeTca);
         $type->__setParent($this);
         $type->setTableName($this->tableName);
-        
+
         // Inject the field resolver
         $type->__setFieldTcaResolver(function ($field) use ($columnsOverrides) {
             // Try to get a fresh config from one of our own children or use our config object...
@@ -766,31 +865,31 @@ class TcaTable extends AbstractTcaTable
             } else {
                 $tca = Arrays::getPath($this->config, ['columns', $field], []);
             }
-            
+
             // Check if this field is not known in the sql table yet
             if (empty($tca)) {
                 if (empty($this->context->SqlGenerator->getDefinitionFor($this->tableName, $field))) {
                     $this->context->SqlGenerator->setDefinitionFor($this->tableName, $field, 'text');
                 }
             }
-            
+
             // Check if there is a registered override
             $overrides = Arrays::getPath($columnsOverrides, $field, []);
             if (! empty($overrides)) {
                 ArrayUtility::mergeRecursiveWithOverrule($tca, $overrides);
             }
-            
+
             // Done
             return $tca;
         });
-        
+
         // Initialize the type
         $type->initializeInstance();
-        
+
         // Done
         return $this->types[$id] = $type;
     }
-    
+
     /**
      * Internal helper to create a new instance of a tca table, based on the global tca array
      *
@@ -803,33 +902,33 @@ class TcaTable extends AbstractTcaTable
     {
         // Load the tca
         $tableTca = Arrays::getPath($GLOBALS, ['TCA', $tableName], []);
-        
+
         // Create a new instance
         $i = $context->getInstanceOf(static::class, [$tableName, $context]);
         $i->setRaw($tableTca);
         $i->setTableName($tableName);
         $i->initializeInstance();
-        
+
         // Done
         return $i;
     }
-    
+
     /**
      * Internal helper to initialize all references of this table, based on the given tca
      */
     protected function initializeInstance(): void
     {
         parent::initializeInstance();
-        
+
         // Import sql statements
         $this->context->SqlGenerator->__setByTcaDefinition($this->getTableName(), $this->config);
-        
+
         // Create control object
         $ctrl       = Arrays::getPath($this->config, 'ctrl', []);
         $this->ctrl = TypoContainer::getInstance()->get(TcaTableCtrl::class, [
             'args' => [$ctrl, $this],
         ]);
-        
+
         // Import additional config
         foreach (static::ADDITIONAL_TCA_CONFIG_LIST as $property) {
             if (! empty($this->config[$property])) {

@@ -275,6 +275,7 @@ abstract class AbstractBetterQuery
     {
         $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
+        // @todo This is crap, because it will disable "deleted", if it was set previously
         $settings->setIgnoreEnableFields($state);
         if ($state) {
             $settings->setEnableFieldsToBeIgnored(['disabled']);
@@ -296,6 +297,7 @@ abstract class AbstractBetterQuery
     {
         $clone    = clone $this;
         $settings = $clone->adapter->getSettings();
+        // @todo This is crap, because it will disable "hidden", if it was set previously
         $settings->setIgnoreEnableFields($state);
         $settings->setIncludeDeleted($state);
 

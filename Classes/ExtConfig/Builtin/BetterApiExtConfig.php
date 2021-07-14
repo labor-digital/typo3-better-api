@@ -43,6 +43,7 @@ use LaborDigital\Typo3BetterApi\ExtConfig\OptionList\ExtConfigOptionTraitGenerat
 use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkBuilder;
 use LaborDigital\Typo3BetterApi\Link\LinkBrowser\LinkSetRecordLinkHandler;
 use LaborDigital\Typo3BetterApi\Middleware\RequestCollectorMiddleware;
+use LaborDigital\Typo3BetterApi\Middleware\TablePreviewResolverMiddleware;
 use LaborDigital\Typo3BetterApi\Translation\FileSync\TranslationSyncCommand;
 use LaborDigital\Typo3BetterApi\Translation\TranslationConfigOption;
 use LaborDigital\Typo3BetterApi\TypoScript\TypoScriptConfigOption;
@@ -98,6 +99,10 @@ class BetterApiExtConfig implements ExtConfigInterface, ExtConfigExtensionInterf
 
         // Register middlewares
         $configurator->http()
+                     ->registerMiddleware(TablePreviewResolverMiddleware::class, 'frontend', [
+                         'after'  => 'typo3/cms-frontend/backend-user-authentication',
+                         'before' => 'typo3/cms-frontend/site',
+                     ])
                      ->registerMiddleware(RequestCollectorMiddleware::class, 'frontend', [
                          'after'  => 'typo3/cms-frontend/site',
                          'before' => 'typo3/cms-frontend/base-redirect-resolver',

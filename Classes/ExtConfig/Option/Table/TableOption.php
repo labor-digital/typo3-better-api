@@ -19,12 +19,14 @@
 
 namespace LaborDigital\Typo3BetterApi\ExtConfig\Option\Table;
 
+use LaborDigital\Typo3BetterApi\Event\Events\ExtLocalConfLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\ExtTablesLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\SqlDefinitionFilterEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\TcaCompletelyLoadedEvent;
 use LaborDigital\Typo3BetterApi\Event\Events\TcaWithoutOverridesLoadedEvent;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\AbstractExtConfigOption;
 use LaborDigital\Typo3BetterApi\ExtConfig\Option\ExtConfigOptionInterface;
+use LaborDigital\Typo3BetterApi\Frontend\TablePreview\PreviewLinkHook;
 use LaborDigital\Typo3BetterApi\NamingConvention\Naming;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
@@ -72,6 +74,7 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         $subscription->subscribe(TcaWithoutOverridesLoadedEvent::class, '__applyTableTca', ['priority' => 200]);
         $subscription->subscribe(TcaCompletelyLoadedEvent::class, '__applyTableTcaOverrides', ['priority' => 500]);
         $subscription->subscribe(ExtTablesLoadedEvent::class, '__applyExtTables');
+        $subscription->subscribe(ExtLocalConfLoadedEvent::class, '__applyExtLocalConf', ['priority' => -100]);
         $subscription->subscribe(SqlDefinitionFilterEvent::class, '__applySqlExtension');
     }
 
@@ -420,6 +423,16 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
         ]);
     }
 
+    public function __applyExtLocalConf()
+    {
+        // Add page ts config for table ordering when in backend
+        if ($this->context->TypoContext->getEnvAspect()->isBackend()) {
+            $this->context->TypoScript
+                ->addPageTsConfig($this->getTableListOrderTsConfig())
+                ->addPageTsConfig($this->getTableConfig()->tsConfig);
+        }
+    }
+
     /**
      * @inheritDoc
      */
@@ -436,9 +449,9 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
             ExtensionManagementUtility::allowTableOnStandardPages($tableName);
         }
 
-        // Add page ts config for table ordering when in backend
         if ($this->context->TypoContext->getEnvAspect()->isBackend()) {
-            $this->context->TypoScript->addPageTsConfig($this->getTableListOrderTsConfig());
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['viewOnClickClass'][]
+                = PreviewLinkHook::class;
         }
     }
 
@@ -521,9 +534,22 @@ class TableOption extends AbstractExtConfigOption implements ExtConfigOptionInte
      */
     protected function getTableConfig(): TableConfig
     {
-        return $this->getCachedValueOrRun('tableConfig', function () {
-            return $this->context->getInstanceOf(TableConfigGenerator::class)->generateTableConfig($this->context);
-        });
+        $config = null;
+        try {
+            return $this->getCachedValueOrRun('tableConfig', function () use (&$config) {
+                $config = $this->context->getInstanceOf(TableConfigGenerator::class)
+                                        ->generateTableConfig($this->context);
+
+                // This is ugly, but we need to avoid caching if the config is empty
+                if (empty(array_filter(get_object_vars($config)))) {
+                    throw new \Exception('no caching');
+                }
+
+                return $config;
+            });
+        } catch (\Throwable $e) {
+            return $config;
+        }
     }
 
     /**

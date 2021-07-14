@@ -161,7 +161,7 @@ class BetterQuery extends AbstractBetterQuery
     public function getAll(bool $returnAsArray = false)
     {
         // Check if we have to apply an advanced relation lookup
-        if (! $returnAsArray && ! empty($this->includeHiddenChildren) || ! empty($this->includeDeletedChildren)) {
+        if (! $returnAsArray && (! empty($this->includeHiddenChildren) || ! empty($this->includeDeletedChildren))) {
             return ExtendedRelationQueryResult::makeInstance($this->getQuery()->execute($returnAsArray), [
                 'hidden'  => $this->includeHiddenChildren,
                 'deleted' => $this->includeDeletedChildren,
@@ -181,7 +181,13 @@ class BetterQuery extends AbstractBetterQuery
      */
     public function getFirst(bool $returnAsArray = false)
     {
-        return $returnAsArray ? reset($this->getAll(true)) : $this->getAll(false)->getFirst();
+        if ($returnAsArray) {
+            $all = $this->getAll(true);
+
+            return reset($all);
+        }
+
+        return $this->getAll()->getFirst();
     }
 
     /**
