@@ -28,6 +28,7 @@ use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\CshLabelStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\PreviewLinkStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 
@@ -60,6 +61,7 @@ class TcaPostProcessor implements NoDiInterface
             ListPositionStep::class,
             TablesOnStandardPagesStep::class,
             CshLabelStep::class,
+            PreviewLinkStep::class,
         ];
     
     /**

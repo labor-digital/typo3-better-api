@@ -25,9 +25,12 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\CshLabelStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\PreviewLinkStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
+use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkGeneratorInterface;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
+use Neunerlei\Options\Options;
 
 trait TcaTableConfigTrait
 {
@@ -785,5 +788,100 @@ trait TcaTableConfigTrait
     public function getCSHFiles(): array
     {
         return array_values($this->config['ctrl'][CshLabelStep::CONFIG_KEY] ?? []);
+    }
+    
+    
+    /**
+     * Enables the "preview" button in the edit record form of the TYPO3 backend.
+     * T3BA comes with built-in support to even show hidden records in the frontend.
+     *
+     * @param   string|int|array  $pidOrLinkDefinition  Either the uid of the page, to use for the preview of this record,
+     *                                                  as string, integer or array
+     *                                                  {@see TypoLink::withPid() for the usage as array}. Alternatively
+     *                                                  you can set the key of a link definition key that will be used for
+     *                                                  the preview link generation.
+     * @param   string|null       $uidParam             Defines the name of the parameter that should be mapped to the uid
+     *                                                  of the record to be previewed. NOTE: If you use controllerClass and
+     *                                                  controllerAction, you don't need to use the tx_signature[] prefix,
+     *                                                  this is handled automatically. NOTE 2: If you set a linkSetKey
+     *                                                  instead of a pid, you can omit this parameter when the link definition
+     *                                                  contains a single required parameter
+     * @param   array             $options              The options to configure the preview
+     *                                                  - controllerClass string: Optional extbase controller name to use
+     *                                                  for the url
+     *                                                  - controllerAction string: Optional action name in an extbase
+     *                                                  controller to use for the url generation
+     *                                                  - additionalTables array: Optional, additional tables that should
+     *                                                  be allowed to show their hidden records on the preview page.
+     *                                                  - additionalGetParameters array: Optional, additional get
+     *                                                  parameters to append to the generated url
+     *                                                  - generator string: If your preview link is a special kind of
+     *                                                  noodle, you can specify a custom generator. Specify the class that
+     *                                                  implements the PreviewLinkGeneratorInterface to do so.
+     *
+     * @return $this
+     * @see PreviewLinkGeneratorInterface
+     * @see \LaborDigital\T3ba\ExtConfigHandler\Link\ConfigureLinksInterface
+     */
+    public function enablePreviewLink($pidOrLinkDefinition, ?string $uidParam = null, array $options = [])
+    {
+        $options = array_merge(['pidOrLinkSet' => $pidOrLinkDefinition, 'uidParam' => $uidParam], $options);
+        $options = $this->getContext()->getExtConfigContext()->replaceMarkers($options);
+        
+        $this->config['ctrl'][PreviewLinkStep::CONFIG_KEY] = array_filter(
+            Options::make($options, [
+                'pidOrLinkSet' => [
+                    'type' => ['array', 'int', 'string'],
+                ],
+                'uidParam' => [
+                    'type' => ['string', 'null'],
+                    'default' => null,
+                ],
+                'controllerClass' => [
+                    'type' => ['string', 'null'],
+                    'default' => null,
+                ],
+                'controllerAction' => [
+                    'type' => ['string', 'null'],
+                    'default' => null,
+                ],
+                'additionalTables' => [
+                    'type' => ['array', 'null'],
+                    'default' => null,
+                ],
+                'additionalGetParameters' => [
+                    'type' => ['array', 'null'],
+                    'default' => null,
+                ],
+                'generator' => [
+                    'type' => ['string', 'null'],
+                    'default' => null,
+                    'validator' => function (?string $class) {
+                        if ($class !== null
+                            && (! class_exists($class)
+                                || ! in_array(PreviewLinkGeneratorInterface::class, class_implements($class), true))) {
+                            return 'The given generator is invalid, because it either not exists, ' .
+                                   'or does not implement the required ' . PreviewLinkGeneratorInterface::class;
+                        }
+                        
+                        return true;
+                    },
+                ],
+            ])
+        );
+        
+        return $this;
+    }
+    
+    /**
+     * Disables the preview link by resetting the configuration
+     *
+     * @return $this
+     */
+    public function disablePreviewLink(): self
+    {
+        unset($this->config['ctrl'][PreviewLinkStep::CONFIG_KEY]);
+        
+        return $this;
     }
 }

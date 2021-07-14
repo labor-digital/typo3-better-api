@@ -33,6 +33,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Routing\ConfigureRoutingInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
+use LaborDigital\T3ba\Middleware\TablePreviewResolverMiddleware;
 use LaborDigital\T3ba\Tool\BackendPreview\Hook\Legacy\ItemPreviewRenderer;
 use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldNode;
@@ -40,6 +41,7 @@ use LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardNode;
 use LaborDigital\T3ba\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapper;
 use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkBuilder;
 use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkHandler;
+use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkHook;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
@@ -94,6 +96,12 @@ class Core implements ConfigureRawSettingsInterface,
                 ],
             ],
             'SC_OPTIONS' => [
+                't3lib/class.t3lib_befunc.php' => [
+                    'viewOnClickClass' => [
+                        PreviewLinkHook::class => PreviewLinkHook::class,
+                    ],
+                ],
+                
                 't3lib/class.t3lib_userauthgroup.php' => [
                     'getDefaultUploadFolder' => [
                         FalFileBaseDir::class => FalFileBaseDir::class . '->applyConfiguredFalFolders',
@@ -151,6 +159,9 @@ class Core implements ConfigureRawSettingsInterface,
         );
         
         $configurator
+            ->registerMiddleware(TablePreviewResolverMiddleware::class, [
+                'before' => 'typo3/cms-frontend/site',
+            ])
             ->registerMiddleware(RequestCollectorMiddleware::class, [
                 'after' => 'typo3/cms-frontend/site',
                 'before' => 'typo3/cms-frontend/base-redirect-resolver',
