@@ -202,7 +202,7 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      */
     public function parse(string $config): array
     {
-        $parser = $this->getService(TypoScriptParser::class);
+        $parser = $this->makeInstance(TypoScriptParser::class);
         $parser->parse($config);
         
         return $parser->setup;
