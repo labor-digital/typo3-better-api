@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.5.0](https://github.com/labor-digital/typo3-better-api/compare/v10.4.0...v10.5.0) (2021-07-15)
+
+
+### Features
+
+* **Tca:** implement support to generate a record preview url in the backend ([2fe4a92](https://github.com/labor-digital/typo3-better-api/commit/2fe4a92babc46ccba244ec9f86aef45f5fbfeb18))
+
+
+### Bug Fixes
+
+* **Cache\FrontendCache:** make isUpdate detection more reliable ([4eaed13](https://github.com/labor-digital/typo3-better-api/commit/4eaed132a20ab7dfa92e44b7ea00774720ed17b0))
+* **ClassOverrideGenerator:** remove unused code segment ([ec91f59](https://github.com/labor-digital/typo3-better-api/commit/ec91f59675fffd8e0b3300ce0672692865c09be3))
+* **Tca\PostProcessor:** use generic tca.meta.tsConfig config instead of tca.meta.backend.listPosition ([af1600f](https://github.com/labor-digital/typo3-better-api/commit/af1600f25ad9068b85162086a7801cc8d702786a))
+* **TypoScript:** don't retrieve TypoScriptParser through the service container ([72945a6](https://github.com/labor-digital/typo3-better-api/commit/72945a6658ecf8e80da2d31eb94d3e350e1de937))
+
 ## [10.4.0](https://github.com/labor-digital/typo3-better-api/compare/v10.3.0...v10.4.0) (2021-07-06)
 
 
