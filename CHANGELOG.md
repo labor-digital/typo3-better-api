@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.30.0](https://github.com/labor-digital/typo3-better-api/compare/v9.29.7...v9.30.0) (2021-07-15)
+
+
+### Features
+
+* **Tca:** implement support to generate a record preview url in the backend ([2dcb9f8](https://github.com/labor-digital/typo3-better-api/commit/2dcb9f84cf8c01b7fb3c44bb5eb978fe42333c73))
+
+
+### Bug Fixes
+
+* **Domain\BetterQuery:** fix an issue when uid where constraints are negated ([5fad232](https://github.com/labor-digital/typo3-better-api/commit/5fad23226c07f2db7c708a20d4dd6fb1ee5e5e67))
+
 ### [9.29.7](https://github.com/labor-digital/typo3-better-api/compare/v9.29.6...v9.29.7) (2021-07-06)
 
 
