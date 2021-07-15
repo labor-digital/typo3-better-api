@@ -126,7 +126,6 @@ class ClassOverrideGenerator
             }
             
             // Resolve the stack
-            $args['result'] = true;
             static::resolveOverrideStack($stack);
         }
         

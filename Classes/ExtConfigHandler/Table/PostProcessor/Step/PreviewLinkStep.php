@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.14 at 16:57
  */
 
 declare(strict_types=1);
@@ -25,18 +25,12 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
-use Neunerlei\Arrays\Arrays;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkHook;
 
-/**
- * Class ListPositionStep
- *
- * Generates the ts config script for the backend list ordering
- *
- * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
- */
-class ListPositionStep implements TcaPostProcessorStepInterface, NoDiInterface
+class PreviewLinkStep implements TcaPostProcessorStepInterface, NoDiInterface
 {
-    public const CONFIG_KEY = 'listPosition';
+    public const CONFIG_KEY = 'tablePreviewLink';
     
     /**
      * @inheritDoc
@@ -48,7 +42,7 @@ class ListPositionStep implements TcaPostProcessorStepInterface, NoDiInterface
         }
         
         $meta['tsConfig'] = ($meta['tsConfig'] ?? '') . PHP_EOL .
-                            $this->buildOrderTsConfigString(
+                            $this->buildPreviewLinkTsConfig(
                                 $tableName, $config['ctrl'][static::CONFIG_KEY]
                             );
         
@@ -56,30 +50,31 @@ class ListPositionStep implements TcaPostProcessorStepInterface, NoDiInterface
     }
     
     /**
-     * Internal helper to build the ts config for the table list order
+     * Generates the ts config to pass the required information to our preview link hook
      *
      * @param   string  $tableName
-     * @param   array   $order
+     * @param   array   $configuration
      *
      * @return string
      */
-    protected function buildOrderTsConfigString(string $tableName, array $order): string
+    protected function buildPreviewLinkTsConfig(string $tableName, array $configuration): string
     {
-        $c = Arrays::merge(['before' => [], 'after' => []], $order);
+        $hiddenField = $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'] ?? 'hidden';
         
-        $ts = [];
-        $ts[] = 'mod.web_list.tableDisplayOrder.' . $tableName . ' {';
-        
-        foreach (['before', 'after'] as $key) {
-            if (! empty($c[$key])) {
-                $c[$key] = array_unique($c[$key]);
-                $ts[] = $key . ' = ' . implode(', ', array_unique($c[$key]));
+        return '
+        TCEMAIN.preview {
+            ' . $tableName . ' {
+                previewPageId = 0
+                fieldToParameterMap {
+                    uid = ' . PreviewLinkHook::UID_TRANSFER_MARKER . '
+                    ' . $hiddenField . ' = ' . PreviewLinkHook::HIDDEN_TRANSFER_MARKER . '
+                }
+                additionalGetParameters {
+                    ' . PreviewLinkHook::TABLE_TRANSFER_MARKER . ' = ' . $tableName . '
+                    ' . PreviewLinkHook::CONFIG_TRANSFER_MARKER . ' = ' .
+               base64_encode(SerializerUtil::serializeJson($configuration)) . '
+                }
             }
-        }
-        
-        $ts[] = '}';
-        
-        return implode(PHP_EOL, $ts);
+        }';
     }
-    
 }

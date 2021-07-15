@@ -51,6 +51,13 @@ class BetterVisibilityAspect extends VisibilityAspect implements PublicServiceIn
     protected $context;
     
     /**
+     * A list of table names that are allowed to be retrieved, even if they are hidden
+     *
+     * @var array
+     */
+    protected $includeHiddenOfTables = [];
+    
+    /**
      * Inject the typo context instance
      *
      * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
@@ -117,6 +124,42 @@ class BetterVisibilityAspect extends VisibilityAspect implements PublicServiceIn
     public function includeDeletedRecords(): bool
     {
         return $this->getRootVisibilityAspect()->includeDeletedRecords();
+    }
+    
+    /**
+     * Returns the list of tables that are allowed to show hidden records
+     *
+     * @return array
+     */
+    public function getIncludeHiddenOfTables(): array
+    {
+        return $this->includeHiddenOfTables;
+    }
+    
+    /**
+     * Returns true if the given table name is in the list of tables which are allowed to show their hidden records.
+     *
+     * @param   string  $tableName
+     *
+     * @return bool
+     */
+    public function includeHiddenOfTable(string $tableName): bool
+    {
+        return in_array($tableName, $this->includeHiddenOfTables, true);
+    }
+    
+    /**
+     * Sets the list of tables that are allowed to show their hidden contents
+     *
+     * @param   array  $includeHiddenOfTables
+     *
+     * @return $this
+     */
+    public function setIncludeHiddenOfTables(array $includeHiddenOfTables): self
+    {
+        $this->includeHiddenOfTables = $includeHiddenOfTables;
+        
+        return $this;
     }
     
     /**

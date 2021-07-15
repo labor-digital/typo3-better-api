@@ -33,6 +33,7 @@ use LaborDigital\T3ba\Core\Override\ExtendedConfigurationController;
 use LaborDigital\T3ba\Core\Override\ExtendedContainerBuilder;
 use LaborDigital\T3ba\Core\Override\ExtendedDataHandler;
 use LaborDigital\T3ba\Core\Override\ExtendedDataMapper;
+use LaborDigital\T3ba\Core\Override\ExtendedHiddenRestriction;
 use LaborDigital\T3ba\Core\Override\ExtendedLanguageService;
 use LaborDigital\T3ba\Core\Override\ExtendedLocalizationUtility;
 use LaborDigital\T3ba\Core\Override\ExtendedNodeFactory;
@@ -45,6 +46,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
@@ -59,6 +61,7 @@ class ClassOverrideStage implements BootStageInterface
     
     public const OVERRIDE_MAP
         = [
+            HiddenRestriction::class => ExtendedHiddenRestriction::class,
             BackendUtility::class => ExtendedBackendUtility::class,
             Bootstrap::class => ExtendedBootstrap::class,
             ContainerBuilder::class => ExtendedContainerBuilder::class,
