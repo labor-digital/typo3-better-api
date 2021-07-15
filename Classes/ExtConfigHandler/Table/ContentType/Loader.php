@@ -40,7 +40,7 @@ class Loader implements PublicServiceInterface
     use TypoContextAwareTrait;
     use DelayedConfigExecutionTrait;
     
-    protected const EXT_CONTENT_DEFAULT_TYPE = '__extContentDefaultType__';
+    public const EXT_CONTENT_DEFAULT_TYPE = '__extContentDefaultType__';
     
     /**
      * Key in "additionalData" that will be used as suggested data model if

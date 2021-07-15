@@ -23,11 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Frontend;
 
 
+use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
 use LaborDigital\T3ba\Event\Frontend\FrontendAssetFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use LaborDigital\T3ba\ExtConfigHandler\Common\Assets\AssetApplierTrait;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
+use TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry;
 
 class Applier extends AbstractExtConfigApplier
 {
@@ -39,16 +41,93 @@ class Applier extends AbstractExtConfigApplier
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
+        $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtLocalConfLoaded');
         $subscription->subscribe(FrontendAssetFilterEvent::class, 'onAssetFilter', ['priority' => -5000]);
+    }
+    
+    /**
+     * Registers the configured meta tag managers into the registry
+     */
+    public function onExtLocalConfLoaded(): void
+    {
+        $metaTagManagers = $this->state->get('t3ba.frontend.metaTagManagers');
+        if (! empty($metaTagManagers)) {
+            $registry = $this->getMetaTagManagerRegistry();
+            foreach ($metaTagManagers as $args) {
+                $registry->registerManager(...$args);
+            }
+        }
     }
     
     /**
      * Executes the asset collector configuration
      */
-    public function onAssetFilter(): void
+    public function onAssetFilter(FrontendAssetFilterEvent $event): void
+    {
+        $siteIdentifier = $this->getTypoContext()->site()->getCurrent()->getIdentifier();
+        
+        $this->applyAssetCollectorActions($siteIdentifier);
+        $this->applyMetaTagActions($siteIdentifier);
+        $this->applyHeaderAndFooterData($event, $siteIdentifier);
+        
+    }
+    
+    /**
+     * Applies the registered raw html configuration to the page renderer
+     *
+     * @param   \LaborDigital\T3ba\Event\Frontend\FrontendAssetFilterEvent  $event
+     * @param   string                                                      $siteIdentifier
+     */
+    protected function applyHeaderAndFooterData(FrontendAssetFilterEvent $event, string $siteIdentifier): void
+    {
+        $html = $this->state->get('typo.site.' . $siteIdentifier . '.frontend.html');
+        if (! empty($html['header'])) {
+            $event->getPageRenderer()->addHeaderData($html['header']);
+        }
+        if (! empty($html['footer'])) {
+            $event->getPageRenderer()->addFooterData($html['footer']);
+        }
+    }
+    
+    /**
+     * Injects the registered assets into the asset collector
+     *
+     * @param   string  $siteIdentifier
+     */
+    protected function applyAssetCollectorActions(string $siteIdentifier): void
     {
         $this->executeAssetCollectorActions(
-            'typo.site.' . $this->getTypoContext()->site()->getCurrent()->getIdentifier() . '.frontend'
+            'typo.site.' . $siteIdentifier . '.frontend'
         );
+    }
+    
+    /**
+     * Injects the configured meta tags into the meta tag managers
+     *
+     * @param   string  $siteIdentifier
+     */
+    protected function applyMetaTagActions(string $siteIdentifier): void
+    {
+        $metaTagActions = $this->state->get('typo.site.' . $siteIdentifier . '.frontend.metaTagActions');
+        if (! empty($metaTagActions)) {
+            $registry = $this->getMetaTagManagerRegistry();
+            foreach (['add' => 'addProperty', 'remove' => 'removeProperty'] as $listKey => $method) {
+                if (! empty($metaTagActions[$listKey])) {
+                    foreach ($metaTagActions[$listKey] as $property => $args) {
+                        $registry->getManagerForProperty($property)->$method(...$args);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Internal helper to retrieve the meta tag manager registry.
+     *
+     * @return \TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry
+     */
+    protected function getMetaTagManagerRegistry(): MetaTagManagerRegistry
+    {
+        return $this->getTypoContext()->di()->makeInstance(MetaTagManagerRegistry::class);
     }
 }

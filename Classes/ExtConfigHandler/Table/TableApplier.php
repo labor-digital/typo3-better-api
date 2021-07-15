@@ -113,6 +113,7 @@ class TableApplier extends AbstractExtConfigApplier
      */
     public function onTcaLoad(): void
     {
+        $this->getService(ContentTypeLoader::class)->provideDefaultTcaType();
         $this->getService(TableLoader::class)->loadTables();
     }
     

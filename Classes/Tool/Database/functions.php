@@ -104,20 +104,22 @@ if (! function_exists('dbgQuery')) {
         }
         
         try {
-            if (! empty($exception)) {
-                echo '<h5>Db Errors</h5>';
-                DebuggerUtility::var_dump($exception);
+            if (php_sapi_name() !== 'cli') {
+                if (! empty($exception)) {
+                    echo '<h5>Db Errors</h5>';
+                    DebuggerUtility::var_dump($exception);
+                }
+                echo '<h5>Query Object</h5>';
+                DebuggerUtility::var_dump($query);
+                if (! empty($first)) {
+                    echo '<h5>First result entity</h5>';
+                    DebuggerUtility::var_dump($first);
+                }
+                echo '<h5>Raw result</h5>';
+                DebuggerUtility::var_dump($result);
+                echo '<h5>Db Connection</h5>';
+                DebuggerUtility::var_dump($GLOBALS['TYPO3_DB']);
             }
-            echo '<h5>Query Object</h5>';
-            DebuggerUtility::var_dump($query);
-            if (! empty($first)) {
-                echo '<h5>First result entity</h5>';
-                DebuggerUtility::var_dump($first);
-            }
-            echo '<h5>Raw result</h5>';
-            DebuggerUtility::var_dump($result);
-            echo '<h5>Db Connection</h5>';
-            DebuggerUtility::var_dump($GLOBALS['TYPO3_DB']);
         } catch (Exception $e) {
             echo '<h2>Db Error!</h2>';
             DebuggerUtility::var_dump($e);

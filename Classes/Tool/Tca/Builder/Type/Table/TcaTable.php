@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
 use Doctrine\DBAL\Schema\Table;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
 use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractTypeList;
@@ -174,6 +175,24 @@ class TcaTable extends AbstractTypeList
     public function getSchema(): Table
     {
         return $this->context->cs()->sqlRegistry->getTableOverride($this->getTableName());
+    }
+    
+    /**
+     * Sometimes you want to apply som raw adjustments on a per-table level after the table
+     * class has been dumped back as an array.
+     *
+     * The processor callable receives the $config, $extractedMeta and $tableName as parameters.
+     * It should create references to the given values in order to modify them.
+     *
+     * @param   callable  $callback  A callable to apply post processing to the finished TCA array
+     *
+     * @return $this
+     */
+    public function registerRawProcessor(callable $callback): self
+    {
+        TcaPostProcessor::$additionalProcessors[$this->getTableName()][] = $callback;
+        
+        return $this;
     }
     
     /**

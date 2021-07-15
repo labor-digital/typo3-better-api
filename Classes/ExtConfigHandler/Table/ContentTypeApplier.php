@@ -189,29 +189,29 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             return;
         }
         
-        // Clean up after ourselves if the cType of a row previously HAD an extension
-        // but now has none, OR the CType was changed, we drop everything
-        $hasExtensionTable = ContentTypeUtil::hasExtensionTable($cType);
-        $oldCType = $this->resolveColumnValue('CType', ['uid' => $event->getId()]);
-        if (! $hasExtensionTable || (is_string($oldCType) && $oldCType !== $cType && $hasExtensionTable)) {
-            $row = ContentTypeUtil::removeAllExtensionColumns($row);
-            $row['ct_child'] = '';
-            $event->setRow($row);
-            
-            if ($hasExtensionTable) {
-                $this->repository->deleteChildRow($oldCType, $event->getId());
+        // If there is no extension table for the new cType we drop everything
+        // and let the data handler go on by itself.
+        if (! ContentTypeUtil::hasExtensionTable($cType)) {
+            // There are no extension tables -> skip
+            if (empty(ContentTypeUtil::getTableMap())) {
+                return;
             }
             
+            $row = ContentTypeUtil::removeAllExtensionColumns($row);
+            $row['ct_child'] = '0';
+            $event->setRow($row);
+            
             return;
+        }
+        
+        // When the cType is being changed we try to drop the old row
+        $oldCType = $this->resolveColumnValue('CType', ['uid' => $event->getId()]);
+        if (is_string($oldCType) && $oldCType !== $cType && ContentTypeUtil::hasExtensionTable($oldCType)) {
+            $this->repository->deleteChildRow($oldCType, $event->getId());
         }
         
         $childRow = ContentTypeUtil::extractChildFromParent($row, $cType);
         $row = ContentTypeUtil::removeAllExtensionColumns($row);
-        
-        // No child row -> go on
-        if (! $hasExtensionTable) {
-            return;
-        }
         
         // A new record is created -> Delay the child row generation until we have a uid for our record
         $parentId = $event->getId();
@@ -222,7 +222,6 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         $childRow['pid'] = $this->resolveColumnValue('pid', $rowWithUid);
         $childRow['sys_language_uid'] = $this->resolveColumnValue('sys_language_uid', $rowWithUid);
         $row['ct_child'] = $this->repository->saveChildRow($cType, $parentId, $childRow);
-        
         $event->setRow($row);
         
         if ($parentId === -1) {

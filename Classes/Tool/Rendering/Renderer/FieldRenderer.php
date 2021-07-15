@@ -158,11 +158,19 @@ class FieldRenderer implements PublicServiceInterface
             $info = $this->falService->getFileInfo($file);
             if ($info->isImage()) {
                 $width = $info->getImageInfo() ? min(max($info->getImageInfo()->getWidth(), 50), 200) : 200;
-                $content[] = '<img src="' .
-                             $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width, 'relative'])) .
-                             '" style="width:100%; max-width:' . $width . 'px;"' .
-                             ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
-                             ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
+                try {
+                    $content[] = '<img src="' .
+                                 $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width, 'relative'])) .
+                                 '" style="width:100%; max-width:' . $width . 'px;"' .
+                                 ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
+                                 ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
+                } catch (Throwable $e) {
+                    if (stripos($e->getMessage(), 'No such file or directory') !== false) {
+                        $content[] = $this->htmlEncode($info->getFileName()) . ' (Missing File)';
+                    } else {
+                        $content[] = $this->htmlEncode($info->getFileName()) . ' | Error while rendering: ' . $e->getMessage();
+                    }
+                }
             } else {
                 $content[] = $this->htmlEncode($info->getFileName());
             }

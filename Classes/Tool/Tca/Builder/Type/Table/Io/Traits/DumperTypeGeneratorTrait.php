@@ -146,7 +146,7 @@ trait DumperTypeGeneratorTrait
             
             // Check if there is already a showitem for this palette
             if (isset($palettes[$k]['showitem']) &&
-                $this->assertShowItemEquals($palettes[$k]['showitem'], $showitem, $tca)) {
+                $this->assertShowItemEquals($palettes[$k]['showitem'] ?? '', $showitem ?? '', $tca)) {
                 continue;
             }
             

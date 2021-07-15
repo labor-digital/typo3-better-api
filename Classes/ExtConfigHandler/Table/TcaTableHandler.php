@@ -30,7 +30,7 @@ use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
 
-class Handler extends AbstractExtConfigHandler implements NoDiInterface
+class TcaTableHandler extends AbstractExtConfigHandler implements NoDiInterface
 {
     use DelayedConfigExecutionTrait;
     

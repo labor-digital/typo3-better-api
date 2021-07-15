@@ -34,6 +34,7 @@ use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigGenerator as PluginG
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigurePluginInterface;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader;
+use LaborDigital\T3ba\ExtConfigHandler\Table\TcaTableHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\PathUtil\Path;
 
@@ -75,13 +76,6 @@ class Handler extends AbstractGroupExtConfigHandler
     protected $types = [];
     
     /**
-     * The collected form definitions for the TCA form loader (this is only used for content elements)
-     *
-     * @var array
-     */
-    protected $ceFormClasses = [];
-    
-    /**
      * Internal flag that defines which configuration method to use on the configuration class
      *
      * @var string
@@ -117,7 +111,7 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         $configurator->registerLocation('Classes/Controller');
         $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler::class);
-        $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\Table\Handler::class);
+        $configurator->executeThisHandlerAfter(TcaTableHandler::class);
         $configurator->registerInterface(ConfigurePluginInterface::class);
         $configurator->registerInterface(ConfigureContentElementInterface::class);
     }
@@ -134,10 +128,6 @@ class Handler extends AbstractGroupExtConfigHandler
     {
         $state = $this->context->getState();
         $this->config->dump($state);
-        
-        if (! empty($this->ceFormClasses)) {
-            $state->setAsJson('typo.extBase.element.ceFormClasses', $this->ceFormClasses);
-        }
     }
     
     /**
