@@ -55,6 +55,7 @@ class CustomWizardNode extends AbstractFormElement
     public function render()
     {
         // Create the context object
+        /** @var \LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardContext $context */
         $context = $this->makeInstance(
             CustomWizardContext::class, [
                 [
@@ -84,6 +85,9 @@ class CustomWizardNode extends AbstractFormElement
         
         $resultArray = $this->initializeResultArray();
         $resultArray['html'] = $i->render();
+        
+        $resultArray['requireJsModules']
+            = array_merge($resultArray['requireJsModules'] ?? [], $context->getRequireJsModules());
         
         return $i->filterResultArray($resultArray);
     }
