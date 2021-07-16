@@ -46,8 +46,9 @@ class Inline extends AbstractFieldPreset
      *                                        of that field.
      *                                        - foreignSortByField string (t3ba_inline_sorting): The foreign table gets
      *                                        extended by a field that holds the sorting order on the inline parent
-     *                                        record. This defines the name
-     *                                        of that field.
+     *                                        record. This defines the name of that field.
+     *                                        - foreignFieldNameField string (t3ba_inline_field): Used as foreign match field
+     *                                        to define which field is creating the inline relation.
      */
     public function applyInline($foreignTable, array $options = []): void
     {
@@ -74,6 +75,11 @@ class Inline extends AbstractFieldPreset
                             'default' => 't3ba_inline_sorting',
                             'validator' => $fieldLengthValidator,
                         ],
+                        'foreignFieldNameField' => [
+                            'type' => 'string',
+                            'default' => 't3ba_inline_field',
+                            'validator' => $fieldLengthValidator,
+                        ],
                     ],
                     ['required']
                 )
@@ -89,6 +95,9 @@ class Inline extends AbstractFieldPreset
             'foreign_table' => $foreignTableName,
             'foreign_field' => $options['foreignField'],
             'foreign_sortby' => $options['foreignSortByField'],
+            'foreign_match_fields' => [
+                $options['foreignFieldNameField'] => $this->field->getId(),
+            ],
             'appearance' => [
                 'collapseAll' => true,
                 'expandSingle' => true,
@@ -105,15 +114,22 @@ class Inline extends AbstractFieldPreset
         
         // Add columns to foreign table
         $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
-        if (! $table->hasColumn($options['foreignField'], true)) {
-            $table->addColumn($options['foreignField'], 'integer')
-                  ->setDefault(0)
-                  ->setLength(11);
+        foreach (
+            [
+                $options['foreignField'],
+                $options['foreignSortByField'],
+            ] as $fieldName
+        ) {
+            if (! $table->hasColumn($fieldName, true)) {
+                $table->addColumn($fieldName, 'integer')
+                      ->setDefault(0)
+                      ->setLength(11);
+            }
         }
-        if (! $table->hasColumn($options['foreignSortByField'], true)) {
-            $table->addColumn($options['foreignSortByField'], 'integer')
-                  ->setDefault(0)
-                  ->setLength(11);
+        if (! $table->hasColumn($options['foreignFieldNameField'], true)) {
+            $table->addColumn($options['foreignFieldNameField'], 'string')
+                  ->setDefault('')
+                  ->setLength(128);
         }
         
         // Configure column on local table
