@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.15 at 18:12
  */
 
 declare(strict_types=1);
@@ -80,6 +80,86 @@ trait DataHookCollectorTrait
     )
     {
         return $this->registerDataHook(DataHookTypes::TYPE_FORM, $handlerClass, $handlerMethodName);
+    }
+    
+    /**
+     * Registers a new form data hook, which allows you to interfere with the data of the record while it is copied to a new instance.
+     *
+     * NOTE: This is a shortcut for registerDataHook(DataHookTypes::TYPE_COPY, ...)
+     *
+     * @param   string  $handlerClass       The class you want to register as handler
+     * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
+     *                                      The method will receive the DataHookContext object for the registered
+     *                                      constraints as parameter.
+     *
+     * @return $this
+     */
+    public function registerCopyHook(
+        string $handlerClass,
+        string $handlerMethodName = 'copyHook'
+    )
+    {
+        return $this->registerDataHook(DataHookTypes::TYPE_COPY, $handlerClass, $handlerMethodName);
+    }
+    
+    /**
+     * Registers a new form data hook, which allows you to modify the data when the record is moved to another page.
+     *
+     * NOTE: This is a shortcut for registerDataHook(DataHookTypes::TYPE_MOVE, ...)
+     *
+     * @param   string  $handlerClass       The class you want to register as handler
+     * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
+     *                                      The method will receive the DataHookContext object for the registered
+     *                                      constraints as parameter.
+     *
+     * @return $this
+     */
+    public function registerMoveHook(
+        string $handlerClass,
+        string $handlerMethodName = 'moveHook'
+    )
+    {
+        return $this->registerDataHook(DataHookTypes::TYPE_MOVE, $handlerClass, $handlerMethodName);
+    }
+    
+    /**
+     * Registers a new form data hook, which allows you to react when a specific record is deleted
+     *
+     * NOTE: This is a shortcut for registerDataHook(DataHookTypes::TYPE_DELETE, ...)
+     *
+     * @param   string  $handlerClass       The class you want to register as handler
+     * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
+     *                                      The method will receive the DataHookContext object for the registered
+     *                                      constraints as parameter.
+     *
+     * @return $this
+     */
+    public function registerDeleteHook(
+        string $handlerClass,
+        string $handlerMethodName = 'deleteHook'
+    )
+    {
+        return $this->registerDataHook(DataHookTypes::TYPE_DELETE, $handlerClass, $handlerMethodName);
+    }
+    
+    /**
+     * Registers a new form data hook, which allows you to react when a specific record, that was deleted is now being restored
+     *
+     * NOTE: This is a shortcut for registerDataHook(DataHookTypes::TYPE_RESTORE, ...)
+     *
+     * @param   string  $handlerClass       The class you want to register as handler
+     * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
+     *                                      The method will receive the DataHookContext object for the registered
+     *                                      constraints as parameter.
+     *
+     * @return $this
+     */
+    public function registerRestoreHook(
+        string $handlerClass,
+        string $handlerMethodName = 'restoreHook'
+    )
+    {
+        return $this->registerDataHook(DataHookTypes::TYPE_RESTORE, $handlerClass, $handlerMethodName);
     }
     
     /**
