@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.16 at 15:49
  */
 
 declare(strict_types=1);
@@ -25,9 +25,6 @@ namespace LaborDigital\T3ba\Event\Configuration;
  * Class MiddlewareRegistrationEvent
  *
  * Is used to gather middlewares that will be injected into TYPO3's middleware stack
- *
- * Special priorities:
- * 500: INJECT_EXT_CONFIG_MIDDLEWARES
  *
  * @package LaborDigital\T3ba\Core\Event
  */
