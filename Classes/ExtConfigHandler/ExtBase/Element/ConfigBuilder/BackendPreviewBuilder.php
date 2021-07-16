@@ -91,4 +91,23 @@ class BackendPreviewBuilder
         
         return $list;
     }
+    
+    /**
+     * Injects the description and matching constraints into the given list,
+     * if the configurator has a disabled new ce wizard entry, but has a non-empty description
+     *
+     * @param   array                        $list
+     * @param   AbstractElementConfigurator  $configurator
+     * @param   array                        $conditions
+     *
+     * @return array
+     */
+    public static function saveDescriptionIfNeeded(array $list, AbstractElementConfigurator $configurator, array $conditions): array
+    {
+        if (! $configurator->getWizardTab() && ! empty($configurator->getDescription())) {
+            $list[] = [$configurator->getDescription(), $conditions];
+        }
+        
+        return $list;
+    }
 }

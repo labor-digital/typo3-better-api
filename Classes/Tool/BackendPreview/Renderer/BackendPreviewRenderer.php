@@ -86,8 +86,8 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
             throw new BackendPreviewException('The given renderer class: ' . $rendererClass . ' does not exist!');
         }
         
-        $objectManager = $this->makeInstance(ObjectManager::class);
-        $configManager = $objectManager->get(ConfigurationManagerInterface::class);
+        $configManager = $this->makeInstance(ObjectManager::class)
+                              ->get(ConfigurationManagerInterface::class);
         
         ConfigurationManagerAdapter::runWithFrontendManager(
             $configManager,
@@ -213,10 +213,11 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
     {
         // Load the type descriptions from ts config
         if (! isset($this->typeDescriptions)) {
-            $this->typeDescriptions = [];
-            $items = $this->getTypoContext()->config()
-                          ->getTsConfigValue('mod.wizards.newContentElement.wizardItems');
-            foreach ($items as $item) {
+            $conf = $this->getTypoContext()->config();
+            
+            $this->typeDescriptions = $conf->getConfigValue('t3ba.backendPreview.descriptions', []);
+            
+            foreach ($conf->getTsConfigValue('mod.wizards.newContentElement.wizardItems') as $item) {
                 if (! is_array($item['elements.'])) {
                     continue;
                 }

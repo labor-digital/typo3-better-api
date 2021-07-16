@@ -76,6 +76,7 @@ class DataHandlerException extends T3baException
         
         if ($previous !== null) {
             $message .= PHP_EOL . $previous->getMessage();
+            $message .= PHP_EOL . $previous->getTraceAsString();
         }
         
         $i = new static($message, 1599580792, $previous);

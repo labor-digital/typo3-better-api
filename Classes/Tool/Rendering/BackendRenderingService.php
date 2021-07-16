@@ -41,6 +41,7 @@ namespace LaborDigital\T3ba\Tool\Rendering;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\DatabaseRecordListRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldListRenderer;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\InlineContentPreviewRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\RecordTableRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -99,5 +100,23 @@ class BackendRenderingService implements SingletonInterface
     public function renderRecordTable($tableName, array $rows, array $fields): string
     {
         return $this->getService(RecordTableRenderer::class)->render($tableName, $rows, $fields);
+    }
+    
+    /**
+     * Renders a backend preview of inline related content elements. This is useful if you want to render the
+     * nested backend preview of IRRE related content elements, in another content element. For example, in a button group element,
+     * you can relate multiple button elements, which should be rendered in the backend preview.
+     *
+     * NOTE: The renderer will remove all link tags inside the rendered previews to avoid issues with the backend
+     * edit link tags.
+     *
+     * @param   array   $parentRow    The tt_content database row which has the child elements that should be rendered
+     * @param   string  $inlineField  A column/field name on the tt_content table that is used as inline field.
+     *
+     * @return string
+     */
+    public function renderInlineContentPreview(array $parentRow, string $inlineField): string
+    {
+        return $this->getService(InlineContentPreviewRenderer::class)->render($parentRow, $inlineField);
     }
 }

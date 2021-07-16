@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
+use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use Neunerlei\Options\Options;
 
@@ -106,16 +107,19 @@ class Inline extends AbstractFieldPreset
         $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
         if (! $table->hasColumn($options['foreignField'], true)) {
             $table->addColumn($options['foreignField'], 'integer')
+                  ->setDefault(0)
                   ->setLength(11);
         }
         if (! $table->hasColumn($options['foreignSortByField'], true)) {
             $table->addColumn($options['foreignSortByField'], 'integer')
+                  ->setDefault(0)
                   ->setLength(11);
         }
         
         // Configure column on local table
         $this->configureSqlColumn(static function (Column $column) {
             $column->setType(new IntegerType())
+                   ->setDefault(0)
                    ->setLength(11);
         });
         
@@ -138,12 +142,82 @@ class Inline extends AbstractFieldPreset
      *                                        extended by a field that holds the sorting order on the inline parent
      *                                        record. This defines the name
      *                                        of that field.
+     *                                        - defaultCType string: Allows you to define the default CType value
+     *                                        - defaultListType string: Allows you to define the default list type,
+     *                                        using this option will disable defaultCType
+     *                                        - newCeWizard bool: By default the element will replace the "create new"
+     *                                        button with the a "new content element wizard" that opens up in a modal.
+     *                                        To disable this feature set this option to FALSE.
+     *                                        Note: The wizard will be disabled if either "defaultCType" or
+     *                                        "defaultListType" is used.
      *
      * @see applyInline() if you want to use other records
      */
     public function applyInlineContent(array $options = []): void
     {
+        $defaultCType = $options['defaultCType'] ?? null;
+        $defaultListType = $options['defaultListType'] ?? null;
+        $useNewCeWizard = ! ($defaultCType !== null || $defaultListType !== null) && ($options['newCeWizard'] ?? true);
+        unset($options['defaultCType'], $options['defaultListType'], $options['newCeWizard']);
+        
         $this->applyInline('tt_content', $options);
+        
+        // Apply default values for CType or list_type
+        if ($defaultCType || $defaultListType) {
+            if ($defaultListType) {
+                $this->field->addConfig([
+                    'overrideChildTca' => [
+                        'columns' => [
+                            'CType' => [
+                                'config' => [
+                                    'default' => 'list',
+                                ],
+                            ],
+                            'list_type' => [
+                                'config' => [
+                                    'default' => $defaultListType,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            } else {
+                $this->field->addConfig([
+                    'overrideChildTca' => [
+                        'columns' => [
+                            'CType' => [
+                                'config' => [
+                                    'default' => $defaultCType,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            }
+        }
+        
+        // When we are creating an inline content relation on the tt_content table,
+        // we automatically inject a item proc func to the colPos column, so we can
+        // hide the contents on the "page" view.
+        $this->field->addConfig([
+            'overrideChildTca' => [
+                'columns' => [
+                    'colPos' => [
+                        'config' => [
+                            'itemsProcFunc' => InlineColPosHook::class . '->itemsProcFunc',
+                            'default' => '-88',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        
+        // Add the extended render type if the new content element wizard should be used
+        if ($useNewCeWizard) {
+            $this->field->addConfig([
+                'renderType' => 't3baInlineWithNewCeWizard',
+            ]);
+        }
     }
     
 }

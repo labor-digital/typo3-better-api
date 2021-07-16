@@ -59,7 +59,8 @@ trait QueryWhereApplierTrait
     protected function whereUidSpecialConstraintWrapper(
         $key,
         Closure $constraintGenerator,
-        AbstractQueryAdapter $adapter
+        AbstractQueryAdapter $adapter,
+        bool $negated = false
     )
     {
         // Load TCA configuration
@@ -74,6 +75,13 @@ trait QueryWhereApplierTrait
         }
         
         // Build the constraint
+        if ($negated) {
+            return $adapter->makeAnd([
+                $constraintGenerator($key),
+                $constraintGenerator($parentUidField),
+            ]);
+        }
+        
         return $adapter->makeOr([
             $constraintGenerator($key),
             $constraintGenerator($parentUidField),

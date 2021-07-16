@@ -125,34 +125,24 @@ class LegacyContext
     protected static function makeUtilsInstance(array $row, PageLayoutView $pageLayoutView, $headerContent, $itemContent): BackendPreviewUtils
     {
         return static::makeInstance(BackendPreviewUtils::class, [
-            [
-                'renderDefaultHeader' => function () use ($row, $headerContent) {
-                    if (! empty($headerContent)) {
-                        return $headerContent;
-                    }
-                    
-                    return static::findDefaultHeader($row);
-                },
-                'renderDefaultContent' => function () use ($itemContent) {
-                    return $itemContent;
-                },
-                'renderDefaultFooter' => function () use ($row) {
-                    return static::findDefaultFooter($row);
-                },
-                'renderFieldList' => function (array $fields) use ($row) {
-                    return static::getService(BackendRenderingService::class)->renderRecordFieldList(
-                        'tt_content', $row, $fields
-                    );
-                },
-                'renderRecordTable' => function ($tableName, array $rows, array $fields) {
-                    return static::getService(BackendRenderingService::class)->renderRecordTable(
-                        $tableName, $rows, $fields
-                    );
-                },
-                'wrapWithEditLink' => function ($linkText) use ($pageLayoutView, $row) {
-                    return $pageLayoutView->linkEditContent($linkText, $row);
-                },
-            ],
+            function (int $key, $value = null) use ($row, $pageLayoutView, $headerContent, $itemContent) {
+                switch ($key) {
+                    case BackendPreviewUtils::KEY_RENDERING_SERVICE:
+                        return static::getService(BackendRenderingService::class);
+                    case BackendPreviewUtils::KEY_DEFAULT_HEADER:
+                        return empty($headerContent) ? static::findDefaultHeader($row) : $headerContent;
+                    case BackendPreviewUtils::KEY_DEFAULT_CONTENT:
+                        return $itemContent;
+                    case BackendPreviewUtils::KEY_DEFAULT_FOOTER:
+                        return static::findDefaultFooter($row);
+                    case BackendPreviewUtils::KEY_LINK_WRAP:
+                        return $pageLayoutView->linkEditContent($value, $row);
+                    case BackendPreviewUtils::KEY_ROW:
+                        return $row;
+                    default:
+                        return null;
+                }
+            },
         ]);
     }
     

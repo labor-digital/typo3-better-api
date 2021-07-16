@@ -28,6 +28,7 @@ use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType;
 
 class TcaFieldFlexFormConfig
 {
@@ -122,6 +123,15 @@ class TcaFieldFlexFormConfig
      */
     public function getStructure(?string $structure = null): Flex
     {
+        // Special handling if we configure the flexform in a content type
+        // 1.) We don't want to load the default here
+        // 2.) We must use the *,signature structure here
+        if ($structure === null &&
+            $this->field->getForm() instanceof ContentType &&
+            $this->field->getColumnName() === 'pi_flexform') {
+            $structure = '*,' . $this->field->getForm()->getTypeName();
+        }
+        
         $structure = $structure ?? 'default';
         
         // Return existing flex form objects
@@ -190,5 +200,16 @@ class TcaFieldFlexFormConfig
             $config['config']['ds'][$k] = 'FILE:' . $dumper->dumpToFile($flexForm);
         }
         
+        // This is a rather ugly fix, because TYPO3 can't resolve flex form data structures that are defined
+        // in type column overrides, we have to inject them into the main tca after it has been build.
+        $table = $this->field->getRoot();
+        if ($table instanceof TcaTable) {
+            $fieldName = $this->field->getColumnName();
+            $table->registerRawProcessor(static function (array &$tca) use ($config, $fieldName) {
+                foreach ($config['config']['ds'] as $k => $v) {
+                    $tca['columns'][$fieldName]['config']['ds'][$k] = $v;
+                }
+            });
+        }
     }
 }

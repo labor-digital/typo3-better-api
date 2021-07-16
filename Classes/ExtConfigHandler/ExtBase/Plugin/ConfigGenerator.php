@@ -60,6 +60,14 @@ class ConfigGenerator extends AbstractConfigGenerator
         if (! empty($renderers['preview'])) {
             $config->backendPreviewHooks
                 = BackendPreviewBuilder::addHookToList($config->backendPreviewHooks, 'list', $signature);
+            
+            // Store the description for the backend preview renderer, so we can show it
+            // even if the wizard tab is disabled
+            $this->config->additionalPreviewDescriptions
+                = BackendPreviewBuilder::saveDescriptionIfNeeded(
+                $this->config->additionalPreviewDescriptions,
+                $configurator, ['CType' => 'list', 'list_type' => $signature]
+            );
         }
         
         $config->dataHooks = array_merge($config->dataHooks, $configurator->getRegisteredDataHooks());

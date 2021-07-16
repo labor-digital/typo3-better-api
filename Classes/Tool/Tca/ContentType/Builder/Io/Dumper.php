@@ -103,6 +103,7 @@ class Dumper
             $cType = $type->getTypeName();
             $models[$cType] = $type->getDataModelClass();
             $columnNameMap = $this->renameExtensionColumns($tca, $type);
+            $this->rewriteDisplayConditions($columnNameMap, $type);
             $sqlColumns = $this->extractExtensionSqlColumns($cType, $columnNameMap);
             $tableName = $this->generateExtensionTableSql($cType, $sqlColumns);
             $columnNameMap = array_flip($columnNameMap);
@@ -155,6 +156,76 @@ class Dumper
         }
         
         return $nameMap;
+    }
+    
+    /**
+     * Iterates all fields in the type and rewrites the display conditions if short fieldnames have been used.
+     *
+     * @param   array                                                        $nameMap
+     * @param   \LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType  $type
+     */
+    protected function rewriteDisplayConditions(array $nameMap, ContentType $type): void
+    {
+        if (empty($nameMap)) {
+            return;
+        }
+        
+        foreach ($type->getFields() as $field) {
+            $condition = $field->getDisplayCondition();
+            if (empty($condition)) {
+                continue;
+            }
+            
+            $field->setDisplayCondition($this->rewriteSingleDisplayCondition($nameMap, $condition));
+        }
+    }
+    
+    /**
+     * Processes a single display condition value in order to rewrite short keys
+     * with their extended key name provided by the content type
+     *
+     * @param   array         $nameMap    The map between short and long field names
+     * @param   array|string  $condition  The condition to rewrite if needed
+     *
+     * @return array|mixed|string
+     */
+    protected function rewriteSingleDisplayCondition(array $nameMap, $condition)
+    {
+        if (is_array($condition)) {
+            $conditionClean = [];
+            foreach ($condition as $k => $v) {
+                $conditionClean[$k] = $this->rewriteSingleDisplayCondition($nameMap, $v);
+            }
+            
+            return $conditionClean;
+        }
+        
+        if (is_string($condition) && str_contains(strtolower($condition), 'field:')) {
+            $parts = explode(':', $condition);
+            $update = false;
+            $checkNext = false;
+            foreach ($parts as $k => $part) {
+                if (strtolower($part) === 'field') {
+                    $checkNext = true;
+                    continue;
+                }
+                
+                if ($checkNext) {
+                    $checkNext = false;
+                    
+                    if (isset($nameMap[$part])) {
+                        $update = true;
+                        $parts[$k] = $nameMap[$part];
+                    }
+                }
+            }
+            
+            if ($update) {
+                return implode(':', $parts);
+            }
+        }
+        
+        return $condition;
     }
     
     protected function extractExtensionSqlColumns(string $cType, array $nameMap): array
