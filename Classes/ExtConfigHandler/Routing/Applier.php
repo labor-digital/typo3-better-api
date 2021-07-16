@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.16 at 16:16
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 
+use LaborDigital\T3ba\Event\Configuration\BackendRouteRegistrationEvent;
 use LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent;
 use LaborDigital\T3ba\Event\Core\SiteConfigFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
@@ -37,6 +38,7 @@ class Applier extends AbstractExtConfigApplier
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(MiddlewareRegistrationEvent::class, 'onMiddlewareRegistration');
+        $subscription->subscribe(BackendRouteRegistrationEvent::class, 'onBeRouteRegistration');
         $subscription->subscribe(SiteConfigFilterEvent::class, 'onSiteConfigFilter');
     }
     
@@ -68,6 +70,24 @@ class Applier extends AbstractExtConfigApplier
         }
         
         $event->setMiddlewares($middlewares);
+    }
+    
+    /**
+     * Injects the collected backend routes into the TYPO3 configuration
+     *
+     * @param   \LaborDigital\T3ba\Event\Configuration\BackendRouteRegistrationEvent  $e
+     */
+    public function onBeRouteRegistration(BackendRouteRegistrationEvent $e): void
+    {
+        $backendRoutes = $this->state->get('typo.backendRoutes.' . ($e->isAjax() ? 'ajax' : 'default'));
+        if ($backendRoutes) {
+            $e->setRoutes(
+                array_merge(
+                    $e->getRoutes(),
+                    SerializerUtil::unserializeJson($backendRoutes)
+                )
+            );
+        }
     }
     
     /**

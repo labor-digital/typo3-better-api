@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.16 at 16:15
  */
 
 declare(strict_types=1);
@@ -61,6 +61,20 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
      * @var array
      */
     protected $globals = [];
+    
+    /**
+     * Registered backend routing configuration options
+     *
+     * @var array
+     */
+    protected $backendRoutes = [];
+    
+    /**
+     * Registered backend ajax routing configuration options
+     *
+     * @var array
+     */
+    protected $backendAjaxRoutes = [];
     
     /**
      * Registers a new middleware class to the stack.
@@ -183,6 +197,115 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
     }
     
     /**
+     * Registers a new route for the TYPO3 Backend.
+     *
+     * Each request to the backend is eventually executed by a controller. A list of routes is defined
+     * which maps a given request to a controller and an action.
+     *
+     * WARNING: Backend controllers don't support dependency injection!
+     *
+     * @param   string  $path             The path that should be mapped to the registered controller (e.g. /some/path)
+     * @param   string  $controllerClass  The name of the controller class that should be mapped
+     * @param   string  $actionMethod     The FULL name of the action method inside the controller class to use.
+     * @param   array   $options          Additional options to configure the route
+     *                                    - name string: Allows you to define a speaking name for your route.
+     *                                    If omitted, the name is auto-generated based on the given $path
+     *                                    - public bool (FALSE): Public backend routes do not require any session token,
+     *                                    but can be used to redirect to a route that requires a session token internally
+     *                                    - referrerRequired bool (FALSE): enforces existence of HTTP Referer header that
+     *                                    has to match the currently used backend URL (e.g. https://example.org/typo3/),
+     *                                    the request will be denied otherwise.
+     *                                    - refreshEmpty bool (FALSE): triggers a HTML based refresh in case HTTP Referer
+     *                                    header is not given or empty - this attempt uses an HTML refresh, since regular
+     *                                    HTTP Location redirect still would not set a referrer. It implies this technique
+     *                                    should only be used on plain HTML responses and won’t have any impact e.g. on
+     *                                    JSON or XML response types.
+     *                                    - ajax bool (FALSE): If set to true, the route will be registered as "ajax" route.
+     *                                    - parameters array: Optional, additional GET parameters to always be appended to the
+     *                                    generated route path
+     *                                    - raw array: Raw configuration array to merge into the generated config,
+     *                                    to implement features not supported by this facade
+     *
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/BackendRouting/Index.html
+     */
+    public function registerBackendRoute(string $path, string $controllerClass, string $actionMethod, array $options = []): self
+    {
+        if (! class_exists($controllerClass)) {
+            throw new InvalidArgumentException(
+                'The given route controller ' . $controllerClass . ' class does not exist!');
+        }
+        
+        $ref = new \ReflectionClass($controllerClass);
+        if (! $ref->hasMethod($actionMethod) ||
+            ! $ref->getMethod($actionMethod)->isPublic() ||
+            $ref->getMethod($actionMethod)->isStatic()) {
+            throw new InvalidArgumentException(
+                'The given route action method ' . $actionMethod . ' does not exist as public method in class: ' .
+                $controllerClass . '!');
+        }
+        
+        $path = '/' . ltrim(trim($path), '/');
+        
+        $options = Options::make($options, [
+            'name' => [
+                'type' => 'string',
+                'default' => str_replace('-', '_', Inflector::toFile($path)),
+            ],
+            'ajax' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'public' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'parameters' => [
+                'type' => 'array',
+                'default' => [],
+            ],
+            'referrerRequired' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'refreshEmpty' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'raw' => [
+                'type' => 'array',
+                'default' => [],
+            ],
+        ]);
+        
+        $definition = [
+            'path' => $path,
+            'target' => $controllerClass . '::' . $actionMethod,
+        ];
+        
+        if ($options['public']) {
+            $definition['access'] = 'public';
+        }
+        if (! empty($options['parameters'])) {
+            $definition['parameters'] = $options['parameters'];
+        }
+        $referrer = $options['referrerRequired'] ? 'required' : '';
+        if ($options['refreshEmpty']) {
+            $referrer .= ',refresh-empty';
+        }
+        if (! empty($referrer)) {
+            $definition['referrer'] = ltrim($referrer, ',');
+        }
+        $definition = array_merge($definition, $options['raw']);
+        
+        $field = $options['ajax'] ? 'backendAjaxRoutes' : 'backendRoutes';
+        $this->$field[$options['name']] = $definition;
+        
+        return $this;
+    }
+    
+    /**
      * Builds an automatic middleware identifier out of the given class name and the extension key
      *
      * @param   string  $className  The name of the class to generate the middleware identifier for
@@ -221,6 +344,8 @@ class RoutingConfigurator extends AbstractExtConfigConfigurator implements NoDiI
     {
         $state->setAsJson('middleware.list', $this->middlewares);
         $state->setAsJson('middleware.disabled', $this->disabledMiddlewares);
+        $state->setAsJson('backendRoutes.default', $this->backendRoutes);
+        $state->setAsJson('backendRoutes.ajax', $this->backendAjaxRoutes);
         $state->mergeIntoArray('globals', $this->globals);
     }
 }
