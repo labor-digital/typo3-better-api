@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.16 at 14:12
  */
 
 declare(strict_types=1);
@@ -23,10 +23,11 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\FormEngine\Custom;
 
 
+use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 
-interface CustomElementInterface
+interface CustomElementInterface extends PublicServiceInterface
 {
     /**
      * This method is called when, and ONLY IF the field is configured using applyPreset in the tca builder.
