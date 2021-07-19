@@ -26,7 +26,10 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
+use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Upgrade\V11InlineUpgradeWizard;
 use Neunerlei\Options\Options;
 
 class Inline extends AbstractFieldPreset
@@ -48,9 +51,25 @@ class Inline extends AbstractFieldPreset
      *                                        extended by a field that holds the sorting order on the inline parent
      *                                        record. This defines the name
      *                                        of that field.
+     *
+     *                                        Only available if the {@see T3baFeatureToggles::TCA_V11_INLINE_RELATIONS}
+     *                                        feature toggle is enabled:
+     *
+     *                                        - foreignTableNameField string (t3ba_inline_table): The foreign table gets
+     *                                        extended by a field that holds the parent table name, to determine the name
+     *                                        of the parent table. This defines the name of that field.
+     *                                        - foreignSortByField string (t3ba_inline_sorting): The foreign table gets
+     *                                        extended by a field that holds the sorting order on the inline parent
+     *                                        record. This defines the name of that field.
      */
     public function applyInline($foreignTable, array $options = []): void
     {
+        if ($this->isInFlexFormSection()) {
+            throw new TcaBuilderException(
+                'You can\'t create an inline relation on field: '
+                . $this->field->getId() . ' because they are not allowed in flex form sections!');
+        }
+        
         $fieldLengthValidator = static function ($v) {
             if (strlen($v) > 64) {
                 return 'The configured field is too long, you a field name can have 64 characters at max!';
@@ -74,18 +93,30 @@ class Inline extends AbstractFieldPreset
                             'default' => 't3ba_inline_sorting',
                             'validator' => $fieldLengthValidator,
                         ],
+                        'foreignTableNameField' => [
+                            'type' => 'string',
+                            'default' => 't3ba_inline_table',
+                            'validator' => $fieldLengthValidator,
+                        ],
+                        'foreignFieldNameField' => [
+                            'type' => 'string',
+                            'default' => 't3ba_inline_field',
+                            'validator' => $fieldLengthValidator,
+                        ],
                     ],
                     ['required']
                 )
             )
         );
         
+        // @todo remove this in v12
+        $isV11Definition = $this->context->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_INLINE_RELATIONS);
+        
         $foreignTableName = $this->context->getRealTableName($foreignTable);
         
         $config = [
             'type' => 'inline',
             'renderType' => '__UNSET',
-            'allowed' => $foreignTableName,
             'foreign_table' => $foreignTableName,
             'foreign_field' => $options['foreignField'],
             'foreign_sortby' => $options['foreignSortByField'],
@@ -100,20 +131,32 @@ class Inline extends AbstractFieldPreset
             ],
         ];
         
-        $this->addMinMaxItemConfig($config, $options);
-        $this->addEvalConfig($config, $options, ['required']);
+        if ($isV11Definition) {
+            $config['foreign_match_fields'] = [$options['foreignFieldNameField'] => $this->field->getId()];
+            $config['foreign_table_field'] = $options['foreignTableNameField'];
+        }
+        
+        $config = $this->addMinMaxItemConfig($config, $options);
+        $config = $this->addEvalConfig($config, $options, ['required']);
         
         // Add columns to foreign table
         $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
-        if (! $table->hasColumn($options['foreignField'], true)) {
-            $table->addColumn($options['foreignField'], 'integer')
-                  ->setDefault(0)
-                  ->setLength(11);
+        foreach ([$options['foreignField'], $options['foreignSortByField']] as $foreignField) {
+            if (! $table->hasColumn($foreignField, true)) {
+                $table->addColumn($foreignField, 'integer')
+                      ->setDefault(0)
+                      ->setLength(11);
+            }
         }
-        if (! $table->hasColumn($options['foreignSortByField'], true)) {
-            $table->addColumn($options['foreignSortByField'], 'integer')
-                  ->setDefault(0)
-                  ->setLength(11);
+        
+        if ($isV11Definition) {
+            foreach ([$options['foreignFieldNameField'], $options['foreignTableNameField']] as $foreignField) {
+                if (! $table->hasColumn($foreignField, true)) {
+                    $table->addColumn($foreignField, 'string')
+                          ->setDefault('')
+                          ->setLength(128);
+                }
+            }
         }
         
         // Configure column on local table
@@ -122,6 +165,9 @@ class Inline extends AbstractFieldPreset
                    ->setDefault(0)
                    ->setLength(11);
         });
+        
+        // Register upgrade wizard to v11 inline definition
+        $config['t3ba']['deprecated'][V11InlineUpgradeWizard::class] = true;
         
         $this->field->addConfig($config);
     }
