@@ -85,8 +85,8 @@ if (! function_exists('dbgQuery')) {
         // Try to execute the message
         try {
             if ($isStandalone) {
-                $first = $dQuery->getFirstResult();
-                $result = $dQuery->execute()->fetchAssociative();
+                $result = $dQuery->execute()->fetchAllAssociative();
+                $first = empty($result) ? null : reset($result);
             } else {
                 $first = $query->execute()->getFirst();
                 $result = $query->execute(true);
@@ -112,7 +112,7 @@ if (! function_exists('dbgQuery')) {
                 echo '<h5>Query Object</h5>';
                 DebuggerUtility::var_dump($query);
                 if (! empty($first)) {
-                    echo '<h5>First result entity</h5>';
+                    echo '<h5>First result item</h5>';
                     DebuggerUtility::var_dump($first);
                 }
                 echo '<h5>Raw result</h5>';
