@@ -49,13 +49,18 @@ abstract class AbstractQueryAdapter implements NoDiInterface
         $this->settings = $settings;
         
         // Reset the settings
-        $language = $context->language()->getCurrentFrontendLanguage();
-        $langAspect = LanguageAspectFactory::createFromSiteLanguage($language);
-        $settings->setLanguageMode($langAspect->getLegacyLanguageMode());
-        $settings->setLanguageOverlayMode($langAspect->getLegacyOverlayType());
+        if ($context->site()->hasCurrent()) {
+            $language = $context->language()->getCurrentFrontendLanguage();
+            $langAspect = LanguageAspectFactory::createFromSiteLanguage($language);
+            $settings->setLanguageMode($langAspect->getLegacyLanguageMode());
+            $settings->setLanguageOverlayMode($langAspect->getLegacyOverlayType());
+            $settings->setRespectSysLanguage(true);
+            $settings->setLanguageUid($language->getLanguageId());
+        } else {
+            $settings->setRespectSysLanguage(false);
+        }
+        
         $settings->setRespectStoragePage(false);
-        $settings->setRespectSysLanguage(true);
-        $settings->setLanguageUid($language->getLanguageId());
     }
     
     /**
