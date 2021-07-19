@@ -44,6 +44,7 @@ use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\StringType;
 use Doctrine\DBAL\Types\TextType;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
@@ -53,6 +54,7 @@ use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexSection;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
+use LaborDigital\T3ba\Upgrade\V11MmUpgradeWizard;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
@@ -408,23 +410,45 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
             return $config;
         }
         
-        // Build the field name and respect the flex form parent field
-        $fieldId = Inflector::toUnderscore($this->field->getId());
-        if ($this->isFlexForm()) {
-            $fieldId = 'flex_' . Inflector::toUnderscore($this->getTcaField()->getId()) . '_' . $fieldId;
+        $tableName = $this->getTcaTable()->getTableName();
+        
+        if ($this->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_MM_TABLES)) {
+            $sqlRegistry = $this->context->cs()->sqlRegistry;
+            
+            $config['MM'] = $sqlRegistry->registerMmTable(
+                $sqlRegistry->prepareTableName(
+                    ! empty($options['mmTableName']) ? $options['mmTableName'] : $tableName,
+                    'mm'
+                )
+            );
+            
+            $config['MM_match_fields'] = [
+                'fieldname' =>
+                    $this->isFlexForm()
+                        ? $this->getTcaField()->getId() . '->' . $this->field->getId()
+                        : $this->field->getId(),
+            ];
+            
+        } else {
+            // @todo remove this in v12
+            $fieldId = Inflector::toUnderscore($this->field->getId());
+            if ($this->isFlexForm()) {
+                $fieldId = 'flex_' . Inflector::toUnderscore($this->getTcaField()->getId()) . '_' . $fieldId;
+            }
+            
+            $config['MM'] = $this->context->cs()->sqlRegistry->registerMmTable(
+                $tableName,
+                $fieldId,
+                $options['mmTableName'] ?? null
+            );
         }
         
-        $mmTableName = $this->context->cs()->sqlRegistry->registerMmTable(
-            $this->getTcaTable()->getTableName(),
-            $fieldId,
-            $options['mmTableName'] ?? null
-        );
+        $config['t3ba']['deprecated'][V11MmUpgradeWizard::class] = true;
         
         $this->configureSqlColumn(static function (Column $column) {
             $column->setType(new IntegerType())->setLength(11)->setDefault(0);
         });
         
-        $config['MM'] = $mmTableName;
         $config['prepend_tname'] = true;
         
         // Done

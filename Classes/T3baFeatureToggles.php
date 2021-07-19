@@ -26,6 +26,13 @@ namespace LaborDigital\T3ba;
 interface T3baFeatureToggles
 {
     /**
+     * V11 will introduce a new way of generating MM TCA tables. An update wizard is provided.
+     * This toggle, will activate the feature in v10 so you don't need to update in the future
+     * NOTE: Toggle will be removed in v12
+     */
+    public const TCA_V11_MM_TABLES = 't3ba.TCA.MM.V11Definition';
+    
+    /**
      * V11 will generate inline relations through an MM table instead of specific fields on the foreign table.
      * An update wizard is provided. This toggle, will activate the feature in v10 so you don't need to update in the future
      *
