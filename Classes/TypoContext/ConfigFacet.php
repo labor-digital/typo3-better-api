@@ -50,6 +50,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Configuration\Features;
 use TYPO3\CMS\Core\Registry;
 
 /**
@@ -347,6 +348,19 @@ class ConfigFacet implements FacetInterface
         }
         
         return $this->getService(TypoScriptService::class)->getTsConfig($path, $options);
+    }
+    
+    /**
+     * Checks if a TYPO3 feature toggle is enabled.
+     *
+     * @param   string  $featureName  The name of the feature toggle to check for
+     *
+     * @return bool
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/FeatureToggles/#using-the-api-as-extension-author
+     */
+    public function isFeatureEnabled(string $featureName): bool
+    {
+        return $this->makeInstance(Features::class)->isFeatureEnabled($featureName);
     }
 }
 

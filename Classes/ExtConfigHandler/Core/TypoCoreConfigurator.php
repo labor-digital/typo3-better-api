@@ -53,6 +53,20 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator implements NoDi
     protected $cacheConfigurations = [];
     
     /**
+     * Stores the list of feature toggles that should be enabled by default, if not explicilty disabled.
+     *
+     * @var array
+     */
+    protected $featureToggleDefaults = [];
+    
+    /**
+     * The list of enabled, and disabled feature toggles
+     *
+     * @var array
+     */
+    protected $featureToggles = [];
+    
+    /**
      * Registers a xClass override for a given class
      *
      * @param   string  $classToOverride      The class to override with the xClass
@@ -342,6 +356,53 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator implements NoDi
     }
     
     /**
+     * Used to enable a feature by default in your extension. Features enabled by default,
+     * must be disabled explicitly by using disableFeature() again. This method is used by extension authors.
+     *
+     * @param   string  $featureName  The name of the feature you want to enable
+     *
+     * @return $this
+     * @see disableFeature()
+     */
+    public function enableFeatureByDefault(string $featureName): self
+    {
+        $this->featureToggleDefaults[$featureName] = true;
+        
+        return $this;
+    }
+    
+    /**
+     * Enables a TYPO3 feature toggle.
+     *
+     * @param   string  $featureName  The name of the feature you want to enable
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/FeatureToggles/#using-the-api-as-extension-author
+     * @see \LaborDigital\T3ba\TypoContext\ConfigFacet::isFeatureEnabled() to check if a feature was enabled
+     */
+    public function enableFeature(string $featureName): self
+    {
+        $this->featureToggles[$featureName] = true;
+        
+        return $this;
+    }
+    
+    /**
+     * Disables a TYPO3 feature toggle.
+     *
+     * @param   string  $featureName  The name of the feature you want to disable
+     *
+     * @return $this
+     * @see enableFeature
+     */
+    public function disableFeature(string $featureName): self
+    {
+        $this->featureToggles[$featureName] = false;
+        
+        return $this;
+    }
+    
+    /**
      * Internal helper to store the configuration on the config state
      *
      * @param   \Neunerlei\Configuration\State\ConfigState  $state
@@ -350,6 +411,9 @@ class TypoCoreConfigurator extends AbstractExtConfigConfigurator implements NoDi
     {
         $state->mergeIntoArray('TYPO3_CONF_VARS.SYS.Objects', $this->xClasses);
         $state->mergeIntoArray('TYPO3_CONF_VARS.SYS.caching.cacheConfigurations', $this->cacheConfigurations);
+        $state->mergeIntoArray('TYPO3_CONF_VARS.SYS.features', array_merge(
+            $this->featureToggleDefaults, $this->featureToggles
+        ));
         $state->mergeIntoArray('TYPO3_CONF_VARS.LOG', array_reduce(
             $this->logConfigurations,
             static function (array $target, array $item) {
