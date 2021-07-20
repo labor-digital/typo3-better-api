@@ -20,7 +20,7 @@
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset;
+namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits;
 
 
 trait FieldPresetBasePidTrait

@@ -41,6 +41,11 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset;
 
 use Doctrine\DBAL\Schema\Column;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetBasePidTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetEvalTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetGenericWizardsTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetMinMaxTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetMmTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
