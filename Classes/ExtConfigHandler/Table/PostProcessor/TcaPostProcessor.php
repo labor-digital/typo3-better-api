@@ -65,16 +65,26 @@ class TcaPostProcessor implements NoDiInterface
         ];
     
     /**
+     * The list of registered processors to execute after the main steps are completed
+     *
+     * @var array
+     */
+    protected static $additionalProcessors = [];
+    
+    /**
      * Public api to register additional post processors that will be executed after all steps completed.
      * The list contains the $nameOfTheTable => [$callable, $anotherCallable] where the callables are executed
      * in their given order.
      *
-     * The processor callable receives the $config, $extractedMeta and $tableName as parameters.
-     * It should create references to the given values in order to modify them.
-     *
-     * @var array
+     * @param   string    $tableName  The name of the table to apply the post processor for
+     * @param   callable  $processor  The post processor callable to execute, it receives the $config,
+     *                                $extractedMeta and $tableName as parameters.
+     *                                It should create references to the given values in order to modify them.
      */
-    public static $additionalProcessors = [];
+    public static function registerAdditionalProcessor(string $tableName, callable $processor): void
+    {
+        static::$additionalProcessors[$tableName][] = $processor;
+    }
     
     /**
      * Executes all existing steps for the database tables
