@@ -35,12 +35,15 @@ use Neunerlei\Inflection\Inflector;
 
 trait FieldPresetMmTrait
 {
-    protected function addMmTableOptions(array $optionDefinition): array
+    protected function addMmTableOptions(array $optionDefinition, bool $withOpposite = true): array
     {
-        $optionDefinition['mmOpposite'] = [
-            'type' => ['string', 'null'],
-            'default' => null,
-        ];
+        if ($withOpposite) {
+            $optionDefinition['mmOpposite'] = [
+                'type' => ['string', 'null'],
+                'default' => null,
+            ];
+        }
+        
         $optionDefinition['mmTable'] = [
             'type' => 'bool',
             'default' => static function ($field, $given) {
@@ -86,15 +89,12 @@ trait FieldPresetMmTrait
         }
         
         $tableName = $this->getTcaTable()->getTableName();
+        /** @var \LaborDigital\T3ba\Tool\Sql\SqlRegistry $sqlRegistry */
+        $sqlRegistry = $this->context->cs()->sqlRegistry;
         
         if ($this->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_MM_TABLES)) {
-            $sqlRegistry = $this->context->cs()->sqlRegistry;
-            
             $config['MM'] = $sqlRegistry->registerMmTable(
-                $sqlRegistry->prepareTableName(
-                    ! empty($options['mmTableName']) ? $options['mmTableName'] : $tableName,
-                    'mm'
-                )
+                ! empty($options['mmTableName']) ? $options['mmTableName'] : $sqlRegistry->makeMmTableName($tableName)
             );
             
             $config['MM_match_fields'] = [
@@ -111,10 +111,8 @@ trait FieldPresetMmTrait
                 $fieldId = 'flex_' . Inflector::toUnderscore($this->getTcaField()->getId()) . '_' . $fieldId;
             }
             
-            $config['MM'] = $this->context->cs()->sqlRegistry->registerMmTable(
-                $tableName,
-                $fieldId,
-                $options['mmTableName'] ?? null
+            $config['MM'] = $sqlRegistry->registerMmTable(
+                ! empty($options['mmTableName']) ? $options['mmTableName'] : $sqlRegistry->makeMmTableName($tableName, $fieldId)
             );
         }
         
@@ -159,6 +157,11 @@ trait FieldPresetMmTrait
         $config['MM_opposite_field'] = $targetField;
         
         TcaPostProcessor::registerAdditionalProcessor($targetTable, static function (array &$config) use ($localTable, $localField, $targetField) {
+            // Ignore if the local field was removed later
+            if (! isset($GLOBALS['TCA'][$localTable]['columns'][$localField])) {
+                return;
+            }
+            
             $usage = $config['columns'][$targetField]['config']['MM_oppositeUsage'][$localTable] ?? [];
             
             $config['columns'][$targetField]['config']['MM_oppositeUsage'][$localTable] = array_unique(array_merge($usage, [$localField]));

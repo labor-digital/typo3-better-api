@@ -191,6 +191,23 @@ class SqlRegistry implements SingletonInterface
     }
     
     /**
+     * Helper to build the name of an mm table.
+     *
+     * @param   string       $tableName  The name of the table to create the mm table name for
+     * @param   string|null  $fieldName  DEPRECATED: will be removed in v12, the name of the field the mm table should apply to.
+     *
+     * @return string
+     */
+    public function makeMmTableName(string $tableName, ?string $fieldName = null): string
+    {
+        if ($fieldName !== null) {
+            $tableName = str_replace('_domain_model_', '_', $tableName) . '_' . Inflector::toUnderscore($fieldName);
+        }
+        
+        return $this->prepareTableName($tableName, 'mm');
+    }
+    
+    /**
      * Helper to prepare the name of a single table name to be at max 128 chars long.
      * Also allows to append a suffix to the table name for _mm tables and alike
      *
@@ -221,14 +238,14 @@ class SqlRegistry implements SingletonInterface
      * an be used to create a mm table definition in the sql file.
      *
      * @param   string       $tableName    Until v11: If $fieldName is set, the table name to create the mm table for
-     *                                     The name of the mm table to generate
+     *                                     After v11: The absolute name of the table to generate
      * @param   string|null  $fieldName    deprecated, will be removed in v11:
      *                                     The field name of the given table we create the mm table for
      * @param   string|null  $mmTableName  deprecated, will be removed in v11:
      *                                     Optionally the manually provided name of the mm table
      *
      * @return string
-     * @todo clean up this method in the v12 update
+     * @todo clean up this method in the v11 update
      */
     public function registerMmTable(
         string $tableName,
@@ -236,15 +253,11 @@ class SqlRegistry implements SingletonInterface
         ?string $mmTableName = null
     ): string
     {
-        // @todo remove this in v12
+        // @todo remove this in v11
         if ($fieldName === null && $mmTableName === null) {
             $mmTableName = $tableName;
-        }
-        if (empty($mmTableName)) {
-            $mmTableName = $this->prepareTableName(
-                str_replace('_domain_model_', '_', $tableName) . '_' . Inflector::toUnderscore($fieldName),
-                'mm'
-            );
+        } else {
+            $mmTableName = $this->makeMmTableName($tableName, $fieldName);
         }
         
         if (isset($this->definition->tables[$mmTableName])) {
