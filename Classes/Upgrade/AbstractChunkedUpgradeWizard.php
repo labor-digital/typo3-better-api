@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.19 at 14:40
+ * Last modified: 2021.07.19 at 23:40
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\ExtConfigHandler\UpgradeWizard;
+namespace LaborDigital\T3ba\Upgrade;
 
 
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
@@ -45,7 +45,7 @@ use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
  *      }
  * }
  *
- * @package LaborDigital\T3ba\ExtConfigHandler\UpgradeWizard
+ * @package LaborDigital\T3ba\Upgrade
  */
 abstract class AbstractChunkedUpgradeWizard extends AbstractUpgradeWizard
 {

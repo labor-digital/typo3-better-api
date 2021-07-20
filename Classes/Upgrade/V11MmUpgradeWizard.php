@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Upgrade;
 
 
-use LaborDigital\T3ba\ExtConfigHandler\UpgradeWizard\AbstractChunkedUpgradeWizard;
 use LaborDigital\T3ba\T3baFeatureToggles;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Install\Updates\DatabaseUpdatedPrerequisite;

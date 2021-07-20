@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.19 at 14:32
+ * Last modified: 2021.07.19 at 14:54
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\ExtConfigHandler\UpgradeWizard;
+namespace LaborDigital\T3ba\Upgrade;
 
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\ExtConfigHandler\UpgradeWizard\ConfigureUpgradeWizardInterface;
 use Neunerlei\Inflection\Inflector;
 use Neunerlei\PathUtil\Path;
 use Symfony\Component\Console\Output\OutputInterface;
