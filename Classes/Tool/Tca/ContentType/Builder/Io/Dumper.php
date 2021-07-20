@@ -32,6 +32,7 @@ use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Dumper as TableDumper;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Builder\ContentType;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\DefaultDataModel;
 use Neunerlei\Inflection\Inflector;
 
@@ -247,8 +248,7 @@ class Dumper
             return null;
         }
         
-        $tableName = 'ct_' . $cType;
-        
+        $tableName = $this->sqlRegistry->prepareTableName('tt_content_' . $cType);
         $table = $this->sqlRegistry->getType($tableName, 'contentType');
         
         $table->addColumn('ct_parent', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
@@ -291,7 +291,7 @@ class Dumper
     
     /**
      * Enhances the tca of the tt_content table to include the model mapping for our content models.
-     * The post processor will pick them up and generate the required typoscript for ous.
+     * The post processor will pick them up and generate the required typoScript for ous.
      *
      * @param   array  $tableTca
      * @param   array  $models
@@ -323,16 +323,26 @@ class Dumper
         return $tableTca;
     }
     
+    /**
+     * Processes the tca of the tt_content table and injects the required pointer fields and configuration
+     *
+     * @param   array  $tca
+     * @param   array  $tableMap
+     *
+     * @return array
+     */
     protected function processContentTca(array $tca, array $tableMap): array
     {
         if (empty($tableMap)) {
             return $tca;
         }
         
-        $this->sqlRegistry->getType('tt_content', 'contentType')
-                          ->addColumn('ct_child', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
+        $childPointerField = ContentTypeUtil::getChildPointerFieldName();
         
-        $tca['columns']['ct_child'] = [
+        $this->sqlRegistry->getType('tt_content', 'contentType')
+                          ->addColumn($childPointerField, 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
+        
+        $tca['columns'][$childPointerField] = [
             'label' => 'Content Type Extension Map',
             'description' => 'Allows the tt_content table to map to a set of extended columns on a foreign table like it would extend the table itself',
             'config' => [
@@ -345,7 +355,7 @@ class Dumper
                 continue;
             }
             
-            $tca['types'][$signature]['columnsOverrides']['ct_child'] = [
+            $tca['types'][$signature]['columnsOverrides'][$childPointerField] = [
                 'config' => ['foreign_table' => $tableName],
             ];
         }

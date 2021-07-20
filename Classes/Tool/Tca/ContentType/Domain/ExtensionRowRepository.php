@@ -103,13 +103,14 @@ class ExtensionRowRepository implements PublicServiceInterface
     public function restoreChildRow(string $cType, int $parentUid): void
     {
         [$tableName] = $this->resolveTableNameAndUid($cType, $parentUid, 'restore');
-        $parentRow = $this->dataHandlerService->getEmptyDataHandler()->recordInfo('tt_content', $parentUid, 'ct_child');
+        $childPointerField = ContentTypeUtil::getChildPointerFieldName();
+        $parentRow = $this->dataHandlerService->getEmptyDataHandler()->recordInfo('tt_content', $parentUid, $childPointerField);
         
-        if (! is_array($parentRow) || ! is_numeric($parentRow['ct_child'])) {
+        if (! is_array($parentRow) || ! is_numeric($parentRow[$childPointerField])) {
             return;
         }
         
-        $this->dataHandlerService->getRecordDataHandler($tableName)->restore($parentRow['ct_child']);
+        $this->dataHandlerService->getRecordDataHandler($tableName)->restore($parentRow[$childPointerField]);
     }
     
     /**

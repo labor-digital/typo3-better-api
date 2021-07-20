@@ -79,6 +79,20 @@ abstract class AbstractChunkedUpgradeWizard extends AbstractUpgradeWizard
     protected $chunkSize = 200;
     
     /**
+     * Defines if queries should contain hidden records as well
+     *
+     * @var bool
+     */
+    protected $includeHidden = true;
+    
+    /**
+     * Defines if queries should contain deleted records as well
+     *
+     * @var bool
+     */
+    protected $includeDeleted = false;
+    
+    /**
      * The number of all rows that have to be processed
      *
      * @var int
@@ -176,8 +190,17 @@ abstract class AbstractChunkedUpgradeWizard extends AbstractUpgradeWizard
      */
     protected function getQuery(?string $tableName = null): StandaloneBetterQuery
     {
-        return TypoContext::getInstance()->di()->cs()->db
-            ->getQuery($tableName ?? $this->tableName)
-            ->withIncludeHidden();
+        $query = TypoContext::getInstance()->di()->cs()->db
+            ->getQuery($tableName ?? $this->tableName);
+        
+        if ($this->includeHidden) {
+            $query = $query->withIncludeHidden();
+        }
+        
+        if ($this->includeDeleted) {
+            $query = $query->withIncludeDeleted();
+        }
+        
+        return $query;
     }
 }

@@ -40,4 +40,13 @@ interface T3baFeatureToggles
      */
     public const TCA_V11_INLINE_RELATIONS = 't3ba.TCA.Inline.V11Definition';
     
+    /**
+     * Per v10 implementation, content type tables, began with ct_ followed by the type name.
+     * After getting sensible feedback, v11 will instead begin the table with tt_content_ followed by the type name.
+     * Also the ct_child field in tt_content will be renamed to t3ba_ct_child to match the naming schema.
+     * This toggle, will activate the feature in v10 so you don't need to update in the future
+     *
+     * NOTE: Toggle will be removed in v12
+     */
+    public const CONTENT_TYPE_V11_NAMING_SCHEMA = 't3ba.ContentType.V11Naming';
 }
