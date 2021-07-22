@@ -71,6 +71,8 @@ class ExtendedSiteConfiguration extends T3BaCopySiteConfiguration
         $context = $this->getTypoContext();
         if (! $useCache && $context->env()->isBackend() &&
             ReflectionUtil::getClosestFromStack(SiteConfigurationController::class, 10) !== null) {
+            $this->getCache()->remove($this->cacheIdentifier);
+            
             return $siteConfig;
         }
         
