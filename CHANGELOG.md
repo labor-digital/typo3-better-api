@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.7.0](https://github.com/labor-digital/typo3-better-api/compare/v10.6.0...v10.7.0) (2021-07-22)
+
+
+### Features
+
+* **ExtConfig:** implement support to register upgrade wizards using ext config ([4592e44](https://github.com/labor-digital/typo3-better-api/commit/4592e44c76254cc7311314371e272395f70352c6))
+* **FieldPreset:** create only one MM table per parent table ([2fa8429](https://github.com/labor-digital/typo3-better-api/commit/2fa8429b8d0115d0495543ab277b745984fd63b6))
+* **Tca\ContentType:** implement v11 implementation of content type naming schemas ([f9d21ab](https://github.com/labor-digital/typo3-better-api/commit/f9d21ab7901999b468dce3a0eeb92d55a0dc416a))
+* **Tca\FieldPreset:** implement mm opposite usage better into the relations preset ([1bd163f](https://github.com/labor-digital/typo3-better-api/commit/1bd163f2d7f43b172908d4a1730b8322cfd2abe8))
+* **ViewHelpers:** add add inlineContent view helper for rendering related content elements ([609de7f](https://github.com/labor-digital/typo3-better-api/commit/609de7f73d9c8b21b0845301ed92af8807260520))
+* **ViewHelpers:** implement page title viewhelper to set the page title out of fluid templates ([2cf8918](https://github.com/labor-digital/typo3-better-api/commit/2cf891892877911b4acb1e191b2c6f3fdb21a980))
+* implement basic facade to interact with feature toggles ([6af8271](https://github.com/labor-digital/typo3-better-api/commit/6af82717fa45f73cf13c558527d98cb2a6241e3f))
+
+
+### Bug Fixes
+
+* **Database\BetterQuery:** disable default language handling in better query when no site exists ([76f77d4](https://github.com/labor-digital/typo3-better-api/commit/76f77d486e8eb309058108d066b116d6ef9cb0bf))
+* **Database\dbgQuery:** fix broken output of raw queries ([e619896](https://github.com/labor-digital/typo3-better-api/commit/e619896e3fbff899705efad38cf96a5d13f06fa9))
+* **FieldPreset\Inline:** create a foreign match field for the child table ([3cf42b9](https://github.com/labor-digital/typo3-better-api/commit/3cf42b97f73bafe6a390b6717a3e3e99e8ba0c16))
+* **FieldPreset\Inline:** create a foreign match field for the child table if needed ([ba187b0](https://github.com/labor-digital/typo3-better-api/commit/ba187b05e3a34cb478a356103a95e494a0ed513a))
+* **FieldPreset\Inline:** make sure tt_content colPos column is signed ([dc4662b](https://github.com/labor-digital/typo3-better-api/commit/dc4662bc5cc548cc6f1ef31d3e8879407369dcef))
+* **FieldPreset\Inline:** revert commit 3cf42b97, because it will break existing installations ([0c774c7](https://github.com/labor-digital/typo3-better-api/commit/0c774c7141e9295c438ec6db27294027adb6ba92))
+* **FormEngine\Custom:** make inclusion of js and css in form fields and wizards more reliable ([413aea4](https://github.com/labor-digital/typo3-better-api/commit/413aea49407be63eb510c5b5f0a8264cbf1aa466))
+* **Tca\FieldPreset:** move new traits into correct namespace ([2704336](https://github.com/labor-digital/typo3-better-api/commit/27043363e3795068840a86a1aad2bc5fd56deb84))
+
 ## [10.6.0](https://github.com/labor-digital/typo3-better-api/compare/v10.5.0...v10.6.0) (2021-07-16)
 
 
