@@ -38,9 +38,6 @@ class InlineContentViewHelper extends AbstractViewHelper
     
     protected $escapeOutput = false;
     
-    /**
-     * Initialize arguments
-     */
     public function initializeArguments()
     {
         $this->registerArgument('value', 'mixed', 'The incoming data to render, or null if VH children should be used');

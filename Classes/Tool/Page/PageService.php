@@ -65,6 +65,21 @@ class PageService implements SingletonInterface
     protected $recordHandler;
     
     /**
+     * Allows you to set the current page title in the PageTitle API
+     *
+     * @param   string  $pageTitle
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/PageTitleApi/Index.html
+     */
+    public function setPageTitle(string $pageTitle): self
+    {
+        $this->makeInstance(T3baPageTitleProvider::class)->setTitle($pageTitle);
+        
+        return $this;
+    }
+    
+    /**
      * Returns the record data handler for the pages table.
      * Which allows you root level access to the TYPO3 data handler.
      *
