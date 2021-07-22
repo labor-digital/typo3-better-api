@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.7.1](https://github.com/labor-digital/typo3-better-api/compare/v10.7.0...v10.7.1) (2021-07-22)
+
+
+### Bug Fixes
+
+* **ExtendedSiteConfiguration:** make sure to clear site cache when the record gets saved ([47cd62c](https://github.com/labor-digital/typo3-better-api/commit/47cd62c5a4c79b968e28aaf2da633bdad5a76d0e))
+
 ## [10.7.0](https://github.com/labor-digital/typo3-better-api/compare/v10.6.0...v10.7.0) (2021-07-22)
 
 
