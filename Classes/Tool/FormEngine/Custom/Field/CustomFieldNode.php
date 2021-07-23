@@ -132,6 +132,9 @@ class CustomFieldNode extends AbstractFormElement
 HTML;
         }
         
+        $result['requireJsModules']
+            = array_merge($result['requireJsModules'] ?? [], $this->context->getRequireJsModules());
+        
         // Allow the outside world to filter the result
         return $this->cs()->eventBus->dispatch(new CustomFieldPostProcessorEvent(
             $this->context,

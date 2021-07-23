@@ -184,13 +184,15 @@ class TcaTable extends AbstractTypeList
      * The processor callable receives the $config, $extractedMeta and $tableName as parameters.
      * It should create references to the given values in order to modify them.
      *
-     * @param   callable  $callback  A callable to apply post processing to the finished TCA array
+     * @param   callable  $callback  The post processor callable to execute, it receives the $config,
+     *                               $extractedMeta and $tableName as parameters.
+     *                               It should create references to the given values in order to modify them.
      *
      * @return $this
      */
     public function registerRawProcessor(callable $callback): self
     {
-        TcaPostProcessor::$additionalProcessors[$this->getTableName()][] = $callback;
+        TcaPostProcessor::registerAdditionalProcessor($this->getTableName(), $callback);
         
         return $this;
     }

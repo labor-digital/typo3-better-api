@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\ContentType;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\DefaultDataModel;
 use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 
@@ -220,4 +221,17 @@ class ContentTypeUtil implements NoDiInterface
         return $row;
     }
     
+    /**
+     * Returns the name of the child pointer field in the tt_content table
+     *
+     * @return string
+     */
+    public static function getChildPointerFieldName(): string
+    {
+        if (! empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['features'][T3baFeatureToggles::CONTENT_TYPE_V11_NAMING_SCHEMA])) {
+            return 't3ba_ct_child';
+        }
+        
+        return 'ct_child';
+    }
 }

@@ -1,1 +1,8 @@
 @import 'dynamic:generic.setup'
+
+config.pageTitleProviders {
+	t3ba {
+		provider = LaborDigital\T3ba\Tool\Page\T3baPageTitleProvider
+		before = record,seo
+	}
+}

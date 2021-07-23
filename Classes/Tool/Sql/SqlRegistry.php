@@ -28,6 +28,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\EventHandler\Sql;
+use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\Sql\Io\DefinitionProcessor;
 use LaborDigital\T3ba\Tool\Sql\Io\Dumper;
 use LaborDigital\T3ba\Tool\Sql\Io\TableAdapter;
@@ -190,45 +191,92 @@ class SqlRegistry implements SingletonInterface
     }
     
     /**
-     * an be used to create a mm table definition in the sql file.
+     * Helper to build the name of an mm table.
      *
-     * @param   string       $tableName    The table name to create the mm table for
-     * @param   string       $fieldName    The field name of the given table we create the mm table for
-     * @param   string|null  $mmTableName  Optionally the manually provided name of the mm table
+     * @param   string       $tableName  The name of the table to create the mm table name for
+     * @param   string|null  $fieldName  DEPRECATED: will be removed in v12, the name of the field the mm table should apply to.
      *
      * @return string
      */
-    public function registerMmTable(string $tableName, string $fieldName, ?string $mmTableName = null): string
+    public function makeMmTableName(string $tableName, ?string $fieldName = null): string
     {
-        // Make the name of the mm table
-        if (empty($mmTableName)) {
-            $mmTableName = str_replace('_domain_model_', '_', $tableName) . '_' . Inflector::toUnderscore($fieldName);
-            
-            // Make sure the name does not get longer than 128 chars at max (125 + 3 for "_mm")
-            if (strlen($mmTableName) > 125) {
-                $mmNameHash = md5($mmTableName);
-                $mmTableName = substr($mmTableName, 0, 125 - 32 - 1); // max length - md5 length - 1 for "_"
-                $mmTableName .= '_' . $mmNameHash;
-            }
-            
-            $mmTableName .= '_mm';
+        if ($fieldName !== null) {
+            $tableName = str_replace('_domain_model_', '_', $tableName) . '_' . Inflector::toUnderscore($fieldName);
         }
         
-        // Already defined
+        return $this->prepareTableName($tableName, 'mm');
+    }
+    
+    /**
+     * Helper to prepare the name of a single table name to be at max 128 chars long.
+     * Also allows to append a suffix to the table name for _mm tables and alike
+     *
+     * @param   string       $tableName  The name of the table to prepare
+     * @param   string|null  $suffix     An optional suffix to append to the table name
+     *
+     * @return string
+     */
+    public function prepareTableName(string $tableName, ?string $suffix = null): string
+    {
+        $maxTableLength = 128;
+        
+        if (is_string($suffix)) {
+            $suffix = '_' . ltrim($suffix, '_');
+            $maxTableLength -= strlen($suffix);
+        }
+        
+        if (strlen($tableName) > $maxTableLength) {
+            $tableNameHash = md5($tableName);
+            $tableName = substr($tableName, 0, $maxTableLength - 32 - 1); // max length - md5 length - 1 for "_"
+            $tableName .= '_' . $tableNameHash;
+        }
+        
+        return $tableName . $suffix;
+    }
+    
+    /**
+     * an be used to create a mm table definition in the sql file.
+     *
+     * @param   string       $tableName    Until v11: If $fieldName is set, the table name to create the mm table for
+     *                                     After v11: The absolute name of the table to generate
+     * @param   string|null  $fieldName    deprecated, will be removed in v11:
+     *                                     The field name of the given table we create the mm table for
+     * @param   string|null  $mmTableName  deprecated, will be removed in v11:
+     *                                     Optionally the manually provided name of the mm table
+     *
+     * @return string
+     * @todo clean up this method in the v11 update
+     */
+    public function registerMmTable(
+        string $tableName,
+        ?string $fieldName = null,
+        ?string $mmTableName = null
+    ): string
+    {
+        // @todo remove this in v11
+        if ($fieldName === null && $mmTableName === null) {
+            $mmTableName = $tableName;
+        } else {
+            $mmTableName = $this->makeMmTableName($tableName, $fieldName);
+        }
+        
         if (isset($this->definition->tables[$mmTableName])) {
             return $mmTableName;
         }
         
-        // Define the table
         $table = $this->getTable($mmTableName);
-        
         $table->addColumn('uid', 'integer', ['length' => 11, 'notnull' => true, 'autoincrement' => true]);
         $table->addColumn('uid_local', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
         $table->addColumn('uid_foreign', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
         $table->addColumn('tablenames', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
+        $table->addColumn('fieldname', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
         $table->addColumn('sorting', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
         $table->addColumn('sorting_foreign', 'integer', ['length' => 11, 'notnull' => true, 'default' => 0]);
-        $table->addColumn('ident', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
+        
+        // @todo remove this in v12
+        if (! $this->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_MM_TABLES)) {
+            $table->addColumn('ident', 'string', ['length' => 128, 'notnull' => true, 'default' => '']);
+        }
         
         $table->setPrimaryKey(['uid']);
         $table->addIndex(['uid_local'], 'uid_local');

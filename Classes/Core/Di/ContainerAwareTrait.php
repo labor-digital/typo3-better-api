@@ -134,6 +134,7 @@ trait ContainerAwareTrait
      * @param   string  $classOrInterfaceName  The class to instantiate
      *
      * @return object|mixed
+     * @deprecated will be removed in v11. Use makeInstance() instead
      */
     protected function getServiceOrInstance(string $classOrInterfaceName): object
     {

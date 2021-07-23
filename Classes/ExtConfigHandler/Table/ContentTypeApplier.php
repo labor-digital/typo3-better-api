@@ -189,6 +189,8 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             return;
         }
         
+        $childPointerField = ContentTypeUtil::getChildPointerFieldName();
+        
         // If there is no extension table for the new cType we drop everything
         // and let the data handler go on by itself.
         if (! ContentTypeUtil::hasExtensionTable($cType)) {
@@ -198,7 +200,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             }
             
             $row = ContentTypeUtil::removeAllExtensionColumns($row);
-            $row['ct_child'] = '0';
+            $row[$childPointerField] = '0';
             $event->setRow($row);
             
             return;
@@ -221,11 +223,11 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         
         $childRow['pid'] = $this->resolveColumnValue('pid', $rowWithUid);
         $childRow['sys_language_uid'] = $this->resolveColumnValue('sys_language_uid', $rowWithUid);
-        $row['ct_child'] = $this->repository->saveChildRow($cType, $parentId, $childRow);
+        $row[$childPointerField] = $this->repository->saveChildRow($cType, $parentId, $childRow);
         $event->setRow($row);
         
         if ($parentId === -1) {
-            $this->delayedChildRelation = $row['ct_child'];
+            $this->delayedChildRelation = $row[$childPointerField];
         } else {
             // Rewrite the dataHandlers history entry to incorporate the the extension columns
             DataHandlerAdapter::rewriteHistory(

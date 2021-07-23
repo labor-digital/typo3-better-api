@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.7.1](https://github.com/labor-digital/typo3-better-api/compare/v10.7.0...v10.7.1) (2021-07-22)
+
+
+### Bug Fixes
+
+* **ExtendedSiteConfiguration:** make sure to clear site cache when the record gets saved ([47cd62c](https://github.com/labor-digital/typo3-better-api/commit/47cd62c5a4c79b968e28aaf2da633bdad5a76d0e))
+
+## [10.7.0](https://github.com/labor-digital/typo3-better-api/compare/v10.6.0...v10.7.0) (2021-07-22)
+
+
+### Features
+
+* **ExtConfig:** implement support to register upgrade wizards using ext config ([4592e44](https://github.com/labor-digital/typo3-better-api/commit/4592e44c76254cc7311314371e272395f70352c6))
+* **FieldPreset:** create only one MM table per parent table ([2fa8429](https://github.com/labor-digital/typo3-better-api/commit/2fa8429b8d0115d0495543ab277b745984fd63b6))
+* **Tca\ContentType:** implement v11 implementation of content type naming schemas ([f9d21ab](https://github.com/labor-digital/typo3-better-api/commit/f9d21ab7901999b468dce3a0eeb92d55a0dc416a))
+* **Tca\FieldPreset:** implement mm opposite usage better into the relations preset ([1bd163f](https://github.com/labor-digital/typo3-better-api/commit/1bd163f2d7f43b172908d4a1730b8322cfd2abe8))
+* **ViewHelpers:** add add inlineContent view helper for rendering related content elements ([609de7f](https://github.com/labor-digital/typo3-better-api/commit/609de7f73d9c8b21b0845301ed92af8807260520))
+* **ViewHelpers:** implement page title viewhelper to set the page title out of fluid templates ([2cf8918](https://github.com/labor-digital/typo3-better-api/commit/2cf891892877911b4acb1e191b2c6f3fdb21a980))
+* implement basic facade to interact with feature toggles ([6af8271](https://github.com/labor-digital/typo3-better-api/commit/6af82717fa45f73cf13c558527d98cb2a6241e3f))
+
+
+### Bug Fixes
+
+* **Database\BetterQuery:** disable default language handling in better query when no site exists ([76f77d4](https://github.com/labor-digital/typo3-better-api/commit/76f77d486e8eb309058108d066b116d6ef9cb0bf))
+* **Database\dbgQuery:** fix broken output of raw queries ([e619896](https://github.com/labor-digital/typo3-better-api/commit/e619896e3fbff899705efad38cf96a5d13f06fa9))
+* **FieldPreset\Inline:** create a foreign match field for the child table ([3cf42b9](https://github.com/labor-digital/typo3-better-api/commit/3cf42b97f73bafe6a390b6717a3e3e99e8ba0c16))
+* **FieldPreset\Inline:** create a foreign match field for the child table if needed ([ba187b0](https://github.com/labor-digital/typo3-better-api/commit/ba187b05e3a34cb478a356103a95e494a0ed513a))
+* **FieldPreset\Inline:** make sure tt_content colPos column is signed ([dc4662b](https://github.com/labor-digital/typo3-better-api/commit/dc4662bc5cc548cc6f1ef31d3e8879407369dcef))
+* **FieldPreset\Inline:** revert commit 3cf42b97, because it will break existing installations ([0c774c7](https://github.com/labor-digital/typo3-better-api/commit/0c774c7141e9295c438ec6db27294027adb6ba92))
+* **FormEngine\Custom:** make inclusion of js and css in form fields and wizards more reliable ([413aea4](https://github.com/labor-digital/typo3-better-api/commit/413aea49407be63eb510c5b5f0a8264cbf1aa466))
+* **Tca\FieldPreset:** move new traits into correct namespace ([2704336](https://github.com/labor-digital/typo3-better-api/commit/27043363e3795068840a86a1aad2bc5fd56deb84))
+
+## [10.6.0](https://github.com/labor-digital/typo3-better-api/compare/v10.5.0...v10.6.0) (2021-07-16)
+
+
+### Features
+
+* **FormEngine:** implement new content element wizard, for inlineContent field preset ([50c2881](https://github.com/labor-digital/typo3-better-api/commit/50c288127dcf4e0581ebd91f773523529e0f706c))
+* **FormEngine\Inline:** improve inlineContent preset ([6f8ed71](https://github.com/labor-digital/typo3-better-api/commit/6f8ed7198a9ff1878e3aadec31f0e2bcd25d0ac6))
+* **Rendering:** implement rendering of inline content element previews ([70bee70](https://github.com/labor-digital/typo3-better-api/commit/70bee70d02e4bd787da27c116fb243a584ee8964))
+
+
+### Bug Fixes
+
+* **BackendPreview:** make list label rendering more reliable ([56c573d](https://github.com/labor-digital/typo3-better-api/commit/56c573d0b7c93a6f04df0123cf88674ae91dd246))
+* **BackendPreview:** prevent "inline" elements being displayed as "unused" ([00ed140](https://github.com/labor-digital/typo3-better-api/commit/00ed1408cfcd1fab25fbaf1f8bb7bc8cf7a1cc0d))
+* **BackendPreviewRenderer:** render descriptions of elements not in the new ce wizard, as well ([b97a54a](https://github.com/labor-digital/typo3-better-api/commit/b97a54ab4d380a2ef796419baf94c52f4d77e374))
+* **BetterQuery\Standalone:** ensure handleTranslationAndVersionOverlay always returns an array ([e068ad4](https://github.com/labor-digital/typo3-better-api/commit/e068ad43c2e7d91bdc8e6fc63b6f13d135d20422))
+* **Database\BetterQuery:** fix an issue when uid where constraints are negated ([2e803e7](https://github.com/labor-digital/typo3-better-api/commit/2e803e7cf6c3868aacb12103ba39c6334bb71c4e))
+* **ExtConfig\TypoScript:** fix error when typo.typoScript.staticDirectories was empty ([e45b0e7](https://github.com/labor-digital/typo3-better-api/commit/e45b0e7412b764ec2a2fc49bf5a5d3ce802a315b))
+* **Fal:** allow usage of addFileReference() on hidden records ([eaf072d](https://github.com/labor-digital/typo3-better-api/commit/eaf072dc1e3eb33b434f9c56741ba03be3fe2f8e))
+* **FieldPreset\Inline:** set default values for created foreign fields ([ff2316b](https://github.com/labor-digital/typo3-better-api/commit/ff2316bf59df7a8b679d210215434de7099262d1))
+* **FormEngine\Inline:** always move content elements to colPos -88 ([d928710](https://github.com/labor-digital/typo3-better-api/commit/d92871063e9cfe0c7139d966656feac9fc9ae2d7))
+* **Rendering\FieldList:** fix table style definition ([98984f5](https://github.com/labor-digital/typo3-better-api/commit/98984f5ff655bf067ddc462a8e08625997b20584))
+* **Rendering\FieldRenderer:** fix rendering for file and folder links ([d11efed](https://github.com/labor-digital/typo3-better-api/commit/d11efedcb691bdb676a785e10c854d9a3df70f60))
+* **Tca\ContentType:** resolve display conditions with short field names correctly ([5cd0b5e](https://github.com/labor-digital/typo3-better-api/commit/5cd0b5e2a7c1ff297468a62b7ae4e28096a2e0ba))
+* **Tca\FlexForm:** resolve flex form definitions on tt_content more reliably ([0c7e652](https://github.com/labor-digital/typo3-better-api/commit/0c7e65237afee2d33ddbca7456652ca0d02cfd6a))
+* **Tool\DataHandler:** make exception message more speaking ([6f11142](https://github.com/labor-digital/typo3-better-api/commit/6f111429c89d9b480048f5d42904aff702d7aef7))
+
 ## [10.5.0](https://github.com/labor-digital/typo3-better-api/compare/v10.4.0...v10.5.0) (2021-07-15)
 
 
