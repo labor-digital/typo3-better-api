@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.23 at 10:21
  */
 
 declare(strict_types=1);
@@ -134,7 +134,7 @@ class PageService implements SingletonInterface
             $row['title'] = $options['title'];
         }
         
-        return $this->recordHandler->save($row, $parentPid, $options['force']);
+        return $this->getPageDataHandler()->save($row, $parentPid, $options['force']);
     }
     
     /**
