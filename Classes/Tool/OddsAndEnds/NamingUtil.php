@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 13:51
  */
 
 declare(strict_types=1);
@@ -106,12 +106,13 @@ class NamingUtil implements NoDiInterface
      */
     public static function pluginNameFromControllerAction(string $controllerClass, string $actionName): string
     {
+        $pluginNames = [];
+        
         foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions'] as $config) {
             if (! is_array($config['plugins'] ?? null)) {
                 continue;
             }
             
-            $pluginNames = [];
             foreach ($config['plugins'] as $pluginName => $pluginConfiguration) {
                 $actions = $pluginConfiguration['controllers'][$controllerClass]['actions'] ?? [];
                 
