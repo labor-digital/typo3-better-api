@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 08:36
  */
 
 declare(strict_types=1);
@@ -168,7 +168,8 @@ trait QueryWhereApplierTrait
                 }
                 
                 // Handle operators
-                if ($k === 'uid' && ! in_array($operator, $extBaseOperators, true)) {
+                if ($k === 'uid' && ! in_array($operator, $extBaseOperators, true) &&
+                    $adapter->getSettings()->getRespectSysLanguage()) {
                     $condition = $this->whereUidSpecialConstraintWrapper(
                         $k,
                         static function ($realKey) use ($operator, $adapter, $v, $negated) {
