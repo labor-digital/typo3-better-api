@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 14:38
  */
 
 declare(strict_types=1);
@@ -36,20 +36,19 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     public function addOptionDefinition(array $options): array
     {
         $options['includeHiddenPages'] = [
-            'type' => 'bool',
-            'default' => false,
+            'type' => ['bool', 'null'],
+            'default' => null,
         ];
         $options['includeHiddenContent'] = [
-            'type' => 'bool',
-            'default' => false,
+            'type' => ['bool', 'null'],
+            'default' => null,
         ];
         $options['includeDeletedRecords'] = [
-            'type' => 'bool',
-            'default' => false,
+            'type' => ['bool', 'null'],
+            'default' => null,
         ];
         
         return $options;
-        
     }
     
     /**
@@ -59,9 +58,10 @@ class VisibilitySimulationPass implements SimulatorPassInterface
     {
         $visibilityAspect = $this->getTypoContext()->visibility();
         
-        return $options['includeHiddenPages'] !== $visibilityAspect->includeHiddenPages()
-               || $options['includeHiddenContent'] !== $visibilityAspect->includeHiddenContent()
-               || $options['includeDeletedRecords'] !== $visibilityAspect->includeDeletedRecords();
+        return
+            (is_bool($options['includeHiddenPages']) && $options['includeHiddenPages'] !== $visibilityAspect->includeHiddenPages())
+            || (is_bool($options['includeHiddenContent']) && $options['includeHiddenContent'] !== $visibilityAspect->includeHiddenContent())
+            || (is_bool($options['includeDeletedRecords']) && $options['includeDeletedRecords'] !== $visibilityAspect->includeDeletedRecords());
     }
     
     /**
@@ -74,9 +74,15 @@ class VisibilitySimulationPass implements SimulatorPassInterface
         
         // Update the aspect
         $visibilityAspect = $this->getTypoContext()->visibility();
-        $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
-        $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
-        $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
+        if (is_bool($options['includeHiddenPages'])) {
+            $visibilityAspect->setIncludeHiddenPages($options['includeHiddenPages']);
+        }
+        if (is_bool($options['includeHiddenContent'])) {
+            $visibilityAspect->setIncludeHiddenContent($options['includeHiddenContent']);
+        }
+        if (is_bool($options['includeDeletedRecords'])) {
+            $visibilityAspect->setIncludeDeletedRecords($options['includeDeletedRecords']);
+        }
         
         // Update page repository
         if (isset($GLOBALS['TSFE']->sys_page)) {
