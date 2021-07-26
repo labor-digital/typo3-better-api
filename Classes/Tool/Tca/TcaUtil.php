@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.25 at 20:46
  */
 
 declare(strict_types=1);
@@ -167,5 +167,26 @@ class TcaUtil implements NoDiInterface
         }
         
         return $value;
+    }
+    
+    /**
+     * Helper to extract the language value of a given database row.
+     *
+     * @param   array         $row    The row to extract the language value from.
+     * @param   string|mixed  $table  The name of the database table to resolve the tca for
+     *
+     * @return int|null Returns either the language id, or null if the language field was not
+     *                  present in the row, or did not contain a numeric value
+     */
+    public static function getLanguageUid(array $row, $table): ?int
+    {
+        $tableName = NamingUtil::resolveTableName($table);
+        $languageField = $GLOBALS['TCA'][$tableName]['ctrl']['languageField'] ?? 'sys_language_uid';
+        $val = static::getRowValue($row, $languageField);
+        if (! is_numeric($val)) {
+            return null;
+        }
+        
+        return (int)$val;
     }
 }
