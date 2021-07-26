@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 09:50
  */
 
 declare(strict_types=1);
@@ -178,7 +178,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             $result = $this->handleTranslationAndVersionOverlay($this->adapter->getTableName(), $result);
         }
         
-        return $result;
+        return is_array($result) ? $result : null;
     }
     
     /**
