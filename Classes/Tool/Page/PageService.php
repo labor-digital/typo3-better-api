@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.25 at 21:25
+ * Last modified: 2021.07.26 at 14:41
  */
 
 declare(strict_types=1);
@@ -253,12 +253,14 @@ class PageService implements SingletonInterface
      *                               made in the closure will include deleted records
      *                               - force bool (FALSE): If set to true, the new page is copied as forced admin user,
      *                               ignoring all permissions or access rights!
+     *                               - colPos int (0): The column id you want to render the contents for
+     *                               - site string: Can be set to a valid site identifier to simulate the request
+     *                               on a specific TYPO3 site.
      *
      * @return string
      */
     public function renderPageContents(int $pageId, array $options = []): string
     {
-        // Prepare options
         $options = Options::make($options, [
             'language' => [
                 'type' => ['int', 'string', 'null', SiteLanguage::class],
@@ -280,24 +282,32 @@ class PageService implements SingletonInterface
                 'type' => 'bool',
                 'default' => false,
             ],
+            'colPos' => [
+                'type' => 'int',
+                'default' => 0,
+            ],
+            'site' => [
+                'type' => ['string', 'null'],
+                'default' => null,
+            ],
         ]);
         
         return $this->cs()->simulator->runWithEnvironment([
+            'site' => $options['site'],
             'asAdmin' => $options['force'],
             'pid' => $pageId,
             'language' => $options['language'],
             'includeHiddenPages' => $options['includeHiddenPages'],
             'includeHiddenContent' => $options['includeHiddenContent'],
             'includeDeletedRecords' => $options['includeDeletedRecords'],
-        ], function () use ($pageId) {
-            // Render the page
+        ], function () use ($pageId, $options) {
             return $this->cs()->ts->renderContentObject('CONTENT', [
                 'table' => 'tt_content',
                 'select.' => [
                     'pidInList' => $this->resolveContentPid($pageId),
-                    'languageField' => 'sys_language_uid',
+                    'languageField' => $GLOBALS['TCA']['tt_content']['ctrl']['languageField'] ?? 'sys_language_uid',
                     'orderBy' => 'sorting',
-                    'where' => '{#colPos} = 0',
+                    'where' => '{#colPos}=' . $options['colPos'],
                 ],
             ]);
         });
@@ -331,7 +341,6 @@ class PageService implements SingletonInterface
      */
     public function getPageContents(int $pageId, array $options = [])
     {
-        // Prepare options
         $options = Options::make($options, [
             'where' => [
                 'type' => 'string',
@@ -361,10 +370,14 @@ class PageService implements SingletonInterface
                 'type' => 'bool',
                 'default' => false,
             ],
+            'site' => [
+                'type' => ['string', 'null'],
+                'default' => null,
+            ],
         ]);
         
-        // Collect the records
         $records = $this->cs()->simulator->runWithEnvironment([
+            'site' => $options['site'],
             'asAdmin' => $options['force'],
             'language' => $options['language'],
             'includeHiddenPages' => $options['includeHiddenPages'],
