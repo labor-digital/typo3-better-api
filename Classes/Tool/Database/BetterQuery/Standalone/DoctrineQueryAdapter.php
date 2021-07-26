@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 08:33
  */
 
 declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone;
 
-use Doctrine\DBAL\Connection;
 use LaborDigital\T3ba\Core\Exception\NotImplementedException;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -160,22 +160,19 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
                 
                 return $qb->expr()->like($key, $qb->createNamedParameter($value));
             case 'in':
-                if ($negated) {
-                    return $qb->expr()->notIn(
-                        $key,
-                        $qb->createNamedParameter(
-                            $this->ensureArrayValue($value, $key),
-                            Connection::PARAM_STR_ARRAY
-                        )
-                    );
+                $list = $this->ensureArrayValue($value, $key);
+                if (empty($list)) {
+                    return $qb->expr()->comparison('1', ExpressionBuilder::EQ, '1');
                 }
                 
-                return $qb->expr()->in(
-                    $key,
-                    $qb->createNamedParameter(
-                        $this->ensureArrayValue($value, $key),
-                        Connection::PARAM_STR_ARRAY
-                    )
+                return $qb->expr()->comparison(
+                    $qb->getConnection()->quoteIdentifier($key),
+                    $negated ? 'NOT IN' : 'IN',
+                    '(' .
+                    implode(',', array_map(function ($item) use ($qb) {
+                        return $qb->createNamedParameter($item);
+                    }, $list)) .
+                    ')'
                 );
             case '>':
                 if ($negated) {
