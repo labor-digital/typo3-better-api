@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 15:32
  */
 
 declare(strict_types=1);
@@ -190,6 +190,29 @@ class TemplateRenderingService implements SingletonInterface
         
         // Done
         return $instance;
+    }
+    
+    /**
+     * Renders a standalone fluid source code as an html string
+     *
+     * @param   string  $source   Either a mustache template as string, or a path like FILE:EXT:...
+     * @param   array   $data     The view data to use for the renderer object
+     * @param   array   $options  {@link getFluidView() for the possible options}
+     *
+     * @return string
+     */
+    public function renderFluid(string $source, array $data = [], array $options = []): string
+    {
+        if (stripos($source, 'file:') === 0) {
+            $view = $this->getFluidView($source, $options);
+        } else {
+            $view = $this->getFluidView('', $options);
+            $view->setTemplateSource($source);
+        }
+        
+        $view->assignMultiple($data);
+        
+        return $view->render();
     }
     
     /**
