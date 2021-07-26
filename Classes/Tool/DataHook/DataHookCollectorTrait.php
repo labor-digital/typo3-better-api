@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.15 at 18:12
+ * Last modified: 2021.07.26 at 11:29
  */
 
 declare(strict_types=1);
@@ -326,6 +326,8 @@ trait DataHookCollectorTrait
             DataHookTypes::TYPE_DELETE,
             DataHookTypes::TYPE_RESTORE,
             DataHookTypes::TYPE_FORM,
+            DataHookTypes::TYPE_COPY,
+            DataHookTypes::TYPE_COPY_TO_LANGUAGE,
             DataHookTypes::TYPE_INLINE_LOCALIZE_SYNC,
             DataHookTypes::TYPE_LOCALIZE,
             DataHookTypes::TYPE_VERSION,
