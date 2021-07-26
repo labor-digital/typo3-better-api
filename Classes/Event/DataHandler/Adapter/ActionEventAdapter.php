@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 12:07
  */
 
 declare(strict_types=1);
@@ -59,24 +59,30 @@ class ActionEventAdapter extends AbstractCoreHookEventAdapter
         &$pasteDataMap
     ): void
     {
+        $emitWrap = function ($id, $newElementId = -1) use ($command, $table, $value, &$pasteUpdate, &$pasteDataMap, $parent) {
+            static::$bus->dispatch(($e = new ActionPostProcessorEvent(
+                $command,
+                $table,
+                $id,
+                $newElementId,
+                $value,
+                $pasteUpdate,
+                $pasteDataMap,
+                $parent
+            )));
+            $pasteDataMap = $e->getPasteDataMap();
+            $pasteUpdate = $e->getPasteSpecialData();
+        };
+        
         // Make sure to extract the new uid when a record was copied
-        $newElementId = -1;
         if ($command === 'copy' || $command === 'copyToLanguage') {
-            $newElementId = $parent->copyMappingArray[$table][$id] ?? $newElementId;
+            foreach ($parent->copyMappingArray[$table] ?? [] as $orgElementId => $newElementId) {
+                $emitWrap($orgElementId, $newElementId);
+            }
+            
+            return;
         }
         
-        // Emit the event
-        static::$bus->dispatch(($e = new ActionPostProcessorEvent(
-            $command,
-            $table,
-            $id,
-            $newElementId,
-            $value,
-            $pasteUpdate,
-            $pasteDataMap,
-            $parent
-        )));
-        $pasteDataMap = $e->getPasteDataMap();
-        $pasteUpdate = $e->getPasteSpecialData();
+        $emitWrap($id);
     }
 }
