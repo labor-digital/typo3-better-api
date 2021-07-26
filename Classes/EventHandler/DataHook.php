@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.26 at 09:50
+ * Last modified: 2021.07.26 at 12:06
  */
 
 declare(strict_types=1);
@@ -30,7 +30,9 @@ use LaborDigital\T3ba\Event\DataHandler\SavePostProcessorEvent;
 use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
 use LaborDigital\T3ba\Tool\Database\DbService;
 use LaborDigital\T3ba\Tool\DataHook\DataHookTypes;
+use LaborDigital\T3ba\Tool\DataHook\Definition\DataHookDefinition;
 use LaborDigital\T3ba\Tool\DataHook\Dispatcher;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
@@ -120,7 +122,27 @@ class DataHook implements LazyEventSubscriberInterface
                                ->withWhere(['uid' => $event->getId()])
                                ->withVersionOverlay(false)
                                ->getFirst();
-        $this->dispatcher->dispatch($event->getCommand(), $event->getTableName(), $row ?? [], $event);
+        
+        $this->dispatcher->dispatch($event->getCommand(), $event->getTableName(), $row ?? [], $event)
+                         ->runIfDirty(static function (array $data, DataHookDefinition $definition) use ($event) {
+                             $newUid = ($event->getNewId() >= 0) ? $event->getNewId() : $event->getId();
+                             $dataMap = $event->getPasteDataMap();
+                             $event->setPasteDataMap(array_merge(
+                                 $dataMap,
+                                 [
+                                     $definition->tableName => Arrays::merge(
+                                         $dataMap[$definition->tableName] ?? [],
+                                         [
+                                             $newUid => array_merge(
+                                                 $dataMap[$definition->tableName][$newUid] ?? [],
+                                                 array_intersect_key($data, array_fill_keys($definition->dirtyFields, null))
+                                             ),
+                                         ],
+                                         'sn'
+                                     ),
+                                 ]
+                             ));
+                         });
     }
     
     /**
