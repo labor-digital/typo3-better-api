@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.23 at 10:21
+ * Last modified: 2021.07.25 at 21:25
  */
 
 declare(strict_types=1);
@@ -241,16 +241,18 @@ class PageService implements SingletonInterface
      * Make sure that it will not break in your context!
      *
      * @param   int    $pageId
-     * @param   array  $options  Additional options
-     *                           - includeHidden bool (FALSE) If set to true, hidden pages will be rendered as well.
-     *                           - language string|int|SiteLanguage: Can be used to render the page contents in a
-     *                           specific language context
-     *                           - includeHiddenPages bool (FALSE): If this is set to true the closure will
-     *                           have access to all hidden pages.
-     *                           - includeHiddenContent bool (FALSE): If this is set to true the closure will
-     *                           have access to all hidden content elements on when retrieving tt_content data
-     *                           - includeDeletedRecords bool (FALSE): If this is set to true the requests
-     *                           made in the closure will include deleted records
+     * @param   array  $options      Additional options
+     *                               - includeHidden bool (FALSE) If set to true, hidden pages will be rendered as well.
+     *                               - language string|int|SiteLanguage: Can be used to render the page contents in a
+     *                               specific language context
+     *                               - includeHiddenPages bool (FALSE): If this is set to true the closure will
+     *                               have access to all hidden pages.
+     *                               - includeHiddenContent bool (FALSE): If this is set to true the closure will
+     *                               have access to all hidden content elements on when retrieving tt_content data
+     *                               - includeDeletedRecords bool (FALSE): If this is set to true the requests
+     *                               made in the closure will include deleted records
+     *                               - force bool (FALSE): If set to true, the new page is copied as forced admin user,
+     *                               ignoring all permissions or access rights!
      *
      * @return string
      */
@@ -274,9 +276,14 @@ class PageService implements SingletonInterface
                 'type' => 'bool',
                 'default' => false,
             ],
+            'force' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
         ]);
         
         return $this->cs()->simulator->runWithEnvironment([
+            'asAdmin' => $options['force'],
             'pid' => $pageId,
             'language' => $options['language'],
             'includeHiddenPages' => $options['includeHiddenPages'],
@@ -303,20 +310,22 @@ class PageService implements SingletonInterface
      * This method will make an educated guess on your content elements and if you are running a modular griding
      * extension like grid elements. If you do, the elements will be hierarchically sorted by their parents.
      *
-     * @param   int    $pageId   The id of the page to load the contents for
-     * @param   array  $options  Additional options for this method
-     *                           - where string: Can be used to add an additional where clause to limit the type of
-     *                           content elements that are returned on the given page
-     *                           - language int (current sys language) Can be used to specify the language to render the
-     *                           contents in
-     *                           - includeHiddenPages bool (FALSE): If this is set to true the closure will
-     *                           have access to all hidden pages.
-     *                           - includeHiddenContent bool (FALSE): If this is set to true the closure will
-     *                           have access to all hidden content elements on when retrieving tt_content data
-     *                           - includeDeletedRecords bool (FALSE): If this is set to true the requests
-     *                           made in the closure will include deleted records
-     *                           - returnRaw bool (FALSE): If set to true the method will return the
-     *                           raw list of records instead of the sorted list of elements
+     * @param   int    $pageId       The id of the page to load the contents for
+     * @param   array  $options      Additional options for this method
+     *                               - where string: Can be used to add an additional where clause to limit the type of
+     *                               content elements that are returned on the given page
+     *                               - language int (current sys language) Can be used to specify the language to render the
+     *                               contents in
+     *                               - includeHiddenPages bool (FALSE): If this is set to true the closure will
+     *                               have access to all hidden pages.
+     *                               - includeHiddenContent bool (FALSE): If this is set to true the closure will
+     *                               have access to all hidden content elements on when retrieving tt_content data
+     *                               - includeDeletedRecords bool (FALSE): If this is set to true the requests
+     *                               made in the closure will include deleted records
+     *                               - returnRaw bool (FALSE): If set to true the method will return the
+     *                               raw list of records instead of the sorted list of elements
+     *                               - force bool (FALSE): If set to true, the new page is copied as forced admin user,
+     *                               ignoring all permissions or access rights!
      *
      * @return mixed
      */
@@ -348,10 +357,15 @@ class PageService implements SingletonInterface
                 'type' => 'bool',
                 'default' => false,
             ],
+            'force' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
         ]);
         
         // Collect the records
         $records = $this->cs()->simulator->runWithEnvironment([
+            'asAdmin' => $options['force'],
             'language' => $options['language'],
             'includeHiddenPages' => $options['includeHiddenPages'],
             'includeHiddenContent' => $options['includeHiddenContent'],
