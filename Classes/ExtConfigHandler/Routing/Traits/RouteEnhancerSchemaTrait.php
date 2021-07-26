@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.26 at 13:53
  */
 
 declare(strict_types=1);
@@ -177,9 +177,15 @@ trait RouteEnhancerSchemaTrait
                     'type' => 'string',
                     'default' => static function ($key, array $options): string {
                         try {
-                            return NamingUtil::pluginNameFromControllerAction($options['controller'],
-                                $options['action']);
+                            return NamingUtil::pluginNameFromControllerAction(
+                                $options['controller'],
+                                $options['action']
+                            );
                         } catch (Throwable $e) {
+                            if (str_starts_with($e->getMessage(), 'No plugin name ')) {
+                                return '-2';
+                            }
+                            
                             return '-1';
                         }
                     },
@@ -188,6 +194,12 @@ trait RouteEnhancerSchemaTrait
                             return 'The plugin name of the given controller: ' . $options['controller']
                                    . ' and action: ' . $options['action']
                                    . ' is ambiguous, please define a plugin name manually using the "plugin" option!';
+                        }
+                        
+                        if ($v === '-2') {
+                            return 'The plugin name of the given controller: ' . $options['controller']
+                                   . ' and action: ' . $options['action']
+                                   . ' seams somehow not to be defined in extbase! Did you configure the plugin correctly?';
                         }
                         
                         return true;
