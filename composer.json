@@ -75,7 +75,7 @@
 			"LaborDigital\\T3ba\\Tests\\": "Tests"
 		}
 	},
-	"version": "10.8.0",
+	"version": "10.8.1",
 	"extra": {
 		"t3ba": {
 			"isDev": true

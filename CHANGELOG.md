@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.8.1](https://github.com/labor-digital/typo3-better-api/compare/v10.8.0...v10.8.1) (2021-07-27)
+
+
+### Bug Fixes
+
+* **TemplateRenderingService:** use backend translator in mustache templates when possible ([46fd8e5](https://github.com/labor-digital/typo3-better-api/commit/46fd8e52647c1dddb03d1279015ed9aafe20baf4))
+
 ## [10.8.0](https://github.com/labor-digital/typo3-better-api/compare/v10.7.1...v10.8.0) (2021-07-27)
 
 
