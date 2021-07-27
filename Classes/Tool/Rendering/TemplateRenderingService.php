@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.07.26 at 15:32
+ * Last modified: 2021.07.27 at 14:21
  */
 
 declare(strict_types=1);
@@ -234,8 +234,13 @@ class TemplateRenderingService implements SingletonInterface
                         return '';
                     }
                     
-                    return \LaborDigital\T3ba\Tool\TypoContext\TypoContext
-                        ::getInstance()->di()->cs()->translator->translate($selector);
+                    $ctx = \LaborDigital\T3ba\Tool\TypoContext\TypoContext::getInstance();
+                    $translator = $ctx->di()->cs()->translator;
+                    if ($ctx->env()->isBackend()) {
+                        return $translator->translateBe($selector);
+                    }
+                    
+                    return $translator->translate($selector);
                 },
             ],
         ], $options);
