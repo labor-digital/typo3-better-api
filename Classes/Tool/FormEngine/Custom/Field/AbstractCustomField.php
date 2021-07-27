@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.27 at 10:58
  */
 
 declare(strict_types=1);
@@ -50,6 +50,34 @@ abstract class AbstractCustomField implements CustomFieldInterface
     }
     
     /**
+     * A list of default field information added to the element / container.
+     *
+     * @var array
+     */
+    protected $defaultFieldInformation
+        = [
+            'tcaDescription' => [
+                'renderType' => 'tcaDescription',
+            ],
+        ];
+    
+    /**
+     * A list of default field controls added to the element / container.
+     * This property is often reset by single elements.
+     *
+     * @var array
+     */
+    protected $defaultFieldControl = [];
+    
+    /**
+     * A list of default field wizards added to the element / container.
+     * This property is often reset by single elements.
+     *
+     * @var array
+     */
+    protected $defaultFieldWizard = [];
+    
+    /**
      * The context object to work with
      *
      * @var CustomFieldContext
@@ -62,6 +90,16 @@ abstract class AbstractCustomField implements CustomFieldInterface
     public function setContext(CustomFieldContext $context): void
     {
         $this->context = $context;
+    }
+    
+    /**
+     * Provides the list of default field information to the rendering node
+     *
+     * @return array
+     */
+    public function provideDefaults(): array
+    {
+        return [$this->defaultFieldInformation, $this->defaultFieldControl, $this->defaultFieldWizard];
     }
     
     /**

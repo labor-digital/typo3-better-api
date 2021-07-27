@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.27 at 11:28
  */
 
 declare(strict_types=1);
@@ -58,10 +58,10 @@ class CustomFieldNode extends AbstractFormElement
     /**
      * @inheritDoc
      * @throws \LaborDigital\T3ba\Tool\FormEngine\Custom\CustomFormException
+     * @todo this method should be refactored into smaller parts to make it easier to read and understand
      */
     public function render()
     {
-        // Create a new context
         $this->context = $this->makeInstance(
             CustomFieldContext::class,
             [
@@ -85,7 +85,20 @@ class CustomFieldNode extends AbstractFormElement
                 . '. Because the class does not exist!');
         }
         
-        $i = $this->getServiceOrInstance($className);
+        $i = $this->makeInstance($className);
+        
+        if (is_callable([$i, 'provideDefaults'])) {
+            (function (array $defaults) {
+                $this->defaultFieldInformation = $defaults[0];
+                $this->defaultFieldControl = $defaults[1];
+                $this->defaultFieldWizard = $defaults[2];
+            })($i->provideDefaults());
+        }
+        
+        // Late binding of the data which requires the defaults to be set
+        $this->context->setFieldInformation($this->renderFieldInformation());
+        $this->context->setFieldWizard($this->renderFieldWizard());
+        $this->context->setFieldControl($this->renderFieldControl());
         
         if (! $i instanceof CustomFieldInterface) {
             throw new CustomFormException(
@@ -96,46 +109,51 @@ class CustomFieldNode extends AbstractFormElement
         
         $i->setContext($this->context);
         
-        // Initialize the result
         $result = $this->initializeResultArray();
-        $result['html'] = $i->render();
+        $result['html'] = $html = $i->render();
         
-        // Update the data of this node
         $this->refreshData();
         
-        // Check if we can render the field wizard
-        $fieldWizardResult = $this->renderFieldWizard();
-        $result = $this->mergeChildReturnIntoExistingResult($result, $fieldWizardResult, false);
+        $result = $this->mergeChildReturnIntoExistingResult($result, $this->context->getFieldInformation(), false);
+        if (! $this->context->isDisabled()) {
+            $result = $this->mergeChildReturnIntoExistingResult($result, $this->context->getFieldWizard(), false);
+            $result = $this->mergeChildReturnIntoExistingResult($result, $this->context->getFieldControl(), false);
+        }
         
-        // Check if we should apply the outer wrap
         if ($this->context->isApplyOuterWrap()) {
             $config = $this->context->getConfig()['config'] ?? [];
             
-            // Calculate field size
             $size = $config['size'] ?? $this->context->getDefaultInputWidth();
-            $size = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(),
-                $this->context->getMaxInputWidth());
-            $width = (int)$this->context->getRootNode()->callMethod('formMaxWidth', [$size]);
-            $html = $result['html'];
-            $wizardHtml = $fieldWizardResult['html'];
+            $size = MathUtility::forceIntegerInRange($size, $this->context->getMinInputWidth(), $this->context->getMaxInputWidth());
+            $width = $this->formMaxWidth($size);
+            
+            $fieldInformationHtml = $this->context->getFieldInformationHtml();
+            $wizardHtml = $this->context->getFieldWizardsHtml();
+            $wizardHtml = empty($wizardHtml) || $this->context->isDisabled()
+                ? '' : '<div class="form-wizards-items-bottom">' . $wizardHtml . '</div>';
+            $controlHtml = $this->context->getFieldControlHtml();
+            $controlHtml = empty($controlHtml) || $this->context->isDisabled()
+                ? '' : '<div class="form-wizards-items-aside"><div class="btn-group">' . $controlHtml . '</div></div>';
+            
             $result['html'] = <<<HTML
-				<div class="form-control-wrap" style="max-width: $width px;">
-					<div class="form-wizards-wrap">
-						<div class="form-wizards-element">
-							$html
-						</div>
-						<div class="form-wizards-items-bottom">
-							$wizardHtml
-						</div>
-					</div>
-				</div>
+<div class="formengine-field-item">
+    $fieldInformationHtml
+    <div class="form-control-wrap" style="max-width: $width px;">
+        <div class="form-wizards-wrap">
+            <div class="form-wizards-element">
+                $html
+            </div>
+            $controlHtml
+            $wizardHtml
+        </div>
+    </div>
+</div>
 HTML;
         }
         
         $result['requireJsModules']
             = array_merge($result['requireJsModules'] ?? [], $this->context->getRequireJsModules());
         
-        // Allow the outside world to filter the result
         return $this->cs()->eventBus->dispatch(new CustomFieldPostProcessorEvent(
             $this->context,
             $i->filterResultArray($result)
