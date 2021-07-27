@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.8.0](https://github.com/labor-digital/typo3-better-api/compare/v10.7.1...v10.8.0) (2021-07-27)
+
+
+### Features
+
+* **ExtConfig\Routing:** implement registration of backend routes through ext config ([3563105](https://github.com/labor-digital/typo3-better-api/commit/35631053e06ec8d76683953cdb8cfee1c3e59e95))
+* **FormEngine\CustomField:** improve core integration ([5de3598](https://github.com/labor-digital/typo3-better-api/commit/5de3598347ca1d774008046768e3f92d42aafd9f))
+* **PageService:** add "force" option to additional methods ([9536f5a](https://github.com/labor-digital/typo3-better-api/commit/9536f5a9f937b50f14e1733d86a0b12538eb5cd0))
+* **PageService:** improve renderPageContents and getPageContents with new options ([784e9dc](https://github.com/labor-digital/typo3-better-api/commit/784e9dca079a25e5b5e82594643945d390314fbe))
+* **Rendering:** implement renderFluid() in TemplateRenderingService to render standalone fluid template string ([4d2db5c](https://github.com/labor-digital/typo3-better-api/commit/4d2db5c2beae8a4c067655c58004d6a0def8523e))
+* **TcaUtil:** add getLanguageUid() to extract language uid from a record ([67c9d3f](https://github.com/labor-digital/typo3-better-api/commit/67c9d3fb27861214a44067e945f62f522db26467))
+* **Tool\DataHook:** add registration methods of the most common data hooks to DataHookCollectorTrait ([e40a854](https://github.com/labor-digital/typo3-better-api/commit/e40a85428183ae5927d5afab8f31a9466021902a))
+
+
+### Bug Fixes
+
+* **BetterQuery:** fix broken "in" handling in DoctrineQueryAdapter ([bb25ad8](https://github.com/labor-digital/typo3-better-api/commit/bb25ad8f63f2ff27eaaf96e82bd916870b078949))
+* **BetterQuery:** make sure getFirst returns null instead of false when no result was found ([2510bf0](https://github.com/labor-digital/typo3-better-api/commit/2510bf06c00e9ed00757a1ff1fa34e97fdaa5b4d))
+* **BetterQuery:** special "uid" lookup is now disabled if the language should not be respected ([c159131](https://github.com/labor-digital/typo3-better-api/commit/c1591313524629e02d3154fd10234ebebd916815))
+* **CustomFieldContext:** make sure getRecordUid() returns the record uid instead of the page uid ([00050d8](https://github.com/labor-digital/typo3-better-api/commit/00050d890f614c67bc1b8e43d9fcb6cff6458ccd))
+* **DataHook:** add missing data hook types to the type validator ([e56da78](https://github.com/labor-digital/typo3-better-api/commit/e56da785f4de47a69335634c7296ca96022343b8))
+* **DataHook:** make sure action processor provides changes back to data handler ([b679d04](https://github.com/labor-digital/typo3-better-api/commit/b679d04e8ba0f88ba59b69f51717460781609dc6))
+* **DataHook:** make sure copy events are triggered once per copied entry ([1d901ef](https://github.com/labor-digital/typo3-better-api/commit/1d901ef7ce6a7dab9c8a917c3319f274d2c7122c))
+* **DataHook:** make sure onActionPostProcessor always has a row to process ([b3b1c08](https://github.com/labor-digital/typo3-better-api/commit/b3b1c08caf39da3503a62e332d3a64086afe0f27))
+* **FormEngine:** let CustomElementInterface extend PublicServiceInterface ([ce58dc3](https://github.com/labor-digital/typo3-better-api/commit/ce58dc3b3708d83138625d6c9fadf28a0d095753))
+* **NamingUtil:** gather list of plugin names correctly in pluginNameFromControllerAction() ([3450fbe](https://github.com/labor-digital/typo3-better-api/commit/3450fbe56e72fa2f97c8c3484677003226836e25))
+* **PageService:** use getPageDataHandler() in createNewPage ([951ba01](https://github.com/labor-digital/typo3-better-api/commit/951ba0103994900ee6f5132b7aff8468b8f6d993))
+* **RouteEnhancerSchema:** make error message on failing plugin definition more verbose ([dc75895](https://github.com/labor-digital/typo3-better-api/commit/dc75895e6ea4a381d3fa417f2b9bd6233ba108ad))
+* **VisibilitySimulationPass:** child simulations now inherit the outer visibility correctly ([d46728e](https://github.com/labor-digital/typo3-better-api/commit/d46728e88b5cd90b9c9eddab2f4976440430f0bf))
+
 ### [10.7.1](https://github.com/labor-digital/typo3-better-api/compare/v10.7.0...v10.7.1) (2021-07-22)
 
 
