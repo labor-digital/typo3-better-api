@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.07.27 at 10:45
  */
 
 declare(strict_types=1);
@@ -169,12 +169,13 @@ class CustomFieldContext implements NoDiInterface
     
     /**
      * Returns the UID of the record this field is part of
+     * Returns 0 if the record is not yet saved
      *
      * @return int
      */
     public function getRecordUid(): int
     {
-        return (int)($this->rawData['vanillaUid'] ?? 0);
+        return (int)($this->rawData['databaseRow']['uid'] ?? 0);
     }
     
     /**
