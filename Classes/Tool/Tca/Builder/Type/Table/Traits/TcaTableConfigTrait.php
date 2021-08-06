@@ -790,6 +790,57 @@ trait TcaTableConfigTrait
         return array_values($this->config['ctrl'][CshLabelStep::CONFIG_KEY] ?? []);
     }
     
+    /**
+     * Determines where a record may exist in the page tree.
+     *
+     * @param   bool|null  $state  There are three options depending on the value:
+     *                             - FALSE: Default. Can only exist in the page tree.
+     *                             Records from this table must belong to a page (i.e. have a positive
+     *                             “pid” field value). Thus records cannot be created in the root of the
+     *                             page tree (where “admin” users are the only ones allowed to create records
+     *                             anyways). This is the default behavior.
+     *                             - TRUE: Can only exist in the root. Records must have a “pid”-field
+     *                             value equal to zero. The consequence is that only admin can edit this record.
+     *                             - NULL: Can exist in both page tree and root. Records can belong
+     *                             either to a page (positive “pid” field value) or exist in the root of the
+     *                             page tree (where the “pid” field value will be 0 (zero)).
+     *                             Note: the -1 value will still select foreign_table records for selector
+     *                             boxes only from root (pid=0)
+     *
+     * @return $this
+     * @see https://docs.typo3.org/m/typo3/reference-tca/10.4/en-us/Ctrl/Index.html#rootlevel
+     */
+    public function setRootLevel(?bool $state = true)
+    {
+        $stateNumeric = 1;
+        if ($state === false) {
+            $stateNumeric = 0;
+        } elseif ($state === null) {
+            $stateNumeric = -1;
+        }
+        
+        $this->config['ctrl']['rootLevel'] = $stateNumeric;
+        
+        return $this;
+    }
+    
+    /**
+     * Returns the currently configured definition where a record may exist in the page tree.
+     *
+     * @return bool|null
+     * @see setRootLevel to learn what the result value means
+     */
+    public function getRootLevel(): ?bool
+    {
+        switch ($this->config['ctrl']['rootLevel'] ?? 0) {
+            case 1:
+                return true;
+            case -1:
+                return null;
+            default:
+                return false;
+        }
+    }
     
     /**
      * Enables the "preview" button in the edit record form of the TYPO3 backend.
