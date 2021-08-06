@@ -34,6 +34,19 @@ use Neunerlei\TinyTimy\DateTimy;
 
 class InputFields extends AbstractFieldPreset
 {
+    /**
+     * The list of link options that can be allowed in a link
+     * The key defines the option name, the value 0: the actual option to be blinded, and 1: the default state
+     */
+    protected const BLINDABLE_LINK_OPTIONS
+        = [
+            'allowFiles' => ['file', false],
+            'allowExternal' => ['url', true],
+            'allowPages' => ['page', true],
+            'allowMail' => ['mail', false],
+            'allowFolder' => ['folder', false],
+            'allowPhone' => ['telephone', false],
+        ];
     
     /**
      * Configures the current field as a simple input element
@@ -162,53 +175,78 @@ class InputFields extends AbstractFieldPreset
      *                           - allowPages bool (TRUE): True to allow links to pages
      *                           - allowMail bool (FALSE): True to allow links to mails
      *                           - allowFolder bool (FALSE): True to allow links to storage folders
+     *                           - allowPhone bool (FALSE): True to allow telephone numbers
      *                           - default string: A default value for your input field
-     *                           - maxLength int (2048): The max length of a link (also affects the length of the db
-     *                           field)
+     *                           - maxLength int (2048): The max length of a link (also affects the length of the db field)
      *                           - minLength int (0): The min length of a input
-     *                           - hideClutter bool: By default we hide clutter fields like class or params in the link
-     *                           browser. If you want those fields to be set, set this to false.
+     *                           - blindFields array|true (["class", "params"]):
+     *                           Defines which link option fields should be hidden or shown. TRUE to hide ALL fields,
+     *                           or an array of fields to be hidden. "class" and "params" are blinded by default,
+     *                           pass an empty array to always show them.
      *                           - required, trim bool: Any of these values can be passed
      *                           to define their matching "eval" rules
+     *
+     *                           DEPRECATED: Will be removed in v11, use "blindFields" instead
+     *                           - hideClutter bool: By default we hide clutter fields like class or params in the link
+     *                           browser. If you want those fields to be set, set this to false.
+     *
+     * @todo remove hideClutter in the next major release
      */
     public function applyLink(array $options = []): void
     {
+        array_map(static function (array $def): array {
+            return [
+                'type' => 'bool',
+                'default' => $def[1],
+            ];
+        }, static::BLINDABLE_LINK_OPTIONS);
+        
         // Prepare the options
         $options = Options::make(
             $options,
             $this->addEvalOptions(
                 $this->addMinMaxLengthOptions(
                     $this->addDefaultOptions(
-                        [
-                            'allowLinkSets' => [
-                                'type' => ['bool', 'array'],
-                                'default' => false,
-                            ],
-                            'allowFiles' => [
-                                'type' => 'bool',
-                                'default' => false,
-                            ],
-                            'allowExternal' => [
-                                'type' => 'bool',
-                                'default' => true,
-                            ],
-                            'allowPages' => [
-                                'type' => 'bool',
-                                'default' => true,
-                            ],
-                            'allowMail' => [
-                                'type' => 'bool',
-                                'default' => false,
-                            ],
-                            'allowFolder' => [
-                                'type' => 'bool',
-                                'default' => false,
-                            ],
-                            'hideClutter' => [
-                                'type' => 'bool',
-                                'default' => true,
-                            ],
-                        ]
+                        array_merge(
+                            
+                            array_map(static function (array $def): array {
+                                return [
+                                    'type' => 'bool',
+                                    'default' => $def[1],
+                                ];
+                            }, static::BLINDABLE_LINK_OPTIONS),
+                            
+                            [
+                                'allowLinkSets' => [
+                                    'type' => ['bool', 'array'],
+                                    'default' => false,
+                                ],
+                                'hideClutter' => [
+                                    'type' => 'bool',
+                                    'default' => true,
+                                ],
+                                'blindFields' => [
+                                    'type' => ['array', 'true', 'null'],
+                                    'default' => null,
+                                    'filter' => static function ($value, $_, array $options) {
+                                        if (is_array($value)) {
+                                            return $value;
+                                        }
+                                        
+                                        if ($value === true) {
+                                            return ['class', 'params', 'target', 'title'];
+                                        }
+                                        
+                                        // @todo remove this in the next major release
+                                        if (! $options['hideClutter']) {
+                                            return [];
+                                        }
+                                        
+                                        return ['class', 'params'];
+                                    },
+                                ],
+                            ]
+                        )
                     ), 2048
                 ),
                 ['required', 'trim'],
@@ -216,26 +254,14 @@ class InputFields extends AbstractFieldPreset
             )
         );
         
-        // Prepare blinded url types
-        $blindFields = [];
-        if (! $options['allowFiles']) {
-            $blindFields[] = 'file';
-        }
-        if (! $options['allowExternal']) {
-            $blindFields[] = 'url';
-        }
-        if (! $options['allowPages']) {
-            $blindFields[] = 'page';
-        }
-        if (! $options['allowMail']) {
-            $blindFields[] = 'mail';
-        }
-        if (! $options['allowFolder']) {
-            $blindFields[] = 'folder';
-        }
-        
-        $blindFields[] = '@linkSets:' . urlencode(SerializerUtil::serializeJson($options['allowLinkSets']));
-        $blindFields = implode(',', $blindFields);
+        $blindOptions = array_filter(
+            array_values(
+                array_map(static function (string $key, array $def) use ($options): ?string {
+                    return $options[$key] ? null : $def[0];
+                }, array_keys(static::BLINDABLE_LINK_OPTIONS), static::BLINDABLE_LINK_OPTIONS)
+            )
+        );
+        $blindOptions[] = '@linkSets:' . urlencode(SerializerUtil::serializeJson($options['allowLinkSets']));
         
         // Prepare the config
         $config = [
@@ -245,8 +271,8 @@ class InputFields extends AbstractFieldPreset
             'fieldControl' => [
                 'linkPopup' => [
                     'options' => [
-                        'blindLinkOptions' => $blindFields,
-                        'blindLinkFields' => $options['hideClutter'] ? 'class,params' : '',
+                        'blindLinkOptions' => implode(',', $blindOptions),
+                        'blindLinkFields' => implode(',', $options['blindFields']),
                     ],
                 ],
             ],
@@ -256,7 +282,6 @@ class InputFields extends AbstractFieldPreset
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
         
-        // Set the field
         $this->field->addConfig($config);
     }
     
