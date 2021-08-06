@@ -133,9 +133,11 @@ class TableFactory implements PublicServiceInterface
             preg_replace('/^(.*?_domain_model_)/', '', $tableName)
         );
         
-        $default['ctrl']['iconfile']
-            = $this->cs()->typoContext->path()->getExtensionIconPath(
+        $iconFile = $this->cs()->typoContext->path()->getExtensionIconPath(
             $ctx->getExtConfigContext()->getExtKey());
+        if (! empty($iconFile)) {
+            $default['ctrl']['iconfile'] = $iconFile;
+        }
         
         $default['columns']['l10n_parent']['config']['foreign_table'] = $tableName;
         $default['columns']['l10n_parent']['config']['foreign_table_where'] = str_replace(
