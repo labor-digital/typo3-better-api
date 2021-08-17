@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.9.0](https://github.com/labor-digital/typo3-better-api/compare/v10.8.1...v10.9.0) (2021-08-17)
+
+
+### Features
+
+* **Tca:** implement getRootLevel and setRootLevel helpers to a tca table ([e6327f6](https://github.com/labor-digital/typo3-better-api/commit/e6327f681e2061c0e66bdfc19a50fde47d7ee56f))
+* **Tca\Presets:** improve applyLink() options ([9efcf39](https://github.com/labor-digital/typo3-better-api/commit/9efcf3939c0a69e9ab8f9b3948ed8cb074689754))
+* **Tca\TableFactory:** only add the "iconfile" option if an icon could be resolved ([125e0ca](https://github.com/labor-digital/typo3-better-api/commit/125e0cab1ee8b38492372cb8621b107bcfc4cb2f))
+
 ### [10.8.1](https://github.com/labor-digital/typo3-better-api/compare/v10.8.0...v10.8.1) (2021-07-27)
 
 
