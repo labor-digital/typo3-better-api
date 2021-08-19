@@ -198,13 +198,9 @@ class CacheConfigurationPass implements CompilerPassInterface
             $providerServiceId = $this->getProviderServiceId($container, $identifier, $definitions);
             
             $params['$' . $parameter->getName()] = new Reference($providerServiceId);
-//            $definition->setArgument(
-//                '$' . $parameter->getName(),
-//                new Reference($providerServiceId)
-//            );
         }
         
-        if (! empty($params)) {
+        if (! empty(array_filter($params))) {
             $definitionAdapter($params, $reflectionMethod->getName());
         }
     }
