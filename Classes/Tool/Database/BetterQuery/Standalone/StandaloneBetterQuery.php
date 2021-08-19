@@ -281,9 +281,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
         $qb = $this->getQueryBuilder();
         $table = $this->adapter->getTableName();
         $tcaConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $fields, 'config']);
-        if (! is_array($tcaConfig)) {
+        /** @noinspection SuspiciousBinaryOperationInspection */
+        if (! is_array($tcaConfig) || reset($tcaConfig) === null) {
             throw new BetterQueryException(
-                'One or more of the requested fields: "' . $fields . '" were not found in the TCA of table: "'
+                'One or more of the requested fields: "' . implode('", "', $fields) . '" were not found in the TCA of table: "'
                 . $table . '"!'
             );
         }
