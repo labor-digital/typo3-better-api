@@ -117,7 +117,7 @@ class SharedConfig implements NoDiInterface
         $state->useNamespace('typo.extBase.element', function () use ($state) {
             $state->setAsJson('args', $this->registrationArgs);
             $state->set('configureArgs', $this->configureArgs);
-            $state->setAsJson('iconArgs', $this->iconArgs);
+            $state->setAsJson('iconArgs', array_filter($this->iconArgs));
             $state->setAsJson('dataHooks', $this->dataHooks);
             $state->setAsJson('backendPreviewHooks', $this->backendPreviewHooks);
             $state->setAsJson('flexForms', array_filter($this->flexFormArgs));
