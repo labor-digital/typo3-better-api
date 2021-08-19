@@ -42,6 +42,7 @@ use InvalidArgumentException;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\ProcessedFileAdapter;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
@@ -180,6 +181,7 @@ class FalService implements SingletonInterface
                 return null;
             }
             
+            $table = NamingUtil::resolveTableName($table);
             $file = $this->getFileRepository()->findByRelation($table, $field, $uid);
             
             if (! empty($file)) {
