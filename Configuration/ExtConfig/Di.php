@@ -109,7 +109,7 @@ class Di implements ConfigureDiInterface
                              'identifier' => 'page,pageBased,pageAware',
                              'cacheIdentifier' => 't3ba_frontend',
                          ]);
-        $containerBuilder->addCompilerPass(new CacheConfigurationPass());
+        $containerBuilder->addCompilerPass(new CacheConfigurationPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 50);
         
         // CACHES
         static::registerCache($configurator, 't3ba_system');

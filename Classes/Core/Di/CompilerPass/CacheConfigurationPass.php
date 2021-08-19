@@ -137,12 +137,33 @@ class CacheConfigurationPass implements CompilerPassInterface
             
             if ($ref->getConstructor()) {
                 /** @noinspection NullPointerExceptionInspection */
-                $this->autoWireSingleMethod($container, $def, $ref->getConstructor(), $definitions);
+                $this->autoWireSingleMethod($container, $ref->getConstructor(), $definitions,
+                    static function (array $params) use ($def) {
+                        foreach (array_filter($params) as $param => $ref) {
+                            $def->setArgument($param, $ref);
+                        }
+                    });
             }
             
             foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
                 if (stripos($method->getName(), 'inject') === 0) {
-                    $this->autoWireSingleMethod($container, $def, $method, $definitions);
+                    $this->autoWireSingleMethod($container, $method, $definitions,
+                        static function (array $params, string $methodName) use ($def) {
+                            $existingCall = null;
+                            foreach ($def->getMethodCalls() as $call) {
+                                if ($call[0] === $methodName) {
+                                    $existingCall = $call[1];
+                                    break;
+                                }
+                            }
+                            
+                            if ($existingCall) {
+                                $def->removeMethodCall($methodName);
+                            }
+                            
+                            $def->addMethodCall($methodName, Arrays::merge($existingCall ?? [], array_values($params), 'sn'));
+                        }
+                    );
                 }
             }
         }
@@ -158,15 +179,17 @@ class CacheConfigurationPass implements CompilerPassInterface
      */
     protected function autoWireSingleMethod(
         ContainerBuilder $container,
-        Definition $definition,
         ReflectionMethod $reflectionMethod,
-        array $definitions
+        array $definitions,
+        \Closure $definitionAdapter
     ): void
     {
+        $params = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $types = ReflectionUtil::parseType($parameter);
             
             if (empty(array_intersect($types, static::TRACKED_INTERFACES))) {
+                $params[] = null;
                 continue;
             }
             
@@ -174,10 +197,15 @@ class CacheConfigurationPass implements CompilerPassInterface
             
             $providerServiceId = $this->getProviderServiceId($container, $identifier, $definitions);
             
-            $definition->setArgument(
-                '$' . $parameter->getName(),
-                new Reference($providerServiceId)
-            );
+            $params['$' . $parameter->getName()] = new Reference($providerServiceId);
+//            $definition->setArgument(
+//                '$' . $parameter->getName(),
+//                new Reference($providerServiceId)
+//            );
+        }
+        
+        if (! empty($params)) {
+            $definitionAdapter($params, $reflectionMethod->getName());
         }
     }
     
