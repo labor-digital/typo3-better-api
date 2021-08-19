@@ -47,6 +47,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Di\DiCommonConfigTrait;
 use LaborDigital\T3ba\Tool\Cache\CacheConsumerInterface;
 use LaborDigital\T3ba\Tool\Cache\Implementation\FrontendCache;
 use LaborDigital\T3ba\Tool\Cache\Implementation\PageCache;
+use LaborDigital\T3ba\Tool\Cache\Implementation\RuntimeCache;
 use LaborDigital\T3ba\Tool\Cache\Implementation\SystemCache;
 use LaborDigital\T3ba\Tool\Cache\KeyGenerator\EnvironmentCacheKeyEnhancerInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
@@ -100,6 +101,8 @@ class Di implements ConfigureDiInterface
                          ->addTag('t3ba.cacheKeyEnhancer');
         $containerBuilder->registerForAutoconfiguration(CacheConsumerInterface::class)
                          ->addTag('t3ba.cacheConsumer');
+        $containerBuilder->getDefinition(RuntimeCache::class)
+                         ->addTag('t3ba.cache', ['identifier' => 'runtime', 'cacheIdentifier' => 'runtime']);
         $containerBuilder->getDefinition(SystemCache::class)
                          ->addTag('t3ba.cache', ['identifier' => 'system', 'cacheIdentifier' => 't3ba_system']);
         $containerBuilder->getDefinition(FrontendCache::class)
