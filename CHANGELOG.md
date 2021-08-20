@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.10.0](https://github.com/labor-digital/typo3-better-api/compare/v10.9.0...v10.10.0) (2021-08-19)
+
+
+### Features
+
+* **Cache:** implement runtime cache implementation ([59ad891](https://github.com/labor-digital/typo3-better-api/commit/59ad891be5f87aac071ab23335e4d302c0aad7ee))
+
+
+### Bug Fixes
+
+* **CacheConfigurationPass:** make sure autowiring configuration is generated correctly ([76a3313](https://github.com/labor-digital/typo3-better-api/commit/76a33133eb23afdbf2ffa3b68eeff87106114a69))
+* **ExtConfig\Extbase:** ensure iconArgs don't include NULL values when cached ([7925bc3](https://github.com/labor-digital/typo3-better-api/commit/7925bc3dd1da71e900eae97e74cd8245798889b5))
+
 ## [10.9.0](https://github.com/labor-digital/typo3-better-api/compare/v10.8.1...v10.9.0) (2021-08-17)
 
 
