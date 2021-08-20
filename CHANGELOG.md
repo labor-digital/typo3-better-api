@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.11.0](https://github.com/labor-digital/typo3-better-api/compare/v10.10.0...v10.11.0) (2021-08-20)
+
+
+### Features
+
+* **ExtConfig\Frontend:** add favicon registration option ([0560a5d](https://github.com/labor-digital/typo3-better-api/commit/0560a5dc9ecc4f1b163cf891e44ea1aee6b17659))
+
+
+### Bug Fixes
+
+* **BetterQuery:** ensure good exception message in getRelated() method ([2b18d98](https://github.com/labor-digital/typo3-better-api/commit/2b18d987d2b4f5d1267097ee12e9bbd5f055aa76))
+* **Cache:** don't break other injection methods when using CacheConsumer ([d8fda76](https://github.com/labor-digital/typo3-better-api/commit/d8fda76329bf70dcf2f3bb46d05241f1473cd681))
+* **FalService:** transform table name references into actual table names ([3df1807](https://github.com/labor-digital/typo3-better-api/commit/3df1807dfba5908c3d362a5a8abc6103398c9e85))
+
 ## [10.10.0](https://github.com/labor-digital/typo3-better-api/compare/v10.9.0...v10.10.0) (2021-08-19)
 
 
