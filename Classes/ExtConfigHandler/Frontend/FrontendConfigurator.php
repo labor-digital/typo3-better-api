@@ -28,6 +28,7 @@ use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigConfigurator;
 use LaborDigital\T3ba\ExtConfigHandler\Common\Assets\AssetCollectorTrait;
 use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\MetaTag\MetaTagManagerInterface;
 
 class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDiInterface
@@ -61,6 +62,13 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
      * @var string|null
      */
     protected $footerHtml;
+    
+    /**
+     * The path to the favicon to be shown in the frontend
+     *
+     * @var string|null
+     */
+    protected $favIcon;
     
     /**
      * Registers a new meta tag manager instance into the registry
@@ -168,6 +176,39 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
     }
     
     /**
+     * Registers the given file as favicon for the page
+     *
+     * @param   string|null  $iconFile  Use something like EXT:ext_key/Resources/Public/assets/favicon.png
+     *                                  Markers like {{extKey}} are supported as well
+     *
+     * @return $this
+     */
+    public function registerFavIcon(?string $iconFile): self
+    {
+        if (isset($iconFile)) {
+            $iconFile = $this->context->replaceMarkers($iconFile);
+            $iconFile = $this->context->getTypoContext()->path()->typoPathToRealPath($iconFile);
+            $publicPath = $this->context->getTypoContext()->path()->getPublicPath();
+            $this->favIcon = Path::makeRelative($iconFile, $publicPath);
+        } else {
+            $this->favIcon = null;
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Returns the registered favicon path
+     * WARNING: Only fav icons registered through ext config are returned!
+     *
+     * @return string|null
+     */
+    public function getFavIcon(): ?string
+    {
+        return $this->favIcon;
+    }
+    
+    /**
      * @inheritDoc
      */
     public function finish(ConfigState $state): void
@@ -175,6 +216,11 @@ class FrontendConfigurator extends AbstractExtConfigConfigurator implements NoDi
         $state->useNamespace('root', function (ConfigState $state) {
             $state->set('t3ba.frontend.metaTagManagers', array_values($this->metaTagManagers));
         });
+        
+        if ($this->favIcon) {
+            $state->set('favicon', $this->favIcon);
+        }
+        
         $state->set('html', ['header' => $this->headerHtml, 'footer' => $this->footerHtml]);
         $state->set('metaTagActions', $this->metaTagActions);
         $this->storeAssetCollectorConfiguration($state);
