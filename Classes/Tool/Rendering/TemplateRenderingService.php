@@ -195,7 +195,7 @@ class TemplateRenderingService implements SingletonInterface
     /**
      * Renders a standalone fluid source code as an html string
      *
-     * @param   string  $source   Either a mustache template as string, or a path like FILE:EXT:...
+     * @param   string  $source   Either a fluid template as string, or a path like FILE:EXT:...
      * @param   array   $data     The view data to use for the renderer object
      * @param   array   $options  {@link getFluidView() for the possible options}
      *
