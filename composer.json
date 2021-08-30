@@ -59,7 +59,7 @@
 		"roave/security-advisories": "dev-latest",
 		"phpunit/phpunit": "^9.1",
 		"neunerlei/dbg": "^1.9",
-		"friendsofphp/php-cs-fixer": "^2.16"
+		"friendsofphp/php-cs-fixer": "^3.1"
 	},
 	"support": {
 		"issues": "https://github.com/labor-digital/typo3-better-api/issues",
