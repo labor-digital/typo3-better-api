@@ -250,8 +250,6 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function getRelated(array $fields, array $options = []): array
     {
-        $tableName = $this->adapter->getTableName();
-        
         // Validate options
         $options = Options::make($options, [
             'includeHiddenChildren' => [
@@ -261,13 +259,6 @@ class StandaloneBetterQuery extends AbstractBetterQuery
             'model' => [
                 'type' => ['string', 'array', 'null'],
                 'default' => null,
-                'filter' => static function ($v) use ($tableName) {
-                    if (is_string($v)) {
-                        return [$tableName => $v];
-                    }
-                    
-                    return $v;
-                },
             ],
         ]);
         
@@ -386,7 +377,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
                             (int)$item['id'],
                             $item['table'],
                             $relations[$item['table']][$item['id']],
-                            $options['model'],
+                            is_string($options['model']) ? [$item['table'] => $options['model']] : $options['model'],
                         ]
                     );
                 }
