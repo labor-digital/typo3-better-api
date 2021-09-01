@@ -22,9 +22,9 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone;
 
 use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException;
+use LaborDigital\T3ba\Tool\ExtBase\Hydrator\Hydrator;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 
 /**
  * Class RelatedRecordRow
@@ -127,10 +127,9 @@ class RelatedRecordRow
                 'Could not hydrate a related row for table: ' . $this->getTableName()
                 . ' because it was not mapped to a model');
         }
-        $objects = GeneralUtility::getContainer()
-                                 ->get(DataMapper::class)
-                                 ->map($this->modelMap[$this->getTableName()], [$this->row]);
         
-        return reset($objects);
+        return GeneralUtility::getContainer()
+                             ->get(Hydrator::class)
+                             ->hydrateObject($this->modelMap[$this->getTableName()], $this->row);
     }
 }
