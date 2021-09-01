@@ -187,7 +187,7 @@ class SiteFacet implements FacetInterface
      *
      * @param   bool  $useCache  False to disable all caching of the sites
      *
-     * @return array
+     * @return Site[]
      */
     public function getAll(bool $useCache = true): array
     {
