@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.1](https://github.com/labor-digital/typo3-better-api/compare/v10.11.0...v10.11.1) (2021-09-01)
+
+
+### Bug Fixes
+
+* **RelatedRecordRow:** use Hydrator instead of DataMapper to create related row models ([78e249c](https://github.com/labor-digital/typo3-better-api/commit/78e249c2f150a32b26dbb4753a795359629687a1))
+* **StandaloneBetterQuery:** resolve model table map correctly in getRelated ([14094cf](https://github.com/labor-digital/typo3-better-api/commit/14094cf46c4ffe94a86209b4847bf28f59d499b2))
+
 ## [10.11.0](https://github.com/labor-digital/typo3-better-api/compare/v10.10.0...v10.11.0) (2021-08-20)
 
 
