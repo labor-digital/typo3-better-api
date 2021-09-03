@@ -26,11 +26,16 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendPreviewRendererInterface;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class ContentTypeHandler extends AbstractExtConfigHandler implements NoDiInterface
 {
     use DelayedConfigExecutionTrait;
+    
+    protected $previewRenderers = [];
+    protected $listLabelRenderers = [];
     
     /**
      * @inheritDoc
@@ -52,12 +57,33 @@ class ContentTypeHandler extends AbstractExtConfigHandler implements NoDiInterfa
      */
     public function handle(string $class): void
     {
-        $this->saveDelayedConfig($this->context, 'tca.contentTypes', $class, $class::getCType());
+        $cType = $class::getCType();
+    
+        // Register backend preview renderers
+        $interfaces = class_implements($class);
+    
+        if (in_array(BackendPreviewRendererInterface::class, $interfaces, true)) {
+            $this->previewRenderers[] = [$class, ['CType' => $cType]];
+        }
+        if (in_array(BackendListLabelRendererInterface::class, $interfaces, true)) {
+            $this->listLabelRenderers[] = [$class, ['CType' => $cType]];
+        }
+    
+        $this->saveDelayedConfig($this->context, 'tca.contentTypes', $class, $cType);
+    
     }
     
     /**
      * @inheritDoc
      */
-    public function finish(): void { }
+    public function finish(): void
+    {
+        if (! empty($this->previewRenderers)) {
+            $this->context->getState()->mergeIntoArray('t3ba.backendPreview.previewRenderers', $this->previewRenderers);
+        }
+        if (! empty($this->listLabelRenderers)) {
+            $this->context->getState()->mergeIntoArray('t3ba.backendPreview.listLabelRenderers', $this->listLabelRenderers);
+        }
+    }
     
 }
