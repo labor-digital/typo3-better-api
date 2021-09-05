@@ -144,12 +144,13 @@ class Relations extends AbstractFieldPreset
      *                                       - maxItems int: The maximum number of items allowed in this field
      *                                       - required bool (FALSE): If set to true, the field requires at least 1
      *                                       item. This is identical with setting minItems to 1
-     *                                       - basePid int|string|array: Can be set to preset the "select window" to a
+     *                                       - basePid int|string|array|true: Can be set to preset the "select window" to a
      *                                       certain page id. Highly convenient for the editor.
      *                                       If you define multiple tables in $foreignTable, you can also provide
      *                                       an array of table => pid mappings for all of them. If a
      *                                       table is not in your mapping, it will be opened normally.
      *                                       Table-shorthands are supported, as well as pid string identifiers.
+     *                                       If TRUE is provided, the CURRENT pid will be used as constraint.
      *                                       - allowNew bool (FALSE): If set new records can be created with the new
      *                                       record wizard
      *                                       - allowEdit bool (TRUE): Can be used to disable the editing of records in
@@ -717,10 +718,10 @@ class Relations extends AbstractFieldPreset
      *                                 This is identical with setting minItems to 1
      *                                 - where string: Can be used to limit the selection of records from the foreign
      *                                 table. This should be a SQL conform string that starts with an "AND ..." see
-     *                                 also:
-     *                                 https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
+     *                                 also: https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
      *                                 - basePid int|string: Can be used if "where" is empty to automatically apply the
-     *                                 where string for the base pid
+     *                                 where string for the base pid. If TRUE is provided, the CURRENT pid will be used
+     *                                 as constraint.
      *                                 - userFunc string: Can be given like any select itemProcFunc in typo3 as:
      *                                 vendor\className->methodName and is used as a filter for the items in the select
      *                                 field
@@ -751,42 +752,40 @@ class Relations extends AbstractFieldPreset
         $optionDefinition = $this->addEvalOptions(
             $this->addBasePidOptions(
                 $this->addMinMaxItemOptions(
-                    $this->addBasePidOptions(
-                        [
-                            'additionalItems' => [
-                                'type' => 'array',
-                                'default' => [],
-                            ],
-                            'default' => [
-                                'type' => ['string', 'number', 'null'],
-                                'default' => null,
-                            ],
-                            'allowEmpty' => [
-                                'type' => 'bool',
-                                'default' => false,
-                            ],
-                            'where' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                            'userFunc' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                            'mmTable' => [
-                                'type' => 'bool',
-                                'default' => static function ($field, $given) {
-                                    // Automatically disable the mm table
-                                    /** @noinspection TypeUnsafeComparisonInspection */
-                                    return ! ($given['maxItems'] == 1);
-                                },
-                            ],
-                            'mmTableName' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                        ]
-                    )
+                    [
+                        'additionalItems' => [
+                            'type' => 'array',
+                            'default' => [],
+                        ],
+                        'default' => [
+                            'type' => ['string', 'number', 'null'],
+                            'default' => null,
+                        ],
+                        'allowEmpty' => [
+                            'type' => 'bool',
+                            'default' => false,
+                        ],
+                        'where' => [
+                            'type' => 'string',
+                            'default' => '',
+                        ],
+                        'userFunc' => [
+                            'type' => 'string',
+                            'default' => '',
+                        ],
+                        'mmTable' => [
+                            'type' => 'bool',
+                            'default' => static function ($field, $given) {
+                                // Automatically disable the mm table
+                                /** @noinspection TypeUnsafeComparisonInspection */
+                                return ! ($given['maxItems'] == 1);
+                            },
+                        ],
+                        'mmTableName' => [
+                            'type' => 'string',
+                            'default' => '',
+                        ],
+                    ]
                 )
             ),
             ['required']

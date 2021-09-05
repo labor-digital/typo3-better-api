@@ -41,17 +41,21 @@ trait FieldPresetBasePidTrait
         
         if ($withMapping) {
             $optionDefinition['basePid'] = [
-                'type' => ['int', 'null', 'string', 'array'],
+                'type' => ['int', 'null', 'string', 'array', 'true'],
                 'default' => null,
                 'filter' => function ($v) use ($pid) {
+                    if ($v === true) {
+                        return '###CURRENT_PID###';
+                    }
+        
                     if ($v === null || is_int($v)) {
                         return $v;
                     }
-                    
+        
                     if (! is_array($v)) {
                         return $pid->get($v);
                     }
-                    
+        
                     // Generate the table names for all keys
                     $keys = array_keys($v);
                     foreach ($keys as $i => $table) {
@@ -63,9 +67,13 @@ trait FieldPresetBasePidTrait
             ];
         } else {
             $optionDefinition['basePid'] = [
-                'type' => ['int', 'null', 'string'],
+                'type' => ['int', 'null', 'string', 'true'],
                 'default' => null,
                 'filter' => static function ($v) use ($pid) {
+                    if ($v === true) {
+                        return '###CURRENT_PID###';
+                    }
+        
                     return $v === null ? $v : $pid->get($v);
                 },
             ];
