@@ -121,9 +121,9 @@ trait CustomFormElementTrait
      *  - {renderId} The id of your input field, if you don't want to use inputAttributes
      *  - {renderName} The name of your hidden field to hold the data
      * Only for fields:
-     *  - {inputAttributes -> f:format.raw} The html attributes for the real input field (mind the 3 curly braces)
-     *  - {hiddenField -> f:format.raw} The preconfigured hidden field to hold your data (mind the 3 curly braces)
-     *  - {hiddenAttributes -> f:format.raw} The html attributes for the hidden input field (mind the 3 curly braces)
+     *  - {inputAttributes -> f:format.raw()} The html attributes for the real input field (mind the 3 curly braces)
+     *  - {hiddenField -> f:format.raw()} The preconfigured hidden field to hold your data (mind the 3 curly braces)
+     *  - {hiddenAttributes -> f:format.raw()} The html attributes for the hidden input field (mind the 3 curly braces)
      *
      * @param   string  $template      Either a full template file name or a file path as EXT:.../template.html, or a
      *                                 file that is relative to the given "templateRootPaths".
