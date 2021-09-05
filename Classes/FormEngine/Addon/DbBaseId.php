@@ -41,6 +41,7 @@ namespace LaborDigital\T3ba\FormEngine\Addon;
 use GuzzleHttp\Psr7\Query;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Backend\Form\NodeExpansion\FieldWizard;
 
 class DbBaseId implements NoDiInterface
@@ -79,7 +80,10 @@ class DbBaseId implements NoDiInterface
             // Use the numeric pid as default pid
             $pidMap = $config['basePid'];
             if (! is_array($pidMap)) {
-                $pidMap = ['@default' => $config['basePid']];
+                if ($pidMap === '###CURRENT_PID###') {
+                    $pidMap = TypoContext::getInstance()->pid()->getCurrent();
+                }
+                $pidMap = ['@default' => $pidMap];
             }
             
             // Rewrite the object html
