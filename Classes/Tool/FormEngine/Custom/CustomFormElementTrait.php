@@ -126,7 +126,8 @@ trait CustomFormElementTrait
      *  - {hiddenAttributes -> f:format.raw} The html attributes for the hidden input field (mind the 3 curly braces)
      *
      * @param   string  $template      Either a full template file name or a file path as EXT:.../template.html, or a
-     *                                 file that is relative to the given "templateRootPaths"
+     *                                 file that is relative to the given "templateRootPaths".
+     *                                 Alternatively the fluid template string can be passed as well.
      * @param   array   $data          Data to be passed to the fluid template
      * @param   array   $options       Additional configuration options
      *                                 {@link TemplateRenderingService::getFluidView()} for the options.
@@ -137,9 +138,14 @@ trait CustomFormElementTrait
     protected function renderFluidTemplate(string $template, array $data = [], array $options = []): string
     {
         $data = $this->enhanceTemplateData($data);
+    
+        if (strpos($template, '<') !== false || strpos($template, '{') !== false) {
+            return $this->getTemplateRenderer()->renderFluid($template, $data, $options);
+        }
+    
         $view = $this->getTemplateRenderer()->getFluidView($template, $options);
         $view->assignMultiple($data);
-        
+    
         return $view->render();
     }
     
