@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.2](https://github.com/labor-digital/typo3-better-api/compare/v10.11.1...v10.11.2) (2021-09-08)
+
+
+### Bug Fixes
+
+* **Database:** ensure related rows are resolved correctly ([24e97d9](https://github.com/labor-digital/typo3-better-api/commit/24e97d90cc2241c6013dc70ebd7a2993514663fd))
+
 ### [10.11.1](https://github.com/labor-digital/typo3-better-api/compare/v10.11.0...v10.11.1) (2021-09-01)
 
 
