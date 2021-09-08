@@ -123,7 +123,19 @@ class FieldRenderer implements PublicServiceInterface
             return $this->renderLinkField((string)$row[$fieldName]);
         }
         
-        $content = $this->htmlEncode(BackendUtility::getProcessedValue($tableName, $fieldName, $row[$fieldName]));
+        $content = $this->htmlEncode(
+            BackendUtility::getProcessedValue(
+                $tableName,
+                $fieldName,
+                $row[$fieldName],
+                0,
+                false,
+                false,
+                $row['uid'] ?? 0,
+                true,
+                $row['pid'] ?? 0
+            )
+        );
         
         if (empty($content)) {
             $content = $this->htmlEncode($row[$fieldName]);
