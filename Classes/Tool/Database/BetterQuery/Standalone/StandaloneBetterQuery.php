@@ -25,14 +25,11 @@ use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractBetterQuery;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryException;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
-use LaborDigital\T3ba\Tool\Database\DbService;
-use LaborDigital\T3ba\Tool\Page\PageService;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\Util\OverlayResolver;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\Util\RelationResolver;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
-use Neunerlei\Arrays\Arrays;
-use Neunerlei\Options\Options;
 use Throwable;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Database\RelationHandler;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 
@@ -250,150 +247,17 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function getRelated(array $fields, array $options = []): array
     {
-        // Validate options
-        $options = Options::make($options, [
-            'includeHiddenChildren' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'model' => [
-                'type' => ['string', 'array', 'null'],
-                'default' => null,
-            ],
-        ]);
-        
-        // Validate fields
-        if (empty($fields)) {
-            throw new BetterQueryException('The given $fields value is empty!');
-        }
-        $fields = array_unique($fields);
-        
-        // Prepare the configuration
-        $qb = $this->getQueryBuilder();
-        $table = $this->adapter->getTableName();
-        $tcaConfig = Arrays::getPath($GLOBALS, ['TCA', $table, 'columns', $fields, 'config']);
-        /** @noinspection SuspiciousBinaryOperationInspection */
-        if (! is_array($tcaConfig) || reset($tcaConfig) === null) {
-            throw new BetterQueryException(
-                'One or more of the requested fields: "' . implode('", "', $fields) . '" were not found in the TCA of table: "'
-                . $table . '"!'
-            );
-        }
-        
-        // Fix issues with virtual columns
-        /** @noinspection NullPointerExceptionInspection */
-        $cols = $qb->getConnection()->getSchemaManager()->listTableColumns($table);
-        $findAllFields = count(
-                             array_filter($fields, static function ($fieldName) use ($cols) {
-                                 return isset($cols[$fieldName]);
-                             })
-                         ) !== count($fields);
-        $selectFields = $findAllFields ? ['*'] : array_unique(array_merge(['uid'], $fields));
-        
-        // Query the results from the database
-        $records = (clone $qb)->select(...$selectFields)->execute()->fetchAll();
-        if (empty($records)) {
-            return [];
-        }
-        
-        // Lazy load additional dependencies
-        $dbService = $this->getService(DbService::class);
-        
-        // Iterate the configuration for the fields
-        $resultsByField = [];
-        $additionalWhereCache = [];
-        foreach ($tcaConfig as $currentField => $config) {
-            // Get the table definition for the tca type
-            $mmTable = $config['MM'] ?? '';
-            $tableList = '';
-            if (isset($config['type']) && $config['type'] === 'group') {
-                $tableList = $config['allowed'] ?? '';
-            } elseif (isset($config['foreign_table'])) {
-                $tableList = $config['foreign_table'];
-            }
-            if (empty($tableList)) {
-                throw new BetterQueryException('Could not retrieve the foreign tables from the TCA!');
-            }
-            
-            // Resolve the relations for every element
-            foreach ($records as $result) {
-                if (empty($result)) {
-                    continue;
-                }
-                
-                // Create the relation handler
-                $relationHandler = $this->makeInstance(RelationHandler::class);
-                $relationHandler->setFetchAllFields(true);
-                $relationHandler->start(
-                    empty($mmTable) ? $result[$currentField] : '',
-                    $tableList,
-                    $mmTable,
-                    $result['uid'],
-                    $this->adapter->getTableName(),
-                    $config
-                );
-                
-                // Generate additional constraints for every table
-                // This is done so we can apply the frontend constraints to the backend utility we use
-                foreach ($relationHandler->tableArray as $localTable => $items) {
-                    // Build additional where or load it from cache
-                    /** @noinspection PhpArrayIsAlwaysEmptyInspection */
-                    $additionalWhere = $additionalWhereCache[$localTable] ??
-                                       $dbService->getQuery($localTable)
-                                                 ->withLanguage(false)
-                                                 ->withIncludeHidden($options['includeHiddenChildren'])
-                                                 ->getQueryBuilder()->getSQL();
-                    
-                    // Only extract the "where" part from the query
-                    $additionalWhereParts = explode('WHERE', $additionalWhere);
-                    $additionalWhere = ' AND ' . end($additionalWhereParts);
-                    $relationHandler->additionalWhere[$localTable] = $additionalWhere;
-                }
-                
-                // Request the database using the backend relation handler
-                $relations = $relationHandler->getFromDB();
-                if (empty($relations)) {
-                    // Make sure the field exists and is an array -> to avoid issues later
-                    $resultsByField[$currentField] = $resultsByField[$currentField] ?? [];
-                    continue;
-                }
-                
-                // Handle Overlays
-                foreach ($relations as $localTable => $rows) {
-                    foreach ($rows as $k => $row) {
-                        $relations[$localTable][$k] = $this->handleTranslationAndVersionOverlay($localTable, $row);
-                    }
-                }
-                
-                // Generate objects that are in order by their sorting
-                $relationList = [];
-                foreach ($relationHandler->itemArray as $item) {
-                    if (! isset($relations[$item['table']][$item['id']])) {
-                        continue;
-                    }
-                    $relationList[] = $this->makeInstance(
-                        RelatedRecordRow::class,
-                        [
-                            (int)$item['id'],
-                            $item['table'],
-                            $relations[$item['table']][$item['id']],
-                            is_string($options['model']) ? [$item['table'] => $options['model']] : $options['model'],
-                        ]
+        return $this->getService(RelationResolver::class)
+                    ->resolve(
+                        $fields,
+                        $options,
+                        $this
                     );
-                }
-                
-                // Store the relations
-                $resultsByField[$currentField][$result['uid']] = $relationList;
-            }
-        }
-        
-        // Done
-        return $resultsByField;
     }
     
     /**
      * Runs the given callable inside a transaction scope connection of this query object.
-     * All actions will be commited after your callback was executed, and automatically rolled
+     * All actions will be committed after your callback was executed, and automatically rolled
      * back if the callable has thrown an exception.
      *
      * @param   callable  $callable  The callback to execute inside the transaction context.
@@ -428,38 +292,6 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     protected function handleTranslationAndVersionOverlay(string $tableName, array $row): array
     {
-        // Create page repository if required
-        if (empty($this->pageRepository)) {
-            $this->pageRepository = $this->getService(PageService::class)->getPageRepository();
-        }
-        
-        // Apply the version overlay
-        if ($this->versionOverlay) {
-            $this->pageRepository->versionOL($tableName, $row, true);
-        }
-        
-        // Apply the translation overlay only if required
-        if (! $this->adapter->getSettings()->getRespectSysLanguage()) {
-            return $row;
-        }
-        $languageUid = $this->adapter->getSettings()->getLanguageUid();
-        if ($languageUid < 0) {
-            return $row;
-        }
-        
-        // This is basically a copy of the logic in PageRepository->getLanguageOverlay()
-        if (! Arrays::hasPath($GLOBALS, ['TCA', $tableName, 'ctrl', 'languageField'])) {
-            return $row;
-        }
-        if ($tableName === 'pages') {
-            return $this->pageRepository->getPageOverlay($row, $languageUid);
-        }
-        
-        return $this->pageRepository->getRecordOverlay(
-                $tableName,
-                $row,
-                $languageUid,
-                is_string($this->adapter->getSettings()->getLanguageOverlayMode()) ? 'hideNonTranslated' : '1'
-            ) ?? $row;
+        return $this->getService(OverlayResolver::class)->resolve($tableName, $row, $this->versionOverlay, $this->adapter->getSettings());
     }
 }

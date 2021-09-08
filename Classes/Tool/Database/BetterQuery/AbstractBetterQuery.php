@@ -26,6 +26,7 @@ use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 
 abstract class AbstractBetterQuery implements NoDiInterface
@@ -576,5 +577,16 @@ abstract class AbstractBetterQuery implements NoDiInterface
         $this->adapter->setLimit($limit);
         
         return $pages;
+    }
+    
+    /**
+     * Returns the currently used query settings.
+     * WARNING: Modifying this object will break things!
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface
+     */
+    public function getSettings(): QuerySettingsInterface
+    {
+        return $this->adapter->getSettings();
     }
 }
