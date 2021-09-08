@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.3](https://github.com/labor-digital/typo3-better-api/compare/v10.11.2...v10.11.3) (2021-09-08)
+
+
+### Bug Fixes
+
+* **Rendering\FieldRenderer:** ensure "group" fields are rendered correclty ([a2fe3bf](https://github.com/labor-digital/typo3-better-api/commit/a2fe3bfb1820c69bd552359d90c40f10877800f3))
+
 ### [10.11.2](https://github.com/labor-digital/typo3-better-api/compare/v10.11.1...v10.11.2) (2021-09-08)
 
 
