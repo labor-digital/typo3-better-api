@@ -65,9 +65,9 @@ class ContentRepository implements PublicServiceInterface
      *
      * @param   AbstractBetterQuery  $query     The query object to retrieve the tt_content records with.
      *                                          If the query does not select from tt_content, an exception is thrown.
-     * @param   bool                 $getAll    By default only the first result is returned, if you set $getAll to
+     * @param   bool                 $getAll    By default, only the first result is returned, if you set $getAll to
      *                                          true, all rows will be returned instead.
-     * @param   bool                 $remapped  By default the extension fields get stripped of their namespace prefix,
+     * @param   bool                 $remapped  By default, the extension fields get stripped of their namespace prefix,
      *                                          if you set the $remapped parameter to false, they are kept instead
      *
      * @return array|null
@@ -101,7 +101,7 @@ class ContentRepository implements PublicServiceInterface
      * Returns a single row of the tt_content which contain the extension fields when returned.
      *
      * @param   int   $uid        The uid of the tt_content record to load
-     * @param   bool  $remapped   By default the extension fields get stripped of their namespace prefix,
+     * @param   bool  $remapped   By default, the extension fields get stripped of their namespace prefix,
      *                            if you set the $remapped parameter to false, they are kept instead
      *
      * @return array|null
@@ -115,7 +115,7 @@ class ContentRepository implements PublicServiceInterface
     }
     
     /**
-     * Recevies either a single tt_content uid, or a whole tt_content row which will get extended
+     * Receives either a single tt_content uid, or a whole tt_content row which will get extended
      * and converted into its matched domain model. If no explicit domain model was configured, the
      * DefaultDataModel is used instead.
      *

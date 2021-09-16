@@ -37,7 +37,7 @@ $EM_CONF[$_EXTKEY] = [
     'modify_tables' => '',
     'clearCacheOnLoad' => 1,
     'lockType' => '',
-    'version' => "10.11.1",
+    'version' => "10.11.3",
     'constraints' => [
         'depends' => [
         ],
