@@ -319,6 +319,16 @@ class FileInfo implements NoDiInterface
     }
     
     /**
+     * Returns true if the file is hidden, false if not
+     *
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->getFileReference() && $this->getFileReference()->getProperty('hidden');
+    }
+    
+    /**
      * Returns true if the handled file is an image
      *
      * @return bool
