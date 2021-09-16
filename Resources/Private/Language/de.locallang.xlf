@@ -22,11 +22,19 @@
 		<body>
 			<trans-unit id="formPreset.editRecord">
 				<source>Edit Record</source>
-				<source>Datensatz bearbeiten</source>
+				<target>Datensatz bearbeiten</target>
 			</trans-unit>
 			<trans-unit id="formPreset.newRecord">
 				<source>New Record</source>
-				<source>Neuer Datensatz</source>
+				<target>Neuer Datensatz</target>
+			</trans-unit>
+			<trans-unit id="formPreset.slugPrefix">
+				<source>slug/of/the/page/</source>
+				<target>pfad/der/seite/</target>
+			</trans-unit>
+			<trans-unit id="tool.renderer.fieldRenderer.imagesNotShown">
+				<source>Some files are not shown in the preview</source>
+				<target>Dateien wurden in der Vorschau ausgeblendet</target>
 			</trans-unit>
 			<trans-unit id="field.hidden">
 				<source>Hide this element</source>

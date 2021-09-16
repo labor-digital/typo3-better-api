@@ -26,12 +26,14 @@ namespace LaborDigital\T3ba\Tool\Rendering\Renderer;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Tool\Fal\FalService;
+use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\Translation\Translator;
 use Neunerlei\Inflection\Inflector;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
+use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 class FieldRenderer implements PublicServiceInterface
@@ -157,46 +159,39 @@ class FieldRenderer implements PublicServiceInterface
      */
     protected function renderFileField(string $tableName, array $fieldTca, string $field, array $row): string
     {
-        $matchField = $fieldTca['config']['foreign_match_fields']['fieldname'] ?? $field;
-        $files = $this->falService->getFile($row['uid'], $tableName, $matchField, false);
-        $maxItems = $fieldTca['config']['maxItems'] ?? 1;
-        
-        $content = [];
-        foreach ($files as $c => $file) {
-            if ($c > $maxItems) {
-                break;
-            }
-            
-            $info = $this->falService->getFileInfo($file);
-            if ($info->isImage()) {
-                $width = $info->getImageInfo() ? min(max($info->getImageInfo()->getWidth(), 50), 200) : 200;
-                try {
-                    $content[] = '<img src="' .
-                                 $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width, 'relative'])) .
-                                 '" style="width:100%; max-width:' . $width . 'px;"' .
-                                 ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
-                                 ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
-                } catch (Throwable $e) {
-                    if (stripos($e->getMessage(), 'No such file or directory') !== false) {
-                        $content[] = $this->htmlEncode($info->getFileName()) . ' (Missing File)';
-                    } else {
-                        $content[] = $this->htmlEncode($info->getFileName()) . ' | Error while rendering: ' . $e->getMessage();
+        return $this->iterateFilesOfField($tableName, $fieldTca, $field, $row,
+            function (FileInfo $info, FileReference $file) {
+                if ($info->isImage()) {
+                    $width = $info->getImageInfo() ? min(max($info->getImageInfo()->getWidth(), 50), 200) : 200;
+                    try {
+                        return '<img src="' .
+                               $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width, 'relative'])) .
+                               '" style="width:100%; max-width:' . $width . 'px; max-height: 200px"' .
+                               ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
+                               ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
+                    
+                    } catch (Throwable $e) {
+                        if (stripos($e->getMessage(), 'No such file or directory') !== false) {
+                            return $this->htmlEncode($info->getFileName()) . ' (Missing File)';
+                        }
+                    
+                        return $this->htmlEncode($info->getFileName()) . ' | Error while rendering: ' . $e->getMessage();
                     }
+                
+                } else {
+                    return $this->htmlEncode($info->getFileName());
                 }
-            } else {
-                $content[] = $this->htmlEncode($info->getFileName());
-            }
-        }
-        
-        if (empty($content)) {
-            return '&nbsp;';
-        }
-        
-        if (count($content) === 1) {
-            return reset($content);
-        }
-        
-        return implode('&nbsp;', $content);
+            }, static function (array $content, ?string $suffix): string {
+                if (empty($content)) {
+                    return '&nbsp;';
+                }
+            
+                if (count($content) === 1) {
+                    return reset($content);
+                }
+            
+                return implode('&nbsp;', $content) . ($suffix ? '<br><p style="margin-top: 15px"><em>' . $suffix . '</em></p>' : '');
+            });
     }
     
     /**
@@ -211,21 +206,66 @@ class FieldRenderer implements PublicServiceInterface
      */
     protected function renderFileFieldText(string $tableName, array $fieldTca, string $field, array $row): string
     {
+        return $this->iterateFilesOfField($tableName, $fieldTca, $field, $row,
+            function (FileInfo $info, FileReference $file) {
+                return $file->getNameWithoutExtension() . ' [' . $file->getUid() . ']';
+            }, static function (array $content, ?string $suffix): string {
+                return implode(', ', $content) . ($suffix ? ',...' : '');
+            });
+    }
+    
+    /**
+     * Internal helper to iterate a list of files for a field reference.
+     * It automatically ignores hidden files and handles the "maxItems" definition
+     *
+     * @param   string    $tableName
+     * @param   array     $fieldTca
+     * @param   string    $field
+     * @param   array     $row
+     * @param   callable  $callback          Executed for every file and should return a string value.
+     *                                       Receives the $fileInfo and $fileReference as parameters
+     * @param   callable  $finisherCallback  Receives the list of results provided by $callback and should combine them to a string
+     *
+     * @return string
+     */
+    protected function iterateFilesOfField(
+        string $tableName,
+        array $fieldTca,
+        string $field,
+        array $row,
+        callable $callback,
+        callable $finisherCallback
+    ): string
+    {
         $matchField = $fieldTca['config']['foreign_match_fields']['fieldname'] ?? $field;
         $files = $this->falService->getFile($row['uid'], $tableName, $matchField, false);
-        $maxItems = $fieldTca['config']['maxItems'] ?? 1;
+        $maxItems = $fieldTca['config']['maxItems'] ?? 10;
         
-        
+        $c = 0;
         $content = [];
-        foreach ($files as $c => $file) {
-            if ($c === $maxItems) {
+        $maxReached = false;
+        foreach ($files as $file) {
+            if ($c >= $maxItems) {
+                $maxReached = true;
                 break;
             }
             
-            $content[] = $file->getNameWithoutExtension() . ' [' . $file->getUid() . ']';
+            $info = $this->falService->getFileInfo($file);
+            if ($info->isHidden()) {
+                continue;
+            }
+            
+            $c++;
+            
+            $res = $callback($info, $file);
+            if (! empty($res) && is_string($res)) {
+                $content[] = $res;
+            }
+            unset($res);
         }
         
-        return implode(',', $content);
+        return $finisherCallback($content, $maxReached
+            ? $this->translator->translateBe('t3ba.tool.renderer.fieldRenderer.imagesNotShown') : null);
     }
     
     /**
