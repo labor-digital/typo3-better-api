@@ -277,12 +277,43 @@ class InputFields extends AbstractFieldPreset
                 ],
             ],
         ];
-        
+    
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addEvalConfig($config, $options);
         $config = $this->addMaxLengthConfig($config, $options, true);
-        
+    
         $this->field->addConfig($config);
+    }
+    
+    /**
+     * Superset of the "link" preset, preconfigured for the use of phone numbers.
+     *
+     * @param   array  $options  Additional options inherited from the link preset
+     *                           - default string: A default value for your input field
+     *                           - maxLength int (128): The max length of a link (also affects the length of the db field)
+     *                           - minLength int (0): The min length of a input
+     *                           - blindFields array|true (["class", "params"]):
+     *                           Defines which link option fields should be hidden or shown. TRUE to hide ALL fields,
+     *                           or an array of fields to be hidden. "class" and "params" are blinded by default,
+     *                           pass an empty array to always show them.
+     *                           - required, trim bool: Any of these values can be passed
+     *                           to define their matching "eval" rules
+     *
+     */
+    public function applyLinkPhone(array $options = []): void
+    {
+        $this->applyLink(
+            array_merge(
+                [
+                    'maxLength' => 128,
+                    'allowExternal' => false,
+                    'allowPages' => false,
+                    'allowPhone' => true,
+                    'blindFields' => true,
+                ],
+                $options
+            )
+        );
     }
     
     /**
