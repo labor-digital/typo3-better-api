@@ -145,16 +145,18 @@ trait FieldPresetMmTrait
         }
         
         if (count($tableNames) > 1) {
-            throw new TcaBuilderException('mmOpposite does not work if your relation only applies to a single table. ' .
-                                          ' Your field: ' . $this->field->getId() . ' applies to multiple: ' . implode(', ', $tableNames));
+            throw new TcaBuilderException(
+                'mmOpposite does not work if your relation does not resolve to EXACTLY ONE foreign table.' .
+                ' Your field: ' . $this->field->getId() . ' applies to multiple: ' . implode(', ', $tableNames));
         }
         
         $localField = $this->field->getId();
         $targetField = $options['mmOpposite'];
         $localTable = $this->getTcaTable()->getTableName();
         $targetTable = reset($tableNames);
-        
+    
         $config['MM_opposite_field'] = $targetField;
+        $config['MM_match_fields']['tablenames'] = $localTable;
         
         TcaPostProcessor::registerAdditionalProcessor($targetTable, static function (array &$config) use ($localTable, $localField, $targetField) {
             // Ignore if the local field was removed later

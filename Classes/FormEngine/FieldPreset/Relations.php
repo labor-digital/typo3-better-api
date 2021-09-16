@@ -244,7 +244,7 @@ class Relations extends AbstractFieldPreset
     }
     
     /**
-     * This preset can be used to create the counterpart of a group field that defines the "mmOpposite" option.
+     * This preset can be used to create the counterpart of a field that defines the "mmOpposite" option.
      * It creates a field in the child record that allows you to modify or (if readOnly is enabled) to display
      * related records.
      *
@@ -708,43 +708,49 @@ class Relations extends AbstractFieldPreset
      * based on your configuration of "maxItems". maxItems = 1 means a select box, maxItems > 1 means the select
      * multiple interface
      *
-     * @param   string  $foreignTable  The foreign table to create the relations to
-     *                                 Hint: using ...table will automatically unfold your table to
-     *                                 tx_yourext_domain_model_table
-     * @param   array   $options       Additional options for the relation
-     *                                 - minItems int (0): The minimum number of items required to be valid
-     *                                 - maxItems int: The maximum number of items allowed in this field
-     *                                 - required bool (FALSE): If set to true, the field requires at least 1 item.
-     *                                 This is identical with setting minItems to 1
-     *                                 - where string: Can be used to limit the selection of records from the foreign
-     *                                 table. This should be a SQL conform string that starts with an "AND ..." see
-     *                                 also: https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
-     *                                 - basePid int|string: Can be used if "where" is empty to automatically apply the
-     *                                 where string for the base pid. If TRUE is provided, the CURRENT pid will be used
-     *                                 as constraint.
-     *                                 - userFunc string: Can be given like any select itemProcFunc in typo3 as:
-     *                                 vendor\className->methodName and is used as a filter for the items in the select
-     *                                 field
-     *                                 - mmTable bool (AUTO): By default the script will automatically create
-     *                                 an mm table for this field if it is required. If your field defines
-     *                                 maxItems = 1 there is no requirement for an mm table so we will just
-     *                                 use a 1:1 relation in the database. If you, however want this field
-     *                                 to always use an mmTable, just set this to TRUE manually
-     *                                 - additionalItems array: Additional items that should be attached to the
-     *                                 list of items gathered by the relation lookup. Provide an array of $key =>
-     *                                 $label pairs as a definition.
-     *                                 - default string|number: If given this is used as default value when a new
-     *                                 record is created
+     * @param   string  $foreignTable   The foreign table to create the relations to
+     *                                  Hint: using ...table will automatically unfold your table to
+     *                                  tx_yourext_domain_model_table
+     * @param   array   $options        Additional options for the relation
+     *                                  - minItems int (0): The minimum number of items required to be valid
+     *                                  - maxItems int: The maximum number of items allowed in this field
+     *                                  - required bool (FALSE): If set to true, the field requires at least 1 item.
+     *                                  This is identical with setting minItems to 1
+     *                                  - where string: Can be used to limit the selection of records from the foreign
+     *                                  table. This should be a SQL conform string that starts with an "AND ..." see
+     *                                  also: https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
+     *                                  - basePid int|string: Can be used if "where" is empty to automatically apply the
+     *                                  where string for the base pid. If TRUE is provided, the CURRENT pid will be used
+     *                                  as constraint.
+     *                                  - userFunc string: Can be given like any select itemProcFunc in typo3 as:
+     *                                  vendor\className->methodName and is used as a filter for the items in the select
+     *                                  field
+     *                                  - mmTable bool (AUTO): By default the script will automatically create
+     *                                  an mm table for this field if it is required. If your field defines
+     *                                  maxItems = 1 there is no requirement for an mm table so we will just
+     *                                  use a 1:1 relation in the database. If you, however want this field
+     *                                  to always use an mmTable, just set this to TRUE manually
+     *                                  - mmOpposite string: Allows you to create a link between this field
+     *                                  and the field of the related table. This defines the name of the
+     *                                  field on the $foreignTable. NOTE: This only works if a single $foreignTable
+     *                                  exists! Additionally, you need to create the field on the foreign table
+     *                                  manually. I would suggest using the "relationGroupOpposite" preset to do so.
+     *                                  {@see https://docs.typo3.org/m/typo3/reference-tca/10.4/en-us/ColumnsConfig/Type/Group.html#mm-opposite-field}
+     *                                  - additionalItems array: Additional items that should be attached to the
+     *                                  list of items gathered by the relation lookup. Provide an array of $key =>
+     *                                  $label pairs as a definition.
+     *                                  - default string|number: If given this is used as default value when a new
+     *                                  record is created
      *
-     *                             AVAILABLE WHEN maxItems > 1:
-     *                             - allowNew bool (FALSE): If set new records can be created with the new record
-     *                             wizard
-     *                             - allowEdit bool (TRUE): Can be used to disable the editing of records in the
-     *                             current group
+     *                                  AVAILABLE WHEN maxItems > 1:
+     *                                  - allowNew bool (FALSE): If set new records can be created with the new record
+     *                                  wizard
+     *                                  - allowEdit bool (TRUE): Can be used to disable the editing of records in the
+     *                                  current group
      *
-     *                             LEGACY SUPPORT
-     *                             - mmTableName string: When given this table name is set as mm table name instead
-     *                             of the automatically generated one. Useful for legacy codebase.
+     *                                  LEGACY SUPPORT
+     *                                  - mmTableName string: When given this table name is set as mm table name instead
+     *                                  of the automatically generated one. Useful for legacy codebase.
      */
     public function applyRelationSelect(string $foreignTable, array $options = []): void
     {
@@ -752,40 +758,30 @@ class Relations extends AbstractFieldPreset
         $optionDefinition = $this->addEvalOptions(
             $this->addBasePidOptions(
                 $this->addMinMaxItemOptions(
-                    [
-                        'additionalItems' => [
-                            'type' => 'array',
-                            'default' => [],
-                        ],
-                        'default' => [
-                            'type' => ['string', 'number', 'null'],
-                            'default' => null,
-                        ],
-                        'allowEmpty' => [
-                            'type' => 'bool',
-                            'default' => false,
-                        ],
-                        'where' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                        'userFunc' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                        'mmTable' => [
-                            'type' => 'bool',
-                            'default' => static function ($field, $given) {
-                                // Automatically disable the mm table
-                                /** @noinspection TypeUnsafeComparisonInspection */
-                                return ! ($given['maxItems'] == 1);
-                            },
-                        ],
-                        'mmTableName' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                    ]
+                    $this->addMmTableOptions(
+                        [
+                            'additionalItems' => [
+                                'type' => 'array',
+                                'default' => [],
+                            ],
+                            'default' => [
+                                'type' => ['string', 'number', 'null'],
+                                'default' => null,
+                            ],
+                            'allowEmpty' => [
+                                'type' => 'bool',
+                                'default' => false,
+                            ],
+                            'where' => [
+                                'type' => 'string',
+                                'default' => '',
+                            ],
+                            'userFunc' => [
+                                'type' => 'string',
+                                'default' => '',
+                            ],
+                        ]
+                    )
                 )
             ),
             ['required']
@@ -842,6 +838,7 @@ class Relations extends AbstractFieldPreset
         $config = $this->addBasePidConfig($config, $options);
         $config = $this->addMmTableConfig($config, $options);
         $config = $this->addMinMaxItemConfig($config, $options);
+        $config = $this->addMmOppositeConfig($config, $options, [$foreignTable]);
         
         // Merge the field
         $this->field->addConfig($config);
