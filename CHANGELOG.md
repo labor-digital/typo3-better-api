@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.13.0](https://github.com/labor-digital/typo3-better-api/compare/v10.12.0...v10.13.0) (2021-10-04)
+
+
+### Features
+
+* **Tca\Builder:** allow removing existing displayConditions through setDisplayCondition ([6523219](https://github.com/labor-digital/typo3-better-api/commit/6523219b92b99370a0a4d47381209e333bf81537))
+* **Tca\Builder:** unify field "size" calculation ([338d490](https://github.com/labor-digital/typo3-better-api/commit/338d490d6346a5661a6f194ecf122028e4a5b2f9))
+
+
+### Bug Fixes
+
+* **FieldPresetApplier:** use makeInstance() to resolve applier instead of getService() ([e524707](https://github.com/labor-digital/typo3-better-api/commit/e52470710c6ba3dd9985f416009c4d89cf016ea6))
+* **Sql:** ensure that text columns are created allowing "NULL" ([f707d86](https://github.com/labor-digital/typo3-better-api/commit/f707d865f38ddfa81bc70522d42871a9e529f670))
+* **Tca\Builder:** apply position of line breaks correctly ([21a61ba](https://github.com/labor-digital/typo3-better-api/commit/21a61ba4e122c6da5395b4a359b988c8a351c12d))
+* **Tca\Builder:** ensure numeric palette keys are allowed ([06dc157](https://github.com/labor-digital/typo3-better-api/commit/06dc157e092eb231819bd554e48aa6820890cb63))
+
 ## [10.12.0](https://github.com/labor-digital/typo3-better-api/compare/v10.11.3...v10.12.0) (2021-09-16)
 
 
