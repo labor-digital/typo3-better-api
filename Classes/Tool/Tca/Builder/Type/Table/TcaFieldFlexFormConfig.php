@@ -193,7 +193,10 @@ class TcaFieldFlexFormConfig
         // Make sure we are rendering as flex form
         $config['config']['type'] = 'flex';
         unset($config['config']['renderType']);
-        $this->field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT);
+        $this->field->getColumn()
+                    ->setType(new TextType())
+                    ->setNotnull(false)
+                    ->setLength(SqlFieldLength::MEDIUM_TEXT);
         
         $dumper = $this->field->getRoot()->getContext()->cs()->flexFormDumper;
         foreach ($this->structures as $k => $flexForm) {

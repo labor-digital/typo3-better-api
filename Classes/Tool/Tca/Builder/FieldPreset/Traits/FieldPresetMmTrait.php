@@ -75,7 +75,10 @@ trait FieldPresetMmTrait
         // Skip if we should not use an mm table
         if ($options['mmTable'] === false) {
             $this->configureSqlColumn(static function (Column $column) {
-                $column->setType(new TextType())->setLength(SqlFieldLength::TEXT)->setDefault('');
+                $column->setType(new TextType())
+                       ->setNotnull(false)
+                       ->setLength(SqlFieldLength::TEXT)
+                       ->setDefault('');
             });
             
             return $config;
@@ -119,7 +122,10 @@ trait FieldPresetMmTrait
         $config['t3ba']['deprecated'][V11MmUpgradeWizard::class] = true;
         
         $this->configureSqlColumn(static function (Column $column) {
-            $column->setType(new IntegerType())->setLength(11)->setDefault(0);
+            $column->setType(new IntegerType())
+                   ->setNotnull(true)
+                   ->setLength(11)
+                   ->setDefault(0);
         });
         
         $config['prepend_tname'] = true;

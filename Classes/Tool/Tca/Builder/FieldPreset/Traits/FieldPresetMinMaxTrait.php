@@ -115,9 +115,11 @@ trait FieldPresetMinMaxTrait
                 if ((int)$options['maxLength'] <= 4096) {
                     $column->setType(new StringType())
                            ->setDefault('')
+                           ->setNotnull(true)
                            ->setLength((int)$options['maxLength']);
                 } else {
                     $column->setType(new TextType())
+                           ->setNotnull(false)
                            ->setDefault(null)
                            ->setLength(null);
                 }

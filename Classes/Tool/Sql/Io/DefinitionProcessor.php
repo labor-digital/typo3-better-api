@@ -344,6 +344,7 @@ class DefinitionProcessor
         $defaultTypeConfig = static function (Column $column): void {
             $column->setType(new TextType())
                    ->setLength(SqlFieldLength::MEDIUM_TEXT)
+                   ->setNotnull(false)
                    ->setDefault(null);
         };
         
