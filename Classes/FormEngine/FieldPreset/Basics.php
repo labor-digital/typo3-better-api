@@ -101,9 +101,11 @@ class Basics extends AbstractFieldPreset
      *                           to define their matching "eval" rules
      *                           - maxLength int (65000): The max length of a text (also affects the length of the db
      *                           field)
-     *                           - minLength int (0): The min length of a input
-     *                           - cols int (50): The width of the rendered field in html cols
-     *                           - rows int (40): The height of the rendered field in html rows
+     *                           - minLength int (0): The min length of an input
+     *                           - cols int|string (100%) Defines the width of a field inside its column.
+     *                           Can be either an integer from 10-50 or a percentage from 0-100 suffixed by
+     *                           the "%" sign, as a string.
+     *                           - rows int (5): The height of the rendered field in html rows
      *                           - rte bool (FALSE): If set to true this field will be rendered as RTE editor
      *                           - rteConfig string: For TYPO3 > v7 Can be used to select which rte config is to apply
      *                           to this field
@@ -116,24 +118,22 @@ class Basics extends AbstractFieldPreset
             $this->addEvalOptions(
                 $this->addMinMaxLengthOptions(
                     $this->addDefaultOptions(
-                        [
-                            'cols' => [
-                                'type' => 'int',
-                                'default' => 42,
-                            ],
-                            'rows' => [
-                                'type' => 'int',
-                                'default' => 5,
-                            ],
-                            'rte' => [
-                                'type' => 'bool',
-                                'default' => false,
-                            ],
-                            'rteConfig' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                        ]
+                        $this->addInputSizeOption(
+                            [
+                                'rows' => [
+                                    'type' => 'int',
+                                    'default' => 5,
+                                ],
+                                'rte' => [
+                                    'type' => 'bool',
+                                    'default' => false,
+                                ],
+                                'rteConfig' => [
+                                    'type' => 'string',
+                                    'default' => '',
+                                ],
+                            ], 'cols'
+                        )
                     ),
                     60000
                 )

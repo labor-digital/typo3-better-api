@@ -59,6 +59,9 @@ class InputFields extends AbstractFieldPreset
      *                           - maxLength int (2048): The max length of an input (also affects the length of the db
      *                           field)
      *                           - minLength int (0): The min length of an input
+     *                           - size int|string (100%) Defines the width of an input inside its column.
+     *                           Can be either an integer from 10-50 or a percentage from 0-100 suffixed by
+     *                           the "%" sign, as a string.
      *
      *                           DEPRECATED: Will be removed in v12
      *                           - readOnly bool (FALSE): True to make this field read only
@@ -73,7 +76,9 @@ class InputFields extends AbstractFieldPreset
                 $this->addMinMaxLengthOptions(
                     $this->addReadOnlyOptions(
                         $this->addPlaceholderOption(
-                            $this->addDefaultOptions([])
+                            $this->addDefaultOptions(
+                                $this->addInputSizeOption([])
+                            )
                         )
                     )
                 )
@@ -81,7 +86,7 @@ class InputFields extends AbstractFieldPreset
         );
         
         // Prepare the config
-        $config = ['type' => 'input', 'size' => 39];
+        $config = ['type' => 'input', 'size' => $options['size']];
         
         $config = $this->addDefaultConfig($config, $options);
         $config = $this->addReadOnlyConfig($config, $options);
@@ -106,6 +111,9 @@ class InputFields extends AbstractFieldPreset
      *                           to false
      *                           - required, trim bool: Any of these values can be passed
      *                           to define their matching "eval" rules
+     *                           - size int|string (100%) Defines the width of an input inside its column.
+     *                           Can be either an integer from 10-50 or a percentage from 0-100 suffixed by
+     *                           the "%" sign, as a string.
      */
     public function applyDate(array $options = []): void
     {
@@ -113,16 +121,18 @@ class InputFields extends AbstractFieldPreset
         $options = Options::make(
             $options,
             $this->addEvalOptions(
-                $this->addDefaultOptions([
-                    'withTime' => [
-                        'type' => 'bool',
-                        'default' => false,
-                    ],
-                    'asInt' => [
-                        'type' => 'bool',
-                        'default' => true,
-                    ],
-                ], ['null', 'string', 'number', DateTime::class, DateTimy::class], null)
+                $this->addDefaultOptions(
+                    $this->addInputSizeOption([
+                        'withTime' => [
+                            'type' => 'bool',
+                            'default' => false,
+                        ],
+                        'asInt' => [
+                            'type' => 'bool',
+                            'default' => true,
+                        ],
+                    ])
+                    , ['null', 'string', 'number', DateTime::class, DateTimy::class], null)
                 , ['required', 'trim']
             )
         );
@@ -143,6 +153,7 @@ class InputFields extends AbstractFieldPreset
         // Prepare the config
         $config = [
             'type' => 'input',
+            'size' => $options['size'],
             'renderType' => 'inputDateTime',
         ];
         
@@ -187,6 +198,9 @@ class InputFields extends AbstractFieldPreset
      *                           pass an empty array to always show them.
      *                           - required, trim bool: Any of these values can be passed
      *                           to define their matching "eval" rules
+     *                           - size int|string (100%) Defines the width of an input inside its column.
+     *                           Can be either an integer from 10-50 or a percentage from 0-100 suffixed by
+     *                           the "%" sign, as a string.
      *
      *                           DEPRECATED: Will be removed in v11, use "blindFields" instead
      *                           - hideClutter bool: By default we hide clutter fields like class or params in the link
@@ -209,45 +223,47 @@ class InputFields extends AbstractFieldPreset
             $this->addEvalOptions(
                 $this->addMinMaxLengthOptions(
                     $this->addDefaultOptions(
-                        array_merge(
+                        $this->addInputSizeOption(
+                            array_merge(
+                
+                                array_map(static function (array $def): array {
+                                    return [
+                                        'type' => 'bool',
+                                        'default' => $def[1],
+                                    ];
+                                }, static::BLINDABLE_LINK_OPTIONS),
+                
+                                [
+                                    'allowLinkSets' => [
+                                        'type' => ['bool', 'array'],
+                                        'default' => false,
+                                    ],
+                                    'hideClutter' => [
+                                        'type' => 'bool',
+                                        'default' => true,
+                                    ],
+                                    'blindFields' => [
+                                        'type' => ['array', 'true', 'null'],
+                                        'default' => null,
+                                        'filter' => static function ($value, $_, array $options) {
+                                            if (is_array($value)) {
+                                                return $value;
+                                            }
                             
-                            array_map(static function (array $def): array {
-                                return [
-                                    'type' => 'bool',
-                                    'default' => $def[1],
-                                ];
-                            }, static::BLINDABLE_LINK_OPTIONS),
+                                            if ($value === true) {
+                                                return ['class', 'params', 'target', 'title'];
+                                            }
                             
-                            [
-                                'allowLinkSets' => [
-                                    'type' => ['bool', 'array'],
-                                    'default' => false,
-                                ],
-                                'hideClutter' => [
-                                    'type' => 'bool',
-                                    'default' => true,
-                                ],
-                                'blindFields' => [
-                                    'type' => ['array', 'true', 'null'],
-                                    'default' => null,
-                                    'filter' => static function ($value, $_, array $options) {
-                                        if (is_array($value)) {
-                                            return $value;
-                                        }
-                                        
-                                        if ($value === true) {
-                                            return ['class', 'params', 'target', 'title'];
-                                        }
-                                        
-                                        // @todo remove this in the next major release
-                                        if (! $options['hideClutter']) {
-                                            return [];
-                                        }
-                                        
-                                        return ['class', 'params'];
-                                    },
-                                ],
-                            ]
+                                            // @todo remove this in the next major release
+                                            if (! $options['hideClutter']) {
+                                                return [];
+                                            }
+                            
+                                            return ['class', 'params'];
+                                        },
+                                    ],
+                                ]
+                            )
                         )
                     ), 2048
                 ),
@@ -255,7 +271,17 @@ class InputFields extends AbstractFieldPreset
                 ['trim' => true]
             )
         );
-        
+    
+        // Handle "hideClutter" deprecation
+        if (! $options['hideClutter']) {
+            $table = $this->field->getForm()->getTableName();
+            $field = $this->field->getId();
+            trigger_error(
+                'Deprecated option in: ' . $table . '::' . $field . '. The "hideClutter" option will be removed in v11, use the "blindFields" option instead',
+                E_USER_DEPRECATED
+            );
+        }
+    
         $blindOptions = array_filter(
             array_values(
                 array_map(static function (string $key, array $def) use ($options): ?string {
@@ -264,10 +290,11 @@ class InputFields extends AbstractFieldPreset
             )
         );
         $blindOptions[] = '@linkSets:' . urlencode(SerializerUtil::serializeJson($options['allowLinkSets']));
-        
+    
         // Prepare the config
         $config = [
             'type' => 'input',
+            'size' => $options['size'],
             'softref' => 'typolink,typolink_tag,images,url',
             'renderType' => 'inputLink',
             'fieldControl' => [

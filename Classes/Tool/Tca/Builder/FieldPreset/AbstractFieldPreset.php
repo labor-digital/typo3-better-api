@@ -133,8 +133,42 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
             );
             $config['readOnly'] = true;
         }
-        
+    
         return $config;
+    }
+    
+    /**
+     * Adds the option to configure the "size" of an "input" field either using a percentage or integer value.
+     *
+     * @param   array        $optionDefinition
+     * @param   string|null  $optionName  default: "size", can be set to another name as well, (e.g. cols)
+     *
+     * @return array
+     */
+    protected function addInputSizeOption(array $optionDefinition, ?string $optionName = null): array
+    {
+        $optionDefinition[$optionName ?? 'size'] = [
+            'type' => ['int', 'string'],
+            'default' => '100%',
+            'filter' => static function ($val): int {
+                $minWidth = 10;
+                $maxWidth = 50;
+                if (is_string($val)) {
+                    if ($val === '100%') {
+                        return $maxWidth;
+                    }
+                    if (strpos(trim($val), '%') !== false) {
+                        $val = $maxWidth * (int)trim(trim($val), '% ');
+                    } else {
+                        $val = (int)$val;
+                    }
+                }
+                
+                return max($minWidth, min($maxWidth, $val));
+            },
+        ];
+        
+        return $optionDefinition;
     }
     
     /**
