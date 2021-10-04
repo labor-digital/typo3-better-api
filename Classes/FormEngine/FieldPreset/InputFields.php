@@ -56,11 +56,13 @@ class InputFields extends AbstractFieldPreset
      *                           in form of an array like [class, method] as well.
      *                           - required, trim, lower, int, email, password, unique, null bool: Any of these values
      *                           can be passed to define their matching "eval" rules
-     *                           - maxLength int (2048): The max length of a input (also affects the length of the db
+     *                           - maxLength int (2048): The max length of an input (also affects the length of the db
      *                           field)
-     *                           - minLength int (0): The min length of a input
-     *                           - readOnly bool (FALSE): True to make this field read only
+     *                           - minLength int (0): The min length of an input
      *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - readOnly bool (FALSE): True to make this field read only
+     *                           use the setReadOnly() method on a field instead
      */
     public function applyInput(array $options = []): void
     {

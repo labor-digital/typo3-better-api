@@ -176,6 +176,10 @@ class Relations extends AbstractFieldPreset
      *                                       LEGACY SUPPORT
      *                                       - mmTableName string: When given this table name is set as mm table name
      *                                       instead of the automatically generated one. Useful for legacy codebase.
+     *
+     *                                       DEPRECATED: Will be removed in v12
+     *                                       - readOnly bool (FALSE): True to make this field read only
+     *                                       use the setReadOnly() method on a field instead
      */
     public function applyRelationGroup($foreignTable, array $options = []): void
     {

@@ -101,6 +101,7 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      * @param   array  $optionDefinition
      *
      * @return array
+     * @deprecated will be removed in v12 use the setReadOnly() method on a field instead     *
      */
     protected function addReadOnlyOptions(array $optionDefinition): array
     {
@@ -119,10 +120,17 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
      * @param   array  $options
      *
      * @return array
+     * @deprecated will be removed in v12 use the setReadOnly() method on a field instead
      */
     protected function addReadOnlyConfig(array $config, array $options): array
     {
         if ($options['readOnly'] === true) {
+            $table = $this->field->getForm()->getTableName();
+            $field = $this->field->getId();
+            trigger_error(
+                'Deprecated option in: ' . $table . '::' . $field . '. The "readOnly" option will be removed in v12, use the setReadOnly() method on a field instead',
+                E_USER_DEPRECATED
+            );
             $config['readOnly'] = true;
         }
         
