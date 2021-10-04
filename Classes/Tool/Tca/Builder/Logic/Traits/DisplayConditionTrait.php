@@ -53,9 +53,11 @@ trait DisplayConditionTrait
      * Auto-And: If you apply multiple arrays like [["fieldName", "=" , "0"],["fieldName", "=" , "2"]]
      * the values will be combined using the "AND" conditional
      *
+     * NULL: If the value is set to null, the current display condition will be removed
+     *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Columns/Index.html#displaycond
      *
-     * @param   string|array  $condition
+     * @param   string|array|null  $condition
      *
      * @return $this
      * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
@@ -63,6 +65,10 @@ trait DisplayConditionTrait
     public function setDisplayCondition($condition)
     {
         if (empty($condition)) {
+            if ($condition === null) {
+                $this->config['displayCond'] = null;
+            }
+    
             return $this;
         }
         
