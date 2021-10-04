@@ -198,6 +198,16 @@ class Node implements NoDiInterface
     }
     
     /**
+     * Returns true if the node represents a palette line break
+     *
+     * @return bool
+     */
+    public function isLineBreak(): bool
+    {
+        return $this->type === static::TYPE_NL;
+    }
+    
+    /**
      * Returns the unique id of this node
      *
      * @return int|string
