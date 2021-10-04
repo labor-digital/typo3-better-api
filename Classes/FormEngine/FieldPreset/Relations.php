@@ -259,8 +259,10 @@ class Relations extends AbstractFieldPreset
      * @param   array         $options       Additional options for creating the relation
      *                                       - mmTableName string: When given this table name is set as mm table name
      *                                       instead of the automatically generated one. Useful for legacy codebase.
-     *                                       - readOnly bool (FALSE): True to make this field read only
      *
+     *                                       DEPRECATED: Will be removed in v12
+     *                                       - readOnly bool (FALSE): True to make this field read only
+     *                                       use the setReadOnly() method on a field instead
      *
      * @see \LaborDigital\T3ba\FormEngine\FieldPreset\Relations::applyRelationGroup() mostly the "mmOpposite" option
      * @see https://docs.typo3.org/m/typo3/reference-tca/10.4/en-us/ColumnsConfig/Type/Group.html#mm-opposite-field
