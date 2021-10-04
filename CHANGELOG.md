@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.12.0](https://github.com/labor-digital/typo3-better-api/compare/v10.11.3...v10.12.0) (2021-09-16)
+
+
+### Features
+
+* **CustomFormElement:** allow rendering of fluid template strings ([3deaa9d](https://github.com/labor-digital/typo3-better-api/commit/3deaa9d323c77898e8b14f18c33db10e82d3ccab))
+* **ExtConfig\ContentType:** allow registration of backend preview and list label renderers through content type classes ([5f4245b](https://github.com/labor-digital/typo3-better-api/commit/5f4245bf889144130245be911f094d865f9e9187))
+* **FieldPreset:** add "linkPhone" field preset ([100be79](https://github.com/labor-digital/typo3-better-api/commit/100be79f3ee38516c76d8bae51472baa5c816bbb))
+* **FieldPreset:** allow usage of the "applyRelationGroupOpposite" for "relationSelect" presets as well ([24a1376](https://github.com/labor-digital/typo3-better-api/commit/24a1376e3cdb2dc0a31b982d3bd1d04d184fe91f))
+* **FileInfo:** add isHidden method to detect if files are hidden or not ([2efeb52](https://github.com/labor-digital/typo3-better-api/commit/2efeb529eacd1604519734eb6d6db99b2dfb3013))
+* **TcaBuilder:** allow "TRUE" in "basePid" options to reference the local PID ([c875518](https://github.com/labor-digital/typo3-better-api/commit/c8755182101bfdfa07643e94ee21e5b2f4c6339e))
+* **Upgrade:** introduce abstract TtContentUpgradeWizard ([64dc8e0](https://github.com/labor-digital/typo3-better-api/commit/64dc8e079fccca6d108dafe789a6de340681f99c))
+
+
+### Bug Fixes
+
+* **BackendListLabelRenderer:** try to create renderer instance if not registered as service ([2f60c89](https://github.com/labor-digital/typo3-better-api/commit/2f60c89b933bdd625b81e467fb758ff7ba9cb6e0))
+* **FieldRenderer:** handle rendering of file previews correctly ([c2166f0](https://github.com/labor-digital/typo3-better-api/commit/c2166f0f0a742c0ee52786c1c8244543110d0bcc))
+* **FormEngine:** resolve base pids with "true" correctly into numeric pid ([e94c548](https://github.com/labor-digital/typo3-better-api/commit/e94c548fe3e8e72f5eedeaa6db0eed00208b32b8))
+* **SiteFacet:** add typehint for getAll() method ([5d36ded](https://github.com/labor-digital/typo3-better-api/commit/5d36dedf6463b53a474565e5c704e49747d66841))
+
 ### [10.11.3](https://github.com/labor-digital/typo3-better-api/compare/v10.11.2...v10.11.3) (2021-09-08)
 
 
