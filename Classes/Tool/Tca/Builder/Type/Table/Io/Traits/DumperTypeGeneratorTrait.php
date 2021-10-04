@@ -157,7 +157,7 @@ trait DumperTypeGeneratorTrait
             // Update type's show item...
             // Yay for string manipulation \o/...
             $typeShowitem = preg_replace(
-                '/(--palette--;[^;,]*;)' . preg_quote($k, '/') . '(,|$)/si',
+                '/(--palette--;[^;,]*;)' . preg_quote((string)$k, '/') . '(,|$)/si',
                 '${1}' . $newK . ',',
                 $typeShowitem);
         }
