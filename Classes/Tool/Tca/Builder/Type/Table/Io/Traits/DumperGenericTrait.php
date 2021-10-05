@@ -158,10 +158,18 @@ trait DumperGenericTrait
             
             if ($child instanceof TcaField) {
                 $hasFieldsOrPallets = true;
+                $fieldId = $child->getId();
                 $meta = $child->getLayoutMeta();
-                $meta[0] = $child->getId();
+    
+                // If meta.1 (the label) is the same as the one configured -> don't define it in the string
+                if (! empty($meta[1]) && $meta[1] === $tca['columns'][$fieldId]['label']) {
+                    unset($meta[1]);
+                }
+    
+                $meta[0] = $fieldId;
                 ksort($meta);
                 $pointer[] = rtrim(implode(';', $meta), ';');
+                unset($fieldId);
             }
         }
         

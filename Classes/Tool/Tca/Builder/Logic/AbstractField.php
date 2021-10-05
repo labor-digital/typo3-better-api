@@ -259,11 +259,11 @@ abstract class AbstractField extends AbstractElement
     public function getRaw(): array
     {
         $raw = parent::getRaw();
-        
+    
         // Transform some keys into real typo3 translation keys
         // Because typo does not handle those elements using the default translation method...
         $translator = $this->form->getContext()->cs()->translator;
-        $raw['label'] = $translator->getLabelKey($this->getLabel());
+        $raw['label'] = $this->getLabel(); //$translator->getLabelKey($this->getLabel());
         if (is_array($raw['config'])) {
             foreach (['default', 'placeholder'] as $k) {
                 if (isset($raw['config'][$k])) {
@@ -271,9 +271,9 @@ abstract class AbstractField extends AbstractElement
                 }
             }
         }
-        
+    
         $this->dumpDataHooks($raw);
-        
+    
         // Done
         return $raw;
     }
