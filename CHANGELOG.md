@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.1](https://github.com/labor-digital/typo3-better-api/compare/v10.13.0...v10.13.1) (2021-10-05)
+
+
+### Bug Fixes
+
+* **Tca\Builder:** don't dump field label in showitem string if the same is set as "label" ([cb5f107](https://github.com/labor-digital/typo3-better-api/commit/cb5f107e6d6c01410a222c99fa7d2aa7f1609e1e))
+* **Tca\Builder:** ensure an exception is thrown when nodes are nested invalidly ([c097332](https://github.com/labor-digital/typo3-better-api/commit/c09733266570d2b76c2233123bffb8e9a99baf58))
+
 ## [10.13.0](https://github.com/labor-digital/typo3-better-api/compare/v10.12.0...v10.13.0) (2021-10-04)
 
 
