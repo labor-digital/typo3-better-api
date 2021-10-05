@@ -138,18 +138,26 @@ class Tree implements NoDiInterface
     {
         $node = $this->form->getContext()->cs()
             ->di->makeInstance(Node::class, [$id, $type, $this]);
-        
+    
         $parent = $type === Node::TYPE_TAB ? $this->root : $this->getDefaultNode();
-        
+    
+        if ($parent->getType() === $type) {
+            throw new InvalidNestingException(
+                'You can\'t create a new node with id "' . $id . '", and type: ' . $type
+                . ' here, because the parent is of the same type. '
+                . ' Did you try to nest a palette/section inside a palette/section, this does not work!'
+            );
+        }
+    
         $node->setParent($parent);
         $parent->addChild($node, Node::INSERT_MODE_AFTER);
-        
+    
         if (isset($this->nodes[$type][$node->getId()])) {
             throw new NonUniqueIdException(
-                'You can\'t create a new node with ' . $id . ', and ' . $type
+                'You can\'t create a new node with id: "' . $id . '", and type: ' . $type
                 . ', because it already exists!');
         }
-        
+    
         $this->nodes[$type][$node->getId()] = $node;
         
         return $node;
