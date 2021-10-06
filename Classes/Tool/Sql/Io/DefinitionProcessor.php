@@ -135,7 +135,8 @@ class DefinitionProcessor
                 
                 $tableToDump = $this->makeDumpableTable($combined, $table, $definition);
             }
-            
+    
+    
             $tableToDump = $this->cs()->eventBus
                 ->dispatch(new TableFilterEvent($table->getName(), $table, $tableToDump))
                 ->getTableToDump();
@@ -165,19 +166,29 @@ class DefinitionProcessor
             if ($typeName === SqlRegistry::TABLE_OVERRIDE_TYPE_NAME) {
                 continue;
             }
-            
-            $diff = $this->getService(Comparator::class)->diffTable($combined, $type);
+    
+            // Ensure that all columns of $combined exist on $type
+            // This fixes false "renaming" detections of the comparator
+            $typeClone = clone $type;
+            foreach ($combined->getColumns() as $column) {
+                if (! $typeClone->hasColumn($column->getName())) {
+                    TableAdapter::attachColumn($typeClone, $column);
+                }
+            }
+    
+            $diff = $this->getService(Comparator::class)->diffTable($combined, $typeClone);
+    
             if (! $diff) {
                 continue;
             }
-            
+    
             // Add new column
-            foreach ($diff->addedColumns as $key => $column) {
+            foreach ($diff->addedColumns as $column) {
                 TableAdapter::attachColumn($combined, $column);
             }
-            
+    
             // Modify columns
-            foreach ($diff->changedColumns as $key => $columnDiff) {
+            foreach ($diff->changedColumns as $columnDiff) {
                 TableAdapter::replaceColumn($combined, $this->processColumnDiff($columnDiff));
             }
             
