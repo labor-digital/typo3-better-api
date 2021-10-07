@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.2](https://github.com/labor-digital/typo3-better-api/compare/v10.13.1...v10.13.2) (2021-10-07)
+
+
+### Bug Fixes
+
+* **Sql:** ensure that type columns don't create "renamedColumns" when merging them ([26f1078](https://github.com/labor-digital/typo3-better-api/commit/26f10789f6ab8d1fbecae37d125e5a102ab9848a))
+
 ### [10.13.1](https://github.com/labor-digital/typo3-better-api/compare/v10.13.0...v10.13.1) (2021-10-05)
 
 
