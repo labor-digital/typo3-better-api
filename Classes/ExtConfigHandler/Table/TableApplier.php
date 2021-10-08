@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 
 
+use Closure;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\VarFs\VarFs;
 use LaborDigital\T3ba\Event\Configuration\ExtBasePersistenceRegistrationEvent;
@@ -49,6 +50,13 @@ class TableApplier extends AbstractExtConfigApplier
      * @var \Psr\SimpleCache\CacheInterface
      */
     protected $cache;
+    
+    /**
+     * Cache to store the processed TCA, so we don't have to do it multiple times in an install tool context
+     *
+     * @var array
+     */
+    protected $tcaCache = [];
     
     /**
      * ConfigureTcaTableApplier constructor.
@@ -113,8 +121,10 @@ class TableApplier extends AbstractExtConfigApplier
      */
     public function onTcaLoad(): void
     {
-        $this->getService(ContentTypeLoader::class)->provideDefaultTcaType();
-        $this->getService(TableLoader::class)->loadTables();
+        $this->runAndCacheTca(__FUNCTION__, function () {
+            $this->getService(ContentTypeLoader::class)->provideDefaultTcaType();
+            $this->getService(TableLoader::class)->loadTables();
+        });
     }
     
     /**
@@ -122,12 +132,14 @@ class TableApplier extends AbstractExtConfigApplier
      */
     public function onTcaLoadOverride(): void
     {
-        $this->getService(TableLoader::class)->loadTableOverrides();
-        $this->getService(ContentTypeLoader::class)->load();
-        $this->cache->set(static::TCA_META_CACHE_KEY,
-            $this->makeInstance(TcaPostProcessor::class)->process()
-        );
-        $this->applyMeta();
+        $this->runAndCacheTca(__FUNCTION__, function () {
+            $this->getService(TableLoader::class)->loadTableOverrides();
+            $this->getService(ContentTypeLoader::class)->load();
+            $this->cache->set(static::TCA_META_CACHE_KEY,
+                $this->makeInstance(TcaPostProcessor::class)->process()
+            );
+            $this->applyMeta();
+        });
     }
     
     /**
@@ -145,6 +157,27 @@ class TableApplier extends AbstractExtConfigApplier
             }
         }
         $event->setClasses($classes);
+    }
+    
+    /**
+     * Runs the given callback and caches the TCA after the execution,
+     * so if the method is called multiple times the tca can be reset to the state
+     * after the first execution of the callback
+     *
+     * @param   string    $key
+     * @param   \Closure  $callback
+     */
+    protected function runAndCacheTca(string $key, Closure $callback): void
+    {
+        if ($this->tcaCache[$key]) {
+            $GLOBALS['TCA'] = $this->tcaCache[$key];
+            
+            return;
+        }
+        
+        $callback();
+        
+        $this->tcaCache[$key] = $GLOBALS['TCA'];
     }
     
     /**

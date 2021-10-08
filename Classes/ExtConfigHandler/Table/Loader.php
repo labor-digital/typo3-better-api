@@ -39,13 +39,6 @@ class Loader implements PublicServiceInterface
     use DelayedConfigExecutionTrait;
     
     /**
-     * The state of the loaded tca types to prevent double loading in the install tool
-     *
-     * @var array
-     */
-    protected $loaded = [];
-    
-    /**
      * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TableFactory
      */
     protected $tableFactory;
@@ -95,15 +88,6 @@ class Loader implements PublicServiceInterface
      */
     protected function executeLoad(string $definitionKey): void
     {
-        // Fix for the install tool where the tca gets loaded twice
-        if (isset($this->loaded[$definitionKey])) {
-            foreach ($this->loaded[$definitionKey] as $tableName => $tca) {
-                $GLOBALS['TCA'][$tableName] = $tca;
-            }
-            
-            return;
-        }
-        
         $table = null;
         $this->runDelayedConfig(
             $this->getTypoContext()->config()->getConfigState(),
@@ -127,11 +111,9 @@ class Loader implements PublicServiceInterface
                     $table->getLoadedTypes()
                 );
             },
-            function (string $tableName) use (&$table, $definitionKey) {
+            function (string $tableName) use (&$table) {
                 if ($table !== null) {
-                    $GLOBALS['TCA'][$tableName]
-                        = $this->loaded[$definitionKey][$tableName]
-                        = $this->tableDumper->dump($table);
+                    $GLOBALS['TCA'][$tableName] = $this->tableDumper->dump($table);
                 }
                 $table = null;
             }

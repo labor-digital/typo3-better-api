@@ -68,13 +68,6 @@ class Loader implements PublicServiceInterface
      */
     protected $dumper;
     
-    /**
-     * The state of the loaded tca types to prevent double loading in the install tool
-     *
-     * @var array
-     */
-    protected $loaded;
-    
     public function __construct(
         Factory $factory,
         Dumper $dumper,
@@ -101,28 +94,11 @@ class Loader implements PublicServiceInterface
      */
     public function load(): void
     {
-        if (isset($this->loaded)) {
-            foreach ($this->loaded as $tableName => $config) {
-                $GLOBALS['TCA'][$tableName] = $config;
-            }
-            
-            return;
-        }
-        
         // Extract the default type tca
         $defaultTca = $GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE] ?? [];
         unset($GLOBALS['TCA']['tt_content']['types'][static::EXT_CONTENT_DEFAULT_TYPE]);
         if (! empty($defaultTca) && is_array($defaultTca)) {
             $this->factory->setDefaultTypeTca($defaultTca);
-        }
-        
-        // Fix for the install tool where the tca gets loaded twice
-        if (isset($this->loaded)) {
-            foreach ($this->loaded as $signature => $config) {
-                $GLOBALS['TCA']['tt_content']['types'][$signature] = $config;
-            }
-            
-            return;
         }
         
         $type = null;
@@ -171,8 +147,7 @@ class Loader implements PublicServiceInterface
             }
         );
         
-        $this->loaded = $this->dumper->dump($GLOBALS['TCA'], $this->configContext);
-        foreach ($this->loaded as $tableName => $config) {
+        foreach ($this->dumper->dump($GLOBALS['TCA'], $this->configContext) as $tableName => $config) {
             $GLOBALS['TCA'][$tableName] = $config;
         }
         
