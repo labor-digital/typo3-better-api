@@ -168,6 +168,8 @@ class TcaField extends AbstractField
         if (method_exists($field, 'getColumn')) {
             ColumnAdapter::inheritConfig($this->getColumn(), $field->getColumn());
         }
+        
+        return $this;
     }
     
     /**
