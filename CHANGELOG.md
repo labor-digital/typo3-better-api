@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.14.0](https://github.com/labor-digital/typo3-better-api/compare/v10.13.2...v10.14.0) (2021-10-11)
+
+
+### Features
+
+* **ExtConfig\Table:** implement V11 handling for nested class table names ([c68ebab](https://github.com/labor-digital/typo3-better-api/commit/c68ebab587576f96464390915b633060a20af8c0))
+
+
+### Bug Fixes
+
+* **ExtConfig\Core:** enable feature toggles immediately after handler execution ([4129027](https://github.com/labor-digital/typo3-better-api/commit/4129027e008d35b324ef0a4122a5516d9f644dd1))
+* **Tca\Builder:** ensure "custom fields" allow "NULL" as default value ([f94f4af](https://github.com/labor-digital/typo3-better-api/commit/f94f4af63746053e91a196cee1d790fd1e5d736e))
+* **Tca\Builder:** harden the detection of multiple TCA loads in the same request ([84c478a](https://github.com/labor-digital/typo3-better-api/commit/84c478a0b5ca487155b8d44dfa0f0911a08d4eef))
+
 ### [10.13.2](https://github.com/labor-digital/typo3-better-api/compare/v10.13.1...v10.13.2) (2021-10-07)
 
 
