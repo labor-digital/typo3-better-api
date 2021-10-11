@@ -55,4 +55,21 @@ class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
     {
         return 'typo.globals';
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function finish(): void
+    {
+        parent::finish();
+        
+        // Ensure that feature toggles are applied immediately
+        $features = $this->context->getState()->get('typo.globals.TYPO3_CONF_VARS.SYS.features', []);
+        if (is_array($features)) {
+            foreach ($features as $key => $state) {
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['features'][$key] = $state;
+            }
+        }
+    }
+    
 }
