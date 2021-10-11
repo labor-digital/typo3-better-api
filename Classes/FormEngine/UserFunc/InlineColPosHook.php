@@ -25,8 +25,9 @@ namespace LaborDigital\T3ba\FormEngine\UserFunc;
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
 
-class InlineColPosHook implements NoDiInterface
+class InlineColPosHook implements NoDiInterface, RecordListGetTableHookInterface
 {
     use ContainerAwareTrait;
     
@@ -63,4 +64,18 @@ class InlineColPosHook implements NoDiInterface
         
         return ((int)$record['colPos']) === -88 && ! empty($record['t3ba_inline']);
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject)
+    {
+        if ($table !== 'tt_content') {
+            return;
+        }
+        
+        $additionalWhereClause .= ' AND `colPos`<>-88 AND `t3ba_inline` = ""';
+    }
+    
+    
 }

@@ -136,6 +136,12 @@ class Core implements ConfigureRawSettingsInterface,
                         InlineColPosHook::class => InlineColPosHook::class . '->isContentUsed',
                     ],
                 ],
+                
+                'typo3/class.db_list_extra.inc' => [
+                    'getTable' => [
+                        InlineColPosHook::class => InlineColPosHook::class,
+                    ],
+                ],
             ],
         ]);
     }
