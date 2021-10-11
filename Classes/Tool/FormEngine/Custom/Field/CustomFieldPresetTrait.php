@@ -116,7 +116,7 @@ trait CustomFieldPresetTrait
         );
         
         if ($field instanceof TcaField) {
-            $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT);
+            $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT)->setNotnull(false);
         }
         
         $dataHookOptions = $field->getDataHookOptions();
