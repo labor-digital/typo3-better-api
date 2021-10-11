@@ -26,6 +26,8 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigHandler;
 use LaborDigital\T3ba\ExtConfig\Traits\DelayedConfigExecutionTrait;
+use LaborDigital\T3ba\ExtConfigHandler\Core\Handler;
+use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Inflection\Inflector;
@@ -52,6 +54,7 @@ class TcaTableHandler extends AbstractExtConfigHandler implements NoDiInterface
         // We register "Override>s<" for the TYPO3 natives that could otherwise feel a bit lost ;)
         $configurator->registerOverrideLocation('Overrides');
         $configurator->registerInterface(ConfigureTcaTableInterface::class);
+        $configurator->executeThisHandlerAfter(Handler::class);
     }
     
     /**
@@ -104,19 +107,40 @@ class TcaTableHandler extends AbstractExtConfigHandler implements NoDiInterface
         if ($part === $this->context->getVendor()) {
             array_shift($namespaceParts);
         }
-        
+    
         // Remove Configuration and Table parts
         $namespaceParts = array_filter($namespaceParts, static function (string $part) {
             return ! in_array($part, ['Configuration', 'Table'], true);
         });
+    
+        if ($this->context->getTypoContext()->config()
+                          ->isFeatureEnabled(T3baFeatureToggles::TCA_V11_NESTED_TABLE_NAMES)) {
+            $lastPart = array_pop($namespaceParts);
+            $secondToLastPart = array_pop($namespaceParts);
         
+            if (! empty($secondToLastPart) && str_starts_with($lastPart, $secondToLastPart)) {
+                $_lastPart = substr($lastPart, strlen($secondToLastPart));
+                // ONLY override the last part if we removed an exact match and the table is still camel-case
+                // AND the table is not a "mm" table
+                if (ucfirst($_lastPart) === $_lastPart && ! str_starts_with(strtolower($_lastPart), 'mm')) {
+                    $lastPart = $_lastPart;
+                }
+                unset($_lastPart);
+            }
+        
+            $namespaceParts[] = $secondToLastPart;
+            if (! empty($lastPart)) {
+                $namespaceParts[] = $lastPart;
+            }
+        }
+    
         $tableNamespace = '\\' . implode('\\', $namespaceParts);
         $tableNamespace = preg_replace(
             ['~\\\\Overrides?\\\\~', '~(?:Overrides?)?(?:Tables?)?(?:Overrides?)?$~'],
             ['\\', ''],
             $tableNamespace
         );
-        
+    
         // Compile table name
         return $this->context->resolveTableName(
             '...' . implode('_',

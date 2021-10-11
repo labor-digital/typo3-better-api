@@ -49,4 +49,15 @@ interface T3baFeatureToggles
      * NOTE: Toggle will be removed in v12
      */
     public const CONTENT_TYPE_V11_NAMING_SCHEMA = 't3ba.ContentType.V11Naming';
+    
+    /**
+     * V11 will strip duplicate namespaces from a class name when the table name is derived.
+     * So a class like: Vendor/ExtKey/Configuration/Table/Foo/FooTable generates:
+     * tx_extkey_domain_model_foo instead of tx_extkey_domain_model_foo_foo
+     * Similarly a class like Vendor/ExtKey/Configuration/Table/Foo/FooBarTable will
+     * then generate: tx_extkey_domain_model_foo_bar which makes more sense in general.
+     *
+     * NOTE: Toggle will be removed in v12
+     */
+    public const TCA_V11_NESTED_TABLE_NAMES = 't3ba.TCA.TableName.V11Naming';
 }
