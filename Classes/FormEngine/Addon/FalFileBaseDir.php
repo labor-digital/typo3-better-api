@@ -82,19 +82,25 @@ class FalFileBaseDir implements NoDiInterface
      */
     public static function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {
-        // Check inline elements -> default file reference
-        $data = $event->getProxy()->getData();
         $config = $event->getProxy()->getConfig();
-        $type = 'tca';
-        if (! isset($data['renderType']) || $data['renderType'] !== 'inline') {
-            // Check for group elements -> For flex form sections
-            if (! isset($config['type'], $config['internal_type']) || ! is_array($config)
-                || $config['type'] !== 'group' || $config['internal_type'] !== 'file') {
-                return;
-            }
+        
+        // No config -> not interesting
+        if (empty($config)) {
+            return;
+        }
+        
+        // No group or inline -> ignore
+        if (! in_array($config['type'] ?? null, ['group', 'inline'], true)) {
+            return;
+        }
+        
+        if ($config['type'] === 'group'
+            && ($config['internal_type'] ?? null) === 'file') {
             $type = 'flex';
-        } elseif (! is_array($config) || ! isset($config['foreign_table'])
-                  || $config['foreign_table'] !== 'sys_file_reference') {
+        } elseif ($config['type'] === 'inline'
+                  && ($config['foreign_table'] ?? null) === 'sys_file_reference') {
+            $type = 'tca';
+        } else {
             return;
         }
         
@@ -111,6 +117,8 @@ class FalFileBaseDir implements NoDiInterface
         // Add the directory path in the session storage
         $session = static::cs()->session->getBackendSession();
         $folders = $session->get('dynamicFalFolders', []);
+        
+        $data = $event->getProxy()->getData();
         
         if ($type === 'tca') {
             $folders[$data['tableName']][$data['fieldName']] = $config['baseDir'];
