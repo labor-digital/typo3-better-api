@@ -63,9 +63,8 @@ class Dumper
         $this->extractDataHooksFromTca($tca);
         $defaultTypeName = $table->getDefaultTypeName();
         
-        // Dump types
         foreach ($table->getLoadedTypes() as $typeName => $type) {
-            // Ignore the default type -> as is is already part of the $tca
+            // Ignore the default type -> as it is already part of the $tca
             if ((string)$defaultTypeName === (string)$typeName) {
                 continue;
             }
