@@ -39,7 +39,6 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits;
 
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-use Neunerlei\Arrays\Arrays;
 
 trait DisplayConditionTrait
 {
@@ -68,35 +67,23 @@ trait DisplayConditionTrait
             if ($condition === null) {
                 $this->config['displayCond'] = null;
             }
-    
+            
+            return $this;
+        }
+        
+        if (is_string($condition)) {
+            $this->config['displayCond'] = $condition;
+            
             return $this;
         }
         
         if (is_array($condition)) {
-            if (! Arrays::isAssociative($condition)) {
-                $fieldProcessor = static function (array $condition) {
-                    if (count($condition) === 3 && Arrays::isSequential($condition)) {
-                        return 'FIELD:' . $condition[0] . ':' . $condition[1] . ':' . $condition[2];
-                    }
-                    
-                    return $condition;
-                };
-                
-                if (Arrays::isArrayList($condition) && Arrays::isSequential($condition)) {
-                    $condition = [
-                        'AND' => array_map($fieldProcessor, $condition),
-                    ];
-                } else {
-                    $condition = $fieldProcessor($condition);
-                }
-            }
-        } elseif (! is_string($condition)) {
-            throw new TcaBuilderException('Only strings and arrays are allowed as display conditions!');
+            $this->config['displayCond'] = $this->getRoot()->getContext()->cs()->displayCondBuilder->build($this, $condition);
+            
+            return $this;
         }
         
-        $this->config['displayCond'] = $condition;
-        
-        return $this;
+        throw new TcaBuilderException('Only strings and arrays are allowed as display conditions!');
     }
     
     /**
