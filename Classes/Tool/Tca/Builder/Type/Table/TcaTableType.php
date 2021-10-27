@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
 use LaborDigital\T3ba\Tool\DataHook\DataHookCollectorTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractType;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
@@ -221,11 +222,11 @@ class TcaTableType extends AbstractType
     /**
      * Adds a new line break to palettes
      *
-     * @param   string|null  $position  The position where to add the tab. See moveTo() for details
+     * @param   string|array|AbstractElement|null  $position  The position where to add the tab. See moveTo() for details
      *
      * @return string
      */
-    public function addLineBreak(?string $position = null): string
+    public function addLineBreak($position = null): string
     {
         $id = 'lb-' . md5((string)microtime(true));
         

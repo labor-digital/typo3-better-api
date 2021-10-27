@@ -87,19 +87,28 @@ abstract class AbstractElement implements NoDiInterface
      * Position can be defined as "field", "container" or "0" (tabs) to move the element AFTER the defined element.
      *
      * You may also use the following modifiers:
+     *    - "field": positions the element after the "id" elements
      *    - before:field positions the element in front of the element with "field" as id
      *    - after:field positions the element after the element with "field" as id
      *    - top:container positions the element as first element of a container/tab
      *    - bottom:container positions the element as last element of a container/tab
+     *    - ['before', 'field']: work the same way as the string representation
+     *    - $field: All field instances can be used in the same way as their "id" would
+     *    - ['bottom', $container]: you can use the instance of a field/container as reference as well
      *
-     * @param   string  $position  Either the position to move the field to, or the field will be added to the end of
-     *                             the FIRST possible tab
+     * @param   string|array|AbstractElement  $position  Either the position to move the field to,
+     *                                                   or the field will be added to the end of the FIRST possible tab.
+     *                                                   Can be an array like this as well: ['before', 'field'] or ['before', 'fieldReference']
      *
      * @return $this
      */
-    public function moveTo(string $position = '0')
+    public function moveTo($position = '0')
     {
-        $this->node->moveTo($position);
+        if ($position instanceof AbstractElement) {
+            $this->node->moveTo($position->node);
+        } else {
+            $this->node->moveTo($position);
+        }
         
         return $this;
     }
