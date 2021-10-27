@@ -95,7 +95,7 @@ class EvalOption extends AbstractOption
                 continue;
             }
             
-            if (! $this->allowList || in_array($type, $this->allowList, true)) {
+            if (! $this->allowList || ! in_array($type, $this->allowList, true)) {
                 continue;
             }
             
