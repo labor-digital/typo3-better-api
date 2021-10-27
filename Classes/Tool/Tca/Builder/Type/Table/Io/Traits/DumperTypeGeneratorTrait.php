@@ -152,6 +152,7 @@ trait DumperTypeGeneratorTrait
             
             // Create a new version of this palette for the type
             $newK = $typeName . '-' . $k;
+            $palettes[$newK] = $p;
             $palettes[$newK]['showitem'] = $showitem;
             
             // Update type's show item...
