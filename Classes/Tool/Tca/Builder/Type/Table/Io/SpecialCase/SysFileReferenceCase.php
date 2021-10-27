@@ -70,8 +70,6 @@ class SysFileReferenceCase implements TcaSpecialCaseHandlerInterface
                 $type['showitem']
             );
         }
-        
-        dbge($tca);
     }
     
     /**
