@@ -28,17 +28,20 @@ use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
+use LaborDigital\T3ba\Tool\Tca\Builder\Util\DisplayConditionBuilder;
 use Psr\Container\ContainerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TcaBuilderServices
  *
  * @package LaborDigital\T3ba\Tool\Tca\Builder
  *
- * @property ExtConfigContext $extConfigContext
- * @property SqlRegistry      $sqlRegistry
- * @property Factory          $flexFormFactory
- * @property Dumper           $flexFormDumper
+ * @property ExtConfigContext        $extConfigContext
+ * @property SqlRegistry             $sqlRegistry
+ * @property Factory                 $flexFormFactory
+ * @property Dumper                  $flexFormDumper
+ * @property DisplayConditionBuilder $displayCondBuilder
  */
 class TcaBuilderServices extends CommonServices
 {
@@ -54,6 +57,9 @@ class TcaBuilderServices extends CommonServices
         $this->def['sqlRegistry'] = SqlRegistry::class;
         $this->def['flexFormFactory'] = Factory::class;
         $this->def['flexFormDumper'] = Dumper::class;
+        $this->def['displayCondBuilder'] = static function () {
+            return GeneralUtility::makeInstance(DisplayConditionBuilder::class);
+        };
     }
     
     

@@ -138,9 +138,9 @@ class Tree implements NoDiInterface
     {
         $node = $this->form->getContext()->cs()
             ->di->makeInstance(Node::class, [$id, $type, $this]);
-    
+        
         $parent = $type === Node::TYPE_TAB ? $this->root : $this->getDefaultNode();
-    
+        
         if ($parent->getType() === $type) {
             throw new InvalidNestingException(
                 'You can\'t create a new node with id "' . $id . '", and type: ' . $type
@@ -148,16 +148,16 @@ class Tree implements NoDiInterface
                 . ' Did you try to nest a palette/section inside a palette/section, this does not work!'
             );
         }
-    
+        
         $node->setParent($parent);
         $parent->addChild($node, Node::INSERT_MODE_AFTER);
-    
+        
         if (isset($this->nodes[$type][$node->getId()])) {
             throw new NonUniqueIdException(
                 'You can\'t create a new node with id: "' . $id . '", and type: ' . $type
                 . ', because it already exists!');
         }
-    
+        
         $this->nodes[$type][$node->getId()] = $node;
         
         return $node;
@@ -283,6 +283,9 @@ class Tree implements NoDiInterface
      *  - "after:id" positions the element after the "id" element
      *  - "top:containerId" positions the element as first element of a container/tab
      *  - "bottom:containerId" positions the element as last element of a container/tab
+     *  - ['before', 'id']: work the same way as the string representation
+     *  - $fieldNode: All node instances can be used in the same way as "id" would
+     *  - ['bottom', $containerNode]: you can use the instance of a field/container node as reference as well
      *
      * If top/bottom are used in combination with a field (and not a container
      * element) it will be translated to before or after respectively.
@@ -290,18 +293,39 @@ class Tree implements NoDiInterface
      * If the "id" could not be resolved into a node the second entry in the
      * result array will be null.
      *
-     * @param   string  $position  The position to parse
+     * @param   string|array|Node  $position  The position to parse
      *
      * @return array A numeric array where the first entry is the
      *               selected insert mode, the second entry is the pivot
      *               node or null if it could not be found
      */
-    public function parseMovePosition(string $position): array
+    public function parseMovePosition($position): array
     {
+        // Special handling for array
+        if (is_array($position)) {
+            $positionParts = array_values($position);
+            if (count($positionParts) > 2 || empty($positionParts)) {
+                throw new \InvalidArgumentException('A position array can only contain one or exactly two items');
+            }
+        } elseif (is_string($position) || is_numeric($position)) {
+            $positionParts = explode(':', (string)$position);
+        } elseif (is_object($position)) {
+            $positionParts = [$position];
+        } else {
+            throw new \InvalidArgumentException('The given pivot-id is invalid');
+        }
+        
         // Parse position into node
-        $positionParts = explode(':', $position);
         $pivotId = $positionParts[1] ?? $positionParts[0];
-        $pivotNode = $this->getNode($pivotId);
+        
+        if (is_object($pivotId)) {
+            if (! $pivotId instanceof Node) {
+                throw new \InvalidArgumentException('Invalid position given. The pivot-id is an object of type: ' . get_class($pivotId));
+            }
+            $pivotNode = $pivotId;
+        } else {
+            $pivotNode = $this->getNode($pivotId);
+        }
         
         // Build the insert mode
         $defaultInsertMode = $pivotNode !== null && ! $pivotNode->isField() ? 'bottom' : 'after';

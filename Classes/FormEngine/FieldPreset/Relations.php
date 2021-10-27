@@ -24,12 +24,26 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\T3baFeatureToggles;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\BasePidOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\ElementBrowserFilterOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileBaseDirOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileExtListOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileGenericOverrideChildTcaOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileImageCropOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileImageThumbnailSizeOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InheritParentDefinitionOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\LegacyReadOnlyOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\LimitToPidsOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxItemOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MmTableOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\SelectSideBySideOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\WizardAllowEditOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\WizardAllowNewOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
-use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Category\CategoryRegistry;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Relations extends AbstractFieldPreset
@@ -60,74 +74,33 @@ class Relations extends AbstractFieldPreset
      */
     public function applyCategorize(array $options = []): void
     {
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addMinMaxItemOptions(
-                    [
-                        'limitToPids' => [
-                            'type' => ['bool', 'int', 'string', 'array'],
-                            'default' => true,
-                        ],
-                        'sideBySide' => [
-                            'type' => 'bool',
-                            'default' => false,
-                        ],
-                    ]
-                ),
-                ['required']
-            )
+        $o = $this->initializeOptions([
+            new SelectSideBySideOption(),
+            new LimitToPidsOption('sys_category'),
+            new MinMaxItemOption(),
+            new MmTableOption('sys_category', 'items'),
+            new EvalOption(['required']),
+        ]);
+        
+        $this->context->configureSqlColumn(
+            static function (Column $column) {
+                $column->setType(new IntegerType())
+                       ->setLength(11)
+                       ->setDefault(0);
+            }
         );
         
-        // Prepare the config
-        $config = CategoryRegistry::getTcaFieldConfiguration($this->getTcaTable()->getTableName(), $this->field->getId());
-        $config['size'] = 7;
+        $o->validate($options);
         
-        // Prepare the pid limiter
-        if (! empty($options['limitToPids'])) {
-            $pidSelector = '';
-            
-            if (is_array($options['limitToPids'])) {
-                $options['limitToPids'] = implode(',', $options['limitToPids']);
-            }
-            
-            if (is_string($options['limitToPids'])
-                && ! empty($tmp = $this->context->getExtConfigContext()->getTypoContext()->pid()
-                                                ->get($options['limitToPids'], 0))) {
-                $pidSelector = ' = ' . $tmp;
-            }
-            
-            if (empty($pidSelector) && (is_string($options['limitToPids']) || is_numeric($options['limitToPids']))) {
-                $pidSelector = ' IN (' . $options['limitToPids'] . ')';
-            }
-            
-            if ($options['limitToPids'] === true) {
-                $pidSelector = ' = ###CURRENT_PID###';
-            }
-            
-            $config['foreign_table_where'] = ' AND sys_category.pid' . $pidSelector . $config['foreign_table_where'];
-        }
-        
-        // Apply defaults
-        $config = $this->addMinMaxItemConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options);
-        
-        // Convert the render type if required
-        if ($options['sideBySide']) {
-            $config['renderType'] = 'selectMultipleSideBySide';
-        }
-        
-        $this->addMmOppositeConfig([], ['mmOpposite' => 'items'], ['sys_category']);
-        
-        // Set the sql
-        $this->configureSqlColumn(static function (Column $column) {
-            $column->setType(new IntegerType())
-                   ->setLength(11)
-                   ->setDefault(0);
-        });
-        
-        // Set the field
-        $this->field->addConfig($config);
+        $this->field->addConfig(
+            $o->apply(
+                CategoryRegistry::getTcaFieldConfiguration(
+                    $this->context->getTcaTable()->getTableName(),
+                    $this->field->getId(),
+                    ['size' => 7]
+                )
+            )
+        );
     }
     
     /**
@@ -156,7 +129,7 @@ class Relations extends AbstractFieldPreset
      *                                       - allowEdit bool (TRUE): Can be used to disable the editing of records in
      *                                       the current group
      *                                       - filters array: A list of filter functions to apply for this group.
-     *                                       The filter should be supplied like a typical Typo3 callback
+     *                                       The filter should be supplied like a typical TYPO3 callback
      *                                       class->function. If the filter is given as array, the first value will be
      *                                       used as callback and the second as parameters. Note: This feature is not
      *                                       implemented in the element browser for Flex forms in the TYPO3 core... The
@@ -169,7 +142,7 @@ class Relations extends AbstractFieldPreset
      *                                       - mmOpposite string: Allows you to create a link between this field
      *                                       and the field of the related table. This defines the name of the
      *                                       field on the $foreignTable. NOTE: This only works if a single $foreignTable
-     *                                       exists! Additionally you need to create the field on the foreign table
+     *                                       exists! Additionally, you need to create the field on the foreign table
      *                                       manually. I would suggest using the "relationGroupOpposite" preset to do so.
      *                                       {@see https://docs.typo3.org/m/typo3/reference-tca/10.4/en-us/ColumnsConfig/Type/Group.html#mm-opposite-field}
      *
@@ -183,68 +156,32 @@ class Relations extends AbstractFieldPreset
      */
     public function applyRelationGroup($foreignTable, array $options = []): void
     {
-        $options = Options::make(
-            $options,
-            $this->addAllowEditOptions(
-                $this->addAllowNewOptions(
-                    $this->addEvalOptions(
-                        $this->addBasePidOptions(
-                            $this->addMinMaxItemOptions(
-                                $this->addMmTableOptions(
-                                    $this->addReadOnlyOptions([
-                                        'filters' => [
-                                            'type' => 'array',
-                                            'default' => [],
-                                        ],
-                                    ])
-                                )
-                            ), true),
-                        ['required']
-                    )
-                )
-            )
+        $tables = $this->context->getRealTableNameList($foreignTable);
+        
+        $o = $this->initializeOptions([
+            new ElementBrowserFilterOption(),
+            new LegacyReadOnlyOption(),
+            new MmTableOption($tables),
+            new MinMaxItemOption(),
+            new BasePidOption(true),
+            new EvalOption(['required']),
+            new WizardAllowNewOption(),
+            new WizardAllowEditOption(),
+        ]);
+        
+        $options = $o->validate($options);
+        
+        $this->field->addConfig(
+            $o->apply([
+                'type' => 'group',
+                'internal_type' => 'db',
+                'allowed' => implode(',', $tables),
+                'foreign_table' => count($tables) === 1 ? reset($tables) : null,
+                'size' => $options['maxItems'] === 1 ? 1 : 3,
+                'multiple' => 0,
+                'localizeReferencesAtParentLocalization' => true,
+            ])
         );
-        
-        $tables = $this->generateTableNameList($foreignTable);
-        
-        $config = [
-            'type' => 'group',
-            'internal_type' => 'db',
-            'allowed' => implode(',', $tables),
-            'size' => $options['maxItems'] === 1 ? 1 : 3,
-            'multiple' => 0,
-            'localizeReferencesAtParentLocalization' => true,
-        ];
-        
-        if (count($tables) === 1) {
-            $config['foreign_table'] = reset($tables);
-        }
-        
-        $filters = [];
-        foreach ($options['filters'] as $filter) {
-            if (! is_array($filter)) {
-                $filter = [$filter, []];
-            }
-            
-            $filters[] = [
-                'userFunc' => $filter[0],
-                'parameters' => $filter[1],
-            ];
-        }
-        
-        if (! empty($filters)) {
-            $config['filter'] = $filters;
-        }
-        
-        $config = $this->addReadOnlyConfig($config, $options);
-        $config = $this->addAllowNewConfig($config, $options);
-        $config = $this->addAllowEditConfig($config, $options);
-        $config = $this->addBasePidConfig($config, $options);
-        $config = $this->addMmTableConfig($config, $options);
-        $config = $this->addMmOppositeConfig($config, $options, $tables);
-        $config = $this->addMinMaxItemConfig($config, $options);
-        
-        $this->field->addConfig($config);
     }
     
     /**
@@ -269,18 +206,20 @@ class Relations extends AbstractFieldPreset
      */
     public function applyRelationGroupOpposite($foreignTable, string $foreignField, array $options = []): void
     {
-        $options = Options::make($options,
-            $this->addMmTableOptions(
-                $this->addReadOnlyOptions([]), false
-            )
-        );
+        $o = $this->initializeOptions([
+            new MmTableOption(),
+            new LegacyReadOnlyOption(),
+        ]);
         
         $foreignTableName = $this->context->getRealTableName($foreignTable);
+        
+        $options = $o->validate($options);
         
         if (empty($options['mmTableName'])) {
             $options['mmTableName'] = $this->context->cs()->sqlRegistry->makeMmTableName(
                 $foreignTableName,
-                $this->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_MM_TABLES) ? null : $foreignField
+                $this->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_MM_TABLES)
+                    ? null : $foreignField
             );
         }
         
@@ -333,46 +272,34 @@ class Relations extends AbstractFieldPreset
      *                           This is identical with setting minItems to 1
      *                           - allowList string: A comma separated list of file extensions that are specifically
      *                           ALLOWED to be uploaded, every other extension will be blocked
-     *                           - blockList string: A comma separated list of file extensions that are specifically
-     *                           BLOCKED to be uploaded, every other extension will be allowed
      *                           - baseDir string: Either a fully qualified fal identifier like 1:/folder-name/ or just
      *                           a simple folder name like folder-name that is always used/selected by default
      *                           if the object browser is opened
-     *                           - disableFalFields array: An optional list of sys_file_reference fields
+     *                           - disableFalFields array|true: An optional list of sys_file_reference fields
      *                           that should be disabled for this field. This allows you to remove some input
-     *                           options on the fly. This has no effect if the field is inside a flex form section!
+     *                           options on the fly. TRUE disables ALL fields.
+     *                           This has no effect if the field is inside a flex form section!
+     *
+     *                           DEPRECATED:
+     *                           - blockList string: A comma separated list of file extensions that are specifically
+     *                           BLOCKED to be uploaded, every other extension will be allowed
+     *                           NOTE: This feature does not really work as it is intended. This is a filter
+     *                           that ONLY works in the elementBrowser and is therefore completely useless
+     *                           This option will be removed in v12
      */
     public function applyRelationFile(array $options = []): void
     {
-        $options = Options::make(
-            $options,
-            $this->addMinMaxItemOptions(
-                $this->addEvalOptions(
-                    [
-                        'allowList' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                        'blockList' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                        'baseDir' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                        'disableFalFields' => [
-                            'type' => 'array',
-                            'default' => [],
-                        ],
-                    ],
-                    ['required']
-                )
-            )
-        );
+        $o = $this->initializeOptions([
+            new FileExtListOption(),
+            new FileBaseDirOption(),
+            new FileGenericOverrideChildTcaOption(),
+            new EvalOption(['required']),
+            new MinMaxItemOption(),
+        ]);
         
-        // Check if we are inside a section
-        if ($this->isInFlexFormSection()) {
+        $options = $o->validate($options);
+        
+        if ($this->context->isInFlexFormSection()) {
             // Inside a section
             $config = [
                 'type' => 'group',
@@ -391,55 +318,30 @@ class Relations extends AbstractFieldPreset
                 $options['blockList']
             );
             
-            // Add our custom config
             $config = Arrays::merge($r, [
                 'foreign_match_fields' => [
-                    'tablenames' => $this->getTcaTable()->getTableName(),
+                    'tablenames' => $this->context->getTcaTable()->getTableName(),
                     'table_local' => 'sys_file',
                 ],
                 'appearance' => [
                     'createNewRelationLinkTitle' => 'LLL:EXT:cms/locallang_ttc.xlf:images.addFileReference',
                     'fileUploadAllowed' => false,
+                    'fileByUrlAllowed' => false,
                     'showSynchronizationLink' => true,
                     'showAllLocalizationLink' => true,
                     'showPossibleLocalizationRecords' => true,
                 ],
             ]);
             
-            // Remove all disabled fields
-            if (! empty($options['disableFalFields'])) {
-                foreach ($options['disableFalFields'] as $field) {
-                    if (! is_string($field)) {
-                        continue;
-                    }
-                    $config['overrideChildTca']['columns'][$field]['config']['type'] = 'passthrough';
-                    $config['overrideChildTca']['columns'][$field]['config']['renderType'] = 'passthrough';
-                }
-            }
-            
-            // Set sql for field
-            $this->configureSqlColumn(static function (Column $column) {
+            $this->context->configureSqlColumn(static function (Column $column) {
                 $column->setType(new IntegerType())
                        ->setLength(11)
                        ->setDefault(0);
             });
         }
         
-        // Add base dir if not empty
-        if (! empty($options['baseDir'])) {
-            $config['baseDir'] = $options['baseDir'];
-            
-            // Allow direct upload
-            if (! $this->isInFlexFormSection()) {
-                $config['appearance']['fileUploadAllowed'] = true;
-            }
-        }
-        
-        // Add defaults
-        $config = $this->addMinMaxItemConfig($config, $options);
-        
-        // Merge the field
-        $this->field->addConfig($config);
+        $this->field->addConfig(['overrideChildTca' => '__UNSET']);
+        $this->field->addConfig($o->apply($config));
     }
     
     /**
@@ -469,7 +371,7 @@ class Relations extends AbstractFieldPreset
             ],
         ], ['allowUnknown' => true]);
         
-        // Build the allow list
+        // Build the allow-list
         $allowList = implode(',', array_filter([
             $options['allowYoutube'] ? 'youtube' : '',
             $options['allowVimeo'] ? 'vimeo' : '',
@@ -477,7 +379,6 @@ class Relations extends AbstractFieldPreset
         $options['allowList'] = $allowList;
         unset($options['allowYoutube'], $options['allowVimeo']);
         
-        // Make the real relation
         $this->applyRelationFile($options);
     }
     
@@ -511,6 +412,8 @@ class Relations extends AbstractFieldPreset
      *                           - disableFalFields array: An optional list of sys_file_reference fields
      *                           that should be disabled for this field. This allows you to remove some input
      *                           options on the fly
+     *                           - thumbnailSize array ([200,150]): An array containing the width(0)
+     *                           and height(1) of the image thumbnail
      *
      * CropVariantsArray:
      *  "cropVariants" => [
@@ -530,181 +433,18 @@ class Relations extends AbstractFieldPreset
      */
     public function applyRelationImage(array $options = []): void
     {
-        // Apply additional file options
-        $options = Options::make($options, [
-            'allowList' => [
-                'type' => 'string',
-                'default' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
-            ],
-            'allowCrop' => [
-                'type' => 'bool',
-                'default' => true,
-            ],
-            'useDefaultCropVariant' => [
-                'type' => 'bool',
-                'default' => true,
-            ],
-            'cropVariants' => [
-                'type' => 'array',
-                'default' => [],
-                'children' => [
-                    '*' => [
-                        'title' => [
-                            'type' => 'string',
-                        ],
-                        'aspectRatios' => [
-                            'type' => 'array',
-                        ],
-                    ],
-                ],
-            ],
-        ], ['allowUnknown' => true]);
-        
-        // Strip off our internal options
-        $_options = $options;
-        unset($options['allowCrop'], $options['useDefaultCropVariant'], $options['cropVariants']);
-        
-        // Apply the normal file relation
-        $this->applyRelationFile($options);
-        
-        // Revert the options
-        $options = $_options;
-        unset($_options);
-        
-        // Adjust labels
-        // Make the thumbnail bigger
-        $this->field->addConfig([
-            'appearance' => [
-                'headerThumbnail' => [
-                    'height' => 150,
-                    'width' => 200,
-                ],
-            ],
+        $o = $this->initializeOptions([
+            new FileExtListOption($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']),
+            new FileImageCropOption(),
+            new FileImageThumbnailSizeOption(),
+            new InheritParentDefinitionOption(),
         ]);
         
-        // Adjust the child tca
-        if ($this->isFlexForm()) {
-            $this->field->addConfig([
-                'foreign_selector_fieldTcaOverride' => [
-                    'config' => [
-                        'appearance' => [
-                            'elementBrowserAllowed' => $options['allowList'],
-                        ],
-                    ],
-                ],
-            ]);
-        } else {
-            $this->field->addConfig([
-                'overrideChildTca' => [
-                    'columns' => [
-                        'uid_local' => [
-                            'config' => [
-                                'appearance' => [
-                                    'elementBrowserAllowed' => $options['allowList'],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ]);
-        }
+        $options = $o->validate($options, ['allowUnknown' => true]);
         
+        $this->applyRelationFile($options);
         
-        // Apply settings for image cropping
-        // There seems to be no cropping capability for images in flex forms ?
-        if ($options['allowCrop'] && ! $this->isFlexForm()) {
-            // Build real crop variants array
-            $cropVariants = [];
-            foreach ($options['cropVariants'] as $k => $c) {
-                // Build aspect ratio list by converting the simple format to the TYPO3 format
-                if (! is_array($c['allowedAspectRatios'])) {
-                    $c['allowedAspectRatios'] = [];
-                }
-                
-                if (is_array($c['aspectRatios'])) {
-                    foreach ($c['aspectRatios'] as $ratio => $label) {
-                        if ($ratio === 'free') {
-                            $ratio = 'NaN';
-                        }
-                        $value = 0;
-                        if ($ratio !== 'NaN') {
-                            $ratioParts = array_map('trim', explode(':', $ratio));
-                            if (count($ratioParts) !== 2 || ! is_numeric($ratioParts[0]) || ! is_numeric($ratioParts[1])
-                                || (int)$ratioParts[1] === 0) {
-                                throw new TcaBuilderException("Invalid image ratio definition: \"$ratio\" given!");
-                            }
-                            $value = $ratioParts[0] / $ratioParts[1];
-                        }
-                        $c['allowedAspectRatios'][$ratio] = [
-                            'title' => $label,
-                            'value' => $value,
-                        ];
-                    }
-                }
-                unset($c['aspectRatios']);
-                
-                // Add the selected aspect ratio if it is not defined
-                if (! isset($c['selectedRatio']) && ! empty($c['allowedAspectRatios'])) {
-                    reset($c['allowedAspectRatios']);
-                    $c['selectedRatio'] = key($c['allowedAspectRatios']);
-                }
-                
-                // Add the crop area if it is not defined
-                if (! isset($c['cropArea'])) {
-                    $c['cropArea'] = [
-                        'height' => 1.0,
-                        'width' => 1.0,
-                        'x' => 0.0,
-                        'y' => 0.0,
-                    ];
-                }
-                
-                // Make sure we have a default crop variant
-                if (is_numeric($k)) {
-                    if (! isset($cropVariants['default']) && ! isset($options['cropVariants']['default'])) {
-                        $k = 'default';
-                    } else {
-                        throw new TcaBuilderException('Invalid crop variant list given. elements must have unique, non-numeric keys! Key: '
-                                                      . $k . ' is therefore invalid!');
-                    }
-                }
-                
-                $cropVariants[$k] = $c;
-            }
-            
-            // Check if default variant is disabled
-            if ($options['useDefaultCropVariant'] === false) {
-                $cropVariants['default']['disabled'] = 1;
-            }
-            
-            // Prepare crop config
-            $cropConfig = [
-                'type' => 'imageManipulation',
-            ];
-            if (! empty($cropVariants)) {
-                $cropConfig['cropVariants'] = $cropVariants;
-            }
-            
-            // Update the tca definition
-            $this->field->addConfig([
-                // TCA
-                'overrideChildTca' => [
-                    'columns' => [
-                        'crop' => [
-                            'config' => $cropConfig,
-                        ],
-                    ],
-                    'types' => [
-                        File::FILETYPE_UNKNOWN => [
-                            'showitem' => '--palette--;;imageoverlayPalette, --palette--;;filePalette',
-                        ],
-                        File::FILETYPE_IMAGE => [
-                            'showitem' => '--palette--;;imageoverlayPalette, --palette--;;filePalette',
-                        ],
-                    ],
-                ],
-            ]);
-        }
+        $this->field->addConfig($o->apply());
     }
     
     /**

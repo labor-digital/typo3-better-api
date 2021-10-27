@@ -41,14 +41,9 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
     use LocallyCachedStatePropertyTrait;
     
     /**
-     * @var TcaBuilderContext
+     * @var FieldPresetContext
      */
     protected $context;
-    
-    /**
-     * @var AbstractField
-     */
-    protected $field;
     
     /**
      * The list of presets that have been configured
@@ -82,8 +77,9 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
      */
     public function configureField(AbstractField $field, TcaBuilderContext $context): self
     {
-        $this->field = $field;
-        $this->context = $context;
+        $this->context = $this->context ?? $this->makeInstance(FieldPresetContext::class, [$context]);
+        
+        FieldPresetContext::setField($this->context, $field);
         
         return $this;
     }
@@ -105,13 +101,15 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
      */
     public function __call($name, $arguments)
     {
-        if (! $this->field || ! $this->context) {
+        if (! $this->context) {
             throw new TcaBuilderException('You can\'t apply a preset without configuring a field beforehand!');
         }
         
+        $field = $this->context->getField();
+        
         if (! $this->hasPreset($name)) {
             $this->logger->error('Field preset applier failed to apply a preset with name: ' . $name
-                                 . ' for field: ' . $this->field->getId() . ' because the preset was not registered!');
+                                 . ' for field: ' . $field->getId() . ' because the preset was not registered!');
             
             return $this;
         }
@@ -121,11 +119,13 @@ class FieldPresetApplier implements SingletonInterface, LoggerAwareInterface
         /** @var \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetInterface $i */
         $i = $this->makeInstance($definition[0]);
         $i->setContext($this->context);
-        $i->setField($this->field);
+        
+        // @todo remove this in v12
+        $i->setField($field);
         
         call_user_func_array([$i, $definition[1]], $arguments);
         
-        return $this->field;
+        return $field;
     }
     
     

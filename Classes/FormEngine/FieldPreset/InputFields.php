@@ -28,8 +28,14 @@ use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\FormEngine\UserFunc\SlugPrefixProvider;
 use LaborDigital\T3ba\FormEngine\UserFunc\SlugPrefixProviderInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\DateEvalOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\DefaultOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InputSizeOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\LegacyReadOnlyOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxLengthOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\PlaceholderOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
-use Neunerlei\Options\Options;
 use Neunerlei\TinyTimy\DateTimy;
 
 class InputFields extends AbstractFieldPreset
@@ -69,33 +75,24 @@ class InputFields extends AbstractFieldPreset
      */
     public function applyInput(array $options = []): void
     {
-        // Prepare the options
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addMinMaxLengthOptions(
-                    $this->addReadOnlyOptions(
-                        $this->addPlaceholderOption(
-                            $this->addDefaultOptions(
-                                $this->addInputSizeOption([])
-                            )
-                        )
-                    )
-                )
-            )
+        $o = $this->initializeOptions(
+            [
+                new InputSizeOption(),
+                new DefaultOption(),
+                new PlaceholderOption(),
+                new LegacyReadOnlyOption(),
+                new MinMaxLengthOption(null, null, true),
+                new EvalOption(),
+            ]
         );
         
-        // Prepare the config
-        $config = ['type' => 'input', 'size' => $options['size']];
+        $o->validate($options);
         
-        $config = $this->addDefaultConfig($config, $options);
-        $config = $this->addReadOnlyConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options);
-        $config = $this->addMaxLengthConfig($config, $options, true);
-        $config = $this->addPlaceholderConfig($config, $options);
-        
-        // Done
-        $this->field->addConfig($config);
+        $this->field->addConfig(
+            $o->apply([
+                'type' => 'input',
+            ])
+        );
     }
     
     /**
@@ -117,62 +114,50 @@ class InputFields extends AbstractFieldPreset
      */
     public function applyDate(array $options = []): void
     {
-        // Prepare options
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addDefaultOptions(
-                    $this->addInputSizeOption([
-                        'withTime' => [
-                            'type' => 'bool',
-                            'default' => false,
-                        ],
-                        'asInt' => [
-                            'type' => 'bool',
-                            'default' => true,
-                        ],
-                    ])
-                    , ['null', 'string', 'number', DateTime::class, DateTimy::class], null)
-                , ['required', 'trim']
-            )
+        $o = $this->initializeOptions([
+            'withTime' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'asInt' => [
+                'type' => 'bool',
+                'default' => true,
+            ],
+            new InputSizeOption(),
+            new DefaultOption(null, ['null', 'string', 'number', DateTime::class, DateTimy::class]),
+            new DateEvalOption(),
+        ]);
+        
+        $options = $o->validate($options);
+        
+        $this->context->configureSqlColumn(
+            static function (Column $column) use ($options) {
+                if ($options['asInt']) {
+                    $column->setType(new IntegerType())
+                           ->setLength(10)
+                           ->setDefault(0);
+                } else {
+                    $column
+                        ->setType(new DateTimeType())
+                        ->setDefault('CURRENT_TIMESTAMP');
+                }
+            }
         );
         
-        // Set sql statement
-        $this->configureSqlColumn(static function (Column $column) use ($options) {
-            if ($options['asInt']) {
-                $column->setType(new IntegerType())
-                       ->setLength(10)
-                       ->setDefault(0);
-            } else {
-                $column
-                    ->setType(new DateTimeType())
-                    ->setDefault('CURRENT_TIMESTAMP');
-            }
-        });
+        $config = $o->apply(
+            [
+                'type' => 'input',
+                'renderType' => 'inputDateTime',
+                'dbType' => $options['asInt'] ? null : 'datetime',
+            ]
+        );
         
-        // Prepare the config
-        $config = [
-            'type' => 'input',
-            'size' => $options['size'],
-            'renderType' => 'inputDateTime',
-        ];
-        
+        // As this field is special, we need to override the default value to add the value in the correct format
         if ($options['default'] !== null) {
             $date = new DateTimy($options['default']);
             $config['default'] = $options['asInt'] ? $date->getTimestamp() : $date->formatSql();
         }
         
-        $options[$options['withTime'] ? 'datetime' : 'date'] = true;
-        
-        $config = $this->addEvalConfig($config, $options);
-        
-        if (! $options['asInt']) {
-            $config['dbType'] = 'datetime';
-        } else {
-            $config['eval'] .= ',int';
-        }
-        
-        // Done
         $this->field->addConfig($config);
     }
     
@@ -210,69 +195,59 @@ class InputFields extends AbstractFieldPreset
      */
     public function applyLink(array $options = []): void
     {
-        array_map(static function (array $def): array {
-            return [
-                'type' => 'bool',
-                'default' => $def[1],
-            ];
-        }, static::BLINDABLE_LINK_OPTIONS);
-        
-        // Prepare the options
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addMinMaxLengthOptions(
-                    $this->addDefaultOptions(
-                        $this->addInputSizeOption(
-                            array_merge(
+        $o = $this->initializeOptions(
+            array_merge(
                 
-                                array_map(static function (array $def): array {
-                                    return [
-                                        'type' => 'bool',
-                                        'default' => $def[1],
-                                    ];
-                                }, static::BLINDABLE_LINK_OPTIONS),
+                array_map(static function (array $def): array {
+                    return [
+                        'type' => 'bool',
+                        'default' => $def[1],
+                    ];
+                }, static::BLINDABLE_LINK_OPTIONS),
                 
-                                [
-                                    'allowLinkSets' => [
-                                        'type' => ['bool', 'array'],
-                                        'default' => false,
-                                    ],
-                                    'hideClutter' => [
-                                        'type' => 'bool',
-                                        'default' => true,
-                                    ],
-                                    'blindFields' => [
-                                        'type' => ['array', 'true', 'null'],
-                                        'default' => null,
-                                        'filter' => static function ($value, $_, array $options) {
-                                            if (is_array($value)) {
-                                                return $value;
-                                            }
+                [
+                    'allowLinkSets' => [
+                        'type' => ['bool', 'array'],
+                        'default' => false,
+                    ],
+                    // @todo remove this in the next major release
+                    'hideClutter' => [
+                        'type' => 'bool',
+                        'default' => true,
+                    ],
+                    'blindFields' => [
+                        'type' => ['array', 'true', 'null'],
+                        'default' => null,
+                        'filter' => static function ($value, $_, array $options) {
+                            if (is_array($value)) {
+                                return $value;
+                            }
                             
-                                            if ($value === true) {
-                                                return ['class', 'params', 'target', 'title'];
-                                            }
+                            if ($value === true) {
+                                return ['class', 'params', 'target', 'title'];
+                            }
                             
-                                            // @todo remove this in the next major release
-                                            if (! $options['hideClutter']) {
-                                                return [];
-                                            }
+                            // @todo remove this in the next major release
+                            if (! $options['hideClutter']) {
+                                return [];
+                            }
                             
-                                            return ['class', 'params'];
-                                        },
-                                    ],
-                                ]
-                            )
-                        )
-                    ), 2048
-                ),
-                ['required', 'trim'],
-                ['trim' => true]
+                            return ['class', 'params'];
+                        },
+                    ],
+                    
+                    new InputSizeOption(),
+                    new DefaultOption(),
+                    new MinMaxLengthOption(2048, null, true),
+                    new EvalOption(['required', 'trim'], ['trim' => true]),
+                ]
             )
         );
-    
+        
+        $options = $o->validate($options);
+        
         // Handle "hideClutter" deprecation
+        // @todo remove this in the next major release
         if (! $options['hideClutter']) {
             $table = $this->field->getForm()->getTableName();
             $field = $this->field->getId();
@@ -281,7 +256,7 @@ class InputFields extends AbstractFieldPreset
                 E_USER_DEPRECATED
             );
         }
-    
+        
         $blindOptions = array_filter(
             array_values(
                 array_map(static function (string $key, array $def) use ($options): ?string {
@@ -290,28 +265,24 @@ class InputFields extends AbstractFieldPreset
             )
         );
         $blindOptions[] = '@linkSets:' . urlencode(SerializerUtil::serializeJson($options['allowLinkSets']));
-    
-        // Prepare the config
-        $config = [
-            'type' => 'input',
-            'size' => $options['size'],
-            'softref' => 'typolink,typolink_tag,images,url',
-            'renderType' => 'inputLink',
-            'fieldControl' => [
-                'linkPopup' => [
-                    'options' => [
-                        'blindLinkOptions' => implode(',', $blindOptions),
-                        'blindLinkFields' => implode(',', $options['blindFields']),
+        
+        $this->field->addConfig(
+            $o->apply(
+                [
+                    'type' => 'input',
+                    'softref' => 'typolink,typolink_tag,images,url',
+                    'renderType' => 'inputLink',
+                    'fieldControl' => [
+                        'linkPopup' => [
+                            'options' => [
+                                'blindLinkOptions' => implode(',', $blindOptions),
+                                'blindLinkFields' => implode(',', $options['blindFields']),
+                            ],
+                        ],
                     ],
-                ],
-            ],
-        ];
-    
-        $config = $this->addDefaultConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options);
-        $config = $this->addMaxLengthConfig($config, $options, true);
-    
-        $this->field->addConfig($config);
+                ]
+            )
+        );
     }
     
     /**
@@ -373,43 +344,44 @@ class InputFields extends AbstractFieldPreset
      */
     public function applySlug(array $fields, array $options = []): void
     {
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addDefaultOptions(
-                    [
-                        'separator' => [
-                            'type' => 'string',
-                            'default' => '/',
-                        ],
-                        'replacements' => [
-                            'type' => 'array',
-                            'default' => ['/' => '-'],
-                        ],
-                        'prefix' => [
-                            'type' => 'string',
-                            'default' => '',
-                        ],
-                        'prefixProvider' => [
-                            'type' => 'string',
-                            'default' => SlugPrefixProvider::class,
-                            'validator' => static function (string $class) {
-                                if (! class_exists($class)) {
-                                    return 'The given class: ' . $class . ' does not exist!';
-                                }
-                                
-                                if (! in_array(SlugPrefixProviderInterface::class, class_implements($class), true)) {
-                                    return 'The given slug prefix provider: ' . $class
-                                           . ' must implement the required interface: '
-                                           . SlugPrefixProviderInterface::class;
-                                }
-                                
-                                return true;
-                            },
-                        ],
-                    ], ['string', 'number']
-                ), ['required', 'uniqueInSite'])
-        );
+        $o = $this->initializeOptions([
+            'separator' => [
+                'type' => 'string',
+                'default' => '/',
+            ],
+            'replacements' => [
+                'type' => 'array',
+                'default' => ['/' => '-'],
+            ],
+            'prefix' => [
+                'type' => 'string',
+                'default' => '',
+            ],
+            'prefixProvider' => [
+                'type' => 'string',
+                'default' => SlugPrefixProvider::class,
+                'validator' => static function (string $class) {
+                    if (! class_exists($class)) {
+                        return 'The given class: ' . $class . ' does not exist!';
+                    }
+                    
+                    if (! in_array(SlugPrefixProviderInterface::class, class_implements($class), true)) {
+                        return 'The given slug prefix provider: ' . $class
+                               . ' must implement the required interface: '
+                               . SlugPrefixProviderInterface::class;
+                    }
+                    
+                    return true;
+                },
+            ],
+            
+            new DefaultOption('', ['string', 'number']),
+            new EvalOption(['required', 'uniqueInSite']),
+            new MinMaxLengthOption(2048, null, true),
+            new InputSizeOption(),
+        ]);
+        
+        $options = $o->validate($options);
         
         // Sadly, TYPO3 sucks hard sometimes... The prefix provider does not get any information for
         // which field it is generating the slug for. So we have to get our prefix there, somehow...
@@ -418,33 +390,23 @@ class InputFields extends AbstractFieldPreset
             $prefixMethod = 'pre_' . bin2hex($options['prefix']);
         }
         
-        // Build the configuration
-        $config = [
-            'type' => 'slug',
-            'generatorOptions' => [
-                'fields' => $fields,
-                'fieldSeparator' => $options['separator'],
-                'prefixParentPageSlug' => false,
-                'replacements' => $options['replacements'],
-            ],
-            'appearance' => [
-                'prefix' => $options['prefixProvider'] . '->' . $prefixMethod,
-                'staticPrefix' => $options['prefix'],
-            ],
-            'prependSlash' => false,
-            'fallbackCharacter' => '-',
-            'size' => 50,
-        ];
-        
-        if ($this->field->isReadOnly()) {
-            $config['renderType'] = 'input';
-        }
-        
-        $config = $this->addDefaultConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options);
-        $config = $this->addMaxLengthConfig($config, ['maxLength' => 2048], true);
-        
-        // Inject the field configuration
-        $this->field->addConfig($config);
+        $this->field->addConfig(
+            [
+                'type' => 'slug',
+                'renderType' => $this->field->isReadOnly() ? 'input' : null,
+                'generatorOptions' => [
+                    'fields' => $fields,
+                    'fieldSeparator' => $options['separator'],
+                    'prefixParentPageSlug' => false,
+                    'replacements' => $options['replacements'],
+                ],
+                'appearance' => [
+                    'prefix' => $options['prefixProvider'] . '->' . $prefixMethod,
+                    'staticPrefix' => $options['prefix'],
+                ],
+                'prependSlash' => false,
+                'fallbackCharacter' => '-',
+            ]
+        );
     }
 }

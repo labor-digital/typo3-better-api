@@ -28,14 +28,16 @@ use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Sql\ColumnAdapter;
 use LaborDigital\T3ba\Tool\Sql\FallbackType;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
-use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaLabelTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
 class TcaField extends AbstractField
 {
-    use LayoutMetaTrait;
+    use LayoutMetaLabelTrait {
+        getLabel as getLabelRoot;
+    }
     use TcaDataHookCollectorAddonTrait;
     
     /**
@@ -45,14 +47,9 @@ class TcaField extends AbstractField
      */
     protected $flex;
     
-    /**
-     * @inheritDoc
-     */
-    public function setLabel(?string $label)
+    protected function getLayoutMetaLabelIdx(): int
     {
-        $this->layoutMeta[1] = $label ?? '';
-        
-        return parent::setLabel($label);
+        return 1;
     }
     
     /**
@@ -60,13 +57,15 @@ class TcaField extends AbstractField
      */
     public function getLabel(): string
     {
-        $label = $this->label ?? $this->layoutMeta[1] ?? '';
+        $label = $this->getLabelRoot();
+        
         if (empty($label)) {
             return Inflector::toHuman($this->getId());
         }
         
         return $label;
     }
+    
     
     /**
      * Returns the database table name for the current field

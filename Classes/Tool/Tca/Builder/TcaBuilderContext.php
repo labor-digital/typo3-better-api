@@ -26,6 +26,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 
 class TcaBuilderContext implements NoDiInterface
@@ -101,5 +102,31 @@ class TcaBuilderContext implements NoDiInterface
             'model',
             strtolower(Inflector::toCamelBack(substr(trim($tableName), 3))),
         ]));
+    }
+    
+    /**
+     * Helper which is used to generate a list of valid table names.
+     * It will always return an array of table names. If a comma separated string is given, it will be broken up into
+     * an array, if a ...table shorthand is given it will be resolved to the current extension's table name.
+     * Non-unique items will be dropped
+     *
+     * @param   string|array  $tableInput
+     *
+     * @return array
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
+     */
+    public function getRealTableNameList($tableInput): array
+    {
+        if (! is_array($tableInput)) {
+            if (is_string($tableInput)) {
+                $tableInput = Arrays::makeFromStringList($tableInput);
+            } else {
+                throw new TcaBuilderException('The given value for $table is invalid! Please use either an array of table names, or a single table as string!');
+            }
+        }
+        
+        return array_unique(
+            array_map([$this, 'getRealTableName'], $tableInput)
+        );
     }
 }

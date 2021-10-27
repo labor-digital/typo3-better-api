@@ -63,7 +63,7 @@ trait DumperGenericTrait
     }
     
     /**
-     * Dumps the a slim tca object with the data of a specific type
+     * Dumps a slim tca object with the data of a specific type
      *
      * @param   TcaTableType  $type
      *
@@ -131,9 +131,10 @@ trait DumperGenericTrait
             if ($child instanceof TcaPalette) {
                 $hasFieldsOrPallets = true;
                 $meta = $child->getLayoutMeta();
-                $meta[0] = $child->hasLabel() ? $child->getLabel() : '';
-                $meta[1] = $currentPalette = substr($child->getId(), 1);
                 $pointer[] = '--palette--;' . implode(';', $meta);
+                
+                $currentPalette = $meta[1];
+                $palettes[$currentPalette] = $child->getRaw();
                 
                 $paletteShowItem = [];
                 $pointer = &$paletteShowItem;
@@ -160,12 +161,12 @@ trait DumperGenericTrait
                 $hasFieldsOrPallets = true;
                 $fieldId = $child->getId();
                 $meta = $child->getLayoutMeta();
-    
+                
                 // If meta.1 (the label) is the same as the one configured -> don't define it in the string
                 if (! empty($meta[1]) && $meta[1] === $tca['columns'][$fieldId]['label']) {
                     unset($meta[1]);
                 }
-    
+                
                 $meta[0] = $fieldId;
                 ksort($meta);
                 $pointer[] = rtrim(implode(';', $meta), ';');

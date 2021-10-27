@@ -22,7 +22,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits;
 
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\WizardAllowEditOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\WizardAllowNewOption;
 
+/**
+ * @deprecated will be removed in v12 use the option container instead!
+ */
 trait FieldPresetGenericWizardsTrait
 {
     /**
@@ -31,13 +36,18 @@ trait FieldPresetGenericWizardsTrait
      * @param   array  $optionDefinition
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addAllowEditOptions(array $optionDefinition): array
     {
-        $optionDefinition['allowEdit'] = [
-            'type' => 'bool',
-            'default' => true,
-        ];
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            get_called_class() . '::prepareOptions([new ' . WizardAllowEditOption::class . '()])->apply($config, $options); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        (new WizardAllowEditOption())->addDefinition($optionDefinition);
         
         return $optionDefinition;
     }
@@ -49,19 +59,12 @@ trait FieldPresetGenericWizardsTrait
      * @param   array  $options  The current fields options to check if the wizard was enabled
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addAllowEditConfig(array $config, array $options): array
     {
-        if (! $options['allowEdit']) {
-            return $config;
-        }
-        
-        $config['fieldControl']['editPopup'] = [
-            'disabled' => false,
-            'options' => [
-                'title' => 't3ba.formPreset.editRecord',
-            ],
-        ];
+        (new WizardAllowEditOption())->applyConfig($config, $options);
         
         return $config;
     }
@@ -72,13 +75,18 @@ trait FieldPresetGenericWizardsTrait
      * @param   array  $optionDefinition
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addAllowNewOptions(array $optionDefinition): array
     {
-        $optionDefinition['allowNew'] = [
-            'type' => 'bool',
-            'default' => false,
-        ];
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            get_called_class() . '::prepareOptions([new ' . WizardAllowNewOption::class . '()])->apply($config, $options); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        (new WizardAllowNewOption())->addDefinition($optionDefinition);
         
         return $optionDefinition;
     }
@@ -90,21 +98,12 @@ trait FieldPresetGenericWizardsTrait
      * @param   array  $options  The current fields options to check if the wizard was enabled
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addAllowNewConfig(array $config, array $options): array
     {
-        if (! $options['allowNew']) {
-            return $config;
-        }
-        
-        $config['fieldControl']['addRecord'] = [
-            'disabled' => false,
-            'options' => [
-                'title' => 't3ba.formPreset.newRecord',
-                'setValue' => 'append',
-                'pid' => '###CURRENT_PID###',
-            ],
-        ];
+        (new WizardAllowNewOption())->applyConfig($config, $options);
         
         return $config;
     }

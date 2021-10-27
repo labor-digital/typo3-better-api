@@ -349,11 +349,13 @@ class Node implements NoDiInterface
     /**
      * Moves this node to a new position, defined by the position string.
      *
-     * @param   string  $position  The position to move the node to
+     * @param   string|array|Node  $position  Either the position to move the node to,
+     *                                        or the field will be added to the end of the FIRST possible tab.
+     *                                        Can be an array like this as well: ['before', 'field'] or ['before', $node]
      *
      * @see \LaborDigital\T3ba\Tool\Tca\Builder\Tree\Tree::parseMovePosition()
      */
-    public function moveTo(string $position): void
+    public function moveTo($position): void
     {
         [$insertMode, $pivotNode] = $this->tree->parseMovePosition($position);
         if ($pivotNode === null) {

@@ -27,10 +27,11 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
 use LaborDigital\T3ba\T3baFeatureToggles;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InlineForeignFieldOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxItemOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3ba\Upgrade\V11InlineUpgradeWizard;
-use Neunerlei\Options\Options;
 
 class Inline extends AbstractFieldPreset
 {
@@ -64,112 +65,45 @@ class Inline extends AbstractFieldPreset
      */
     public function applyInline($foreignTable, array $options = []): void
     {
-        if ($this->isInFlexFormSection()) {
+        if ($this->context->isInFlexFormSection()) {
             throw new TcaBuilderException(
                 'You can\'t create an inline relation on field: '
                 . $this->field->getId() . ' because they are not allowed in flex form sections!');
         }
         
-        $fieldLengthValidator = static function ($v) {
-            if (strlen($v) > 64) {
-                return 'The configured field is too long, you a field name can have 64 characters at max!';
-            }
-            
-            return true;
-        };
+        $o = $this->initializeOptions([
+            new EvalOption(['required']),
+            new MinMaxItemOption(),
+            new InlineForeignFieldOption($foreignTable),
+        ]);
         
-        $options = Options::make(
-            $options,
-            $this->addMinMaxItemOptions(
-                $this->addEvalOptions(
-                    [
-                        'foreignField' => [
-                            'type' => 'string',
-                            'default' => 't3ba_inline',
-                            'validator' => $fieldLengthValidator,
-                        ],
-                        'foreignSortByField' => [
-                            'type' => 'string',
-                            'default' => 't3ba_inline_sorting',
-                            'validator' => $fieldLengthValidator,
-                        ],
-                        'foreignTableNameField' => [
-                            'type' => 'string',
-                            'default' => 't3ba_inline_table',
-                            'validator' => $fieldLengthValidator,
-                        ],
-                        'foreignFieldNameField' => [
-                            'type' => 'string',
-                            'default' => 't3ba_inline_field',
-                            'validator' => $fieldLengthValidator,
-                        ],
+        $this->context->configureSqlColumn(
+            static function (Column $column) {
+                $column->setType(new IntegerType())
+                       ->setDefault(0)
+                       ->setLength(11);
+            }
+        );
+        
+        $o->validate($options);
+        
+        $this->field->addConfig(
+            $o->apply([
+                    'type' => 'inline',
+                    'renderType' => '__UNSET',
+                    'appearance' => [
+                        'collapseAll' => true,
+                        'expandSingle' => true,
+                        'useSortable' => true,
+                        'showPossibleLocalizationRecords' => true,
+                        'showRemovedLocalizationRecords' => true,
+                        'showAllLocalizationLink' => true,
+                        'showSynchronizationLink' => true,
                     ],
-                    ['required']
-                )
+                ]
             )
         );
         
-        // @todo remove this in v12
-        $isV11Definition = $this->context->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_INLINE_RELATIONS);
-        
-        $foreignTableName = $this->context->getRealTableName($foreignTable);
-        
-        $config = [
-            'type' => 'inline',
-            'renderType' => '__UNSET',
-            'foreign_table' => $foreignTableName,
-            'foreign_field' => $options['foreignField'],
-            'foreign_sortby' => $options['foreignSortByField'],
-            'appearance' => [
-                'collapseAll' => true,
-                'expandSingle' => true,
-                'useSortable' => true,
-                'showPossibleLocalizationRecords' => true,
-                'showRemovedLocalizationRecords' => true,
-                'showAllLocalizationLink' => true,
-                'showSynchronizationLink' => true,
-            ],
-        ];
-        
-        if ($isV11Definition) {
-            $config['foreign_match_fields'] = [$options['foreignFieldNameField'] => $this->field->getId()];
-            $config['foreign_table_field'] = $options['foreignTableNameField'];
-        }
-        
-        $config = $this->addMinMaxItemConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options, ['required']);
-        
-        // Add columns to foreign table
-        $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
-        foreach ([$options['foreignField'], $options['foreignSortByField']] as $foreignField) {
-            if (! $table->hasColumn($foreignField, true)) {
-                $table->addColumn($foreignField, 'integer')
-                      ->setDefault(0)
-                      ->setLength(11);
-            }
-        }
-        
-        if ($isV11Definition) {
-            foreach ([$options['foreignFieldNameField'], $options['foreignTableNameField']] as $foreignField) {
-                if (! $table->hasColumn($foreignField, true)) {
-                    $table->addColumn($foreignField, 'string')
-                          ->setDefault('')
-                          ->setLength(128);
-                }
-            }
-        }
-        
-        // Configure column on local table
-        $this->configureSqlColumn(static function (Column $column) {
-            $column->setType(new IntegerType())
-                   ->setDefault(0)
-                   ->setLength(11);
-        });
-        
-        // Register upgrade wizard to v11 inline definition
-        $config['t3ba']['deprecated'][V11InlineUpgradeWizard::class] = true;
-        
-        $this->field->addConfig($config);
     }
     
     /**
@@ -243,7 +177,7 @@ class Inline extends AbstractFieldPreset
         }
         
         // When we are creating an inline content relation on the tt_content table,
-        // we automatically inject a item proc func to the colPos column, so we can
+        // we automatically inject an item proc func to the colPos column, so we can
         // hide the contents on the "page" view.
         $this->field->addConfig([
             'overrideChildTca' => [

@@ -198,6 +198,37 @@ class TcaTable extends AbstractTypeList
     }
     
     /**
+     * All changes to table "palettes" will normally be done "per-type", meaning if a palette exists globally on a table,
+     * and a single type modifies its content a new variant for this type is auto-created. This avoids unexpected side-effects
+     * when working with palettes on multiple types.
+     *
+     * While this works in 90% of all use-cases this approach has some drawbacks,
+     * when you want to modify existing tables, especially core tables like tt_content or sys_file_reference.
+     *
+     * For this reason you can use this method to modify the palettes on all types that have the palette in question.
+     *
+     * @param   string    $paletteName  The name of the palette you want to modify
+     * @param   callable  $callback     A callback which receives the instance of the palette and the type that contains the palette.
+     *                                  Something like: function (TcaPalette $palette) {$palette->getField('...');}
+     *
+     * @return $this
+     */
+    public function modifyPaletteGlobally(string $paletteName, callable $callback): self
+    {
+        foreach ($this->getTypeNames() as $typeName) {
+            $type = $this->getType($typeName);
+            
+            if (! $type->hasPalette($paletteName) && $typeName !== $this->getDefaultTypeName()) {
+                continue;
+            }
+            
+            $callback($type->getPalette($paletteName), $type);
+        }
+        
+        return $this;
+    }
+    
+    /**
      * @inheritDoc
      */
     protected function loadType($typeName): AbstractType

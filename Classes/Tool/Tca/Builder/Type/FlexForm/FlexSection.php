@@ -94,4 +94,25 @@ class FlexSection extends AbstractContainer
         return $this;
     }
     
+    /**
+     * Returns the instance of a certain field inside your current layout
+     *
+     * Note: If the field not exists, a new one will be created at the end of the form
+     *
+     * Note: This method supports the usage of paths. FlexForm fields inside of containers may have
+     * the same id's. Which makes the lookup of such fields ambiguous. There is not much you can do about that, tho...
+     * To select such fields you can either select the section and then the field inside it. Or you use paths
+     * on a method like this. A path looks like: "section->field" the "->" works as a separator between the parts of
+     * the path. As you see there is no Tab definition, like 0 or 1. Because we will look for "section" in all existing
+     * tabs.
+     *
+     * @param   string  $id  The id / column name of this field in the database
+     *
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexField
+     */
+    public function getField(string $id): FlexField
+    {
+        return $this->getForm()->getField($id);
+    }
+    
 }
