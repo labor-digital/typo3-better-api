@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.15.1](https://github.com/labor-digital/typo3-better-api/compare/v10.15.0...v10.15.1) (2021-10-27)
+
+
+### Bug Fixes
+
+* **FieldOption\EvalOption:** ensure that allowed types are actually allowed ([c039c73](https://github.com/labor-digital/typo3-better-api/commit/c039c738ebd68a8d351cffba2c17c71193c8a2e4))
+* **FormEngine\Inline:** ensure inline contents don't show up in the list view ([1dd144d](https://github.com/labor-digital/typo3-better-api/commit/1dd144d0e7d37e005975af027e011e4d1ac6509f))
+* **Tca\Field:** return $this in inheritFrom() method ([919ba48](https://github.com/labor-digital/typo3-better-api/commit/919ba48e29dbf361d9e2a2f5c9435773702d1fbc))
+
 ## [10.15.0](https://github.com/labor-digital/typo3-better-api/compare/v10.14.0...v10.15.0) (2021-10-27)
 
 
