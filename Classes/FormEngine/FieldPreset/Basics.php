@@ -24,8 +24,14 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\StringType;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\DefaultOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InputSizeOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxItemOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxLengthOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\SelectItemsOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\UserFuncOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
-use Neunerlei\Options\Options;
 
 class Basics extends AbstractFieldPreset
 {
@@ -54,42 +60,38 @@ class Basics extends AbstractFieldPreset
      */
     public function applyCheckbox(array $options = []): void
     {
-        // Prepare the options
-        $options = Options::make($options,
-            $this->addDefaultOptions(
-                [
-                    'toggle' => [
-                        'type' => 'bool',
-                        'default' => false,
-                    ],
-                    'inverted' => [
-                        'type' => 'bool',
-                        'default' => false,
-                    ],
-                ], ['bool'], false
-            )
+        $o = $this->initializeOptions([
+            'toggle' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'inverted' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            new DefaultOption(false, ['bool']),
+        ]);
+        
+        $options = $o->validate($options);
+        
+        $this->context->configureSqlColumn(
+            static function (Column $column) {
+                $column
+                    ->setType(new IntegerType())
+                    ->setLength(4)
+                    ->setDefault(0);
+            }
         );
         
-        // Prepare the config
-        $config = ['type' => 'check'];
-        $config['default'] = (int)$options['default'];
-        if ($options['toggle']) {
-            $config['renderType'] = 'checkboxToggle';
-        }
-        if ($options['inverted']) {
-            $config['items'] = [[0 => '', 1 => '', 'invertStateDisplay' => true,]];
-        }
-        
-        // Set sql config
-        $this->configureSqlColumn(static function (Column $column) {
-            $column
-                ->setType(new IntegerType())
-                ->setLength(4)
-                ->setDefault(0);
-        });
-        
-        // Done
-        $this->field->addConfig($config);
+        $this->field->addConfig(
+            $o->apply(
+                [
+                    'type' => 'check',
+                    'renderType' => $options['toggle'] ? 'checkboxToggle' : null,
+                    'items' => $options['inverted'] ? [[0 => '', 1 => '', 'invertStateDisplay' => true]] : null,
+                ]
+            )
+        );
     }
     
     /**
@@ -112,54 +114,36 @@ class Basics extends AbstractFieldPreset
      */
     public function applyTextArea(array $options = []): void
     {
-        // Prepare the options
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addMinMaxLengthOptions(
-                    $this->addDefaultOptions(
-                        $this->addInputSizeOption(
-                            [
-                                'rows' => [
-                                    'type' => 'int',
-                                    'default' => 5,
-                                ],
-                                'rte' => [
-                                    'type' => 'bool',
-                                    'default' => false,
-                                ],
-                                'rteConfig' => [
-                                    'type' => 'string',
-                                    'default' => '',
-                                ],
-                            ], 'cols'
-                        )
-                    ),
-                    60000
-                )
-            )
+        $o = $this->initializeOptions([
+            'rows' => [
+                'type' => 'int',
+                'default' => 5,
+            ],
+            'rte' => [
+                'type' => 'bool',
+                'default' => false,
+            ],
+            'rteConfig' => [
+                'type' => 'string',
+                'default' => '',
+            ],
+            new InputSizeOption('cols'),
+            new DefaultOption(),
+            new MinMaxLengthOption(60000, 0, true),
+            new EvalOption(),
+        ]);
+        
+        $options = $o->validate($options);
+        
+        $this->field->addConfig(
+            $o->apply([
+                'type' => 'text',
+                'rows' => $options['rows'],
+                'enableRichtext' => $options['rte'] ? true : null,
+                'richtextConfiguration' => $options['rte'] && ! empty($options['rteConfig'])
+                    ? $options['rteConfig'] : null,
+            ])
         );
-        
-        $config = [
-            'type' => 'text',
-            'rows' => $options['rows'],
-            'cols' => $options['cols'],
-        ];
-        
-        $config = $this->addDefaultConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options);
-        $config = $this->addMaxLengthConfig($config, $options, true);
-        
-        // Add rte config
-        if ($options['rte']) {
-            $config['enableRichtext'] = true;
-            if (! empty($options['rteConfig'])) {
-                $config['richtextConfiguration'] = $options['rteConfig'];
-            }
-        }
-        
-        // Done
-        $this->field->addConfig($config);
     }
     
     /**
@@ -179,79 +163,37 @@ class Basics extends AbstractFieldPreset
      *                           - required bool: If set this field will be required to be filled
      *                           - default string|number: If given this is used as default value when a new record is
      *                           created
-     *                           - userFunc string: Can be given like any select itemProcFunc in typo3 as:
+     *                           - userFunc string: Can be given like any select itemProcFunc in TYPO3 as:
      *                           vendor\className->methodName and is used as a filter for the items in the select field
      *
      */
     public function applySelect(array $items, array $options = []): void
     {
-        // Prepare the options
-        $options = Options::make(
-            $options,
-            $this->addEvalOptions(
-                $this->addMinMaxItemOptions(
-                    $this->addDefaultOptions(
-                        [
-                            'userFunc' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                        ], ['string', 'number', 'null'], null
-                    ), ['maxItems' => 1]
-                ),
-                ['required']
-            )
+        $o = $this->initializeOptions([
+            new UserFuncOption(),
+            new SelectItemsOption($items),
+            new DefaultOption(null, ['string', 'number', 'null']),
+            new MinMaxItemOption(1),
+            new EvalOption(['required']),
+        ]);
+        
+        $options = $o->validate($options);
+        
+        $this->context->configureSqlColumn(
+            static function (Column $column) {
+                $column->setType(new StringType())
+                       ->setLength(1024)
+                       ->setDefault('');
+            }
         );
         
-        // Convert the items array
-        $itemsFiltered = [];
-        foreach ($items as $k => $v) {
-            if (is_array($v)) {
-                // Ignore invalid configuration
-                if (! isset($v[0], $v[1]) || (! is_string($v[1]) && ! is_bool($v[1]))) {
-                    continue;
-                }
-                
-                // Handle specials
-                if ($v[1] === true) {
-                    // Handle an option group
-                    $v = [$v[0] ?? '', '--div--'];
-                } elseif (is_string($v[1])) {
-                    // Handle an icon identifier
-                    $v = [$v[0], $k, $v[1]];
-                } else {
-                    continue;
-                }
-            } else {
-                $v = [$v, $k];
-            }
-            
-            $itemsFiltered[] = $v;
-        }
-        
-        // Build the config
-        $config = [
-            'type' => 'select',
-            'renderType' => $options['maxItems'] <= 1 ? 'selectSingle' : 'selectCheckBox',
-            'size' => 1,
-            'items' => $itemsFiltered,
-        ];
-        
-        if (! empty($options['userFunc'])) {
-            $config['itemsProcFunc'] = $options['userFunc'];
-        }
-        
-        $config = $this->addDefaultConfig($config, $options);
-        $config = $this->addMinMaxItemConfig($config, $options);
-        $config = $this->addEvalConfig($config, $options);
-        $this->configureSqlColumn(static function (Column $column) {
-            $column->setType(new StringType())
-                   ->setLength(1024)
-                   ->setDefault('');
-        });
-        
-        // Set the field
-        $this->field->addConfig($config);
+        $this->field->addConfig(
+            $o->apply([
+                'type' => 'select',
+                'renderType' => $options['maxItems'] <= 1 ? 'selectSingle' : 'selectCheckBox',
+                'size' => 1,
+            ])
+        );
     }
     
     /**
@@ -267,17 +209,21 @@ class Basics extends AbstractFieldPreset
         if (! $this->field->hasLabel()) {
             $this->field->setLabel('t3ba.t.sys_file_reference.imageAlignment');
         }
-        $this->applySelect([
-            'tl' => 't3ba.t.sys_file_reference.imageAlignment.topLeft',
-            'tc' => 't3ba.t.sys_file_reference.imageAlignment.topCenter',
-            'tr' => 't3ba.t.sys_file_reference.imageAlignment.topRight',
-            'cl' => 't3ba.t.sys_file_reference.imageAlignment.centerLeft',
-            'cc' => 't3ba.t.sys_file_reference.imageAlignment.centerCenter',
-            'cr' => 't3ba.t.sys_file_reference.imageAlignment.centerRight',
-            'bl' => 't3ba.t.sys_file_reference.imageAlignment.bottomLeft',
-            'bc' => 't3ba.t.sys_file_reference.imageAlignment.bottomCenter',
-            'br' => 't3ba.t.sys_file_reference.imageAlignment.bottomRight',
-        ], ['default' => 'cc']);
+        
+        $this->applySelect(
+            [
+                'tl' => 't3ba.t.sys_file_reference.imageAlignment.topLeft',
+                'tc' => 't3ba.t.sys_file_reference.imageAlignment.topCenter',
+                'tr' => 't3ba.t.sys_file_reference.imageAlignment.topRight',
+                'cl' => 't3ba.t.sys_file_reference.imageAlignment.centerLeft',
+                'cc' => 't3ba.t.sys_file_reference.imageAlignment.centerCenter',
+                'cr' => 't3ba.t.sys_file_reference.imageAlignment.centerRight',
+                'bl' => 't3ba.t.sys_file_reference.imageAlignment.bottomLeft',
+                'bc' => 't3ba.t.sys_file_reference.imageAlignment.bottomCenter',
+                'br' => 't3ba.t.sys_file_reference.imageAlignment.bottomRight',
+            ],
+            ['default' => 'cc']
+        );
     }
     
     /**

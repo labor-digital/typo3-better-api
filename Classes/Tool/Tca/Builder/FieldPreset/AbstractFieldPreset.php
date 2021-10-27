@@ -39,22 +39,18 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset;
 
 
-use Doctrine\DBAL\Schema\Column;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\Container;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetBasePidTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetEvalTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetGenericWizardsTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetMinMaxTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetMmTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits\FieldPresetOptionDeprecationTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
-use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
-use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\FlexSection;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
-use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
-use Neunerlei\Arrays\Arrays;
 
 abstract class AbstractFieldPreset implements FieldPresetInterface
 {
@@ -64,23 +60,26 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     use FieldPresetBasePidTrait;
     use FieldPresetMinMaxTrait;
     use FieldPresetGenericWizardsTrait;
+    use FieldPresetOptionDeprecationTrait;
     
     /**
      * Holds the instance of the form field to configure
      *
      * @var \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField
+     * @todo make this a read only property in v11 and up and read the value from $this->context->getField()
      */
     protected $field;
     
     /**
      * The context of the field
      *
-     * @var \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetContext
      */
     protected $context;
     
     /**
      * @inheritDoc
+     * @deprecated will be replaced in v11 with "initialize($field, $context)", support will be dropped in v12
      */
     public function setField(AbstractField $field): void
     {
@@ -96,259 +95,129 @@ abstract class AbstractFieldPreset implements FieldPresetInterface
     }
     
     /**
-     * Internal helper which is used to add the "readOnly" option to the field configuration
+     * Helper to create an option container for your field preset.
+     * The option container is an extension on the Options::make syntax and is specifically designed to apply field definitions to a config array
      *
-     * @param   array  $optionDefinition
+     * @param   array  $definition  The same syntax as in {@link \Neunerlei\Options\Options::make()}, ADDITIONALLY all objects in the array that extend the
+     *                              {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\AbstractOption} class will be used to extend the $definition
+     *                              and apply their configuration when the "apply()" method of the container is executed
      *
-     * @return array
-     * @deprecated will be removed in v12 use the setReadOnly() method on a field instead     *
+     * @return \LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\Container
      */
-    protected function addReadOnlyOptions(array $optionDefinition): array
+    protected function initializeOptions(array $definition = []): Container
     {
-        $optionDefinition['readOnly'] = [
-            'type' => 'bool',
-            'default' => false,
-        ];
-        
-        return $optionDefinition;
-    }
-    
-    /**
-     * Internal helper to add the "read only" configuration to the config array if the matching option was set
-     *
-     * @param   array  $config
-     * @param   array  $options
-     *
-     * @return array
-     * @deprecated will be removed in v12 use the setReadOnly() method on a field instead
-     */
-    protected function addReadOnlyConfig(array $config, array $options): array
-    {
-        if ($options['readOnly'] === true) {
-            $table = $this->field->getForm()->getTableName();
-            $field = $this->field->getId();
-            trigger_error(
-                'Deprecated option in: ' . $table . '::' . $field . '. The "readOnly" option will be removed in v12, use the setReadOnly() method on a field instead',
-                E_USER_DEPRECATED
-            );
-            $config['readOnly'] = true;
-        }
-    
-        return $config;
-    }
-    
-    /**
-     * Adds the option to configure the "size" of an "input" field either using a percentage or integer value.
-     *
-     * @param   array        $optionDefinition
-     * @param   string|null  $optionName  default: "size", can be set to another name as well, (e.g. cols)
-     *
-     * @return array
-     */
-    protected function addInputSizeOption(array $optionDefinition, ?string $optionName = null): array
-    {
-        $optionDefinition[$optionName ?? 'size'] = [
-            'type' => ['int', 'string'],
-            'default' => '100%',
-            'filter' => static function ($val): int {
-                $minWidth = 10;
-                $maxWidth = 50;
-                if (is_string($val)) {
-                    if ($val === '100%') {
-                        return $maxWidth;
-                    }
-                    if (strpos(trim($val), '%') !== false) {
-                        $val = $maxWidth * (int)trim(trim($val), '% ');
-                    } else {
-                        $val = (int)$val;
-                    }
-                }
-                
-                return max($minWidth, min($maxWidth, $val));
-            },
-        ];
-        
-        return $optionDefinition;
-    }
-    
-    /**
-     * Internal helper to add a placeholder definition to the option array
-     *
-     * @param   array        $optionDefinition
-     * @param   string|null  $defaultPlaceholder  Optional default placeholder value
-     *
-     * @return array
-     */
-    protected function addPlaceholderOption(array $optionDefinition, ?string $defaultPlaceholder = null): array
-    {
-        $optionDefinition['placeholder'] = [
-            'type' => ['string', 'null'],
-            'default' => $defaultPlaceholder,
-        ];
-        
-        return $optionDefinition;
-    }
-    
-    /**
-     * Adds the placeholder config option to the config array of the field
-     *
-     * @param   array  $config
-     * @param   array  $options
-     *
-     * @return array
-     */
-    protected function addPlaceholderConfig(array $config, array $options): array
-    {
-        if (empty($options['placeholder'])) {
-            return $config;
-        }
-        $config['placeholder'] = $options['placeholder'];
-        
-        return $config;
-    }
-    
-    /**
-     * Provides the option definition for the "default" configuration
-     *
-     * @param   array       $optionDefinition
-     * @param   array|null  $type
-     * @param   mixed       $default
-     *
-     * @return array
-     */
-    protected function addDefaultOptions(array $optionDefinition, ?array $type = null, $default = ''): array
-    {
-        $optionDefinition['default'] = [
-            'type' => $type ?? ['string'],
-            'preFilter' => static function ($v) {
-                if (is_array($v) && count($v) === 2 && is_string($v[0] ?? null) && is_string($v[1] ?? null)) {
-                    return '@callback:' . $v[0] . '->' . $v[1];
-                }
-                
-                return $v;
-            },
-            'default' => $default,
-        ];
-        
-        return $optionDefinition;
-    }
-    
-    /**
-     * Adds the default configuration based on the given options
-     *
-     * @param   array  $config
-     * @param   array  $options
-     *
-     * @return array
-     */
-    protected function addDefaultConfig(array $config, array $options): array
-    {
-        if ($options['default'] !== null && $options['default'] !== '') {
-            $config['default'] = $options['default'];
-        }
-        
-        return $config;
+        return $this->makeInstance(Container::class, [$this->context, $definition]);
     }
     
     /**
      * Internal helper which is used to generate a list of valid table names.
      * It will always return an array of table names. If a comma separated string is given, it will be broken up into
-     * an array, if a ...table short hand is given it will be resolved to the current extension's table name.
-     * Non unique items will be dropped
+     * an array, if a ...table shorthand is given it will be resolved to the current extension's table name.
+     * Non-unique items will be dropped
      *
      * @param   string|array  $tableInput
      *
      * @return array
      * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
+     * @deprecated will be removed in v11 use $this->context->getRealTableNameList() instead
      */
     protected function generateTableNameList($tableInput): array
     {
-        if (! is_array($tableInput)) {
-            if (is_string($tableInput)) {
-                $tableInput = Arrays::makeFromStringList($tableInput);
-            } else {
-                throw new TcaBuilderException('The given value for $table is invalid! Please use either an array of table names, or a single table as string!');
-            }
-        }
-        
-        return array_unique(
-            array_map([$this->context, 'getRealTableName'], $tableInput)
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            '$this->context->' . __FUNCTION__ . '(); instead!',
+            E_USER_DEPRECATED
         );
         
+        return $this->context->getRealTableNameList($tableInput);
     }
     
     /**
      * Returns true if the currently configured field is the child of a flex form
      *
      * @return bool
+     * @deprecated will be removed in v11 use $this->context->isFlexForm() instead
      */
     protected function isFlexForm(): bool
     {
-        return $this->field->getForm() instanceof Flex;
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            '$this->context->' . __FUNCTION__ . '(); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        return $this->context->isFlexForm();
     }
     
     /**
      * Returns true if this field is in a repeatable flex form section.
      *
      * @return bool
+     * @deprecated will be removed in v11 use $this->context->isInFlexFormSection() instead
      */
     protected function isInFlexFormSection(): bool
     {
-        return $this->isFlexForm() && $this->field->getParent() instanceof FlexSection;
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            '$this->context->' . __FUNCTION__ . '(); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        return $this->context->isInFlexFormSection();
     }
     
     /**
      * Returns the instance of the tca table, even if this field is part of a flex form
      *
      * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable
+     * @deprecated will be removed in v11 use $this->context->getTcaTable() instead
      */
     protected function getTcaTable(): TcaTable
     {
-        if ($this->isFlexForm()) {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            $form = $this->field->getForm()->getContainingField()->getForm();
-        } else {
-            $form = $this->field->getForm();
-        }
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            '$this->context->' . __FUNCTION__ . '(); instead!',
+            E_USER_DEPRECATED
+        );
         
-        if ($form instanceof TcaTableType) {
-            $form = $form->getParent();
-        }
-        
-        return $form;
+        return $this->context->getTcaTable();
     }
     
     /**
      * Returns the tca field, even if the currently configured field is part of a flex form
      *
      * @return \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField
+     * @deprecated will be removed in v11 use $this->context->getTcaField() instead
      */
     protected function getTcaField(): TcaField
     {
-        if ($this->isFlexForm()) {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            return $this->field->getForm()->getContainingField();
-        }
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            '$this->context->' . __FUNCTION__ . '(); instead!',
+            E_USER_DEPRECATED
+        );
         
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->field;
+        return $this->context->getTcaField();
     }
     
     /**
      * Helper method that executes the given callback if the current field has a "getColumn()" method
-     * meaning it can have a SQL definition.
+     * meaning it can have an SQL definition.
      *
      * @param   callable  $callback  The callback receives the column definition to configure
      *
      * @return void
-     * @see \Doctrine\DBAL\Schema\Column
+     * @see        \Doctrine\DBAL\Schema\Column
+     * @deprecated will be removed in v11 use $this->context->configureSqlColumn() instead
      */
     protected function configureSqlColumn(callable $callback): void
     {
-        if (method_exists($this->field, 'getColumn')) {
-            /** @var Column $col */
-            $col = $this->field->getColumn();
-            $callback($col);
-        }
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            '$this->context->' . __FUNCTION__ . '($callback); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        $this->context->configureSqlColumn($callback);
     }
 }

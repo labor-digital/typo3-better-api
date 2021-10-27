@@ -22,23 +22,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits;
 
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
 
+/**
+ * @deprecated will be removed in v12 use the option container instead!
+ */
 trait FieldPresetEvalTrait
 {
-    protected $EVAL_TYPES
-        = [
-            'required',
-            'trim',
-            'date',
-            'datetime',
-            'lower',
-            'int',
-            'email',
-            'password',
-            'unique',
-            'uniqueInSite',
-            'null',
-        ];
+    protected $EVAL_TYPES = EvalOption::TYPES;
     
     /**
      * Internal helper to add the different eval options to the Options::make definition.
@@ -52,17 +43,18 @@ trait FieldPresetEvalTrait
      *                                    otherwise all eval rules start with a value of FALSE.
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addEvalOptions(array $optionDefinition, array $evalFilter = [], array $evalDefaults = []): array
     {
-        foreach ($this->EVAL_TYPES as $type) {
-            if (empty($evalFilter) || in_array($type, $evalFilter, true)) {
-                $optionDefinition[$type] = [
-                    'type' => 'bool',
-                    'default' => $evalDefaults[$type] ?? false,
-                ];
-            }
-        }
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            get_called_class() . '::prepareOptions([new ' . EvalOption::class . '()])->apply($config, $options); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        (new EvalOption($evalFilter, $evalDefaults))->addDefinition($optionDefinition);
         
         return $optionDefinition;
     }
@@ -76,24 +68,12 @@ trait FieldPresetEvalTrait
      *                                added as option
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addEvalConfig(array $config, array $options, array $evalFilter = []): array
     {
-        // Build the eval string
-        $eval = [];
-        foreach ($this->EVAL_TYPES as $type) {
-            if ($options[$type] === true && (empty($evalFilter) || in_array($type, $evalFilter, true))) {
-                $eval[] = $type;
-            }
-        }
-        $evalString = implode(',', $eval);
-        
-        // Add eval only if we got it configured
-        if (! empty($evalString)) {
-            $config['eval'] = $evalString;
-        } else {
-            unset($config['eval']);
-        }
+        (new EvalOption($evalFilter))->applyConfig($config, $options);
         
         return $config;
     }

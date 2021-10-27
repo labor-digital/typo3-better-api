@@ -58,6 +58,7 @@ interface FieldPresetInterface extends PublicServiceInterface
      * @param   AbstractField  $field
      *
      * @return void
+     * @deprecated will be no longer be used in v11, method will be dropped in v12
      */
     public function setField(AbstractField $field): void;
     

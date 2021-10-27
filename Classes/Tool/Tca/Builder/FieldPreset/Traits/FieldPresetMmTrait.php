@@ -23,41 +23,30 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits;
 
 
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Types\IntegerType;
-use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
-use LaborDigital\T3ba\T3baFeatureToggles;
-use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
-use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3ba\Upgrade\V11MmUpgradeWizard;
-use Neunerlei\Inflection\Inflector;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MmTableOption;
 
+/**
+ * @deprecated will be removed in v12 use the option container instead!
+ */
 trait FieldPresetMmTrait
 {
+    /**
+     * @param   array  $optionDefinition
+     * @param   bool   $withOpposite
+     *
+     * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
+     */
     protected function addMmTableOptions(array $optionDefinition, bool $withOpposite = true): array
     {
-        if ($withOpposite) {
-            $optionDefinition['mmOpposite'] = [
-                'type' => ['string', 'null'],
-                'default' => null,
-            ];
-        }
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            get_called_class() . '::prepareOptions([new ' . MmTableOption::class . '()])->apply($config, $options); instead!',
+            E_USER_DEPRECATED
+        );
         
-        $optionDefinition['mmTable'] = [
-            'type' => 'bool',
-            'default' => static function ($field, $given) {
-                if (! isset($given['maxItems'])) {
-                    return true;
-                }
-                
-                return ! ((int)$given['maxItems'] === 1);
-            },
-        ];
-        $optionDefinition['mmTableName'] = [
-            'type' => 'string',
-            'default' => '',
-        ];
+        (new MmTableOption($withOpposite ? 'pages' : null))->addDefinition($optionDefinition);
         
         return $optionDefinition;
     }
@@ -69,66 +58,15 @@ trait FieldPresetMmTrait
      * @param   array  $options
      *
      * @return array
+     *
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addMmTableConfig(array $config, array $options): array
     {
-        // Skip if we should not use an mm table
-        if ($options['mmTable'] === false) {
-            $this->configureSqlColumn(static function (Column $column) {
-                $column->setType(new TextType())
-                       ->setNotnull(false)
-                       ->setLength(SqlFieldLength::TEXT)
-                       ->setDefault('');
-            });
-            
-            return $config;
-        }
-        
-        // MM Tables are not supported in sections
-        if ($this->isInFlexFormSection()) {
-            unset($config['MM']);
-            
-            return $config;
-        }
-        
-        $tableName = $this->getTcaTable()->getTableName();
-        /** @var \LaborDigital\T3ba\Tool\Sql\SqlRegistry $sqlRegistry */
-        $sqlRegistry = $this->context->cs()->sqlRegistry;
-        
-        if ($this->cs()->typoContext->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_MM_TABLES)) {
-            $config['MM'] = $sqlRegistry->registerMmTable(
-                ! empty($options['mmTableName']) ? $options['mmTableName'] : $sqlRegistry->makeMmTableName($tableName)
-            );
-            
-            $config['MM_match_fields'] = [
-                'fieldname' =>
-                    $this->isFlexForm()
-                        ? $this->getTcaField()->getId() . '->' . $this->field->getId()
-                        : $this->field->getId(),
-            ];
-            
-        } else {
-            // @todo remove this in v12
-            $fieldId = Inflector::toUnderscore($this->field->getId());
-            if ($this->isFlexForm()) {
-                $fieldId = 'flex_' . Inflector::toUnderscore($this->getTcaField()->getId()) . '_' . $fieldId;
-            }
-            
-            $config['MM'] = $sqlRegistry->registerMmTable(
-                ! empty($options['mmTableName']) ? $options['mmTableName'] : $sqlRegistry->makeMmTableName($tableName, $fieldId)
-            );
-        }
-        
-        $config['t3ba']['deprecated'][V11MmUpgradeWizard::class] = true;
-        
-        $this->configureSqlColumn(static function (Column $column) {
-            $column->setType(new IntegerType())
-                   ->setNotnull(true)
-                   ->setLength(11)
-                   ->setDefault(0);
-        });
-        
-        $config['prepend_tname'] = true;
+        $i = new MmTableOption();
+        $i->initialize($this->context);
+        $i->applyConfig($config, $options);
         
         return $config;
     }
@@ -143,37 +81,15 @@ trait FieldPresetMmTrait
      *
      * @return array
      * @throws \LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException
+     *
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addMmOppositeConfig(array $config, array $options, array $tableNames): array
     {
-        if ((isset($options['mmTable']) && $options['mmTable'] === false) || empty($options['mmOpposite'])) {
-            return $config;
-        }
-        
-        if (count($tableNames) > 1) {
-            throw new TcaBuilderException(
-                'mmOpposite does not work if your relation does not resolve to EXACTLY ONE foreign table.' .
-                ' Your field: ' . $this->field->getId() . ' applies to multiple: ' . implode(', ', $tableNames));
-        }
-        
-        $localField = $this->field->getId();
-        $targetField = $options['mmOpposite'];
-        $localTable = $this->getTcaTable()->getTableName();
-        $targetTable = reset($tableNames);
-    
-        $config['MM_opposite_field'] = $targetField;
-        $config['MM_match_fields']['tablenames'] = $localTable;
-        
-        TcaPostProcessor::registerAdditionalProcessor($targetTable, static function (array &$config) use ($localTable, $localField, $targetField) {
-            // Ignore if the local field was removed later
-            if (! isset($GLOBALS['TCA'][$localTable]['columns'][$localField])) {
-                return;
-            }
-            
-            $usage = $config['columns'][$targetField]['config']['MM_oppositeUsage'][$localTable] ?? [];
-            
-            $config['columns'][$targetField]['config']['MM_oppositeUsage'][$localTable] = array_unique(array_merge($usage, [$localField]));
-        });
+        $i = new MmTableOption($tableNames);
+        $i->initialize($this->context);
+        $i->applyConfig($config, $options);
         
         return $config;
     }

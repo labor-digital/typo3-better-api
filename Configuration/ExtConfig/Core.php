@@ -33,6 +33,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Routing\ConfigureRoutingInterface;
 use LaborDigital\T3ba\ExtConfigHandler\Routing\RoutingConfigurator;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3ba\FormEngine\Node\InlineWithNewCeWizardNode;
+use LaborDigital\T3ba\FormEngine\UserFunc\FileGenericOverrideChildTcaDataProvider;
 use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
 use LaborDigital\T3ba\FormEngine\UserFunc\InlineContentElementWizardDataProvider;
 use LaborDigital\T3ba\Middleware\RequestCollectorMiddleware;
@@ -48,6 +49,9 @@ use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkHook;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
 use TYPO3\CMS\Backend\Form\FormDataProvider\InitializeProcessedTca;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaFlexPrepare;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaFlexProcess;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInlineConfiguration;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
@@ -103,6 +107,10 @@ class Core implements ConfigureRawSettingsInterface,
                             InlineContentElementWizardDataProvider::class => [
                                 'before' => [DatabaseRowInitializeNew::class],
                                 'depends' => [InitializeProcessedTca::class],
+                            ],
+                            FileGenericOverrideChildTcaDataProvider::class => [
+                                'before' => [TcaInlineConfiguration::class, TcaFlexProcess::class],
+                                'depends' => [TcaFlexPrepare::class],
                             ],
                         ],
                     ],

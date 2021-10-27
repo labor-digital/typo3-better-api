@@ -23,10 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\Traits;
 
 
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Types\StringType;
-use Doctrine\DBAL\Types\TextType;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxItemOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxLengthOption;
 
+/**
+ * @deprecated will be removed in v12 use the option container instead!
+ */
 trait FieldPresetMinMaxTrait
 {
     
@@ -37,29 +39,33 @@ trait FieldPresetMinMaxTrait
      * @param   array  $options
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addMinMaxItemOptions(array $optionDefinition, array $options = []): array
     {
-        $optionDefinition['minItems'] = [
-            'type' => 'int',
-            'default' => is_numeric($options['minItems']) ? (int)$options['minItems'] : 0,
-        ];
-        $optionDefinition['maxItems'] = [
-            'type' => 'int',
-            'default' => is_numeric($options['maxItems']) ? (int)$options['maxItems'] : 999,
-        ];
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            get_called_class() . '::prepareOptions([new ' . MinMaxItemOption::class . '()])->apply($config, $options); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        (new MinMaxItemOption())->addDefinition($optionDefinition);
         
         return $optionDefinition;
     }
     
+    /**
+     * @param   array  $config
+     * @param   array  $options
+     *
+     * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
+     */
     protected function addMinMaxItemConfig(array $config, array $options): array
     {
-        // If the field is required -> minItems is 1
-        if ($options['required'] === true) {
-            $options['minItems'] = max($options['minItems'], 1);
-        }
-        $config['minitems'] = $options['minItems'];
-        $config['maxitems'] = $options['maxItems'];
+        (new MinMaxItemOption())->applyConfig($config, $options);
         
         return $config;
     }
@@ -73,6 +79,8 @@ trait FieldPresetMinMaxTrait
      * @param   int    $defaultMin  The default value for the minimal input length
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addMinMaxLengthOptions(
         array $optionsDefinition,
@@ -80,14 +88,13 @@ trait FieldPresetMinMaxTrait
         int $defaultMin = 0
     ): array
     {
-        $optionsDefinition['maxLength'] = [
-            'type' => 'int',
-            'default' => $defaultMax,
-        ];
-        $optionsDefinition['minLength'] = [
-            'type' => 'int',
-            'default' => $defaultMin,
-        ];
+        trigger_error(
+            'Deprecated usage of: ' . get_called_class() . '::' . __FUNCTION__ . '() you should use: ' .
+            get_called_class() . '::prepareOptions([new ' . MinMaxLengthOption::class . '()])->apply($config, $options); instead!',
+            E_USER_DEPRECATED
+        );
+        
+        (new MinMaxLengthOption($defaultMax, $defaultMin))->addDefinition($optionsDefinition);
         
         return $optionsDefinition;
     }
@@ -100,31 +107,14 @@ trait FieldPresetMinMaxTrait
      * @param   bool   $addSqlStatement  If set to true the sql statement of this column will automatically be
      *
      * @return array
+     * @deprecated will be removed in v12 use the option container instead
+     * {@link \LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset::initializeOptions}
      */
     protected function addMaxLengthConfig(array $config, array $options, bool $addSqlStatement = false): array
     {
-        if (! empty($options['maxLength'])) {
-            $config['max'] = $options['maxLength'];
-        }
-        if (! empty($options['minLength'])) {
-            $config['min'] = $options['minLength'];
-        }
-        
-        if ($addSqlStatement) {
-            $this->configureSqlColumn(static function (Column $column) use ($options) {
-                if ((int)$options['maxLength'] <= 4096) {
-                    $column->setType(new StringType())
-                           ->setDefault('')
-                           ->setNotnull(true)
-                           ->setLength((int)$options['maxLength']);
-                } else {
-                    $column->setType(new TextType())
-                           ->setNotnull(false)
-                           ->setDefault(null)
-                           ->setLength(null);
-                }
-            });
-        }
+        $i = new MinMaxLengthOption(512, 0, $addSqlStatement);
+        $i->initialize($this->context);
+        $i->applyConfig($config, $options);
         
         return $config;
     }
