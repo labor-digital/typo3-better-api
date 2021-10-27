@@ -121,4 +121,20 @@ class TcaPalette extends AbstractContainer
         
         return $meta;
     }
+    
+    /**
+     * Returns the instance of a certain field inside your current layout
+     * Note: If the field not exists, a new one will be created at the end of the form
+     *
+     * @param   string     $id                   The id / column name of this field in the database
+     * @param   bool|null  $ignoreFieldIdIssues  If set to true, the field id will not be validated
+     *                                           against TYPO3s field naming schema
+     *
+     * @return TcaField
+     * @throws \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\InvalidFieldIdException
+     */
+    public function getField(string $id, ?bool $ignoreFieldIdIssues = null): TcaField
+    {
+        return $this->getForm()->getField($id, $ignoreFieldIdIssues);
+    }
 }
