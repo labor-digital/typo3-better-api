@@ -41,6 +41,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Logic;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\ElementConfigTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Tree\Node;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Flex;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTableType;
 
@@ -133,7 +134,7 @@ abstract class AbstractElement implements NoDiInterface
     /**
      * Returns the instance of the type this element is part of
      *
-     * @return AbstractForm|AbstractType|TcaTableType
+     * @return AbstractForm|AbstractType|TcaTableType|Flex
      */
     public function getForm()
     {
