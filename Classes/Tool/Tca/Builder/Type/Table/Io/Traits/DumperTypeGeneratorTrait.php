@@ -150,6 +150,11 @@ trait DumperTypeGeneratorTrait
                 continue;
             }
             
+            if ($k === 'audioOverlayPalette') {
+                dbg($palettes[$k]['showitem'] ?? '', $showitem ?? '');
+                dbge($this->assertShowItemEquals($palettes[$k]['showitem'] ?? '', $showitem ?? '', $tca));
+            }
+            
             // Create a new version of this palette for the type
             $newK = $typeName . '-' . $k;
             $palettes[$newK]['showitem'] = $showitem;
@@ -209,9 +214,9 @@ trait DumperTypeGeneratorTrait
                 continue;
             }
             
-            if (($aToken[1] ?? null) !== ($bTokens[1] ?? null)) {
+            if (($aToken[1] ?? null) !== ($bToken[1] ?? null)) {
                 $aLabel = $aToken[1] ?? $tca['columns'][$aToken[0]]['label'] ?? null;
-                $bLabel = $bToken[1] ?? $tca['columns'][$bToken[1] ?? null]['label'] ?? null;
+                $bLabel = $bToken[1] ?? $tca['columns'][$bToken[0]]['label'] ?? null;
                 if ($aLabel !== $bLabel) {
                     return false;
                 }
