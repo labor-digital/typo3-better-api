@@ -30,6 +30,7 @@ use LaborDigital\T3ba\Event\Tca\TableFactoryTcaFilterEvent;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\SpecialCase\SpecialCaseHandler;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TableDefaults;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
 use Neunerlei\Inflection\Inflector;
@@ -49,15 +50,25 @@ class TableFactory implements PublicServiceInterface
     protected $sqlRegistry;
     
     /**
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\SpecialCase\SpecialCaseHandler
+     */
+    protected $specialCaseHandler;
+    
+    /**
      * TableFactory constructor.
      *
      * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory  $typeFactory
      * @param   \LaborDigital\T3ba\Tool\Sql\SqlRegistry                        $sqlRegistry
      */
-    public function __construct(TypeFactory $typeFactory, SqlRegistry $sqlRegistry)
+    public function __construct(
+        TypeFactory $typeFactory,
+        SqlRegistry $sqlRegistry,
+        SpecialCaseHandler $specialCaseHandler
+    )
     {
         $this->typeFactory = $typeFactory;
         $this->sqlRegistry = $sqlRegistry;
+        $this->specialCaseHandler = $specialCaseHandler;
     }
     
     /**
@@ -100,6 +111,9 @@ class TableFactory implements PublicServiceInterface
             // Make sure new tables are registered in the SQL generation
             $this->sqlRegistry->getTable($table->getTableName());
         }
+        
+        // Handle special cases
+        $this->specialCaseHandler->initializeTca($tca, $table);
         
         // Allow filtering
         $table->getContext()->cs()->eventBus->dispatch(($e = new TableFactoryTcaFilterEvent($tca, $table)));

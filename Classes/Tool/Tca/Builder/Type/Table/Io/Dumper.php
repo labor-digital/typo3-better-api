@@ -26,6 +26,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Event\Tca\TableDumperAfterBuildEvent;
 use LaborDigital\T3ba\Event\Tca\TableDumperBeforeBuildEvent;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\SpecialCase\SpecialCaseHandler;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\DumperDataHookTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\DumperGenericTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits\DumperTypeGeneratorTrait;
@@ -44,13 +45,19 @@ class Dumper
     protected $eventBus;
     
     /**
+     * @var \LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\SpecialCase\SpecialCaseHandler
+     */
+    protected $specialCaseHandler;
+    
+    /**
      * TableDumper constructor.
      *
      * @param   \LaborDigital\T3ba\Core\EventBus\TypoEventBus  $eventBus
      */
-    public function __construct(TypoEventBus $eventBus)
+    public function __construct(TypoEventBus $eventBus, SpecialCaseHandler $specialCaseHandler)
     {
         $this->eventBus = $eventBus;
+        $this->specialCaseHandler = $specialCaseHandler;
     }
     
     public function dump(TcaTable $table): array
@@ -86,6 +93,8 @@ class Dumper
         }
         
         $this->injectDataHooksIntoTca($tca);
+        
+        $this->specialCaseHandler->dumpTca($tca, $table);
         
         return $this->eventBus->dispatch(new TableDumperAfterBuildEvent($tca, $table))->getTca();
     }
