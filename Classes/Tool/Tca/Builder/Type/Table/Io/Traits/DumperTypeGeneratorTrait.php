@@ -150,11 +150,6 @@ trait DumperTypeGeneratorTrait
                 continue;
             }
             
-            if ($k === 'audioOverlayPalette') {
-                dbg($palettes[$k]['showitem'] ?? '', $showitem ?? '');
-                dbge($this->assertShowItemEquals($palettes[$k]['showitem'] ?? '', $showitem ?? '', $tca));
-            }
-            
             // Create a new version of this palette for the type
             $newK = $typeName . '-' . $k;
             $palettes[$newK]['showitem'] = $showitem;
