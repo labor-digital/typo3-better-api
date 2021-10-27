@@ -63,7 +63,7 @@ trait DumperGenericTrait
     }
     
     /**
-     * Dumps the a slim tca object with the data of a specific type
+     * Dumps a slim tca object with the data of a specific type
      *
      * @param   TcaTableType  $type
      *
