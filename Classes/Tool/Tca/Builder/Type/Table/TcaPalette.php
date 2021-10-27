@@ -24,23 +24,101 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table;
 
 
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractContainer;
-use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaTrait;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\LayoutMetaLabelTrait;
 
 class TcaPalette extends AbstractContainer
 {
-    use LayoutMetaTrait;
+    use LayoutMetaLabelTrait {
+        getLayoutMeta as getLayoutMetaRoot;
+    }
+    
+    /**
+     * If set to true, this palette will never be shown, but the fields of the palette are technically
+     * rendered as hidden elements in FormEngine.
+     *
+     * @var bool
+     */
+    protected $hidden = false;
+    
+    /**
+     * New in version 11.3: The palettes description property has been added with TYPO3 11.3.
+     * Allows to display a localized description text into the palette declaration. It will be displayed below the palette label.
+     * This additional help text can be used to clarify some field usages directly in the UI.
+     *
+     * @todo implement getters and setters in v11
+     *
+     * @var string|null
+     */
+    protected $description;
+    
+    protected function getLayoutMetaLabelIdx(): int
+    {
+        return 0;
+    }
+    
+    /**
+     * If true, this palette will never be shown, but the fields of the palette are technically
+     * rendered as hidden elements in FormEngine
+     *
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+    
+    /**
+     * Defines if the palette should be hidden, meaning the palette will never be shown,
+     * but the fields of the palette are rendered as hidden elements
+     *
+     * @param   bool  $hidden
+     */
+    public function setHidden(bool $hidden = true): void
+    {
+        $this->hidden = $hidden;
+    }
     
     /**
      * @inheritDoc
-     * @return $this
      */
-    public function setLabel(?string $label): self
+    public function setRaw(array $raw)
     {
-        // Make sure the label gets printed when the showItem string is build
-        $this->layoutMeta[0] = $label;
+        if (isset($raw['isHiddenPalette'])) {
+            $this->setHidden((bool)$raw['isHiddenPalette']);
+            unset($raw['isHiddenPalette']);
+        }
         
-        parent::setLabel($label);
+        // @todo implement "description" reader in v11
+//            if(is_string($config['description'])){
+//                $i->setDescription($config['description']);
+//            }
         
-        return $this;
+        return parent::setRaw($raw);
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public function getRaw(): array
+    {
+        $raw = $this->config;
+        
+        if ($this->isHidden()) {
+            $raw['isHiddenPalette'] = true;
+        }
+        
+        return $raw;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getLayoutMeta(): array
+    {
+        $meta = $this->getLayoutMetaRoot();
+        $meta[1] = substr($this->getId(), 1);
+        
+        return $meta;
     }
 }

@@ -43,7 +43,7 @@ trait FactoryPopulatorTrait
     protected function populateElements(TcaTableType $type, array $tca): void
     {
         // Load the palettes
-        $palettes = Arrays::getPath($tca, 'palettes.*.showitem', []);
+        $palettes = Arrays::getPath($tca, 'palettes.*', []);
         
         // Load the showitem string
         $showItem = $this->parseShowItemString($tca['types'][$type->getTypeName()]['showitem'] ?? '');
@@ -70,7 +70,7 @@ trait FactoryPopulatorTrait
                         // Ignore the field if we don't have a configuration for it
                         // or the palette is already loaded
                         $config = $palettes[$id] ?? null;
-                        if (empty($config) || $type->hasPalette($id)) {
+                        if (empty($config) || empty($config['showitem']) || $type->hasPalette($id)) {
                             break;
                         }
                         
@@ -188,7 +188,7 @@ trait FactoryPopulatorTrait
      * @param   array                                                                     $layoutMeta
      * @param   string                                                                    $id
      * @param   array                                                                     $cols
-     * @param   string                                                                    $showItem
+     * @param   array                                                                     $config
      */
     protected function populatePalette(
         TcaTableType $type,
@@ -196,18 +196,16 @@ trait FactoryPopulatorTrait
         array $layoutMeta,
         string $id,
         array $cols,
-        string $showItem
+        array $config
     ): void
     {
-        $target->addMultiple(function () use ($type, $id, $layoutMeta, $cols, $showItem) {
+        $target->addMultiple(function () use ($type, $id, $layoutMeta, $cols, $config) {
             $i = $type->getPalette($id);
+            
+            $i->setRaw($config);
             $i->setLayoutMeta($layoutMeta);
             
-            if (! empty($layoutMeta[0])) {
-                $i->setLabel($layoutMeta[0]);
-            }
-            
-            foreach ($this->parseShowItemString($showItem) as $_layoutMeta) {
+            foreach ($this->parseShowItemString($config['showitem']) as $_layoutMeta) {
                 $_id = reset($_layoutMeta);
                 
                 // Handle non-configured fields
