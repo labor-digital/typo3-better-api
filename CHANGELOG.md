@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.15.0](https://github.com/labor-digital/typo3-better-api/compare/v10.14.0...v10.15.0) (2021-10-27)
+
+
+### Features
+
+* **Tca\Builder:** add getField method to containers and tabs ([021328b](https://github.com/labor-digital/typo3-better-api/commit/021328b894910a8e879e9106bb8cc5bb684437c4))
+* **Tca\Builder:** build display conditions more reliably ([10e6773](https://github.com/labor-digital/typo3-better-api/commit/10e677327a09384d2d5261690b8431f807a000e6))
+* **Tca\Builder:** implement special TCA case handler ([58eb6d7](https://github.com/labor-digital/typo3-better-api/commit/58eb6d726f2edd819c7f66d282bf31b80ef26a1e))
+* **Tca\Builder:** moveTo() positions can now be given as array ([524b3b7](https://github.com/labor-digital/typo3-better-api/commit/524b3b71e028f973fa54b334fcf3bc5ce1fc4280))
+* **Tca\Dumper:** ensure TCA palette diffs are calculated correctly ([e682c18](https://github.com/labor-digital/typo3-better-api/commit/e682c18b858e0a0f928d53b6663a4240d3b3eb10))
+* **Tca\Dumper:** ensure TCA palette diffs are calculated correctly ([780064a](https://github.com/labor-digital/typo3-better-api/commit/780064a6e4c380a6fa92bdb0934571771203c9bf))
+* **Tca\FieldPreset:** major rework of the field preset application ([1bf5639](https://github.com/labor-digital/typo3-better-api/commit/1bf5639a5726e9f1c99c4e87fe9a4231bcb8fe2a))
+* **Tca\Table:** add modifyPaletteGlobally() method to tca tables ([6b58c3e](https://github.com/labor-digital/typo3-better-api/commit/6b58c3e5af7ad6c962b8630da39fc2bd1e6cd9b5))
+* **Tca\TcaBuilderContext:** extract getRealTableNameList() from AbstractFieldPreset ([a9f9a49](https://github.com/labor-digital/typo3-better-api/commit/a9f9a498bcfb1ee1cc3ade3fda78d37cb90c4ec3))
+
+
+### Bug Fixes
+
+* **FormEngine\Addon\FalFileBaseDir:** harden resolving of group and inline fields ([5cf8003](https://github.com/labor-digital/typo3-better-api/commit/5cf80030266b35beeae6821c89890d697932ba39))
+* **Tca\AbstractElement:** add "Flex" as possible return type of getForm() ([899692d](https://github.com/labor-digital/typo3-better-api/commit/899692d6f25d5bc3bc612deb22d6f7af45db7ac1))
+* **Tca\Builder:** dump and load palettes correctly ([08a75dc](https://github.com/labor-digital/typo3-better-api/commit/08a75dce2ead39a19d78409e9086a407b4e63ffb))
+* **Tca\Builder:** remove dev fragment ([81f4113](https://github.com/labor-digital/typo3-better-api/commit/81f41137d9aef1f56e4ed40d9dc5a27441b25f49))
+* **Tca\Dumper:** ensure type palette clones inherit ALL config and not only the showitem value ([1c77f47](https://github.com/labor-digital/typo3-better-api/commit/1c77f4719ab59591a8e54b01d4e1c169b67237a9))
+* **Tca\Dumper:** fix typo in comments ([479b826](https://github.com/labor-digital/typo3-better-api/commit/479b826fca8b6ada69f6ce9893c8035e44760c96))
+
 ## [10.14.0](https://github.com/labor-digital/typo3-better-api/compare/v10.13.2...v10.14.0) (2021-10-11)
 
 
