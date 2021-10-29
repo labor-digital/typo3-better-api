@@ -74,7 +74,11 @@ class InlineColPosHook implements NoDiInterface, RecordListGetTableHookInterface
             return;
         }
         
-        $additionalWhereClause .= ' AND `colPos`<>-88 AND `t3ba_inline` = ""';
+        $additionalWhereClause .= ' AND `colPos`<>-88';
+        
+        if (isset($GLOBALS['TCA']['tt_content']['columns']['t3ba_inline'])) {
+            $additionalWhereClause .= ' AND `t3ba_inline` = ""';
+        }
     }
     
     

@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldOption;
 
 
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
 use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Upgrade\V11InlineUpgradeWizard;
 
@@ -74,24 +75,35 @@ class InlineForeignFieldOption extends AbstractOption
         $config['foreign_sortby'] = $options['foreignSortByField'];
         
         // Add columns to foreign table
-        $table = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
+        $sqlTable = $this->context->cs()->sqlRegistry->getTableOverride($foreignTableName);
         foreach ([$options['foreignField'], $options['foreignSortByField']] as $foreignField) {
-            if (! $table->hasColumn($foreignField, true)) {
-                $table->addColumn($foreignField, 'integer')
-                      ->setDefault(0)
-                      ->setLength(11);
+            if (! $sqlTable->hasColumn($foreignField, true)) {
+                $sqlTable->addColumn($foreignField, 'integer')
+                         ->setDefault(0)
+                         ->setLength(11);
             }
+            
+            TcaPostProcessor::registerAdditionalProcessor(
+                $foreignTableName,
+                static function (array &$config) use ($foreignField) {
+                    if (isset($config['columns'][$foreignField])) {
+                        return;
+                    }
+                    
+                    $config['columns'][$foreignField]['config']['type'] = 'passtrough';
+                }
+            );
         }
         
-        $this->v11DefinitionSwitch(function () use (&$config, $options, $table) {
+        $this->v11DefinitionSwitch(function () use (&$config, $options, $sqlTable) {
             $config['foreign_match_fields'] = [$options['foreignFieldNameField'] => $this->context->getField()->getId()];
             $config['foreign_table_field'] = $options['foreignTableNameField'];
             
             foreach ([$options['foreignFieldNameField'], $options['foreignTableNameField']] as $foreignField) {
-                if (! $table->hasColumn($foreignField, true)) {
-                    $table->addColumn($foreignField, 'string')
-                          ->setDefault('')
-                          ->setLength(128);
+                if (! $sqlTable->hasColumn($foreignField, true)) {
+                    $sqlTable->addColumn($foreignField, 'string')
+                             ->setDefault('')
+                             ->setLength(128);
                 }
             }
         });
