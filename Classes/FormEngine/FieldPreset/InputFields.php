@@ -391,7 +391,7 @@ class InputFields extends AbstractFieldPreset
         }
         
         $this->field->addConfig(
-            [
+            $o->apply([
                 'type' => 'slug',
                 'renderType' => $this->field->isReadOnly() ? 'input' : null,
                 'generatorOptions' => [
@@ -406,7 +406,7 @@ class InputFields extends AbstractFieldPreset
                 ],
                 'prependSlash' => false,
                 'fallbackCharacter' => '-',
-            ]
+            ])
         );
     }
 }
