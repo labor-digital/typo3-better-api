@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.15.3](https://github.com/labor-digital/typo3-better-api/compare/v10.15.2...v10.15.3) (2021-10-29)
+
+
+### Bug Fixes
+
+* **FormEngine\InlineColPosHook:** ensure that t3ba_inline field is only required when it exists ([cdc08d8](https://github.com/labor-digital/typo3-better-api/commit/cdc08d80afae6df249291c4bfb1fef1fcda86fea))
+
 ### [10.15.2](https://github.com/labor-digital/typo3-better-api/compare/v10.15.1...v10.15.2) (2021-10-29)
 
 
