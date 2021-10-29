@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.15.2](https://github.com/labor-digital/typo3-better-api/compare/v10.15.1...v10.15.2) (2021-10-29)
+
+
+### Bug Fixes
+
+* **FieldPreset\Slug:** ensure that all options are applied to the slug preset ([4ca2e5c](https://github.com/labor-digital/typo3-better-api/commit/4ca2e5c90c640f7b0d88b6910dd66de71576c7d1))
+
 ### [10.15.1](https://github.com/labor-digital/typo3-better-api/compare/v10.15.0...v10.15.1) (2021-10-27)
 
 
