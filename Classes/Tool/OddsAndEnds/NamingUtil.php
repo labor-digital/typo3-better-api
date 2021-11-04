@@ -275,13 +275,53 @@ class NamingUtil implements NoDiInterface
      *                                                         - instantiatable callables [Class::class, 'method']
      *                                                         Class will be instantiated using the container if
      *                                                         "method" is not declared "static".
-     * @param   bool                   $instantiateIfRequired  Set this to false if you don't want to instantiate the
+     * @param   bool                   $instantiateIfRequired  @deprecated This flag will be removed in v12
+     *                                                         Set this to false if you don't want to instantiate the
      *                                                         class of instantiable callbacks. Mostly for legacy
      *                                                         support.
      *
      * @return callable
+     * @todo remove $instantiateIfRequired in v12
      */
     public static function resolveCallable($callable, bool $instantiateIfRequired = true): callable
+    {
+        $resolvedCallable = static::parseCallable($callable, $instantiateIfRequired);
+        if ($resolvedCallable === null) {
+            throw new InvalidArgumentException('Could not resolve the given callable into an actual callable!');
+        }
+        
+        if (is_array($resolvedCallable) && is_array($resolvedCallable[0] ?? null) && ($resolvedCallable[0][0] ?? null) === '@instance') {
+            $resolvedCallable[0] = TypoContext::getInstance()->di()->makeInstance($resolvedCallable[0][1]);
+        }
+        
+        return $resolvedCallable;
+    }
+    
+    /**
+     * Checks if the given callable looks like a TYPO callable and can be resolved using resolveCallable()
+     *
+     * @param   string|array|callable  $callable  {@link NamingUtil::resolveCallable()} for a list of possible values
+     *
+     * @return bool
+     */
+    public static function isCallable($callable): bool
+    {
+        try {
+            return static::parseCallable($callable) !== null;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Internal helper to parse a typical TYPO callable into an actual callable
+     *
+     * @param $callable
+     * @param $instantiateIfRequired  @deprecated will be removed in v12
+     *
+     * @return array|callable|string|null
+     */
+    protected static function parseCallable($callable, $instantiateIfRequired = false)
     {
         if (is_string($callable)) {
             // Return something that is already callable
@@ -331,17 +371,16 @@ class NamingUtil implements NoDiInterface
             
             if (! $ref->getMethod($callable[1])->isStatic()) {
                 return [
-                    TypoContext::getInstance()->di()->getServiceOrInstance($callable[0]),
+                    ['@instance', $callable[0]],
                     $callable[1],
                 ];
             }
         }
         
-        if (! is_callable($callable)) {
-            throw new InvalidArgumentException('Could not resolve the given callable into an actual callable!');
+        if (is_callable($callable)) {
+            return $callable;
         }
         
-        return $callable;
+        return null;
     }
-    
 }
