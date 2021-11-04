@@ -78,7 +78,8 @@ trait DisplayConditionTrait
         }
         
         if (is_array($condition)) {
-            $this->config['displayCond'] = $this->getRoot()->getContext()->cs()->displayCondBuilder->build($this, $condition);
+            $this->config['displayCond']
+                = $this->getRoot()->getContext()->cs()->displayCondBuilder->build($this, $condition);
             
             return $this;
         }

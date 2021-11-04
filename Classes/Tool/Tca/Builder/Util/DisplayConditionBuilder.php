@@ -41,11 +41,16 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
      * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement  $el
      * @param   array                                                      $definition
      *
-     * @return array
+     * @return array|string
      */
-    public function build(AbstractElement $el, array $definition): array
+    public function build(AbstractElement $el, array $definition)
     {
         $out = [];
+        
+        $_v = $this->buildSimpleSyntax($definition, $el);
+        if ($_v !== null) {
+            return $_v;
+        }
         
         foreach ($definition as $k => $v) {
             if (is_string($v)) {
@@ -68,12 +73,10 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
                     $this->throwException($el, 'Nested display conditions can\'t be associative arrays!');
                 }
                 
-                if (count($v) === 3 && in_array(strtoupper(trim($v[1])), static::EVAL_TYPES, true)) {
-                    if ($v[0] === 'FIELD') {
-                        $this->throwException($el, 'Invalid display condition, an array with three parts can\'t start with "FIELD"');
-                    }
-                    
-                    array_unshift($v, 'FIELD');
+                $_v = $this->buildSimpleSyntax($v, $el);
+                if ($_v !== null) {
+                    $out[$k] = $_v;
+                    continue;
                 }
                 
                 if (! in_array(strtoupper(trim($v[0])), static::TYPES, true)) {
@@ -84,7 +87,46 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
             }
         }
         
+        $outCount = count($out);
+        if ($outCount > 1 && ! Arrays::isAssociative($out)) {
+            $out = ['AND' => $out];
+        } elseif ($outCount === 1 && is_string(reset($out))) {
+            return reset($out);
+        }
+        
         return $out;
+    }
+    
+    /**
+     * Internal helper to handle the "simple" syntax like ['field', '=', 'value'], or ['FIELD', 'field', '=', 'value']
+     * and convert them to their string representation. This section can occur directly at root level,
+     * or any other nested level when "OR" or "AND" are used
+     *
+     * @param   array                                                      $value
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement  $el
+     *
+     * @return string|null
+     */
+    protected function buildSimpleSyntax(array $value, AbstractElement $el): ?string
+    {
+        $vCount = count($value);
+        if (($vCount !== 3 && $vCount !== 4) || Arrays::isAssociative($value)) {
+            return null;
+        }
+        
+        if ($vCount === 3 && in_array(strtoupper(trim($value[1])), static::EVAL_TYPES, true)) {
+            if ($value[0] === 'FIELD') {
+                $this->throwException($el, 'Invalid display condition, an array with three parts can\'t start with "FIELD"');
+            }
+            
+            array_unshift($value, 'FIELD');
+        }
+        
+        if (! in_array(strtoupper(trim($value[0])), static::TYPES, true)) {
+            return null;
+        }
+        
+        return implode(':', $value);
     }
     
     /**
