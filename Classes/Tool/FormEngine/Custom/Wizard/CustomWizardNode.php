@@ -104,8 +104,16 @@ class CustomWizardNode extends AbstractFormElement
         $field = $config['fieldName'];
         $row = $config['databaseRow'];
         
-        return empty($config['flexFormPath'])
-            ? $row[$field]
-            : Arrays::getPath($row[$field], $config['flexFormPath'], null, '/');
+        if (! empty($config['flexFormFormPrefix'])) {
+            $flexFormPath = array_filter(explode(']', str_replace('[', '', $config['flexFormFormPrefix'])));
+            if (! empty($config['flexFormContainerFieldName'])) {
+                $flexFormPath[] = $config['flexFormContainerFieldName'];
+            }
+            $flexFormPath[] = 'vDEF';
+            
+            return Arrays::getPath($row[$field], $flexFormPath);
+        }
+        
+        return $row[$field];
     }
 }
