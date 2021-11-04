@@ -90,7 +90,7 @@ class InlineForeignFieldOption extends AbstractOption
                         return;
                     }
                     
-                    $config['columns'][$foreignField]['config']['type'] = 'passtrough';
+                    $config['columns'][$foreignField]['config']['type'] = 'passthrough';
                 }
             );
         }
