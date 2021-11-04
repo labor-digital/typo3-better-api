@@ -23,6 +23,7 @@ namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
+use LaborDigital\T3ba\FormEngine\Wizard\FileLinkPreviewWizard;
 use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\BasePidOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\ElementBrowserFilterOption;
@@ -296,18 +297,24 @@ class Relations extends AbstractFieldPreset
             new EvalOption(['required']),
             new MinMaxItemOption(),
         ]);
-        
         $options = $o->validate($options);
         
         if ($this->context->isInFlexFormSection()) {
             // Inside a section
+            $this->field->applyPreset()->customWizard(FileLinkPreviewWizard::class);
             $config = [
-                'type' => 'group',
-                'internal_type' => 'file',
-                'allowed' => $options['allowList'],
-                'disallowed' => $options['blockList'],
-                'localizeReferencesAtParentLocalization' => true,
-                'size' => $options['maxItems'] === 1 ? 1 : 3,
+                'type' => 'input',
+                'softref' => 'typolink',
+                'renderType' => 'inputLink',
+                'fieldControl' => [
+                    'linkPopup' => [
+                        'options' => [
+                            'allowedExtensions' => $options['allowList'],
+                            'blindLinkOptions' => 'page,url,telephone,folder,mail',
+                            'blindLinkFields' => 'class,params,target,title',
+                        ],
+                    ],
+                ],
             ];
         } else {
             // Default field
