@@ -95,8 +95,8 @@ class FileGenericOverrideChildTcaDataProvider implements FormDataProviderInterfa
                         continue;
                     }
                     
-                    $config['overrideChildTca']['columns'][$field]['config']['type'] = 'passthrough';
-                    $config['overrideChildTca']['columns'][$field]['config']['renderType'] = 'passthrough';
+                    $tca['config']['overrideChildTca']['columns'][$field]['config']['type'] = 'passthrough';
+                    $tca['config']['overrideChildTca']['columns'][$field]['config']['renderType'] = 'passthrough';
                 }
             }
         }
