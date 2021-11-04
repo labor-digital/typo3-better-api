@@ -50,18 +50,23 @@ class UserFuncOption extends AbstractOption
         $definition['userFunc'] = [
             'type' => 'string',
             'default' => '',
+            'preFilter' => static function ($v) {
+                if (is_array($v) && count($v) === 2) {
+                    return reset($v) . '->' . end($v);
+                }
+                
+                return $v;
+            },
             'validator' => static function (string $func) {
                 if (empty($func)) {
                     return true;
                 }
                 
                 try {
-                    NamingUtil::resolveCallable($func, false);
+                    return NamingUtil::isCallable($func);
                 } catch (\Exception $e) {
                     return $e->getMessage();
                 }
-                
-                return true;
             },
         ];
     }
