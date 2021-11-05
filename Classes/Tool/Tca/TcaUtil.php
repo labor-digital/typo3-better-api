@@ -129,7 +129,9 @@ class TcaUtil implements NoDiInterface
                 } else {
                     $typeTca = $GLOBALS['TCA'][$tableName]['types'][$rowType] ?? [];
                     
-                    $GLOBALS['TCA'][$tableName]['columns'] = static::applyColumnOverrides($tcaBackup, $typeTca);
+                    if (is_array($typeTca['columnOverrides'] ?? null)) {
+                        $GLOBALS['TCA'][$tableName]['columns'] = static::applyColumnOverrides($tcaBackup, $typeTca);
+                    }
                     
                     // Only keep the last 20 results -> Save a bit of memory here...
                     if (count(static::$resolvedTypeTca) > 20) {
