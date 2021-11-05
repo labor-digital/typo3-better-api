@@ -39,37 +39,37 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\FormEngine\Addon;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent;
+use LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent;
 use LaborDigital\T3ba\FormEngine\Util\FormEngineChangeFunctionBuilder;
 use TYPO3\CMS\Backend\Form\Element\GroupElement;
 
 class GroupElementsCanTriggerReload implements NoDiInterface
 {
-    
     /**
-     * This applier allows group elements to emit the page reload when they have changed.
+     * Ensures that the on-change dialog is only called once and does not open multiple modals
      *
-     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodePostProcessorEvent  $event
+     * @param   \LaborDigital\T3ba\Event\FormEngine\BackendFormNodeFilterEvent  $event
      */
-    public static function onPostProcess(BackendFormNodePostProcessorEvent $event): void
+    public static function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {
         if (! $event->getNode() instanceof GroupElement) {
             return;
         }
         
-        $fieldChangeFunc = $event->getProxy()->getData()['parameterArray']['fieldChangeFunc'] ?? null;
+        $data = $event->getProxy()->getData();
+        $changeFunc = $data['parameterArray']['fieldChangeFunc']['alert'] ?? null;
         
-        if (empty($fieldChangeFunc)) {
+        if (! is_string($changeFunc)) {
             return;
         }
         
-        // Build the change function
-        $result = $event->getResult();
-        $result['html'] = FormEngineChangeFunctionBuilder::buildOnChangeFunction(
-            $result['html'],
-            $fieldChangeFunc
-        );
+        $hash = md5(microtime(true) . random_bytes(128));
+        $storageVar = 'window._GROUP_ON_CHANGE_' . $hash;
+        $changeFunc = 'clearTimeout(' . $storageVar . ');' . $storageVar . '=setTimeout(function(){' .
+                      $changeFunc .
+                      ';},150);';
         
-        $event->setResult($result);
+        $data['parameterArray']['fieldChangeFunc']['alert'] = $changeFunc;
+        $event->getProxy()->setData($data);
     }
 }
