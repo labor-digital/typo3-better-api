@@ -556,7 +556,7 @@ class FalService implements SingletonInterface
         
         $url = $processed->getPublicUrl(false);
         $url .= ! str_contains($url, '?') ? '?' : '&';
-        $url .= 'hash=' . md5($processed->getSha1());
+        $url .= 'hash=' . md5($processed->exists() ? $processed->getSha1() : 'missing');
         
         if (isset($relative)) {
             return '/' . ltrim($url, '/');

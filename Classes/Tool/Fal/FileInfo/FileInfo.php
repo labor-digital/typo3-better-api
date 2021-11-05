@@ -205,8 +205,9 @@ class FileInfo implements NoDiInterface
     public function getHash(): string
     {
         if ($this->isProcessed()) {
-            return md5($this->processedFile->getSha1());
+            return md5($this->processedFile->exists() ? $this->processedFile->getSha1() : 'missing');
         }
+        
         $hash = $this->file->getProperty('identifier_hash') .
                 $this->file->getProperty('sha1') .
                 $this->file->getProperty('size') .
