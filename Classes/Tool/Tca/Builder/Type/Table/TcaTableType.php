@@ -132,7 +132,8 @@ class TcaTableType extends AbstractType
             );
             
             // Inherit the configuration for a field
-            if ((string)$this->getTypeName() !== (string)$this->parent->getDefaultTypeName()) {
+            if ((string)$this->getTypeName() !== (string)$this->parent->getDefaultTypeName()
+                && $this->parent->hasType($this->parent->getDefaultTypeName())) {
                 // Special handling if we are not in the default type
                 $defaultType = $this->parent->getType();
                 if ($defaultType->hasField($id)) {
