@@ -67,6 +67,7 @@ class CustomFieldNode extends AbstractFormElement
             [
                 [
                     'rawData' => $this->data,
+                    'nodeFactory' => $this->nodeFactory,
                     'iconFactory' => $this->iconFactory,
                     'rootNode' => $this,
                     'defaultInputWidth' => $this->defaultInputWidth,

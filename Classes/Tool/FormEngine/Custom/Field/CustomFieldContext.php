@@ -41,10 +41,22 @@ namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\CustomAssetTrait;
 use Neunerlei\Arrays\Arrays;
+use TYPO3\CMS\Backend\Form\NodeFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 
 class CustomFieldContext implements NoDiInterface
 {
     use CustomAssetTrait;
+    
+    /**
+     * @var \TYPO3\CMS\Core\Imaging\IconFactory
+     */
+    protected $iconFactory;
+    
+    /**
+     * @var \TYPO3\CMS\Backend\Form\NodeFactory
+     */
+    protected $nodeFactory;
     
     /**
      * The raw data, stored on the root node element
@@ -465,5 +477,25 @@ class CustomFieldContext implements NoDiInterface
         $this->fieldControl = $fieldControl;
         
         return $this;
+    }
+    
+    /**
+     * Returns the icon factory instance for the field
+     *
+     * @return \TYPO3\CMS\Core\Imaging\IconFactory
+     */
+    public function getIconFactory(): IconFactory
+    {
+        return $this->iconFactory;
+    }
+    
+    /**
+     * Returns the node factory instance for the field
+     *
+     * @return \TYPO3\CMS\Backend\Form\NodeFactory
+     */
+    public function getNodeFactory(): NodeFactory
+    {
+        return $this->nodeFactory;
     }
 }
