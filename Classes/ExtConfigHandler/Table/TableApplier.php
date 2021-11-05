@@ -35,6 +35,7 @@ use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader as ContentTypeLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\Loader as TableLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
+use LaborDigital\T3ba\ExtConfigHandler\Table\Util\PersistenceConfigReloader;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
@@ -57,6 +58,14 @@ class TableApplier extends AbstractExtConfigApplier
      * @var array
      */
     protected $tcaCache = [];
+    
+    /**
+     * True if the ext base persistence mapping was loaded while or before
+     * the TCA was completely built. In that case we have to forcefully reload it.
+     *
+     * @var bool
+     */
+    protected $reloadExtBaseMapping = false;
     
     /**
      * ConfigureTcaTableApplier constructor.
@@ -139,6 +148,11 @@ class TableApplier extends AbstractExtConfigApplier
                 $this->makeInstance(TcaPostProcessor::class)->process()
             );
             $this->applyMeta();
+            
+            if ($this->reloadExtBaseMapping) {
+                $this->reloadExtBaseMapping = false;
+                $this->getService(PersistenceConfigReloader::class)->reload();
+            }
         });
     }
     
@@ -149,6 +163,8 @@ class TableApplier extends AbstractExtConfigApplier
      */
     public function onPersistenceRegistration(ExtBasePersistenceRegistrationEvent $event): void
     {
+        $this->reloadExtBaseMapping = true;
+        
         $classes = $event->getClasses();
         $list = $this->state->get('tca.meta.extbase.persistence');
         if (is_array($list)) {
