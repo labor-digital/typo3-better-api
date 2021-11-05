@@ -101,13 +101,19 @@ trait CustomFieldPresetTrait
                 . CustomFieldInterface::class . ' interface!');
         }
         
+        $oldTca = $field->getRaw();
+        
         $field->setRaw(
             Arrays::merge(
-                $field->getRaw(),
+                $oldTca,
                 [
                     'config' => [
                         'type' => 'text',
                         'renderType' => 't3baField',
+                        't3baInherited' => [
+                            'type' => $oldTca['config']['type'] ?? null,
+                            'renderType' => $oldTca['config']['renderType'] ?? null,
+                        ],
                         't3baClass' => $customElementClass,
                         't3ba' => $options,
                     ],
