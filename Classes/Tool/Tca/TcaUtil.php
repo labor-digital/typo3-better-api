@@ -152,7 +152,7 @@ class TcaUtil implements NoDiInterface
      * @param   array   $row  The database row to extract the value from
      * @param   string  $key  The column name that should be extracted
      *
-     * @return int|string
+     * @return int|string|array
      */
     public static function getRowValue(array $row, string $key)
     {
@@ -160,6 +160,10 @@ class TcaUtil implements NoDiInterface
         
         if (is_array($value)) {
             $value = reset($value);
+        }
+        
+        if (is_array($value)) {
+            return $value;
         }
         
         if (! is_string($value) && ! is_numeric($value)) {
