@@ -96,6 +96,36 @@ abstract class AbstractTypeList implements NoDiInterface
     }
     
     /**
+     * Removes a loaded type instance
+     *
+     * @param $typeName
+     *
+     * @return $this
+     */
+    public function removeType($typeName)
+    {
+        unset($this->types[$typeName], $this->types[(string)$typeName]);
+        
+        return $this;
+    }
+    
+    /**
+     * Makes the type with the given type name the default type
+     *
+     * @param $typeName
+     *
+     * @return $this
+     */
+    public function setDefaultTypeName($typeName)
+    {
+        $type = $this->getType($typeName);
+        $this->removeType($typeName);
+        $this->types = array_merge([$typeName => $type], $this->types);
+        
+        return $this;
+    }
+    
+    /**
      * Returns the list of all type names that are currently registered (both loaded and defined)
      *
      * @return array
