@@ -73,9 +73,11 @@ class TcaPalette extends AbstractContainer
      *
      * @param   bool  $hidden
      */
-    public function setHidden(bool $hidden = true): void
+    public function setHidden(bool $hidden = true)
     {
         $this->hidden = $hidden;
+        
+        return $this;
     }
     
     /**
