@@ -62,7 +62,26 @@ class DbService implements SingletonInterface, PublicServiceInterface
      */
     public function persistAll(): void
     {
-        $this->getService(PersistenceManagerInterface::class)->persistAll();
+        $this->getPersistenceManager()->persistAll();
+    }
+    
+    /**
+     * Clears the in-memory state of the persistence.
+     * Simple wrapper around the extBase persistence manager
+     */
+    public function clearState(): void
+    {
+        $this->getPersistenceManager()->clearState();
+    }
+    
+    /**
+     * Returns the instance of the extBase persistence manager
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
+     */
+    public function getPersistenceManager(): PersistenceManagerInterface
+    {
+        return $this->cs()->objectManager->get(PersistenceManagerInterface::class);
     }
     
     /**
