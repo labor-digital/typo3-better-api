@@ -71,15 +71,17 @@ trait DisplayConditionTrait
             return $this;
         }
         
+        $builder = $this->getRoot()->getContext()->cs()->displayCondBuilder;
+        
         if (is_string($condition)) {
+            $condition = $builder->buildFromString($this, $condition);
             $this->config['displayCond'] = $condition;
             
             return $this;
         }
         
         if (is_array($condition)) {
-            $this->config['displayCond']
-                = $this->getRoot()->getContext()->cs()->displayCondBuilder->build($this, $condition);
+            $this->config['displayCond'] = $builder->build($this, $condition);
             
             return $this;
         }

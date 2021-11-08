@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\Util;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\FormEngine\Custom\DisplayCondition\CustomDisplayConditionInterface;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractContainer;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
@@ -54,7 +55,7 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
         
         foreach ($definition as $k => $v) {
             if (is_string($v)) {
-                $out[$k] = $v;
+                $out[$k] = $this->buildFromString($el, $v);
                 continue;
             }
             
@@ -95,6 +96,43 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
         }
         
         return $out;
+    }
+    
+    /**
+     * Helper to build a user condition from a class that uses the CustomDisplayConditionInterface
+     *
+     * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement  $el
+     * @param   string                                                     $condition
+     *
+     * @return string
+     * @see CustomDisplayConditionInterface
+     */
+    public function buildFromString(AbstractElement $el, string $condition): string
+    {
+        return $this->buildCustomString($condition);
+    }
+    
+    /**
+     * Checks if the given condition is the class name of a CustomDisplayConditionInterface
+     * implementation and automatically expands the syntax if required.
+     *
+     * @param   string  $condition
+     *
+     * @return string
+     */
+    protected function buildCustomString(string $condition): string
+    {
+        if (! str_contains($condition, '\\') || str_contains($condition, ':')) {
+            return $condition;
+        }
+        if (! class_exists($condition)) {
+            return $condition;
+        }
+        if (! in_array(CustomDisplayConditionInterface::class, class_implements($condition), true)) {
+            return $condition;
+        }
+        
+        return 'USER:' . $condition . '->evaluate';
     }
     
     /**
