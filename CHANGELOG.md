@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.16.0](https://github.com/labor-digital/typo3-better-api/compare/v10.15.3...v10.16.0) (2021-11-04)
+
+
+### Features
+
+* **NamingUtil:** add isCallable() helper to validate if a TYPO3 callable definition seems to be valid ([f37c873](https://github.com/labor-digital/typo3-better-api/commit/f37c87377c38e67b6b52116e4e265e742f02bcd3))
+
+
+### Bug Fixes
+
+* **FormEngine\CustomWizardNode:** extract flex form values correctly ([87e8512](https://github.com/labor-digital/typo3-better-api/commit/87e85124c3223b5cf22aa4d61ac23cedeb4fc790))
+* **Tca\InlineForeignFieldOption:** fix typo in foreign field type config ([183d2a2](https://github.com/labor-digital/typo3-better-api/commit/183d2a24c2d2038efa9c8260e1af071d6adcb007))
+* **Tca\Relations:** ensure that file relations inside of flex form sections are rendered again ([5f781d6](https://github.com/labor-digital/typo3-better-api/commit/5f781d6c964c9f89fc0ff03513dd65cf6dd4586e))
+* **Tca\UserFuncOption:** ensure callable check does not fail for non-static callbacks ([f4f8031](https://github.com/labor-digital/typo3-better-api/commit/f4f8031e1091aef9cb8fc5f7034d3c0bb76b4a67))
+
 ### [10.15.3](https://github.com/labor-digital/typo3-better-api/compare/v10.15.2...v10.15.3) (2021-10-29)
 
 
