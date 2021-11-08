@@ -28,6 +28,7 @@ use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\FormEngine\UserFunc\InlineColPosHook;
 use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InlineAppearanceOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InlineForeignFieldOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxItemOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
@@ -45,6 +46,12 @@ class Inline extends AbstractFieldPreset
      *                                        - maxItems int: The maximum number of items allowed in this field
      *                                        - required bool (FALSE): If set to true, the field requires at least 1
      *                                        item. This is identical with setting minItems to 1
+     *                                        - allOpen bool (FALSE): If set to true, all inline elements will
+     *                                        be expanded by default.
+     *                                        - openMultiple bool (FALSE): If set to true, multiple inline elements can
+     *                                        be expanded at a time.
+     *                                        - noSorting bool (FALSE): If set to true, the option to sort inline
+     *                                        elements will be disabled.
      *                                        - foreignField string (t3ba_inline): The foreign table gets extended
      *                                        by a field that holds the inline parent id. This defines the name
      *                                        of that field.
@@ -75,6 +82,7 @@ class Inline extends AbstractFieldPreset
             new EvalOption(['required']),
             new MinMaxItemOption(),
             new InlineForeignFieldOption($foreignTable),
+            new InlineAppearanceOption(),
         ]);
         
         $this->context->configureSqlColumn(
@@ -92,9 +100,6 @@ class Inline extends AbstractFieldPreset
                     'type' => 'inline',
                     'renderType' => '__UNSET',
                     'appearance' => [
-                        'collapseAll' => true,
-                        'expandSingle' => true,
-                        'useSortable' => true,
                         'showPossibleLocalizationRecords' => true,
                         'showRemovedLocalizationRecords' => true,
                         'showAllLocalizationLink' => true,
