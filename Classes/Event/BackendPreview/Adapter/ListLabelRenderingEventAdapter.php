@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Event\BackendPreview\Adapter;
 
 
-use LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent;
+use LaborDigital\T3ba\Event\BackendPreview\ContentListLabelRenderingEvent;
 use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 
@@ -47,7 +47,7 @@ class ListLabelRenderingEventAdapter extends AbstractCoreHookEventAdapter
     {
         $row = empty($args['row']) || ! is_array($args['row']) ? [] : $args['row'];
         
-        $e = new ListLabelRenderingEvent(
+        $e = new ContentListLabelRenderingEvent(
             $args['table'],
             $row,
             $args['title'],

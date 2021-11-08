@@ -27,6 +27,9 @@ use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\DomainModelMapSt
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\PreviewLinkStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
+use LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface;
+use LaborDigital\T3ba\Tool\BackendPreview\Hook\TableListLabelRenderer;
+use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
 use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkGeneratorInterface;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
@@ -533,6 +536,90 @@ trait TcaTableConfigTrait
         }
         
         return $this;
+    }
+    
+    /**
+     * Sets the given renderer class as a list label renderer for all records of the current table.
+     * NOTE: The renderer is set BOTH as label_userFunc AND formattedLabel_userFunc internally, the options are provided to both
+     * NOTE2: Setting the renderer class, will replace both "setLabelColumn()" and "setLabelAlternativeColumns()" options!
+     *
+     * @param   string|null  $rendererClass  A class that implements BackendListLabelRendererInterface or null to
+     *                                       remove the currently registered renderer class
+     * @param   array        $options        Optional options to be provided to your renderer implementation
+     *
+     * @return $this
+     * @see \LaborDigital\T3ba\Tool\BackendPreview\BackendListLabelRendererInterface
+     */
+    public function setListLabelRenderer(?string $rendererClass, array $options = [])
+    {
+        if ($rendererClass === null) {
+            unset(
+                $this->config['ctrl']['formattedLabel_userFunc'],
+                $this->config['ctrl']['label_userFunc'],
+                $this->config['ctrl']['formattedLabel_userFunc_options'],
+                $this->config['ctrl']['label_userFunc_options']
+            );
+            
+            return $this;
+        }
+        
+        if (! in_array(BackendListLabelRendererInterface::class, class_implements($rendererClass), true)) {
+            throw new TcaBuilderException(
+                'Invalid list label renderer class: "' . $rendererClass .
+                '" given. It either not exists or does not implement the required interface: "' .
+                BackendListLabelRendererInterface::class . '"');
+        }
+        
+        $this->config['ctrl']['formattedLabel_userFunc'] = TableListLabelRenderer::class . '->renderInline';
+        $this->config['ctrl']['label_userFunc'] = TableListLabelRenderer::class . '->render';
+        $this->config['ctrl']['formattedLabel_userFunc_options'] = ['t3baClass' => $rendererClass, 't3ba' => $options];
+        $this->config['ctrl']['label_userFunc_options'] = ['t3baClass' => $rendererClass, 't3ba' => $options];
+        
+        return $this;
+    }
+    
+    /**
+     * Returns the currently registered list label renderer class or the registered callback of label_userFunc
+     *
+     * @return string|null
+     */
+    public function getListLabelRenderer(): ?string
+    {
+        return $this->config['ctrl']['label_userFunc']['t3baClass'] ??
+               $this->config['ctrl']['label_userFunc'] ??
+               null;
+    }
+    
+    /**
+     * Allows you to set the options of the registered list label renderer without changing the renderer class
+     *
+     * @param   array  $options  The options array to provide to your renderer
+     *
+     * @return $this
+     */
+    public function setListLabelRendererOptions(array $options)
+    {
+        foreach (['formattedLabel_userFunc_options', 'label_userFunc_options'] as $field) {
+            if (isset($this->config['ctrl'][$field]['t3ba'])) {
+                $this->config['ctrl'][$field]['t3ba'] = $options;
+            } else {
+                $this->config['ctrl'][$field] = $options;
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Returns the currently set options to be provided for the list label renderer
+     *
+     * @return array|null
+     */
+    public function getListLabelRendererOptions(): ?array
+    {
+        return $this->config['ctrl']['label_userFunc_options']['t3ba'] ??
+               $this->config['ctrl']['label_userFunc_options'] ??
+               null;
     }
     
     /**

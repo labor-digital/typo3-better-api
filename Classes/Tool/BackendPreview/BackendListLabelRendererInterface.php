@@ -29,10 +29,14 @@ interface BackendListLabelRendererInterface extends PublicServiceInterface
      * Should use the given row to render the backend list label.
      * It should return a string, that will be used as list label and appended after the default list label.
      *
-     * @param   array  $row      The database row to render the list label from
-     * @param   array  $options  Additional options that may have been passed by the TCA
+     * @param   array   $row        The database row to render the list label from
+     * @param   array   $options    Additional options that may have been passed by the TCA
+     * @param   string  $tableName  The name of the table the renderer is executed for.
+     *                              To avoid breaking changes until the next major release this parameter
+     *                              should be set using string $tableName = ''
      *
      * @return string
+     * @todo in v11 add an official third parameter "tableName"
      */
     public function renderBackendListLabel(array $row, array $options): string;
 }

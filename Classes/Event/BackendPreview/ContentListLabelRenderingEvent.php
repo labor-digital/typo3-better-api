@@ -14,29 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2021.11.08 at 18:34
  */
 
 declare(strict_types=1);
 
+
 namespace LaborDigital\T3ba\Event\BackendPreview;
 
+use LaborDigital\T3ba\Event\BackendPreview\Adapter\ListLabelRenderingEventAdapter;
+use LaborDigital\T3ba\Event\CoreHookAdapter\CoreHookEventInterface;
 
 /**
- * @deprecated will be removed in v11 in favour of ContentListLabelRenderingEvent
+ * Class ContentListLabelRenderingEvent
+ *
+ * Called when the backend tries to render the label of a list entry of a tt_content element.
+ * Mostly for use in the backend preview renderer
  */
-class ListLabelRenderingEvent extends ContentListLabelRenderingEvent
+class ContentListLabelRenderingEvent extends AbstractListLabelRenderingEvent implements CoreHookEventInterface
 {
+    
     /**
      * @inheritDoc
      */
-    public function __construct(string $tableName, array $row, string $title, array $options)
+    public static function getAdapterClass(): string
     {
-        trigger_error(
-            'Deprecated usage of event: ' . ListLabelRenderingEvent::class . ' use ' . ContentListLabelRenderingEvent::class . ' instead!',
-            E_USER_DEPRECATED
-        );
-        parent::__construct($tableName, $row, $title, $options);
+        return ListLabelRenderingEventAdapter::class;
     }
     
 }

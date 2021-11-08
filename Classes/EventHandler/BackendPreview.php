@@ -24,8 +24,9 @@ namespace LaborDigital\T3ba\EventHandler;
 
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3ba\Event\BackendPreview\ListLabelRenderingEvent;
+use LaborDigital\T3ba\Event\BackendPreview\ContentListLabelRenderingEvent;
 use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
+use LaborDigital\T3ba\Event\BackendPreview\TableListLabelRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Renderer\BackendListLabelRenderer;
 use LaborDigital\T3ba\Tool\BackendPreview\Renderer\BackendPreviewRenderer;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
@@ -40,13 +41,19 @@ class BackendPreview implements LazyEventSubscriberInterface
      */
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
-        $subscription->subscribe(ListLabelRenderingEvent::class, 'onListLabelRendering');
+        $subscription->subscribe(ContentListLabelRenderingEvent::class, 'onContentListLabelRendering');
+        $subscription->subscribe(TableListLabelRenderingEvent::class, 'onTableListLabelRendering');
         $subscription->subscribe(PreviewRenderingEvent::class, 'onPreviewRendering');
     }
     
-    public function onListLabelRendering(ListLabelRenderingEvent $event): void
+    public function onContentListLabelRendering(ContentListLabelRenderingEvent $event): void
     {
-        $this->getService(BackendListLabelRenderer::class)->render($event);
+        $this->getService(BackendListLabelRenderer::class)->renderForContent($event);
+    }
+    
+    public function onTableListLabelRendering(TableListLabelRenderingEvent $event): void
+    {
+        $this->getService(BackendListLabelRenderer::class)->renderForTable($event);
     }
     
     public function onPreviewRendering(PreviewRenderingEvent $event): void
