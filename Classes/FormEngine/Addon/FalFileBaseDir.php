@@ -94,6 +94,7 @@ class FalFileBaseDir implements NoDiInterface
             return;
         }
         
+        // @todo this is no longer a thing, we should handle the new "file-link" syntax instead
         if ($config['type'] === 'group'
             && ($config['internal_type'] ?? null) === 'file') {
             $type = 'flex';
