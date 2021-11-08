@@ -52,11 +52,14 @@ class Basics extends AbstractFieldPreset
      * Converts the field into a checkbox
      *
      * @param   array  $options  Additional options for this preset
-     *                           - default bool (FALSE): A default value for your input field
      *                           - toggle bool (FALSE): If set to true, this field is rendered as toggle and not as
      *                           checkbox
      *                           - inverted bool (FALSE): If set to true checked / unchecked state are swapped in view:
      *                           A checkbox is marked checked if the database bit is not set and vice versa.
+     *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default bool (FALSE): A default value for your input field
+     *                           use the setDefault() method on a field instead
      */
     public function applyCheckbox(array $options = []): void
     {
@@ -82,6 +85,10 @@ class Basics extends AbstractFieldPreset
                     ->setDefault(0);
             }
         );
+        
+        if (! is_bool($this->field->getDefault())) {
+            $this->field->setDefault(false);
+        }
         
         $this->field->addConfig(
             $o->apply(

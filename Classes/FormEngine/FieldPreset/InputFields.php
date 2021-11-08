@@ -58,8 +58,6 @@ class InputFields extends AbstractFieldPreset
      * Configures the current field as a simple input element
      *
      * @param   array  $options  Additional options for this preset
-     *                           - default string|array: A default value for your input field. Can be a callback
-     *                           in form of an array like [class, method] as well.
      *                           - required, trim, lower, int, email, password, unique, null bool: Any of these values
      *                           can be passed to define their matching "eval" rules
      *                           - maxLength int (2048): The max length of an input (also affects the length of the db
@@ -72,6 +70,9 @@ class InputFields extends AbstractFieldPreset
      *                           DEPRECATED: Will be removed in v12
      *                           - readOnly bool (FALSE): True to make this field read only
      *                           use the setReadOnly() method on a field instead
+     *                           - default string|array: A default value for your input field. Can be a callback
+     *                           in form of an array like [class, method] as well.
+     *                           use the setDefault() method on a field instead
      */
     public function applyInput(array $options = []): void
     {
@@ -101,7 +102,6 @@ class InputFields extends AbstractFieldPreset
      * Date fields have their own datepicker.
      *
      * @param   array  $options  Additional options for this preset
-     *                           - default string|number|DateTime: A default value for your input field
      *                           - withTime bool (FALSE): If set to true this field can also have the time set, not
      *                           only the date
      *                           - asInt bool (TRUE): By default the database value will be written as "integer"
@@ -112,6 +112,10 @@ class InputFields extends AbstractFieldPreset
      *                           - size int|string (100%) Defines the width of an input inside its column.
      *                           Can be either an integer from 10-50 or a percentage from 0-100 suffixed by
      *                           the "%" sign, as a string.
+     *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default string|number|DateTime: A default value for your input field
+     *                           use the setDefault() method on a field instead
      */
     public function applyDate(array $options = []): void
     {
@@ -191,6 +195,11 @@ class InputFields extends AbstractFieldPreset
      *                           DEPRECATED: Will be removed in v11, use "blindFields" instead
      *                           - hideClutter bool: By default we hide clutter fields like class or params in the link
      *                           browser. If you want those fields to be set, set this to false.
+     *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default string|array: A default value for your input field. Can be a callback
+     *                           in form of an array like [class, method] as well.
+     *                           use the setDefault() method on a field instead
      *
      * @todo remove hideClutter in the next major release
      */
@@ -290,7 +299,6 @@ class InputFields extends AbstractFieldPreset
      * Superset of the "link" preset, preconfigured for the use of phone numbers.
      *
      * @param   array  $options  Additional options inherited from the link preset
-     *                           - default string: A default value for your input field
      *                           - maxLength int (128): The max length of a link (also affects the length of the db field)
      *                           - minLength int (0): The min length of a input
      *                           - blindFields array|true (["class", "params"]):
@@ -300,6 +308,10 @@ class InputFields extends AbstractFieldPreset
      *                           - required, trim bool: Any of these values can be passed
      *                           to define their matching "eval" rules
      *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default string|array: A default value for your input field. Can be a callback
+     *                           in form of an array like [class, method] as well.
+     *                           use the setDefault() method on a field instead
      */
     public function applyLinkPhone(array $options = []): void
     {
@@ -330,15 +342,19 @@ class InputFields extends AbstractFieldPreset
      *                           and turn them into dashes.
      *                           - separator string (/): Used to separate the values of certain fields
      *                           from one another.
-     *                           - default string: A default value for your input field
      *                           - required, uniqueInSite bool: Any of these values can be passed
      *                           to define their matching "eval" rules
      *                           - prefix string: Allows you to define a static prefix to be rendered
      *                           in front of the actual slug part. This can be a string, or a translation label.
-     *                           If the (translated) value starts with a "/" the site base will automatically
+     *                           If the (translated) value starts with a "/" the site base will be automatically
      *                           prepended to it. Note: This only works if you don't set prefixProvider!
      *                           - prefixProvider string: Allows you to define a custom slug prefix provider class.
      *                           The class must implement the SlugPrefixProviderInterface in order to work.
+     *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default string|array: A default value for your input field. Can be a callback
+     *                           in form of an array like [class, method] as well.
+     *                           use the setDefault() method on a field instead
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Slug.html
      * @see SlugPrefixProviderInterface

@@ -44,6 +44,7 @@ use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\FieldPresetApplier;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\Traits\DisplayConditionTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
+use Neunerlei\TinyTimy\DateTimy;
 
 abstract class AbstractField extends AbstractElement
 {
@@ -184,6 +185,10 @@ abstract class AbstractField extends AbstractElement
     
     /**
      * Sets a default value for your field.
+     *
+     * Optional: You can provide a callable as an array like [Class::class, 'method'] in order to create the
+     * default value on the fly when the form field gets resolved.
+     *
      * NOTE: Not all field types support a default configuration option.
      * In those cases the value is simply ignored
      *
@@ -194,6 +199,25 @@ abstract class AbstractField extends AbstractElement
      */
     public function setDefault($default)
     {
+        if (is_array($default)) {
+            if (is_callable($default) && is_object($default[0] ?? null)) {
+                $default[0] = get_class($default[0]);
+            }
+            
+            if (count($default) === 2 && is_string($default[0] ?? null) && is_string($default[1] ?? null)) {
+                return '@callback:' . $default[0] . '->' . $default[1];
+            }
+        }
+        
+        if (is_object($default)) {
+            if ($default instanceof \DateTime) {
+                $date = new DateTimy($default);
+                $default
+                    = ($this->config['config']['dbType'] ?? null) === 'datetime'
+                    ? $date->formatSql() : $date->getTimestamp();
+            }
+        }
+        
         $this->config['config']['default'] = $default;
         
         return $this;
@@ -259,7 +283,7 @@ abstract class AbstractField extends AbstractElement
     public function getRaw(): array
     {
         $raw = parent::getRaw();
-    
+        
         // Transform some keys into real typo3 translation keys
         // Because typo does not handle those elements using the default translation method...
         $translator = $this->form->getContext()->cs()->translator;
@@ -271,9 +295,9 @@ abstract class AbstractField extends AbstractElement
                 }
             }
         }
-    
+        
         $this->dumpDataHooks($raw);
-    
+        
         // Done
         return $raw;
     }

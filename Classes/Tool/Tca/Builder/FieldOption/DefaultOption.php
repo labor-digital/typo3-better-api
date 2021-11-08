@@ -24,6 +24,8 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldOption;
 
 /**
  * Adds the configuration for a "default" value of the field
+ *
+ * @deprecated will be removed in v12
  */
 class DefaultOption extends AbstractOption
 {
@@ -76,9 +78,15 @@ class DefaultOption extends AbstractOption
     public function applyConfig(array &$config, array $options): void
     {
         if ($options['default'] !== null) {
+            $table = $this->context->getTcaTable()->getTableName();
+            $field = $this->context->getField()->getId();
+            
+            trigger_error(
+                'Deprecated option in: ' . $table . '::' . $field . '. The "default" option will be removed in v12, use the setDefault() method on a field instead',
+                E_USER_DEPRECATED
+            );
+            
             $config['default'] = $options['default'];
-        } else {
-            $config['default'] = '__UNSET';
         }
     }
     
