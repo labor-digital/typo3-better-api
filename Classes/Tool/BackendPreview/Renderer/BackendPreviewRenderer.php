@@ -105,8 +105,7 @@ class BackendPreviewRenderer extends AbstractRenderer implements SingletonInterf
                             if (in_array(ActionController::class, class_parents($rendererClass), true)) {
                                 $signature = $row['CType'] === 'list' ? $row['list_type'] : $row['CType'];
                                 $signature = strpos($signature, 'tx_') === 0 ? $signature : 'tx_' . $signature;
-                                $configType = $row['CType'] === 'list' ? 'plugin' : 'contentElement';
-                                $config = $this->cs()->ts->get([$configType, $signature], ['default' => []]);
+                                $config = $this->cs()->ts->get(['plugin', $signature], ['default' => []]);
                                 $cObj = $this->getService(TsfeService::class)->getContentObjectRenderer();
                                 $cObj->data = $row;
                                 $configManager->setConfiguration($config);
