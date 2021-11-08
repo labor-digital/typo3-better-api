@@ -77,7 +77,15 @@ class DefaultOption extends AbstractOption
      */
     public function applyConfig(array &$config, array $options): void
     {
+        if (empty($options['default']) && ! empty($config['default'])) {
+            return;
+        }
+        
         if ($options['default'] !== null) {
+            if ($options['default'] === '') {
+                return;
+            }
+            
             $table = $this->context->getTcaTable()->getTableName();
             $field = $this->context->getField()->getId();
             
