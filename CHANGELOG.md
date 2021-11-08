@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.17.0](https://github.com/labor-digital/typo3-better-api/compare/v10.16.0...v10.17.0) (2021-11-08)
+
+
+### Features
+
+* **FormEngine\CustomField:** store initial "type" and "renderType" in config when setting a custom field ([e61ceee](https://github.com/labor-digital/typo3-better-api/commit/e61ceee812e96c9e6c83f2a2d3b7438dffb82ada))
+* **Tca\AbstractTypeList:** add "removeType" and "setDefaultTypeName" methods ([8492655](https://github.com/labor-digital/typo3-better-api/commit/8492655b65057268a0087bc311a41f288394bf99))
+
+
+### Bug Fixes
+
+* **BackendPreviewRenderer:** resolve content element view config correctly ([959c04e](https://github.com/labor-digital/typo3-better-api/commit/959c04efa85e8aeedc6505366c5558e19d90990c))
+* **ContentControllerBackendPreviewTrait:** save a unnecessary variable ([cebed2f](https://github.com/labor-digital/typo3-better-api/commit/cebed2f8e327c1ec36840e54465d58c64a91bcdc))
+* **Database\DbService:** retrieve PersistenceManager through object manager ([b73dfbc](https://github.com/labor-digital/typo3-better-api/commit/b73dfbc997038d240a339cbe8b86a225378139e9))
+* **Database\RelationResolver:** throw an exception if a field config could not be resolved ([50d0961](https://github.com/labor-digital/typo3-better-api/commit/50d096197050fc60715277d4e3418ee153116b0d))
+* **ExtConfig\Table:** forcefully reload extBase persistence mapping when required before TCA build ([bd0a4b7](https://github.com/labor-digital/typo3-better-api/commit/bd0a4b7bcbdabf559c5d408f8c00c1c065756b8d))
+* **FalService:** create fallback hash for missing files ([fa98f7e](https://github.com/labor-digital/typo3-better-api/commit/fa98f7e5bba92ba73b9ffcfd9b10d3a35ef2a429))
+* **FormEngine\CustomField:** add getters for "iconFactory" and "nodeFactory" to context ([addc69a](https://github.com/labor-digital/typo3-better-api/commit/addc69adafdcc58e242fc24eae8e82377c3ad3ed))
+* **FormEngine\GroupElementsTriggerReload:** make addon compatible with changed requirements in v10 ([0845743](https://github.com/labor-digital/typo3-better-api/commit/08457434399faa534e192fad140991082dc8bf14))
+* **Tca\Builder:** build simple display conditions correctly ([4f553fa](https://github.com/labor-digital/typo3-better-api/commit/4f553fae40498afc92bbdbf6037e9e4fb82f1add))
+* **Tca\EvalOption:** ensure eval rules are applied correctly ([af8000a](https://github.com/labor-digital/typo3-better-api/commit/af8000a05f25105cb56ef2990b0120a751d2db09))
+* **Tca\Palette:** setHidden() now correctly returns $this ([c8979df](https://github.com/labor-digital/typo3-better-api/commit/c8979df4da0e1871253073ab7bdb31348f43e397))
+* **Tca\RelationFile:** handle disabled fal fields correctly ([ad1c5d4](https://github.com/labor-digital/typo3-better-api/commit/ad1c5d40c28bea1f2b1f5b90bfabf8ffb7bae3ae))
+* **Tca\TcaTableType:** don't inherit field if no default type exists ([d57b672](https://github.com/labor-digital/typo3-better-api/commit/d57b672b35f81211cf70474de8422c4ef6c39478))
+* **Tca\TcaUtil:** ensure runWithResolvedTypeTca works correctly even without columnOverrides ([c3881e9](https://github.com/labor-digital/typo3-better-api/commit/c3881e91409f24d233c0b5fd1d960d4c775b5fe4))
+* **Tca\TcaUtil:** ensure that runWithResolvedTypeTca knows about column name changes ([ee453bc](https://github.com/labor-digital/typo3-better-api/commit/ee453bce7c51ae43c2af13e88d2b6745967e2a54))
+* **TcaUtil:** getRowValue can now return array values ([65ea603](https://github.com/labor-digital/typo3-better-api/commit/65ea6037fe9ae90be4f1726f6553ce2269d4eeae))
+
 ## [10.16.0](https://github.com/labor-digital/typo3-better-api/compare/v10.15.3...v10.16.0) (2021-11-04)
 
 
