@@ -172,6 +172,12 @@ class RelationResolver implements PublicServiceInterface
     protected function resolveSingleRow(array $row): void
     {
         foreach ($this->findFieldTcaConfig() as $fieldName => $fieldConfig) {
+            if (! is_array($fieldConfig)) {
+                throw new BetterQueryException(
+                    'Could not resolve relation of field: "' . $fieldName . '", on table: "' .
+                    $this->tableName . '" because there is no TCA config for it.');
+            }
+            
             $relationHandler = $this->prepareRelationHandler($fieldName, $row, $fieldConfig);
             $relations = $relationHandler->getFromDB();
             $this->list[$fieldName][$row['uid']] = empty($relations)
