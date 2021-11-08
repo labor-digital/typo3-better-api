@@ -86,7 +86,7 @@ class LimitToPidsOption extends AbstractOption
             return;
         }
         
-        $config[$this->configName] .= ' AND sys_category.pid' . $pidSelector;
+        $config[$this->configName] .= ' AND ' . $this->foreignTableName . '.pid' . $pidSelector;
     }
     
 }
