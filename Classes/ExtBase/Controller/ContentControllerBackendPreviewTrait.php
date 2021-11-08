@@ -107,8 +107,7 @@ trait ContentControllerBackendPreviewTrait
         $config = $this->configurationManager
             ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
         $typoContext = TypoContext::getInstance();
-        $typoScript = $typoContext->di()->cs()->ts;
-        $viewConfig = $typoScript->removeDots($config['view'] ?? []);
+        $viewConfig = $typoContext->di()->cs()->ts->removeDots($config['view'] ?? []);
         
         // Make and prepare the view instance
         return $typoContext->di()
