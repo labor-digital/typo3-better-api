@@ -91,6 +91,7 @@ class InputFields extends AbstractFieldPreset
         $this->field->addConfig(
             $o->apply([
                 'type' => 'input',
+                'renderType' => '__UNSET',
             ])
         );
     }
