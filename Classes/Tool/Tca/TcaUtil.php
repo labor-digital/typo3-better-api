@@ -117,7 +117,7 @@ class TcaUtil implements NoDiInterface
         $rowType = static::getRecordType($row, $tableName);
         
         $tcaBackup = $GLOBALS['TCA'][$tableName]['columns'] ?? [];
-        $key = $tableName . '_' . $rowType;
+        $key = $tableName . '_' . $rowType . '_' . md5(implode('-', array_keys($tcaBackup)));
         
         try {
             if (! empty($rowType)) {
