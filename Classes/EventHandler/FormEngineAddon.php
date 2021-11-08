@@ -31,6 +31,7 @@ use LaborDigital\T3ba\FormEngine\Addon\DbBaseId;
 use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3ba\FormEngine\Addon\FieldDefaultAndPlaceholderTranslation;
 use LaborDigital\T3ba\FormEngine\Addon\GroupElementsCanTriggerReload;
+use LaborDigital\T3ba\FormEngine\Addon\InlineElementsCanTriggerReload;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
@@ -51,13 +52,14 @@ class FormEngineAddon implements LazyEventSubscriberInterface
     public function onNodeFilter(BackendFormNodeFilterEvent $event): void
     {
         FalFileBaseDir::onNodeFilter($event);
+        GroupElementsCanTriggerReload::onNodeFilter($event);
     }
     
     public function onPostProcess(BackendFormNodePostProcessorEvent $event): void
     {
         DbBaseId::onPostProcess($event);
         FalFileBaseDir::onPostProcess($event);
-        GroupElementsCanTriggerReload::onPostProcess($event);
+        InlineElementsCanTriggerReload::onPostProcess($event);
     }
     
     public function onFormFilter(FormFilterEvent $event): void
