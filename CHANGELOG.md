@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.18.0](https://github.com/labor-digital/typo3-better-api/compare/v10.17.0...v10.18.0) (2021-11-08)
+
+
+### Features
+
+* **FieldPreset\Inline:** implement "allOpen", "openMultiple" and "noSorting" options ([e30b04e](https://github.com/labor-digital/typo3-better-api/commit/e30b04e8e6a024e31c8a1ff377dae8bf4fd136c8))
+* **FormEngine\Addon:** add fieldChangeFunc to inline elements ([6335beb](https://github.com/labor-digital/typo3-better-api/commit/6335beb2912cc1a922a110bb2885825afdb4b02e))
+* **Tca\Builder:** implement support for listLabelRenderers on a table level ([285fda6](https://github.com/labor-digital/typo3-better-api/commit/285fda666747dbee7e04c3051b4853628657352a))
+* **Tca\FieldOption:** add InlineAppearanceOption ([cba1f0a](https://github.com/labor-digital/typo3-better-api/commit/cba1f0aac4256502dc9f88981410c6ae0ca3f3aa))
+* **TcaBuilder:** introduce CustomDisplayConditionInterface for user conditions ([ed871db](https://github.com/labor-digital/typo3-better-api/commit/ed871db8752f6c0642d8ea80202e393d81d46125))
+* **TcaBuilder\FieldPreset:** deprecate "default" option on presets ([7b4e800](https://github.com/labor-digital/typo3-better-api/commit/7b4e800cce33b951195371161d35ec82f62bce5b))
+
+
+### Bug Fixes
+
+* **EventHandler\FormEngineAddon:** update form engine addon event handler ([f3d3da7](https://github.com/labor-digital/typo3-better-api/commit/f3d3da78f9a4654c6f1c1e8d70a7554839c0aff4))
+* **Tca\FieldOption:** add limitToPids to configured foreign table ([e3a137c](https://github.com/labor-digital/typo3-better-api/commit/e3a137c57ec6652a55dbadb1ccf43372e33b8191))
+* **Tca\FieldOption:** handle array of pids correctly ([03cc9c8](https://github.com/labor-digital/typo3-better-api/commit/03cc9c8d41874e1daf91e16dbcf94a0531c200d5))
+* **TcaBuilder\FieldPreset:** ensure empty default option does not override existing defaults ([20ebb56](https://github.com/labor-digital/typo3-better-api/commit/20ebb56e38fa67b8514fc4a08fd38d0c8d2aa50a))
+* **TcaBuilder\Input:** remove renderType when setting "input" preset ([17d6be3](https://github.com/labor-digital/typo3-better-api/commit/17d6be352793977d6d2eda94451102f9654993cb))
+
 ## [10.17.0](https://github.com/labor-digital/typo3-better-api/compare/v10.16.0...v10.17.0) (2021-11-08)
 
 
