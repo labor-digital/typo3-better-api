@@ -213,10 +213,10 @@ class FalService implements SingletonInterface
      *
      * IMPORTANT: There will be no permission checks when creating the reference!
      *
-     * @param   FileInterface  $file   The main file to create the reference for
-     * @param   int            $uid    The uid of the record that should display the linked file
-     * @param   string         $field  The field of the record that should be linked with this file
-     * @param   string         $table  The table of the record that should be linked with this file
+     * @param   FileInterface  $file       The main file to create the reference for
+     * @param   int            $uid        The uid of the record that should display the linked file
+     * @param   string|null    $field      The field of the record that should be linked with this file
+     * @param   string|null    $tableName  The table of the record that should be linked with this file
      *
      * @return \TYPO3\CMS\Core\Resource\FileReference
      * @throws \LaborDigital\T3ba\Tool\Fal\FalException
@@ -224,18 +224,20 @@ class FalService implements SingletonInterface
     public function addFileReference(
         FileInterface $file,
         int $uid,
-        string $field = 'image',
-        string $table = 'tt_content'
+        ?string $field = null,
+        ?string $tableName = null
     ): FileReference
     {
-        // Ignore the access checks
+        $field = $field ?? 'image';
+        $tableName = NamingUtil::resolveTableName($tableName ?? 'tt_content');
+        
         $referenceUid = $this->cs()->simulator->runWithEnvironment(['asAdmin', 'includeHiddenContent'],
-            function () use ($file, $uid, $field, $table) {
+            function () use ($file, $uid, $field, $tableName) {
                 // Get the record from the database
-                $record = $this->cs()->db->getQuery($table)->withIncludeHidden()->withWhere(['uid' => $uid])->getFirst();
+                $record = $this->cs()->db->getQuery($tableName)->withIncludeHidden()->withWhere(['uid' => $uid])->getFirst();
                 if (empty($record)) {
                     throw new FalException(
-                        'Invalid table: ' . $table . ' or uid: ' . $uid . ' to create a file reference for');
+                        'Invalid table: ' . $tableName . ' or uid: ' . $uid . ' to create a file reference for');
                 }
                 
                 // Make sure we can add sys_file_references everywhere
@@ -248,13 +250,13 @@ class FalService implements SingletonInterface
                             'NEW1' => [
                                 'table_local' => 'sys_file',
                                 'uid_local' => $file->getProperty('uid'),
-                                'tablenames' => $table,
+                                'tablenames' => $tableName,
                                 'uid_foreign' => $uid,
                                 'fieldname' => $field,
                                 'pid' => $record['pid'],
                             ],
                         ],
-                        $table => [
+                        $tableName => [
                             $uid => [
                                 'pid' => $record['pid'],
                                 $field => 'NEW1',
@@ -265,11 +267,9 @@ class FalService implements SingletonInterface
                     $GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
                 }
                 
-                // Get the new id
                 return reset($handler->newRelatedIDs['sys_file_reference']);
             });
         
-        // Done
         return $this->getFileReference($referenceUid);
     }
     
@@ -323,13 +323,11 @@ class FalService implements SingletonInterface
      *                                    extracted from it
      * @param   array   $options          An array of possible options
      *                                    - duplicationBehavior string ("replace"): Changes the way how duplicated
-     *                                    files
-     *                                    are handled. One of DuplicationBehavior's constants
+     *                                    files are handled. One of DuplicationBehavior's constants
      *                                    - allowedExtensions string|array: A comma separated list, or an array of
      *                                    allowed file extensions. If empty
      *                                    $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['allow'] is used instead.
-     *                                    Use
-     *                                    "*" to allow all file types
+     *                                    Use "*" to allow all file types
      *                                    - deniedExtensions string|array: A comma separated list of denied file
      *                                    extensions. If empty
      *                                    $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['deny'] is tried instead.
@@ -353,6 +351,7 @@ class FalService implements SingletonInterface
             ],
             'allowedExtensions' => [
                 'type' => ['string', 'array'],
+                // @todo https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/9.0/Breaking-83081-RemovedConfigurationOptionBeFileExtensionsWebspace.html
                 'default' => $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['allow'],
                 'preFilter' => static function ($v) {
                     return empty($v) ? [] : $v;
@@ -367,6 +366,7 @@ class FalService implements SingletonInterface
             ],
             'deniedExtensions' => [
                 'type' => ['string', 'array'],
+                // @todo 'fileDenyPattern' should be used here?
                 'default' => $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['deny'],
                 'preFilter' => static function ($v) {
                     return empty($v) ? [] : $v;
@@ -618,6 +618,7 @@ class FalService implements SingletonInterface
             if (! $folder->hasFolder($part)) {
                 $folder->createFolder($part);
             }
+            
             $folder = $folder->getSubfolder($part);
         }
         
@@ -642,11 +643,14 @@ class FalService implements SingletonInterface
         $falPath = trim(trim($falPath, '\\/ '));
         $falPath = Path::unifySlashes($falPath, '/');
         $parts = explode(':', $falPath);
+        
         if (count($parts) === 1 && is_numeric($parts[0])) {
             $parts[] = '';
         }
+        
         $storageId = count($parts) > 1 && is_numeric($parts[0]) ? (int)array_shift($parts) : 1;
         $remainingPathParts = array_values(array_filter(explode('/', implode(':', $parts))));
+        
         if (empty($remainingPathParts)) {
             $remainingPathParts[] = '';
         }
