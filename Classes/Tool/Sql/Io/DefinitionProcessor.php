@@ -137,10 +137,6 @@ class DefinitionProcessor
                 $tableToDump = $this->makeDumpableTable($combined, $table, $definition);
             }
             
-            if ($tableToDump->getName() === 'tx_thbingen_domain_model_multitool_slide'
-                && $tableToDump->hasColumn('teaser_image')) {
-                dbge($tableToDump, $types);
-            }
             $tableToDump = $this->cs()->eventBus
                 ->dispatch(new TableFilterEvent($table->getName(), $table, $tableToDump))
                 ->getTableToDump();
