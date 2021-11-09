@@ -120,6 +120,16 @@ class TcaTable extends AbstractTypeList
     }
     
     /**
+     * @inheritDoc
+     */
+    public function removeType($typeName)
+    {
+        $this->context->cs()->sqlRegistry->removeType($this->tableName, $typeName);
+        
+        return parent::removeType($typeName);
+    }
+    
+    /**
      * Can be used to set raw config values, that are not implemented in the TCA builder facade.
      *
      * @param   array  $raw         The configuration to set
