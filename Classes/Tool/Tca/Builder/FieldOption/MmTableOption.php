@@ -45,8 +45,8 @@ class MmTableOption extends AbstractOption
     protected $oppositeTables;
     
     /**
-     * This is mostly an implementation detail of the "categorize" field preset but considered part of the public api.
-     * If this property contains a string, ONLY the mmOpposite configuration will be applied with the given field name as opposite field
+     * If this property contains a string, ONLY the mmOpposite configuration
+     * will be applied with the given field name as opposite field
      *
      * @var string|null
      */
@@ -117,6 +117,9 @@ class MmTableOption extends AbstractOption
         // Opposite configuration only if required
         if (! empty($this->oppositeTables) && (! empty($options['mmOpposite']) || $this->forcedOppositeField !== null)) {
             $this->applyOppositeConfig($config, $options);
+            if ($this->forcedOppositeField !== null) {
+                return;
+            }
         }
         
         $this->v11DefinitionSwitch($config, $options, function () use ($options, &$config) {

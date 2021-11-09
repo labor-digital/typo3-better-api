@@ -79,7 +79,6 @@ class Relations extends AbstractFieldPreset
             new SelectSideBySideOption(),
             new LimitToPidsOption('sys_category'),
             new MinMaxItemOption(),
-            new MmTableOption('sys_category', 'items'),
             new EvalOption(['required']),
         ]);
         
