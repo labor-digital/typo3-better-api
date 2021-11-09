@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.19.0](https://github.com/labor-digital/typo3-better-api/compare/v10.18.0...v10.19.0) (2021-11-09)
+
+
+### Features
+
+* **FalService:** resolve table names through NamingUtil in addFileReference() ([962edd4](https://github.com/labor-digital/typo3-better-api/commit/962edd42aaaf471e72da21c10ecb0a08ef2d206e))
+
+
+### Bug Fixes
+
+* **Sql:** remove dev fragment ([387062b](https://github.com/labor-digital/typo3-better-api/commit/387062baa7cb3f69bef82aed99ea2ce31e714fc2))
+* **Sql:** try to inherit field sql definition if not present on the current type ([0d5b3f0](https://github.com/labor-digital/typo3-better-api/commit/0d5b3f085d945671f06a4a6ee4ea125e58d8c932))
+* **TcaBuilder\CustomFieldPreset:** don't modify the SQL definition in custom fields ([7d7b43e](https://github.com/labor-digital/typo3-better-api/commit/7d7b43e75251ac50f47c12e3179e8fb04e27dda0))
+* **TcaBuilder\Relations:** generate sys_category opposite field config correctly ([4f83f7a](https://github.com/labor-digital/typo3-better-api/commit/4f83f7a19e334062d186a6bc408cac0c639844cd))
+* **TcaBuilder\TcaTable:** remove sql type when removing a TCA type ([dade079](https://github.com/labor-digital/typo3-better-api/commit/dade079fbb121145fe19da20426ac18bd5deec94))
+
 ## [10.18.0](https://github.com/labor-digital/typo3-better-api/compare/v10.17.0...v10.18.0) (2021-11-08)
 
 
