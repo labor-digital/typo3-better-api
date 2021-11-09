@@ -158,6 +158,17 @@ class SqlRegistry implements SingletonInterface
     }
     
     /**
+     * Removes the registered type configuration from the definition object
+     *
+     * @param   string  $tableName
+     * @param           $typeName
+     */
+    public function removeType(string $tableName, $typeName): void
+    {
+        unset($this->definition->types[$tableName][$typeName]);
+    }
+    
+    /**
      * This is a TCA builder special case. The table object itself provides the author with the option
      * to access the SQL table definition. This is useful to register indexes or foreign keys for the table,
      * which is done on a global scale and not on a per-field basis.
@@ -184,7 +195,21 @@ class SqlRegistry implements SingletonInterface
     {
         $type = $this->getType($tableName, $typeName);
         if (! $type->hasColumn($fieldName)) {
-            return $type->addColumn($fieldName, static::FALLBACK_TYPE_NAME);
+            $col = $type->addColumn($fieldName, static::FALLBACK_TYPE_NAME);
+            
+            // Try to inherit options from another type
+            foreach (($this->definition->types[$tableName] ?? []) as $_typeName => $_type) {
+                if ($_typeName === static::TABLE_OVERRIDE_TYPE_NAME) {
+                    continue;
+                }
+                
+                if ($typeName !== $_typeName && $_type->hasColumn($fieldName)) {
+                    ColumnAdapter::inheritConfig($col, $_type->getColumn($fieldName));
+                    break;
+                }
+            }
+            
+            return $col;
         }
         
         return $type->getColumn($fieldName);

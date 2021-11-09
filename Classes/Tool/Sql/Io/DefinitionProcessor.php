@@ -33,6 +33,7 @@ use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\TextType;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\Sql\TableFilterEvent;
+use LaborDigital\T3ba\Tool\Sql\ColumnAdapter;
 use LaborDigital\T3ba\Tool\Sql\Definition;
 use LaborDigital\T3ba\Tool\Sql\FallbackType;
 use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
@@ -135,8 +136,11 @@ class DefinitionProcessor
                 
                 $tableToDump = $this->makeDumpableTable($combined, $table, $definition);
             }
-    
-    
+            
+            if ($tableToDump->getName() === 'tx_thbingen_domain_model_multitool_slide'
+                && $tableToDump->hasColumn('teaser_image')) {
+                dbge($tableToDump, $types);
+            }
             $tableToDump = $this->cs()->eventBus
                 ->dispatch(new TableFilterEvent($table->getName(), $table, $tableToDump))
                 ->getTableToDump();
@@ -166,7 +170,7 @@ class DefinitionProcessor
             if ($typeName === SqlRegistry::TABLE_OVERRIDE_TYPE_NAME) {
                 continue;
             }
-    
+            
             // Ensure that all columns of $combined exist on $type
             // This fixes false "renaming" detections of the comparator
             $typeClone = clone $type;
@@ -175,18 +179,18 @@ class DefinitionProcessor
                     TableAdapter::attachColumn($typeClone, $column);
                 }
             }
-    
+            
             $diff = $this->getService(Comparator::class)->diffTable($combined, $typeClone);
-    
+            
             if (! $diff) {
                 continue;
             }
-    
+            
             // Add new column
             foreach ($diff->addedColumns as $column) {
                 TableAdapter::attachColumn($combined, $column);
             }
-    
+            
             // Modify columns
             foreach ($diff->changedColumns as $columnDiff) {
                 TableAdapter::replaceColumn($combined, $this->processColumnDiff($columnDiff));
@@ -377,7 +381,7 @@ class DefinitionProcessor
         if ($targetBType === $newBType && $targetBType === ParameterType::STRING) {
             // New type is text -> this overrules all other string types
             if ($new->getType() instanceof TextType) {
-                $defaultTypeConfig($target);
+                ColumnAdapter::inheritConfig($target, $new);
             }
             
             return;
