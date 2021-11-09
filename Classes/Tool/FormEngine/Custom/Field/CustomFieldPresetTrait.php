@@ -38,13 +38,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
-use Doctrine\DBAL\Types\TextType;
-use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
-use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 use Neunerlei\Arrays\Arrays;
 
 /**
@@ -120,10 +117,6 @@ trait CustomFieldPresetTrait
                 ]
             )
         );
-        
-        if ($field instanceof TcaField) {
-            $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT)->setNotnull(false);
-        }
         
         $dataHookOptions = $field->getDataHookOptions();
         $field->setDataHookOptions(array_merge($dataHookOptions,
