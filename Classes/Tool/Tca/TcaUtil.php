@@ -28,6 +28,8 @@ use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\DataHandling\ItemProcessingService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaUtil implements NoDiInterface
 {
@@ -105,10 +107,10 @@ class TcaUtil implements NoDiInterface
      * This allows us to render the correct labels even if we have overrides
      *
      * @param   array         $row       The database row to resolve the correct tca for
-     * @param   string|mixed  $table     The name of the database table to resolve the tca for
-     * @param   callable      $callback  The callback to execute
+     * @param   string|mixed  $table     The table-name, table-class or repository-class that defines the table of $row
+     * @param   callable      $callback  The callback to execute. The callback receives the modified table TCA as parameter
      *
-     * @return mixed
+     * @return mixed Returns the result of $callback()
      * @see NamingUtil::resolveTableName() on allowed options for the $table parameter
      */
     public static function runWithResolvedTypeTca(array $row, $table, callable $callback)
@@ -145,6 +147,49 @@ class TcaUtil implements NoDiInterface
             return $callback($GLOBALS['TCA'][$tableName]);
         } finally {
             $GLOBALS['TCA'][$tableName]['columns'] = $tcaBackup;
+        }
+    }
+    
+    /**
+     * Generates the full list of all possible items in a field, based on the configured itemProcFunc and injects it
+     * into the TCA, as if they were configured manually. It executed $callback and restores the TCA back to the original state.
+     *
+     * @param   array         $row        The database row to resolve the items for
+     * @param   string|mixed  $table      The table-name, table-class or repository-class that defines the table of $row
+     * @param   string        $fieldName  The name of the TCA field for which the items should be resolved
+     * @param   callable      $callback   The callback to execute. The callback receives
+     *
+     * @return mixed Returns the result of $callback()
+     * @see NamingUtil::resolveTableName() on allowed options for the $table parameter
+     */
+    public static function runWithResolvedItemProcFunc(array $row, $table, string $fieldName, callable $callback)
+    {
+        $tableName = NamingUtil::resolveTableName($table);
+        try {
+            if (is_array($GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [])) {
+                $fieldTca = $GLOBALS['TCA'][$tableName]['columns'][$fieldName];
+                
+                if (! empty($fieldTca['config']['itemsProcFunc'])) {
+                    $tcaBackup = $fieldTca;
+                    $config = $fieldTca['config'] ?? [];
+                    $items = $config['items'] ?? [];
+                    $items = GeneralUtility::makeInstance(ItemProcessingService::class)->getProcessingItems(
+                        $tableName,
+                        0,
+                        $fieldName,
+                        $row,
+                        $config,
+                        $items
+                    );
+                    $GLOBALS['TCA'][$tableName]['columns'][$fieldName]['config']['items'] = $items;
+                }
+            }
+            
+            return $callback($GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? []);
+        } finally {
+            if (isset($tcaBackup)) {
+                $GLOBALS['TCA'][$tableName]['columns'][$fieldName] = $tcaBackup;
+            }
         }
     }
     
