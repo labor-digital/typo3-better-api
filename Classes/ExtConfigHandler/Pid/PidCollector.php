@@ -44,10 +44,10 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
     /**
      * Adds a new pid mapping to the pid service.
      *
-     * @param   string  $key  A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
+     * @param   string  $key  A key like "myKey" or "storage.myKey" for hierarchical data
      * @param   int     $pid  The numeric page id which should be returned when the given pid is required
      *
-     * @return PidCollector
+     * @return $this
      */
     public function set(string $key, int $pid): self
     {
@@ -61,20 +61,68 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
      *
      * @param   array  $pids  A list of pids as $path => $pid or as multidimensional array
      *
-     * @return PidCollector
+     * @return $this
      */
-    public function setMultiple(array $pids): PidCollector
+    public function setMultiple(array $pids): self
     {
         foreach (Arrays::flatten($pids) as $k => $pid) {
             if (! is_string($k)) {
                 throw new InvalidArgumentException('The given key for pid: ' . $pid . ' has to be a string!');
             }
+            
             if (! is_numeric($pid)) {
                 throw new InvalidArgumentException(
                     'The given value for pid: ' . $k . ' has to be numeric! Given value: ' . $pid);
             }
+            
             $this->set($k, (int)$pid);
         }
+        
+        return $this;
+    }
+    
+    /**
+     * Removes a previously configured pid pair
+     *
+     * @param   string  $key  A key like "myKey" or "storage.myKey" for hierarchical data to remove
+     *
+     * @return $this
+     */
+    public function remove(string $key): self
+    {
+        $this->pids = Arrays::removePath($this->pids, $this->context->replaceMarkers($key));
+        
+        return $this;
+    }
+    
+    /**
+     * Like remove() but removes multiple pid pairs at once
+     *
+     * @param   array  $pids  A list of keys, like "myKey" or "storage.myKey" for hierarchical data to remove
+     *
+     * @return $this
+     */
+    public function removeMultiple(array $pids): self
+    {
+        foreach (Arrays::flatten($pids) as $k) {
+            if (! is_string($k)) {
+                throw new InvalidArgumentException('The given key: ' . $k . ' has to be a string!');
+            }
+            
+            $this->remove($k);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Removes ALL configured pid pairs
+     *
+     * @return $this
+     */
+    public function clear(): self
+    {
+        $this->pids = [];
         
         return $this;
     }
