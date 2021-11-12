@@ -28,10 +28,12 @@ use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Tool\Fal\FalService;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 use LaborDigital\T3ba\Tool\Translation\Translator;
 use Neunerlei\Inflection\Inflector;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\DataHandling\ItemProcessingService;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
@@ -49,6 +51,13 @@ class FieldRenderer implements PublicServiceInterface
      * @var \LaborDigital\T3ba\Tool\Fal\FalService
      */
     protected $falService;
+    
+    /**
+     * A list of TCAs that should be restoraead
+     *
+     * @var array
+     */
+    protected $tcaToRestore = [];
     
     public function __construct(Translator $translator, FalService $falService)
     {
@@ -125,19 +134,26 @@ class FieldRenderer implements PublicServiceInterface
             return $this->renderLinkField((string)$row[$fieldName]);
         }
         
-        $content = $this->htmlEncode(
-            BackendUtility::getProcessedValue(
-                $tableName,
-                $fieldName,
-                $row[$fieldName],
-                0,
-                false,
-                false,
-                $row['uid'] ?? 0,
-                true,
-                $row['pid'] ?? 0
-            )
-        );
+        if (! empty($fieldTca['config']['itemsProcFunc'])) {
+            $this->applyFieldTcaItemProcFunc($tableName, $fieldName, $row);
+        }
+        
+        $content = TcaUtil::runWithResolvedItemProcFunc($row, $tableName, $fieldName,
+            function () use ($tableName, $fieldName, $row) {
+                return $this->htmlEncode(
+                    BackendUtility::getProcessedValue(
+                        $tableName,
+                        $fieldName,
+                        $row[$fieldName],
+                        0,
+                        false,
+                        false,
+                        $row['uid'] ?? 0,
+                        true,
+                        $row['pid'] ?? 0
+                    )
+                );
+            });
         
         if (empty($content)) {
             $content = $this->htmlEncode($row[$fieldName]);
@@ -169,15 +185,15 @@ class FieldRenderer implements PublicServiceInterface
                                '" style="width:100%; max-width:' . $width . 'px; max-height: 200px"' .
                                ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
                                ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
-                    
+                        
                     } catch (Throwable $e) {
                         if (stripos($e->getMessage(), 'No such file or directory') !== false) {
                             return $this->htmlEncode($info->getFileName()) . ' (Missing File)';
                         }
-                    
+                        
                         return $this->htmlEncode($info->getFileName()) . ' | Error while rendering: ' . $e->getMessage();
                     }
-                
+                    
                 } else {
                     return $this->htmlEncode($info->getFileName());
                 }
@@ -185,11 +201,11 @@ class FieldRenderer implements PublicServiceInterface
                 if (empty($content)) {
                     return '&nbsp;';
                 }
-            
+                
                 if (count($content) === 1) {
                     return reset($content);
                 }
-            
+                
                 return implode('&nbsp;', $content) . ($suffix ? '<br><p style="margin-top: 15px"><em>' . $suffix . '</em></p>' : '');
             });
     }
@@ -340,6 +356,35 @@ class FieldRenderer implements PublicServiceInterface
         }
         
         return $value;
+    }
+    
+    /**
+     * Generates the
+     *
+     * @param   string  $tableName
+     * @param   string  $fieldName
+     * @param   array   $row
+     */
+    protected function applyFieldTcaItemProcFunc(string $tableName, string $fieldName, array $row): void
+    {
+        if (isset($this->tcaToRestore[$tableName][$fieldName])) {
+            return;
+        }
+        
+        $fieldConf = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
+        $this->tcaToRestore[$tableName][$fieldName] = $fieldConf;
+        $config = $fieldConf['config'] ?? [];
+        $items = $config['items'] ?? [];
+        $items = $this->makeInstance(ItemProcessingService::class)->getProcessingItems(
+            $tableName,
+            0,
+            $fieldName,
+            $row,
+            $config,
+            $items
+        );
+        
+        $GLOBALS['TCA'][$tableName]['columns'][$fieldName]['config']['items'] = $items;
     }
     
     /**
