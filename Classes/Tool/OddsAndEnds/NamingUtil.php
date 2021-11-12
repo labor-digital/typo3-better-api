@@ -225,24 +225,13 @@ class NamingUtil implements NoDiInterface
      */
     public static function resolveTableName($selector): string
     {
-        if (is_object($selector)) {
-            if ($selector instanceof BetterRepository) {
-                return $selector->getTableName();
-            }
-            
-            if ($selector instanceof Repository
-                || $selector instanceof AbstractEntity
-                || $selector instanceof ConfigureTcaTableInterface) {
-                $selector = get_class($selector);
-            }
-        }
-        
         if (is_string($selector)) {
-            if (isset(static::$tcaTableClassNameMap[$selector])) {
-                return static::$tcaTableClassNameMap[$selector];
-            }
             if (isset(static::$resolvedTableNames[$selector])) {
                 return static::$resolvedTableNames[$selector];
+            }
+            
+            if (isset(static::$tcaTableClassNameMap[$selector])) {
+                return static::$tcaTableClassNameMap[$selector];
             }
             
             if (class_exists($selector)) {
@@ -262,8 +251,20 @@ class NamingUtil implements NoDiInterface
             return static::$resolvedTableNames[$selector] = $selector;
         }
         
-        throw new InvalidArgumentException('Could not convert the given selector: ' . $selector
-                                           . ' into a database table name!');
+        if (is_object($selector)) {
+            if ($selector instanceof BetterRepository) {
+                return $selector->getTableName();
+            }
+            
+            if ($selector instanceof Repository
+                || $selector instanceof AbstractEntity
+                || $selector instanceof ConfigureTcaTableInterface) {
+                return static::resolveTableName(get_class($selector));
+            }
+        }
+        
+        throw new InvalidArgumentException('Could not convert the given selector: "' . $selector
+                                           . '" into a database table name!');
     }
     
     /**
