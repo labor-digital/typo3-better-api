@@ -79,6 +79,14 @@ class SiteFacet implements FacetInterface
     protected $currentSite;
     
     /**
+     * If the locally resolved $currentSite was resolved through a pid,
+     * this property contains the pid in order to automatically reload the site if the current pid changed.
+     *
+     * @var int|null
+     */
+    protected $currentPid;
+    
+    /**
      * True while the site is being found to avoid infinite loops
      *
      * @var bool
@@ -111,25 +119,29 @@ class SiteFacet implements FacetInterface
         if (! empty($site) && ! $site instanceof NullSite) {
             // Make sure to reset the current site if we suddenly get a site
             $this->currentSite = null;
+            $this->currentPid = null;
             
             return $site;
         }
         
-        /**
-         * Check if we have a current site cached
-         */
-        if (! empty($this->currentSite)) {
-            return $this->currentSite;
-        }
-        
-        // Try to find the site via pid
+        // Resolve the current pid
         $this->simulateNoSite = true;
         $pid = $this->context->pid()->getCurrent();
         $this->simulateNoSite = false;
         
+        /**
+         * Check if we have a current site cached
+         */
+        if (! empty($this->currentSite) &&
+            (empty($pid) || empty($this->currentPid) || $pid === $this->currentPid)) {
+            return $this->currentSite;
+        }
+        
         if (! empty($pid)) {
             $site = $this->getSiteFinder()->getSiteByPageId($pid);
             if ($site !== null) {
+                $this->currentPid = $pid;
+                
                 return $this->currentSite = $site;
             }
         }
