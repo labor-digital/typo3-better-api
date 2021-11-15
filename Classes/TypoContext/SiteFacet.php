@@ -78,8 +78,6 @@ class SiteFacet implements FacetInterface
      */
     protected $currentSite;
     
-    protected $forceResolvedSites;
-    
     /**
      * True while the site is being found to avoid infinite loops
      *
@@ -122,10 +120,6 @@ class SiteFacet implements FacetInterface
          */
         if (! empty($this->currentSite)) {
             return $this->currentSite;
-        }
-        
-        if (! $this->canUseSiteFinder()) {
-            throw new SiteNotFoundException('We are too early in the lifecycle to even try to resolve a site!');
         }
         
         // Try to find the site via pid
@@ -173,10 +167,6 @@ class SiteFacet implements FacetInterface
             return false;
         }
         
-        if (! $this->canUseSiteFinder()) {
-            return false;
-        }
-        
         try {
             $this->getCurrent();
             
@@ -195,16 +185,7 @@ class SiteFacet implements FacetInterface
      */
     public function getAll(bool $useCache = true): array
     {
-        if ($this->canUseSiteFinder()) {
-            return $this->getSiteFinder()->getAllSites($useCache);
-        }
-        
-        if ($useCache && isset($this->forceResolvedSites)) {
-            return $this->forceResolvedSites;
-        }
-        
-        return $this->forceResolvedSites
-            = CacheLessSiteConfigurationAdapter::makeInstance()->getAllExistingSites($useCache);
+        return $this->getSiteFinder()->getAllSites($useCache);
     }
     
     /**
@@ -250,28 +231,31 @@ class SiteFacet implements FacetInterface
     }
     
     /**
-     * Returns true if the site finder and site matcher can be instantiated,
-     * false if we are too early in the lifecycle
-     *
-     * @return bool
-     */
-    protected function canUseSiteFinder(): bool
-    {
-        return $this->context->di()->getContainer()->get('boot.state')->done;
-    }
-    
-    /**
      * Internal helper to lazily create the instance of the site finder if required
      *
      * @return \TYPO3\CMS\Core\Site\SiteFinder
      */
     protected function getSiteFinder(): SiteFinder
     {
+        $canUseCaching = $this->context->di()->getContainer()->get('boot.state')->done;
+        
         if (isset($this->siteFinder)) {
-            return $this->siteFinder;
+            // As soon as we can use the normal adapter, we will recreate it, otherwise we use our cacheLess adapter instead
+            if (! $this->siteFinder instanceof CacheLessSiteConfigurationAdapter || ! $canUseCaching) {
+                return $this->siteFinder;
+            }
         }
         
-        return $this->siteFinder = $this->context->di()->makeInstance(SiteFinder::class);
+        if ($canUseCaching) {
+            return $this->siteFinder = $this->context->di()->makeInstance(SiteFinder::class);
+        }
+        
+        unset($this->siteMatcher);
+        
+        return $this->siteFinder
+            = $this->context->di()->makeInstance(SiteFinder::class, [
+            CacheLessSiteConfigurationAdapter::makeInstance(),
+        ]);
     }
     
     /**
