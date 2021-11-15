@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfig\Interfaces\SiteIdentifierProviderInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface;
 use Neunerlei\Configuration\Loader\ConfigDefinition as DefaultConfigDefinition;
 use Neunerlei\Configuration\State\ConfigState;
@@ -90,32 +91,9 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
         $this->configContext->initialize($this->configContext->getLoaderContext(), $siteState);
         
         $siteKeys = array_keys($this->sites);
-        $siteConfigClasses = [];
-        foreach ($this->configClasses as $class) {
-            // Allow filtering of the configuration based on a site key
-            if (in_array(SiteKeyProviderInterface::class, class_implements($class), true)) {
-                // Extract sites using the site key provider
-                $result = $class::getSiteKeys($siteKeys);
-                if (! empty($result) && ! in_array($identifier, $result, true)) {
-                    continue;
-                }
-            } elseif (str_contains($class, '\\Site\\')) {
-                // Extract site based on namespace convention
-                foreach ($this->handlerDefinition->locations as $handlerLocation) {
-                    $nsPattern = '\\' . trim(str_replace('/', '\\', $handlerLocation), '\\') . '\\Site\\';
-                    $nsPattern = preg_quote($nsPattern, '~') . '(.*?)\\\\';
-                    preg_match('~' . $nsPattern . '~', $class, $m);
-                    if (! empty($m) && ! empty($m[1])) {
-                        $thisIdentifier = strtolower($m[1]);
-                        if ($thisIdentifier !== 'common' && strtolower($identifier) !== $thisIdentifier) {
-                            continue 2;
-                        }
-                    }
-                }
-            }
-            
-            $siteConfigClasses[] = $class;
-        }
+        $siteConfigClasses = array_filter($this->configClasses, function ($v) use ($identifier, $siteKeys) {
+            return $this->filterSiteConfigClass($identifier, $siteKeys, $v);
+        });
         
         $filter = static function (array $value) use ($siteConfigClasses) {
             return array_filter($value, static function ($key) use ($siteConfigClasses) {
@@ -149,5 +127,47 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
         $state->mergeIntoArray('typo.site.' . $identifier, $data);
     }
     
+    /**
+     * Checks if a site config class can is applicable for a site called $identifier
+     *
+     * @param   string  $identifier  The identifier of the site to test the class for
+     * @param   array   $siteKeys    The list of all available site identifiers
+     * @param   string  $class       The name of the class to be filtered
+     *
+     * @return bool
+     */
+    protected function filterSiteConfigClass(string $identifier, array $siteKeys, string $class): bool
+    {
+        if (in_array(SiteIdentifierProviderInterface::class, class_implements($class), true)) {
+            /** @var SiteIdentifierProviderInterface $class */
+            $result = $class::getSiteIdentifiers($siteKeys);
+            if (! empty($result) && ! in_array($identifier, $result, true)) {
+                return false;
+            }
+        } elseif (in_array(SiteKeyProviderInterface::class, class_implements($class), true)) {
+            // @todo remove this in v11
+            // Extract sites using the site key provider
+            /** @var SiteKeyProviderInterface $class */
+            $result = $class::getSiteKeys($siteKeys);
+            if (! empty($result) && ! in_array($identifier, $result, true)) {
+                return false;
+            }
+        } elseif (str_contains($class, '\\Site\\')) {
+            // Extract site based on namespace convention
+            foreach ($this->handlerDefinition->locations as $handlerLocation) {
+                $nsPattern = '\\' . trim(str_replace('/', '\\', $handlerLocation), '\\') . '\\Site\\';
+                $nsPattern = preg_quote($nsPattern, '~') . '(.*?)\\\\';
+                preg_match('~' . $nsPattern . '~', $class, $m);
+                if (! empty($m) && ! empty($m[1])) {
+                    $thisIdentifier = strtolower($m[1]);
+                    if ($thisIdentifier !== 'common' && strtolower($identifier) !== $thisIdentifier) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
     
 }

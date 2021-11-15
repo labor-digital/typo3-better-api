@@ -29,20 +29,18 @@ namespace LaborDigital\T3ba\ExtConfig\Interfaces;
  * In other handlers this interface is not used. It is optional to filter configs to apply only to specific
  * sites.
  *
- * @package    LaborDigital\T3ba\ExtConfig\Interfaces
- * @deprecated will be removed in v11, use SiteIdentifierProviderInterface instead
- * @see        \LaborDigital\T3ba\ExtConfig\Interfaces\SiteIdentifierProviderInterface
+ * @package LaborDigital\T3ba\ExtConfig\Interfaces
  */
-interface SiteKeyProviderInterface
+interface SiteIdentifierProviderInterface
 {
     
     /**
-     * Must return the list of site keys this configuration applies to.
+     * Must return the list of site identifiers this configuration applies to.
      * If an empty array is returned the configuration will be applied to all sites.
      *
-     * @param   array  $existingSiteKeys  Receives the list of registered site keys in this installation.
+     * @param   array  $existingSiteIdentifiers  Receives the list of registered site keys in this installation.
      *
      * @return array
      */
-    public static function getSiteKeys(array $existingSiteKeys): array;
+    public static function getSiteIdentifiers(array $existingSiteIdentifiers): array;
 }
