@@ -166,16 +166,16 @@ class MainLoader
             $this->getTypoContext(),
         ]);
         $container->set(SiteConfigContext::class, $configContext);
-        
         $loader->setConfigContextClass(SiteConfigContext::class);
+        
         $loader->setCache(null);
-        $loader->setContainer($this->getContainer());
+        $loader->setContainer($container);
         
         $loader->setEventDispatcher(
             $this->makeEventDispatcherProxy(static function (object $event) use ($state) {
                 if ($event instanceof BeforeConfigLoadEvent) {
-                    $event->getLoaderContext()->configContext
-                        ->initialize($event->getLoaderContext(), $state);
+                    $ctx = $event->getLoaderContext();
+                    $ctx->configContext->initialize($ctx, $state);
                 }
             })
         );
