@@ -25,6 +25,9 @@ namespace LaborDigital\T3ba\ExtConfig\Loader;
 use Closure;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\ExtConfig\MainExtConfigGeneratedEvent;
+use LaborDigital\T3ba\Event\ExtConfig\SiteBasedExtConfigGeneratedEvent;
+use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\StandAloneHandlerInterface;
@@ -38,6 +41,7 @@ use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
 use Neunerlei\Configuration\State\ConfigState;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Site\Entity\NullSite;
 
 class MainLoader
 {
@@ -84,6 +88,14 @@ class MainLoader
                         $this->injectEmptyConfigShell($event);
                     } elseif ($event instanceof BeforeStateCachingEvent) {
                         $this->loadSiteBasedConfig($event->getState());
+                        
+                        $configContext = $event->getLoaderContext()->configContext;
+                        if ($configContext instanceof ExtConfigContext) {
+                            $this->eventBus->dispatch(
+                                new MainExtConfigGeneratedEvent(
+                                    $configContext, $event->getState())
+                            );
+                        }
                     }
                 }
             )
@@ -165,6 +177,7 @@ class MainLoader
             $this->extConfigService,
             $typoContext,
         ]);
+        $configContext->initializeSite('null', new NullSite());
         
         $container->set(SiteConfigContext::class, $configContext);
         
@@ -201,6 +214,10 @@ class MainLoader
         );
         
         $loader->load();
+        
+        $this->eventBus->dispatch(
+            new SiteBasedExtConfigGeneratedEvent($configContext, $state)
+        );
     }
     
 }

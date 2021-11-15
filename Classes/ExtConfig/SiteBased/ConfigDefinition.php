@@ -115,6 +115,10 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
             $this->classNamespaceMap = $clone->classNamespaceMap;
         }
         
+        $this->configContext->getTypoContext()->di()->cs()->eventBus->dispatch(
+            new SingleSiteBasedExtConfigGeneratedEvent($identifier, $this->configContext, $siteState)
+        );
+        
         // Inject the site state into the main state object
         $data = $siteState->getAll();
         
