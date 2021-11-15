@@ -24,15 +24,15 @@ use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3ba\Tool\Database\DatabaseException;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 if (! function_exists('dbgQuery')) {
     /**
      * Helper to debug a typo3 query. Will render the sql statement, the result, and exceptions to the screen to see.
      *
-     * @param   QueryInterface|ExtBaseBetterQuery|StandaloneBetterQuery|QueryBuilder  $query  The query to debug
+     * @param   QueryInterface|ExtBaseBetterQuery|StandaloneBetterQuery|QueryBuilder|QueryResultInterface  $query
      *
      * @throws \LaborDigital\T3ba\Tool\Database\DatabaseException
      */
@@ -43,7 +43,7 @@ if (! function_exists('dbgQuery')) {
         if ($query instanceof ExtBaseBetterQuery) {
             $query = $query->getQuery();
         }
-        if ($query instanceof QueryResult) {
+        if ($query instanceof QueryResultInterface) {
             $query = $query->getQuery();
         }
         if (! $query instanceof QueryInterface) {
