@@ -268,11 +268,17 @@ class PidFacet implements FacetInterface
         }
         
         if ($this->context->env()->isBackend()) {
+            // Parameter array of popups like "linkBrowser" and the like
+            if ($requestFacet->hasGet('P.pid')) {
+                return (int)$requestFacet->getGet('P.pid');
+            }
+            
+            // Request id, which was not provided in the _GET super-global
             if (isset($_REQUEST['id'])) {
                 return (int)$_REQUEST['id'];
             }
             
-            // Try to parse return url
+            // Fetch from return url -> when editing a record in the backend
             if ($requestFacet->hasGet('returnUrl')) {
                 $query = Query::parse(
                     Path::makeUri(
