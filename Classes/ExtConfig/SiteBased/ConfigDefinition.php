@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Event\ExtConfig\SingleSiteBasedExtConfigGeneratedEvent;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteIdentifierProviderInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface;
 use Neunerlei\Configuration\Loader\ConfigDefinition as DefaultConfigDefinition;
@@ -76,12 +77,15 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
      * @param   string                            $identifier
      * @param   \TYPO3\CMS\Core\Site\Entity\Site  $site
      * @param   callable                          $callback
+     *
+     * @todo remove $identifier in v11, because we can extract identifier from $site directly
      */
     protected function runWithSiteBasedDefinition(string $identifier, Site $site, callable $callback): void
     {
         $clone = clone $this;
         
         if ($this->configContext instanceof SiteConfigContext) {
+            $siteBackup = $this->configContext->getSite();
             $this->configContext->initializeSite($identifier, $site);
         }
         
@@ -113,6 +117,10 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
             $this->configClasses = $clone->configClasses;
             $this->overrideConfigClasses = $clone->overrideConfigClasses;
             $this->classNamespaceMap = $clone->classNamespaceMap;
+            
+            if (isset($siteBackup)) {
+                $this->configContext->initializeSite($siteBackup->getIdentifier(), $siteBackup);
+            }
         }
         
         $this->configContext->getTypoContext()->di()->cs()->eventBus->dispatch(

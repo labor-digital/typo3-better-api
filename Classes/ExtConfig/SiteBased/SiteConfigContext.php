@@ -26,7 +26,7 @@ namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
-use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 
 class SiteConfigContext extends ExtConfigContext
 {
@@ -57,6 +57,7 @@ class SiteConfigContext extends ExtConfigContext
      * Returns the key of the site that currently gets configured
      *
      * @return string
+     * @deprecated will be removed in v11 use getSiteIdentifier() instead
      */
     public function getSiteKey(): string
     {
@@ -64,11 +65,21 @@ class SiteConfigContext extends ExtConfigContext
     }
     
     /**
+     * Returns the identifier of the site that currently gets configured
+     *
+     * @return string
+     */
+    public function getSiteIdentifier(): string
+    {
+        return $this->site->getIdentifier();
+    }
+    
+    /**
      * Returns the site that gets currently configured
      *
-     * @return \TYPO3\CMS\Core\Site\Entity\Site
+     * @return \TYPO3\CMS\Core\Site\Entity\SiteInterface
      */
-    public function getSite(): Site
+    public function getSite(): SiteInterface
     {
         return $this->site;
     }
@@ -76,12 +87,13 @@ class SiteConfigContext extends ExtConfigContext
     /**
      * Internal helper to inject the configured site into the context
      *
-     * @param   string                            $siteKey
-     * @param   \TYPO3\CMS\Core\Site\Entity\Site  $site
+     * @param   string                                     $siteKey
+     * @param   \TYPO3\CMS\Core\Site\Entity\SiteInterface  $site
      *
      * @internal
+     * @todo in v11 remove the $siteKey property, because we can inherit the identifier through the site
      */
-    public function initializeSite(string $siteKey, Site $site): void
+    public function initializeSite(string $siteKey, SiteInterface $site): void
     {
         $this->siteKey = $siteKey;
         $this->site = $site;
