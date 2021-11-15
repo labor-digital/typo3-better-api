@@ -56,14 +56,14 @@ class SiteFacet implements FacetInterface
 {
     
     /**
-     * @var \TYPO3\CMS\Core\Site\SiteFinder
-     */
-    protected $siteFinder;
-    
-    /**
      * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
      */
     protected $context;
+    
+    /**
+     * @var \TYPO3\CMS\Core\Site\SiteFinder
+     */
+    protected $siteFinder;
     
     /**
      * @var \TYPO3\CMS\Core\Routing\SiteMatcher
@@ -84,18 +84,9 @@ class SiteFacet implements FacetInterface
      */
     protected $simulateNoSite = false;
     
-    /**
-     * SiteAspect constructor.
-     *
-     * @param   \TYPO3\CMS\Core\Site\SiteFinder                  $siteFinder
-     * @param   \TYPO3\CMS\Core\Routing\SiteMatcher              $siteMatcher
-     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext  $context
-     */
-    public function __construct(SiteFinder $siteFinder, SiteMatcher $siteMatcher, TypoContext $context)
+    public function __construct(TypoContext $context)
     {
-        $this->siteFinder = $siteFinder;
         $this->context = $context;
-        $this->siteMatcher = $siteMatcher;
     }
     
     /**
@@ -130,19 +121,24 @@ class SiteFacet implements FacetInterface
             return $this->currentSite;
         }
         
+        if (! $this->canUseSiteFinder()) {
+            throw new SiteNotFoundException('We are too early in the lifecycle to even try to resolve a site!');
+        }
+        
         // Try to find the site via pid
         $this->simulateNoSite = true;
         $pid = $this->context->pid()->getCurrent();
         $this->simulateNoSite = false;
+        
         if (! empty($pid)) {
-            $site = $this->siteFinder->getSiteByPageId($pid);
+            $site = $this->getSiteFinder()->getSiteByPageId($pid);
             if ($site !== null) {
                 return $this->currentSite = $site;
             }
         }
         
         // Use the single site we have
-        $sites = $this->siteFinder->getAllSites();
+        $sites = $this->getSiteFinder()->getAllSites();
         if (count($sites) === 1) {
             return $this->currentSite = reset($sites);
         }
@@ -151,7 +147,7 @@ class SiteFacet implements FacetInterface
         $request = $this->context->request()->getRootRequest();
         if (! is_null($request)) {
             try {
-                $result = $this->siteMatcher->matchRequest($request->withUri(Path::makeUri(true)));
+                $result = $this->getSiteMatcher()->matchRequest($request->withUri(Path::makeUri(true)));
                 
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $this->currentSite = $result->getSite();
@@ -173,6 +169,11 @@ class SiteFacet implements FacetInterface
         if ($this->simulateNoSite) {
             return false;
         }
+        
+        if (! $this->canUseSiteFinder()) {
+            return false;
+        }
+        
         try {
             $this->getCurrent();
             
@@ -191,7 +192,7 @@ class SiteFacet implements FacetInterface
      */
     public function getAll(bool $useCache = true): array
     {
-        return $this->siteFinder->getAllSites($useCache);
+        return $this->getSiteFinder()->getAllSites($useCache);
     }
     
     /**
@@ -203,7 +204,7 @@ class SiteFacet implements FacetInterface
      */
     public function get(string $identifier): SiteInterface
     {
-        return $this->siteFinder->getSiteByIdentifier($identifier);
+        return $this->getSiteFinder()->getSiteByIdentifier($identifier);
     }
     
     /**
@@ -215,7 +216,7 @@ class SiteFacet implements FacetInterface
      */
     public function getForPid($pid): Site
     {
-        return $this->siteFinder->getSiteByPageId($this->context->pid()->get($pid));
+        return $this->getSiteFinder()->getSiteByPageId($this->context->pid()->get($pid));
     }
     
     /**
@@ -228,11 +229,50 @@ class SiteFacet implements FacetInterface
     public function has(string $identifier): bool
     {
         try {
-            $this->siteFinder->getSiteByIdentifier($identifier);
+            $this->getSiteFinder()->getSiteByIdentifier($identifier);
             
             return true;
         } catch (SiteNotFoundException $exception) {
             return false;
         }
+    }
+    
+    /**
+     * Returns true if the site finder and site matcher can be instantiated,
+     * false if we are too early in the lifecycle
+     *
+     * @return bool
+     */
+    protected function canUseSiteFinder(): bool
+    {
+        return $this->context->di()->getContainer()->get('boot.state')->done;
+    }
+    
+    /**
+     * Internal helper to lazily create the instance of the site finder if required
+     *
+     * @return \TYPO3\CMS\Core\Site\SiteFinder
+     */
+    protected function getSiteFinder(): SiteFinder
+    {
+        if (isset($this->siteFinder)) {
+            return $this->siteFinder;
+        }
+        
+        return $this->siteFinder = $this->context->di()->makeInstance(SiteFinder::class);
+    }
+    
+    /**
+     * Internal helper to lazily create the instance of the site matcher if required
+     *
+     * @return \TYPO3\CMS\Core\Routing\SiteMatcher
+     */
+    protected function getSiteMatcher(): SiteMatcher
+    {
+        if (isset($this->siteMatcher)) {
+            return $this->siteMatcher;
+        }
+        
+        return $this->siteMatcher = $this->context->di()->makeInstance(SiteMatcher::class, [$this->getSiteFinder()]);
     }
 }
