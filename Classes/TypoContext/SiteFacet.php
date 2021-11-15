@@ -40,6 +40,7 @@ namespace LaborDigital\T3ba\TypoContext;
 
 use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\TypoContext\Util\CacheLessSiteConfigurationAdapter;
 use Neunerlei\PathUtil\Path;
 use Throwable;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
@@ -76,6 +77,8 @@ class SiteFacet implements FacetInterface
      * @var \TYPO3\CMS\Core\Site\Entity\SiteInterface
      */
     protected $currentSite;
+    
+    protected $forceResolvedSites;
     
     /**
      * True while the site is being found to avoid infinite loops
@@ -192,7 +195,16 @@ class SiteFacet implements FacetInterface
      */
     public function getAll(bool $useCache = true): array
     {
-        return $this->getSiteFinder()->getAllSites($useCache);
+        if ($this->canUseSiteFinder()) {
+            return $this->getSiteFinder()->getAllSites($useCache);
+        }
+        
+        if ($useCache && isset($this->forceResolvedSites)) {
+            return $this->forceResolvedSites;
+        }
+        
+        return $this->forceResolvedSites
+            = CacheLessSiteConfigurationAdapter::makeInstance()->getAllExistingSites($useCache);
     }
     
     /**
