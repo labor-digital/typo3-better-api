@@ -25,7 +25,6 @@ namespace LaborDigital\T3ba\ExtConfig\Loader;
 use Closure;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
-use LaborDigital\T3ba\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\StandAloneHandlerInterface;
@@ -161,13 +160,15 @@ class MainLoader
         $loader = $this->extConfigService->makeLoader(ExtConfigService::SITE_BASED_LOADER_KEY);
         $container = $this->getContainer();
         
+        $typoContext = $this->getTypoContext();
         $configContext = $this->makeInstance(SiteConfigContext::class, [
             $this->extConfigService,
-            $this->getTypoContext(),
+            $typoContext,
         ]);
-        $container->set(SiteConfigContext::class, $configContext);
-        $loader->setConfigContextClass(SiteConfigContext::class);
         
+        $container->set(SiteConfigContext::class, $configContext);
+        
+        $loader->setConfigContextClass(SiteConfigContext::class);
         $loader->setCache(null);
         $loader->setContainer($container);
         
@@ -194,7 +195,7 @@ class MainLoader
             $this->makeInstance(
                 ConfigFinder::class,
                 [
-                    CachelessSiteConfigurationAdapter::makeInstance()->getAllExistingSites(false),
+                    $typoContext->site()->getAll(false),
                 ]
             )
         );

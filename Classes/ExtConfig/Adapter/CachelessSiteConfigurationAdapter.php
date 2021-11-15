@@ -23,41 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfig\Adapter;
 
 
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use TYPO3\CMS\Core\Cache\Backend\NullBackend;
-use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
-use TYPO3\CMS\Core\Configuration\SiteConfiguration;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-class CachelessSiteConfigurationAdapter extends SiteConfiguration implements NoDiInterface
+/**
+ * @deprecated This class will be removed in v11 use LaborDigital\T3ba\TypoContext\Util\CacheLessSiteConfigurationAdapter() instead!
+ */
+class CachelessSiteConfigurationAdapter extends \LaborDigital\T3ba\TypoContext\Util\CacheLessSiteConfigurationAdapter
 {
-    /**
-     * @inheritDoc
-     */
-    public function __construct(string $configPath = '') { parent::__construct($configPath); }
-    
-    /**
-     * @inheritDoc
-     */
-    protected function getCache(): PhpFrontend
-    {
-        return new PhpFrontend('foo', new NullBackend('foo'));
-    }
-    
-    /**
-     * Creates a new instance of myself based on the given site config
-     *
-     * @param   \TYPO3\CMS\Core\Configuration\SiteConfiguration|null  $siteConfiguration
-     *
-     * @return static
-     * @noinspection ExposingInternalClassesInspection
-     */
-    public static function makeInstance(?SiteConfiguration $siteConfiguration = null): self
-    {
-        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-        $siteConfiguration = $siteConfiguration ?? GeneralUtility::makeInstance(SiteConfiguration::class);
-        $configPath = $siteConfiguration->configPath;
-        
-        return GeneralUtility::makeInstance(static::class, $configPath);
-    }
+
 }
