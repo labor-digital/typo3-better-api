@@ -111,7 +111,7 @@ trait DumperGenericTrait
         $currentPalette = null;
         $paletteShowItem = [];
         $pointer = &$showItem;
-        $hasFieldsOrPallets = false;
+        $hasFieldsOrPalettes = false;
         
         foreach ($type->getAllChildren() as $child) {
             if ($child instanceof TcaTab) {
@@ -129,9 +129,14 @@ trait DumperGenericTrait
             }
             
             if ($child instanceof TcaPalette) {
-                $hasFieldsOrPallets = true;
+                $hasFieldsOrPalettes = true;
                 $meta = $child->getLayoutMeta();
-                $pointer[] = '--palette--;' . implode(';', $meta);
+                // The ORDER of the items in the meta array is absolutely critical,
+                // so note to self: PLEASE DON'T delete this again!
+                $pointer[] = '--palette--;' . implode(';', [
+                        $meta[0] ?? '',
+                        $meta[1] ?? substr($child->getId(), 1),
+                    ]);
                 
                 $currentPalette = $meta[1];
                 $palettes[$currentPalette] = $child->getRaw();
@@ -158,7 +163,7 @@ trait DumperGenericTrait
             }
             
             if ($child instanceof TcaField) {
-                $hasFieldsOrPallets = true;
+                $hasFieldsOrPalettes = true;
                 $fieldId = $child->getId();
                 $meta = $child->getLayoutMeta();
                 
@@ -174,7 +179,7 @@ trait DumperGenericTrait
             }
         }
         
-        if (! empty($showItem) && $hasFieldsOrPallets) {
+        if (! empty($showItem) && $hasFieldsOrPalettes) {
             $tca['types'][$type->getTypeName()]['showitem'] = implode(',', $showItem);
         }
         $tca['palettes'] = $palettes;
