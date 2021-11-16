@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.19.1](https://github.com/labor-digital/typo3-better-api/compare/v10.19.0...v10.19.1) (2021-11-16)
+
+
+### Bug Fixes
+
+* **Tca\TableDumper:** ensure palette showitem definitions are correct ([57041a2](https://github.com/labor-digital/typo3-better-api/commit/57041a2e8d6b75b7117c261370bbb43d89644826))
+
 ## [10.19.0](https://github.com/labor-digital/typo3-better-api/compare/v10.18.0...v10.19.0) (2021-11-09)
 
 
