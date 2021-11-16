@@ -86,14 +86,19 @@ class MainLoader
                 function (object $event) {
                     if ($event instanceof BeforeConfigLoadEvent) {
                         $this->injectEmptyConfigShell($event);
-                    } elseif ($event instanceof BeforeStateCachingEvent) {
+                        
+                        return;
+                    }
+                    
+                    if ($event instanceof BeforeStateCachingEvent) {
+                        $event->getState()->set(ExtConfigService::PERSISTABLE_STATE_PATH, $event->getCacheKey());
+                        
                         $this->loadSiteBasedConfig($event->getState());
                         
                         $configContext = $event->getLoaderContext()->configContext;
                         if ($configContext instanceof ExtConfigContext) {
                             $this->eventBus->dispatch(
-                                new MainExtConfigGeneratedEvent(
-                                    $configContext, $event->getState())
+                                new MainExtConfigGeneratedEvent($configContext, $event->getState())
                             );
                         }
                     }

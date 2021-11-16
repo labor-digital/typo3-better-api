@@ -29,7 +29,9 @@ use LaborDigital\T3ba\Core\VarFs\VarFs;
 use LaborDigital\T3ba\Event\ConfigLoaderFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
 use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Configuration\Loader\Loader;
+use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Core\Environment;
@@ -43,6 +45,8 @@ class ExtConfigService
     public const EVENT_BUS_LOADER_KEY = 'EventBus';
     public const DI_BUILD_LOADER_KEY = 'DiBuild';
     public const DI_RUN_LOADER_KEY = 'DiRun';
+    
+    public const PERSISTABLE_STATE_PATH = 't3ba.stateCacheKey';
     
     /**
      * The list of default handler locations to traverse.
@@ -227,6 +231,29 @@ class ExtConfigService
     public function getAutoloaderMap(): array
     {
         return $this->getNamespaceMaps()['autoload'];
+    }
+    
+    /**
+     * Allows you to override a modified state object already stored in the cache.
+     * BE CAREFUL WITH THIS! This is mostly an internal implementation detail to resolve
+     * late bindings like in TCA definitions.
+     *
+     * In order to be persistable, the state MUST contain a cache key at the path defined in PERSISTABLE_STATE_PATH
+     *
+     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     *
+     * @throws \LaborDigital\T3ba\ExtConfig\UnpersistableCacheStateException
+     */
+    public function persistState(ConfigState $state): void
+    {
+        $cacheKey = $state->get(static::PERSISTABLE_STATE_PATH);
+        if (! is_string($cacheKey)) {
+            throw new UnpersistableCacheStateException(
+                'The given cache state object could not be persisted, because there is no entry at path: "'
+                . static::PERSISTABLE_STATE_PATH . '" that would contain the cache key');
+        }
+        
+        $this->fs->getCache()->set($cacheKey, SerializerUtil::serializeJson($state->getAll()));
     }
     
     /**
