@@ -228,7 +228,8 @@ class DefinitionProcessor
      */
     protected function makeDumpableTable(Table $combined, Table $initial, Definition $definition): ?Table
     {
-        // Drop all fallback columns -> TYPO3 should handle this or it is not correctly configured
+        // Drop all fallback columns -> TYPO3 should handle this (though ext_table.sql),
+        // or it is configured incorrectly
         $this->dropFallbackColumns($combined);
         
         // Build a merge sum based on the combined types and their diff to the currently configured table

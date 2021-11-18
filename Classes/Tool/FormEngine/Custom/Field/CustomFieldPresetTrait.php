@@ -38,10 +38,14 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\FormEngine\Custom\Field;
 
+use Doctrine\DBAL\Types\TextType;
+use LaborDigital\T3ba\Tool\Sql\FallbackType;
+use LaborDigital\T3ba\Tool\Sql\SqlFieldLength;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
 use LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractField;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderContext;
 use LaborDigital\T3ba\Tool\Tca\Builder\TcaBuilderException;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 use Neunerlei\Arrays\Arrays;
 
 /**
@@ -123,6 +127,11 @@ trait CustomFieldPresetTrait
             ['contextClass' => CustomFieldDataHookContext::class]));
         
         call_user_func([$customElementClass, 'configureField'], $field, $options, $context);
+        
+        // If the field does not have a TCA column configured, we automatically apply a type for it.
+        if ($field instanceof TcaField && $field->getColumn()->getType() instanceof FallbackType) {
+            $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT)->setNotnull(false);
+        }
         
         $field->setDataHookOptions($dataHookOptions);
     }
