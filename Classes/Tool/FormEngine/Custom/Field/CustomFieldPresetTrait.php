@@ -128,7 +128,7 @@ trait CustomFieldPresetTrait
         
         call_user_func([$customElementClass, 'configureField'], $field, $options, $context);
         
-        // If the field does not have a TCA column configured, we automatically apply a type for it.
+        // If the field does not have an SQL column configured, we automatically apply a type for it.
         if ($field instanceof TcaField && $field->getColumn()->getType() instanceof FallbackType) {
             $field->getColumn()->setType(new TextType())->setLength(SqlFieldLength::MEDIUM_TEXT)->setNotnull(false);
         }
