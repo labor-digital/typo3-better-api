@@ -24,7 +24,10 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorTrait;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
+use Neunerlei\Configuration\State\ConfigState;
 
 /**
  * Class CshLabelStep
@@ -33,9 +36,11 @@ use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepI
  *
  * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
  */
-class CshLabelStep implements TcaPostProcessorStepInterface, NoDiInterface
+class CshLabelStep implements TcaPostProcessorStepInterface, StateAwareTcaPostProcessorInterface, NoDiInterface
 {
     public const CONFIG_KEY = 'cshLabels';
+    
+    protected $labels = [];
     
     /**
      * @inheritDoc
@@ -44,11 +49,19 @@ class CshLabelStep implements TcaPostProcessorStepInterface, NoDiInterface
     {
         if (! empty($config['ctrl'][static::CONFIG_KEY]) && is_array($config['ctrl'][static::CONFIG_KEY])) {
             foreach ($config['ctrl'][static::CONFIG_KEY] as $label) {
+                $this->labels[] = [$tableName, $label];
+                // @todo remove this in the next major version
                 $meta['cshLabels'][] = [$tableName, $label];
             }
         }
         
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
+    
+    public function applyToConfigState(ConfigState $state): void
+    {
+        $state->set('tca.cshLabels', $this->labels);
+    }
+    
     
 }

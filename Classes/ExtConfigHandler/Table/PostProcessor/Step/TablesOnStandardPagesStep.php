@@ -24,7 +24,10 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorTrait;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
+use Neunerlei\Configuration\State\ConfigState;
 
 /**
  * Class TablesOnStandardPagesStep
@@ -33,9 +36,16 @@ use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepI
  *
  * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
  */
-class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface, NoDiInterface
+class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface, StateAwareTcaPostProcessorInterface, NoDiInterface
 {
     public const CONFIG_KEY = 'allowOnStandardPages';
+    
+    /**
+     * The list of table names that should be allowed on standard pages
+     *
+     * @var array
+     */
+    protected $list = [];
     
     /**
      * @inheritDoc
@@ -43,10 +53,17 @@ class TablesOnStandardPagesStep implements TcaPostProcessorStepInterface, NoDiIn
     public function process(string $tableName, array &$config, array &$meta): void
     {
         if (! empty($config['ctrl'][static::CONFIG_KEY])) {
+            $this->list[] = $tableName;
+            
+            // @todo remove this in the next major version
             $meta['onStandardPages'][] = $tableName;
         }
         
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
     
+    public function applyToConfigState(ConfigState $state): void
+    {
+        $state->set('tca.allowOnStandardPages', $this->list);
+    }
 }

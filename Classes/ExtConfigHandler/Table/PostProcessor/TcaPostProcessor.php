@@ -31,6 +31,7 @@ use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\ListPositionStep
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\PreviewLinkStep;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step\TablesOnStandardPagesStep;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use Neunerlei\Configuration\State\ConfigState;
 
 /**
  * Class TcaPostProcessor
@@ -89,17 +90,22 @@ class TcaPostProcessor implements NoDiInterface
     /**
      * Executes all existing steps for the database tables
      *
+     * @param   \Neunerlei\Configuration\State\ConfigState|null  $configState
+     *
      * @return array
+     * @todo make $configState required in the next major version
      */
-    public function process(): array
+    public function process(?ConfigState $configState = null): array
     {
+        $configState = $configState ?? $this->getService(ConfigState::class);
+        
         // Store the state of the class name map
         $meta['classNameMap'] = NamingUtil::$tcaTableClassNameMap;
         
         // Create the steps
         $steps = [];
         foreach (static::$steps as $stepClass) {
-            $step = $this->getServiceOrInstance($stepClass);
+            $step = $this->makeInstance($stepClass);
             
             if (! $step instanceof TcaPostProcessorStepInterface) {
                 continue;
@@ -112,6 +118,10 @@ class TcaPostProcessor implements NoDiInterface
         foreach ($GLOBALS['TCA'] as $tableName => &$config) {
             foreach ($steps as $step) {
                 $step->process($tableName, $config, $meta);
+                
+                if ($step instanceof StateAwareTcaPostProcessorInterface) {
+                    $step->applyToConfigState($configState);
+                }
             }
             
             if (is_array(static::$additionalProcessors[$tableName] ?? null)) {
@@ -122,6 +132,8 @@ class TcaPostProcessor implements NoDiInterface
                 }
             }
         }
+        
+        $meta['@deprecated'] = '"tca.meta" will be removed in v11, the information will then be stored under "tca" directly';
         
         return $meta;
     }

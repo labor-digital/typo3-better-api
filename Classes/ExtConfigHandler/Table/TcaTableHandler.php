@@ -82,6 +82,9 @@ class TcaTableHandler extends AbstractExtConfigHandler implements NoDiInterface
      */
     public function finish(): void
     {
+        $this->context->getState()->mergeIntoArray('tca.classNameMap', $this->storedTableNameMap);
+        
+        // @todo remove this in the next major release
         $this->context->getState()->mergeIntoArray('tca.meta.classNameMap', $this->storedTableNameMap);
     }
     
@@ -107,17 +110,17 @@ class TcaTableHandler extends AbstractExtConfigHandler implements NoDiInterface
         if ($part === $this->context->getVendor()) {
             array_shift($namespaceParts);
         }
-    
+        
         // Remove Configuration and Table parts
         $namespaceParts = array_filter($namespaceParts, static function (string $part) {
             return ! in_array($part, ['Configuration', 'Table'], true);
         });
-    
+        
         if ($this->context->getTypoContext()->config()
                           ->isFeatureEnabled(T3baFeatureToggles::TCA_V11_NESTED_TABLE_NAMES)) {
             $lastPart = array_pop($namespaceParts);
             $secondToLastPart = array_pop($namespaceParts);
-        
+            
             if (! empty($secondToLastPart) && str_starts_with($lastPart, $secondToLastPart)) {
                 $_lastPart = substr($lastPart, strlen($secondToLastPart));
                 // ONLY override the last part if we removed an exact match and the table is still camel-case
@@ -127,20 +130,20 @@ class TcaTableHandler extends AbstractExtConfigHandler implements NoDiInterface
                 }
                 unset($_lastPart);
             }
-        
+            
             $namespaceParts[] = $secondToLastPart;
             if (! empty($lastPart)) {
                 $namespaceParts[] = $lastPart;
             }
         }
-    
+        
         $tableNamespace = '\\' . implode('\\', $namespaceParts);
         $tableNamespace = preg_replace(
             ['~\\\\Overrides?\\\\~', '~(?:Overrides?)?(?:Tables?)?(?:Overrides?)?$~'],
             ['\\', ''],
             $tableNamespace
         );
-    
+        
         // Compile table name
         return $this->context->resolveTableName(
             '...' . implode('_',

@@ -34,6 +34,8 @@ interface TcaPostProcessorStepInterface extends PublicServiceInterface
      * @param   array   $config     The configuration of the table to process
      * @param   array   $meta       Allows to store meta-data that gets injected into the config state object at
      *                              tca.meta. Everything you store here must be json encodeable!
+     *
+     * @todo $meta should be replaced with ConfigState here, as we can now persist the config state at a later point
      */
     public function process(string $tableName, array &$config, array &$meta): void;
 }

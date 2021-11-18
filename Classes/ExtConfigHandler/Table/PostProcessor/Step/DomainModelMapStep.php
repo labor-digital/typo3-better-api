@@ -24,7 +24,10 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorTrait;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
+use Neunerlei\Configuration\State\ConfigState;
 
 /**
  * Class DomainModelMapStep
@@ -33,9 +36,12 @@ use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepI
  *
  * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
  */
-class DomainModelMapStep implements TcaPostProcessorStepInterface, NoDiInterface
+class DomainModelMapStep implements TcaPostProcessorStepInterface, StateAwareTcaPostProcessorInterface, NoDiInterface
 {
     public const CONFIG_KEY = 'domainModelClasses';
+    
+    protected $classNameMap = [];
+    protected $extBasePersistenceMap = [];
     
     /**
      * @inheritDoc
@@ -56,11 +62,22 @@ class DomainModelMapStep implements TcaPostProcessorStepInterface, NoDiInterface
                 $definition['properties'][$property]['fieldName'] = $field;
             }
             
+            $this->extBasePersistenceMap[$className] = $definition;
+            $this->classNameMap[$className] = $tableName;
+            
+            // @todo remove this in the next major release
             $meta['extbase']['persistence'][$className] = $definition;
             $meta['classNameMap'][$className] = $tableName;
         }
         
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
+    
+    public function applyToConfigState(ConfigState $state): void
+    {
+        $state->set('typo.extBase.persistence', $this->extBasePersistenceMap);
+        $state->mergeIntoArray('tca.classNameMap', $this->classNameMap);
+    }
+    
     
 }

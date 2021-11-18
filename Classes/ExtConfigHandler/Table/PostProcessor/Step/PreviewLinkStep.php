@@ -24,12 +24,18 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorTrait;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StepTsConfigHelperTrait;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkHook;
+use Neunerlei\Configuration\State\ConfigState;
 
-class PreviewLinkStep implements TcaPostProcessorStepInterface, NoDiInterface
+class PreviewLinkStep implements TcaPostProcessorStepInterface, StateAwareTcaPostProcessorInterface, NoDiInterface
 {
+    use StepTsConfigHelperTrait;
+    
     public const CONFIG_KEY = 'tablePreviewLink';
     
     /**
@@ -41,12 +47,17 @@ class PreviewLinkStep implements TcaPostProcessorStepInterface, NoDiInterface
             return;
         }
         
-        $meta['tsConfig'] = ($meta['tsConfig'] ?? '') . PHP_EOL .
-                            $this->buildPreviewLinkTsConfig(
-                                $tableName, $config['ctrl'][static::CONFIG_KEY]
-                            );
+        $this->ts[] = $this->buildPreviewLinkTsConfig($tableName, $config['ctrl'][static::CONFIG_KEY]);
+        
+        // @todo remove this in the next major version
+        $meta['tsConfig'] = $meta['tsConfig'] ?? '';
         
         unset($config['ctrl'][static::CONFIG_KEY]);
+    }
+    
+    public function applyToConfigState(ConfigState $state): void
+    {
+        $this->addTsConfigToState($state, 'tca.previewLink');
     }
     
     /**

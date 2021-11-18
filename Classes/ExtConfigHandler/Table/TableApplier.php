@@ -32,6 +32,7 @@ use LaborDigital\T3ba\Event\Core\ExtTablesLoadedEvent;
 use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3ba\Event\Core\TcaWithoutOverridesLoadedEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader as ContentTypeLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\Loader as TableLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
@@ -45,6 +46,9 @@ class TableApplier extends AbstractExtConfigApplier
 {
     use ContainerAwareTrait;
     
+    /**
+     * @deprecated will be removed in v11 without replacement
+     */
     protected const TCA_META_CACHE_KEY = 'extConfig.tca.meta';
     
     /**
@@ -95,6 +99,7 @@ class TableApplier extends AbstractExtConfigApplier
     public function onExtLocalConfLoaded(): void
     {
         $this->applyMeta();
+        $this->provideTableClassNameMap();
     }
     
     /**
@@ -102,22 +107,21 @@ class TableApplier extends AbstractExtConfigApplier
      */
     public function onExtTablesLoaded(): void
     {
-        // Apply ts config
-        $def = $this->state->get('tca.meta.tsConfig', '');
         // @todo remove this in v11
+        $def = $this->state->get('tca.meta.tsConfig', '');
         $def .= PHP_EOL . PHP_EOL . $this->state->get('tca.meta.backend.listPosition', '');
         if (! empty(trim($def))) {
             ExtensionManagementUtility::addPageTSConfig($def);
         }
         
         // Apply tables on standard pages
-        $list = $this->state->get('tca.meta.onStandardPages');
+        $list = array_unique($this->tempMerge('tca.meta.onStandardPages', 'tca.allowOnStandardPages'));
         if (is_array($list)) {
             array_map([ExtensionManagementUtility::class, 'allowTableOnStandardPages'], $list);
         }
         
         // Apply table csh files
-        $list = $this->state->get('tca.meta.cshLabels');
+        $list = array_unique($this->tempMerge('tca.meta.cshLabels', 'tca.cshLabels'));
         if (is_array($list)) {
             foreach ($list as $args) {
                 ExtensionManagementUtility::addLLrefForTCAdescr(...$args);
@@ -144,10 +148,15 @@ class TableApplier extends AbstractExtConfigApplier
         $this->runAndCacheTca(__FUNCTION__, function () {
             $this->getService(TableLoader::class)->loadTableOverrides();
             $this->getService(ContentTypeLoader::class)->load();
-            $this->cache->set(static::TCA_META_CACHE_KEY,
-                $this->makeInstance(TcaPostProcessor::class)->process()
-            );
+            
+            $meta = $this->makeInstance(TcaPostProcessor::class)->process($this->state);
+            $this->getService(ExtConfigService::class)->persistState($this->state);
+            
+            // @todo remove this in v11
+            $this->cache->set(static::TCA_META_CACHE_KEY, $meta);
             $this->applyMeta();
+            
+            $this->provideTableClassNameMap();
             
             if ($this->reloadExtBaseMapping) {
                 $this->reloadExtBaseMapping = false;
@@ -166,7 +175,7 @@ class TableApplier extends AbstractExtConfigApplier
         $this->reloadExtBaseMapping = true;
         
         $classes = $event->getClasses();
-        $list = $this->state->get('tca.meta.extbase.persistence');
+        $list = $this->tempMerge('tca.meta.extbase.persistence', 'typo.extBase.persistence');
         if (is_array($list)) {
             foreach ($list as $class => $def) {
                 $classes[$class] = Arrays::merge($classes[$class] ?? [], $def, 'nn');
@@ -197,17 +206,38 @@ class TableApplier extends AbstractExtConfigApplier
     }
     
     /**
-     * Applies meta information that was generated alongside the TCA to services that can handle them
+     * Prepares the NamingUtil class by injecting our stored class map into the class->table map
      */
-    protected function applyMeta(): void
+    protected function provideTableClassNameMap(): void
     {
-        // Injects the tca.meta node into the global configuration object
-        $this->state->mergeIntoArray('tca.meta', $this->cache->get(static::TCA_META_CACHE_KEY, []));
-        
-        // Prepares the NamingUtil class by injecting our stored class map into the the class->table map
-        $list = $this->state->get('tca.meta.classNameMap');
+        $list = $this->tempMerge('tca.meta.classNameMap', 'tca.classNameMap');
         if (is_array($list)) {
             NamingUtil::$tcaTableClassNameMap = array_merge(NamingUtil::$tcaTableClassNameMap, $list);
         }
+    }
+    
+    /**
+     * Applies meta information that was generated alongside the TCA to services that can handle them
+     *
+     * @deprecated will be removed in the next major release
+     */
+    protected function applyMeta(): void
+    {
+        $this->state->mergeIntoArray('tca.meta', $this->cache->get(static::TCA_META_CACHE_KEY, []));
+    }
+    
+    /**
+     * @param   array|null  $a
+     * @param   array|null  $b
+     *
+     * @return array
+     * @deprecated temporary helper until the next major version
+     */
+    private function tempMerge(string $oldKey, string $newKey): array
+    {
+        $a = $this->state->get($oldKey, []);
+        $b = $this->state->get($newKey, []);
+        
+        return array_merge(is_array($a) ? $a : [], is_array($b) ? $b : []);
     }
 }

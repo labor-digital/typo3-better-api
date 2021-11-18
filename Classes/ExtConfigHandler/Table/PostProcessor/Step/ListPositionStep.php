@@ -24,8 +24,11 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StateAwareTcaPostProcessorInterface;
+use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\StepTsConfigHelperTrait;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessorStepInterface;
 use Neunerlei\Arrays\Arrays;
+use Neunerlei\Configuration\State\ConfigState;
 
 /**
  * Class ListPositionStep
@@ -34,9 +37,12 @@ use Neunerlei\Arrays\Arrays;
  *
  * @package LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\Step
  */
-class ListPositionStep implements TcaPostProcessorStepInterface, NoDiInterface
+class ListPositionStep implements TcaPostProcessorStepInterface, StateAwareTcaPostProcessorInterface, NoDiInterface
 {
+    use StepTsConfigHelperTrait;
+    
     public const CONFIG_KEY = 'listPosition';
+    public const TS_IMPORT_PATH = 'tca.table.listPosition';
     
     /**
      * @inheritDoc
@@ -47,13 +53,19 @@ class ListPositionStep implements TcaPostProcessorStepInterface, NoDiInterface
             return;
         }
         
-        $meta['tsConfig'] = ($meta['tsConfig'] ?? '') . PHP_EOL .
-                            $this->buildOrderTsConfigString(
-                                $tableName, $config['ctrl'][static::CONFIG_KEY]
-                            );
+        $this->ts[] = $this->buildOrderTsConfigString($tableName, $config['ctrl'][static::CONFIG_KEY]);
+        
+        // @todo remove this in the next major version
+        $meta['tsConfig'] = $meta['tsConfig'] ?? '';
         
         unset($config['ctrl'][static::CONFIG_KEY]);
     }
+    
+    public function applyToConfigState(ConfigState $state): void
+    {
+        $this->addTsConfigToState($state, 'tca.listPosition');
+    }
+    
     
     /**
      * Internal helper to build the ts config for the table list order
