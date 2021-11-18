@@ -25,12 +25,14 @@ namespace LaborDigital\T3ba\Tool\TypoScript;
 
 use LaborDigital\T3ba\Core\VarFs\VarFs;
 use Neunerlei\Configuration\State\ConfigState;
+use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\Inflection\Inflector;
 use SplFileInfo;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class DynamicTypoScriptRegistry implements SingletonInterface
 {
+    use LocallyCachedStatePropertyTrait;
     
     /**
      * @var \LaborDigital\T3ba\Core\VarFs\VarFs
@@ -53,7 +55,7 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     public function __construct(ConfigState $configState, VarFs $fs)
     {
         $this->fs = $fs->getMount('DynamicTypoScript');
-        $this->contents = (array)$configState->get('typo.typoScript.dynamicTypoScript', []);
+        $this->registerCachedProperty('contents', 'typo.typoScript.dynamicTypoScript', $configState, null, []);
     }
     
     /**
