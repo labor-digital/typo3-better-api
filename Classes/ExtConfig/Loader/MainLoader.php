@@ -34,6 +34,7 @@ use LaborDigital\T3ba\ExtConfig\Interfaces\StandAloneHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\SiteBased\ConfigFinder;
 use LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext;
 use LaborDigital\T3ba\ExtConfigHandler\Core\Handler;
+use LaborDigital\T3ba\T3baFeatureToggles;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
@@ -86,8 +87,7 @@ class MainLoader
             $this->makeEventDispatcherProxy(
                 function (object $event) {
                     if ($event instanceof BeforeConfigLoadEvent) {
-                        $this->injectEmptyConfigShell($event);
-                        
+//                        $this->injectEmptyConfigShell($event);
                         return;
                     }
                     
@@ -125,8 +125,10 @@ class MainLoader
         
         $loader->setContainer($this->getContainer());
         $state = $loader->load();
-        
-        $this->getContainer()->set(ConfigState::class, $state);
+        $this->getService(ConfigState::class)->importFrom($state);
+//        dbge('DONE', $state->get('t3ba.pids'), $state->get('typo.typoScript.dynamicTypoScript'));
+//        dbge($state);
+//        $this->getContainer()->set(ConfigState::class, $state);
         
         // Merge the globals into the globals and then remove them from the state (save a bit of memory)
         $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
@@ -183,6 +185,12 @@ class MainLoader
      */
     protected function loadSiteBasedConfig(ConfigState $state): void
     {
+        if ($this->getTypoContext()->config()->isFeatureEnabled(
+            T3baFeatureToggles::EXT_CONFIG_V11_SITE_BASED_CONFIG
+        )) {
+            return;
+        }
+        
         $loader = $this->extConfigService->makeLoader(ExtConfigService::SITE_BASED_LOADER_KEY);
         $container = $this->getContainer();
         

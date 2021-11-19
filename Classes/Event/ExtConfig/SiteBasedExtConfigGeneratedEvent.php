@@ -23,8 +23,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Event\ExtConfig;
 
 /**
- * Emitted when the MAIN SITE-BASED ext config for ALL SITES was generated.
- * Allows you to modify/filter the config state before it is persisted into the cache
+ * Emitted after ALL sites have been processed for a site-based ext config handler.
  */
 class SiteBasedExtConfigGeneratedEvent extends AbstractExtConfigGeneratedEvent
 {

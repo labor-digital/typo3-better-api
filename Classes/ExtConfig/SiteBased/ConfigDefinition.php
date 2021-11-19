@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Event\ExtConfig\SingleSiteBasedExtConfigGeneratedEvent;
+use LaborDigital\T3ba\Event\ExtConfig\SiteBasedExtConfigGeneratedEvent;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteIdentifierProviderInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface;
 use Neunerlei\Configuration\Loader\ConfigDefinition as DefaultConfigDefinition;
@@ -37,6 +38,11 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
      * @var \TYPO3\CMS\Core\Site\Entity\Site[]
      */
     protected $sites;
+    
+    /**
+     * @var \LaborDigital\T3ba\ExtConfig\ExtConfigContext|\LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext
+     */
+    protected $configContext;
     
     /**
      * @inheritDoc
@@ -69,6 +75,10 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
                 }
             );
         }
+        
+        $this->configContext->getTypoContext()->di()->cs()->eventBus->dispatch(
+            new SiteBasedExtConfigGeneratedEvent($this->configContext, $this->configContext->getState())
+        );
     }
     
     /**
