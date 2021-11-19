@@ -860,7 +860,7 @@ trait TcaTableConfigTrait
         }
         
         $this->config['ctrl'][CshLabelStep::CONFIG_KEY][md5($filename)]
-            = $this->getContext()->getExtConfigContext()->replaceMarkers($filename);
+            = $this->getContext()->getExtConfigContext()->resolveFilename($filename);
         
         return $this;
     }

@@ -179,7 +179,7 @@ abstract class AbstractConfigurator
      */
     public function setIcon(string $icon): self
     {
-        $this->icon = $this->context->replaceMarkers($icon);
+        $this->icon = $this->context->resolveFilename($icon);
         
         return $this;
     }

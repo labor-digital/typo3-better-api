@@ -25,10 +25,12 @@ namespace LaborDigital\T3ba\ExtConfig;
 
 use LaborDigital\T3ba\Core\Di\DelegateContainer;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Core\Exception\T3baException;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use LaborDigital\T3ba\TypoContext\EnvFacet;
 use Neunerlei\Configuration\Loader\ConfigContext;
+use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
@@ -226,6 +228,46 @@ class ExtConfigContext extends ConfigContext implements NoDiInterface
         }
         
         return NamingUtil::resolveTableName($tableName);
+    }
+    
+    /**
+     * Helper to resolve a file name into a valid filename to use in the TYPO3 ecosystem.
+     * $filename can be either an ABSOLUTE path, a RELATIVE path (starting with ./) or a path
+     * that begins with EXT:ExtKey... in order to be resolved.
+     *
+     * @param   string  $filename              The path to resolve
+     * @param   bool    $asTypoPathIfPossible  If set to FALSE we will NOT try to resolve an EXT:ExtKey path for relatives or absolutes
+     *
+     * @return string
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
+     */
+    public function resolveFilename(string $filename, bool $asTypoPathIfPossible = true): string
+    {
+        $filename = Path::normalize($this->replaceMarkers($filename));
+        
+        if (! $asTypoPathIfPossible) {
+            return $filename;
+        }
+        
+        if (str_starts_with($filename, './') || str_starts_with($filename, '.' . DIRECTORY_SEPARATOR)) {
+            if ($this->getExtKey() === 'LIMBO') {
+                throw new ExtConfigException('Could not resolve relative filename: "' . $filename . '" because there is currently no active extension context');
+            }
+            
+            return 'EXT:' . $this->getExtKey() . substr($filename, 1);
+        }
+        
+        if (! str_starts_with(strtolower($filename), 'ext:')) {
+            if (file_exists($filename)) {
+                try {
+                    return $this->getTypoContext()->path()->realPathToTypoExt($filename);
+                } catch (T3baException $e) {
+                    // If the resolution into an TYPO3 path fails, we simply return the absolute path
+                }
+            }
+        }
+        
+        return $filename;
     }
     
     /**
