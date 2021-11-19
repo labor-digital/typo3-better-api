@@ -33,6 +33,7 @@ use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\StandAloneHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\SiteBased\ConfigFinder;
 use LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\Core\Handler;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
@@ -106,11 +107,17 @@ class MainLoader
             )
         );
         
+        // @todo this can be removed in v11, in order to set the EXT_CONFIG_V11_SITE_BASED_CONFIG
+        // at the first possible location, I need to inject the handler manually.
+        // This allows all other site-based handler to participate on the early access program,
+        // without additional configuration
+        $loader->registerHandler($this->makeInstance(Handler::class));
+        
         $loader->setHandlerFinder(
             $this->makeInstance(
                 FilteredHandlerFinder:: class,
                 [
-                    [StandAloneHandlerInterface::class, SiteBasedHandlerInterface::class],
+                    [StandAloneHandlerInterface::class],
                     [],
                 ]
             )
@@ -134,6 +141,7 @@ class MainLoader
      * @param   \Closure  $eventMapper
      *
      * @return \Psr\EventDispatcher\EventDispatcherInterface
+     * @todo in v11 the event dispatcher proxy should be extracted into a real class
      */
     protected function makeEventDispatcherProxy(Closure $eventMapper): EventDispatcherInterface
     {
@@ -170,6 +178,8 @@ class MainLoader
      * It will create a new child loader that will execute the handlers inside the Configuration/SiteConfig directory.
      *
      * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     *
+     * @deprecated will be removed in v11
      */
     protected function loadSiteBasedConfig(ConfigState $state): void
     {

@@ -41,6 +41,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ExtConfigService
 {
     public const MAIN_LOADER_KEY = 'Main';
+    /** @deprecated will be removed in v11, where siteBased config is loaded along-side the MAIN_LOADER_KEY */
     public const SITE_BASED_LOADER_KEY = 'SiteBased';
     public const EVENT_BUS_LOADER_KEY = 'EventBus';
     public const DI_BUILD_LOADER_KEY = 'DiBuild';
@@ -199,6 +200,18 @@ class ExtConfigService
         $loader->setConfigContextClass(ExtConfigContext::class);
         $loader->setCache($this->fs->getCache());
         $loader->setContainer($this->container);
+        
+        if ($type === static::MAIN_LOADER_KEY) {
+            $typoContext = $this->context->getTypoContext();
+            $loader->setConfigFinder(
+                $typoContext->di()->makeInstance(
+                    ExtConfigConfigFinder::class,
+                    [
+                        $typoContext->site()->getAll(false),
+                    ]
+                )
+            );
+        }
         
         foreach ($this->getRootLocations() as $rootLocation) {
             $loader->registerRootLocation(...$rootLocation);

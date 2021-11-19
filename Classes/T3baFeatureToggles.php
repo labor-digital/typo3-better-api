@@ -60,4 +60,14 @@ interface T3baFeatureToggles
      * NOTE: Toggle will be removed in v12
      */
     public const TCA_V11_NESTED_TABLE_NAMES = 't3ba.TCA.TableName.V11Naming';
+    
+    /**
+     * Beginning in V11 the site-based ext-config options will be loaded along-side the normal ext-config
+     * data in the Main loader. This will replace the old load strategy AFTER the normal ext-config state
+     * has been loaded. Enabling this feature toggle, will use the same behaviour in v10.
+     *
+     * NOTE: Toggle will be removed in v11
+     */
+    public const EXT_CONFIG_V11_SITE_BASED_CONFIG = 't3ba.ExtConfig.V11SiteBasedLoadOrder';
+    
 }
