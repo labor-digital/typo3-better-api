@@ -60,6 +60,7 @@ class SharedConfig implements NoDiInterface
      * Contains the arguments that have to be used to register the plugin's icon in the icon registry
      *
      * @var array
+     * @deprecated will be removed in v11. Use the ExtConfigIconRegistry directly to register icons
      */
     public $iconArgs = [];
     

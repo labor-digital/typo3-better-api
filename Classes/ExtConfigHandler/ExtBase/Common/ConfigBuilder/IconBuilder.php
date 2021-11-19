@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\ConfigBuilder;
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\Icon\ExtConfigIconRegistry;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
@@ -32,12 +33,32 @@ use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 class IconBuilder
 {
     /**
+     * Adds a new icon to the registry and the config state
+     *
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigurator  $configurator
+     * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                            $context
+     */
+    public static function registerIcon(
+        AbstractConfigurator $configurator,
+        ExtConfigContext $context
+    ): void
+    {
+        if (empty($configurator->getIcon())) {
+            return;
+        }
+        
+        $registry = $context->getTypoContext()->di()->getService(ExtConfigIconRegistry::class);
+        $registry->registerIcon(static::buildIconIdentifier($configurator, $context), $configurator->getIcon());
+    }
+    
+    /**
      * Generates a new set of arguments that have to be used to register the icon in the icon registry
      *
      * @param   \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractConfigurator  $configurator
      * @param   \LaborDigital\T3ba\ExtConfig\ExtConfigContext                            $context
      *
      * @return array|null
+     * @deprecated will be removed in v11
      */
     public static function buildIconRegistrationArgs(
         AbstractConfigurator $configurator,

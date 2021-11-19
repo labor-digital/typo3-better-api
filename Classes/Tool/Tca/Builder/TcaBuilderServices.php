@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\Tool\Tca\Builder;
 
 use LaborDigital\T3ba\Core\Di\CommonServices;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
+use LaborDigital\T3ba\ExtConfigHandler\Icon\ExtConfigIconRegistry;
 use LaborDigital\T3ba\Tool\Sql\SqlRegistry;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Dumper;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\FlexForm\Io\Factory;
@@ -42,6 +43,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @property Factory                 $flexFormFactory
  * @property Dumper                  $flexFormDumper
  * @property DisplayConditionBuilder $displayCondBuilder
+ * @property ExtConfigIconRegistry   $iconRegistry
  */
 class TcaBuilderServices extends CommonServices
 {
@@ -55,6 +57,7 @@ class TcaBuilderServices extends CommonServices
         // Register static instances
         $this->def['extConfigContext'] = $extConfigContext;
         $this->def['sqlRegistry'] = SqlRegistry::class;
+        $this->def['iconRegistry'] = ExtConfigIconRegistry::class;
         $this->def['flexFormFactory'] = Factory::class;
         $this->def['flexFormDumper'] = Dumper::class;
         $this->def['displayCondBuilder'] = static function () {

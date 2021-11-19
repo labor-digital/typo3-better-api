@@ -86,7 +86,16 @@ class SelectItemsOption extends AbstractOption
                     $v = [$v[0] ?? '', '--div--'];
                 } elseif (is_string($v[1])) {
                     // Handle an icon identifier
-                    $v = [$v[0], $k, $v[1]];
+                    $iconRegistry = $this->context->cs()->iconRegistry;
+                    $filename = $this->context->getExtConfigContext()->replaceMarkers($v[1]);
+                    $identifier = $iconRegistry->getIdentifierForFilename($filename);
+                    
+                    // Register an icon if the icon definition is not already an identifier
+                    if ($identifier !== $filename) {
+                        $iconRegistry->registerIcon($identifier, $filename);
+                    }
+                    
+                    $v = [$v[0], $k, $identifier];
                 } else {
                     continue;
                 }

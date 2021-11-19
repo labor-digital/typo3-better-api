@@ -86,6 +86,8 @@ class Applier extends AbstractExtConfigApplier
     
     /**
      * Registers the plugin icons into the icon registry
+     *
+     * @deprecated will be removed in v11, the icons will now be registered through the icon option
      */
     protected function registerElementIcons(): void
     {

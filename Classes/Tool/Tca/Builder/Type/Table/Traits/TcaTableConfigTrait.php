@@ -810,28 +810,34 @@ trait TcaTableConfigTrait
      * Pointing to the icon file to use for the table. Icons should be square SVGs. In case you cannot supply a SVG you
      * can still use a PNG file of 64x64 pixels in dimension.
      *
-     * @param   string  $filename  Either an absolute filename, or one of the following options:
-     *                             EXT:{{extKey}}/Resources/Public/Icons/icon.svg
-     *                             ./Resources/Public/Icons/icon.svg <- for the current extension
+     * @param   string|null  $filename  Either an absolute filename, or one of the following options:
+     *                                  EXT:{{extKey}}/Resources/Public/Icons/icon.svg
+     *                                  ./Resources/Public/Icons/icon.svg <- for the current extension
+     *                                  NULL -> to remove the current icon
      *
      * @return $this
      *
      * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/Ctrl/Index.html#iconfile
      */
-    public function setIconFile(string $filename)
+    public function setIconFile(?string $filename)
     {
-        if (str_starts_with($filename, './')) {
-            $filename = 'EXT:{{extKey}}' . substr($filename, 1);
+        if ($filename === null) {
+            unset($this->config['ctrl']['iconfile']);
+            
+            return $this;
         }
         
-        $this->config['ctrl']['iconfile']
-            = $this->getContext()->getExtConfigContext()->replaceMarkers($filename);
+        $identifier = 'tcarecords-' . $this->getTableName() . '-default';
+        $this->config['ctrl']['iconfile'] = $identifier;
+        
+        $this->getContext()->cs()->iconRegistry->registerIcon($identifier, $filename);
         
         return $this;
     }
     
     /**
-     * Returns the currently set path to the icon file or null.
+     * Returns the currently set path to the icon file,
+     * the icon identifier (if the icon was not registered yet) or null.
      *
      * @return string|null
      *
@@ -839,7 +845,13 @@ trait TcaTableConfigTrait
      */
     public function getIconFile(): ?string
     {
-        return $this->config['ctrl']['iconfile'] ?? null;
+        $identifier = $this->config['ctrl']['iconfile'] ?? null;
+        
+        if (is_string($identifier)) {
+            return $this->getContext()->cs()->iconRegistry->getFilenameForIcon($identifier);
+        }
+        
+        return $identifier;
     }
     
     /**
