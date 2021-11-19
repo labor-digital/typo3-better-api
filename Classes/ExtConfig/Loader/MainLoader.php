@@ -123,7 +123,6 @@ class MainLoader
         
         // Merge the globals into the globals and then remove them from the state (save a bit of memory)
         $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
-        $state->set('typo.globals', null);
         
         // Reset the log manager so our log configurations are applied correctly
         $this->getContainer()->get(LogManager::class)->reset();
