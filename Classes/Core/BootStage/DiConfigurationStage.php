@@ -137,7 +137,8 @@ class DiConfigurationStage implements BootStageInterface
         $symfony->set(TypoListenerProvider::class, $listenerProvider);
         
         $extConfigService = $miniContainer->get(ExtConfigService::class);
-        $symfony->set(ExtConfigContext::class, $extConfigService->getContext());
+        $extConfigContext = $extConfigService->getContext();
+        $symfony->set(ExtConfigContext::class, $extConfigContext);
         $symfony->set(ExtConfigService::class, $extConfigService);
         
         $context = TypoContext::setInstance(new TypoContext(
@@ -150,8 +151,8 @@ class DiConfigurationStage implements BootStageInterface
         $symfony->get(ListenerProvider::class);
         $symfony->get(EventSubscriberBridge::class);
         
-        $symfony->set(ConfigState::class, new ConfigState([]));
-        $extConfigService->getContext()->setTypoContext($context);
+        $symfony->set(ConfigState::class, $extConfigContext->getState());
+        $extConfigContext->setTypoContext($context);
         $extConfigService->getDiLoader()->loadForRuntime();
         
         $eventBus->dispatch(new DiContainerFilterEvent($symfony));

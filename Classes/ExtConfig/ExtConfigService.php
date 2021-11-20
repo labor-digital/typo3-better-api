@@ -31,6 +31,7 @@ use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
 use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Configuration\Loader\Loader;
+use Neunerlei\Configuration\Loader\LoaderContext;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
@@ -156,9 +157,16 @@ class ExtConfigService
      */
     public function getContext(): ExtConfigContext
     {
-        return $this->context ?? $this->context = GeneralUtility::makeInstance(
-                ExtConfigContext::class, $this
-            );
+        if (isset($this->context)) {
+            return $this->context;
+        }
+        
+        $this->context = GeneralUtility::makeInstance(
+            ExtConfigContext::class, $this
+        );
+        $this->context->initialize(new LoaderContext(), new ConfigState([]));
+        
+        return $this->context;
     }
     
     /**

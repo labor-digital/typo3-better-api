@@ -124,14 +124,16 @@ class MainLoader
         );
         
         $loader->setContainer($this->getContainer());
-        $state = $loader->load();
-        $this->getService(ConfigState::class)->importFrom($state);
-//        dbge('DONE', $state->get('t3ba.pids'), $state->get('typo.typoScript.dynamicTypoScript'));
-//        dbge($state);
-//        $this->getContainer()->set(ConfigState::class, $state);
+        
+        $globalState = $this->getService(ConfigState::class);
+        $globalState->importFrom($loader->load());
+        
+        // Ensure the config context is in sync with the global state
+        $configContext = $this->extConfigService->getContext();
+        $configContext->initialize($configContext->getLoaderContext(), $globalState);
         
         // Merge the globals into the globals and then remove them from the state (save a bit of memory)
-        $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
+        $GLOBALS = Arrays::merge($GLOBALS, $globalState->get('typo.globals', []), 'nn');
         
         // Reset the log manager so our log configurations are applied correctly
         $this->getContainer()->get(LogManager::class)->reset();
