@@ -74,10 +74,8 @@ class LimitToPidsOption extends AbstractOption
             $pids = Arrays::makeFromStringList($pids);
         }
         
-        $pidFacet = $this->context->getExtConfigContext()->getTypoContext()->pid();
-        
         if (is_array($pids) && ! empty($pids)) {
-            $pidSelector = ' IN(' . implode(',', $pidFacet->getMultiple($pids, 0)) . ')';
+            $pidSelector = ' IN (###PID_LIST(' . implode(',', $pids) . ')###)';
         } elseif (is_numeric($pids)) {
             $pidSelector = ' = ' . $pids;
         } elseif ($pids === true) {
