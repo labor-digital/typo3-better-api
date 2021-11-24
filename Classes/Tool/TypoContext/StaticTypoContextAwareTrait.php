@@ -47,20 +47,31 @@ trait StaticTypoContextAwareTrait
      *
      * @return TypoContext
      */
-    protected static function TypoContext(): TypoContext
+    protected static function getTypoContext(): TypoContext
     {
         if (isset(static::$__typoContext)) {
             return static::$__typoContext;
         }
         
-        if (method_exists(static::class, 'Container')) {
+        if (method_exists(static::class, 'getContainer')) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $container = static::Container();
+            $container = static::getContainer();
             if ($container instanceof ContainerInterface) {
                 return static::$__typoContext = $container->get(TypoContext::class);
             }
         }
         
         return static::$__typoContext = TypoContext::getInstance();
+    }
+    
+    /**
+     * Returns the typo context instance
+     *
+     * @return TypoContext
+     * @deprecated will be removed in v11, use getTypoContext() instead!
+     */
+    protected static function TypoContext(): TypoContext
+    {
+        return static::getTypoContext();
     }
 }
