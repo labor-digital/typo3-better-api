@@ -41,6 +41,17 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Pid;
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 
+/**
+ * Used to configure the list of "pids". Pids is short for page-ids and is a global registry of "well-known"
+ * page ids. The ids are stored as a "key" => "value" pair, meaning you can work with easily to remember
+ * aliases and hold all ids in a centralized repository.
+ *
+ * You can reference pids by their "key" in all T3BA configuration options instead of defining their numeric value.
+ * Simply provide them as "@pid.yourKey" and the matching page id will be resolved for you.
+ * You can also access the pid mapping as TypoScript Constants at "$config.t3ba.pid.yourKey"
+ *
+ * @see \LaborDigital\T3ba\ExtConfigHandler\Pid\Site\ConfigureSitePidsInterface for a site-based configuration
+ */
 interface ConfigurePidsInterface
 {
     /**

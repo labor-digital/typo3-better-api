@@ -139,6 +139,7 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
     
     /**
      * @inheritDoc
+     * @deprecated will be removed in v11
      */
     public function finish(ConfigState $state): void
     {
@@ -155,6 +156,7 @@ class PidCollector implements ExtConfigContextAwareInterface, ExtConfigConfigura
      * Uses the configured list of pids and converts it into a typoScript setup and constant string
      *
      * @return array
+     * @deprecated will be removed in v11
      */
     protected function buildPidTypoScript(): array
     {

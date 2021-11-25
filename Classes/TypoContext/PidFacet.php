@@ -39,11 +39,11 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\TypoContext;
 
 use GuzzleHttp\Psr7\Query;
+use LaborDigital\T3ba\ExtConfig\Traits\SiteConfigAwareTrait;
 use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\InvalidPidException;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\Arrays\Arrays;
-use Neunerlei\Configuration\State\LocallyCachedStatePropertyTrait;
 use Neunerlei\PathUtil\Path;
 use RuntimeException;
 use Throwable;
@@ -53,19 +53,30 @@ use Throwable;
  */
 class PidFacet implements FacetInterface
 {
-    use LocallyCachedStatePropertyTrait;
+    use SiteConfigAwareTrait;
     
     /**
-     * @var TypoContext
-     */
-    protected $context;
-    
-    /**
-     * The list of configured pids
+     * The list of GLOBAL pids inherited from the config state
      *
      * @var array
      */
     protected $pids;
+    
+    /**
+     * The list of pids that have been set at runtime (by their site identifier)
+     *
+     * @var array
+     */
+    protected $setPids = [];
+    
+    /**
+     * The list of resolved pids by their site identifier.
+     * The resolved pid list contains the GLOBAL pids, combined with the SITE pids and the SET_PIDS
+     * for a specified site.
+     *
+     * @var array
+     */
+    protected $resolvedPids = [];
     
     /**
      * PidFacet constructor.
@@ -75,7 +86,15 @@ class PidFacet implements FacetInterface
     public function __construct(TypoContext $context)
     {
         $this->context = $context;
-        $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState(), null, []);
+        
+        $resetter = function ($v) {
+            $this->resolvedPids = [];
+            
+            return $v;
+        };
+        
+        $this->registerCachedProperty('pids', 't3ba.pids', $context->config()->getConfigState(), $resetter, []);
+        $this->registerConfig('pids', $resetter);
     }
     
     /**
@@ -89,28 +108,33 @@ class PidFacet implements FacetInterface
     /**
      * Returns true if the pid with the given key exists
      *
-     * @param   string  $key  A key like "myKey" or "storage.myKey" for hierarchical data
+     * @param   string       $key             A key like "myKey" or "storage.myKey" for hierarchical data
+     * @param   string|null  $siteIdentifier  Optional site identifier to request the pids for a
+     *                                        specific site and not for the currently active one.
      *
      * @return bool
      */
-    public function has(string $key): bool
+    public function has(string $key, ?string $siteIdentifier = null): bool
     {
-        return Arrays::hasPath($this->pids, $this->stripPrefix($key));
+        return Arrays::hasPath($this->getResolvedPids($siteIdentifier), $this->stripPrefix($key));
     }
     
     /**
      * Sets the given pid for the defined key for the current runtime.
      * Note: The mapping will not be persisted!
      *
-     * @param   string  $key  A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
-     * @param   int     $pid  The numeric page id which should be returned when the given pid is required
+     * @param   string       $key             A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical data
+     * @param   int          $pid             The numeric page id which should be returned when the given pid is required
+     * @param   string|null  $siteIdentifier  Optional site identifier to request the pids for a
+     *                                        specific site and not for the currently active one.
      *
      * @return $this
      */
-    public function set(string $key, int $pid): self
+    public function set(string $key, int $pid, ?string $siteIdentifier = null): self
     {
-        $pidsModified = Arrays::setPath($this->pids, $this->stripPrefix($key), $pid);
-        $this->context->config()->getConfigState()->set('t3ba.pids', $pidsModified);
+        $siteIdentifier = $this->prepareSiteIdentifier($siteIdentifier);
+        $this->setPids[$siteIdentifier]
+            = Arrays::setPath($this->setPids[$siteIdentifier] ?? [], $this->stripPrefix($key), $pid);
         
         return $this;
     }
@@ -119,12 +143,14 @@ class PidFacet implements FacetInterface
      * The same as set() but adds multiple pids at once.
      * Note: The mapping will not be persisted!
      *
-     * @param   array  $pids  A list of pids as $path => $pid or as multidimensional array
+     * @param   array        $pids            A list of pids as $path => $pid or as multidimensional array
+     * @param   string|null  $siteIdentifier  Optional site identifier to request the pids for a
+     *                                        specific site and not for the currently active one.
      *
      * @return $this
      * @throws \LaborDigital\T3ba\Tool\TypoContext\InvalidPidException
      */
-    public function setMultiple(array $pids): self
+    public function setMultiple(array $pids, ?string $siteIdentifier = null): self
     {
         foreach (Arrays::flatten($pids) as $k => $pid) {
             if (! is_string($k)) {
@@ -137,10 +163,9 @@ class PidFacet implements FacetInterface
             }
         }
         
-        $this->context->config()->getConfigState()->set(
-            't3ba.pids',
-            Arrays::merge($this->pids, $pids)
-        );
+        $siteIdentifier = $this->prepareSiteIdentifier($siteIdentifier);
+        $this->setPids[$siteIdentifier]
+            = Arrays::merge($this->setPids[$siteIdentifier] ?? [], $pids);
         
         return $this;
     }
@@ -148,17 +173,19 @@ class PidFacet implements FacetInterface
     /**
      * Returns the pid for the given key
      *
-     * @param   string|integer  $key       A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical
-     *                                     data If a key is numeric and can be parsed as integer it will be returned if
-     *                                     no pid could be found
-     * @param   int             $fallback  An optional fallback which will be returned, if the required pid was not
-     *                                     found NOTE: If no fallback is defined (-1) the method will throw an
-     *                                     exception if the pid was not found in the registry
+     * @param   string|integer  $key             A key like "myKey", "$pid.storage.stuff" or "storage.myKey" for hierarchical
+     *                                           data If a key is numeric and can be parsed as integer it will be returned if
+     *                                           no pid could be found
+     * @param   int             $fallback        An optional fallback which will be returned, if the required pid was not
+     *                                           found NOTE: If no fallback is defined (-1) the method will throw an
+     *                                           exception if the pid was not found in the registry
+     * @param   string|null     $siteIdentifier  Optional site identifier to request the pids for a
+     *                                           specific site and not for the currently active one.
      *
      * @return int
      * @throws \LaborDigital\T3ba\Tool\TypoContext\InvalidPidException
      */
-    public function get($key, int $fallback = -1): int
+    public function get($key, int $fallback = -1, ?string $siteIdentifier = null): int
     {
         if (is_int($key)) {
             return $key;
@@ -174,11 +201,7 @@ class PidFacet implements FacetInterface
             return (int)$key;
         }
         
-        if (! is_array($this->pids)) {
-            throw new RuntimeException('You are requiring the PIDs to early! They have not yet been registered!');
-        }
-        
-        $pid = Arrays::getPath($this->pids, $this->stripPrefix($key), -9999);
+        $pid = Arrays::getPath($this->getResolvedPids($siteIdentifier), $this->stripPrefix($key), -9999);
         
         if (! is_numeric($pid) || $pid === -9999) {
             if ($fallback !== -1) {
@@ -196,18 +219,20 @@ class PidFacet implements FacetInterface
     /**
      * Similar to get() but returns multiple pids at once, instead of a single one
      *
-     * @param   array  $keys               An array of pid keys to retrieve
-     * @param   int    $fallback           An optional fallback which will be returned, if the required pid was not
-     *                                     found NOTE: If no fallback is defined (-1) the method will throw an
-     *                                     exception if the pid was not found in the registry
+     * @param   array        $keys            An array of pid keys to retrieve
+     * @param   int          $fallback        An optional fallback which will be returned, if the required pid was not
+     *                                        found NOTE: If no fallback is defined (-1) the method will throw an
+     *                                        exception if the pid was not found in the registry
+     * @param   string|null  $siteIdentifier  Optional site identifier to request the pids for a
+     *                                        specific site and not for the currently active one.
      *
      * @return array
      * @see get()
      */
-    public function getMultiple(array $keys, int $fallback = -1): array
+    public function getMultiple(array $keys, int $fallback = -1, ?string $siteIdentifier = null): array
     {
         foreach ($keys as $k => $key) {
-            $keys[$k] = $this->get($key, $fallback);
+            $keys[$k] = $this->get($key, $fallback, $siteIdentifier);
         }
         
         return $keys;
@@ -218,14 +243,16 @@ class PidFacet implements FacetInterface
      * For example "page.foo", "page.boo" and "page.bar" all live in the same subset of "page".
      * So you can request the subset key "page" to retrieve the list of all pids.
      *
-     * @param   string  $key  The key of a subset to retrieve, use a typical path to retrieve nested subsets
+     * @param   string       $key             The key of a subset to retrieve, use a typical path to retrieve nested subsets
+     * @param   string|null  $siteIdentifier  Optional site identifier to request the pids for a
+     *                                        specific site and not for the currently active one.
      *
      * @return array
      * @throws \LaborDigital\T3ba\Tool\TypoContext\InvalidPidException
      */
-    public function getSubSet(string $key): array
+    public function getSubSet(string $key, ?string $siteIdentifier = null): array
     {
-        $list = Arrays::getPath($this->pids, $this->stripPrefix($key), []);
+        $list = Arrays::getPath($this->getResolvedPids($siteIdentifier), $this->stripPrefix($key), []);
         if (! is_array($list)) {
             throw new InvalidPidException('There given key : ' . $key . ' did not resolve to a pid subset!');
         }
@@ -236,11 +263,14 @@ class PidFacet implements FacetInterface
     /**
      * Returns the whole list of all registered pids by their keys
      *
+     * @param   string|null  $siteIdentifier  Optional site identifier to request the pids for a
+     *                                        specific site and not for the currently active one.
+     *
      * @return array
      */
-    public function getAll(): array
+    public function getAll(?string $siteIdentifier = null): array
     {
-        return $this->pids;
+        return $this->getResolvedPids($siteIdentifier);
     }
     
     /**
@@ -282,7 +312,7 @@ class PidFacet implements FacetInterface
             if ($requestFacet->hasGet('returnUrl')) {
                 $query = Query::parse(
                     Path::makeUri(
-                        'http://www.foo.bar' . $requestFacet->getGet('returnUrl')
+                        'https://www.foo.bar' . $requestFacet->getGet('returnUrl')
                     )->getQuery()
                 );
                 if (isset($query['id'])) {
@@ -319,4 +349,56 @@ class PidFacet implements FacetInterface
         
         return $key;
     }
+    
+    /**
+     * Internal helper to use either the siteIdentifier or our internal fallback
+     *
+     * @param   string|null  $siteIdentifier
+     *
+     * @return string
+     */
+    protected function prepareSiteIdentifier(?string $siteIdentifier = null): string
+    {
+        return $siteIdentifier ?? '@default';
+    }
+    
+    /**
+     * Internal helper to resolve the pids including their site-based overlays
+     *
+     * @param   string|null  $siteIdentifier
+     *
+     * @return array
+     */
+    protected function getResolvedPids(?string $siteIdentifier = null): array
+    {
+        $siteIdentifierWithFallback = $this->prepareSiteIdentifier($siteIdentifier);
+        if (isset($this->resolvedPids[$siteIdentifierWithFallback])) {
+            return $this->resolvedPids[$siteIdentifierWithFallback];
+        }
+        
+        if (! is_array($this->pids)) {
+            throw new RuntimeException('You are requiring the PIDs to early! They have not yet been registered!');
+        }
+        
+        return $this->resolvedPids[$siteIdentifierWithFallback]
+            = Arrays::merge(
+            $this->pids,
+            $this->getSiteConfig($siteIdentifier),
+            $this->setPids[$siteIdentifierWithFallback] ?? []
+        );
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function getSiteIdentifier(): string
+    {
+        try {
+            return $this->context->site()->getCurrent()->getIdentifier();
+        } catch (Throwable $e) {
+            return '@unknown';
+        }
+    }
+    
+    
 }
