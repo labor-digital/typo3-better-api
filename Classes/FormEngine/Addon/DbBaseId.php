@@ -77,18 +77,22 @@ class DbBaseId implements NoDiInterface
         // Inject the temp db mount based on the basePid
         $pattern = '~(data-params=".*?\|)([^|]*?)(")~i';
         if (! empty($config['basePid'])) {
+            $typoContext = TypoContext::getInstance();
+            
             // Use the numeric pid as default pid
             $pidMap = $config['basePid'];
             if (! is_array($pidMap)) {
                 if ($pidMap === '###CURRENT_PID###') {
-                    $pidMap = TypoContext::getInstance()->pid()->getCurrent();
+                    $pidMap = $typoContext->pid()->getCurrent();
                 }
                 $pidMap = ['@default' => $pidMap];
             }
             
+            $pidMap = $typoContext->pid()->getMultiple($pidMap);
+            
             // Rewrite the object html
             $result['html'] = preg_replace_callback($pattern, static function ($m) use ($pidMap) {
-                [$a, $prefix, $table, $suffix] = $m;
+                [, $prefix, $table, $suffix] = $m;
                 $pid = $pidMap[$table] ?? $pidMap['@default'] ?? 0;
                 
                 $url = Query::build([
@@ -107,7 +111,7 @@ class DbBaseId implements NoDiInterface
         
         // Make sure to reset the temp db mount if multiple fields are registered in a form
         $result['html'] = preg_replace_callback($pattern, static function ($m) {
-            [$a, $prefix, $table, $suffix] = $m;
+            [, $prefix, $table, $suffix] = $m;
             $url = Query::build([
                 'setTempDBmount' => 0,
             ]);
