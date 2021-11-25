@@ -24,16 +24,23 @@ namespace LaborDigital\T3ba\Tool\Link\LinkBrowser;
 
 
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Recordlist\Controller\AbstractLinkBrowserController;
 use TYPO3\CMS\Recordlist\LinkHandler\RecordLinkHandler;
 
 class LinkBrowserHandler extends RecordLinkHandler
 {
+    use TypoContextAwareTrait;
+    
     /**
      * @inheritDoc
      */
     public function initialize(AbstractLinkBrowserController $linkBrowser, $identifier, array $configuration): void
     {
+        if (! empty($configuration['storagePid'])) {
+            $configuration['storagePid'] = $this->getTypoContext()->pid()->get($configuration['storagePid']);
+        }
+        
         parent::initialize($linkBrowser, $identifier, $configuration);
         
         if (isset($this->configuration['table']) && class_exists($this->configuration['table'])) {
