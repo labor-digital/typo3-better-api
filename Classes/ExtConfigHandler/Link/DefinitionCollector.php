@@ -28,6 +28,7 @@ use LaborDigital\T3ba\ExtConfig\Interfaces\ExtConfigContextAwareInterface;
 use LaborDigital\T3ba\ExtConfig\Traits\ExtConfigContextAwareTrait;
 use LaborDigital\T3ba\Tool\Link\Definition;
 use LaborDigital\T3ba\Tool\Link\LinkException;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -110,40 +111,115 @@ class DefinitionCollector implements ExtConfigConfiguratorInterface, ExtConfigCo
                 continue;
             }
             
-            $required = $linkSet->getRequiredElements();
-            if (count($required) !== 1) {
+            $requiredElements = $linkSet->getRequiredElements();
+            if (count($requiredElements) !== 1) {
                 throw new LinkException('You can\'t register the link set: "' . $key
                                         . '" to show up in the link browser, because it MUST have EXACTLY ONE required argument or ONE required fragment part!');
             }
             
             $config = $linkSet->getLinkBrowserConfig();
-            $options = $config['options'];
             $linkSet->clearLinkBrowserConfig();
             
-            $basePid = '';
-            if (! empty($options['basePid'])) {
-                $basePid = 'storagePid = ' . $this->context->resolvePids($options['basePid']) . PHP_EOL;
-            }
-            
-            $hidePageTree = '';
-            if ((isset($options['hidePageTree']) && $options['hidePageTree'] === true)
-                || in_array('hidePageTree', $options, true)) {
-                $hidePageTree = 'hidePageTree = 1' . PHP_EOL;
-            }
-            
-            $tsConfig[] = 'TCEMAIN.linkHandler.linkSet_' . $key . '{' . PHP_EOL .
-                          'handler = ' . $config['handler'] . PHP_EOL .
-                          'label = ' . $config['label'] . PHP_EOL .
-                          'configuration {' . PHP_EOL .
-                          'table = ' . $config['table'] . PHP_EOL .
-                          'arg = ' . reset($required) . PHP_EOL .
-                          $basePid .
-                          $hidePageTree .
-                          '}' . PHP_EOL .
-                          '}' . PHP_EOL;
-            
+            $tsConfig[] = $this->buildLinkHandlerTypoScript($key, $config, $requiredElements);
         }
         
         return PHP_EOL . implode(PHP_EOL . PHP_EOL, $tsConfig);
+    }
+    
+    /**
+     * Generates the main typoScript declaration to register the link handler in the TS config array
+     *
+     * @param   string  $key
+     * @param   array   $config
+     * @param   array   $requiredElements
+     *
+     * @return string
+     */
+    protected function buildLinkHandlerTypoScript(string $key, array $config, array $requiredElements): string
+    {
+        $options = $config['options'];
+        $ts = 'TCEMAIN.linkHandler.linkSet_' . $key . '{' . PHP_EOL .
+              'handler = ' . $config['handler'] . PHP_EOL .
+              'label = ' . $config['label'] . PHP_EOL .
+              'configuration {' . PHP_EOL .
+              'table = ' . $config['table'] . PHP_EOL .
+              'arg = ' . reset($requiredElements) . PHP_EOL .
+              $this->buildStoragePidDefinition($options) .
+              $this->buildHidePageTreeDefinition($options) .
+              '}' . PHP_EOL .
+              '}' . PHP_EOL;
+        
+        return $this->buildLimitToSitesWrap($ts, $options);
+    }
+    
+    /**
+     * Generates the "storagePid" declaration for the linkHandler TypoScript
+     *
+     * @param   array  $options
+     *
+     * @return string|null
+     */
+    protected function buildStoragePidDefinition(array $options): ?string
+    {
+        if (! empty($options['basePid'])) {
+            if (is_array($options['basePid'])) {
+                $storagePidOptions = [];
+                foreach ($options['basePid'] as $siteIdentifier => $pid) {
+                    $storagePidOptions[] = '[betterSite("identifier") == "' . $siteIdentifier . '"]' . PHP_EOL .
+                                           'storagePid = ' . $pid . PHP_EOL
+                                           . '[END]';
+                }
+                
+                return implode(PHP_EOL, $storagePidOptions);
+            }
+            
+            return 'storagePid = ' . $options['basePid'] . PHP_EOL;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Builds the "hidePageTree" declaration for the linkHandler TypoScript
+     *
+     * @param   array  $options
+     *
+     * @return string|null
+     */
+    protected function buildHidePageTreeDefinition(array $options): ?string
+    {
+        if ((isset($options['hidePageTree']) && $options['hidePageTree'] === true)
+            || in_array('hidePageTree', $options, true)) {
+            return 'hidePageTree = 1' . PHP_EOL;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Wraps the given $ts string into a condition that only applies to specific sites
+     *
+     * @param   string  $ts
+     * @param   array   $options
+     *
+     * @return string
+     */
+    protected function buildLimitToSitesWrap(string $ts, array $options): string
+    {
+        if (! empty($options['limitToSites'])) {
+            $sites = is_string($options['limitToSites'])
+                ? Arrays::makeFromStringList($options['limitToSites'])
+                : null ?? (is_array($options['limitToSites']) ? $options['limitToSites'] : []);
+            
+            $conditions = array_map(static function ($v): string {
+                return 'betterSite("identifier") == "' . $v . '"';
+            }, $sites);
+            
+            $ts = '[' . implode(' || ', $conditions) . ']' . PHP_EOL .
+                  $ts . PHP_EOL
+                  . '[END]';
+        }
+        
+        return $ts;
     }
 }

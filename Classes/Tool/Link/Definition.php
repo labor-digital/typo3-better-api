@@ -661,10 +661,14 @@ class Definition implements NoDiInterface
      *                                     label.
      * @param   string  $tableOrModelName  A database table name which can also be a short code like '...something"
      * @param   array   $options           Additional options for the setup
-     *                                     - basePid (string|int): an optional storage pid to force the link browser
+     *                                     - basePid (string|int|array): an optional storage pid to force the link browser
      *                                     to. This can be either a numeric value or a pid identifier.
+     *                                     You can pass an array of "siteIdentifier" => $pid if you need different
+     *                                     storage pids on different sites
      *                                     - hidePageTree (bool) FALSE: If this is flag is set, the page tree will be
      *                                     hidden when the link browser is rendered
+     *                                     - limitToSites (string|array): an optional list of siteIdentifiers
+     *                                     for which the entry in the link browser should be rendered
      *
      * @return $this
      * @see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/8.6/Feature-79626-IntegrateRecordLinkHandler.html
