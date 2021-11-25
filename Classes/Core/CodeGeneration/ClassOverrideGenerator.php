@@ -80,19 +80,28 @@ class ClassOverrideGenerator
     protected static $overrideDefinitions = [];
     
     /**
+     * True if the generator should handle "unit/functional test cases"
+     *
+     * @var bool
+     */
+    protected static $isTestMode = false;
+    
+    /**
      * Called once in the better api init boot phase to populate the required properties
      * and to register our event handler
      *
      * @param   \Composer\Autoload\ClassLoader       $composerClassLoader
      * @param   \LaborDigital\T3ba\Core\VarFs\Mount  $fsMount
      */
-    public static function init(ClassLoader $composerClassLoader, Mount $fsMount): void
+    public static function init(ClassLoader $composerClassLoader, Mount $fsMount, ?bool $testMode = null): void
     {
         // Check if we already did the init process
         if (static::$initDone) {
             return;
         }
         static::$initDone = true;
+        
+        static::$isTestMode = $testMode ?? str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'phpunit');
         
         // Create local references
         static::$fsMount = $fsMount;
@@ -165,6 +174,13 @@ class ClassOverrideGenerator
                 . static::$overrideDefinitions[$classToOverride] . ' and therefore can not be overwritten again!');
         }
         static::$overrideDefinitions[$classToOverride] = $classToOverrideWith;
+        
+        if (static::$isTestMode) {
+            try {
+                static::loadClass($classToOverride);
+            } catch (\Throwable $e) {
+            }
+        }
     }
     
     /**
@@ -338,18 +354,28 @@ if(!class_exists('\\$classToOverride', false)) {
         // Resolve the source file
         $overrideSourceFile = static::$classLoader->findFile($of);
         if ($overrideSourceFile === false) {
-            throw new ClassOverridesException('Could not create a clone of class: ' . $of
-                                              . ' because Composer could not resolve it\'s filename!');
+            if (! static::$isTestMode) {
+                throw new ClassOverridesException('Could not create a clone of class: ' . $of
+                                                  . ' because Composer could not resolve it\'s filename!');
+            }
         }
         
         // Load the content
-        $source = Fs::readFileAsLines($overrideSourceFile);
+        if (static::$isTestMode && ! $overrideSourceFile) {
+            $source = [
+                '<?php' . PHP_EOL,
+                'namespace ' . Path::classNamespace($of) . ';' . PHP_EOL,
+                'class ' . Path::classBasename($of) . '{}' . PHP_EOL,
+            ];
+        } else {
+            $source = Fs::readFileAsLines($overrideSourceFile);
+        }
         
         // Find matching class definition
         $className = Path::classBasename($of);
         $nameChanged = false;
         foreach ($source as $k => $line) {
-            if (! preg_match('~(class\\s+)(.*?)(?:\\s*(?:;|$|{|\\n)|\\s+\\w)~si', ltrim($line), $m)) {
+            if (! preg_match('~(class\\s+)(.*?)(?:\\s*(?:;|$|{|\\n)|\\s+\\w|\\s+})~si', ltrim($line), $m)) {
                 continue;
             }
             if ($m[2] !== $className) {
