@@ -14,5 +14,8 @@ Tests/Coverage
 !.idea/copyright/*
 
 # Test Sources
-Tests/Build/*
-!Tests/Build/.keep
+.Build/*
+!.Build/.keep
+composer.lock
+Tests/.phpunit.result.cache
+Tests/Coverage-Unit
