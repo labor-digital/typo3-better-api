@@ -34,9 +34,10 @@ class TypoScript implements ConfigureTypoScriptInterface
      */
     public static function configureTypoScript(TypoScriptConfigurator $configurator, ExtConfigContext $context): void
     {
-        $configurator->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'T3BA - Generic TypoScript');
-        $configurator->registerStaticTsDirectory('Configuration/TypoScript/Pids', 'T3BA - PID Mapping');
-        $configurator->registerStaticTsDirectory('Configuration/TypoScript/ExtBase', 'T3BA - ExtBase');
+        $configurator
+            ->registerStaticTsDirectory('Configuration/TypoScript/Generic', 'T3BA - Generic TypoScript')
+            ->registerStaticTsDirectory('Configuration/TypoScript/Pids', 'T3BA - PID Mapping')
+            ->registerStaticTsDirectory('Configuration/TypoScript/ExtBase', 'T3BA - ExtBase');
     }
     
 }
