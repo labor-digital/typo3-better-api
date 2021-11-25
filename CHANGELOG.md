@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.20.0](https://github.com/labor-digital/typo3-better-api/compare/v10.19.1...v10.20.0) (2021-11-25)
+
+
+### Features
+
+* **Event:** add ExpressionLanguageRegistrationEvent ([6b59f6c](https://github.com/labor-digital/typo3-better-api/commit/6b59f6cdcecb88780933251943506ef4719c373c))
+* **ExtConfig:** allow v11 feature to load side-based extConfig along-side default ext-config ([6c38c50](https://github.com/labor-digital/typo3-better-api/commit/6c38c500157b3b1717da009827968081ab7f9b9c))
+* **ExtConfig:** introduce events to filter the extConfig state before caching it ([587bc46](https://github.com/labor-digital/typo3-better-api/commit/587bc46f2ce696dcf7ec84664d981269f12fc5f5))
+* **ExtConfig:** make ConfigState persistable ([90858ea](https://github.com/labor-digital/typo3-better-api/commit/90858eabe82a3f6de8dcc6d3e3acc3d8dec1c85a))
+* **ExtConfig:** make SiteBasedExtConfigGeneratedEvent v11 feature aware ([e1838f1](https://github.com/labor-digital/typo3-better-api/commit/e1838f1ee5ea38d3dd08ecc63d50ffe28ad3308d))
+* **ExtConfig/Context:** introduce resolveFilename() method ([dc3239a](https://github.com/labor-digital/typo3-better-api/commit/dc3239a7b7dd317ef644ea5bb09ac5fc28e89f8a))
+* **ExtConfig/Icon:** Introduce unified icon configuration option ([d8ada28](https://github.com/labor-digital/typo3-better-api/commit/d8ada28b57848723ed7dc97c2a8c06debc5be323))
+* **ExtConfig\MainLoader:** use new configuration lib features ([93d0f20](https://github.com/labor-digital/typo3-better-api/commit/93d0f20f7f3355fabbe1cf5f4c83aca6ecaa3b6e))
+* **ExtConfig\MainLoader:** use SiteFacet to resolve sites ([f01c010](https://github.com/labor-digital/typo3-better-api/commit/f01c010709716ff4544c2298ce7e3e3058500951))
+* **ExtConfig\PidCollector:** allow removal of registered pids ([b60d47b](https://github.com/labor-digital/typo3-better-api/commit/b60d47b8d7008a85fb265d351d160fae3c49fb7c))
+* **ExtConfig\Site:** run handler after site pid handler ([ea3eaf2](https://github.com/labor-digital/typo3-better-api/commit/ea3eaf2c27bd6d6fd0d7104610df45cf05645ddf))
+* **ExtConfig\SiteBased:** deprecate SiteKeyProviderInterface in favour of SiteIdentifierProviderInterface ([e7caec0](https://github.com/labor-digital/typo3-better-api/commit/e7caec01492dcf06e3d9e4f2678a2339dc64a167))
+* **ExtConfig\SiteBased:** implement ExtendedSiteBasedHandlerInterface ([9aa7d7f](https://github.com/labor-digital/typo3-better-api/commit/9aa7d7f77fff1f0fd3b1dc99a668e0a2132043b1))
+* **ExtConfig\TypoScript:** introduce expressionLanguage and preParseFunc options ([deb0e96](https://github.com/labor-digital/typo3-better-api/commit/deb0e9680dd5a0c30f89a971c0626389522e87bf))
+* **FieldRenderer:** resolve item proc func items before rendering the value ([f5ff7b0](https://github.com/labor-digital/typo3-better-api/commit/f5ff7b003f61b55ebaba6ca65e8e2f8af21c185c))
+* **FormEngine\Addon:** resolve TCA field "basePid" on run-time ([769c53e](https://github.com/labor-digital/typo3-better-api/commit/769c53e1c7e4a81deaaef0a5b7df8d58465560bb))
+* **Link\LinkBrowser:** resolve "storagePid" pid value when needed ([968a770](https://github.com/labor-digital/typo3-better-api/commit/968a770427bff6bfe12b8c07212ff358dc3fe88a))
+* **Pid:** introduce site-based pid handling ([8d635e3](https://github.com/labor-digital/typo3-better-api/commit/8d635e325f9d6983d921592b93557221e42fd52d))
+* **Pid:** only update pids from typoScript if changes were detected ([5d5eaf4](https://github.com/labor-digital/typo3-better-api/commit/5d5eaf47d470009e273508189204830c2645cdee))
+* **SiteConfigAwareTrait:** add "siteIdentifier" parameter to getSiteConfig() ([8372468](https://github.com/labor-digital/typo3-better-api/commit/8372468ee046acb23e4de5bb0d1571a12c7112c6))
+* **Tca\FieldOption:** "limitToPids" now resolves the pids as formDataProvider ([7ce373e](https://github.com/labor-digital/typo3-better-api/commit/7ce373e4ce6bafdc6796b88355fbf2dd4ff38a9b))
+* **Tca\FieldOption\BasePid:** don't resolve "pid" references at build-time ([7c86ee5](https://github.com/labor-digital/typo3-better-api/commit/7c86ee5a42d5fa15aa1dee4ee5b611ae66916a82))
+* **TypoContext\Site:** ensure compatibility with site-based pids ([66a84af](https://github.com/labor-digital/typo3-better-api/commit/66a84af0bb040288aa34592fa7ac853b98b5f7ed))
+* bump required versions for neunerlei/configuration and neunerlei/arrays ([d7aed3f](https://github.com/labor-digital/typo3-better-api/commit/d7aed3f571b02fb9fde4e789f8d694b15e83c16e))
+* **Tca\PostProcessor:** introduce "tca.meta" persistation directly in the configState ([5504f60](https://github.com/labor-digital/typo3-better-api/commit/5504f60fb6f371d86d6c04a690023c33a7cd656c))
+* **TcaUtil:** add runWithResolvedItemProcFunc to resolve dynamic items in a TCA field ([54d5d68](https://github.com/labor-digital/typo3-better-api/commit/54d5d68ac1a7ec322030141da9808ebbf83f87b3))
+* **TypoContext:** add getTypoContext to StaticTypoContextAwareTrait ([80e54a6](https://github.com/labor-digital/typo3-better-api/commit/80e54a67d5c7d020b6181c03a022fc9c3fd4ec3f))
+* **TypoContext\PidFacet:** resolve pid in popups like "linkBrowser" reliably ([bfc1a47](https://github.com/labor-digital/typo3-better-api/commit/bfc1a4716c1d98b9529f7ea99a26b33db40a915f))
+
+
+### Bug Fixes
+
+* **Database\dbgQuery:** ensure all QueryResultInterface types can be debugged ([24d6b88](https://github.com/labor-digital/typo3-better-api/commit/24d6b886abfef9f6bf533343f68a724a2f83c217))
+* **ExtConfig:** ensure all ConfigState instances are in sync with DI ([9807982](https://github.com/labor-digital/typo3-better-api/commit/9807982a0eaf332e456dfe4ffb4da103e98e7939))
+* **ExtConfig\MainLoader:** don't unset typo.globals when loading the config state ([d819a04](https://github.com/labor-digital/typo3-better-api/commit/d819a048d06a1d351dfce11dd7e37baa0d85e0ad))
+* **NamingUtil:** optimize the execution order of resolveTableName ([355e094](https://github.com/labor-digital/typo3-better-api/commit/355e0940d49eb0291597a98e7875da1777762efe))
+* **Tca\CustomFieldPreset:** re-introduce sql column generation for custom fields ([d44131a](https://github.com/labor-digital/typo3-better-api/commit/d44131adaa75130fd11aed7b869d17d7b605f51f))
+* **TypoContext\SiteFacet:** ensure SiteFacet does not need SiteFinder or SiteMatcher to be instantiated ([3164e79](https://github.com/labor-digital/typo3-better-api/commit/3164e7994611ac46f53322b14fe3adf45f57c8bb))
+* **TypoContext\SiteFacet:** improve site resolution for early requests ([2848111](https://github.com/labor-digital/typo3-better-api/commit/2848111a1146a84a14b06c2af710afb9175d16b4))
+* **TypoContext\SiteFacet:** improve site resolution for early requests further ([97795fa](https://github.com/labor-digital/typo3-better-api/commit/97795fad802bb77c33467aaaef97e326737dcb7a))
+* **TypoContext\SiteFacet:** make resolved $currentSite aware of the current pid and recompile if needed ([26f1a43](https://github.com/labor-digital/typo3-better-api/commit/26f1a43c34d7524e4692b64549f5d8ca67185892))
+* **TypoScript\DynamicTypoScriptRegistry:** use LocallyCachedStatePropertyTrait to retrieve "contents" ([47ba201](https://github.com/labor-digital/typo3-better-api/commit/47ba2019c2c2871f8c4b7eda286e0ebb9a3d1fcf))
+
 ### [10.19.1](https://github.com/labor-digital/typo3-better-api/compare/v10.19.0...v10.19.1) (2021-11-16)
 
 
