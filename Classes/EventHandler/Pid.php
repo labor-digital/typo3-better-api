@@ -25,7 +25,6 @@ namespace LaborDigital\T3ba\EventHandler;
 
 use LaborDigital\T3ba\Event\TypoScript\ConfigArrayPostProcEvent;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
-use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
@@ -37,23 +36,16 @@ class Pid implements LazyEventSubscriberInterface
     protected $context;
     
     /**
-     * @var \LaborDigital\T3ba\Tool\TypoScript\TypoScriptService
-     */
-    protected $typoScriptService;
-    
-    /**
      * PidEventHandler constructor.
      *
      * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext       $context
      * @param   \LaborDigital\T3ba\Tool\TypoScript\TypoScriptService  $typoScriptService
      */
     public function __construct(
-        TypoContext $context,
-        TypoScriptService $typoScriptService
+        TypoContext $context
     )
     {
         $this->context = $context;
-        $this->typoScriptService = $typoScriptService;
     }
     
     /**
@@ -74,7 +66,48 @@ class Pid implements LazyEventSubscriberInterface
     public function onTypoScriptConfigPostProcessing(ConfigArrayPostProcEvent $event): void
     {
         $pidConfig = $event->getConfig()['t3ba.']['pid.'] ?? [];
-        $pidConfig = $this->typoScriptService->removeDots($pidConfig);
-        $this->context->pid()->setMultiple($pidConfig);
+        
+        if (empty($pidConfig)) {
+            return;
+        }
+        
+        $diff = $this->generateDiff($this->context->pid()->getAll(), $pidConfig);
+        
+        if (empty($diff)) {
+            return;
+        }
+        
+        $this->context->pid()->setMultiple($diff);
+    }
+    
+    /**
+     * Generates a diff between the currently set pids and the typo script pids
+     * Only if the diff detects a difference the pids will be updated
+     *
+     * @param   array  $a
+     * @param   array  $b
+     *
+     * @return array
+     */
+    protected function generateDiff(array $a, array $b): array
+    {
+        $diff = [];
+        
+        foreach ($b as $k => $v) {
+            $_k = rtrim($k, '.');
+            
+            if (is_array($v)) {
+                $diff[$_k] = $this->generateDiff(is_array($a[$_k] ?? null) ? $a[$_k] : [], $v);
+                continue;
+            }
+            
+            if (($a[$_k] ?? null) === (int)$v) {
+                continue;
+            }
+            
+            $diff[$_k] = (int)$v;
+        }
+        
+        return array_filter($diff);
     }
 }
