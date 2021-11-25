@@ -221,7 +221,16 @@ class SiteFacet implements FacetInterface
      */
     public function getForPid($pid): Site
     {
-        return $this->getSiteFinder()->getSiteByPageId($this->context->pid()->get($pid));
+        // If we have no site, don't try to resolve one based on the pid -> This might lead to endless loops
+        if (! $this->hasCurrent()) {
+            $this->simulateNoSite = true;
+        }
+        
+        try {
+            return $this->getSiteFinder()->getSiteByPageId($this->context->pid()->get($pid));
+        } finally {
+            $this->simulateNoSite = false;
+        }
     }
     
     /**
