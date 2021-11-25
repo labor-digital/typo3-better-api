@@ -46,6 +46,7 @@ class Applier extends AbstractExtConfigApplier
     {
         $this->applyUserTsConfig();
         $this->applyPageTsConfig();
+        $this->applyPreParseFuncs();
     }
     
     public function onTcaCompletelyLoaded(): void
@@ -54,25 +55,16 @@ class Applier extends AbstractExtConfigApplier
         $this->applyTcaPageTsConfig();
     }
     
-    /**
-     * Registers the user ts configuration
-     */
     protected function applyUserTsConfig(): void
     {
         ExtensionManagementUtility::addUserTSConfig($this->state->get('typo.typoScript.userTsConfig', ''));
     }
     
-    /**
-     * Registers the page ts configuration
-     */
     protected function applyPageTsConfig(): void
     {
         ExtensionManagementUtility::addPageTSConfig($this->state->get('typo.typoScript.pageTsConfig', ''));
     }
     
-    /**
-     * Registers the registered, selectable page ts files
-     */
     protected function applyTcaPageTsConfig(): void
     {
         foreach ($this->state->get('typo.typoScript.selectablePageTsFiles', []) as $file) {
@@ -80,9 +72,6 @@ class Applier extends AbstractExtConfigApplier
         }
     }
     
-    /**
-     * Registers static typo script directories
-     */
     protected function applyStaticDirectoryRegistration(): void
     {
         foreach ($this->state->get('typo.typoScript.staticDirectories', []) as $directory) {
@@ -91,5 +80,14 @@ class Applier extends AbstractExtConfigApplier
             }
             ExtensionManagementUtility::addStaticFile(...$directory);
         }
+    }
+    
+    protected function applyPreParseFuncs(): void
+    {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tsparser.php']['preParseFunc']
+            = array_merge(
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tsparser.php']['preParseFunc'] ?? [],
+            $this->state->get('typo.typoScript.preParseFunctions', [])
+        );
     }
 }
