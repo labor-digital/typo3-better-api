@@ -39,6 +39,8 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
     {
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureSiteRoutingInterface::class);
+        $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\Routing\Handler::class);
+        $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\Pid\Site\Handler::class);
     }
     
     /**
