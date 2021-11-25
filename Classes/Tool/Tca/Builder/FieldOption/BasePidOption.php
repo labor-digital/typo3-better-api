@@ -44,13 +44,11 @@ class BasePidOption extends AbstractOption
      */
     public function addDefinition(array &$definition): void
     {
-        $pid = $this->context->cs()->typoContext->pid();
-        
         if ($this->withMapping) {
             $definition['basePid'] = [
                 'type' => ['int', 'null', 'string', 'array', 'true'],
                 'default' => null,
-                'filter' => function ($v) use ($pid) {
+                'filter' => function ($v) {
                     if ($v === true) {
                         return '###CURRENT_PID###';
                     }
@@ -60,12 +58,12 @@ class BasePidOption extends AbstractOption
                     }
                     
                     if (! is_array($v)) {
-                        return $pid->get($v);
+                        return $v;
                     }
                     
                     return array_combine(
                         $this->context->getRealTableNameList(array_keys($v)),
-                        $pid->getMultiple($v)
+                        $v
                     );
                 },
             ];
@@ -73,12 +71,12 @@ class BasePidOption extends AbstractOption
             $definition['basePid'] = [
                 'type' => ['int', 'null', 'string', 'true'],
                 'default' => null,
-                'filter' => static function ($v) use ($pid) {
+                'filter' => static function ($v) {
                     if ($v === true) {
                         return '###CURRENT_PID###';
                     }
                     
-                    return $v === null ? $v : $pid->get($v);
+                    return $v;
                 },
             ];
         }
