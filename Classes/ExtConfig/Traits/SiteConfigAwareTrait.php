@@ -75,10 +75,13 @@ trait SiteConfigAwareTrait
     /**
      * Returns the configuration for the currently active TYPO3 site
      *
+     * @param   string|null  $siteIdentifier  Optional site identifier to retrieve the config for a specific
+     *                                        site instead of the current one
+     *
      * @return array
      */
-    protected function getSiteConfig(): array
+    protected function getSiteConfig(?string $siteIdentifier = null): array
     {
-        return $this->locallyCachedConfig[$this->getSiteIdentifier()] ?? [];
+        return $this->locallyCachedConfig[$siteIdentifier ?? $this->getSiteIdentifier()] ?? [];
     }
 }
