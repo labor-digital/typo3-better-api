@@ -81,16 +81,13 @@ class MainLoader
      */
     public function load(): void
     {
+        $state = $this->getService(ConfigState::class);
+        
         $loader = $this->extConfigService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
         
         $loader->setEventDispatcher(
             $this->makeEventDispatcherProxy(
                 function (object $event) {
-                    if ($event instanceof BeforeConfigLoadEvent) {
-//                        $this->injectEmptyConfigShell($event);
-                        return;
-                    }
-                    
                     if ($event instanceof BeforeStateCachingEvent) {
                         $event->getState()->set(ExtConfigService::PERSISTABLE_STATE_PATH, $event->getCacheKey());
                         
@@ -123,24 +120,21 @@ class MainLoader
             )
         );
         
-        $loader->setContainer($this->getContainer());
-        
-        $globalState = $this->getService(ConfigState::class);
-        $globalState->importFrom($loader->load());
+        $loader->load(false, $state);
         
         // Ensure the config context is in sync with the global state
         $configContext = $this->extConfigService->getContext();
-        $configContext->initialize($configContext->getLoaderContext(), $globalState);
+        $configContext->initialize($configContext->getLoaderContext(), $state);
         
         // Merge the globals into the globals and then remove them from the state (save a bit of memory)
-        $GLOBALS = Arrays::merge($GLOBALS, $globalState->get('typo.globals', []), 'nn');
+        $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
         
         // Reset the log manager so our log configurations are applied correctly
         $this->getContainer()->get(LogManager::class)->reset();
     }
     
     /**
-     * Creates an internal event dispatcher proxy we use to keep track of the loading stages internally
+     * Creates an internal event dispatcher proxy we use, to keep track of the loading stages internally
      *
      * @param   \Closure  $eventMapper
      *
