@@ -947,7 +947,7 @@ trait TcaTableConfigTrait
      *
      * @param   string|int|array  $pidOrLinkDefinition  Either the uid of the page, to use for the preview of this record,
      *                                                  as string, integer or array
-     *                                                  {@see TypoLink::withPid() for the usage as array}. Alternatively
+     *                                                  {@see Link::withPid() for the usage as array}. Alternatively
      *                                                  you can set the key of a link definition key that will be used for
      *                                                  the preview link generation.
      * @param   string|null       $uidParam             Defines the name of the parameter that should be mapped to the uid
@@ -1010,7 +1010,7 @@ trait TcaTableConfigTrait
                         if ($class !== null
                             && (! class_exists($class)
                                 || ! in_array(PreviewLinkGeneratorInterface::class, class_implements($class), true))) {
-                            return 'The given generator is invalid, because it either not exists, ' .
+                            return 'The given generator "' . $class . '" is invalid, because it either not exists, ' .
                                    'or does not implement the required ' . PreviewLinkGeneratorInterface::class;
                         }
                         
