@@ -29,6 +29,9 @@ use LaborDigital\T3ba\Core\Kernel;
 use LaborDigital\T3ba\Event\Core\PackageManagerCreatedEvent;
 use Neunerlei\PathUtil\Path;
 use TYPO3\CMS\Core\Package\Package;
+use TYPO3\CMS\Core\Package\PackageManager;
+use TYPO3\CMS\Core\Package\UnitTestPackageManager;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class HookPackageRegistrationStage implements BootStageInterface
 {
@@ -39,6 +42,12 @@ class HookPackageRegistrationStage implements BootStageInterface
     {
         $eventBus->addListener(PackageManagerCreatedEvent::class, static function (PackageManagerCreatedEvent $event) {
             $packageManager = $event->getPackageManager();
+            
+            // To ensure the package manager can register our package
+            // we need to inject it into the general utility when we are running unit tests
+            if ($packageManager instanceof UnitTestPackageManager) {
+                GeneralUtility::setSingletonInstance(PackageManager::class, $packageManager);
+            }
             
             $packageKey = 't3ba_hook';
             if ($packageManager->isPackageActive($packageKey)) {
