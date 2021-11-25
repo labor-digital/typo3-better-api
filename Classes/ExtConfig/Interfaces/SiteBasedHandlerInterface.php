@@ -31,8 +31,10 @@ namespace LaborDigital\T3ba\ExtConfig\Interfaces;
  * NOTE: The configuration of site based handlers will always be stored under the typo.site.$SITE_IDENTIFIER.[$yourPath]
  * Keep that in mind when you read or write the config state
  *
- * @package LaborDigital\T3ba\ExtConfig
- * @see     \LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface
+ * @package    LaborDigital\T3ba\ExtConfig
+ * @see        \LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface
+ * @see        \LaborDigital\T3ba\ExtConfig\Interfaces\SiteIdentifierProviderInterface
+ * @see        \LaborDigital\T3ba\ExtConfig\Interfaces\ExtendedSiteBasedHandlerInterface
  */
 interface SiteBasedHandlerInterface
 {

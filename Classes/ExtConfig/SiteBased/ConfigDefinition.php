@@ -26,6 +26,7 @@ namespace LaborDigital\T3ba\ExtConfig\SiteBased;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Event\ExtConfig\SingleSiteBasedExtConfigGeneratedEvent;
 use LaborDigital\T3ba\Event\ExtConfig\SiteBasedExtConfigGeneratedEvent;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtendedSiteBasedHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteIdentifierProviderInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteKeyProviderInterface;
 use Neunerlei\Configuration\Loader\ConfigDefinition as DefaultConfigDefinition;
@@ -67,6 +68,12 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
      */
     public function process(): void
     {
+        $handler = $this->handlerDefinition->handler;
+        
+        if ($handler instanceof ExtendedSiteBasedHandlerInterface) {
+            $handler->prepareSiteBasedConfig($this->configContext->getState());
+        }
+        
         foreach ($this->sites as $identifier => $site) {
             $this->runWithSiteBasedDefinition(
                 $identifier, $site,
@@ -74,6 +81,10 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
                     parent::process();
                 }
             );
+        }
+        
+        if ($handler instanceof ExtendedSiteBasedHandlerInterface) {
+            $handler->finishSiteBasedConfig($this->configContext->getState());
         }
         
         $this->configContext->getTypoContext()->di()->cs()->eventBus->dispatch(
