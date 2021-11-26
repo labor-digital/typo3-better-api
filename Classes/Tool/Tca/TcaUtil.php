@@ -54,7 +54,7 @@ class TcaUtil implements NoDiInterface
             $overrides = $overrides['columnsOverrides'];
         }
         
-        $hasColumns = is_array($tca['columns']);
+        $hasColumns = is_array($tca['columns'] ?? null);
         
         $columns = Arrays::merge($hasColumns ? $tca['columns'] : $tca, $overrides, 'allowRemoval');
         
