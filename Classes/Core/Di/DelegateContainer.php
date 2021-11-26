@@ -35,6 +35,10 @@ class DelegateContainer implements ContainerInterface
 {
     use SingletonInstanceTrait;
     
+    public const TYPE_INTERNAL = 'internal';
+    public const TYPE_SYMFONY = 'symfony';
+    public const TYPE_FAILSAFE = 'failsafe';
+    
     /**
      * @var \LaborDigital\T3ba\Core\Di\MiniContainer
      */
@@ -58,7 +62,7 @@ class DelegateContainer implements ContainerInterface
      */
     public function setContainer(string $type, ?ContainerInterface $container): void
     {
-        if (! in_array($type, ['internal', 'symfony', 'failsafe'], true)) {
+        if (! in_array($type, [static::TYPE_INTERNAL, static::TYPE_SYMFONY, static::TYPE_FAILSAFE], true)) {
             throw new InvalidArgumentException('Invalid container type given!');
         }
         $this->$type = $container;

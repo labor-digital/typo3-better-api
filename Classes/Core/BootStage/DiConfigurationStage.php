@@ -109,7 +109,7 @@ class DiConfigurationStage implements BootStageInterface
     public function onDiContainerBeingInstantiated(CreateDiContainerEvent $event): void
     {
         if ($event->isFailsafe()) {
-            $this->delegate->setContainer('failsafe', $event->getContainer());
+            $this->delegate->setContainer(DelegateContainer::TYPE_FAILSAFE, $event->getContainer());
             
             return;
         }
@@ -122,7 +122,7 @@ class DiConfigurationStage implements BootStageInterface
         }
         
         $miniContainer = $this->delegate->getInternal();
-        $this->delegate->setContainer('symfony', $symfony);
+        $this->delegate->setContainer(DelegateContainer::TYPE_SYMFONY, $symfony);
         
         $symfony->set(VarFs::class, $miniContainer->get(VarFs::class));
         

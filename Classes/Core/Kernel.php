@@ -118,7 +118,7 @@ class Kernel
         $container = new DelegateContainer();
         $i->container = $container;
         DelegateContainer::setInstance($container);
-        $container->setContainer('internal', new MiniContainer());
+        $container->setContainer(DelegateContainer::TYPE_INTERNAL, new MiniContainer());
         $container->set(VarFs::class, $i->fs = new VarFs());
         $container->set(CacheInterface::class, $i->fs->getCache());
         $container->set(static::class, $i);
