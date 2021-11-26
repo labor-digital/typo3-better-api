@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.21.0](https://github.com/labor-digital/typo3-better-api/compare/v10.20.0...v10.21.0) (2021-11-26)
+
+
+### Features
+
+* **ClassOverrideGenerator:** special class loading when running phpunit ([0f09ce9](https://github.com/labor-digital/typo3-better-api/commit/0f09ce9e9c66c7e6f1d56d66470398086a007d51))
+* **Core\HookPackage:** special handling for unit-tests when registering our hook package ([a8c0a46](https://github.com/labor-digital/typo3-better-api/commit/a8c0a4647e4517fc6a65609cc3b4bee0de1179be))
+
+
+### Bug Fixes
+
+* **Tca\DisplayConditionBuilder:** harden display condition generation and add test ([6b08fb8](https://github.com/labor-digital/typo3-better-api/commit/6b08fb83f830a314c756a9aa1489a113a6e8633f))
+
 ## [10.20.0](https://github.com/labor-digital/typo3-better-api/compare/v10.19.1...v10.20.0) (2021-11-25)
 
 
