@@ -50,7 +50,7 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
         
         $_v = $this->buildSimpleSyntax($definition, $el);
         if ($_v !== null) {
-            return $_v;
+            return implode(':', $_v);
         }
         
         foreach ($definition as $k => $v) {
@@ -61,12 +61,12 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
             
             if (is_array($v)) {
                 if ($k === 'AND' || $k === 'OR') {
-                    $out[$k] = $this->build($el, $v);
+                    $out[$k] = $this->build($el, $v, true);
                     continue;
                 }
                 
                 if (is_numeric($k) && Arrays::isArrayList($v)) {
-                    $out[$k] = ['AND' => $this->build($el, $v)];
+                    $out[$k] = $this->build($el, $v);
                     continue;
                 }
                 
@@ -76,20 +76,17 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
                 
                 $_v = $this->buildSimpleSyntax($v, $el);
                 if ($_v !== null) {
-                    $out[$k] = $_v;
+                    $out[$k] = implode(':', $_v);
                     continue;
                 }
                 
-                if (! in_array(strtoupper(trim($v[0])), static::TYPES, true)) {
-                    $this->throwException($el, 'Invalid type in rule: ' . implode(':', $v));
-                }
-                
-                $out[$k] = implode(':', $v);
+                $this->throwException($el, 'Invalid type in rule: "' . implode(':', $v) . '"');
             }
         }
         
         $outCount = count($out);
-        if ($outCount > 1 && ! Arrays::isAssociative($out)) {
+        // func_get_arg(2) if the parent list contains an "OR"/"AND", we don't need to wrap them in an "AND"
+        if ($outCount > 1 && ! Arrays::isAssociative($out) && (func_num_args() !== 3 || ! func_get_arg(2))) {
             $out = ['AND' => $out];
         } elseif ($outCount === 1 && is_string(reset($out))) {
             return reset($out);
@@ -143,28 +140,72 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
      * @param   array                                                      $value
      * @param   \LaborDigital\T3ba\Tool\Tca\Builder\Logic\AbstractElement  $el
      *
-     * @return string|null
+     * @return array
      */
-    protected function buildSimpleSyntax(array $value, AbstractElement $el): ?string
+    protected function buildSimpleSyntax(array $value, AbstractElement $el): ?array
     {
-        $vCount = count($value);
-        if (($vCount !== 3 && $vCount !== 4) || Arrays::isAssociative($value)) {
+        if (Arrays::isAssociative($value) || is_array(reset($value))) {
             return null;
         }
         
-        if ($vCount === 3 && in_array(strtoupper(trim($value[1])), static::EVAL_TYPES, true)) {
-            if ($value[0] === 'FIELD') {
-                $this->throwException($el, 'Invalid display condition, an array with three parts can\'t start with "FIELD"');
+        $firstVal = strtoupper(trim((string)reset($value)));
+        
+        if (! in_array($firstVal, static::TYPES, true)) {
+            $vCount = count($value);
+            if (($vCount === 3 || $vCount === 2) && in_array(strtoupper(trim($value[1] ?? '')), static::EVAL_TYPES, true)) {
+                $firstVal = 'FIELD';
+                array_unshift($value, $firstVal);
+            } else {
+                return null;
+            }
+        }
+        
+        switch ($firstVal) {
+            case 'FIELD':
+                $evalType = $value[2] = strtoupper(trim($value[2] ?? ''));
+                $evalValue = $value[3] ?? null;
+                switch ($evalType) {
+                    case 'IN':
+                    case '!IN':
+                        $value[3] = is_array($evalValue) ? implode(',', $evalValue) : ($evalValue ?? '');
+                        break;
+                    case '-':
+                    case '!-':
+                        $value[3] = is_array($evalValue) ? implode('-', array_slice($evalValue, 0, 2)) : ($value[3] ?? '');
+                        break;
+                    case 'REQ':
+                        $value[3] = $evalValue ?? 'true';
+                        break;
+                }
+                
+                if (count($value) !== 4) {
+                    $this->throwException($el,
+                        'Invalid display condition: "' . implode(':', $value) .
+                        '", an array for a "FIELD" type can have exactly 4 elements ONLY');
+                }
+                
+                break;
+            case 'REC':
+                if (count($value) === 1) {
+                    $value[] = 'new';
+                }
+                $value[1] = strtoupper((string)($value[1] ?? ''));
+                break;
+            case 'VERSION':
+                $value[1] = strtoupper((string)($value[1] ?? ''));
+                break;
+        }
+        
+        return array_map(static function ($v) {
+            if ($v === true) {
+                return 'true';
+            }
+            if ($v === false) {
+                return 'false';
             }
             
-            array_unshift($value, 'FIELD');
-        }
-        
-        if (! in_array(strtoupper(trim($value[0])), static::TYPES, true)) {
-            return null;
-        }
-        
-        return implode(':', $value);
+            return $v;
+        }, $value);
     }
     
     /**
