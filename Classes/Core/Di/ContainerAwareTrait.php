@@ -123,6 +123,10 @@ trait ContainerAwareTrait
      */
     protected function makeInstance(string $class, array $constructorArguments = [])
     {
+        if (empty($constructorArguments)) {
+            return $this->caServices[$class] ?? GeneralUtility::makeInstance($class);
+        }
+        
         return GeneralUtility::makeInstance($class, ...$constructorArguments);
     }
     
@@ -147,7 +151,7 @@ trait ContainerAwareTrait
      * Returns a list of commonly used services as a "lazy" lookup method.
      *
      * @return \LaborDigital\T3ba\Core\Di\CommonServices
-     * @see cs() for a short hand
+     * @see cs() for a shorthand
      */
     protected function getCommonServices(): CommonServices
     {
@@ -165,6 +169,6 @@ trait ContainerAwareTrait
     {
         return $this->caServices[CommonServices::class] ??
                $this->caServices[CommonServices::class]
-                   = $this->getService(CommonServices::class);
+                   = $this->makeInstance(CommonServices::class);
     }
 }
