@@ -126,6 +126,22 @@ class CommonServices implements PublicServiceInterface
     }
     
     /**
+     * Allows the outside world to set instances directly.
+     * This is especially helpful when writing unit tests
+     *
+     * @param   string  $key       The "key" to set the instance for. Like "session", "simulator", "typoContext"...
+     * @param   object  $instance  The instance to be set for the given key
+     *
+     * @return $this
+     */
+    public function setInstance(string $key, object $instance): self
+    {
+        $this->def[$key] = $instance;
+        
+        return $this;
+    }
+    
+    /**
      * Magic method to resolve the required instance based on the property
      *
      * @param $name
