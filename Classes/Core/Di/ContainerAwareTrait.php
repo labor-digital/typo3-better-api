@@ -37,6 +37,7 @@ trait ContainerAwareTrait
      * Holds the list of stored service instances
      *
      * @var array
+     * @deprecated will be renamed to $caInstances = [] in v11
      */
     protected $caServices = [];
     
@@ -48,6 +49,7 @@ trait ContainerAwareTrait
      * @param   object  $instance              The instance to register for the given class / interface name
      *
      * @return void
+     * @todo rename to setInstance() and deprecate it in v11
      */
     public function setService(string $classOrInterfaceName, object $instance): void
     {
@@ -61,6 +63,8 @@ trait ContainerAwareTrait
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance that should be checked
      *
      * @return bool
+     * @todo rename to hasInstance() and deprecate it in v11
+     * @todo this will replace hasSetService in v11, as we don't need a special check for that anymore
      */
     protected function hasService(string $classOrInterfaceName): bool
     {
@@ -76,6 +80,7 @@ trait ContainerAwareTrait
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance that should be checked
      *
      * @return bool
+     * @deprecated will be removed in v12, hasService / hasInstance will replace it
      */
     protected function hasSetService(string $classOrInterfaceName): bool
     {
@@ -93,6 +98,7 @@ trait ContainerAwareTrait
      * @param   string  $class  The class or interface you want to retrieve the object for
      *
      * @return mixed
+     * @deprecated will be removed in v12, use makeInstance instead
      */
     protected function getService(string $class)
     {
@@ -119,7 +125,8 @@ trait ContainerAwareTrait
      *
      * @return mixed
      *
-     * @see \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance()
+     * @see  \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance()
+     * @todo rename to getInstance and deprecate it in v11
      */
     protected function makeInstance(string $class, array $constructorArguments = [])
     {
