@@ -15,7 +15,7 @@
   ~
   ~ Last modified: 2020.02.28 at 20:24
   -->
-<phpunit colors="true" backupGlobals="true" cacheResult="false" convertErrorsToExceptions="true" convertWarningsToExceptions="true" convertNoticesToExceptions="true" forceCoversAnnotation="false" processIsolation="false" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="../.Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php">
+<phpunit colors="true" backupGlobals="true" cacheResult="false" convertErrorsToExceptions="false" convertWarningsToExceptions="false" convertNoticesToExceptions="false" forceCoversAnnotation="false" processIsolation="false" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="../.Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php">
 	<coverage processUncoveredFiles="false">
 		<include>
 			<directory suffix=".php">../Classes/</directory>
