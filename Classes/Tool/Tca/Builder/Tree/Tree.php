@@ -143,9 +143,9 @@ class Tree implements NoDiInterface
         
         if ($parent->getType() === $type) {
             throw new InvalidNestingException(
-                'You can\'t create a new node with id "' . $id . '", and type: ' . $type
-                . ' here, because the parent is of the same type. '
-                . ' Did you try to nest a palette/section inside a palette/section, this does not work!'
+                'You can\'t create a new node with id: "' . $node->getid() . '", and type: "' . $type . '"'
+                . ' here, because the parent with id: "' . $parent->getId() . '" is of the same type.'
+                . ' Did you try to nest a palette/section inside a palette/section? This does not work!'
             );
         }
         
@@ -312,7 +312,9 @@ class Tree implements NoDiInterface
         } elseif (is_object($position)) {
             $positionParts = [$position];
         } else {
-            throw new \InvalidArgumentException('The given pivot-id is invalid');
+            throw new \TypeError(
+                'A position can be defined either as string, array, object or number, however a value of type: "' .
+                gettype($position) . '" was given');
         }
         
         // Parse position into node
@@ -320,7 +322,9 @@ class Tree implements NoDiInterface
         
         if (is_object($pivotId)) {
             if (! $pivotId instanceof Node) {
-                throw new \InvalidArgumentException('Invalid position given. The pivot-id is an object of type: ' . get_class($pivotId));
+                throw new \TypeError(
+                    'Invalid position given. The pivot-id is an object of type: "' . get_class($pivotId) .
+                    '" while only objects of type: "' . Node::class . '" are allowed');
             }
             $pivotNode = $pivotId;
         } else {
@@ -372,26 +376,19 @@ class Tree implements NoDiInterface
             $nodeToAddNodeTo = $this->getRootNode();
             $pivotNode = $pivotNode->getContainingTab();
             $allowOnlyBeforeAndAfter = true;
-            if ($insertMode === Node::INSERT_MODE_TOP) {
-                $insertMode = Node::INSERT_MODE_BEFORE;
-            } elseif ($insertMode === Node::INSERT_MODE_BOTTOM) {
-                $insertMode = Node::INSERT_MODE_AFTER;
-            }
-        } // Only add containers to tabs
-        elseif ($nodeToMove->isContainer()) {
+        } elseif ($nodeToMove->isContainer()) {
             $nodeToAddNodeTo = $pivotNode->getContainingTab();
         } elseif ($nodeToMove->isField() || $nodeToMove->isLineBreak()) {
-            // Move field to other field
-            if ($pivotNode->isField()) {
-                $nodeToAddNodeTo = $pivotNode->getParent();
-                $allowOnlyBeforeAndAfter = true;
-            } elseif ($insertMode === Node::INSERT_MODE_TOP || $insertMode === Node::INSERT_MODE_BOTTOM
-                      || $pivotNode->isTab()) {
+            if ($pivotNode->isTab() || $pivotNode->isContainer()) {
+                // Move field into container or tab
                 $nodeToAddNodeTo = $pivotNode;
             } else {
+                // Move field to other field or line break
                 $nodeToAddNodeTo = $pivotNode->getParent();
+                $allowOnlyBeforeAndAfter = true;
             }
         } else {
+            // Fallback should there be the case that a new node type was implemented
             // @codeCoverageIgnoreStart
             return;
             // @codeCoverageIgnoreEnd
