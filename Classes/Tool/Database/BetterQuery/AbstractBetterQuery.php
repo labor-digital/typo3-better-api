@@ -22,10 +22,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Database\BetterQuery;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\Database\BetterQuery\Util\RecursivePidResolver;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 
@@ -134,18 +137,32 @@ abstract class AbstractBetterQuery implements NoDiInterface
      * Keep in mind tho, that the pid limitations apply to all objects you are looking up, even if you
      * are searching for child properties, the child has to match your pid constraints!
      *
-     * @param   string|array|int|bool  $pids  The list of pids you want to set as constraints.
-     *                                        Either a single value, or an array of values.
-     *                                        You may use pid selectors using the PidService like
-     *                                        (at)pid.storage.something If you set this to TRUE the current page id
-     *                                        will be used. Setting this to FALSE will remove the pid restrictions
+     * @param   string|array|int|bool|null  $pids            The list of pids you want to set as constraints.
+     *                                                       Either a single value, or an array of values.
+     *                                                       You may use pid selectors using the PidService like
+     *                                                       (at)pid.storage.something If you set this to TRUE the current page id
+     *                                                       will be used. Setting this to FALSE will remove the pid restrictions.
+     *                                                       By setting the value to NULL, the default extBase configuration
+     *                                                       will be retrieved through the configuration manager.
+     * @param   int                         $recursionLevel  If set to a value bigger than 0, child pids
+     *                                                       of the given pids are also taken into account up
+     *                                                       until the level you define with this argument.
      *
      * @return $this
      */
-    public function withPids($pids): self
+    public function withPids($pids, $recursionLevel = 0): self
     {
         $clone = clone $this;
         $settings = $clone->adapter->getSettings();
+        
+        // Null defaults to the extbase settings
+        if ($pids === null) {
+            $settings->setRespectStoragePage(true);
+            $config = $this->typoContext->config()->getExtBaseConfig(null, null, ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+            $settings->setStoragePageIds(Arrays::makeFromStringList($config['persistence']['storagePid'] ?? ''));
+            
+            return $clone;
+        }
         
         // Handle special pid values
         if (is_bool($pids)) {
@@ -168,6 +185,12 @@ abstract class AbstractBetterQuery implements NoDiInterface
             
             return $clone->typoContext->pid()->get($v);
         }, $clone->adapter->ensureArrayValue($pids, 'pid'));
+        
+        // Resolve pids recursive if needed
+        if ($recursionLevel > 0 && ! empty($pids)) {
+            $pids = $this->typoContext->di()->getService(RecursivePidResolver::class)
+                                      ->resolve($pids, $recursionLevel);
+        }
         
         // Update the page limitations in the query settings
         $settings->setRespectStoragePage(true);
