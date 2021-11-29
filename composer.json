@@ -12,16 +12,7 @@
 	"scripts": {
 		"post-autoload-dump": [
 			"TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
-		],
-		"test": [
-			"@test-unit"
-		],
-		"test-cover": [
-			"@test-unit-cover"
-		],
-		"test-unit": "phpunit --configuration Tests/Unit.xml",
-		"test-unit-cover": "XDEBUG_MODE=coverage phpunit --configuration Tests/Unit.xml --coverage-html Tests/Coverage-Unit",
-		"test-functional": "./Build/bin/phpunit Tests/Functional.xml"
+		]
 	},
 	"authors": [
 		{
@@ -79,16 +70,13 @@
 	},
 	"version": "10.21.0",
 	"config": {
-		"vendor-dir": ".Build/vendor",
-		"bin-dir": ".Build/bin"
+		"bin-dir": "bin"
 	},
 	"extra": {
 		"t3ba": {
 			"isDev": true
 		},
 		"typo3/cms": {
-			"app-dir": ".Build",
-			"web-dir": ".Build/web",
 			"Package": {
 				"protected": true,
 				"partOfFactoryDefault": true,
