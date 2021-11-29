@@ -127,4 +127,34 @@ class TestLockPick
         
         return $method->invokeArgs($this->instance, $arguments);
     }
+    
+    /**
+     * Sets the value of a static property
+     *
+     * @param   string  $className
+     * @param   string  $property
+     * @param           $value
+     */
+    public static function setStaticProperty(string $className, string $property, $value): void
+    {
+        $prop = (new \ReflectionClass($className))->getProperty($property);
+        $prop->setAccessible(true);
+        $prop->setValue($value);
+    }
+    
+    /**
+     * Returns the value of a static property of a class
+     *
+     * @param   string  $className
+     * @param   string  $property
+     *
+     * @return mixed
+     */
+    public static function getStaticProperty(string $className, string $property)
+    {
+        $prop = (new \ReflectionClass($className))->getProperty($property);
+        $prop->setAccessible(true);
+        
+        return $prop->getValue();
+    }
 }

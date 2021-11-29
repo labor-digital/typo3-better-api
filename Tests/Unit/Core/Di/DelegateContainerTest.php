@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\Tests\Unit\Core\Di;
 
 use LaborDigital\T3ba\Core\Di\DelegateContainer;
 use LaborDigital\T3ba\Core\Di\MiniContainer;
+use LaborDigital\T3ba\Tests\Util\TestLockPick;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use TYPO3\CMS\Core\DependencyInjection\FailsafeContainer;
@@ -47,9 +48,7 @@ class DelegateContainerTest extends UnitTestCase
         GeneralUtility::setContainer($cs2);
         static::assertSame($cs2, $c->getSymfony());
         
-        $prop = (new \ReflectionClass(GeneralUtility::class))->getProperty('container');
-        $prop->setAccessible(true);
-        $prop->setValue(null);
+        TestLockPick::setStaticProperty(GeneralUtility::class, 'container', null);
     }
     
     public function testInternalRetrieval(): void
