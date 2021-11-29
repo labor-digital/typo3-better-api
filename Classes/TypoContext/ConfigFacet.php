@@ -52,6 +52,8 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExis
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Configuration\Features;
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * Repository for the different, global configuration options in TYPO3
@@ -278,14 +280,30 @@ class ConfigFacet implements FacetInterface
     /**
      * Returns the plugin / extension configuration for ext base extensions
      *
-     * @param   string|null  $extensionName  The extension name / key to read the configuration for
-     * @param   string|null  $pluginName     Optional plugin to look up.
+     * @param   string|null  $extensionName      The extension name / key to read the configuration for
+     * @param   string|null  $pluginName         Optional plugin to look up.
+     * @param   string|null  $configurationType  One of the ConfigurationManagerInterface::CONFIGURATION_ constants,
+     *                                           By default: ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS
      *
      * @return array
      */
-    public function getExtBaseConfig(?string $extensionName = null, ?string $pluginName = null): array
+    public function getExtBaseConfig(?string $extensionName = null, ?string $pluginName = null, ?string $configurationType = null): array
     {
-        return $this->getService(TypoScriptService::class)->getExtBaseSettings($extensionName, $pluginName);
+        return $this->getExtBaseConfigManager()
+                    ->getConfiguration(
+                        $configurationType ?? ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+                        $extensionName,
+                        $pluginName);
+    }
+    
+    /**
+     * Returns the instance of the ExtBase configuration manager, resolved through the container
+     *
+     * @return \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+     */
+    public function getExtBaseConfigManager(): ConfigurationManagerInterface
+    {
+        return $this->getService(ConfigurationManager::class);
     }
     
     /**
