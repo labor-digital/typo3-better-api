@@ -10,7 +10,7 @@ on:
       - 'package.json'
       - 'CHANGELOG.md'
 jobs:
-  testsuite:
+  test:
     name: all tests
     runs-on: ubuntu-latest
     strategy:
