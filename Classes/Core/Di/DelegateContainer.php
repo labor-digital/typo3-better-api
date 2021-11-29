@@ -62,8 +62,9 @@ class DelegateContainer implements ContainerInterface
      */
     public function setContainer(string $type, ?ContainerInterface $container): void
     {
-        if (! in_array($type, [static::TYPE_INTERNAL, static::TYPE_SYMFONY, static::TYPE_FAILSAFE], true)) {
-            throw new InvalidArgumentException('Invalid container type given!');
+        $allowedTypes = [static::TYPE_INTERNAL, static::TYPE_SYMFONY, static::TYPE_FAILSAFE];
+        if (! in_array($type, $allowedTypes, true)) {
+            throw new InvalidArgumentException('Invalid container type "' . $type . '" given, allowed are: "' . implode('", "', $allowedTypes) . '"');
         }
         $this->$type = $container;
     }
@@ -76,10 +77,13 @@ class DelegateContainer implements ContainerInterface
      */
     public function set($id, $concrete): void
     {
-        if (isset($this->symfony)) {
-            $this->symfony->set($id, $concrete);
-        } else {
+        $symfony = $this->getSymfony();
+        if ($symfony) {
+            $symfony->set($id, $concrete);
+        } elseif (isset($this->internal)) {
             $this->internal->set($id, $concrete);
+        } else {
+            throw new LogicException('There is currently no container available to set the service on!');
         }
     }
     
