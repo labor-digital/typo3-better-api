@@ -181,10 +181,11 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
      * @param   string|null  $pluginName     Optional plugin to look up.
      *
      * @return array
+     * @deprecated will be removed in v11 use TypoContext->config()->getExtBaseConfig() instead
      */
     public function getExtBaseSettings(?string $extensionName = null, ?string $pluginName = null): array
     {
-        $cm = $this->getService(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $cm = $this->getService(ConfigurationManagerInterface::class);
         $settings = $cm->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             $extensionName, $pluginName);
         
