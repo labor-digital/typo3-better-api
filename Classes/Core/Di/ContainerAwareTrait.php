@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Core\Di;
 
+use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -109,11 +110,11 @@ trait ContainerAwareTrait
     /**
      * Returns the instance of the container
      *
-     * @return \LaborDigital\T3ba\Core\Di\DelegateContainer
+     * @return \LaborDigital\T3ba\Core\Di\DelegateContainer|ContainerInterface
      */
-    protected function getContainer(): DelegateContainer
+    protected function getContainer(): ContainerInterface
     {
-        // @todo use ContainerInterface instead of delegate in v11
+        // @todo use ContainerInterface instead of "delegate" in v11
         return $this->caServices['delegate'] ??
                $this->caServices['delegate'] = DelegateContainer::getInstance();
     }
