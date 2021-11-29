@@ -37,6 +37,7 @@ trait SingletonInstanceTrait
      *
      * @return self
      * @throws \LaborDigital\T3ba\Core\Exception\SingletonNotSetException
+     * @todo rename to getSingleton() and deprecate it in v11
      */
     public static function getInstance(): self
     {
@@ -54,6 +55,7 @@ trait SingletonInstanceTrait
      *
      * @return $this
      * @internal
+     * @todo rename to setSingleton() and deprecate it in v11
      */
     public static function setInstance(self $instance): self
     {
