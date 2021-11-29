@@ -39,7 +39,6 @@ use LaborDigital\T3ba\Tool\TypoScript\TypoScriptService;
 use LaborDigital\T3ba\TypoContext\DependencyInjectionFacet;
 use Neunerlei\EventBus\EventBusInterface;
 use Psr\Container\ContainerInterface;
-use TYPO3\CMS\Core\DependencyInjection\NotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
@@ -84,11 +83,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class CommonServices implements PublicServiceInterface
 {
     /**
-     * Defines how the specific properties should be resolved.
-     *
-     * Arguments:
-     * 0: Name of the class to resolve
-     * 1: True if a new instance of the class should be returned, false/null if a singleton can be used
+     * The list of properties and either their class names, closures as "factories" or already resolved instances
      *
      * @var array
      */
@@ -108,6 +103,9 @@ class CommonServices implements PublicServiceInterface
             'session' => SessionService::class,
             'dataHandler' => DataHandlerService::class,
             'typoContext' => TypoContext::class,
+            'container' => null,
+            'di' => null,
+            'objectManager' => null,
         ];
     
     /**
@@ -129,14 +127,21 @@ class CommonServices implements PublicServiceInterface
      * Allows the outside world to set instances directly.
      * This is especially helpful when writing unit tests
      *
-     * @param   string  $key       The "key" to set the instance for. Like "session", "simulator", "typoContext"...
+     * @param   string  $name      The "name"/"key" to set the instance for. Like "session", "simulator", "typoContext"...
      * @param   object  $instance  The instance to be set for the given key
      *
      * @return $this
+     * @throws \LaborDigital\T3ba\Core\Di\UnknownCommonServiceNameException
      */
-    public function setInstance(string $key, object $instance): self
+    public function setInstance(string $name, object $instance): self
     {
-        $this->def[$key] = $instance;
+        if (! array_key_exists($name, $this->def)) {
+            throw new UnknownCommonServiceNameException(
+                'You can\'t set a common service with name: "' . $name . '" because it is not part of the object\'s definition'
+            );
+        }
+        
+        $this->def[$name] = $instance;
         
         return $this;
     }
@@ -147,7 +152,7 @@ class CommonServices implements PublicServiceInterface
      * @param $name
      *
      * @return mixed
-     * @throws \TYPO3\CMS\Core\DependencyInjection\NotFoundException
+     * @throws \LaborDigital\T3ba\Core\Di\UnknownCommonServiceNameException
      * @noinspection MagicMethodsValidityInspection
      */
     public function __get($name)
@@ -155,27 +160,29 @@ class CommonServices implements PublicServiceInterface
         if (! isset($this->def[$name])) {
             switch ($name) {
                 case 'container':
-                    return $this->container;
+                    return $this->def[$name] = $this->container;
                 case 'di':
-                    return $this->typoContext->di();
+                    return $this->def[$name] = $this->typoContext->di();
                 case 'objectManager':
-                    return GeneralUtility::makeInstance(ObjectManager::class);
+                    return $this->def[$name] = GeneralUtility::makeInstance(ObjectManager::class);
             }
             
-            throw new NotFoundException('Invalid common service "' . $name . '" requested!');
+            throw new UnknownCommonServiceNameException(
+                'There is no registered common service with name: "' . $name . '"'
+            );
         }
         
         if (is_object($this->def[$name])) {
             // Use a factory
             if ($this->def[$name] instanceof Closure) {
-                return $this->def[$name]($this->container, $name);
+                return $this->def[$name] = $this->def[$name]($this->container, $name);
             }
             
             // Return the instance
             return $this->def[$name];
         }
         
-        return $this->container->get($this->def[$name]);
+        return $this->def[$name] = GeneralUtility::makeInstance($this->def[$name]);
     }
     
 }
