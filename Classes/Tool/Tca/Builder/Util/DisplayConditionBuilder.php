@@ -218,11 +218,11 @@ class DisplayConditionBuilder implements NoDiInterface, SingletonInterface
      */
     protected function throwException(AbstractElement $el, string $message): void
     {
-        $msg = 'Failed to build display condition for';
+        $msg = 'Failed to build display condition';
         if ($el instanceof AbstractField) {
-            $msg .= ' field "' . $el->getId() . '"';
+            $msg .= ' for field "' . $el->getId() . '"';
         } elseif ($el instanceof AbstractContainer) {
-            $msg .= ' in section "' . $el->getId() . '"';
+            $msg .= ' for section "' . $el->getId() . '"';
         }
         
         $msg .= ' on table "' . $el->getRoot()->getTableName() . '", because: ';

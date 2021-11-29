@@ -244,7 +244,7 @@ class DisplayConditionBuilderTest extends UnitTestCase
     {
         $this->expectException(TcaBuilderException::class);
         $this->expectExceptionMessage(
-            'Failed to build display condition for on table "foo_table", because: Invalid type in rule: "FOO:bar:=:faz"');
+            'Failed to build display condition on table "foo_table", because: Invalid type in rule: "FOO:bar:=:faz"');
         $builder = new DisplayConditionBuilder();
         $builder->build($this->getElementMock(), [['FOO', 'bar', '=', 'faz']]);
     }
@@ -253,7 +253,7 @@ class DisplayConditionBuilderTest extends UnitTestCase
     {
         $this->expectException(TcaBuilderException::class);
         $this->expectExceptionMessage(
-            'Failed to build display condition for on table "foo_table", because: Nested display conditions can\'t be associative arrays!');
+            'Failed to build display condition on table "foo_table", because: Nested display conditions can\'t be associative arrays!');
         $builder = new DisplayConditionBuilder();
         $builder->build($this->getElementMock(), [['foo' => ['bar' => 'baz']]]);
     }
@@ -262,7 +262,7 @@ class DisplayConditionBuilderTest extends UnitTestCase
     {
         $this->expectException(TcaBuilderException::class);
         $this->expectExceptionMessage(
-            'Failed to build display condition for on table "foo_table", because: Invalid display condition: "FIELD:foo:", an array for a "FIELD" type can have exactly 4 elements ONLY');
+            'Failed to build display condition on table "foo_table", because: Invalid display condition: "FIELD:foo:", an array for a "FIELD" type can have exactly 4 elements ONLY');
         $builder = new DisplayConditionBuilder();
         $builder->build($this->getElementMock(), [['FIELD', 'foo']]);
     }
@@ -301,7 +301,7 @@ class DisplayConditionBuilderTest extends UnitTestCase
         
         $this->expectException(TcaBuilderException::class);
         $this->expectExceptionMessage(
-            'Failed to build display condition for in section "foo" on table "foo_table", because: Invalid type in rule: "FOO:bar:=:faz"');
+            'Failed to build display condition for section "foo" on table "foo_table", because: Invalid type in rule: "FOO:bar:=:faz"');
         $builder = new DisplayConditionBuilder();
         $builder->build($el, [['FOO', 'bar', '=', 'faz']]);
     }
