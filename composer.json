@@ -77,7 +77,7 @@
 			"LaborDigital\\T3ba\\Tests\\": "Tests"
 		}
 	},
-	"version": "10.20.0",
+	"version": "10.21.0",
 	"config": {
 		"vendor-dir": ".Build/vendor",
 		"bin-dir": ".Build/bin"
