@@ -67,6 +67,8 @@ class DiConfigurationStage implements BootStageInterface
     {
         $this->delegate = $kernel->getContainer();
         
+        GeneralUtility::setContainer($this->delegate);
+        
         $eventBus->addListener(PackageManagerCreatedEvent::class, [$this, 'onPackageManagerCreated']);
         $eventBus->addListener(DiContainerBeingBuildEvent::class, [$this, 'onDiContainerBeingBuild']);
         $eventBus->addListener(CreateDiContainerEvent::class, [$this, 'onDiContainerBeingInstantiated']);
@@ -199,40 +201,5 @@ class DiConfigurationStage implements BootStageInterface
             $classLoader->setPsr4($namespace, $directory);
         }
     }
-
-//    /**
-//     * Creates the local, mini container instance that is used until the real TYPO3 container
-//     * is up and running.
-//     *
-//     * @param   \TYPO3\CMS\Core\Package\PackageManager  $packageManager
-//     */
-//    protected function initializeLocalContainer(PackageManager $packageManager): void
-//    {
-//        $this->services = new MiniContainer([
-//            Kernel::class         => $this->kernel,
-//            VarFs::class          => $this->kernel->getFs(),
-//            PackageManager::class => $packageManager,
-//            TypoEventBus::class   => $this->kernel->getEventBus(),
-//            CacheInterface::class => $this->kernel->getFs()->getCache(),
-//            ClassLoader::class    => $this->kernel->getClassLoader(),
-//        ]);
-//
-//        $configService = GeneralUtility::makeInstance(
-//            ExtConfigService::class,
-//            $packageManager, $this->kernel->getEventBus(), $this->kernel->getFs(), $this->services
-//        );
-//
-//        $configService = $this->makeInstance(
-//            ExtConfigService::class,
-//            [$packageManager, $this->kernel->getEventBus(), $this->kernel->getFs(), $this->services]
-//        );
-//        $container->set(ExtConfigService::class, $configService);
-//        $container->set(ExtConfigContext::class, $configService->getContext());
-//
-//        $this->delegate = new DelegateContainer();
-//        $this->delegate->add($container);
-//
-//        $this->setContainer($this->delegate);
-//    }
-
+    
 }
