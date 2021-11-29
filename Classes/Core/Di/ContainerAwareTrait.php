@@ -30,6 +30,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * the Container() method will return the container instance!
  *
  * @package LaborDigital\T3ba\Core\Di
+ * @todo    in v11 get StaticContainerAwareTrait in sync + add tests for it
  */
 trait ContainerAwareTrait
 {
@@ -75,7 +76,7 @@ trait ContainerAwareTrait
      * Returns true if there was an instance of the given class or interface injected into this class using
      * the "setService()" method.
      *
-     * Note: This only checks for locally available services! Use hasService()) to ask the container as well.
+     * Note: This only checks for locally available services! Use hasService() to ask the container as well.
      *
      * @param   string  $classOrInterfaceName  The name of the interface / class this instance that should be checked
      *
@@ -112,6 +113,7 @@ trait ContainerAwareTrait
      */
     protected function getContainer(): DelegateContainer
     {
+        // @todo use ContainerInterface instead of delegate in v11
         return $this->caServices['delegate'] ??
                $this->caServices['delegate'] = DelegateContainer::getInstance();
     }
@@ -176,6 +178,6 @@ trait ContainerAwareTrait
     {
         return $this->caServices[CommonServices::class] ??
                $this->caServices[CommonServices::class]
-                   = $this->makeInstance(CommonServices::class);
+                   = $this->makeInstance(CommonServices::class, [$this->getContainer()]);
     }
 }
