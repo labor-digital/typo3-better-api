@@ -83,7 +83,7 @@ class TypoContext implements SingletonInterface, PublicServiceInterface
      */
     public function getRootContext(): Context
     {
-        return $this->rootContext ?? ($this->rootContext = $this->getContainer()->get(Context::class));
+        return $this->rootContext ?? ($this->rootContext = $this->makeInstance(Context::class));
     }
     
     /** ====================================================
