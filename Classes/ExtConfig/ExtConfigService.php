@@ -291,6 +291,12 @@ class ExtConfigService
         
         $rootLocations = [];
         foreach ($this->packageManager->getActivePackages() as $package) {
+            // System extensions will not be scanned, because they can not
+            // contain custom configuration we need to know about
+            if (str_contains($package->getPackagePath(), 'sysext')) {
+                continue;
+            }
+            
             $rootLocations[] = [
                 $package->getPackagePath(),
                 function ($file, string $class) use ($package) {
