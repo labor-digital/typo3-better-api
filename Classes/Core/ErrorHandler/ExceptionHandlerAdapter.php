@@ -24,7 +24,6 @@ namespace LaborDigital\T3ba\Core\ErrorHandler;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
-use LaborDigital\T3ba\Core\Exception\T3baException;
 use LaborDigital\T3ba\Event\Core\ErrorFilterEvent;
 use Throwable;
 use TYPO3\CMS\Core\Error\ExceptionHandlerInterface;
@@ -53,12 +52,11 @@ class ExceptionHandlerAdapter extends ProductionExceptionHandler implements NoDi
      */
     public function __construct()
     {
-        if (empty(static::$defaultExceptionHandler)) {
-            throw new T3baException(
-                'Could not create instance of: ' . static::class
-                . ' because no default exception handler was registered!');
-        }
-        $this->defaultExceptionHandlerInstance = GeneralUtility::makeInstance(static::$defaultExceptionHandler);
+        $this->defaultExceptionHandlerInstance = GeneralUtility::makeInstance(
+            empty(static::$defaultExceptionHandler)
+                ? ProductionExceptionHandler::class
+                : static::$defaultExceptionHandler
+        );
         
         // Disable the child exception handler's handling -> We will take care of that
         restore_exception_handler();
