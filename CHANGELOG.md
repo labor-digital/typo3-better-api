@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.22.0](https://github.com/labor-digital/typo3-better-api/compare/v10.21.0...v10.22.0) (2021-11-29)
+
+
+### Features
+
+* **Di\CommonServices:** add "setInstance" to Common Services object ([e38322b](https://github.com/labor-digital/typo3-better-api/commit/e38322bbaf7fe1e3324a4c2b52eacc85d101784b))
+* **Di\ContainerAwareTrait:** deprecate "setService" and company ([366e1f2](https://github.com/labor-digital/typo3-better-api/commit/366e1f286bf1f7e5162a16b92e3025aca8c3b81e))
+* **Di\ContainerAwareTrait:** ensure makeInstance() resolves locally set services ([b5daf60](https://github.com/labor-digital/typo3-better-api/commit/b5daf60f322e41b6e518af486e5d7027870c3975))
+
+
+### Bug Fixes
+
+* harden dependencies ([a871d40](https://github.com/labor-digital/typo3-better-api/commit/a871d406083e5a067650a4306235e7a24ea9602f))
+* **BootStage\DiConfigurationStage:** inject delegate container into GeneralUtility ([9bfe7d2](https://github.com/labor-digital/typo3-better-api/commit/9bfe7d285cb167d5e2330f771987683821583e4f))
+* **Di\CommonService:** harden class against misuse ([8617acf](https://github.com/labor-digital/typo3-better-api/commit/8617acff34cd7cfb7fb383cd1daecfa3cf7a4066))
+* **Di\ContainerAwareTrait:** set ContainerInterface as return type of getContainer() ([6a2b54e](https://github.com/labor-digital/typo3-better-api/commit/6a2b54e5c99c23ea3ee771b41b0b3c503a12d9bd))
+* **Di\DelegateContainer:** harden container against errors ([8d47744](https://github.com/labor-digital/typo3-better-api/commit/8d47744e79ca67e061d21f333952735f9f23940d))
+* **Tca\Builder:** fix multiple minor issues that I found while testing ([cb8623a](https://github.com/labor-digital/typo3-better-api/commit/cb8623a2d8e056e771a227c4de0450ae45540192))
+* **Tca\TcaUtil:** validate that "columns" exists in applyColumnOverrides ([adda7d9](https://github.com/labor-digital/typo3-better-api/commit/adda7d9b96678d93e8b00e05a63cc30e58a9f589))
+* **TypoContext:** resolve "Context" through makeInstance instead of PSR container ([80699cc](https://github.com/labor-digital/typo3-better-api/commit/80699cc95b7a11ed84730a154819b7c10fdffcd6))
+
 ## [10.21.0](https://github.com/labor-digital/typo3-better-api/compare/v10.20.0...v10.21.0) (2021-11-26)
 
 
