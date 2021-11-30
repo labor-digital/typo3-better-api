@@ -98,6 +98,9 @@ class DiConfigurationStage implements BootStageInterface
         $this->delegate->set(ContainerConfigurator::class, $event->getContainerConfigurator());
         $this->delegate->set(ContainerBuilder::class, $event->getContainerBuilder());
         
+        // We re-inject the delegate, because in tests the container gets flushed away...
+        GeneralUtility::setContainer($this->delegate);
+        
         $extConfigService = $this->delegate->get(ExtConfigService::class);
         $extConfigService->getDiLoader()->loadForBuildTime();
     }
