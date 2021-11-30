@@ -37,6 +37,7 @@ use LaborDigital\T3ba\Core\Override\ExtendedHiddenRestriction;
 use LaborDigital\T3ba\Core\Override\ExtendedLanguageService;
 use LaborDigital\T3ba\Core\Override\ExtendedLocalizationUtility;
 use LaborDigital\T3ba\Core\Override\ExtendedNodeFactory;
+use LaborDigital\T3ba\Core\Override\ExtendedPackageManager;
 use LaborDigital\T3ba\Core\Override\ExtendedReferenceIndex;
 use LaborDigital\T3ba\Core\Override\ExtendedSiteConfiguration;
 use LaborDigital\T3ba\Core\Override\ExtendedTypoScriptParser;
@@ -51,6 +52,7 @@ use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -75,6 +77,7 @@ class ClassOverrideStage implements BootStageInterface
             ReferenceIndex::class => ExtendedReferenceIndex::class,
             DataMapper::class => ExtendedDataMapper::class,
             ConfigurationController::class => ExtendedConfigurationController::class,
+            PackageManager::class => ExtendedPackageManager::class,
         ];
     
     /**
