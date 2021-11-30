@@ -15,15 +15,19 @@
   ~
   ~ Last modified: 2020.02.28 at 20:24
   -->
-<phpunit colors="true" bootstrap="../.Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php">
+<!-- @f.of -->
+<phpunit
+		colors="true"
+		bootstrap="../../vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php"
+>
 	<coverage processUncoveredFiles="true">
 		<include>
-			<directory suffix=".php">./Classes/</directory>
+			<directory suffix=".php">../../Classes/</directory>
 		</include>
 	</coverage>
 	<testsuites>
 		<testsuite name="Tests">
-			<directory>./Functional/</directory>
+			<directory>../../Tests/Functional/</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

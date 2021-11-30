@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2021 LABOR.digital
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ Last modified: 2021.11.29 at 21:30
+  -->
+
+<dataset>
+	<be_users>
+		<uid>1</uid>
+		<pid>0</pid>
+		<username>admin</username>
+		<deleted>0</deleted>
+		<admin>1</admin>
+	</be_users>
+	<be_users>
+		<uid>2</uid>
+		<pid>0</pid>
+		<username>test1</username>
+		<deleted>1</deleted>
+		<admin>0</admin>
+	</be_users>
+	<be_users>
+		<uid>3</uid>
+		<pid>0</pid>
+		<username>test1</username>
+		<deleted>0</deleted>
+		<admin>0</admin>
+	</be_users>
+	<be_users>
+		<uid>9</uid>
+		<pid>0</pid>
+		<username>editor</username>
+		<usergroup>9</usergroup>
+		<deleted>0</deleted>
+		<admin>0</admin>
+		<options>3</options>
+	</be_users>
+</dataset>

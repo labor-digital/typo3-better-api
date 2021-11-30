@@ -18,6 +18,11 @@ if [ "$1" = "unit-cover" ]; then
 	exit
 fi
 
+if [ "$1" = "functional" ]; then
+	./runTests.sh -s functional
+	exit
+fi
+
 read -r -d '' HELP <<EOF
 Simplified test runner for a TYPO3 extension.
 
