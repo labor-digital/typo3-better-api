@@ -41,6 +41,7 @@ use LaborDigital\T3ba\Core\Exception\KernelNotInitializedException;
 use LaborDigital\T3ba\Core\VarFs\VarFs;
 use LaborDigital\T3ba\Event\KernelBootEvent;
 use Neunerlei\EventBus\Dispatcher\EventListenerListItem;
+use Neunerlei\EventBus\EventBusInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class Kernel
@@ -124,6 +125,7 @@ class Kernel
         $container->set(static::class, $i);
         $container->set(ClassLoader::class, $composerClassLoader);
         $container->set(TypoEventBus::class, $i->eventBus = $i->makeEventBus());
+        $container->set(EventBusInterface::class, $i->eventBus);
         
         // Create the default boot stages
         $defaultBootStages = [
