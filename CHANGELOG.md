@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.23.0](https://github.com/labor-digital/typo3-better-api/compare/v10.22.0...v10.23.0) (2021-11-30)
+
+
+### Features
+
+* **BetterQuery:** implement better extBase support and recursive lookup for withPid ([cadc0d2](https://github.com/labor-digital/typo3-better-api/commit/cadc0d204c09f485dc4419d9faeea06e95bdefeb))
+* **Core\BootStage:** replace hook package and use t3ba as package itself ([13be13e](https://github.com/labor-digital/typo3-better-api/commit/13be13eb6c8f99ca9b65893eb9f84fbf9620b16b))
+* **Core\BootStage:** update dbg state for the new class based api ([b44ef22](https://github.com/labor-digital/typo3-better-api/commit/b44ef224381d5a68ef469af14e12f6d948c6e729))
+* **ExceptionHandler:** don't die if no "defaultExceptionhandler" was set ([0e86cfb](https://github.com/labor-digital/typo3-better-api/commit/0e86cfb32d3797bc1d9ad1c9d87fdd163f58d782))
+* **Kernel:** ensure EventBusInterface can be required through the delegate container ([488f4c9](https://github.com/labor-digital/typo3-better-api/commit/488f4c9eeb2ffe5f8b6633fd7d052af6a7c4f3b3))
+* **TypoContext\Config:** add getExtBaseConfigManager method ([bc6d3f1](https://github.com/labor-digital/typo3-better-api/commit/bc6d3f143d8f0fc24360190a872c4e9daa5acdc2))
+
+
+### Bug Fixes
+
+* **Core\BootStage:** inject delegate container into general utility again in onDiContainerBeingBuild ([33286c3](https://github.com/labor-digital/typo3-better-api/commit/33286c32aa1735ce20a694b84ace0f92d247480d))
+* **ExtConfig:** don't load extensions from the "sysext" directory ([7a300ff](https://github.com/labor-digital/typo3-better-api/commit/7a300ff199f2e7c62b81a4e7d20e034f2bfdc62b))
+
 ## [10.22.0](https://github.com/labor-digital/typo3-better-api/compare/v10.21.0...v10.22.0) (2021-11-29)
 
 
