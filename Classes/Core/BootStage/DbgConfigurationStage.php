@@ -31,6 +31,7 @@ use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Core\Kernel;
 use LaborDigital\T3ba\Core\Kint\LazyLoadingPlugin;
 use LaborDigital\T3ba\Core\Kint\TypoInstanceTypePlugin;
+use Neunerlei\Dbg\Dbg;
 use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -51,8 +52,7 @@ class DbgConfigurationStage implements BootStageInterface
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
         include_once dirname(__DIR__, 2) . '/Tool/Database/functions.php';
-        
-        if (! function_exists('dbgConfig') || ! defined('_DBG_CONFIG_LOADED')) {
+        if (! class_exists(Dbg::class)) {
             return;
         }
         
@@ -61,11 +61,11 @@ class DbgConfigurationStage implements BootStageInterface
         Kint::$plugins[] = TypoInstanceTypePlugin::class;
         
         // Redirect the logs into the TYPO log directory
-        dbgConfig('logDir', Path::unifyPath(BETTER_API_TYPO3_VAR_PATH, '/') . 'log');
+        Dbg::config('logDir', Path::unifyPath(BETTER_API_TYPO3_VAR_PATH, '/') . 'log');
         
         // Register pre hook to fix broken typo3 iframe
         $recursion = false;
-        dbgConfig('postHooks', static function ($type, $function) use (&$recursion) {
+        Dbg::config('postHooks', static function ($type, $function) use (&$recursion) {
             if ($recursion || ! str_starts_with($function, 'dbg')) {
                 return;
             }
