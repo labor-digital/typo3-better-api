@@ -30,7 +30,6 @@ use LaborDigital\T3ba\Tests\Util\TestLockPick;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use LaborDigital\T3ba\TypoContext\DependencyInjectionFacet;
 use Neunerlei\EventBus\EventBusInterface;
-use PHPUnit\Framework\Error;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\DependencyInjection\FailsafeContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -113,7 +112,7 @@ class CommonServicesTest extends UnitTestCase
     public function testInterfaceResolutionFailsThroughFailsafeContainer(): void
     {
         if (version_compare(phpversion(), '7.4.0', '<')) {
-            $this->expectException(Error::class);
+            $this->expectException(\Error::class);
         } else {
             $this->expectError();
         }
