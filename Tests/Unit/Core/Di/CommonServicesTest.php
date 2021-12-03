@@ -111,13 +111,13 @@ class CommonServicesTest extends UnitTestCase
     
     public function testInterfaceResolutionFailsThroughFailsafeContainer(): void
     {
-        if (version_compare(phpversion(), '7.4.0', '<')) {
-            $this->expectException(\Error::class);
-        } else {
-            $this->expectError();
+        try {
+            GeneralUtility::setContainer(new FailsafeContainer());
+            (new CommonServices(new MiniContainer()))->eventBus;
+            static::fail('CommonServices did not throw an exception when it should fail retrieving the eventBus interface');
+        } catch (\Throwable $e) {
+            static::assertIsObject($e);
         }
-        GeneralUtility::setContainer(new FailsafeContainer());
-        (new CommonServices(new MiniContainer()))->eventBus;
     }
     
     protected function tearDown(): void
