@@ -182,7 +182,19 @@ class CommonServices implements PublicServiceInterface
             return $this->def[$name];
         }
         
-        return $this->def[$name] = GeneralUtility::makeInstance($this->def[$name]);
+        try {
+            return $this->def[$name] = GeneralUtility::makeInstance($this->def[$name]);
+        } catch (\Throwable $e) {
+            // In the install tool, where T3 only knows it's "FailsafeContainer" we can't
+            // reliably resolve interfaces through GeneralUtility::makeInstance
+            // Therefore we will try our internal container delegate to resolve the
+            // instance in such cases
+            if ($this->container->has($this->def[$name])) {
+                return $this->container->get($this->def[$name]);
+            }
+            
+            throw $e;
+        }
     }
     
 }

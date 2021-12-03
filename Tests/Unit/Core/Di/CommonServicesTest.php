@@ -29,7 +29,9 @@ use LaborDigital\T3ba\Core\Di\UnknownCommonServiceNameException;
 use LaborDigital\T3ba\Tests\Util\TestLockPick;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use LaborDigital\T3ba\TypoContext\DependencyInjectionFacet;
+use Neunerlei\EventBus\EventBusInterface;
 use Psr\Container\ContainerInterface;
+use TYPO3\CMS\Core\DependencyInjection\FailsafeContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -94,6 +96,24 @@ class CommonServicesTest extends UnitTestCase
         $this->expectExceptionMessage('There is no registered common service with name: "foo"');
         
         (new CommonServices(new MiniContainer()))->foo;
+    }
+    
+    public function testInterfaceResolutionThroughInternalContainerIfTypoUsesFailsafeContainer(): void
+    {
+        $c = new MiniContainer([
+            EventBusInterface::class => new \stdClass(),
+        ]);
+        $cs = new CommonServices($c);
+        GeneralUtility::setContainer(new FailsafeContainer());
+        
+        static::assertInstanceOf(\stdClass::class, $cs->eventBus);
+    }
+    
+    public function testInterfaceResolutionFailsThroughFailsafeContainer(): void
+    {
+        $this->expectError();
+        GeneralUtility::setContainer(new FailsafeContainer());
+        (new CommonServices(new MiniContainer()))->eventBus;
     }
     
     protected function tearDown(): void
