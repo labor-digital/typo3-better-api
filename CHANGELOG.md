@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.24.0](https://github.com/labor-digital/typo3-better-api/compare/v10.23.1...v10.24.0) (2021-12-04)
+
+
+### Features
+
+* (Core\PackageManagerAdapter): deprecate the class as it is no longer required ([c5740e7](https://github.com/labor-digital/typo3-better-api/commit/c5740e743ba51c75b15b36bcbe9a226b19664f73))
+
+
+### Bug Fixes
+
+* ensure that content-types are processed BEFORE the TCA overrides ([a7351dd](https://github.com/labor-digital/typo3-better-api/commit/a7351dd1183c95fa9dc680476c1ea446bfec8ffa))
+
 ### [10.23.1](https://github.com/labor-digital/typo3-better-api/compare/v10.23.0...v10.23.1) (2021-12-03)
 
 
