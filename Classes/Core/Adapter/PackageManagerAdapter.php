@@ -26,6 +26,9 @@ namespace LaborDigital\T3ba\Core\Adapter;
 use TYPO3\CMS\Core\Package\PackageInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 
+/**
+ * @deprecated no longer required and will be removed in v11
+ */
 class PackageManagerAdapter extends PackageManager
 {
     /**
