@@ -146,8 +146,8 @@ class TableApplier extends AbstractExtConfigApplier
     public function onTcaLoadOverride(): void
     {
         $this->runAndCacheTca(__FUNCTION__, function () {
-            $this->getService(TableLoader::class)->loadTableOverrides();
             $this->getService(ContentTypeLoader::class)->load();
+            $this->getService(TableLoader::class)->loadTableOverrides();
             
             $meta = $this->makeInstance(TcaPostProcessor::class)->process($this->state);
             $this->getService(ExtConfigService::class)->persistState($this->state);
