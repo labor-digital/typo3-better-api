@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.23.1](https://github.com/labor-digital/typo3-better-api/compare/v10.23.0...v10.23.1) (2021-12-03)
+
+
+### Bug Fixes
+
+* **Di\CommonServices:** ensure interfaces can be resolved if T3 uses Failsafe container ([978d35c](https://github.com/labor-digital/typo3-better-api/commit/978d35cb94d979b610bf7d58c97bf7351ef55795))
+
 ## [10.23.0](https://github.com/labor-digital/typo3-better-api/compare/v10.22.0...v10.23.0) (2021-11-30)
 
 
