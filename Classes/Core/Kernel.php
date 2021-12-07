@@ -115,7 +115,11 @@ class Kernel
             $hook();
         }
         
+        // @todo we should detect phpUnit tests and store the value here
+        // str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'phpunit')
+        
         // Build our internal container
+        // @todo move the container creation to its own method
         $container = new DelegateContainer();
         $i->container = $container;
         DelegateContainer::setInstance($container);
