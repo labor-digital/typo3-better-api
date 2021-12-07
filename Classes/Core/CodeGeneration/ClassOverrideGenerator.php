@@ -18,43 +18,26 @@
  */
 
 declare(strict_types=1);
-/**
- * Copyright 2020 LABOR.digital
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Last modified: 2020.03.18 at 18:39
- */
 
 namespace LaborDigital\T3ba\Core\CodeGeneration;
 
 use Composer\Autoload\ClassLoader;
+use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Core\VarFs\Mount;
-use LaborDigital\T3ba\Event\ClassOverrideContentFilterEvent;
-use LaborDigital\T3ba\Event\ClassOverrideStackFilterEvent;
-use Neunerlei\FileSystem\Fs;
-use Neunerlei\Inflection\Inflector;
-use Neunerlei\PathUtil\Path;
-use TYPO3\ClassAliasLoader\ClassAliasMap;
 
-class ClassOverrideGenerator
+class ClassOverrideGenerator implements NoDiInterface
 {
+    /**
+     * @var \LaborDigital\T3ba\Core\CodeGeneration\AutoLoader
+     */
+    protected static $autoLoader;
     
     /**
      * True if the init method ran at least once
      *
      * @var bool
+     * @deprecated will be removed in v11
      */
     protected static $initDone = false;
     
@@ -62,13 +45,15 @@ class ClassOverrideGenerator
      * The temporary file system to store the class copies in
      *
      * @var Mount
+     * @deprecated will be removed in v11
      */
     protected static $fsMount;
     
     /**
-     * The instance of the we use to resolve the class file names with
+     * The instance of the T3 class loader we use, to resolve the class file names with
      *
      * @var ClassLoader
+     * @deprecated will be removed in v11
      */
     protected static $classLoader;
     
@@ -76,6 +61,7 @@ class ClassOverrideGenerator
      * The list of class overrides that are registered
      *
      * @var array
+     * @deprecated will be removed in v11
      */
     protected static $overrideDefinitions = [];
     
@@ -83,6 +69,7 @@ class ClassOverrideGenerator
      * True if the generator should handle "unit/functional test cases"
      *
      * @var bool
+     * @deprecated will be removed in v11
      */
     protected static $isTestMode = false;
     
@@ -90,25 +77,65 @@ class ClassOverrideGenerator
      * Called once in the better api init boot phase to populate the required properties
      * and to register our event handler
      *
-     * @param   \Composer\Autoload\ClassLoader       $composerClassLoader
-     * @param   \LaborDigital\T3ba\Core\VarFs\Mount  $fsMount
+     * @param   \LaborDigital\T3ba\Core\CodeGeneration\AutoLoader|mixed  $autoLoader
+     * @param   bool|mixed                                               $testMode
+     *
+     * @todo the typeHints should be re-added in v11, they were removed for backward-compatability
      */
-    public static function init(ClassLoader $composerClassLoader, Mount $fsMount, ?bool $testMode = null): void
+    public static function init($autoLoader, $testMode): void
     {
-        // Check if we already did the init process
-        if (static::$initDone) {
-            return;
+        if (! $autoLoader instanceof AutoLoader) {
+            // @todo this part can be safely removed in v11
+            if (static::$initDone) {
+                return;
+            }
+            static::$initDone = true;
+            
+            $autoLoader = (function (ClassLoader $composerClassLoader, Mount $fsMount, ?bool $testMode = null) {
+                static::$isTestMode = $testMode ?? str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'phpunit');
+                
+                return new AutoLoader(
+                    new OverrideList(),
+                    new OverrideStackResolver(
+                        TypoEventBus::getInstance(),
+                        $fsMount,
+                        static function () use ($composerClassLoader) {
+                            return new CodeGenerator($composerClassLoader);
+                        }
+                    ),
+                    new LegacyContext(
+                        $fsMount,
+                        $composerClassLoader
+                    )
+                );
+            })(...func_get_args());
+            
+            $autoLoader->setTestMode(static::$isTestMode);
+        } else {
+            $autoLoader->setTestMode((bool)$testMode);
+            
+            static::$isTestMode = (bool)$testMode;
         }
-        static::$initDone = true;
         
-        static::$isTestMode = $testMode ?? str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'phpunit');
+        if (isset(static::$autoLoader)) {
+            static::$autoLoader->unregister();
+        }
         
-        // Create local references
-        static::$fsMount = $fsMount;
-        static::$classLoader = $composerClassLoader;
+        static::$autoLoader = $autoLoader;
+        $autoLoader->register();
         
-        // Register autoload hook
-        spl_autoload_register([static::class, 'loadClass'], false, true);
+        static::$fsMount = $autoLoader->legacyContext->fsMount;
+        static::$classLoader = $autoLoader->legacyContext->classLoader;
+    }
+    
+    /**
+     * Returns the internal autoloader instance we use, to inject our clones
+     *
+     * @return \LaborDigital\T3ba\Core\CodeGeneration\AutoLoader
+     */
+    public static function getAutoLoader(): AutoLoader
+    {
+        return static::$autoLoader;
     }
     
     /**
@@ -117,28 +144,11 @@ class ClassOverrideGenerator
      * @param $class
      *
      * @return bool
+     * @deprecated will be removed in v11
      */
     public static function loadClass($class): bool
     {
-        if (static::hasClassOverride($class)) {
-            // Resolve the dependency list
-            $classToOverrideWith = static::$overrideDefinitions[$class];
-            $stack = [$class => $classToOverrideWith];
-            for ($i = 0; $i < 100; $i++) {
-                if (isset(static::$overrideDefinitions[$classToOverrideWith])) {
-                    $tmp = $classToOverrideWith;
-                    $classToOverrideWith = static::$overrideDefinitions[$classToOverrideWith];
-                    $stack[$tmp] = $classToOverrideWith;
-                } else {
-                    break;
-                }
-            }
-            
-            // Resolve the stack
-            static::resolveOverrideStack($stack);
-        }
-        
-        return false;
+        return static::$autoLoader->loadClass($class);
     }
     
     /**
@@ -164,46 +174,20 @@ class ClassOverrideGenerator
         bool $overrule = false
     ): void
     {
-        if (class_exists($classToOverride, false)) {
-            throw new ClassOverridesException(
-                'The class: ' . $classToOverride . ' can not be overridden, because it is already defined!');
-        }
-        if (! $overrule && static::hasClassOverride($classToOverride)) {
-            throw new ClassOverridesException(
-                'The class: ' . $classToOverride . ' is already overridden with: '
-                . static::$overrideDefinitions[$classToOverride] . ' and therefore can not be overwritten again!');
-        }
-        static::$overrideDefinitions[$classToOverride] = $classToOverrideWith;
-        
-        if (static::$isTestMode) {
-            try {
-                static::loadClass($classToOverride);
-            } catch (\Throwable $e) {
-            }
-        }
+        static::$autoLoader->getOverrideList()->registerOverride(...func_get_args());
     }
     
     /**
      * Returns true if the given class can be overwritten with something else
      *
      * @param   string  $classToOverride  The name of the class to check for
-     * @param   bool    $withOverrule     Set this to true if you want allow overruling of the existing definition
+     * @param   bool    $withOverrule     Set this to true if you want to allow overruling of the existing definition
      *
      * @return bool
      */
     public static function canOverrideClass(string $classToOverride, bool $withOverrule = false): bool
     {
-        if (class_exists($classToOverride, false)) {
-            return false;
-        }
-        if (! isset(static::$overrideDefinitions[$classToOverride])) {
-            return true;
-        }
-        if ($withOverrule) {
-            return true;
-        }
-        
-        return false;
+        return static::$autoLoader->getOverrideList()->canOverrideClass(...func_get_args());
     }
     
     /**
@@ -215,7 +199,7 @@ class ClassOverrideGenerator
      */
     public static function hasClassOverride(string $classToOverride): bool
     {
-        return isset(static::$overrideDefinitions[$classToOverride]);
+        return static::$autoLoader->getOverrideList()->hasClassOverride(...func_get_args());
     }
     
     /**
@@ -225,71 +209,11 @@ class ClassOverrideGenerator
      * @param   array  $stack  The list of steps that are required to resolve a class through
      *                         all it's overrides.
      *
+     * @deprecated will be removed in v11
      */
     protected static function resolveOverrideStack(array $stack): void
     {
-        // Allow filtering
-        TypoEventBus::getInstance()->dispatch(
-            ($e = new ClassOverrideStackFilterEvent($stack))
-        );
-        $stack = $e->getStack();
-        
-        // Get the class names
-        reset($stack);
-        $initialClassName = key($stack);
-        $finalClassName = end($stack);
-        
-        // Compile the copies
-        $filesToInclude = [];
-        foreach ($stack as $classToOverride => $classToOverrideWith) {
-            $basename = Inflector::toFile($classToOverride);
-            $cloneFilename = $basename . '-clone.php';
-            $aliasFilename = $basename . '.php';
-            $filesToInclude[] = $cloneFilename;
-            $filesToInclude[] = $aliasFilename;
-            
-            // Check if we have to create the override
-            if (! static::$fsMount->hasFile($aliasFilename) || ! static::$fsMount->hasFile($cloneFilename)) {
-                // Make the class name
-                $namespace = Path::classNamespace($classToOverride);
-                $copyClassName = 'T3BaCopy' . Path::classBasename($classToOverride);
-                $copyClassFullName = ltrim($namespace . '\\' . $copyClassName, '\\');
-                
-                // Create content
-                $cloneContent = static::getClassCloneContentOf($classToOverride, $copyClassName);
-                $aliasContent = static::getClassAliasContent($classToOverride, $classToOverrideWith, $finalClassName,
-                    $copyClassFullName);
-                
-                // Allow filtering
-                $e = new ClassOverrideContentFilterEvent(
-                    $classToOverride,
-                    $copyClassName,
-                    $initialClassName,
-                    $finalClassName,
-                    $cloneContent,
-                    $aliasContent
-                );
-                TypoEventBus::getInstance()->dispatch($e);
-                $cloneContent = $e->getCloneContent();
-                $aliasContent = $e->getAliasContent();
-                
-                // Dump the files
-                static::$fsMount->setFileContent($cloneFilename, $cloneContent);
-                static::$fsMount->setFileContent($aliasFilename, $aliasContent);
-            }
-        }
-        
-        // Include the files
-        foreach ($filesToInclude as $aliasFilename) {
-            static::$fsMount->includeFile($aliasFilename);
-        }
-        
-        // Register alias map
-        ClassAliasMap::addAliasMap([
-            'aliasToClassNameMapping' => [
-                $finalClassName => $initialClassName,
-            ],
-        ]);
+        static::$autoLoader->legacyHandler(__FUNCTION__, func_get_args());
     }
     
     /**
@@ -301,6 +225,7 @@ class ClassOverrideGenerator
      * @param   string  $copyClassFullName
      *
      * @return string
+     * @deprecated will be removed in v11
      */
     protected static function getClassAliasContent(
         string $classToOverride,
@@ -309,33 +234,7 @@ class ClassOverrideGenerator
         string $copyClassFullName
     ): string
     {
-        $namespace = Path::classNamespace($classToOverride);
-        $baseName = Path::classBasename($classToOverride);
-        
-        return "<?php
-declare(strict_types=1);
-/**
- * CLASS OVERRIDE GENERATOR - GENERATED FILE
- * This file is generated dynamically! You should not edit it's contents,
- * because they will be lost as soon as composer autoload files are generated!
-*/
-/**
- * The original class can be found here:
- * @see \\$classToOverride
- *
- * The clone of the original class can be found here:
- * @see \\$copyClassFullName
- *
- * The class which is used as override can be found here:
- * @see \\$finalClassName
- */
-Namespace $namespace;
-if(!class_exists('\\$classToOverride', false)) {
-
-    class $baseName
-        extends \\$classToOverrideWith {}
-}
-";
+        return static::$autoLoader->legacyHandler(__FUNCTION__, func_get_args());
     }
     
     /**
@@ -348,107 +247,10 @@ if(!class_exists('\\$classToOverride', false)) {
      *
      * @return string
      * @throws \LaborDigital\T3ba\Core\CodeGeneration\ClassOverridesException
+     * @deprecated will be removed in v11
      */
     protected static function getClassCloneContentOf(string $of, string $copyClassName): string
     {
-        // Resolve the source file
-        $overrideSourceFile = static::$classLoader->findFile($of);
-        if ($overrideSourceFile === false) {
-            if (! static::$isTestMode) {
-                throw new ClassOverridesException('Could not create a clone of class: ' . $of
-                                                  . ' because Composer could not resolve it\'s filename!');
-            }
-        }
-        
-        // Load the content
-        if (static::$isTestMode && ! $overrideSourceFile) {
-            $source = [
-                '<?php' . PHP_EOL,
-                'namespace ' . Path::classNamespace($of) . ';' . PHP_EOL,
-                'class ' . Path::classBasename($of) . '{}' . PHP_EOL,
-            ];
-        } else {
-            $source = Fs::readFileAsLines($overrideSourceFile);
-        }
-        
-        // Find matching class definition
-        $className = Path::classBasename($of);
-        $nameChanged = false;
-        foreach ($source as $k => $line) {
-            if (! preg_match('~(class\\s+)(.*?)(?:\\s*(?:;|$|{|\\n)|\\s+\\w|\\s+})~si', ltrim($line), $m)) {
-                continue;
-            }
-            if ($m[2] !== $className) {
-                continue;
-            }
-            $nameChanged = true;
-            $find = $m[1] . $m[2];
-            $replaceWith = $m[1] . $copyClassName;
-            $source[$k] = str_replace($find, $replaceWith, $line);
-            break;
-        }
-        
-        // Fail if we could not rewrite the class
-        if (! $nameChanged) {
-            throw new ClassOverridesException(
-                'Failed to rewrite the name of class: ' . $className . ' to: ' .
-                $copyClassName . ' when creating a copy of file: ' . $overrideSourceFile);
-        }
-        
-        // Fix return types
-        foreach ($source as $k => $line) {
-            if (stripos($line, '@return') === false) {
-                continue;
-            }
-            $pattern = '~(^\\s*\\*\\s*@return\\s+)' . preg_quote($className, '~') . '~si';
-            $source[$k] = preg_replace($pattern, '$1' . $copyClassName, $line);
-            $pattern = '~(^\\s*\\*\\s*@return\\s+)\\\\?' . preg_quote($of, '~') . '~si';
-            $source[$k] = preg_replace($pattern, '$1' . $copyClassName, $source[$k]);
-        }
-        
-        // Inject notice
-        $noticeSet = false;
-        foreach ($source as $k => $line) {
-            // Fix __CLASS__ references
-            $line = str_replace('__CLASS__', '\\' . rtrim($of, '\\') . '::class', $line);
-            
-            $sourceParsed[] = $line;
-            if (! $noticeSet
-                && ((stripos($line, '<?php') !== false) || (str_contains($line, '<?='))
-                    || str_contains($line, '<?'))) {
-                $sourceParsed[] = '/**' . PHP_EOL;
-                $sourceParsed[] = ' * THIS FILE IS AUTOMATICALLY GENERATED!' . PHP_EOL;
-                $sourceParsed[] = ' * ' . PHP_EOL;
-                $sourceParsed[] = ' * This is a copy of the class: ' . $of . PHP_EOL;
-                $sourceParsed[] = ' * Which normally resides in: ' . realpath($overrideSourceFile) . PHP_EOL;
-                $sourceParsed[] = ' * ' . PHP_EOL;
-                $sourceParsed[]
-                    = ' * It was created by the T3BA extension in order to extend core functionality.'
-                      . PHP_EOL;
-                $sourceParsed[] = ' * NEVER, EVER EDIT THIS FILE MANUALLY - YOUR CHANGES WILL VANISH!' . PHP_EOL;
-                $sourceParsed[] = ' * ' . PHP_EOL;
-                $sourceParsed[] = " * @see \\$of" . PHP_EOL;
-                $sourceParsed[] = ' */' . PHP_EOL . PHP_EOL;
-                $noticeSet = true;
-            }
-            $source = $sourceParsed;
-        }
-        $source = implode($source);
-        
-        // Unlock all "private" methods to be "protected"...
-        $source = preg_replace_callback('~(^|\\s|\\t)private(\\s(?:static\\s)?(?:\$|function))~i',
-            static function ($m) {
-                [, $before, $after] = $m;
-                
-                return $before . 'protected' . $after;
-            }, $source);
-        
-        // Replace all "self::" references with "static::" to allow external overrides
-        return preg_replace_callback('~(^|\\s|\\t)self::([$\w])~i',
-            static function ($m) {
-                [, $before, $after] = $m;
-                
-                return $before . 'static::' . $after;
-            }, $source);
+        return static::$autoLoader->legacyHandler(__FUNCTION__, func_get_args());
     }
 }

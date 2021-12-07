@@ -23,7 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Core\BootStage;
 
 
+use LaborDigital\T3ba\Core\CodeGeneration\AutoLoader;
 use LaborDigital\T3ba\Core\CodeGeneration\ClassOverrideGenerator;
+use LaborDigital\T3ba\Core\CodeGeneration\CodeGenerator;
+use LaborDigital\T3ba\Core\CodeGeneration\LegacyContext;
+use LaborDigital\T3ba\Core\CodeGeneration\OverrideList;
+use LaborDigital\T3ba\Core\CodeGeneration\OverrideStackResolver;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Core\Kernel;
 use LaborDigital\T3ba\Core\Override\ExtendedBackendUtility;
@@ -85,7 +90,12 @@ class ClassOverrideStage implements BootStageInterface
      */
     public function prepare(TypoEventBus $eventBus, Kernel $kernel): void
     {
-        ClassOverrideGenerator::init($kernel->getClassLoader(), $kernel->getFs()->getMount('ClassOverrides'));
+        ClassOverrideGenerator::init(
+            $this->makeAutoLoaderInstance($kernel),
+            // @todo the phpunit flag should be detected by and inherited from the kernel class
+            str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'phpunit')
+        );
+        
         $eventBus->addListener(KernelBootEvent::class, [$this, 'onKernelBoot']);
     }
     
@@ -100,6 +110,41 @@ class ClassOverrideStage implements BootStageInterface
             }
             ClassOverrideGenerator::registerOverride($target, $override);
         }
+    }
+    
+    /**
+     * Factory to register the internal services in our container and initialize the auto loader instance
+     *
+     * @param   \LaborDigital\T3ba\Core\Kernel  $kernel
+     *
+     * @return \LaborDigital\T3ba\Core\CodeGeneration\AutoLoader
+     */
+    protected function makeAutoLoaderInstance(Kernel $kernel): AutoLoader
+    {
+        $container = $kernel->getContainer();
+        $composerClassLoader = $kernel->getClassLoader();
+        
+        $container->set(OverrideList::class, new OverrideList());
+        $container->set(OverrideStackResolver::class, new OverrideStackResolver(
+            $kernel->getEventBus(),
+            $mount = $kernel->getFs()->getMount('ClassOverrides'),
+            static function () use ($composerClassLoader) {
+                return new CodeGenerator($composerClassLoader);
+            }
+        ));
+        
+        $loader = new AutoLoader(
+            $container->get(OverrideList::class),
+            $container->get(OverrideStackResolver::class),
+            new LegacyContext(
+                $mount,
+                $composerClassLoader
+            )
+        );
+        
+        $container->set(AutoLoader::class, $loader);
+        
+        return $loader;
     }
     
 }
