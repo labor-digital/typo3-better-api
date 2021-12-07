@@ -38,6 +38,9 @@ class InlineAppearanceOption extends AbstractOption
         $definition['allOpen'] = $def;
         $definition['openMultiple'] = $def;
         $definition['noSorting'] = $def;
+        $definition['noDelete'] = $def;
+        $definition['noHide'] = $def;
+        $definition['noInfo'] = $def;
     }
     
     /**
@@ -48,6 +51,11 @@ class InlineAppearanceOption extends AbstractOption
         $config['appearance']['collapseAll'] = ! $options['allOpen'];
         $config['appearance']['expandSingle'] = ! $options['openMultiple'];
         $config['appearance']['useSortable'] = ! $options['noSorting'];
+        $config['appearance']['enabledControls']['sort'] = ! $options['noSorting'];
+        $config['appearance']['enabledControls']['dragdrop'] = ! $options['noSorting'];
+        $config['appearance']['enabledControls']['delete'] = ! $options['noDelete'];
+        $config['appearance']['enabledControls']['hide'] = ! $options['noHide'];
+        $config['appearance']['enabledControls']['info'] = ! $options['noInfo'];
     }
     
 }

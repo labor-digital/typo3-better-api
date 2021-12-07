@@ -50,8 +50,10 @@ class Inline extends AbstractFieldPreset
      *                                        be expanded by default.
      *                                        - openMultiple bool (FALSE): If set to true, multiple inline elements can
      *                                        be expanded at a time.
-     *                                        - noSorting bool (FALSE): If set to true, the option to sort inline
-     *                                        elements will be disabled.
+     *                                        - noSorting bool (FALSE): If set to true, the "sort" options will be disabled
+     *                                        - noDelete bool (FALSE): If set to true, the "delete" option will be disabled
+     *                                        - noHide bool (FALSE): If set to true, the "visibility" option will be disabled
+     *                                        - noInfo bool (FALSE): If set to true, the "info" option will be disabled
      *                                        - foreignField string (t3ba_inline): The foreign table gets extended
      *                                        by a field that holds the inline parent id. This defines the name
      *                                        of that field.
