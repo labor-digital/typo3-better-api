@@ -102,7 +102,7 @@ class RecordDataHandler implements NoDiInterface
         ], [], $force);
         
         if (! $isNew) {
-            return $uid;
+            return (int)$uid;
         }
         
         return reset($handler->substNEWwithIDs);
