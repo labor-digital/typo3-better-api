@@ -25,11 +25,12 @@ namespace LaborDigital\T3ba\Tool\DataHandler\Record;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\DataHandler\DataHandlerService;
+use TYPO3\CMS\Core\Utility\StringUtility;
 
 /**
  * Class RecordDataHandler
  *
- * A simple abstraction to perform record actions using the data handler in an object oriented way
+ * A simple abstraction to perform record actions using the data handler in an object-oriented way
  *
  * @package LaborDigital\T3ba\Tool\DataHandler\Record
  */
@@ -89,7 +90,7 @@ class RecordDataHandler implements NoDiInterface
         $isNew = false;
         if (! isset($data['uid']) || ! is_numeric($data['uid'])) {
             $isNew = true;
-            $data['uid'] = 'NEW_1';
+            $data['uid'] = StringUtility::getUniqueId('NEW_');
         }
         
         $uid = $data['uid'];
