@@ -80,6 +80,7 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
                 $fieldArray,
                 $pObj
             )));
+            
             $id = $e->getId();
             $fieldArray = $e->getRow();
         } catch (Throwable $e) {
@@ -91,13 +92,11 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
     public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, DataHandler $pObj): void
     {
         try {
-            if (($pObj->substNEWwithIDs[$id] ?? null) === null) {
-                if (isset($pObj->datamap[$table][$id])) {
-                    $fieldArray = $pObj->datamap[$table][$id];
-                } else {
-                    return;
-                }
+            $id = $pObj->substNEWwithIDs[$id] ?? $id;
+            if (! isset($pObj->datamap[$table][$id])) {
+                return;
             }
+            $fieldArray = $pObj->datamap[$table][$id];
             
             $this->EventBus()->dispatch(($e = new SaveAfterDbOperationsEvent(
                 $status,
