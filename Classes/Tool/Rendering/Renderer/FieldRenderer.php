@@ -74,6 +74,8 @@ class FieldRenderer implements PublicServiceInterface
      */
     public function renderTableTitle(string $tableName): string
     {
+        $tableName = NamingUtil::resolveTableName($tableName);
+        
         $label = $GLOBALS['TCA'][$tableName]['ctrl']['title'] ?? null;
         if ($label === null) {
             return Inflector::toHuman($tableName);
@@ -92,6 +94,8 @@ class FieldRenderer implements PublicServiceInterface
      */
     public function renderLabel(string $tableName, string $fieldName): string
     {
+        $tableName = NamingUtil::resolveTableName($tableName);
+        
         $fieldTca = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
         
         if (isset($fieldTca['label'])) {
@@ -107,13 +111,15 @@ class FieldRenderer implements PublicServiceInterface
      * @param   string  $tableName  The name of the database table
      * @param   string  $fieldName  The column/field name in the table to render
      * @param   array   $row        The raw database row to extract the value from
-     * @param   bool    $textOnly   By default the rendered value may contain HTML markup, if you set this
+     * @param   bool    $textOnly   By default, the rendered value may contain HTML markup, if you set this
      *                              flag to true those cases will be replaced with a textual representation
      *
      * @return string|null
      */
     public function render(string $tableName, string $fieldName, array $row, bool $textOnly = false): ?string
     {
+        $tableName = NamingUtil::resolveTableName($tableName);
+        
         $fieldTca = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
         
         if (empty($fieldTca) || (empty($row[$fieldName]) && $row[$fieldName] !== 0)) {
