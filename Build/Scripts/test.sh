@@ -13,13 +13,18 @@ if [ "$1" = "install-min" ]; then
 	exit
 fi
 
+if [ "$1" = "install-max" ]; then
+	./runTests.sh -s composerInstallMax
+	exit
+fi
+
 if [ "$1" = "unit" ]; then
-	./runTests.sh -s unit
+	./runTests.sh -s unit -e "${@: 2} --"
 	exit
 fi
 
 if [ "$1" = "unit-73" ]; then
-	./runTests.sh -s unit -p 7.3
+	./runTests.sh -s unit -p 7.3 -e "${@: 2} --"
 	exit
 fi
 
