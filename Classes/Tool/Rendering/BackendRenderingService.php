@@ -41,6 +41,7 @@ namespace LaborDigital\T3ba\Tool\Rendering;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\DatabaseRecordListRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldListRenderer;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\InlineContentPreviewRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\RecordTableRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -118,5 +119,49 @@ class BackendRenderingService implements SingletonInterface
     public function renderInlineContentPreview(array $parentRow, string $inlineField): string
     {
         return $this->getService(InlineContentPreviewRenderer::class)->render($parentRow, $inlineField);
+    }
+    
+    /**
+     * Renders the title of the table translated for the current user
+     *
+     * @param   string  $tableName
+     *
+     * @return string
+     * @see FieldRenderer::renderTableTitle()
+     */
+    public function renderTableTitle(string $tableName): string
+    {
+        return $this->getService(FieldRenderer::class)->renderTableTitle($tableName);
+    }
+    
+    /**
+     * Renders the translated label string given to a field of a table
+     *
+     * @param   string  $tableName  The name of the database table
+     * @param   string  $fieldName  The column/field name in the table to render
+     *
+     * @return string
+     * @see FieldRenderer::renderLabel()
+     */
+    public function renderFieldLabel(string $tableName, string $fieldName): string
+    {
+        return $this->getService(FieldRenderer::class)->renderLabel($tableName, $fieldName);
+    }
+    
+    /**
+     * Renders the value of a single field in a given row of a database table.
+     *
+     * @param   string  $tableName  The name of the database table
+     * @param   string  $fieldName  The column/field name in the table to render
+     * @param   array   $row        The raw database row to extract the value from
+     * @param   bool    $textOnly   By default, the rendered value may contain HTML markup, if you set this
+     *                              flag to true those cases will be replaced with a textual representation
+     *
+     * @return string|null
+     * @see FieldRenderer::renderFieldValue()
+     */
+    public function renderFieldValue(string $tableName, string $fieldName, array $row, bool $textOnly = false): ?string
+    {
+        return $this->getService(FieldRenderer::class)->render($tableName, $fieldName, $row, $textOnly);
     }
 }
