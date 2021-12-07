@@ -157,4 +157,23 @@ class TestLockPick
         
         return $prop->getValue();
     }
+    
+    /**
+     * Executes a static method of a class and returns its return value
+     *
+     * @param   string      $className
+     * @param   string      $method
+     * @param   array|null  $args
+     *
+     * @return mixed
+     */
+    public static function invokeStaticMethod(string $className, string $method, ?array $args = null)
+    {
+        $method = (new \ReflectionClass($className))->getMethod($method);
+        $method->setAccessible(true);
+        
+        $args = $args ?? [];
+        
+        return $method->invoke(null, ...$args);
+    }
 }
