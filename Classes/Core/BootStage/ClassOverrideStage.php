@@ -44,6 +44,7 @@ use LaborDigital\T3ba\Core\Override\ExtendedLocalizationUtility;
 use LaborDigital\T3ba\Core\Override\ExtendedNodeFactory;
 use LaborDigital\T3ba\Core\Override\ExtendedPackageManager;
 use LaborDigital\T3ba\Core\Override\ExtendedReferenceIndex;
+use LaborDigital\T3ba\Core\Override\ExtendedRootLineUtility;
 use LaborDigital\T3ba\Core\Override\ExtendedSiteConfiguration;
 use LaborDigital\T3ba\Core\Override\ExtendedTypoScriptParser;
 use LaborDigital\T3ba\Event\KernelBootEvent;
@@ -59,6 +60,7 @@ use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Lowlevel\Controller\ConfigurationController;
@@ -83,6 +85,7 @@ class ClassOverrideStage implements BootStageInterface
             DataMapper::class => ExtendedDataMapper::class,
             ConfigurationController::class => ExtendedConfigurationController::class,
             PackageManager::class => ExtendedPackageManager::class,
+            RootlineUtility::class => ExtendedRootLineUtility::class,
         ];
     
     /**

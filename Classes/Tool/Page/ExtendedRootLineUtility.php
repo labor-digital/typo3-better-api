@@ -32,6 +32,8 @@ class ExtendedRootLineUtility extends RootlineUtility implements NoDiInterface
 {
     use StaticContainerAwareTrait;
     
+    protected static $extensionOptions;
+    
     /**
      * Executes the root line request with additional options applied
      *
@@ -48,7 +50,7 @@ class ExtendedRootLineUtility extends RootlineUtility implements NoDiInterface
      */
     public static function getWith(int $pageId, array $options = []): array
     {
-        $options = Options::make($options, [
+        static::$extensionOptions = $options = Options::make($options, [
             'includeAllNotDeleted' => [
                 'type' => 'bool',
                 'default' => false,
@@ -64,7 +66,7 @@ class ExtendedRootLineUtility extends RootlineUtility implements NoDiInterface
         ]);
         
         $instance = static::makeInstance(
-            RootlineUtility::class,
+            static::class,
             [
                 $pageId,
                 $options['mountPoint'],
@@ -72,26 +74,34 @@ class ExtendedRootLineUtility extends RootlineUtility implements NoDiInterface
             ]
         );
         
-        $instance->cacheIdentifier
-            .= '_' . ((int)$options['includeAllNotDeleted']) . '_' . implode(',', $options['additionalFields'])
-               . '_extended';
-        if (isset(parent::$localCache[$instance->cacheIdentifier])) {
-            return parent::$localCache[$instance->cacheIdentifier];
-        }
-        
         $backupPermission = $instance->context->where_groupAccess;
-        if ($options['includeAllNotDeleted']) {
-            $instance->context->where_groupAccess = '';
-        }
-        
-        $backupFields = parent::$rootlineFields;
+        $backupFields = static::$rootlineFields;
         try {
-            parent::$rootlineFields = array_merge(parent::$rootlineFields, $options['additionalFields']);
+            static::$rootlineFields = array_unique(array_merge(static::$rootlineFields, $options['additionalFields']));
+            if ($options['includeAllNotDeleted']) {
+                $instance->context->where_groupAccess = '';
+            }
             
-            return parent::$localCache[$instance->cacheIdentifier] = $instance->get();
+            return $instance->get();
+            
         } finally {
-            parent::$rootlineFields = $backupFields;
+            static::$rootlineFields = $backupFields;
             $instance->context->where_groupAccess = $backupPermission;
         }
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getCacheIdentifier($otherUid = null)
+    {
+        return parent::getCacheIdentifier($otherUid) . '_' .
+               md5(
+                   ((int)(static::$extensionOptions['includeAllNotDeleted'] ?? 0)) .
+                   '_' .
+                   implode(',', static::$extensionOptions['additionalFields'] ?? [])
+               )
+               . '_extended';
+    }
+    
 }
