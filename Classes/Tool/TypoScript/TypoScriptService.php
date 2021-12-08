@@ -31,6 +31,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 
 class TypoScriptService implements SingletonInterface, PublicServiceInterface
@@ -286,6 +287,35 @@ class TypoScriptService implements SingletonInterface, PublicServiceInterface
         }
         
         return $this->renderContentObject($type, $config);
+    }
+    
+    /**
+     * Allows you to process a text using the lib.parseFunc definition.
+     *
+     * A shortcut to the {@link ContentObjectRenderer::parseFunc()}, which states:
+     * Implements the stdWrap property, "parseFunc".
+     *
+     * This is a function with a lot of interesting uses. In classic TypoScript this is used to process text
+     * from the bodytext field; This included highlighting of search words, changing http:// and mailto: prefixed strings into etc.
+     * It is still a very important function for processing of bodytext which is normally stored in the database
+     * in a format which is not fully ready to be outputted.
+     * This situation has not become better by having an RTE around...
+     *
+     * @param   string       $text             The text to be parsed by the content object
+     * @param   string|null  $parseFuncTSPath  The Ts configuration path, by default: lib.parseFunc_RTE
+     *
+     * @return string
+     */
+    public function applyTextParseFunc(string $text, ?string $parseFuncTSPath = null): string
+    {
+        $parseFuncTSPath = $parseFuncTSPath ?? 'lib.parseFunc_RTE';
+        
+        return $this->cs()->simulator->runWithEnvironment([], function () use ($text, $parseFuncTSPath) {
+            $cObj = $this->makeInstance(ContentObjectRenderer::class);
+            $cObj->start([]);
+            
+            return $cObj->parseFunc($text, [], '< ' . $parseFuncTSPath);
+        });
     }
     
     /**
