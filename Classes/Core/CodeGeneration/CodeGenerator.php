@@ -305,7 +305,7 @@ PHP;
         $source = str_replace('__CLASS__', '\\' . rtrim($of, '\\') . '::class', $source);
         
         // Replace all "self::" references with "static::" to allow external overrides
-        return preg_replace_callback('~(^|\\s|\\t)self::([$\w])~i',
+        return preg_replace_callback('~(^|\\s|\\t|[();.=\-+/])self::([$\w])~i',
             static function ($m) {
                 [, $before, $after] = $m;
                 
