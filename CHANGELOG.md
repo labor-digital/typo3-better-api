@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.25.0](https://github.com/labor-digital/typo3-better-api/compare/v10.24.1...v10.25.0) (2021-12-07)
+
+
+### Features
+
+* **BackendRenderingService:** implement facade methods to FieldRenderer ([ea8f010](https://github.com/labor-digital/typo3-better-api/commit/ea8f010dcec0cc68653fcdead6c5cdb7ddeb08ea))
+* **Tca\Inline:** implement new appearance options for the "inline" preset ([8fd838b](https://github.com/labor-digital/typo3-better-api/commit/8fd838b2c911897b4f67f46553f23d5946698893))
+
+
+### Bug Fixes
+
+* **Event\SaveEventAdapter:** extract the correct field array for afterDatabaseOperations hook ([3573a82](https://github.com/labor-digital/typo3-better-api/commit/3573a8260c3abaf7c3c011ef02aa36edea9850c0))
+* **Event\SaveEventAdapter:** extract the correct field list for afterDatabaseOperations hook ([9c9a018](https://github.com/labor-digital/typo3-better-api/commit/9c9a0189a13617eb1a16aa7b374118a6f1c33da9))
+* **RecordDataHandler:** ensure that the result of save is an integer ([a96ad50](https://github.com/labor-digital/typo3-better-api/commit/a96ad5087b5576c8a027e39ac362f32d1c4bc428))
+* **RecordDataHandler:** generate "NEW_" uid through StringUtility ([3da36eb](https://github.com/labor-digital/typo3-better-api/commit/3da36eb17916b6e616a7c41a7fc1fd0731786818))
+* **Renderer\FieldRenderer:** ensure to resolve the table name in all methods ([10337a3](https://github.com/labor-digital/typo3-better-api/commit/10337a375bc1746f0f19d62291bd6cf27bf6a451))
+
 ### [10.24.1](https://github.com/labor-digital/typo3-better-api/compare/v10.24.0...v10.24.1) (2021-12-07)
 
 ## [10.24.0](https://github.com/labor-digital/typo3-better-api/compare/v10.23.1...v10.24.0) (2021-12-04)
