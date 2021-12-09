@@ -265,7 +265,9 @@ class Dumper
     {
         $tca = TableDefaults::TABLE_TCA;
         $tca['ctrl']['title'] = 'Content Type - Table Extension - ' . $cType;
+        $tca['ctrl']['adminOnly'] = true;
         $tca['ctrl']['hideTable'] = true;
+        $tca['ctrl']['typeicon_classes']['default'] = 'mimetypes-x-content-text';
         
         $tca['ctrl'][TablesOnStandardPagesStep::CONFIG_KEY] = true;
         
@@ -283,6 +285,12 @@ class Dumper
             $tca['columns'][$columnName] = array_merge($columnDefault, ['label' => $columnName]);
             $showItem[] = $columnName;
         }
+        
+        $tca['columns'] = array_map(static function (array $column): array {
+            unset($column['exclude']);
+            
+            return $column;
+        }, $tca['columns']);
         
         $tca['types'][0]['showitem'] = implode(',', $columnNames);
         
