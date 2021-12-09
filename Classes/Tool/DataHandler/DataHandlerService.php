@@ -65,14 +65,16 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      *
      * Occurring errors will throw a DataHandlerException
      *
-     * @param   array      $data      The data array to process
-     * @param   array      $commands  The commands to process
-     * @param   bool|null  $force     True to force the execution as admin user
+     * @param   array             $data      The data array to process
+     * @param   array             $commands  The commands to process
+     * @param   bool|string|null  $force     True to force the execution as _t3ba_adminUser_
+     *                                       'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                       false|null: Don't force the execution -> default
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @see DataHandler::process_datamap()
      */
-    public function processData(array $data, array $commands = [], ?bool $force = null): DataHandler
+    public function processData(array $data, array $commands = [], $force = null): DataHandler
     {
         return $this->doProcessing($data, $commands, true, $force);
     }
@@ -82,14 +84,16 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
      *
      * Occurring errors will throw a DataHandlerException
      *
-     * @param   array      $commands  The commands to process
-     * @param   array      $data      Optional data if required for your commands
-     * @param   bool|null  $force     True to force the execution as admin user
+     * @param   array             $commands  The commands to process
+     * @param   array             $data      Optional data if required for your commands
+     * @param   bool|string|null  $force     True to force the execution as _t3ba_adminUser_
+     *                                       'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                       false|null: Don't force the execution -> default
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @see DataHandler::process_cmdmap()
      */
-    public function processCommands(array $commands, array $data = [], ?bool $force = null): DataHandler
+    public function processCommands(array $commands, array $data = [], $force = null): DataHandler
     {
         return $this->doProcessing($data, $commands, false, $force);
     }
@@ -97,15 +101,17 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
     /**
      * Internal handler to do the processing on a fresh data handler instance
      *
-     * @param   array      $data        The data array
-     * @param   array      $commands    the cmd array
-     * @param   bool       $handleData  True if process_datamap() should be executed, false for process_cmdmap()
-     * @param   bool|null  $force       True to force the execution as admin user
+     * @param   array             $data        The data array
+     * @param   array             $commands    the cmd array
+     * @param   bool              $handleData  True if process_datamap() should be executed, false for process_cmdmap()
+     * @param   bool|string|null  $force       True to force the execution as _t3ba_adminUser_
+     *                                         'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                         false|null: Don't force the execution -> default
      *
      * @return \TYPO3\CMS\Core\DataHandling\DataHandler
      * @throws \LaborDigital\T3ba\Tool\DataHandler\DataHandlerException
      */
-    protected function doProcessing(array $data, array $commands, bool $handleData, ?bool $force = null): DataHandler
+    protected function doProcessing(array $data, array $commands, bool $handleData, $force = null): DataHandler
     {
         // This is a hotfix, to automatically initialize the backend user if we are running in
         // cli mode, otherwise the user has to do that for every command class.
@@ -114,11 +120,14 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
             $context->beUser()->getUser()->backendCheckLogin();
         }
         
-        return $this->forceWrapper(function () use ($data, $commands, $handleData) {
+        return $this->forceWrapper(function () use ($data, $commands, $handleData, $force) {
             $handler = $this->getEmptyDataHandler();
             try {
                 $handler->errorLog = [];
                 $handler->start($data, $commands);
+                if (is_string($force) && strtolower(trim($force)) === 'soft') {
+                    $handler->admin = true;
+                }
                 if ($handleData) {
                     $handler->process_datamap();
                 } else {
@@ -133,20 +142,21 @@ class DataHandlerService implements PublicServiceInterface, SingletonInterface
             }
             
             return $handler;
-        }, (bool)$force);
+        }, $force);
     }
     
     /**
      * Internal helper to run the given callback either as forced user or as the current user
      *
-     * @param   callable  $callback  The callback to execute
-     * @param   bool      $force     True to run as a forced admin user
+     * @param   callable          $callback  The callback to execute
+     * @param   bool|string|null  $force     True to force the execution as _t3ba_adminUser_
+     *                                       false|null|string: Don't force the execution -> default
      *
      * @return mixed
      */
-    protected function forceWrapper(callable $callback, bool $force)
+    protected function forceWrapper(callable $callback, $force)
     {
-        if (! $force) {
+        if (! $force || is_string($force)) {
             return $callback();
         }
         

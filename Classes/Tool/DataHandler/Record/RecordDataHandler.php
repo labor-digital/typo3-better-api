@@ -74,14 +74,16 @@ class RecordDataHandler implements NoDiInterface
     /**
      * Creates a new record in the database.
      *
-     * @param   array     $data       The record row to add to the database
-     * @param   int|null  $pid        An optional pid to store the record on
-     * @param   bool      $force      If set to true, the record is created as forced admin user,
-     *                                ignoring all permissions or access rights!
+     * @param   array             $data      The record row to add to the database
+     * @param   int|null          $pid       An optional pid to store the record on
+     * @param   bool|string|null  $force     True to force the execution as _t3ba_adminUser_
+     *                                       'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                       false|null: Don't force the execution -> default
+     *                                       WARNING: this ignores all permissions or access rights!
      *
      * @return int The uid of the new record
      */
-    public function save(array $data, ?int $pid = null, bool $force = false): int
+    public function save(array $data, ?int $pid = null, $force = null): int
     {
         if ($pid !== null) {
             $data['pid'] = $pid;
@@ -113,15 +115,17 @@ class RecordDataHandler implements NoDiInterface
      * Creates a copy of a certain record. If the $targetPageId is empty, the copy will be created on the current page.
      * Otherwise it will be copied as a child of the given target page.
      *
-     * @param   int       $uid        The record id to copy
-     * @param   int|null  $targetPid  The page id to copy record to. If left empty the record copy will
-     *                                be created on the current page
-     * @param   bool      $force      If set to true, the record is copied as forced admin user,
-     *                                ignoring all permissions or access rights!
+     * @param   int               $uid        The record id to copy
+     * @param   int|null          $targetPid  The page id to copy record to. If left empty the record copy will
+     *                                        be created on the current page
+     * @param   bool|string|null  $force      True to force the execution as _t3ba_adminUser_
+     *                                        'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                        false|null: Don't force the execution -> default
+     *                                        WARNING: this ignores all permissions or access rights!
      *
      * @return int
      */
-    public function copy(int $uid, ?int $targetPid = null, bool $force = false): int
+    public function copy(int $uid, ?int $targetPid = null, $force = null): int
     {
         $handler = $this->handlerService->processCommands([
             $this->tableName => [
@@ -137,14 +141,16 @@ class RecordDataHandler implements NoDiInterface
     /**
      * Moves a record with the given uid to another page
      *
-     * @param   int   $uid        The record uid to move
-     * @param   int   $targetPid  The page id to move the page to
-     * @param   bool  $force      If set to true, the record is moved as forced admin user,
-     *                            ignoring all permissions or access rights!
+     * @param   int               $uid        The record uid to move
+     * @param   int               $targetPid  The page id to move the page to
+     * @param   bool|string|null  $force      True to force the execution as _t3ba_adminUser_
+     *                                        'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                        false|null: Don't force the execution -> default
+     *                                        WARNING: this ignores all permissions or access rights!
      *
      * @return void
      */
-    public function move(int $uid, int $targetPid, bool $force = false): void
+    public function move(int $uid, int $targetPid, $force = null): void
     {
         $this->handlerService->processCommands([
             $this->tableName => [
@@ -158,11 +164,13 @@ class RecordDataHandler implements NoDiInterface
     /**
      * Marks a record as "deleted". It still can be restored using the restore() method.
      *
-     * @param   int   $uid
-     * @param   bool  $force   If set to true, the record is restored as forced admin user,
-     *                         ignoring all permissions or access rights!
+     * @param   int               $uid
+     * @param   bool|string|null  $force  True to force the execution as _t3ba_adminUser_
+     *                                    'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                    false|null: Don't force the execution -> default
+     *                                    WARNING: this ignores all permissions or access rights!
      */
-    public function delete(int $uid, bool $force = false): void
+    public function delete(int $uid, $force = null): void
     {
         $this->handlerService->processCommands([
             $this->tableName => [
@@ -176,11 +184,13 @@ class RecordDataHandler implements NoDiInterface
     /**
      * Restores a record by removing the marker that defines it as "deleted".
      *
-     * @param   int   $uid     The uid of the record to restore
-     * @param   bool  $force   If set to true, the record is restored as forced admin user,
-     *                         ignoring all permissions or access rights!
+     * @param   int               $uid    The uid of the record to restore
+     * @param   bool|string|null  $force  True to force the execution as _t3ba_adminUser_
+     *                                    'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                    false|null: Don't force the execution -> default
+     *                                    WARNING: this ignores all permissions or access rights!
      */
-    public function restore(int $uid, bool $force = false): void
+    public function restore(int $uid, $force = null): void
     {
         $this->handlerService->processCommands([
             $this->tableName => [
