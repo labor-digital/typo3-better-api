@@ -90,6 +90,13 @@ class TcaPalette extends AbstractContainer
             unset($raw['isHiddenPalette']);
         }
         
+        if (isset($raw['label'])) {
+            if (! empty(trim((string)$raw['label']))) {
+                $this->setLabel($raw['label']);
+            }
+            unset($raw['label']);
+        }
+        
         // @todo implement "description" reader in v11
 //            if(is_string($config['description'])){
 //                $i->setDescription($config['description']);
@@ -108,6 +115,10 @@ class TcaPalette extends AbstractContainer
         
         if ($this->isHidden()) {
             $raw['isHiddenPalette'] = true;
+        }
+        
+        if (! empty($this->getLabel())) {
+            $raw['label'] = $this->getLabel();
         }
         
         return $raw;

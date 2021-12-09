@@ -138,15 +138,11 @@ trait DumperTypeGeneratorTrait
         foreach ($typePalettes as $k => $p) {
             $showitem = $p['showitem'];
             
-            // Add new palette
-            if (! isset($palettes[$k])) {
-                $palettes[$k]['showitem'] = $showitem;
-                continue;
-            }
-            
-            // Check if there is already a showitem for this palette
-            if (isset($palettes[$k]['showitem']) &&
-                $this->assertShowItemEquals($palettes[$k]['showitem'] ?? '', $showitem ?? '', $tca)) {
+            // Add new palette OR check if there is already a showitem for this palette
+            if (! isset($palettes[$k]) ||
+                (isset($palettes[$k]['showitem']) &&
+                 $this->assertShowItemEquals($palettes[$k]['showitem'] ?? '', $showitem ?? '', $tca))) {
+                $palettes[$k] = $p;
                 continue;
             }
             
@@ -188,6 +184,7 @@ trait DumperTypeGeneratorTrait
         }
         
         $tokenizer = static function (string $v): array {
+            // @todo an "array_filter" could prevent issues where stuff like "field,,otherField" exists?
             return array_map(static function (string $t): array {
                 return array_map('trim', explode(';', $t));
             }, explode(',', $v));
