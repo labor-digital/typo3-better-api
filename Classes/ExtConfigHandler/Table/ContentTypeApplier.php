@@ -223,13 +223,25 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         
         $childRow['pid'] = $this->resolveColumnValue('pid', $rowWithUid);
         $childRow['sys_language_uid'] = $this->resolveColumnValue('sys_language_uid', $rowWithUid);
-        $row[$childPointerField] = $this->repository->saveChildRow($cType, $parentId, $childRow);
+        if (isset($this->delayedChildRelation)) {
+            // This block will be executed when inline relations are present and prevents
+            // the creation of zombie entries in the database
+            if ($parentId === -1) {
+                throw new \LogicException('This should never happen: Tried to register a child for delayed relation, while another one waits for relation');
+            }
+            
+            $row[$childPointerField] = $this->delayedChildRelation;
+            $this->persistDelayedChildRelation($cType, $parentId, $childRow['pid']);
+        } else {
+            $row[$childPointerField] = $this->repository->saveChildRow($cType, $parentId, $childRow);
+        }
+        
         $event->setRow($row);
         
         if ($parentId === -1) {
             $this->delayedChildRelation = $row[$childPointerField];
         } else {
-            // Rewrite the dataHandlers history entry to incorporate the the extension columns
+            // Rewrite the dataHandlers history entry to incorporate the extension columns
             DataHandlerAdapter::rewriteHistory(
                 $event->getDataHandler(),
                 $parentId,
@@ -247,20 +259,13 @@ class ContentTypeApplier extends AbstractExtConfigApplier
      */
     public function onSaveDbOperations(SaveAfterDbOperationsEvent $event): void
     {
-        if ($event->getTableName() !== 'tt_content') {
-            return;
-        }
-        if (empty($this->delayedChildRelation)) {
+        if (! $this->delayedChildRelation || $event->getTableName() !== 'tt_content') {
             return;
         }
         
         $row = $event->getRow();
-        $this->repository->saveChildRow($row['CType'], $event->getId(), [
-            'uid' => $this->delayedChildRelation,
-            'pid' => $row['pid'],
-        ]);
+        $this->persistDelayedChildRelation($row['CType'], $event->getId(), $row['pid']);
         
-        $this->delayedChildRelation = null;
     }
     
     /**
@@ -464,6 +469,27 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             $parentRow,
             ContentTypeUtil::convertChildForParent($childRow, $cType)
         );
+    }
+    
+    /**
+     * Applies the ct_parent update to the extension table, for an uid which was registered for "delayed" relation.
+     *
+     * @param   string  $cType
+     * @param   int     $parentUid
+     * @param   int     $parentPid
+     */
+    protected function persistDelayedChildRelation(string $cType, int $parentUid, int $parentPid): void
+    {
+        if (empty($this->delayedChildRelation)) {
+            return;
+        }
+        
+        $this->repository->saveChildRow($cType, $parentUid, [
+            'uid' => $this->delayedChildRelation,
+            'pid' => $parentPid,
+        ]);
+        
+        $this->delayedChildRelation = null;
     }
     
     /**

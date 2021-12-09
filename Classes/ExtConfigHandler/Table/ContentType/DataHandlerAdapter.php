@@ -34,7 +34,7 @@ class DataHandlerAdapter extends DataHandler implements NoDiInterface
      *
      * This is fix is required for the sys_history to work correctly with extension columns.
      *
-     * Yes, this is not perfect and I SHOULD do it in the aforementioned method, to be save for updates.
+     * Yes, this is not perfect, and I SHOULD do it in the aforementioned method, to be safe for updates.
      * but, it works for now.
      *
      * @param   \TYPO3\CMS\Core\DataHandling\DataHandler  $dataHandler
