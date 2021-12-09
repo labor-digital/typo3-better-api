@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.26.0](https://github.com/labor-digital/typo3-better-api/compare/v10.25.0...v10.26.0) (2021-12-09)
+
+
+### Features
+
+* **TypoScript:** add shortcut method to apply lib.parseFunc to a text ([a99f693](https://github.com/labor-digital/typo3-better-api/commit/a99f693a6478af2002801e0403022ed1ffd8a533))
+
+
+### Bug Fixes
+
+* **Core\CodeGeneration:** enhance detection of static references ([4934c86](https://github.com/labor-digital/typo3-better-api/commit/4934c86dfd83f5e9dd529cec0908a5d173074b56))
+* **Page\ExtendedRootLineUtility:** ensure additional fields are resolved correctly ([fbebf27](https://github.com/labor-digital/typo3-better-api/commit/fbebf27b88f8dee36f7aef59557e58ca6c83cf58))
+* **Tca\Builder:** ensure that palette labels are handled correctly ([d0fdb06](https://github.com/labor-digital/typo3-better-api/commit/d0fdb06719c19b9b6767d368ef877bd1c631ecab))
+
 ## [10.25.0](https://github.com/labor-digital/typo3-better-api/compare/v10.24.1...v10.25.0) (2021-12-07)
 
 
