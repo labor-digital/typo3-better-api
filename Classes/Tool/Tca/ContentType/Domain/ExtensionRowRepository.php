@@ -91,7 +91,7 @@ class ExtensionRowRepository implements PublicServiceInterface
         
         $data['ct_parent'] = $parentUid;
         
-        return $this->dataHandlerService->getRecordDataHandler($tableName)->save($data);
+        return $this->dataHandlerService->getRecordDataHandler($tableName)->save($data, null, 'soft');
     }
     
     /**
@@ -110,7 +110,7 @@ class ExtensionRowRepository implements PublicServiceInterface
             return;
         }
         
-        $this->dataHandlerService->getRecordDataHandler($tableName)->restore($parentRow[$childPointerField]);
+        $this->dataHandlerService->getRecordDataHandler($tableName)->restore($parentRow[$childPointerField], 'soft');
     }
     
     /**
@@ -127,7 +127,7 @@ class ExtensionRowRepository implements PublicServiceInterface
             return;
         }
         
-        $this->dataHandlerService->getRecordDataHandler($tableName)->delete($uid);
+        $this->dataHandlerService->getRecordDataHandler($tableName)->delete($uid, 'soft');
     }
     
     /**

@@ -225,6 +225,7 @@ class ContentTypeUtil implements NoDiInterface
      * Returns the name of the child pointer field in the tt_content table
      *
      * @return string
+     * @deprecated will be removed in v12
      */
     public static function getChildPointerFieldName(): string
     {
