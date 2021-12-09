@@ -93,10 +93,12 @@ class SaveEventAdapter extends AbstractCoreHookEventAdapter
     {
         try {
             $id = $pObj->substNEWwithIDs[$id] ?? $id;
-            if (! isset($pObj->datamap[$table][$id])) {
-                return;
+            if ($status !== 'new') {
+                if (! isset($pObj->datamap[$table][$id])) {
+                    return;
+                }
+                $fieldArray = $pObj->datamap[$table][$id];
             }
-            $fieldArray = $pObj->datamap[$table][$id];
             
             $this->EventBus()->dispatch(($e = new SaveAfterDbOperationsEvent(
                 $status,
