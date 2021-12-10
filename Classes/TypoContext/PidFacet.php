@@ -38,13 +38,12 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\TypoContext;
 
-use GuzzleHttp\Psr7\Query;
 use LaborDigital\T3ba\ExtConfig\Traits\SiteConfigAwareTrait;
 use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\InvalidPidException;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use LaborDigital\T3ba\TypoContext\Util\CurrentPidFinder;
 use Neunerlei\Arrays\Arrays;
-use Neunerlei\PathUtil\Path;
 use RuntimeException;
 use Throwable;
 
@@ -274,62 +273,17 @@ class PidFacet implements FacetInterface
     }
     
     /**
-     * Returns the current page's pid
+     * Tries to find the current page uid. The method will automatically try to fall back
      *
-     * Note: in the backend you will only
-     * find a page id if you are in the "page" module. If the page uid could not
-     * be found the method will return 0
+     * to the site-root page if it could not find the current page. If neither a page nor a site root pid
+     * could be found 0 will be returned.
      *
      * @return int
      * @throws \Exception
      */
     public function getCurrent(): int
     {
-        if (isset($GLOBALS['TSFE'])) {
-            $id = TsfeAdapter::getCurrentId($GLOBALS['TSFE']);
-            if ($id) {
-                return $id;
-            }
-        }
-        
-        $requestFacet = $this->context->request();
-        if ($requestFacet->hasGet('id')) {
-            return (int)$requestFacet->getGet('id');
-        }
-        
-        if ($this->context->env()->isBackend()) {
-            // Parameter array of popups like "linkBrowser" and the like
-            if ($requestFacet->hasGet('P.pid')) {
-                return (int)$requestFacet->getGet('P.pid');
-            }
-            
-            // Request id, which was not provided in the _GET super-global
-            if (isset($_REQUEST['id'])) {
-                return (int)$_REQUEST['id'];
-            }
-            
-            // Fetch from return url -> when editing a record in the backend
-            if ($requestFacet->hasGet('returnUrl')) {
-                $query = Query::parse(
-                    Path::makeUri(
-                        'https://www.foo.bar' . $requestFacet->getGet('returnUrl')
-                    )->getQuery()
-                );
-                if (isset($query['id'])) {
-                    return (int)$query['id'];
-                }
-            }
-        }
-        
-        // Fallback to the root pid of the site
-        try {
-            if ($this->context->site()->hasCurrent()) {
-                return $this->context->site()->getCurrent()->getRootPageId();
-            }
-        } catch (Throwable $exception) {
-        }
-        
-        return 0;
+        return CurrentPidFinder::findPid($this->context) ?? 0;
     }
     
     /**

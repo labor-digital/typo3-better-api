@@ -25,6 +25,9 @@ namespace LaborDigital\T3ba\TypoContext;
 
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
+/**
+ * @deprecated this class is no longer used, and will be removed in v11
+ */
 class TsfeAdapter extends TypoScriptFrontendController
 {
     /**
