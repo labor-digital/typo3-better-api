@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.28.0](https://github.com/labor-digital/typo3-better-api/compare/v10.27.0...v10.28.0) (2021-12-10)
+
+
+### Features
+
+* **PidFacet:** extract current pid resolution into a utility class ([cdd82b6](https://github.com/labor-digital/typo3-better-api/commit/cdd82b6d61fc5fad1906fd63210cec7332421f1b))
+
+
+### Bug Fixes
+
+* **Tca\Builder:** define not existing keys as __UNSET in generated columnOverrides ([ff0fbe8](https://github.com/labor-digital/typo3-better-api/commit/ff0fbe87ea74f39dfc8822bc4e2038fa5621de6c))
+* **Tca\Builder:** don't __UNSET "overrideChildTca.types" ([6e52f1e](https://github.com/labor-digital/typo3-better-api/commit/6e52f1e05e29645b8a75577c530173897517cbf6))
+* **Tca\TcaUtil:** use ArrayUtility::mergeRecursiveWithOverrule for columnOverride application ([68b5758](https://github.com/labor-digital/typo3-better-api/commit/68b575895bd737a40d264455af8cfd3c35c63139))
+
 ## [10.27.0](https://github.com/labor-digital/typo3-better-api/compare/v10.26.0...v10.27.0) (2021-12-10)
 
 
