@@ -62,6 +62,12 @@ trait DumperTypeGeneratorTrait
             $diff[$k] = $v;
         }
         
+        foreach ($a as $k => $v) {
+            if (! isset($b[$k])) {
+                $diff[$k] = '__UNSET';
+            }
+        }
+        
         return $diff;
     }
     
