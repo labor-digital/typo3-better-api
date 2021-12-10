@@ -33,10 +33,12 @@ trait DumperTypeGeneratorTrait
      *
      * @param   array  $a
      * @param   array  $b
+     * @param   array  $unsetIgnoreKeys  Internal to define a list of properties that should not be set to __UNSET
+     *                                   even if they don't exist in $a
      *
      * @return array
      */
-    protected function makeArrayDiff(array $a, array $b): array
+    protected function makeArrayDiff(array $a, array $b, array $unsetIgnoreKeys = []): array
     {
         $diff = [];
         foreach ($b as $k => $v) {
@@ -51,7 +53,13 @@ trait DumperTypeGeneratorTrait
             }
             
             if (is_array($v) && is_array($a[$k])) {
-                $_diff = $this->makeArrayDiff($a[$k], $v);
+                $_diff = $this->makeArrayDiff(
+                    $a[$k], $v,
+                    // This is a fix to prevent the "types" sub-key of overrideChildTca
+                    // to be defined as "__UNSET", because TYPO will not resolve those keys
+                    // through ArrayUtility, but access the array directly.
+                    $k === 'overrideChildTca' ? ['types'] : []
+                );
                 if (! empty($_diff)) {
                     $diff[$k] = $_diff;
                 }
@@ -63,7 +71,7 @@ trait DumperTypeGeneratorTrait
         }
         
         foreach ($a as $k => $v) {
-            if (! isset($b[$k])) {
+            if (! isset($b[$k]) && ! in_array($k, $unsetIgnoreKeys, true)) {
                 $diff[$k] = '__UNSET';
             }
         }
