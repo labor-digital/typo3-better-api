@@ -120,7 +120,7 @@ class PageService implements SingletonInterface
                 'default' => '',
             ],
             'force' => [
-                'type' => 'bool',
+                'type' => ['bool', 'string'],
                 'default' => false,
             ],
             'pageRow' => [
@@ -146,12 +146,14 @@ class PageService implements SingletonInterface
      * If you however set $force to true, the action will be executed as admin, even if there is currently no user
      * logged in
      *
-     * @param   int    $pageId       The page id to copy
-     * @param   array  $options      Additional options
-     *                               - targetPid int: The page id to copy the page to. If left empty the new page will
-     *                               be copied right below the origin page
-     *                               - force bool (FALSE): If set to true, the new page is copied as forced admin user,
-     *                               ignoring all permissions or access rights!
+     * @param   int    $pageId            The page id to copy
+     * @param   array  $options           Additional options
+     *                                    - targetPid int: The page id to copy the page to. If left empty the new page will
+     *                                    be copied right below the origin page
+     *                                    - $force bool|string: True to force the execution as _t3ba_adminUser_
+     *                                    'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                    false: Don't force the execution -> default
+     *                                    WARNING: this ignores all permissions or access rights!
      *
      * @return int
      */
@@ -164,7 +166,7 @@ class PageService implements SingletonInterface
                 'default' => null,
             ],
             'force' => [
-                'type' => 'bool',
+                'type' => ['bool', 'string'],
                 'default' => false,
             ],
         ]);
@@ -175,14 +177,16 @@ class PageService implements SingletonInterface
     /**
      * Moves a page with the given page id to another page
      *
-     * @param   int   $pageId     The page id to move
-     * @param   int   $targetPid  The page id to move the page to
-     * @param   bool  $force      If set to true, the new page is moved as forced admin user,
-     *                            ignoring all permissions or access rights!
+     * @param   int               $pageId     The page id to move
+     * @param   int               $targetPid  The page id to move the page to
+     * @param   bool|string|null  $force      True to force the execution as _t3ba_adminUser_
+     *                                        'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                        false|null: Don't force the execution -> default
+     *                                        WARNING: this ignores all permissions or access rights!
      *
      * @return void
      */
-    public function movePage(int $pageId, int $targetPid, bool $force = false): void
+    public function movePage(int $pageId, int $targetPid, $force = null): void
     {
         $this->getPageDataHandler()->move($pageId, $targetPid, $force);
     }
@@ -190,11 +194,13 @@ class PageService implements SingletonInterface
     /**
      * Marks this page as "deleted". It still can be restored using the "restorePage" method.
      *
-     * @param   int   $pageId  The page to delete
-     * @param   bool  $force   If set to true, the new page is deleted as forced admin user,
-     *                         ignoring all permissions or access rights!
+     * @param   int               $pageId     The page to delete
+     * @param   bool|string|null  $force      True to force the execution as _t3ba_adminUser_
+     *                                        'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                        false|null: Don't force the execution -> default
+     *                                        WARNING: this ignores all permissions or access rights!
      */
-    public function deletePage(int $pageId, bool $force = false): void
+    public function deletePage(int $pageId, $force = null): void
     {
         $this->getPageDataHandler()->delete($pageId, $force);
     }
@@ -202,11 +208,13 @@ class PageService implements SingletonInterface
     /**
      * Restores a page by removing the marker that defines it as "deleted".
      *
-     * @param   int   $pageId  The page to restore
-     * @param   bool  $force   If set to true, the new page is restored as forced admin user,
-     *                         ignoring all permissions or access rights!
+     * @param   int               $pageId     The page to restore
+     * @param   bool|string|null  $force      True to force the execution as _t3ba_adminUser_
+     *                                        'soft': Keeps the current user but sets the "admin" flag in data handler
+     *                                        false|null: Don't force the execution -> default
+     *                                        WARNING: this ignores all permissions or access rights!
      */
-    public function restorePage(int $pageId, bool $force = false): void
+    public function restorePage(int $pageId, $force = null): void
     {
         $this->getPageDataHandler()->restore($pageId, $force);
     }
