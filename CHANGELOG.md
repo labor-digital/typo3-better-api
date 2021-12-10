@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.27.0](https://github.com/labor-digital/typo3-better-api/compare/v10.26.0...v10.27.0) (2021-12-10)
+
+
+### Features
+
+* **DataHandler:** implement "soft" forcing without using _t3ba_adminUser_ ([11e2317](https://github.com/labor-digital/typo3-better-api/commit/11e231734bc183eab0c2c5a810b02c09a66a4ae3))
+* **PageService:** allow "soft" forcing for dataHandler actions ([f37e587](https://github.com/labor-digital/typo3-better-api/commit/f37e5871e3f6d3168b077e51e06e9490ef77d224))
+* **Tca\ContentType:** use "soft" forcing for dataHandler actions ([036f58f](https://github.com/labor-digital/typo3-better-api/commit/036f58f07ea6dbf54f27332f61cf77e270e344b1))
+
+
+### Bug Fixes
+
+* **Event\SaveEventAdapter:** execute SaveAfterDbOperationsEvent for "new" records correctly again ([904d8cf](https://github.com/labor-digital/typo3-better-api/commit/904d8cf574a65da364c268498130f88e861feff4))
+* **Tca\ContentType:** fix creating zombie rows in extension table ([a796494](https://github.com/labor-digital/typo3-better-api/commit/a7964944a77930d0118c9316e7a55ae3c959e8dd))
+* **Tca\ContentType:** prevent extension tables from showing up in be_groups ([6526461](https://github.com/labor-digital/typo3-better-api/commit/652646171a511fa295f4b834223d810e02f9ac70))
+
 ## [10.26.0](https://github.com/labor-digital/typo3-better-api/compare/v10.25.0...v10.26.0) (2021-12-09)
 
 
