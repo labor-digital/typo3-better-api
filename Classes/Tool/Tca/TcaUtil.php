@@ -25,10 +25,10 @@ namespace LaborDigital\T3ba\Tool\Tca;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
-use Neunerlei\Arrays\Arrays;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\ItemProcessingService;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaUtil implements NoDiInterface
@@ -56,7 +56,8 @@ class TcaUtil implements NoDiInterface
         
         $hasColumns = is_array($tca['columns'] ?? null);
         
-        $columns = Arrays::merge($hasColumns ? $tca['columns'] : $tca, $overrides, 'allowRemoval');
+        $columns = $hasColumns ? $tca['columns'] : $tca;
+        ArrayUtility::mergeRecursiveWithOverrule($columns, $overrides);
         
         if ($hasColumns) {
             $tca['columns'] = $columns;
