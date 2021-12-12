@@ -73,7 +73,7 @@ class AutoLoader implements NoDiInterface
             return;
         }
         
-        spl_autoload_register([$this, 'loadClass'], false, true);
+        spl_autoload_register([$this, 'loadClass'], true, true);
         $this->isRegistered = true;
     }
     
