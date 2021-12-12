@@ -24,13 +24,14 @@ namespace LaborDigital\T3ba\ExtBase\Controller;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\ExtBase\ActionController\MethodNameFilterEvent;
 use LaborDigital\T3ba\Event\ExtBase\ActionController\RequestFilterEvent;
+use LaborDigital\T3ba\Event\ExtBase\ActionController\ResponseFilterEvent;
 use LaborDigital\T3ba\Tool\ExtBase\ExtBaseNotFoundHandler;
 use LaborDigital\T3ba\Tool\Link\Link;
 use LaborDigital\T3ba\Tool\Link\LinkService;
 use LaborDigital\T3ba\Tool\Rendering\FlashMessageRenderingService;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
-use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 
@@ -44,11 +45,10 @@ abstract class BetterActionController extends ActionController
      *
      * @see https://forum.typo3.org/index.php?t=msg&goto=740402&
      *
-     * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface   $request
-     * @param   \TYPO3\CMS\Extbase\Mvc\ResponseInterface  $response
+     * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface  $request
      *
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest(RequestInterface $request): ResponseInterface
     {
         // Load the data from the content object
         if (empty($this->data)) {
@@ -63,21 +63,20 @@ abstract class BetterActionController extends ActionController
                 $request->getControllerExtensionName(), $request->getPluginName())
         );
         
-        // Allow filtering
         $eventBus = $this->cs()->eventBus;
-        $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, true));
+        $eventBus->dispatch(new RequestFilterEvent($request, $this));
         
-        // Do the default stuff
         try {
-            parent::processRequest($request, $response);
-        } catch (TargetNotFoundException $e) {
+            $response = parent::processRequest($request);
+        } catch (TargetNotFoundException) {
             // Catch dbal overkill exceptions
         } finally {
             $messagingService->setDefaultQueueId(FlashMessageRenderingService::DEFAULT_QUEUE);
         }
         
-        // Allow filtering
-        $eventBus->dispatch(new RequestFilterEvent($request, $response, $this, false));
+        $eventBus->dispatch(new ResponseFilterEvent($response, $request, $this));
+        
+        return $response;
     }
     
     /**
@@ -115,7 +114,6 @@ abstract class BetterActionController extends ActionController
         $this->cs()->eventBus->dispatch(($e = new MethodNameFilterEvent(
             parent::resolveActionMethodName(),
             $this->request,
-            $this->response,
             $this
         )));
         

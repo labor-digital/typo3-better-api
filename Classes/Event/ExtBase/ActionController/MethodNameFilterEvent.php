@@ -23,7 +23,6 @@ namespace LaborDigital\T3ba\Event\ExtBase\ActionController;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
-use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 
 /**
  * Class MethodNameFilterEvent
@@ -40,47 +39,37 @@ class MethodNameFilterEvent
      *
      * @var string
      */
-    protected $actionName;
+    protected string $actionName;
     
     /**
      * The extbase request object to handle
      *
      * @var \TYPO3\CMS\Extbase\Mvc\RequestInterface
      */
-    protected $request;
-    
-    /**
-     * The ext base response object to dump the contents into
-     *
-     * @var \TYPO3\CMS\Extbase\Mvc\ResponseInterface
-     */
-    protected $response;
+    protected RequestInterface $request;
     
     /**
      * The controller to handle the request
      *
      * @var \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
-    protected $controller;
+    protected ActionController $controller;
     
     /**
      * MethodNameFilterEvent constructor.
      *
      * @param   string                                              $actionName
      * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface             $request
-     * @param   \TYPO3\CMS\Extbase\Mvc\ResponseInterface            $response
      * @param   \TYPO3\CMS\Extbase\Mvc\Controller\ActionController  $controller
      */
     public function __construct(
         string $actionName,
         RequestInterface $request,
-        ResponseInterface $response,
         ActionController $controller
     )
     {
         $this->actionName = $actionName;
         $this->request = $request;
-        $this->response = $response;
         $this->controller = $controller;
     }
     
@@ -116,16 +105,6 @@ class MethodNameFilterEvent
     public function getRequest(): RequestInterface
     {
         return $this->request;
-    }
-    
-    /**
-     * Returns the ext base response object to dump the contents into
-     *
-     * @return \TYPO3\CMS\Extbase\Mvc\ResponseInterface
-     */
-    public function getResponse(): ResponseInterface
-    {
-        return $this->response;
     }
     
     /**

@@ -21,18 +21,26 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Event\ExtBase\ActionController;
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 
 /**
- * Class RequestFilterEvent
+ * Class ResponseFilterEvent
  *
- * Emitted when a "Better action controller" ext base action controller is invoked, before the action is executed
+ * Emitted when a "Better action controller" ext base action controller is invoked, after the action was executed
  *
  * @package LaborDigital\T3ba\Event\ExtBase\ActionController
  */
-class RequestFilterEvent
+class ResponseFilterEvent
 {
+    
+    /**
+     * The response object returned by the action method
+     *
+     * @var \Psr\Http\Message\ResponseInterface
+     */
+    protected ResponseInterface $response;
     
     /**
      * The ext base request object to handle
@@ -49,16 +57,43 @@ class RequestFilterEvent
     protected ActionController $controller;
     
     /**
+     * @param   \Psr\Http\Message\ResponseInterface                 $response
      * @param   \TYPO3\CMS\Extbase\Mvc\RequestInterface             $request
      * @param   \TYPO3\CMS\Extbase\Mvc\Controller\ActionController  $controller
      */
     public function __construct(
+        ResponseInterface $response,
         RequestInterface $request,
         ActionController $controller
     )
     {
+        $this->response = $response;
         $this->request = $request;
         $this->controller = $controller;
+    }
+    
+    /**
+     * Returns the response object returned by the action method
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getResponse(): ResponseInterface
+    {
+        return $this->response;
+    }
+    
+    /**
+     * Allows you to override the response object returned by the action method
+     *
+     * @param   \Psr\Http\Message\ResponseInterface  $response
+     *
+     * @return ResponseFilterEvent
+     */
+    public function setResponse(ResponseInterface $response): ResponseFilterEvent
+    {
+        $this->response = $response;
+        
+        return $this;
     }
     
     /**
