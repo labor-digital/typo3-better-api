@@ -38,11 +38,10 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Core\Override;
 
-use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Event\Core\SiteConfigFilterEvent;
-use LaborDigital\T3ba\ExtConfig\Adapter\CachelessSiteConfigurationAdapter;
 use LaborDigital\T3ba\Tool\OddsAndEnds\ReflectionUtil;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
+use LaborDigital\T3ba\TypoContext\Util\CacheLessSiteConfigurationAdapter;
 use TYPO3\CMS\Backend\Controller\SiteConfigurationController;
 use TYPO3\CMS\Core\Configuration\T3BaCopySiteConfiguration;
 
@@ -56,14 +55,14 @@ class ExtendedSiteConfiguration extends T3BaCopySiteConfiguration
     public function getAllSiteConfigurationFromFiles(bool $useCache = true): array
     {
         // Create the configuration if it is not yet cached
-        $isCached = $useCache && ! empty($this->getCache()->get($this->cacheIdentifier));
+        $isCached = $useCache && ! empty($this->cache->get($this->cacheIdentifier));
         $siteConfig = parent::getAllSiteConfigurationFromFiles($useCache);
         if ($isCached) {
             return $siteConfig;
         }
         
         // Special switch if we load the configuration early
-        if ($this instanceof CachelessSiteConfigurationAdapter) {
+        if ($this instanceof CacheLessSiteConfigurationAdapter) {
             return $siteConfig;
         }
         
@@ -71,18 +70,19 @@ class ExtendedSiteConfiguration extends T3BaCopySiteConfiguration
         $context = $this->getTypoContext();
         if (! $useCache && $context->env()->isBackend() &&
             ReflectionUtil::getClosestFromStack(SiteConfigurationController::class, 10) !== null) {
-            $this->getCache()->remove($this->cacheIdentifier);
+            $this->cache->remove($this->cacheIdentifier);
             
             return $siteConfig;
         }
         
         // Allow filtering
-        TypoEventBus::getInstance()->dispatch(($e = new SiteConfigFilterEvent($siteConfig)));
-        $siteConfig = $e->getConfig();
+        $siteConfig = $this->getTypoContext()->di()->cs()->eventBus
+            ->dispatch(new SiteConfigFilterEvent($siteConfig))
+            ->getConfig();
         
         // Update the cached value
         if ($useCache) {
-            $this->getCache()->set($this->cacheIdentifier, 'return ' . var_export($siteConfig, true) . ';');
+            $this->cache->set($this->cacheIdentifier, 'return ' . var_export($siteConfig, true) . ';');
         }
         
         // Done

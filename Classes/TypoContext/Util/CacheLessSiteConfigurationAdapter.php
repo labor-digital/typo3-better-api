@@ -58,6 +58,6 @@ class CacheLessSiteConfigurationAdapter extends SiteConfiguration implements NoD
         $siteConfiguration = $siteConfiguration ?? GeneralUtility::makeInstance(SiteConfiguration::class);
         $configPath = $siteConfiguration->configPath;
         
-        return GeneralUtility::makeInstance(static::class, $configPath);
+        return GeneralUtility::makeInstance(static::class, $configPath, new PhpFrontend('foo', new NullBackend('foo')));
     }
 }
