@@ -127,7 +127,9 @@ class AutoLoader implements NoDiInterface
         $stack = $this->overrideList->getClassStack($class);
         if (is_array($stack)) {
             $aliasMap = $this->stackResolver->resolve($stack);
-            ClassAliasMap::addAliasMap(['aliasToClassNameMapping' => $aliasMap]);
+            if (ClassAliasMap::hasAliasMaps()) {
+                ClassAliasMap::addAliasMap(['aliasToClassNameMapping' => $aliasMap]);
+            }
             
             return true;
         }
@@ -152,7 +154,9 @@ class AutoLoader implements NoDiInterface
                 [$stack] = $args;
                 if (is_array($stack)) {
                     $aliasMap = $this->stackResolver->resolve($stack);
-                    ClassAliasMap::addAliasMap(['aliasToClassNameMapping' => $aliasMap]);
+                    if (ClassAliasMap::hasAliasMaps()) {
+                        ClassAliasMap::addAliasMap(['aliasToClassNameMapping' => $aliasMap]);
+                    }
                 }
                 break;
             case 'getClassAliasContent':
