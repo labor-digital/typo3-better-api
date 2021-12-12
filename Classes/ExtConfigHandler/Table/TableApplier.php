@@ -194,7 +194,7 @@ class TableApplier extends AbstractExtConfigApplier
      */
     protected function runAndCacheTca(string $key, Closure $callback): void
     {
-        if ($this->tcaCache[$key]) {
+        if (is_array($this->tcaCache[$key] ?? null)) {
             $GLOBALS['TCA'] = $this->tcaCache[$key];
             
             return;
