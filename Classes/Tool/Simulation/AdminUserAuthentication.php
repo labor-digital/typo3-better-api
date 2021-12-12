@@ -42,6 +42,7 @@ namespace LaborDigital\T3ba\Tool\Simulation;
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Core\Exception\T3baException;
 use LaborDigital\T3ba\Tool\Database\DbService;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 
@@ -73,9 +74,9 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     /**
      * @inheritDoc
      */
-    public function start(): void
+    public function start(ServerRequestInterface $request = null): void
     {
-        parent::start();
+        parent::start($request);
         $this->loginUser();
     }
     
@@ -90,7 +91,7 @@ class AdminUserAuthentication extends BackendUserAuthentication implements Publi
     /**
      * @inheritDoc
      */
-    protected function isUserAllowedToLogin(): bool
+    public function isUserAllowedToLogin(): bool
     {
         return true;
     }
