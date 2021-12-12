@@ -48,7 +48,7 @@ trait DumperDataHookTrait
     protected function extractDataHooksFromTca(array &$tca): void
     {
         // Extract column data hooks
-        if ($tca['columns'] && is_array($tca['columns'])) {
+        if (is_array($tca['columns'] ?? null)) {
             foreach ($tca['columns'] as $column => &$def) {
                 $this->iterateDataHooksIn($def, function ($type, $key, $hook) use ($column) {
                     $this->dataHookFieldCache[$column][$type][$key] = $hook;
@@ -63,7 +63,7 @@ trait DumperDataHookTrait
         });
         
         // Extract type data hooks
-        if ($tca['types'] && is_array($tca['types'])) {
+        if (is_array($tca['types'] ?? null)) {
             foreach ($tca['types'] as &$def) {
                 $this->iterateDataHooksIn($def, function ($type, $key, $hook) {
                     $this->dataHookTableCache[$type][$key] = $hook;
@@ -83,7 +83,7 @@ trait DumperDataHookTrait
     {
         // Inject the data hooks back into the columns
         foreach ($this->dataHookFieldCache as $column => $hooks) {
-            if (! $tca['columns'][$column] || ! is_array($tca['columns'][$column])) {
+            if (! is_array($tca['columns'][$column] ?? null)) {
                 continue;
             }
             $tca['columns'][$column][DataHookTypes::TCA_DATA_HOOK_KEY] = array_map('array_values', $hooks);
@@ -103,7 +103,7 @@ trait DumperDataHookTrait
      */
     protected function iterateDataHooksIn(array &$configuration, callable $callback): void
     {
-        if (! $configuration[DataHookTypes::TCA_DATA_HOOK_KEY]
+        if (! isset($configuration[DataHookTypes::TCA_DATA_HOOK_KEY])
             || ! is_array($configuration[DataHookTypes::TCA_DATA_HOOK_KEY])) {
             return;
         }
