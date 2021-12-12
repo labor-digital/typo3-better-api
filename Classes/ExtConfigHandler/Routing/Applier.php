@@ -97,11 +97,11 @@ class Applier extends AbstractExtConfigApplier
      */
     public function onSiteConfigFilter(SiteConfigFilterEvent $e): void
     {
-        $routeEnhancers = $this->state->get('typo.site.*.routeEnhancers');
+        $routeEnhancers = $this->state->get('typo.site.*.routeEnhancers', []);
         $config = $e->getConfig();
         
         foreach (array_keys($config) as $key) {
-            if (! is_string($routeEnhancers[$key])) {
+            if (! is_string($routeEnhancers[$key] ?? null)) {
                 continue;
             }
             
