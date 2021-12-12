@@ -29,7 +29,7 @@
 		}
 	],
 	"require": {
-		"typo3/cms-core": "^10.0",
+		"typo3/cms-core": "^11.5.3",
 		"psr/simple-cache": "^1.0",
 		"psr/container": "^1.0",
 		"neunerlei/event-bus": "^3.0.0",
@@ -69,7 +69,7 @@
 			"LaborDigital\\T3ba\\Tests\\": "Tests"
 		}
 	},
-	"version": "10.28.1",
+	"version": "11.0.0-dev",
 	"config": {
 		"bin-dir": "bin"
 	},
