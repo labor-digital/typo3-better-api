@@ -209,7 +209,7 @@ trait FactoryPopulatorTrait
                 $_id = reset($_layoutMeta);
                 
                 // Handle non-configured fields
-                if (! $cols[$_id]) {
+                if (! isset($cols[$_id])) {
                     // Handle line breaks
                     if ($_id === '--linebreak--') {
                         $i->addMultiple(static function () use ($type) {
@@ -252,7 +252,7 @@ trait FactoryPopulatorTrait
         $target->addMultiple(static function () use ($type, $id, $layoutMeta, $config) {
             $i = $type->getField($id, true);
             $i->setLayoutMeta($layoutMeta);
-            $config['label'] = $config['label'] ?: ($layoutMeta[1] ?? null);
+            $config['label'] = ($config['label'] ?? null) ?: ($layoutMeta[1] ?? null);
             $i->setRaw($config);
         });
     }
