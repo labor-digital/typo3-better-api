@@ -40,8 +40,10 @@ namespace LaborDigital\T3ba\TypoContext;
 
 use LaborDigital\T3ba\Core\Exception\T3baException;
 use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
 /**
@@ -55,14 +57,14 @@ class EnvFacet implements FacetInterface
      *
      * @var int
      */
-    protected $versionInt;
+    protected int $versionInt;
     
     /**
      * Stores the version comparisons to save repetitive overhead
      *
      * @var array
      */
-    protected $versionComparisons = [];
+    protected array $versionComparisons = [];
     
     /**
      * Returns typo3's application context object
@@ -105,7 +107,7 @@ class EnvFacet implements FacetInterface
         }
         
         // Get the integer version of the typo3 version
-        if (empty($this->versionInt)) {
+        if (! isset($this->versionInt)) {
             $this->versionInt = VersionNumberUtility::convertVersionNumberToInteger($this->getVersion());
         }
         $versionInt = $this->versionInt;
@@ -140,7 +142,6 @@ class EnvFacet implements FacetInterface
                 throw new T3baException("Invalid operator \"$operator\" given! Only =, !=, <, >, <= or >= are supported!");
         }
         
-        // Done
         return $this->versionComparisons[$key];
     }
     
@@ -153,7 +154,9 @@ class EnvFacet implements FacetInterface
      */
     public function getVersion(bool $exact = false): string
     {
-        return $exact ? VersionNumberUtility::getCurrentTypo3Version() : VersionNumberUtility::getNumericTypo3Version();
+        return $exact
+            ? VersionNumberUtility::getCurrentTypo3Version()
+            : VersionNumberUtility::getNumericTypo3Version();
     }
     
     /**
@@ -163,7 +166,8 @@ class EnvFacet implements FacetInterface
      */
     public function isBackend(): bool
     {
-        return defined('TYPO3_MODE') && TYPO3_MODE === 'BE';
+        return ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+               && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend();
     }
     
     /**
@@ -173,7 +177,8 @@ class EnvFacet implements FacetInterface
      */
     public function isFrontend(): bool
     {
-        return defined('TYPO3_MODE') && TYPO3_MODE === 'FE';
+        return ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+               && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
     }
     
     /**
@@ -190,6 +195,9 @@ class EnvFacet implements FacetInterface
      * Returns true if the current call was performed in the typo3 install tool
      *
      * @return bool
+     * @deprecated this feature was marked deprecated in v11 and will be removed in 12
+     *             the reason is, that TYPO removed the install tool request type without replacement
+     *             see: https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/11.0/Deprecation-92947-DeprecateTYPO3_MODEAndTYPO3_REQUESTTYPEConstants.html
      */
     public function isInstall(): bool
     {
@@ -224,29 +232,26 @@ class EnvFacet implements FacetInterface
      */
     public function isDev(): bool
     {
-        return Environment::getContext()->isDevelopment();
+        return $this->getApplicationContext()->isDevelopment();
     }
     
     /**
-     * Returns true if the current instance is running in production OR staging context
-     *
-     * @param   bool  $includeStaging  If this is set to false the method will not check for a staging version,
-     *                                 instead it only returns true IF the context is set to production
+     * Returns true if the current instance is running in production context
      *
      * @return bool
      */
-    public function isProduction(bool $includeStaging = true): bool
+    public function isProduction(): bool
     {
-        return $includeStaging ? ! $this->isDev() : Environment::getContext()->isProduction();
+        return $this->getApplicationContext()->isProduction();
     }
     
     /**
-     * Returns true if the current instance is running in staging context
+     * Returns true if the current instance is running in unit/functional testing context
      *
      * @return bool
      */
-    public function isStaging(): bool
+    public function isTesting(): bool
     {
-        return Environment::getContext()->isTesting();
+        return $this->getApplicationContext()->isTesting();
     }
 }
