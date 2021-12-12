@@ -363,9 +363,10 @@ class ExtConfigService
     }
     
     /**
-     * Returns the namespace lists for the auto loader and the ext-key namespace map
+     * Returns the namespace lists for the auto-loader and the ext-key namespace map
      *
      * @return array[]
+     * @throws \LaborDigital\T3ba\ExtConfig\ExtConfigException
      */
     protected function getNamespaceMaps(): array
     {
@@ -386,14 +387,24 @@ class ExtConfigService
             if (! is_object($autoload->{'psr-4'})) {
                 continue;
             }
-            foreach ((array)$autoload->{'psr-4'} as $namespace => $directory) {
-                $directory = trim($directory, '/.');
-                if ($directory === 'Classes' || str_ends_with($directory, '/Classes')) {
-                    $extKeyNamespaceMap[$package->getPackageKey()][$namespace] = $directory;
-                    $potentialConfigDir = Path::join($package->getPackagePath(),
-                        dirname($directory), 'Configuration');
-                    if (is_dir($potentialConfigDir)) {
-                        $autoloadMap[$namespace . 'Configuration\\'] = $potentialConfigDir;
+            foreach ((array)$autoload->{'psr-4'} as $namespace => $target) {
+                if (is_string($target)) {
+                    $target = [$target];
+                } elseif ($target instanceof \stdClass || is_array($target)) {
+                    $target = (array)$target;
+                } else {
+                    throw new ExtConfigException('Failed to parse PSR-4 configuration for namespace: ' . $namespace);
+                }
+                
+                foreach ($target as $directory) {
+                    $directory = trim($directory, '/.');
+                    if ($directory === 'Classes' || str_ends_with($directory, '/Classes')) {
+                        $extKeyNamespaceMap[$package->getPackageKey()][$namespace] = $directory;
+                        $potentialConfigDir = Path::join($package->getPackagePath(),
+                            dirname($directory), 'Configuration');
+                        if (is_dir($potentialConfigDir)) {
+                            $autoloadMap[$namespace . 'Configuration\\'] = $potentialConfigDir;
+                        }
                     }
                 }
             }
