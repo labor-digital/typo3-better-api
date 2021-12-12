@@ -44,8 +44,8 @@ use LaborDigital\T3ba\Event\BootstrapFailsafeDefinitionEvent;
 use LaborDigital\T3ba\Event\BootstrapInitializesErrorHandlingEvent;
 use LaborDigital\T3ba\Event\Core\PackageManagerCreatedEvent;
 use Psr\Container\ContainerInterface;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Core\T3BaCopyBootstrap;
+use TYPO3\CMS\Core\Package\Cache\PackageCacheInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 
 class ExtendedBootstrap extends T3BaCopyBootstrap
@@ -64,9 +64,9 @@ class ExtendedBootstrap extends T3BaCopyBootstrap
     /**
      * @inheritDoc
      */
-    public static function createPackageManager($packageManagerClassName, FrontendInterface $coreCache): PackageManager
+    public static function createPackageManager($packageManagerClassName, PackageCacheInterface $packageCache): PackageManager
     {
-        $packageManager = parent::createPackageManager($packageManagerClassName, $coreCache);
+        $packageManager = parent::createPackageManager($packageManagerClassName, $packageCache);
         
         TypoEventBus::getInstance()
                     ->dispatch(new PackageManagerCreatedEvent($packageManager));
