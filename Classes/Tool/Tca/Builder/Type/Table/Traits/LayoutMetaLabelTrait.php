@@ -56,7 +56,7 @@ trait LayoutMetaLabelTrait
     {
         $meta = $this->layoutMeta;
         $labelIdx = $this->getLayoutMetaLabelIdx();
-        $metaLabel = $this->layoutMeta[$labelIdx];
+        $metaLabel = $this->layoutMeta[$labelIdx] ?? null;
         $configLabel = $this->getLabel();
         
         // If meta.1 (the label) is the same as the one configured -> don't define it in the string
