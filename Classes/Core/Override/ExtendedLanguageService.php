@@ -47,7 +47,7 @@ class ExtendedLanguageService extends T3BaCopyLanguageService
     /**
      * @inheritDoc
      */
-    public function sL($input)
+    public function sL($input): string
     {
         return TranslationLabelProvider::provideLabelFor($input, function ($input) {
             return parent::sL($input);
