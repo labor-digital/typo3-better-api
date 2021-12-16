@@ -105,7 +105,6 @@ class Basics extends AbstractFieldPreset
      * Configures the current input element as a text area optionally with a rte configuration
      *
      * @param   array  $options  Additional options
-     *                           - default string: An optional default value to set for this field
      *                           - required, trim bool: Any of these values can be passed
      *                           to define their matching "eval" rules
      *                           - maxLength int (65000): The max length of a text (also affects the length of the db
@@ -118,6 +117,10 @@ class Basics extends AbstractFieldPreset
      *                           - rte bool (FALSE): If set to true this field will be rendered as RTE editor
      *                           - rteConfig string: For TYPO3 > v7 Can be used to select which rte config is to apply
      *                           to this field
+     *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default string: A default value for your input field
+     *                           use the setDefault() method on a field instead
      */
     public function applyTextArea(array $options = []): void
     {
@@ -168,11 +171,12 @@ class Basics extends AbstractFieldPreset
      *                           - minItems int (0): The minimum number of items required to be valid
      *                           - maxItems int (1): The maximum number of items allowed in this field
      *                           - required bool: If set this field will be required to be filled
-     *                           - default string|number: If given this is used as default value when a new record is
-     *                           created
      *                           - userFunc string: Can be given like any select itemProcFunc in TYPO3 as:
      *                           vendor\className->methodName and is used as a filter for the items in the select field
      *
+     *                           DEPRECATED: Will be removed in v12
+     *                           - default string: A default value for your input field
+     *                           use the setDefault() method on a field instead
      */
     public function applySelect(array $items, array $options = []): void
     {
