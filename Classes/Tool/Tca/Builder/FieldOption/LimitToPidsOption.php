@@ -80,7 +80,7 @@ class LimitToPidsOption extends AbstractOption
         $this->configName = $configName ?? 'foreign_table_where';
         $this->optionName = $options['optionName'] ?? 'limitToPids';
         $this->defaultValue = $options['defaultValue'] ?? true;
-        $this->defaultValueRecursive = $options['defaultValueRecursive'] ?? true;
+        $this->defaultValueRecursive = $options['defaultValueRecursive'] ?? false;
         $this->defaultValueRecursiveDepth = $options['defaultValueRecursiveDepth'] ?? 10;
     }
     
