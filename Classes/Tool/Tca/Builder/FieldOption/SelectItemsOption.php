@@ -41,9 +41,17 @@ class SelectItemsOption extends AbstractOption
      */
     protected $items;
     
-    public function __construct(?array $items = null)
+    /**
+     * The name of the option to find the item definition on
+     *
+     * @var string
+     */
+    protected $optionName;
+    
+    public function __construct(?array $items = null, ?string $optionName = null)
     {
         $this->items = $items;
+        $this->optionName = $optionName ?? 'items';
     }
     
     /**
@@ -55,7 +63,7 @@ class SelectItemsOption extends AbstractOption
             return;
         }
         
-        $definition['items'] = [
+        $definition[$this->optionName] = [
             'type' => 'array',
             'default' => [],
         ];
