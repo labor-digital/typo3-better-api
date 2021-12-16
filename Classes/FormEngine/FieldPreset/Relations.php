@@ -68,7 +68,7 @@ class Relations extends AbstractFieldPreset
      *                           This is identical with setting minItems to 1
      *                           - sideBySide bool (FALSE): If set to true the categories are shown as two columns
      *                           instead of the tree view
-     *                           - limitToPids int|string|bool|array (FALSE): Can be used to limit the item selection
+     *                           - limitToPids int|string|bool|array (TRUE): Can be used to limit the item selection
      *                           to a certain pid, or a list of pids. True for the current pid, false for no limiting, a numeric pid, a pid selector
      *                           or an array containing either numeric or string values.
      *                           - limitToPidsRecursive bool (FALSE): If set to true, the items will be resolved RECURSIVELY
@@ -101,7 +101,6 @@ class Relations extends AbstractFieldPreset
         );
         
         $o->validate($options);
-        
         $this->field->addConfig(
             $o->apply(
                 CategoryRegistry::getTcaFieldConfiguration(
