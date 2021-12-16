@@ -74,7 +74,7 @@ class SelectItemsOption extends AbstractOption
      */
     public function applyConfig(array &$config, array $options): void
     {
-        $items = $this->items ?? $options['items'] ?? [];
+        $items = $this->items ?? $options[$this->optionName] ?? [];
         if (empty($items) || ! is_array($items)) {
             return;
         }
