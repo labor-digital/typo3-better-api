@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.28.3](https://github.com/labor-digital/typo3-better-api/compare/v10.28.2...v10.28.3) (2021-12-16)
+
+
+### Bug Fixes
+
+* ensure the backend can resolve the correct translator when symfony container exists ([727c5b3](https://github.com/labor-digital/typo3-better-api/commit/727c5b3115389dd890c08f85b3c206e0955761b8))
+
 ### [10.28.2](https://github.com/labor-digital/typo3-better-api/compare/v10.28.1...v10.28.2) (2021-12-16)
 
 
