@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.29.0](https://github.com/labor-digital/typo3-better-api/compare/v10.28.3...v10.29.0) (2021-12-16)
+
+
+### Features
+
+* **FieldOption\LimitToPidsOption:** add support for recursive pid resolution ([658f867](https://github.com/labor-digital/typo3-better-api/commit/658f867a7224450e0ef97f7a3b53fcfe77ef6557))
+* **FieldPreset\Relations:** update applyRelationSelect to use the new options api ([6416689](https://github.com/labor-digital/typo3-better-api/commit/641668951a638d0630101463a3a68054ab876b50))
+* **FormEngine\Addon:** allow recursive resolution of pids in where clauses ([a750a35](https://github.com/labor-digital/typo3-better-api/commit/a750a352df82afe6ad9fc49932bc73849f7f8d8a))
+* **Tca\SelectItemsOption:** allow custom option name ([1d6bbc0](https://github.com/labor-digital/typo3-better-api/commit/1d6bbc0dcbd7ad6cd8d315505681c0e2029ad4e2))
+
+
+### Bug Fixes
+
+* **Di\ServiceProvider:** ensure that the correct package path is generated ([4fdc25e](https://github.com/labor-digital/typo3-better-api/commit/4fdc25e3983c73ab9e7f986129213bfbe91da717))
+* **FieldOption\MinMaxItemOption:** add "required" definition if it not exists ([9ddc39d](https://github.com/labor-digital/typo3-better-api/commit/9ddc39d81b35dd93aa317d9eb4c624e2648cc69b))
+* **FieldOption\SelectItemsOption:** ensure that applyConfig utilizes the "optionName" parameter ([7d8600d](https://github.com/labor-digital/typo3-better-api/commit/7d8600dffd537bd33da2804015bf937393f8c410))
+* **FieldPreset\Basics:** add notices for deprecated options ([8dd79cd](https://github.com/labor-digital/typo3-better-api/commit/8dd79cde6b03fb667727e95baf357ef8ff61d952))
+
 ### [10.28.3](https://github.com/labor-digital/typo3-better-api/compare/v10.28.2...v10.28.3) (2021-12-16)
 
 
