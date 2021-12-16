@@ -53,6 +53,15 @@ class ServiceProvider extends AbstractServiceProvider
     {
         $kernel = Kernel::getInstance();
         
+        $c = $kernel->getContainer();
+        if ($c->getSymfony()) {
+            return new Translator(
+                $kernel->getEventBus(),
+                $c->get(TsfeService::class),
+                $c->get(ConfigState::class)
+            );
+        }
+        
         return new Translator(
             $kernel->getEventBus(),
             static::makeDummyTsfeService(),
