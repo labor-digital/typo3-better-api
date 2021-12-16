@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.29.1](https://github.com/labor-digital/typo3-better-api/compare/v10.29.0...v10.29.1) (2021-12-16)
+
+
+### Bug Fixes
+
+* **Event:** execute FormFilterEvent on tcaSelectTreeAjaxFieldData as well ([cafb2c9](https://github.com/labor-digital/typo3-better-api/commit/cafb2c95fd23ac68d4959da96be92810213dfcf4))
+* **Tca\LimitToPidsOption:** set limitToPidsRecursive to false by default ([726b5a1](https://github.com/labor-digital/typo3-better-api/commit/726b5a1c4725cde5c3fe469a92370fd952cb0972))
+
 ## [10.29.0](https://github.com/labor-digital/typo3-better-api/compare/v10.28.3...v10.29.0) (2021-12-16)
 
 
