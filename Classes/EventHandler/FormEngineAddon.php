@@ -32,7 +32,7 @@ use LaborDigital\T3ba\FormEngine\Addon\FalFileBaseDir;
 use LaborDigital\T3ba\FormEngine\Addon\FieldDefaultAndPlaceholderTranslation;
 use LaborDigital\T3ba\FormEngine\Addon\GroupElementsCanTriggerReload;
 use LaborDigital\T3ba\FormEngine\Addon\InlineElementsCanTriggerReload;
-use LaborDigital\T3ba\FormEngine\Addon\PidInForeignWhereClause;
+use LaborDigital\T3ba\FormEngine\Addon\PidInWhereClauseResolver;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 use Neunerlei\EventBus\Subscription\LazyEventSubscriberInterface;
 
@@ -66,7 +66,7 @@ class FormEngineAddon implements LazyEventSubscriberInterface
     public function onFormFilter(FormFilterEvent $event): void
     {
         FieldDefaultAndPlaceholderTranslation::onFormFilter($event);
-        PidInForeignWhereClause::onFormFilter($event);
+        PidInWhereClauseResolver::onFormFilter($event);
     }
     
     public function onDefaultFilter(DataHandlerDefaultFilterEvent $event): void
