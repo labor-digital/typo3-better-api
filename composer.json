@@ -79,6 +79,7 @@
 		},
 		"typo3/cms": {
 			"Package": {
+				"serviceProvider": "LaborDigital\\T3ba\\Core\\Di\\ServiceProvider",
 				"protected": true,
 				"partOfFactoryDefault": true,
 				"partOfMinimalUsableSystem": true
