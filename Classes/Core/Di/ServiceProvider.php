@@ -36,7 +36,7 @@ class ServiceProvider extends AbstractServiceProvider
      */
     protected static function getPackagePath(): string
     {
-        return __DIR__ . '/../';
+        return __DIR__ . '/../../../';
     }
     
     /**
