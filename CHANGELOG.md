@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.28.2](https://github.com/labor-digital/typo3-better-api/compare/v10.28.1...v10.28.2) (2021-12-16)
+
+
+### Bug Fixes
+
+* ensure we don't break the Extension Configuration module of the install tool ([a78bbdd](https://github.com/labor-digital/typo3-better-api/commit/a78bbddbd08f35b8f4ad9aca4c96b8c1d1212a7e))
+
 ### [10.28.1](https://github.com/labor-digital/typo3-better-api/compare/v10.28.0...v10.28.1) (2021-12-10)
 
 ## [10.28.0](https://github.com/labor-digital/typo3-better-api/compare/v10.27.0...v10.28.0) (2021-12-10)
