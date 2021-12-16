@@ -61,6 +61,13 @@ class MinMaxItemOption extends AbstractOption
             'type' => 'int',
             'default' => $this->defaultMin,
         ];
+        
+        if (! isset($definition['required'])) {
+            $definition['required'] = [
+                'type' => 'bool',
+                'default' => false,
+            ];
+        }
     }
     
     /**
