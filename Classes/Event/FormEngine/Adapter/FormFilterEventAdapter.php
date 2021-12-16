@@ -25,8 +25,10 @@ use LaborDigital\T3ba\Event\CoreHookAdapter\AbstractCoreHookEventAdapter;
 use LaborDigital\T3ba\Event\FormEngine\FormFilterEvent;
 use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
 use TYPO3\CMS\Backend\Form\FormDataProvider\InlineOverrideChildTca;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsOverrides;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsRemoveUnused;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaGroup;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectTreeItems;
 use TYPO3\CMS\Backend\Form\FormDataProviderInterface;
 
 class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements FormDataProviderInterface
@@ -43,6 +45,10 @@ class FormFilterEventAdapter extends AbstractCoreHookEventAdapter implements For
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['inlineParentRecord'][static::class] = [
             'depends' => [InlineOverrideChildTca::class],
             'before' => [TcaColumnsRemoveUnused::class],
+        ];
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaSelectTreeAjaxFieldData'][static::class] = [
+            'depends' => [TcaColumnsOverrides::class],
+            'before' => [TcaSelectTreeItems::class],
         ];
     }
     
