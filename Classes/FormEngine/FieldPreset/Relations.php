@@ -25,7 +25,9 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\IntegerType;
 use LaborDigital\T3ba\FormEngine\Wizard\FileLinkPreviewWizard;
 use LaborDigital\T3ba\T3baFeatureToggles;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\BasePidOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\DefaultOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\ElementBrowserFilterOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\EvalOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileBaseDirOption;
@@ -34,11 +36,14 @@ use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileGenericOverrideChildTcaOp
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileImageCropOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\FileImageThumbnailSizeOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\InheritParentDefinitionOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\LegacyBasePidToLimitToPidsRewriteOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\LegacyReadOnlyOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\LimitToPidsOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxItemOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MmTableOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\SelectItemsOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\SelectSideBySideOption;
+use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\UserFuncOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\WizardAllowEditOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\WizardAllowNewOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
@@ -63,8 +68,13 @@ class Relations extends AbstractFieldPreset
      *                           This is identical with setting minItems to 1
      *                           - sideBySide bool (FALSE): If set to true the categories are shown as two columns
      *                           instead of the tree view
-     *                           - limitToPids int|string|bool|array (TRUE) Can be used to limit the category selection
-     *                           to a certain pid, or a list of pids.
+     *                           - limitToPids int|string|bool|array (FALSE): Can be used to limit the item selection
+     *                           to a certain pid, or a list of pids. True for the current pid, false for no limiting, a numeric pid, a pid selector
+     *                           or an array containing either numeric or string values.
+     *                           - limitToPidsRecursive bool (FALSE): If set to true, the items will be resolved RECURSIVELY
+     *                           based on the provided "limitToPids" option
+     *                           - limitToPidsRecursiveDepth int (10): If "limitToPidsRecursive" is true, this option defines
+     *                           how many levels of recursion we should resolve
      *                           --- TRUE: Setting this to true will only show categories on the same pid than the
      *                           record
      *                           --- FALSE: Setting this to false will disable the pid constrain and show all
@@ -471,9 +481,13 @@ class Relations extends AbstractFieldPreset
      *                                  - where string: Can be used to limit the selection of records from the foreign
      *                                  table. This should be a SQL conform string that starts with an "AND ..." see
      *                                  also: https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Select.html#id93
-     *                                  - basePid int|string: Can be used if "where" is empty to automatically apply the
-     *                                  where string for the base pid. If TRUE is provided, the CURRENT pid will be used
-     *                                  as constraint.
+     *                                  - limitToPids int|string|bool|array (FALSE): Can be used to limit the item selection
+     *                                  to a certain pid, or a list of pids. True for the current pid, false for no limiting, a numeric pid, a pid selector
+     *                                  or an array containing ither numeric or string values.
+     *                                  - limitToPidsRecursive bool (FALSE): If set to true, the items will be resolved RECURSIVELY
+     *                                  based on the provided "limitToPids" option
+     *                                  - limitToPidsRecursiveDepth int (10): If "limitToPidsRecursive" is true, this option defines
+     *                                  how many levels of recursion we should resolve
      *                                  - userFunc string: Can be given like any select itemProcFunc in typo3 as:
      *                                  vendor\className->methodName and is used as a filter for the items in the select
      *                                  field
@@ -491,8 +505,6 @@ class Relations extends AbstractFieldPreset
      *                                  - additionalItems array: Additional items that should be attached to the
      *                                  list of items gathered by the relation lookup. Provide an array of $key =>
      *                                  $label pairs as a definition.
-     *                                  - default string|number: If given this is used as default value when a new
-     *                                  record is created
      *
      *                                  AVAILABLE WHEN maxItems > 1:
      *                                  - allowNew bool (FALSE): If set new records can be created with the new record
@@ -503,97 +515,56 @@ class Relations extends AbstractFieldPreset
      *                                  LEGACY SUPPORT
      *                                  - mmTableName string: When given this table name is set as mm table name instead
      *                                  of the automatically generated one. Useful for legacy codebase.
+     *
+     *                                  DEPRECATED: Will be removed in v12
+     *                                  - basePid int|string: Can be used to automatically apply the
+     *                                  where string for the base pid. If TRUE is provided, the CURRENT pid will be used
+     *                                  as constraint. Use the "limitToPids" option instead
+     *                                  - default string|number: A default value for your input field
+     *                                  use the setDefault() method on a field instead
      */
     public function applyRelationSelect(string $foreignTable, array $options = []): void
     {
-        // Prepare options
-        $optionDefinition = $this->addEvalOptions(
-            $this->addBasePidOptions(
-                $this->addMinMaxItemOptions(
-                    $this->addMmTableOptions(
-                        [
-                            'additionalItems' => [
-                                'type' => 'array',
-                                'default' => [],
-                            ],
-                            'default' => [
-                                'type' => ['string', 'number', 'null'],
-                                'default' => null,
-                            ],
-                            'allowEmpty' => [
-                                'type' => 'bool',
-                                'default' => false,
-                            ],
-                            'where' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                            'userFunc' => [
-                                'type' => 'string',
-                                'default' => '',
-                            ],
-                        ]
-                    )
-                )
-            ),
-            ['required']
+        $foreignTable = NamingUtil::resolveTableName($foreignTable);
+        $allowsMultiSelect = empty($options['maxItems']) || (is_numeric($options['maxItems']) && $options['maxItems'] > 1);
+        
+        $o = $this->initializeOptions(array_merge(
+            [
+                new UserFuncOption(),
+                new SelectItemsOption(null, 'additionalItems'),
+                new DefaultOption(null, ['string', 'number', 'null']),
+                new LimitToPidsOption($foreignTable, null, [
+                    'defaultValue' => false,
+                ]),
+                new LegacyBasePidToLimitToPidsRewriteOption(),
+                new MmTableOption($foreignTable),
+                new MinMaxItemOption(),
+                'where' => [
+                    'type' => 'string',
+                    'default' => '',
+                ],
+            ],
+            $allowsMultiSelect ? [
+                new WizardAllowEditOption(),
+                new WizardAllowNewOption(),
+            ] : []
+        ));
+        
+        $options = $o->validate($options);
+        
+        $this->field->addConfig(
+            $o->apply([
+                'type' => 'select',
+                'renderType' => $options['maxItems'] > 1
+                    ? 'selectMultipleSideBySide'
+                    : 'selectSingle',
+                'foreign_table' => $foreignTable,
+                'foreign_table_where' => empty($options['where']) ? null : $options['where'],
+                'multiple' => false,
+                'enableMultiSelectFilterTextfield' => true,
+                'localizeReferencesAtParentLocalization' => true,
+            ])
         );
-        
-        // Check if we got a multi selector and extend the options
-        if (empty($options['maxItems']) || (is_numeric($options['maxItems']) && $options['maxItems'] > 1)) {
-            $optionDefinition = $this->addAllowEditOptions(
-                $this->addAllowNewOptions(
-                    $optionDefinition
-                )
-            );
-        }
-        $options = Options::make($options, $optionDefinition);
-        
-        // Prepare table name
-        $foreignTableList = $this->generateTableNameList($foreignTable);
-        $foreignTable = (string)reset($foreignTableList);
-        
-        // Prepare the where clause
-        if (empty($options['where']) && ! empty($options['basePid'])) {
-            $options['where'] = "AND $foreignTable.pid = " . $options['basePid'];
-        }
-        
-        // Convert the items array
-        $itemsFiltered = [];
-        foreach ($options['additionalItems'] as $k => $v) {
-            $itemsFiltered[] = [$v, $k];
-        }
-        
-        // Add additional config
-        if ($options['default'] !== null) {
-            $config['default'] = $options['default'];
-        }
-        
-        // Build the tca
-        $config = [
-            'type' => 'select',
-            'items' => $itemsFiltered,
-            'renderType' => $options['maxItems'] > 1
-                ? 'selectMultipleSideBySide'
-                : 'selectSingle',
-            'foreign_table' => $foreignTable,
-            'foreign_table_where' => $options['where'],
-            'multiple' => false,
-            'enableMultiSelectFilterTextfield' => true,
-            'localizeReferencesAtParentLocalization' => true,
-            'itemsProcFunc' => $options['userFunc'],
-        ];
-        
-        // Apply defaults
-        $config = $this->addAllowNewConfig($config, $options);
-        $config = $this->addAllowEditConfig($config, $options);
-        $config = $this->addBasePidConfig($config, $options);
-        $config = $this->addMmTableConfig($config, $options);
-        $config = $this->addMinMaxItemConfig($config, $options);
-        $config = $this->addMmOppositeConfig($config, $options, [$foreignTable]);
-        
-        // Merge the field
-        $this->field->addConfig($config);
     }
     
     /**
