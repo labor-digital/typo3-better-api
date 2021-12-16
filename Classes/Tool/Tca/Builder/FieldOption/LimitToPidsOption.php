@@ -22,10 +22,13 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Tca\Builder\FieldOption;
 
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 
 /**
  * Applies an option called "limitToPids", which extends the "foreign_table_where" string with a list of configured pids
+ *
+ * @see \LaborDigital\T3ba\FormEngine\Addon\PidInWhereClauseResolver
  */
 class LimitToPidsOption extends AbstractOption
 {
@@ -43,10 +46,42 @@ class LimitToPidsOption extends AbstractOption
      */
     protected $configName;
     
-    public function __construct(string $foreignTableName, ?string $configName = null)
+    /**
+     * The name of the option to find the item definition on
+     *
+     * @var string
+     */
+    protected $optionName;
+    
+    /**
+     * The default value for the main option
+     *
+     * @var mixed
+     */
+    protected $defaultValue;
+    
+    /**
+     * The default value for the recursive option
+     *
+     * @var mixed
+     */
+    protected $defaultValueRecursive;
+    
+    /**
+     * The default value for the recursive-depth option
+     *
+     * @var mixed
+     */
+    protected $defaultValueRecursiveDepth;
+    
+    public function __construct(string $foreignTableName, ?string $configName = null, array $options = [])
     {
         $this->foreignTableName = $foreignTableName;
         $this->configName = $configName ?? 'foreign_table_where';
+        $this->optionName = $options['optionName'] ?? 'limitToPids';
+        $this->defaultValue = $options['defaultValue'] ?? true;
+        $this->defaultValueRecursive = $options['defaultValueRecursive'] ?? true;
+        $this->defaultValueRecursiveDepth = $options['defaultValueRecursiveDepth'] ?? 10;
     }
     
     /**
@@ -54,9 +89,17 @@ class LimitToPidsOption extends AbstractOption
      */
     public function addDefinition(array &$definition): void
     {
-        $definition['limitToPids'] = [
+        $definition[$this->optionName] = [
             'type' => ['bool', 'int', 'string', 'array'],
-            'default' => true,
+            'default' => $this->defaultValue,
+        ];
+        $definition[$this->optionName . 'Recursive'] = [
+            'type' => 'bool',
+            'default' => $this->defaultValueRecursive,
+        ];
+        $definition[$this->optionName . 'RecursiveDepth'] = [
+            'type' => 'int',
+            'default' => $this->defaultValueRecursiveDepth,
         ];
     }
     
@@ -65,26 +108,38 @@ class LimitToPidsOption extends AbstractOption
      */
     public function applyConfig(array &$config, array $options): void
     {
-        if (empty($options['limitToPids'])) {
+        if (empty($options[$this->optionName])) {
             return;
         }
         
-        $pids = $options['limitToPids'];
+        $pids = $options[$this->optionName];
         if (is_string($pids)) {
             $pids = Arrays::makeFromStringList($pids);
         }
         
+        $operator = '= %s';
+        
         if (is_array($pids) && ! empty($pids)) {
-            $pidSelector = ' IN (###PID_LIST(' . implode(',', $pids) . ')###)';
+            $operator = 'IN (%s)';
+            $selector = '###PID_LIST(' . implode(',', $pids) . ')###';
         } elseif (is_numeric($pids)) {
-            $pidSelector = ' = ' . $pids;
+            $selector = (string)$pids;
         } elseif ($pids === true) {
-            $pidSelector = ' = ###CURRENT_PID###';
+            $selector = '###CURRENT_PID###';
         } else {
             return;
         }
         
-        $config[$this->configName] .= ' AND ' . $this->foreignTableName . '.pid' . $pidSelector;
+        if ($options[$this->optionName . 'Recursive'] ?? false) {
+            $depth = $options[$this->optionName . 'RecursiveDepth'];
+            // The operator must always expect an array
+            $operator = 'IN (%s)';
+            $selector = '###PIDS_RECURSIVE(' . $depth . '|' . $selector . ')###';
+        }
+        
+        $config[$this->configName] .= ' AND ' .
+                                      NamingUtil::resolveTableName($this->foreignTableName) .
+                                      '.pid ' . sprintf($operator, $selector);
     }
     
 }
