@@ -203,4 +203,25 @@ class ExtConfigIconRegistry implements PublicServiceInterface, SingletonInterfac
         
         return $this;
     }
+    
+    /**
+     * Registers an icon with a provided identifier as selectable in the "pages" TCA under the "module" field.
+     * This allows you to create module icons without juggling with the TCA at all.
+     *
+     * @param   string       $tableNameOrType  Either a table name or a type to use as unique flag
+     * @param   string       $identifier       The icon identifier to be registered. The icon file must be registered in the system.
+     * @param   string|null  $label            A label to be shown for the icon. If omitted and $tableNameOrType is a table name,
+     *                                         the table name will be used as label, otherwise a "humanized" version of the type string will be used.
+     *
+     * @return $this
+     */
+    public function registerPageModuleIcon(string $tableNameOrType, string $identifier, ?string $label = null): self
+    {
+        $this->context->getState()->attachToArray(
+            'typo.icon.pages.module',
+            [$tableNameOrType, $identifier, $label]
+        );
+        
+        return $this;
+    }
 }

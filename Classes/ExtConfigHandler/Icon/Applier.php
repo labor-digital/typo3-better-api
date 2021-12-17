@@ -25,8 +25,11 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Icon;
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\Core\ExtLocalConfLoadedEvent;
+use LaborDigital\T3ba\Event\Core\TcaWithoutOverridesLoadedEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
+use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 
 class Applier extends AbstractExtConfigApplier
@@ -39,6 +42,7 @@ class Applier extends AbstractExtConfigApplier
     public static function subscribeToEvents(EventSubscriptionInterface $subscription): void
     {
         $subscription->subscribe(ExtLocalConfLoadedEvent::class, 'onExtConfigLoaded');
+        $subscription->subscribe(TcaWithoutOverridesLoadedEvent::class, 'onTcaLoad', ['priority' => -500]);
     }
     
     public function onExtConfigLoaded(): void
@@ -47,10 +51,15 @@ class Applier extends AbstractExtConfigApplier
         $this->registerAliases();
     }
     
+    public function onTcaLoad(): void
+    {
+        $this->registerPagesModuleIcons();
+    }
+    
     protected function registerIcons(): void
     {
         $iconRegistrationArgs = $this->state->get('typo.icon.icons', []);
-        if (is_array($iconRegistrationArgs)) {
+        if (! empty($iconRegistrationArgs) && is_array($iconRegistrationArgs)) {
             $iconRegistry = $this->getService(IconRegistry::class);
             foreach ($iconRegistrationArgs as $args) {
                 $iconRegistry->registerIcon(...$args);
@@ -61,12 +70,35 @@ class Applier extends AbstractExtConfigApplier
     protected function registerAliases(): void
     {
         $iconAliasArgs = $this->state->get('typo.icon.aliases', []);
-        if (is_array($iconAliasArgs)) {
+        if (! empty($iconAliasArgs) && is_array($iconAliasArgs)) {
             $iconRegistry = $this->getService(IconRegistry::class);
             foreach ($iconAliasArgs as $identifier => $args) {
                 if ($iconRegistry->isRegistered($identifier)) {
                     $iconRegistry->registerAlias(...$args);
                 }
+            }
+        }
+    }
+    
+    protected function registerPagesModuleIcons(): void
+    {
+        $moduleIcons = $this->state->get('typo.icon.pages.module', []);
+        if (! empty($moduleIcons) && is_array($moduleIcons)) {
+            foreach ($moduleIcons as $args) {
+                [$tableNameOrType, $identifier, $label] = $args;
+                
+                $tableNameOrType = NamingUtil::resolveTableName($tableNameOrType);
+                $label = $label
+                         ?? $GLOBALS['TCA'][$tableNameOrType]['ctrl']['title']
+                            ?? Inflector::toHuman($tableNameOrType);
+                
+                $GLOBALS['TCA']['pages']['columns']['module']['config']['items'][] = [
+                    $label,
+                    $tableNameOrType,
+                    $identifier,
+                ];
+                
+                $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['contains-' . $tableNameOrType] = $identifier;
             }
         }
     }
