@@ -78,7 +78,7 @@ class TemplateRenderingService implements SingletonInterface
     
     /**
      * This method allows you to render a mustache or handlebars template into a string.
-     * As engine we use LightNCandy internally with compiled templates for a faster execution of the same variants.
+     * As engine, we use LightNCandy internally with compiled templates for a faster execution of the same variants.
      *
      * @param   string  $template  Either a mustache template as string, or a path like FILE:EXT:...
      * @param   array   $data      The view data to use for the renderer object
