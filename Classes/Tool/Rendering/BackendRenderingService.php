@@ -39,11 +39,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Rendering;
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
+use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\DatabaseRecordListRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldListRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\InlineContentPreviewRenderer;
 use LaborDigital\T3ba\Tool\Rendering\Renderer\RecordTableRenderer;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class BackendRenderingService implements SingletonInterface
@@ -101,6 +103,23 @@ class BackendRenderingService implements SingletonInterface
     public function renderRecordTable($tableName, array $rows, array $fields): string
     {
         return $this->getService(RecordTableRenderer::class)->render($tableName, $rows, $fields);
+    }
+    
+    /**
+     * Returns the "title"-value in record, $row, from table, $table
+     * The field(s) from which the value is taken is determined by the "ctrl"-entries 'label', 'label_alt' and 'label_alt_force'
+     *
+     * @param   string|mixed  $tableName  The name of the database table to render the title for
+     * @param   array         $row        The row to use as data source for the title to render
+     *
+     * @return string
+     */
+    public function renderRecordTitle($tableName, array $row): string
+    {
+        return BackendUtility::getRecordTitle(
+            NamingUtil::resolveTableName($tableName),
+            $row
+        );
     }
     
     /**
