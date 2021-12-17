@@ -814,6 +814,7 @@ trait TcaTableConfigTrait
      *                                  EXT:{{extKey}}/Resources/Public/Icons/icon.svg
      *                                  ./Resources/Public/Icons/icon.svg <- for the current extension
      *                                  NULL -> to remove the current icon
+     *                                  icon-identifier -> The identifier of an existing icon (Must not contain / or \!)
      *
      * @return $this
      *
@@ -830,7 +831,13 @@ trait TcaTableConfigTrait
         $identifier = 'tcarecords-' . $this->getTableName() . '-default';
         $this->config['ctrl']['iconfile'] = $identifier;
         
-        $this->getContext()->cs()->iconRegistry->registerIcon($identifier, $filename);
+        $registry = $this->getContext()->cs()->iconRegistry;
+        
+        if (! str_contains($filename, '/') && ! str_contains($filename, '\\')) {
+            $filename = $registry->getFilenameForIcon($filename);
+        }
+        
+        $registry->registerIcon($identifier, $filename);
         
         return $this;
     }
