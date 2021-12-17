@@ -105,7 +105,8 @@ class TemplateRenderingService implements SingletonInterface
             if (! $this->fsMount->hasFile($templateFile)) {
                 if (! isset($options['flags'])) {
                     $options['flags'] = LightnCandy::FLAG_BESTPERFORMANCE ^ LightnCandy::FLAG_ERROR_EXCEPTION
-                                        ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL;
+                                        ^ LightnCandy::FLAG_PARENT ^ LightnCandy::FLAG_RUNTIMEPARTIAL
+                                        ^ LightnCandy::FLAG_ADVARNAME;
                 }
                 
                 $php = LightnCandy::compile($template, $this->injectMustacheViewHelpers($options));
