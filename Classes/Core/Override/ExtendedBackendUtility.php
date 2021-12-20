@@ -36,6 +36,10 @@ class ExtendedBackendUtility extends T3BaCopyBackendUtility
     {
         $row = parent::getRecord($table, $uid, $fields, $where, $useDeleteClause);
         
+        if (! is_string($table)) {
+            return $row;
+        }
+        
         return TypoEventBus::getInstance()->dispatch(new BackendUtilityRecordFilterEvent(
             $table, (int)$uid, $fields, $where, $useDeleteClause, $row
         ))->getRow();
