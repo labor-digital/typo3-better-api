@@ -273,7 +273,12 @@ trait AssetCollectorTrait
         $this->assetActionList[] = [
             $function,
             $this->context->replaceMarkers(
-                [$identifier, $source, $options['arguments'], ['priority' => $options['priority']]]
+                [
+                    $identifier,
+                    $this->context->resolveFilename($source),
+                    $options['arguments'],
+                    ['priority' => $options['priority']],
+                ]
             ),
         ];
         
