@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.30.1](https://github.com/labor-digital/typo3-better-api/compare/v10.30.0...v10.30.1) (2021-12-20)
+
+
+### Bug Fixes
+
+* **Override\ExtendedBackendUtility:** don't emit BackendUtilityRecordFilterEvent if user has no access to the table ([b0be0ae](https://github.com/labor-digital/typo3-better-api/commit/b0be0aef5f82d07d77a934ee87e8a17ea1d077d9))
+
 ## [10.30.0](https://github.com/labor-digital/typo3-better-api/compare/v10.29.1...v10.30.0) (2021-12-20)
 
 
