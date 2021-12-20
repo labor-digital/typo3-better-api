@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.30.0](https://github.com/labor-digital/typo3-better-api/compare/v10.29.1...v10.30.0) (2021-12-20)
+
+
+### Features
+
+* integrate organization units into page tree ([5ed5740](https://github.com/labor-digital/typo3-better-api/commit/5ed5740ab43d8e899559791330cadd42f17e3eba))
+* **Event:** implement PageLayoutHeaderRenderingEvent ([727d1e3](https://github.com/labor-digital/typo3-better-api/commit/727d1e3fb01d2d860cf309c19098248189a003a3))
+* **ExtConfig\Icon:** implement "pages"."module" TCA icon registration ([ff0ec68](https://github.com/labor-digital/typo3-better-api/commit/ff0ec68ddca39545c90adfba9cb174b4e71c7349))
+* **Rendering\BackendRenderingService:** implement renderRecordTitle method ([de92c79](https://github.com/labor-digital/typo3-better-api/commit/de92c7962a159b2165c2447791e27efb6761e1c5))
+* **Tca\Table:** allow table icon registration through icon identifier ([9bddf7e](https://github.com/labor-digital/typo3-better-api/commit/9bddf7e18fbda234a86731b9f88a16cbe2bd5c19))
+
+
+### Bug Fixes
+
+* **Rendering\TemplateRenderingService:** ensure that mustache helpers allow string variables ([e12141b](https://github.com/labor-digital/typo3-better-api/commit/e12141b12b8dc459c22f3070e3c7df460c8d368a))
+* **Rendering\TemplateRenderingService:** fix a typo in the documentation ([e3c216e](https://github.com/labor-digital/typo3-better-api/commit/e3c216e3a1874558a9546d52f2e868af5f3b545a))
+
 ### [10.29.1](https://github.com/labor-digital/typo3-better-api/compare/v10.29.0...v10.29.1) (2021-12-16)
 
 
