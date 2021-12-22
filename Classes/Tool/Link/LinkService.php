@@ -108,10 +108,16 @@ class LinkService implements SingletonInterface, PublicServiceInterface
         }
         if (! empty($args)) {
             foreach ($args as $k => $v) {
-                if (strpos($k, 'fragment:') === 0) {
+                // @todo this should throw an exception in v11
+                if (! is_string($k)) {
+                    continue;
+                }
+                
+                if (str_starts_with($k, 'fragment:')) {
                     $link = $link->withAddedToFragment(substr($k, 9), $v);
                     continue;
                 }
+                
                 $link = $link->withAddedToArgs($k, $v);
             }
         }
