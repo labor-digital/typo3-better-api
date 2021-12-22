@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.30.2](https://github.com/labor-digital/typo3-better-api/compare/v10.30.1...v10.30.2) (2021-12-22)
+
+
+### Bug Fixes
+
+* **Links:** don't fail with a type-error when link arguments are malformed ([830348d](https://github.com/labor-digital/typo3-better-api/commit/830348da8365db5aca1af6de0430f1545fbb50b6))
+
 ### [10.30.1](https://github.com/labor-digital/typo3-better-api/compare/v10.30.0...v10.30.1) (2021-12-20)
 
 
