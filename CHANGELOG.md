@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.30.4](https://github.com/labor-digital/typo3-better-api/compare/v10.30.3...v10.30.4) (2022-01-13)
+
+
+### Bug Fixes
+
+* **FieldPreset\Relations:** add eval option for select relation fields ([b16cac2](https://github.com/labor-digital/typo3-better-api/commit/b16cac2a52cf720c24201ed1823d3e316e6a0c34))
+
 ### [10.30.3](https://github.com/labor-digital/typo3-better-api/compare/v10.30.2...v10.30.3) (2022-01-13)
 
 
