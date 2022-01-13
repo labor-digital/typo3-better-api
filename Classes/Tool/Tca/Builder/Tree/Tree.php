@@ -382,6 +382,11 @@ class Tree implements NoDiInterface
             if ($pivotNode->isTab() || $pivotNode->isContainer()) {
                 // Move field into container or tab
                 $nodeToAddNodeTo = $pivotNode;
+                // Before or after must change the node to the parent if we move to a container
+                if (($insertMode === Node::INSERT_MODE_AFTER || $insertMode === Node::INSERT_MODE_BEFORE)
+                    && $pivotNode->isContainer()) {
+                    $nodeToAddNodeTo = $pivotNode->getParent();
+                }
             } else {
                 // Move field to other field or line break
                 $nodeToAddNodeTo = $pivotNode->getParent();
