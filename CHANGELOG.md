@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.30.3](https://github.com/labor-digital/typo3-better-api/compare/v10.30.2...v10.30.3) (2022-01-13)
+
+
+### Bug Fixes
+
+* **Tca\MmTableOption:** correctly generate MM_match_fields for mmOpposite usage ([4daccdf](https://github.com/labor-digital/typo3-better-api/commit/4daccdf1a799c9118ff2a090d570ba337365d175))
+* **Tca\Tree:** fix issue when moving a field before/after a container ([54c24d2](https://github.com/labor-digital/typo3-better-api/commit/54c24d2222006554ea8a333748b439137465d809))
+
 ### [10.30.2](https://github.com/labor-digital/typo3-better-api/compare/v10.30.1...v10.30.2) (2021-12-22)
 
 
