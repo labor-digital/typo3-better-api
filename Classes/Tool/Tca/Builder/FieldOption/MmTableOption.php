@@ -130,12 +130,9 @@ class MmTableOption extends AbstractOption
                 ! empty($options['mmTableName']) ? $options['mmTableName'] : $sqlRegistry->makeMmTableName($tableName)
             );
             
-            $config['MM_match_fields'] = [
-                'fieldname' =>
-                    $this->context->isFlexForm()
-                        ? $this->context->getTcaField()->getId() . '->' . $this->context->getField()->getId()
-                        : $this->context->getField()->getId(),
-            ];
+            $config['MM_match_fields']['fieldname'] = $this->context->isFlexForm()
+                ? $this->context->getTcaField()->getId() . '->' . $this->context->getField()->getId()
+                : $this->context->getField()->getId();
         });
         
         
