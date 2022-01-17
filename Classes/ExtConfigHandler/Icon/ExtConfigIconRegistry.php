@@ -110,10 +110,14 @@ class ExtConfigIconRegistry implements PublicServiceInterface, SingletonInterfac
             return $this->registeredIcons[$identifier];
         }
         
+        if (isset($this->icons[$identifier]) && ! $this->iconRegistry->isRegistered($identifier)) {
+            $this->iconRegistry->registerIcon(...$this->icons[$identifier]);
+        }
+        
         if ($this->iconRegistry->isRegistered($identifier)) {
             $config = $this->iconRegistry->getIconConfigurationByIdentifier($identifier);
             
-            return $config['source'] ?? $identifier;
+            return $config['source'] ?? $config['options']['source'] ?? $identifier;
         }
         
         return $identifier;
