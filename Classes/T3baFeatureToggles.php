@@ -70,4 +70,11 @@ interface T3baFeatureToggles
      */
     public const EXT_CONFIG_V11_SITE_BASED_CONFIG = 't3ba.ExtConfig.V11SiteBasedLoadOrder';
     
+    /**
+     * Beginning with V11 the name of dynamic TCA tables will be changed to be generically used
+     * for multiple types. This will avoid a huge number of palettes with the same content.
+     *
+     * NOTE: Toggle will be removed in v11
+     */
+    public const TCA_V11_REUSE_DYNAMIC_PALETTES = 't3ba.TCA.Dumper.V11ReuseDynamicPalettes';
 }

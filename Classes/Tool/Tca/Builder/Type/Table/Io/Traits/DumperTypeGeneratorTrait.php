@@ -23,7 +23,10 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\Traits;
 
 
+use LaborDigital\T3ba\T3baFeatureToggles;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaTable;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 
 trait DumperTypeGeneratorTrait
 {
@@ -149,10 +152,21 @@ trait DumperTypeGeneratorTrait
             }
             
             // Create a new version of this palette for the type
-            $newK = $typeName . '-' . $k;
-            $palettes[$newK] = $p;
-            $palettes[$newK]['showitem'] = $showitem;
-            $palettes[$newK]['t3baOriginalId'] = $k;
+            if (TypoContext::getInstance()->config()->isFeatureEnabled(T3baFeatureToggles::TCA_V11_REUSE_DYNAMIC_PALETTES)) {
+                // Reuse dynamic palettes to avoid a huge number of variants with the same content
+                ksort($p);
+                $newK = $k . '-dyn-' . md5($showitem . '-' . SerializerUtil::serializeJson($p));
+                if (! isset($palettes[$newK])) {
+                    $palettes[$newK] = $p;
+                    $palettes[$newK]['t3baOriginalId'] = $k;
+                    $palettes[$newK]['showitem'] = $showitem;
+                }
+            } else {
+                $newK = $typeName . '-' . $k;
+                $palettes[$newK] = $p;
+                $palettes[$newK]['showitem'] = $showitem;
+                $palettes[$newK]['t3baOriginalId'] = $k;
+            }
             
             // Update type's show item...
             // Yay for string manipulation \o/...
