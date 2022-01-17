@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.31.0](https://github.com/labor-digital/typo3-better-api/compare/v10.30.5...v10.31.0) (2022-01-17)
+
+
+### Features
+
+* **Tca\Table:** implement v11 feature to reuse dynamic palettes when possible ([6e9c7d5](https://github.com/labor-digital/typo3-better-api/commit/6e9c7d5c37fc4b73c7582cdfa40daf078f2b4314))
+
+
+### Bug Fixes
+
+* **Tca\Table:** ensure dynamic palettes retain their actual id when rehydrated ([9db3841](https://github.com/labor-digital/typo3-better-api/commit/9db384161337a3324492da1faba9f255f4a0525e))
+* **Tca\Type:** make generation of line break ids independent of microtime ([581b2f0](https://github.com/labor-digital/typo3-better-api/commit/581b2f0566403509f77755ce3d475887efb5b035))
+
 ### [10.30.5](https://github.com/labor-digital/typo3-better-api/compare/v10.30.4...v10.30.5) (2022-01-17)
 
 
