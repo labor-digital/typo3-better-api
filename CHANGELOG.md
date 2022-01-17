@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.30.5](https://github.com/labor-digital/typo3-better-api/compare/v10.30.4...v10.30.5) (2022-01-17)
+
+
+### Bug Fixes
+
+* **ExtConfig\Icon:** ensure configured, but not registered icon files are loaded in getFilenameForIcon ([e778018](https://github.com/labor-digital/typo3-better-api/commit/e7780180924764183299a394479c316f12e1e58a))
+
 ### [10.30.4](https://github.com/labor-digital/typo3-better-api/compare/v10.30.3...v10.30.4) (2022-01-13)
 
 
