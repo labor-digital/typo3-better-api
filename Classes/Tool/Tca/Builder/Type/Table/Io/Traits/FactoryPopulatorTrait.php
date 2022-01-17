@@ -68,9 +68,21 @@ trait FactoryPopulatorTrait
                         $id = end($layoutMeta);
                         
                         // Ignore the field if we don't have a configuration for it
-                        // or the palette is already loaded
                         $config = $palettes[$id] ?? null;
-                        if (empty($config) || empty($config['showitem']) || $type->hasPalette($id)) {
+                        if (empty($config) || empty($config['showitem'])) {
+                            break;
+                        }
+                        
+                        // When the type table was dumped for a specific type, we have to re-map the
+                        // original id, to avoid naming incompatibilities later on.
+                        if (is_string($config['t3baOriginalId'] ?? null)) {
+                            $id = $config['t3baOriginalId'];
+                            $layoutMeta[key($layoutMeta)] = $id;
+                        }
+                        unset($config['t3baOriginalId']);
+                        
+                        // Ignore if the palette is already loaded
+                        if ($type->hasPalette($id)) {
                             break;
                         }
                         

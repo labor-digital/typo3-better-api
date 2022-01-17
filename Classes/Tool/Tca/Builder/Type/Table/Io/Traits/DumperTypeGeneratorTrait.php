@@ -152,6 +152,7 @@ trait DumperTypeGeneratorTrait
             $newK = $typeName . '-' . $k;
             $palettes[$newK] = $p;
             $palettes[$newK]['showitem'] = $showitem;
+            $palettes[$newK]['t3baOriginalId'] = $k;
             
             // Update type's show item...
             // Yay for string manipulation \o/...
