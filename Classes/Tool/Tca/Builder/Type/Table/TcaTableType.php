@@ -33,6 +33,7 @@ use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Io\TypeFactory;
 use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\Traits\TcaDataHookCollectorAddonTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
+use TYPO3\CMS\Core\Utility\StringUtility;
 
 class TcaTableType extends AbstractType
 {
@@ -229,7 +230,7 @@ class TcaTableType extends AbstractType
      */
     public function addLineBreak($position = null): string
     {
-        $id = 'lb-' . md5((string)microtime(true));
+        $id = StringUtility::getUniqueId('lb-');
         
         $el = $this->findOrCreateChild($id, Node::TYPE_NL, function ($node) {
             return ($this->context->cs()->di->makeInstance(
