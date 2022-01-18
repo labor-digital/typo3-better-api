@@ -46,12 +46,42 @@ class SiteSimulationPass implements SimulatorPassInterface
      */
     public function requireSimulation(array $options, array &$storage): bool
     {
-        return $options['site'] !== null
-               && $options['pid'] === null
-               && (
-                   ! $this->getTypoContext()->site()->hasCurrent()
-                   || $this->getTypoContext()->site()->getCurrent()->getIdentifier() !== $options['site']
-               );
+        $hasCurrentSite = $this->getTypoContext()->site()->hasCurrent();
+        $requiresSite = $options['site'] !== null;
+        $requiresPid = ($options['pid'] ?? null) !== null;
+        
+        if (
+            // If a site is required...
+            $requiresSite
+            && (
+                // ... and a current site is available, but does not match the required site...
+                (
+                    $hasCurrentSite
+                    && $this->getTypoContext()->site()->getCurrent()->getIdentifier() !== $options['site']
+                )
+                // ... or there is currently no site...
+                || ! $hasCurrentSite
+            )
+        ) {
+            // ...simulate the required site
+            return true;
+        }
+        
+        if (
+            // If a pid is required...
+            $requiresPid
+            // ... but NOT a site...
+            && ! $requiresSite
+            // ... but there is no current site...
+            && ! $hasCurrentSite
+        ) {
+            // ... simulate the required site based on the given pid
+            $storage['pid'] = $options['pid'];
+            
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -63,7 +93,12 @@ class SiteSimulationPass implements SimulatorPassInterface
         $storage['site'] = $this->getTypoContext()->config()->getRequestAttribute('site');
         
         // Find the given site instance and inject it into the request
-        $site = $this->getTypoContext()->site()->get($options['site']);
+        if (isset($storage['pid'])) {
+            $site = $this->getTypoContext()->site()->getForPid($storage['pid']);
+        } else {
+            $site = $this->getTypoContext()->site()->get($options['site']);
+        }
+        
         $this->getTypoContext()->config()->setRequestAttribute('site', $site);
     }
     
