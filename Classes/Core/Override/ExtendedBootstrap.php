@@ -42,6 +42,7 @@ use Composer\Autoload\ClassLoader;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Event\BootstrapFailsafeDefinitionEvent;
 use LaborDigital\T3ba\Event\BootstrapInitializesErrorHandlingEvent;
+use LaborDigital\T3ba\Event\Core\BasicBootDoneEvent;
 use LaborDigital\T3ba\Event\Core\PackageManagerCreatedEvent;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -50,6 +51,8 @@ use TYPO3\CMS\Core\Package\PackageManager;
 
 class ExtendedBootstrap extends T3BaCopyBootstrap
 {
+    protected static $emitDoneEvent = false;
+    
     /**
      * @inheritDoc
      */
@@ -58,7 +61,11 @@ class ExtendedBootstrap extends T3BaCopyBootstrap
         TypoEventBus::getInstance()
                     ->dispatch(new BootstrapFailsafeDefinitionEvent($failsafe));
         
-        return parent::init($classLoader, $failsafe);
+        static::$emitDoneEvent = true;
+        $container = parent::init($classLoader, $failsafe);
+        static::$emitDoneEvent = false;
+        
+        return $container;
     }
     
     /**
@@ -73,6 +80,19 @@ class ExtendedBootstrap extends T3BaCopyBootstrap
         
         return $packageManager;
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function loadBaseTca(bool $allowCaching = true, FrontendInterface $coreCache = null)
+    {
+        if (self::$emitDoneEvent) {
+            TypoEventBus::getInstance()->dispatch(new BasicBootDoneEvent());
+        }
+        
+        parent::loadBaseTca($allowCaching, $coreCache);
+    }
+    
     
     /**
      * @inheritDoc
