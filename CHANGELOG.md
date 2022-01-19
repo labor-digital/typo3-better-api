@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.32.0](https://github.com/labor-digital/typo3-better-api/compare/v10.31.0...v10.32.0) (2022-01-19)
+
+
+### Features
+
+* **Event:** add new BasicBootDoneEvent ([97537a6](https://github.com/labor-digital/typo3-better-api/commit/97537a64a141ee54619cbf2beba88f42968a4439))
+* **ExtConfig:** implement usage of merge options when combining config states ([f140d68](https://github.com/labor-digital/typo3-better-api/commit/f140d68e7c667591b163c444750445ff073728e6))
+
+
+### Bug Fixes
+
+* **ExtConfig:** ensure config state consistency when TCA is loaded multiple times ([b996e6a](https://github.com/labor-digital/typo3-better-api/commit/b996e6a09ddf581dee6edaaf3319bc8f0ef81a7b))
+* update neunerlei/configuration to min-version 2.7.0 ([95c998c](https://github.com/labor-digital/typo3-better-api/commit/95c998c2b0715f408e4cd74d21e445c529b9160f))
+* **SiteSimulationPass:** adjust simulation detection to create a site if none exists ([ba996fe](https://github.com/labor-digital/typo3-better-api/commit/ba996feb3f589a9a51c7df390c068ba7a2f0bd0b))
+
 ## [10.31.0](https://github.com/labor-digital/typo3-better-api/compare/v10.30.5...v10.31.0) (2022-01-17)
 
 
