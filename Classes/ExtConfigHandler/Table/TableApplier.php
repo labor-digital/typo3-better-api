@@ -32,7 +32,7 @@ use LaborDigital\T3ba\Event\Core\ExtTablesLoadedEvent;
 use LaborDigital\T3ba\Event\Core\TcaCompletelyLoadedEvent;
 use LaborDigital\T3ba\Event\Core\TcaWithoutOverridesLoadedEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
-use LaborDigital\T3ba\ExtConfig\ExtConfigService;
+use LaborDigital\T3ba\ExtConfig\Loader\MainLoader as ExtConfigLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader as ContentTypeLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\Loader as TableLoader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\PostProcessor\TcaPostProcessor;
@@ -135,8 +135,9 @@ class TableApplier extends AbstractExtConfigApplier
     public function onTcaLoad(): void
     {
         $this->runAndCacheTca(__FUNCTION__, function () {
-            $this->getService(ContentTypeLoader::class)->provideDefaultTcaType();
-            $this->getService(TableLoader::class)->loadTables();
+            $this->makeInstance(ExtConfigLoader::class)->restoreGlobalStateWithoutTcaExtensions();
+            $this->makeInstance(ContentTypeLoader::class)->provideDefaultTcaType();
+            $this->makeInstance(TableLoader::class)->loadTables();
         });
     }
     
@@ -146,11 +147,11 @@ class TableApplier extends AbstractExtConfigApplier
     public function onTcaLoadOverride(): void
     {
         $this->runAndCacheTca(__FUNCTION__, function () {
-            $this->getService(ContentTypeLoader::class)->load();
-            $this->getService(TableLoader::class)->loadTableOverrides();
+            $this->makeInstance(ContentTypeLoader::class)->load();
+            $this->makeInstance(TableLoader::class)->loadTableOverrides();
             
             $meta = $this->makeInstance(TcaPostProcessor::class)->process($this->state);
-            $this->getService(ExtConfigService::class)->persistState($this->state);
+            $this->makeInstance(ExtConfigLoader::class)->persistGlobalStateWithTcaExtension();
             
             // @todo remove this in v11
             $this->cache->set(static::TCA_META_CACHE_KEY, $meta);
@@ -160,7 +161,7 @@ class TableApplier extends AbstractExtConfigApplier
             
             if ($this->reloadExtBaseMapping) {
                 $this->reloadExtBaseMapping = false;
-                $this->getService(PersistenceConfigReloader::class)->reload();
+                $this->makeInstance(PersistenceConfigReloader::class)->reload();
             }
         });
     }

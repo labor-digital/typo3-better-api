@@ -25,8 +25,11 @@ namespace LaborDigital\T3ba\ExtConfig\Loader;
 use Closure;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\BasicBootDoneEvent;
 use LaborDigital\T3ba\Event\ExtConfig\MainExtConfigGeneratedEvent;
 use LaborDigital\T3ba\Event\ExtConfig\SiteBasedExtConfigGeneratedEvent;
+use LaborDigital\T3ba\ExtConfig\Adapter\ConfigStateAdapter;
+use LaborDigital\T3ba\ExtConfig\Adapter\ExtensionManagementUtilityAdapter;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
@@ -35,6 +38,7 @@ use LaborDigital\T3ba\ExtConfig\SiteBased\ConfigFinder;
 use LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext;
 use LaborDigital\T3ba\ExtConfigHandler\Core\Handler;
 use LaborDigital\T3ba\T3baFeatureToggles;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\Event\BeforeConfigLoadEvent;
@@ -42,13 +46,20 @@ use Neunerlei\Configuration\Event\BeforeStateCachingEvent;
 use Neunerlei\Configuration\Finder\FilteredHandlerFinder;
 use Neunerlei\Configuration\State\ConfigState;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
 
-class MainLoader
+class MainLoader implements LoggerAwareInterface, SingletonInterface
 {
     use TypoContextAwareTrait;
     use ContainerAwareTrait;
+    use LoggerAwareTrait;
+    
+    protected const STATE_CACHE_KEY = 't3ba.config.state';
+    protected const STATE_CACHE_KEY_WITH_TCA_EXTENSION = 't3ba.config.state.tca';
     
     /**
      * @var \LaborDigital\T3ba\ExtConfig\ExtConfigService
@@ -81,56 +92,155 @@ class MainLoader
      */
     public function load(): void
     {
-        $state = $this->getService(ConfigState::class);
+        $state = $this->makeInstance(ConfigState::class);
         
-        $loader = $this->extConfigService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
-        
-        $loader->setEventDispatcher(
-            $this->makeEventDispatcherProxy(
-                function (object $event) {
-                    if ($event instanceof BeforeStateCachingEvent) {
-                        $event->getState()->set(ExtConfigService::PERSISTABLE_STATE_PATH, $event->getCacheKey());
-                        
-                        $this->loadSiteBasedConfig($event->getState());
-                        
-                        $configContext = $event->getLoaderContext()->configContext;
-                        if ($configContext instanceof ExtConfigContext) {
-                            $this->eventBus->dispatch(
-                                new MainExtConfigGeneratedEvent($configContext, $event->getState())
-                            );
+        $cache = $this->extConfigService->getFs()->getCache();
+        $hasStateCache = $cache->has(static::STATE_CACHE_KEY);
+        $hasStateCacheWithTcaExtension = $cache->has(static::STATE_CACHE_KEY_WITH_TCA_EXTENSION);
+        if ($hasStateCache && $hasStateCacheWithTcaExtension) {
+            // Load the cached state with TCA extensions and set it as state object
+            ConfigStateAdapter::resetState($state, $this->getStoredState());
+        } else {
+            if ($hasStateCache && ! $hasStateCacheWithTcaExtension) {
+                // There is something out of sync here, this should theoretically never happen,
+                // however, to fix this, we will delete the TYPO3 TCA cache and force it to rebuild
+                $this->eventBus->addListener(BasicBootDoneEvent::class, function () {
+                    ExtensionManagementUtilityAdapter::clearBaseTcaCache();
+                });
+            }
+            
+            // @todo the loader generation should be extracted into a "LoaderFactory" class
+            $loader = $this->extConfigService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
+            
+            // As we do cache the state content externally, we don't need the loader to do that for us, too.
+            $loader->setCache(null);
+            
+            $loader->setEventDispatcher(
+                $this->makeEventDispatcherProxy(
+                    function (object $event) {
+                        if ($event instanceof BeforeStateCachingEvent) {
+                            $event->getState()->set(ExtConfigService::PERSISTABLE_STATE_PATH, $event->getCacheKey());
+                            
+                            $this->loadSiteBasedConfig($event->getState());
+                            
+                            $configContext = $event->getLoaderContext()->configContext;
+                            if ($configContext instanceof ExtConfigContext) {
+                                $this->eventBus->dispatch(
+                                    new MainExtConfigGeneratedEvent($configContext, $event->getState())
+                                );
+                            }
                         }
                     }
-                }
-            )
-        );
-        
-        // @todo this can be removed in v11, in order to set the EXT_CONFIG_V11_SITE_BASED_CONFIG
-        // at the first possible location, I need to inject the handler manually.
-        // This allows all other site-based handler to participate on the early access program,
-        // without additional configuration
-        $loader->registerHandler($this->makeInstance(Handler::class));
-        
-        $loader->setHandlerFinder(
-            $this->makeInstance(
-                FilteredHandlerFinder:: class,
-                [
-                    [StandAloneHandlerInterface::class],
-                    [],
-                ]
-            )
-        );
-        
-        $loader->load(false, $state);
+                )
+            );
+            
+            // @todo this can be removed in v11, in order to set the EXT_CONFIG_V11_SITE_BASED_CONFIG
+            // at the first possible location, I need to inject the handler manually.
+            // This allows all other site-based handler to participate on the early access program,
+            // without additional configuration
+            $loader->registerHandler($this->makeInstance(Handler::class));
+            
+            $loader->setHandlerFinder(
+                $this->makeInstance(
+                    FilteredHandlerFinder:: class,
+                    [
+                        [StandAloneHandlerInterface::class],
+                        [],
+                    ]
+                )
+            );
+            
+            $loader->load(false, $state);
+            $this->storeState(static::STATE_CACHE_KEY, $state);
+        }
         
         // Ensure the config context is in sync with the global state
         $configContext = $this->extConfigService->getContext();
         $configContext->initialize($configContext->getLoaderContext(), $state);
         
-        // Merge the globals into the globals and then remove them from the state (save a bit of memory)
+        // Merge the globals into the globals
         $GLOBALS = Arrays::merge($GLOBALS, $state->get('typo.globals', []), 'nn');
         
         // Reset the log manager so our log configurations are applied correctly
         $this->getContainer()->get(LogManager::class)->reset();
+    }
+    
+    /**
+     * Internal helper to restore the config state before the TCA extensions were applied.
+     * This is done in the TableApplier class.
+     *
+     * @return void
+     * @internal Currently a method in testing, you should not rely on it, yet.
+     * @todo     if this logic works in v12 remove the internal annotation
+     * @see      \LaborDigital\T3ba\ExtConfigHandler\Table\TableApplier::onTcaLoad()
+     */
+    public function restoreGlobalStateWithoutTcaExtensions(): void
+    {
+        ConfigStateAdapter::resetState(
+            $this->makeInstance(ConfigState::class),
+            $this->getStoredState(false)
+        );
+    }
+    
+    /**
+     * Internal helper to persist the config state after the TCA extensions were applied.
+     * This is done in the TableApplier class.
+     *
+     * @return void
+     * @internal Currently a method in testing, you should not rely on it, yet.
+     * @todo     if this logic works in v12 remove the internal annotation
+     * @see      \LaborDigital\T3ba\ExtConfigHandler\Table\TableApplier::onTcaLoadOverride()
+     */
+    public function persistGlobalStateWithTcaExtension(): void
+    {
+        $this->storeState(static::STATE_CACHE_KEY_WITH_TCA_EXTENSION, $this->makeInstance(ConfigState::class));
+    }
+    
+    /**
+     * Returns a NEW config state instance directly hydrated from the cached value.
+     * This is NOT the global state, stored in the di container!
+     * You can either require the state after the main loader was executed, or with the included TCA extension,
+     * after the TCA tables were loaded
+     *
+     * @param   bool  $withTcaExtension
+     *
+     * @return \Neunerlei\Configuration\State\ConfigState
+     * @internal Currently a method in testing, you should not rely on it, yet.
+     * @todo     if this logic works in v12 remove the internal annotation
+     */
+    protected function getStoredState(bool $withTcaExtension = true): ConfigState
+    {
+        $cache = $this->extConfigService->getFs()->getCache();
+        $cacheKey = $withTcaExtension ? static::STATE_CACHE_KEY_WITH_TCA_EXTENSION : static::STATE_CACHE_KEY;
+        
+        if (! $cache->has($cacheKey)) {
+            $this->logger->emergency('Requesting stored state, but the cache key: "' . $cacheKey . '" does not exist! Falling back to global state!');
+            
+            return clone $this->makeInstance(ConfigState::class);
+        }
+        
+        return $this->makeInstance(
+            ConfigState::class,
+            [
+                SerializerUtil::unserializeJson(
+                    $cache->get($cacheKey)
+                ),
+            ]
+        );
+    }
+    
+    /**
+     * Internal helper to persist a state object into the cache
+     *
+     * @param   string                                      $cacheKey
+     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     *
+     * @return void
+     */
+    protected function storeState(string $cacheKey, ConfigState $state): void
+    {
+        $cache = $this->extConfigService->getFs()->getCache();
+        $cache->set($cacheKey, SerializerUtil::serializeJson($state->getAll()));
     }
     
     /**
