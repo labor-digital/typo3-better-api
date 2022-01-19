@@ -152,12 +152,13 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
         $data = $siteState->getAll();
         
         // Special handling for the "root" node -> this allows to configure non-site-based configuration
+        $mergeOptions = $this->configContext->getExtConfigService()->getStateMergeOptions();
         if (isset($data['root']) && is_array($data['root'])) {
-            $state->importFrom(new ConfigState($data['root']));
+            $state->importFrom(new ConfigState($data['root']), $mergeOptions);
             unset($data['root']);
         }
         
-        $state->mergeIntoArray('typo.site.' . $identifier, $data);
+        $state->importFrom(new ConfigState(['typo' => ['site' => [$identifier => $data]]]), $mergeOptions);
     }
     
     /**

@@ -28,6 +28,7 @@ use LaborDigital\T3ba\Core\VarFs\Mount;
 use LaborDigital\T3ba\Core\VarFs\VarFs;
 use LaborDigital\T3ba\Event\ConfigLoaderFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
+use LaborDigital\T3ba\ExtConfig\Loader\Factory\MainLoader\MergeOptionFinder\MergeOptionHandler;
 use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Configuration\Loader\Loader;
@@ -44,19 +45,36 @@ class ExtConfigService
     public const MAIN_LOADER_KEY = 'Main';
     /** @deprecated will be removed in v11, where siteBased config is loaded along-side the MAIN_LOADER_KEY */
     public const SITE_BASED_LOADER_KEY = 'SiteBased';
+    /** @deprecated will be removed in v11 */
     public const EVENT_BUS_LOADER_KEY = 'EventBus';
     public const DI_BUILD_LOADER_KEY = 'DiBuild';
     public const DI_RUN_LOADER_KEY = 'DiRun';
     
+    /** @deprecated will be removed without replacement in v11 */
     public const PERSISTABLE_STATE_PATH = 't3ba.stateCacheKey';
     
     /**
      * The list of default handler locations to traverse.
      * This is a public "api" and can be extended if you need to
+     *
+     * @var array
      */
     public static $handlerLocations
         = [
             'Classes/ExtConfigHandler/**',
+        ];
+    
+    /**
+     * The options that define how config states should be merged into one-another
+     * This is a public "api" and can be extended if you need to
+     *
+     * @var array
+     */
+    public static $stateMergeOptions
+        = [
+            'mergeNumeric' => false,
+            'strictNumericMerge' => true,
+            'allowRemoval' => true,
         ];
     
     /**
@@ -202,6 +220,7 @@ class ExtConfigService
      */
     public function makeLoader(string $type): Loader
     {
+        // @todo the loader generation should be extracted into a "LoaderFactory" class
         $appContext = Environment::getContext();
         $loader = GeneralUtility::makeInstance(Loader::class, $type, (string)$appContext);
         $loader->setEventDispatcher($this->eventBus);
@@ -211,6 +230,7 @@ class ExtConfigService
         
         if ($type === static::MAIN_LOADER_KEY) {
             $typoContext = $this->context->getTypoContext();
+            $loader->setCacheMergeOptions($this->getStateMergeOptions());
             $loader->setConfigFinder(
                 $typoContext->di()->makeInstance(
                     ExtConfigConfigFinder::class,
@@ -264,6 +284,7 @@ class ExtConfigService
      * @param   \Neunerlei\Configuration\State\ConfigState  $state
      *
      * @throws \LaborDigital\T3ba\ExtConfig\UnpersistableCacheStateException
+     * @deprecated will be removed without replacement in v11
      */
     public function persistState(ConfigState $state): void
     {
@@ -360,6 +381,18 @@ class ExtConfigService
         $this->classNamespaceCache = [];
         $this->rootLocations = null;
         $this->loaders = [];
+    }
+    
+    /**
+     * Returns the options for merging the config state when site-based and cached configs are processed
+     *
+     * @return array
+     * @see Loader::setCacheMergeOptions()
+     * @see ConfigState::importFrom()
+     */
+    public function getStateMergeOptions(): array
+    {
+        return static::$stateMergeOptions;
     }
     
     /**
