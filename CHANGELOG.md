@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.32.1](https://github.com/labor-digital/typo3-better-api/compare/v10.32.0...v10.32.1) (2022-01-21)
+
+
+### Bug Fixes
+
+* **Link:** provide pageRenderer clone when building frontend links in the backend ([47c967c](https://github.com/labor-digital/typo3-better-api/commit/47c967ce5a9c84e7eecad3f0138b89efec7961bf))
+
 ## [10.32.0](https://github.com/labor-digital/typo3-better-api/compare/v10.31.0...v10.32.0) (2022-01-19)
 
 
