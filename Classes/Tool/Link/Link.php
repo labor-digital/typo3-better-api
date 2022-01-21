@@ -44,7 +44,9 @@ use LaborDigital\T3ba\Tool\Link\Adapter\CacheHashCalculatorAdapter;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
@@ -940,6 +942,7 @@ class Link implements NoDiInterface
      *
      * @return string
      * @throws \LaborDigital\T3ba\Tool\Link\LinkException
+     * @todo this should be extracted into it's own builder class
      */
     public function build(array $options = []): string
     {
@@ -1066,64 +1069,79 @@ class Link implements NoDiInterface
                                     . implode(', ', $missingArgs));
         }
         
-        // Execute uriFor if required
-        if ($useUriFor) {
-            // Do some adjustments if we are in cli mode, because typo3 checks if we are in frontend mode
-            if (! $typoContext->env()->isFrontend()) {
-                // Automatically find the plugin name if there is none
-                $plugin = $request->getPluginName();
-                if (empty($plugin)) {
-                    $plugin = $this->context->getExtensionService()->getPluginNameByAction(
-                        $request->getControllerExtensionName(),
-                        $request->getControllerName(),
-                        $request->getControllerActionName()
-                    );
-                    $request->setPluginName($plugin);
-                }
-                
-                // Automatically find pid if none is given
-                if ($ub->getTargetPageUid() === null) {
-                    $ub->setTargetPageUid(
-                        $this->context->getExtensionService()->getTargetPidByPlugin(
-                            $request->getControllerExtensionName(),
-                            $request->getPluginName()
-                        )
-                    );
-                }
+        // While generating links for the frontend, T3 tends to taint the page renderer instance
+        // while the user is in the backend (for example setting the language to "default").
+        // Therefore, we will save the page renderer and temporarily provide a clone for the link generation.
+        try {
+            if ($typoContext->env()->isBackend()) {
+                $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+                GeneralUtility::setSingletonInstance(PageRenderer::class, clone $pageRenderer);
             }
             
-            // Note: Yes, we COULD use this output, but in cli and other edge cases the result will be wrong,
-            // so we go the extra mile and let the build process run twice to be sure everything works smoothly
-            $ub->uriFor(
-                empty(($tmp = $request->getControllerActionName())) ? null : $tmp,
-                $this->args,
-                empty(($tmp = $request->getControllerName())) ? null : $tmp,
-                empty(($tmp = $request->getControllerExtensionName())) ? null : $tmp,
-                empty(($tmp = $request->getPluginName())) ? null : $tmp
-            );
-        } else {
-            // Set arguments
-            $ub->setArguments($this->args);
-        }
-        
-        // Render the uri
-        if ($options['backend'] && $typoContext->env()->isBackend()) {
-            $uri = $ub->buildBackendUri();
-            if ($typoContext->env()->isCli()) {
-                $uri = preg_replace('~^(.*?)/index.php~',
-                    $typoContext->request()->getHost() . '/' . TYPO3_mainDir . 'index.php',
-                    $uri
+            // Execute uriFor if required
+            if ($useUriFor) {
+                // Do some adjustments if we are in cli mode, because typo3 checks if we are in frontend mode
+                if (! $typoContext->env()->isFrontend()) {
+                    // Automatically find the plugin name if there is none
+                    $plugin = $request->getPluginName();
+                    if (empty($plugin)) {
+                        $plugin = $this->context->getExtensionService()->getPluginNameByAction(
+                            $request->getControllerExtensionName(),
+                            $request->getControllerName(),
+                            $request->getControllerActionName()
+                        );
+                        $request->setPluginName($plugin);
+                    }
+                    
+                    // Automatically find pid if none is given
+                    if ($ub->getTargetPageUid() === null) {
+                        $ub->setTargetPageUid(
+                            $this->context->getExtensionService()->getTargetPidByPlugin(
+                                $request->getControllerExtensionName(),
+                                $request->getPluginName()
+                            )
+                        );
+                    }
+                }
+                
+                // Note: Yes, we COULD use this output, but in cli and other edge cases the result will be wrong,
+                // so we go the extra mile and let the build process run twice to be sure everything works smoothly
+                $ub->uriFor(
+                    empty(($tmp = $request->getControllerActionName())) ? null : $tmp,
+                    $this->args,
+                    empty(($tmp = $request->getControllerName())) ? null : $tmp,
+                    empty(($tmp = $request->getControllerExtensionName())) ? null : $tmp,
+                    empty(($tmp = $request->getPluginName())) ? null : $tmp
                 );
+            } else {
+                // Set arguments
+                $ub->setArguments($this->args);
             }
-        } elseif (! empty($this->cHashExcludedArgs)) {
-            // Simulate the ignored cHash fields
-            $uri = CacheHashCalculatorAdapter::runWithConfiguration([
-                'excludedParameters' => $this->cHashExcludedArgs,
-            ], function () use ($ub) {
-                return $ub->buildFrontendUri();
-            });
-        } else {
-            $uri = $ub->buildFrontendUri();
+            
+            // Render the uri
+            if ($options['backend'] && $typoContext->env()->isBackend()) {
+                $uri = $ub->buildBackendUri();
+                if ($typoContext->env()->isCli()) {
+                    $uri = preg_replace('~^(.*?)/index.php~',
+                        $typoContext->request()->getHost() . '/' . TYPO3_mainDir . 'index.php',
+                        $uri
+                    );
+                }
+            } elseif (! empty($this->cHashExcludedArgs)) {
+                // Simulate the ignored cHash fields
+                $uri = CacheHashCalculatorAdapter::runWithConfiguration([
+                    'excludedParameters' => $this->cHashExcludedArgs,
+                ], function () use ($ub) {
+                    return $ub->buildFrontendUri();
+                });
+            } else {
+                $uri = $ub->buildFrontendUri();
+            }
+            
+        } finally {
+            if (isset($pageRenderer)) {
+                GeneralUtility::setSingletonInstance(PageRenderer::class, $pageRenderer);
+            }
         }
         
         // Build the fragment / anchor
