@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.32.2](https://github.com/labor-digital/typo3-better-api/compare/v10.32.1...v10.32.2) (2022-01-24)
+
+
+### Bug Fixes
+
+* **TypoContext:** ensure that the parsed body is an array ([3dcf804](https://github.com/labor-digital/typo3-better-api/commit/3dcf804cf1e95adb5446a00ae6084e361b475c5b))
+
 ### [10.32.1](https://github.com/labor-digital/typo3-better-api/compare/v10.32.0...v10.32.1) (2022-01-21)
 
 
