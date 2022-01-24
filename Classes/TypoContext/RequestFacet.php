@@ -155,11 +155,11 @@ class RequestFacet implements FacetInterface
     {
         $params = $_POST;
         $request = $this->getRootRequest();
-        if (! is_array($params)) {
-            $params = [];
-        }
         if ($request !== null) {
             $params = $request->getParsedBody();
+        }
+        if (! is_array($params)) {
+            return false;
         }
         
         return Arrays::hasPath($params, $path);
