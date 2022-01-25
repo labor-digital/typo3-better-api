@@ -88,8 +88,8 @@ if (! function_exists('dbgQuery')) {
                 $result = $dQuery->execute()->fetchAllAssociative();
                 $first = empty($result) ? null : reset($result);
             } else {
-                $first = $query->execute()->getFirst();
-                $result = $query->execute(true);
+                $result = (clone $query)->execute(true);
+                $first = (clone $query)->execute()->getFirst();
             }
         } catch (Exception $e) {
             $exception = $e->getMessage();
