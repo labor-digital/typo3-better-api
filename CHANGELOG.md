@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.32.3](https://github.com/labor-digital/typo3-better-api/compare/v10.32.2...v10.32.3) (2022-01-25)
+
+
+### Bug Fixes
+
+* **Database:** fix issue where only a single result was shown in dbgQuery ([40c0844](https://github.com/labor-digital/typo3-better-api/commit/40c0844f50e8bca2d3f7ccf4778b015de5c779a6))
+
 ### [10.32.2](https://github.com/labor-digital/typo3-better-api/compare/v10.32.1...v10.32.2) (2022-01-24)
 
 
