@@ -182,6 +182,25 @@ class MmTableOption extends AbstractOption
                     return;
                 }
                 
+                // Define usage of "foreign_table" in the target table
+                $opposite = $config['columns'][$targetField]['config']['MM_oppositeUsage'] ?? null;
+                $hasOpposite = ! empty($opposite) && is_array($opposite);
+                $canHaveForeignTable = ! $hasOpposite || (count($opposite ?? []) === 1 && key($opposite) === $localTable);
+                
+                // If the target table can have a foreign_table and has none, we set it to our local table
+                if ($canHaveForeignTable && ! isset($config['columns'][$targetField]['config']['foreign_table'])) {
+                    $config['t3ba']['foreign_table'] = $localTable;
+                    $config['columns'][$targetField]['config']['foreign_table'] = $localTable;
+                }
+                
+                // If we can't determine a single foreign table, and currently one was set by this script
+                // we drop the foreign_table definition from the config...
+                if (! $canHaveForeignTable
+                    && ($config['t3ba']['foreign_table'] ?? null)
+                       === ($config['columns'][$targetField]['config']['foreign_table'] ?? null)) {
+                    unset($config['columns'][$targetField]['config']['foreign_table']);
+                }
+                
                 $usage = $config['columns'][$targetField]['config']['MM_oppositeUsage'][$localTable] ?? [];
                 
                 $config['columns'][$targetField]['config']['MM_oppositeUsage'][$localTable]
