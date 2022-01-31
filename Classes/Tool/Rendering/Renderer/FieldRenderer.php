@@ -144,6 +144,18 @@ class FieldRenderer implements PublicServiceInterface
             $this->applyFieldTcaItemProcFunc($tableName, $fieldName, $row);
         }
         
+        // This is a special noodle, if we got a group with multiple relation tables,
+        // the backend utility expects a comma separated foreign_table, which somehow breaks the dataHandler
+        // So we simulate that expected list, by pasting the "allowed" config as "foreign_table" to render the field
+        if (isset($row['uid'])
+            && $fieldTca['config']['type'] === 'group'
+            && $fieldTca['config']['internal_type'] === 'db'
+            && ! empty($fieldTca['config']['MM'])
+            && empty($fieldTca['config']['foreign_table'])
+            && ! empty($fieldTca['config']['allowed'])) {
+            return $this->makeInstance(GroupMultiTableRenderer::class)->render($tableName, $fieldName, $row);
+        }
+        
         $content = TcaUtil::runWithResolvedItemProcFunc($row, $tableName, $fieldName,
             function () use ($tableName, $fieldName, $row) {
                 return $this->htmlEncode(
