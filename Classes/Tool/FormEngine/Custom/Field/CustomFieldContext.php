@@ -225,6 +225,7 @@ class CustomFieldContext implements NoDiInterface
      * Returns true if the field was disabled, false if not
      *
      * @return bool
+     * @todo this should be called "isReadOnly" instead.
      */
     public function isDisabled(): bool
     {
