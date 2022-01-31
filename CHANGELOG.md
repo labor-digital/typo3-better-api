@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.33.0](https://github.com/labor-digital/typo3-better-api/compare/v10.32.4...v10.33.0) (2022-01-31)
+
+
+### Features
+
+* **Rendering:** allow rendering of mixed table group values in FieldRenderer ([d10180c](https://github.com/labor-digital/typo3-better-api/commit/d10180ca8ce0cd227bb4001048181a9a2c6fc673))
+
 ### [10.32.4](https://github.com/labor-digital/typo3-better-api/compare/v10.32.3...v10.32.4) (2022-01-31)
 
 
