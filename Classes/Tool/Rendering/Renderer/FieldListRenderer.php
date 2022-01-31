@@ -31,6 +31,8 @@ use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 
 class FieldListRenderer implements PublicServiceInterface
 {
+    use RendererUtilsTrait;
+    
     /**
      * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository
      */
@@ -115,7 +117,7 @@ class FieldListRenderer implements PublicServiceInterface
             );
         }
         
-        return $this->renderTable(array_filter($rows));
+        return empty($rows) ? '' : $this->renderTable($rows);
     }
     
     /**
@@ -128,36 +130,6 @@ class FieldListRenderer implements PublicServiceInterface
      */
     protected function renderRow(string $label, string $content): string
     {
-        return '<td><strong>' . $this->htmlEncode($label) . ': </strong></td><td>' . $content . '</td>';
-    }
-    
-    /**
-     * Generates the outer HTML of the field table, by concatenating the given rows
-     *
-     * @param   array  $rows
-     *
-     * @return string
-     */
-    protected function renderTable(array $rows): string
-    {
-        if (empty($rows)) {
-            return '';
-        }
-        
-        return
-            '<table class="table" style="margin-top:10px;margin-bottom:0">' .
-            '<tr>' . implode('</tr><tr>', $rows) . '</tr></table>';
-    }
-    
-    /**
-     * Helper to encode html special characters
-     *
-     * @param $value
-     *
-     * @return string
-     */
-    protected function htmlEncode($value): string
-    {
-        return htmlspecialchars((string)$value, ENT_QUOTES | ENT_HTML5);
+        return '<tr><td><strong>' . $this->htmlEncode($label) . ': </strong></td><td>' . $content . '</td></tr>';
     }
 }

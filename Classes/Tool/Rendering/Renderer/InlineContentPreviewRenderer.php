@@ -36,6 +36,7 @@ use TYPO3\CMS\Backend\View\PageLayoutContext;
 class InlineContentPreviewRenderer implements PublicServiceInterface
 {
     use ContainerAwareTrait;
+    use RendererUtilsTrait;
     
     /**
      * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository
@@ -84,13 +85,14 @@ class InlineContentPreviewRenderer implements PublicServiceInterface
                     }
                 }
                 
+                // @todo use the renderTable() method instead
                 return $this->renderList($inlineField, $output);
             });
         });
     }
     
     /**
-     * Creates a dummy grid column instance we can sue for rendering the items
+     * Creates a dummy grid column instance we can use for rendering the items
      *
      * @param   int  $pid
      *
@@ -141,21 +143,16 @@ class InlineContentPreviewRenderer implements PublicServiceInterface
      * @param   array   $items
      *
      * @return string
+     * @deprecated will be removed in v11
      */
     protected function renderList(string $inlineField, array $items): string
     {
-        return '<table class="table">' .
-               '<thead>' .
-               '<th>' .
-               $this->fieldRenderer->renderLabel('tt_content', $inlineField) .
-               '</th>' .
-               '</thead>' .
-               '<tbody>' .
-               '<tr><td>' .
-               implode($items) .
-               '</td></tr>' .
-               '</tbody>' .
-               '</table>';
+        return $this->renderTable(
+            array_map(static function ($v) {
+                return '<tr><td>' . $v . '</td></tr>';
+            }, $items),
+            '<th>' . $this->fieldRenderer->renderLabel('tt_content', $inlineField) . '</th>'
+        );
     }
     
     /**
@@ -168,6 +165,6 @@ class InlineContentPreviewRenderer implements PublicServiceInterface
     protected function renderErrorMessage(string $error): string
     {
         return '<div style="background-color:red; padding: 10px; font-family: sans-serif; color: #fff">'
-               . htmlentities($error, ENT_QUOTES | ENT_HTML5) . '</div>';
+               . $this->htmlEncode($error) . '</div>';
     }
 }

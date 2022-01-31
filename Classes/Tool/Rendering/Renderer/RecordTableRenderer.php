@@ -34,6 +34,8 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class RecordTableRenderer implements PublicServiceInterface
 {
+    use RendererUtilsTrait;
+    
     /**
      * @var \LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository
      */
@@ -98,7 +100,11 @@ class RecordTableRenderer implements PublicServiceInterface
                 $renderedRows[] = $this->renderInternal($tableName, $row, $fields);
             }
             
-            return $this->renderTable($tableName, $renderedRows, $this->renderHeaders($tableName, $fields));
+            return $this->renderTable(
+                $renderedRows,
+                $this->renderHeaders($tableName, $fields),
+                $this->fieldRenderer->renderTableTitle($tableName)
+            );
         });
     }
     
@@ -192,34 +198,4 @@ class RecordTableRenderer implements PublicServiceInterface
         return $this->renderRow($columns);
     }
     
-    /**
-     * Combines all elements of the table together in a html markup
-     *
-     * @param   string  $tableName
-     * @param   array   $rows
-     * @param   string  $headers
-     *
-     * @return string
-     */
-    protected function renderTable(string $tableName, array $rows, string $headers): string
-    {
-        return
-            '<table class="table" style="{margin-top:10px;margin-bottom:0}">' .
-            '<caption>' . $this->fieldRenderer->renderTableTitle($tableName) . '</caption>' .
-            '<thead>' . $headers . '</thead>' .
-            '<tbody>' . implode($rows) . '</tbody>' .
-            '</table>';
-    }
-    
-    /**
-     * Helper to encode html special characters
-     *
-     * @param $value
-     *
-     * @return string
-     */
-    protected function htmlEncode($value): string
-    {
-        return htmlspecialchars((string)$value, ENT_QUOTES | ENT_HTML5);
-    }
 }

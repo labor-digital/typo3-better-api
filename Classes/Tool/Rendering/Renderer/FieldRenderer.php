@@ -26,21 +26,20 @@ namespace LaborDigital\T3ba\Tool\Rendering\Renderer;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
 use LaborDigital\T3ba\Tool\Fal\FalService;
-use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer\FileFieldRenderer;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer\GroupMultiTableRenderer;
+use LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer\LinkFieldRenderer;
 use LaborDigital\T3ba\Tool\Tca\TcaUtil;
 use LaborDigital\T3ba\Tool\Translation\Translator;
 use Neunerlei\Inflection\Inflector;
-use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\ItemProcessingService;
-use TYPO3\CMS\Core\LinkHandling\LinkService;
-use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 class FieldRenderer implements PublicServiceInterface
 {
     use ContainerAwareTrait;
+    use RendererUtilsTrait;
     
     /**
      * @var \LaborDigital\T3ba\Tool\Translation\Translator
@@ -53,7 +52,7 @@ class FieldRenderer implements PublicServiceInterface
     protected $falService;
     
     /**
-     * A list of TCAs that should be restoraead
+     * A list of TCAs that should be restored
      *
      * @var array
      */
@@ -140,6 +139,7 @@ class FieldRenderer implements PublicServiceInterface
             return $this->renderLinkField((string)$row[$fieldName]);
         }
         
+        // @todo remove this in v11 this is already done in TcaUtil::runWithResolvedItemProcFunc()
         if (! empty($fieldTca['config']['itemsProcFunc'])) {
             $this->applyFieldTcaItemProcFunc($tableName, $fieldName, $row);
         }
@@ -178,42 +178,12 @@ class FieldRenderer implements PublicServiceInterface
      * @param   array   $row
      *
      * @return string
+     * @deprecated will be removed in v11 without replacement
+     * @see        FileFieldRenderer
      */
     protected function renderFileField(string $tableName, array $fieldTca, string $field, array $row): string
     {
-        return $this->iterateFilesOfField($tableName, $fieldTca, $field, $row,
-            function (FileInfo $info, FileReference $file) {
-                if ($info->isImage()) {
-                    $width = $info->getImageInfo() ? min(max($info->getImageInfo()->getWidth(), 50), 200) : 200;
-                    try {
-                        return '<img src="' .
-                               $this->htmlEncode($this->falService->getResizedImageUrl($file, ['maxWidth' => $width, 'relative'])) .
-                               '" style="width:100%; max-width:' . $width . 'px; max-height: 200px"' .
-                               ' title="' . $this->htmlEncode($info->getFileName()) . '"' .
-                               ' alt="' . ($info->getImageInfo()->getAlt() ?? $info->getFileName()) . '"/>';
-                        
-                    } catch (Throwable $e) {
-                        if (stripos($e->getMessage(), 'No such file or directory') !== false) {
-                            return $this->htmlEncode($info->getFileName()) . ' (Missing File)';
-                        }
-                        
-                        return $this->htmlEncode($info->getFileName()) . ' | Error while rendering: ' . $e->getMessage();
-                    }
-                    
-                } else {
-                    return $this->htmlEncode($info->getFileName());
-                }
-            }, static function (array $content, ?string $suffix): string {
-                if (empty($content)) {
-                    return '&nbsp;';
-                }
-                
-                if (count($content) === 1) {
-                    return reset($content);
-                }
-                
-                return implode('&nbsp;', $content) . ($suffix ? '<br><p style="margin-top: 15px"><em>' . $suffix . '</em></p>' : '');
-            });
+        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__METHOD__, func_get_args());
     }
     
     /**
@@ -225,15 +195,12 @@ class FieldRenderer implements PublicServiceInterface
      * @param   array   $row
      *
      * @return string
+     * @deprecated will be removed in v11 without replacement
+     * @see        FileFieldRenderer
      */
     protected function renderFileFieldText(string $tableName, array $fieldTca, string $field, array $row): string
     {
-        return $this->iterateFilesOfField($tableName, $fieldTca, $field, $row,
-            function (FileInfo $info, FileReference $file) {
-                return $file->getNameWithoutExtension() . ' [' . $file->getUid() . ']';
-            }, static function (array $content, ?string $suffix): string {
-                return implode(', ', $content) . ($suffix ? ',...' : '');
-            });
+        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__METHOD__, func_get_args());
     }
     
     /**
@@ -249,6 +216,8 @@ class FieldRenderer implements PublicServiceInterface
      * @param   callable  $finisherCallback  Receives the list of results provided by $callback and should combine them to a string
      *
      * @return string
+     * @deprecated will be removed in v11 without replacement
+     * @see        FileFieldRenderer
      */
     protected function iterateFilesOfField(
         string $tableName,
@@ -259,35 +228,7 @@ class FieldRenderer implements PublicServiceInterface
         callable $finisherCallback
     ): string
     {
-        $matchField = $fieldTca['config']['foreign_match_fields']['fieldname'] ?? $field;
-        $files = $this->falService->getFile($row['uid'], $tableName, $matchField, false);
-        $maxItems = $fieldTca['config']['maxItems'] ?? 10;
-        
-        $c = 0;
-        $content = [];
-        $maxReached = false;
-        foreach ($files as $file) {
-            if ($c >= $maxItems) {
-                $maxReached = true;
-                break;
-            }
-            
-            $info = $this->falService->getFileInfo($file);
-            if ($info->isHidden()) {
-                continue;
-            }
-            
-            $c++;
-            
-            $res = $callback($info, $file);
-            if (! empty($res) && is_string($res)) {
-                $content[] = $res;
-            }
-            unset($res);
-        }
-        
-        return $finisherCallback($content, $maxReached
-            ? $this->translator->translateBe('t3ba.tool.renderer.fieldRenderer.imagesNotShown') : null);
+        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__METHOD__, func_get_args());
     }
     
     /**
@@ -296,80 +237,23 @@ class FieldRenderer implements PublicServiceInterface
      * @param   string  $value
      *
      * @return string
+     * @deprecated will be removed in v11, use LinkFieldRenderer directly
+     * @see        \LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer\LinkFieldRenderer
      */
     protected function renderLinkField(string $value): string
     {
-        try {
-            $linkData = $this->makeInstance(LinkService::class)->resolve(
-                $this->makeInstance(TypoLinkCodecService::class)->decode($value)['url'] ?? ''
-            );
-        } catch (Throwable $exception) {
-            return $value;
-        }
-        
-        if (empty($linkData['type'])) {
-            return $value;
-        }
-        
-        switch ($linkData['type']) {
-            case LinkService::TYPE_PAGE:
-                $record = BackendUtility::readPageAccess($linkData['pageuid'], '1=1');
-                if (! empty($record['uid'])) {
-                    return $record['_thePathFull'] . '[' . $record['uid'] . ']';
-                }
-                
-                return $value;
-            case LinkService::TYPE_EMAIL:
-                return $linkData['email'] ?? $value;
-            case LinkService::TYPE_URL:
-                return $linkData['url'] ?? $value;
-            case LinkService::TYPE_FILE:
-                if (! empty($linkData['file'])) {
-                    return $linkData['file']->getNameWithoutExtension() . ' [' . $linkData['file']->getUid() . ']';
-                }
-                
-                return $value;
-            case LinkService::TYPE_FOLDER:
-                if (! empty($linkData['folder'])) {
-                    return $linkData['folder']->getPublicUrl();
-                }
-                
-                return $value;
-            case LinkService::TYPE_RECORD:
-            case 'linkSetRecord':
-                $tableName = $this->cs()->ts->getTsConfig([
-                    'TCEMAIN',
-                    'linkHandler',
-                    $linkData['identifier'] ?? '',
-                    'configuration',
-                    'table',
-                ]);
-                if (! empty($tableName)) {
-                    $tableName = NamingUtil::resolveTableName($tableName);
-                    $record = BackendUtility::getRecord($tableName, $linkData['uid']);
-                    if ($record) {
-                        $recordTitle = BackendUtility::getRecordTitle($tableName, $record);
-                        $tableTitle = $this->translator->translate($GLOBALS['TCA'][$tableName]['ctrl']['title'] ??
-                                                                   $tableName);
-                        
-                        return sprintf('%s [%s:%d]', $recordTitle, $tableTitle, $linkData['uid']);
-                    }
-                }
-                
-                return $value;
-            case LinkService::TYPE_TELEPHONE:
-                return $linkData['telephone'] ?? $value;
-        }
-        
-        return $value;
+        return $this->makeInstance(LinkFieldRenderer::class)->render($value);
     }
     
     /**
-     * Generates the
+     * Generates the real values for columns that provide an "itemsProcFunc"
      *
      * @param   string  $tableName
      * @param   string  $fieldName
      * @param   array   $row
+     *
+     * @deprecated this method will be removed in v11
+     * @see        TcaUtil::runWithResolvedItemProcFunc()
      */
     protected function applyFieldTcaItemProcFunc(string $tableName, string $fieldName, array $row): void
     {
@@ -391,17 +275,5 @@ class FieldRenderer implements PublicServiceInterface
         );
         
         $GLOBALS['TCA'][$tableName]['columns'][$fieldName]['config']['items'] = $items;
-    }
-    
-    /**
-     * Helper to encode html special characters
-     *
-     * @param $value
-     *
-     * @return string
-     */
-    protected function htmlEncode($value): string
-    {
-        return htmlspecialchars((string)$value, ENT_QUOTES | ENT_HTML5);
     }
 }
