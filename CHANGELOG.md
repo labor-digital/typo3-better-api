@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.32.4](https://github.com/labor-digital/typo3-better-api/compare/v10.32.3...v10.32.4) (2022-01-31)
+
+
+### Bug Fixes
+
+* **Tca\MmTableOption:** ensure foreign_table for opposite fields ([648c649](https://github.com/labor-digital/typo3-better-api/commit/648c649b79e477fba5d27ddb27519cfb371af868))
+
 ### [10.32.3](https://github.com/labor-digital/typo3-better-api/compare/v10.32.2...v10.32.3) (2022-01-25)
 
 
