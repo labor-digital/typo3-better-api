@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.33.1](https://github.com/labor-digital/typo3-better-api/compare/v10.33.0...v10.33.1) (2022-02-01)
+
+
+### Bug Fixes
+
+* **FieldRenderer:** use __FUNCTION__ instead of __METHOD__ for legacy bridge ([9b0ba9d](https://github.com/labor-digital/typo3-better-api/commit/9b0ba9dba05ce5bc0cf24542796a47852b1969d6))
+
 ## [10.33.0](https://github.com/labor-digital/typo3-better-api/compare/v10.32.4...v10.33.0) (2022-01-31)
 
 
