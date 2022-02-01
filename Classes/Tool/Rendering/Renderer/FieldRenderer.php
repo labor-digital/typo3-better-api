@@ -195,7 +195,7 @@ class FieldRenderer implements PublicServiceInterface
      */
     protected function renderFileField(string $tableName, array $fieldTca, string $field, array $row): string
     {
-        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__METHOD__, func_get_args());
+        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__FUNCTION__, func_get_args());
     }
     
     /**
@@ -212,7 +212,7 @@ class FieldRenderer implements PublicServiceInterface
      */
     protected function renderFileFieldText(string $tableName, array $fieldTca, string $field, array $row): string
     {
-        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__METHOD__, func_get_args());
+        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__FUNCTION__, func_get_args());
     }
     
     /**
@@ -240,7 +240,7 @@ class FieldRenderer implements PublicServiceInterface
         callable $finisherCallback
     ): string
     {
-        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__METHOD__, func_get_args());
+        return $this->makeInstance(FileFieldRenderer::class)->legacyBridge(__FUNCTION__, func_get_args());
     }
     
     /**
