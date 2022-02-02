@@ -138,7 +138,15 @@ class TableOverride extends Table implements NoDiInterface
             throw new NotImplementedException('This method is unreliable here! The column might be reconfigured in the TCA builder. I recommend not using this method here! If you know what you are doing, set the second parameter to TRUE, to access it anyway!');
         }
         
-        return parent::getColumn($name);
+        $lockedBackup = $this->locked;
+        
+        try {
+            $this->locked = false;
+            
+            return parent::getColumn($name);
+        } finally {
+            $this->locked = $lockedBackup;
+        }
     }
     
     /**
