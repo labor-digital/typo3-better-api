@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.33.2](https://github.com/labor-digital/typo3-better-api/compare/v10.33.1...v10.33.2) (2022-02-03)
+
+
+### Bug Fixes
+
+* **Sql\TableOverride:** ensure $useAnyway is passed along to child methods ([af3dfdf](https://github.com/labor-digital/typo3-better-api/commit/af3dfdf4b53230988c27959e8f92d06491369a80))
+* **Tca:** ensure that sql columns of group opposite fields are configured correctly ([d92bf40](https://github.com/labor-digital/typo3-better-api/commit/d92bf40caedb2f3b36e68d9abdc333c2fdde1b10))
+
 ### [10.33.1](https://github.com/labor-digital/typo3-better-api/compare/v10.33.0...v10.33.1) (2022-02-01)
 
 
