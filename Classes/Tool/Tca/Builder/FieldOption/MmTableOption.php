@@ -78,7 +78,9 @@ class MmTableOption extends AbstractOption
                     return true;
                 }
                 
-                return ! ((int)$given['maxItems'] === 1);
+                // @todo the comment below should be enabled in the next major release
+                // while a fix, it breaks existing data therefore a upgrade wizard should be provided
+                return (int)$given['maxItems'] !== 1; //  || $given['mmOpposite'] !== null || !empty($given['mmTableName']);
             },
         ];
         

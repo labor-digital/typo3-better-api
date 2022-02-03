@@ -246,6 +246,13 @@ class Relations extends AbstractFieldPreset
                 'fieldname' => $foreignField,
             ],
         ]);
+        
+        $this->context->configureSqlColumn(static function (Column $column) {
+            $column->setType(new IntegerType())
+                   ->setLength(11)
+                   ->setNotnull(true)
+                   ->setDefault(0);
+        });
     }
     
     /**
