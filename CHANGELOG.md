@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.33.3](https://github.com/labor-digital/typo3-better-api/compare/v10.33.2...v10.33.3) (2022-02-11)
+
+
+### Bug Fixes
+
+* **Fal\FileInfo:** read image width and height from processed image ([a9e594b](https://github.com/labor-digital/typo3-better-api/commit/a9e594bbbd5308a2749ce9e349903db99a5115c8))
+
 ### [10.33.2](https://github.com/labor-digital/typo3-better-api/compare/v10.33.1...v10.33.2) (2022-02-03)
 
 
