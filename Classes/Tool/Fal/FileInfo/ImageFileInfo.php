@@ -106,20 +106,26 @@ class ImageFileInfo implements NoDiInterface
      * Returns the width of the image in pixels
      *
      * @return int
+     * @noinspection NullPointerExceptionInspection
      */
     public function getWidth(): int
     {
-        return (int)$this->parent->getFile()->getProperty('width');
+        $source = $this->parent->isProcessed() ? $this->parent->getProcessedFile() : $this->parent->getFile();
+        
+        return (int)$source->getProperty('width');
     }
     
     /**
      * Returns the height of the image in pixels
      *
      * @return int
+     * @noinspection NullPointerExceptionInspection
      */
     public function getHeight(): int
     {
-        return (int)$this->parent->getFile()->getProperty('height');
+        $source = $this->parent->isProcessed() ? $this->parent->getProcessedFile() : $this->parent->getFile();
+        
+        return (int)$source->getProperty('height');
     }
     
     /**

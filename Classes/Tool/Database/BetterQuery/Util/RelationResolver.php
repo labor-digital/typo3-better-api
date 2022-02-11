@@ -337,6 +337,7 @@ class RelationResolver implements PublicServiceInterface
                 'type' => 'bool',
                 'default' => false,
             ],
+            // @todo the model map should be translated into table names
             'model' => [
                 'type' => ['string', 'array', 'null'],
                 'default' => null,
