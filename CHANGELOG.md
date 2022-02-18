@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.33.4](https://github.com/labor-digital/typo3-better-api/compare/v10.33.3...v10.33.4) (2022-02-18)
+
+
+### Bug Fixes
+
+* remove security advisories bundle ([3143b3f](https://github.com/labor-digital/typo3-better-api/commit/3143b3f489319252231928426a47a062e2f0a9ea))
+* **Rendering:** use correct SingletonInterface ([c863ecc](https://github.com/labor-digital/typo3-better-api/commit/c863ecca2df7942b20b32a2adce25c37a0c26854))
+
 ### [10.33.3](https://github.com/labor-digital/typo3-better-api/compare/v10.33.2...v10.33.3) (2022-02-11)
 
 
