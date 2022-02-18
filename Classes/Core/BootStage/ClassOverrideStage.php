@@ -108,7 +108,7 @@ class ClassOverrideStage implements BootStageInterface
     public function onKernelBoot(): void
     {
         foreach (static::OVERRIDE_MAP as $target => $override) {
-            if (ClassOverrideGenerator::hasClassOverride($override)) {
+            if (ClassOverrideGenerator::hasClassOverride($target)) {
                 continue;
             }
             ClassOverrideGenerator::registerOverride($target, $override);
