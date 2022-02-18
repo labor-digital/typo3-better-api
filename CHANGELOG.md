@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.33.5](https://github.com/labor-digital/typo3-better-api/compare/v10.33.4...v10.33.5) (2022-02-18)
+
+
+### Bug Fixes
+
+* **ClassOverrideStage:** use correct class for override detection ([acb3048](https://github.com/labor-digital/typo3-better-api/commit/acb3048ba909ad6e7095f1a861866215e852d30b))
+
 ### [10.33.4](https://github.com/labor-digital/typo3-better-api/compare/v10.33.3...v10.33.4) (2022-02-18)
 
 
