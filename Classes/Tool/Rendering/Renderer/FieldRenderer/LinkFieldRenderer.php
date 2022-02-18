@@ -26,10 +26,10 @@ namespace LaborDigital\T3ba\Tool\Rendering\Renderer\FieldRenderer;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\Translation\Translator;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
-use Neunerlei\ContainerAutoWiringDeclaration\SingletonInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 class LinkFieldRenderer implements SingletonInterface
