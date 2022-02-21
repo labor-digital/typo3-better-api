@@ -37,7 +37,7 @@
 		"neunerlei/arrays": "^3.3.3",
 		"neunerlei/tiny-timy": "^1.1.1",
 		"neunerlei/path-util": "^2.4.0",
-		"neunerlei/options": "^1.2.1",
+		"neunerlei/options": "^2.0.0",
 		"neunerlei/inflection": "^1.3.0",
 		"neunerlei/filesystem": "^5.2.1",
 		"zordius/lightncandy": "^1.2.6",
