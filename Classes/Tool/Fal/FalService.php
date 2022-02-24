@@ -42,6 +42,7 @@ use InvalidArgumentException;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\ProcessedFileAdapter;
+use LaborDigital\T3ba\Tool\Fal\Service\FileReferenceCreator;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
@@ -61,7 +62,6 @@ use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\ImageService;
 
@@ -228,49 +228,10 @@ class FalService implements SingletonInterface
         ?string $tableName = null
     ): FileReference
     {
-        $field = $field ?? 'image';
-        $tableName = NamingUtil::resolveTableName($tableName ?? 'tt_content');
+        $refUid = $this->makeInstance(FileReferenceCreator::class)
+                       ->createFileReference($file, $uid, $field, $tableName);
         
-        $referenceUid = $this->cs()->simulator->runWithEnvironment(['asAdmin', 'includeHiddenContent'],
-            function () use ($file, $uid, $field, $tableName) {
-                // Get the record from the database
-                $record = $this->cs()->db->getQuery($tableName)->withIncludeHidden()->withWhere(['uid' => $uid])->getFirst();
-                if (empty($record)) {
-                    throw new FalException(
-                        'Invalid table: ' . $tableName . ' or uid: ' . $uid . ' to create a file reference for');
-                }
-                
-                // Make sure we can add sys_file_references everywhere
-                $allowedTablesBackup = $GLOBALS['PAGES_TYPES']['default']['allowedTables'];
-                ExtensionManagementUtility::allowTableOnStandardPages('sys_file_reference');
-                
-                try {
-                    $handler = $this->cs()->dataHandler->processData([
-                        'sys_file_reference' => [
-                            'NEW1' => [
-                                'table_local' => 'sys_file',
-                                'uid_local' => $file->getProperty('uid'),
-                                'tablenames' => $tableName,
-                                'uid_foreign' => $uid,
-                                'fieldname' => $field,
-                                'pid' => $record['pid'],
-                            ],
-                        ],
-                        $tableName => [
-                            $uid => [
-                                'pid' => $record['pid'],
-                                $field => 'NEW1',
-                            ],
-                        ],
-                    ]);
-                } finally {
-                    $GLOBALS['PAGES_TYPES']['default']['allowedTables'] = $allowedTablesBackup;
-                }
-                
-                return reset($handler->newRelatedIDs['sys_file_reference']);
-            });
-        
-        return $this->getFileReference($referenceUid);
+        return $this->getFileReference($refUid);
     }
     
     /**
