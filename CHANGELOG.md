@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.34.0](https://github.com/labor-digital/typo3-better-api/compare/v10.33.5...v10.34.0) (2022-02-24)
+
+
+### Features
+
+* **BetterQuery:** allow "insert" to return created uid ([c43c105](https://github.com/labor-digital/typo3-better-api/commit/c43c10591ebb4cbab9783ea4d3905e4c25081994))
+
 ### [10.33.5](https://github.com/labor-digital/typo3-better-api/compare/v10.33.4...v10.33.5) (2022-02-18)
 
 
