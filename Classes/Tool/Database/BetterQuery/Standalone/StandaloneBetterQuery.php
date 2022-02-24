@@ -193,16 +193,24 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     /**
      * Executes the query as insert statement
      *
-     * @param   array  $values  The values to specify for the insert query indexed by column names
+     * @param   array  $values              The values to specify for the insert query indexed by column names
+     * @param   bool   $returnLastInsertId  deprecated, will be the new default in v11, if set to true the
      *
-     * @return \Doctrine\DBAL\Driver\Statement|int
+     * @return mixed|int The uid of the new record will be returned if $returnLastInsertId is set to true
+     * @todo remove $returnLastInsertId and always return the uid, the default result is the number of affected rows.
      */
-    public function insert(array $values)
+    public function insert(array $values, bool $returnLastInsertId = false)
     {
-        return $this->getQueryBuilder(false)
-                    ->insert($this->adapter->getTableName())
-                    ->values($values, true)
-                    ->execute();
+        $qb = $this->getQueryBuilder(false)
+                   ->insert($this->adapter->getTableName())
+                   ->values($values, true);
+        
+        $res = $qb->execute();
+        if (! $returnLastInsertId) {
+            return $res;
+        }
+        
+        return (int)$qb->getConnection()->lastInsertId($this->adapter->getTableName());
     }
     
     /**
