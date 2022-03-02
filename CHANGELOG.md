@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.34.1](https://github.com/labor-digital/typo3-better-api/compare/v10.34.0...v10.34.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* **TcaUtil:** ensure that columnsOverrides are applied correctly again ([61be084](https://github.com/labor-digital/typo3-better-api/commit/61be084fde803d9df131267e6054a8481a8d10ba))
+
 ## [10.34.0](https://github.com/labor-digital/typo3-better-api/compare/v10.33.5...v10.34.0) (2022-02-24)
 
 
