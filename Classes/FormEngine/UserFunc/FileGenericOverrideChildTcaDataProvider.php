@@ -45,8 +45,7 @@ class FileGenericOverrideChildTcaDataProvider implements FormDataProviderInterfa
         }
         
         TcaUtil::runWithResolvedTypeTca($result['databaseRow'], $result['tableName'],
-            function () use (&$result) {
-                $tca = $GLOBALS['TCA'][$result['tableName']];
+            function ($tca) use (&$result) {
                 foreach ($tca['columns'] as $key => $col) {
                     if (! isset($result['processedTca']['columns'][$key])) {
                         continue;
