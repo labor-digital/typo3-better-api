@@ -247,7 +247,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      *                                  or an array of 'tableName' => 'modelClassName' if you want to relate
      *                                  multiple tables using a "group" field
      *
-     * @return RelatedRecordRow[][] Returns either a list of entries per field name. The list of entries is ordered by
+     * @return RelatedRecordRow[][][] Returns either a list of entries per field name. The list of entries is ordered by
      *                            the name of the foreign table.
      * @throws BetterQueryException
      * @throws BetterQueryException
