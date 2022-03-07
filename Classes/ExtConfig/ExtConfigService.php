@@ -72,7 +72,12 @@ class ExtConfigService
      */
     public static $stateMergeOptions
         = [
-            'mergeNumeric' => false,
+            'numericMerge' => [
+                // This setting allows pids to have numeric keys
+                'typo.site.*.pids.*' => true,
+                't3ba.pids.*' => true,
+                '*' => false,
+            ],
             'strictNumericMerge' => true,
             'allowRemoval' => true,
         ];

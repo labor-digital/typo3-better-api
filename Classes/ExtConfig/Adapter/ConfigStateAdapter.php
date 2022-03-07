@@ -23,6 +23,8 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfig\Adapter;
 
 
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 
 class ConfigStateAdapter extends ConfigState
@@ -37,7 +39,21 @@ class ConfigStateAdapter extends ConfigState
      */
     public static function resetState(ConfigState $state, ConfigState $source): void
     {
-        $state->state = [];
-        $state->importFrom($source);
+        $oldState = $state->getAll();
+        $state->state = $source->getAll();
+        $state->watchers = Arrays::merge($state->watchers, $source->watchers, 'nn');
+        
+        foreach ($state->watchers as $key => $watchers) {
+            $oldValue = Arrays::getPath($oldState, $key);
+            $value = Arrays::getPath($state->state, $key);
+            
+            if (SerializerUtil::serializeJson($oldValue) === SerializerUtil::serializeJson($value)) {
+                continue;
+            }
+            
+            foreach ($watchers as $watcher) {
+                $watcher($value);
+            }
+        }
     }
 }
