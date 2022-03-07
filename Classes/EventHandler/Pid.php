@@ -35,12 +35,6 @@ class Pid implements LazyEventSubscriberInterface
      */
     protected $context;
     
-    /**
-     * PidEventHandler constructor.
-     *
-     * @param   \LaborDigital\T3ba\Tool\TypoContext\TypoContext       $context
-     * @param   \LaborDigital\T3ba\Tool\TypoScript\TypoScriptService  $typoScriptService
-     */
     public function __construct(
         TypoContext $context
     )
@@ -94,7 +88,7 @@ class Pid implements LazyEventSubscriberInterface
         $diff = [];
         
         foreach ($b as $k => $v) {
-            $_k = rtrim($k, '.');
+            $_k = rtrim((string)$k, '.');
             
             if (is_array($v)) {
                 $diff[$_k] = $this->generateDiff(is_array($a[$_k] ?? null) ? $a[$_k] : [], $v);
