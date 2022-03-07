@@ -338,7 +338,8 @@ class PidFacet implements FacetInterface
             = Arrays::merge(
             $this->pids,
             $this->getSiteConfig($siteIdentifier),
-            $this->setPids[$siteIdentifierWithFallback] ?? []
+            $this->setPids[$siteIdentifierWithFallback] ?? [],
+            'sn'
         );
     }
     
