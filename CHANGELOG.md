@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.34.2](https://github.com/labor-digital/typo3-better-api/compare/v10.34.1...v10.34.2) (2022-03-07)
+
+
+### Bug Fixes
+
+* **Pid:** ensure pid's with numeric keys don't vanish from config state ([4dce1f9](https://github.com/labor-digital/typo3-better-api/commit/4dce1f9d1cb604b79b0d61cb00e9c6781734568f))
+* **Pid:** fix crash when numeric pid key is used while merging site-based ([7b27d03](https://github.com/labor-digital/typo3-better-api/commit/7b27d0369e098abe732183ec97678972f9d00f98))
+
 ### [10.34.1](https://github.com/labor-digital/typo3-better-api/compare/v10.34.0...v10.34.1) (2022-03-02)
 
 
