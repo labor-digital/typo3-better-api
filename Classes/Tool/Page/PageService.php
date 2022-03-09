@@ -39,14 +39,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Page;
 
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
-use LaborDigital\T3ba\Event\PageContentsGridConfigFilterEvent;
 use LaborDigital\T3ba\Tool\DataHandler\Record\RecordDataHandler;
-use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use LaborDigital\T3ba\Tool\Page\Util\Content\ContentRenderer;
+use LaborDigital\T3ba\Tool\Page\Util\Content\ContentResolver;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 /**
  * Class PageService
@@ -269,56 +268,8 @@ class PageService implements SingletonInterface
      */
     public function renderPageContents(int $pageId, array $options = []): string
     {
-        $options = Options::make($options, [
-            'language' => [
-                'type' => ['int', 'string', 'null', SiteLanguage::class],
-                'default' => null,
-            ],
-            'includeHiddenPages' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'includeHiddenContent' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'includeDeletedRecords' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'force' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'colPos' => [
-                'type' => 'int',
-                'default' => 0,
-            ],
-            'site' => [
-                'type' => ['string', 'null'],
-                'default' => null,
-            ],
-        ]);
-        
-        return $this->cs()->simulator->runWithEnvironment([
-            'site' => $options['site'],
-            'asAdmin' => $options['force'],
-            'pid' => $pageId,
-            'language' => $options['language'],
-            'includeHiddenPages' => $options['includeHiddenPages'],
-            'includeHiddenContent' => $options['includeHiddenContent'],
-            'includeDeletedRecords' => $options['includeDeletedRecords'],
-        ], function () use ($pageId, $options) {
-            return $this->cs()->ts->renderContentObject('CONTENT', [
-                'table' => 'tt_content',
-                'select.' => [
-                    'pidInList' => $this->resolveContentPid($pageId),
-                    'languageField' => $GLOBALS['TCA']['tt_content']['ctrl']['languageField'] ?? 'sys_language_uid',
-                    'orderBy' => 'sorting',
-                    'where' => '{#colPos}=' . $options['colPos'],
-                ],
-            ]);
-        });
+        return $this->makeInstance(ContentRenderer::class)
+                    ->render($this->resolveContentPid($pageId), $options);
     }
     
     /**
@@ -344,166 +295,17 @@ class PageService implements SingletonInterface
      *                               raw list of records instead of the sorted list of elements
      *                               - force bool (FALSE): If set to true, the new page is copied as forced admin user,
      *                               ignoring all permissions or access rights!
+     *                               - includeExtensionFields bool (FALSE): If set to true the ContentType extension
+     *                               fields will be included in the result arrays
+     *                               - remapExtensionFields bool (TRUE): By default, the extension fields will have their
+     *                               internal prefix (ct_ctype_...) stripped away, if you set this to false the prefix is kept.
      *
-     * @return mixed
+     * @return array
      */
-    public function getPageContents(int $pageId, array $options = [])
+    public function getPageContents(int $pageId, array $options = []): array
     {
-        $options = Options::make($options, [
-            'where' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'language' => [
-                'type' => ['int', 'string', 'null', SiteLanguage::class],
-                'default' => null,
-            ],
-            'includeHiddenPages' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'includeHiddenContent' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'includeDeletedRecords' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'returnRaw' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'force' => [
-                'type' => 'bool',
-                'default' => false,
-            ],
-            'site' => [
-                'type' => ['string', 'null'],
-                'default' => null,
-            ],
-        ]);
-        
-        $records = $this->cs()->simulator->runWithEnvironment([
-            'site' => $options['site'],
-            'asAdmin' => $options['force'],
-            'language' => $options['language'],
-            'includeHiddenPages' => $options['includeHiddenPages'],
-            'includeHiddenContent' => $options['includeHiddenContent'],
-            'includeDeletedRecords' => $options['includeDeletedRecords'],
-        ], function () use ($pageId, $options) {
-            return $this->cs()->tsfe->getContentObjectRenderer()->getRecords('tt_content', [
-                'pidInList' => $this->resolveContentPid($pageId),
-                'where' => $options['where'],
-            ]);
-        });
-        if (! is_array($records)) {
-            $records = [];
-        }
-        if ($options['returnRaw']) {
-            return $records;
-        }
-        
-        // Default configuration for extensions that provide custom grids
-        $customGrids = [
-            [
-                'parentField' => 'tx_gridelements_container',
-                'parentColField' => 'tx_gridelements_columns',
-            ],
-        ];
-        
-        // Let the outside world add it's own grids or filter the records if required...
-        $this->cs()->eventBus
-            ->dispatch(($e = new PageContentsGridConfigFilterEvent($pageId, $records, $customGrids)));
-        $records = $e->getRecords();
-        $customGrids = $e->getCustomGrids();
-        
-        // Loop 1: Map the records into an element list
-        $elements = [];
-        foreach ($records as $record) {
-            $uid = $record['uid'];
-            $row = [
-                'parent' => null,
-                'colPos' => $record['colPos'],
-                'uid' => $uid,
-                'record' => $record,
-                'children' => [],
-                'sorting' => $record['sorting'],
-            ];
-            $elements[$uid] = $row;
-        }
-        
-        // Loop 2: Map potential stacked grids to their parents
-        foreach ($elements as &$element) {
-            $parent = null;
-            $record = $element['record'];
-            $colPos = $record['colPos'];
-            
-            foreach ($customGrids as $customGridConfig) {
-                // Ignore if the custom grid has no parent field -> misconfiguration
-                if (! isset($customGridConfig['parentField'])) {
-                    continue;
-                }
-                // Ignore if the records does not have the required parent field
-                if (empty($record[$customGridConfig['parentField']])) {
-                    continue;
-                }
-                // Map The parent
-                $parent = $record[$customGridConfig['parentField']];
-                $colPos = 0;
-                // Check if the parent col field exists
-                if (isset($customGridConfig['parentColField'])
-                    && ! empty($record[$customGridConfig['parentColField']])) {
-                    $colPos = $record[$customGridConfig['parentColField']];
-                }
-                break;
-            }
-            
-            // Check if we can map the record as a child
-            if (empty($parent)) {
-                continue;
-            }
-            
-            // Strip out element's that define a parent which is not in our element list -> broken relation?
-            if (! isset($elements[$parent])) {
-                $element['parent'] = false;
-                continue;
-            }
-            
-            // Map the element into a tree
-            $element['parent'] = $parent;
-            $element['colPos'] = $colPos;
-            $elements[$parent]['children'][$colPos][$element['uid']] = &$element;
-        }
-        unset($element);
-        
-        // Loop 3: Sort the children and clean up the output
-        $output = [];
-        foreach ($elements as &$element) {
-            // Sort the element in the child array
-            if (! empty($element['children'])) {
-                foreach ($element['children'] as &$childCol) {
-                    $childCol = Arrays::sortBy($childCol, 'sorting');
-                }
-                unset($childCol);
-            }
-            
-            // Build the output
-            if ($element['parent'] === null) {
-                $output[$element['colPos']][$element['uid']] = $element;
-            }
-        }
-        unset($element);
-        
-        // Sort the elements inside the cols
-        foreach ($output as &$col) {
-            $col = Arrays::sortBy($col, 'sorting');
-        }
-        
-        // Done (make sure we break the references)
-        return SerializerUtil::unserializeJson(
-            SerializerUtil::serializeJson($output)
-        );
+        return $this->makeInstance(ContentResolver::class)
+                    ->getContent($this->resolveContentPid($pageId), $options);
     }
     
     /**
