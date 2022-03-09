@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.35.0](https://github.com/labor-digital/typo3-better-api/compare/v10.34.3...v10.35.0) (2022-03-09)
+
+
+### Features
+
+* **Database:** harden rendering of dbgQuery() ([70d68c2](https://github.com/labor-digital/typo3-better-api/commit/70d68c289fabdc00bed3d8b9693fda958eabb416))
+* **Database:** implement support for a "static where" string in BetterQuery ([78c49ba](https://github.com/labor-digital/typo3-better-api/commit/78c49badfe7c8d7c183c7b73ad4063d331d4effd))
+
 ### [10.34.3](https://github.com/labor-digital/typo3-better-api/compare/v10.34.2...v10.34.3) (2022-03-07)
 
 
