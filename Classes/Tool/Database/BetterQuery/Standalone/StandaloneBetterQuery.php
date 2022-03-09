@@ -52,6 +52,14 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     protected $versionOverlay = true;
     
     /**
+     * If a string is set a static statement will be appended to the generated condition when the
+     * where clause is being built. The first word AND|OR decides how the statement will be combined with the default query
+     *
+     * @var string|null
+     */
+    protected $whereStatement;
+    
+    /**
      * Creates a new query object
      *
      * @param   string                                                         $tableName
@@ -81,9 +89,10 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function withVersionOverlay(bool $state): self
     {
-        $this->versionOverlay = $state;
+        $clone = clone $this;
+        $clone->versionOverlay = $state;
         
-        return $this;
+        return $clone;
     }
     
     /**
@@ -97,6 +106,34 @@ class StandaloneBetterQuery extends AbstractBetterQuery
     }
     
     /**
+     * Can be used to set a static statement string, which will be appended to the generated condition when the
+     * where clause is being built. The first word AND|OR decides how the statement will be combined with the "withWhere" constraints.
+     *
+     * @param   string|null  $statement  A string that starts with AND|OR and contains a valid Sql Statement
+     *
+     * @return $this
+     * @todo in v11 add the option to add multiple statements like "whereGroups"
+     */
+    public function withWhereStatement(?string $statement): self
+    {
+        $clone = clone $this;
+        $clone->whereStatement = $statement;
+        
+        return $clone;
+    }
+    
+    /**
+     * Returns the currently set static statement string, set by "withWhereStatement".
+     * IMPORTANT: This does NOT contain the statement generated using the "withWhere" methods!
+     *
+     * @return string|null
+     */
+    public function getWhereStatement(): ?string
+    {
+        return $this->whereStatement;
+    }
+    
+    /**
      * Returns the configured instance of the query builder for this query
      *
      * @param   bool  $forSelect  By default all select query constraints are added to the query builder instance.
@@ -107,7 +144,7 @@ class StandaloneBetterQuery extends AbstractBetterQuery
      */
     public function getQueryBuilder(bool $forSelect = true): QueryBuilder
     {
-        $this->applyWhere($this->adapter);
+        $this->applyWhere($this->adapter, $this->whereStatement);
         $qb = $this->adapter->getQueryBuilder();
         if ($forSelect) {
             BetterQueryTypo3DbQueryParserAdapter::addConstraintsOfSettings(

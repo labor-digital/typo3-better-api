@@ -27,6 +27,7 @@ use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseQueryAdapter;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\DoctrineQueryAdapter;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Arrays\Arrays;
+use TYPO3\CMS\Core\Database\Query\QueryHelper;
 
 /**
  * Trait QueryWhereApplierTrait
@@ -216,16 +217,24 @@ trait QueryWhereApplierTrait
      * The result is the completely configured query instance
      *
      * @param   \LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
+     * @param   string|null                                                        $whereStatement
      *
      * @return void
      */
-    protected
-    function applyWhere(
-        AbstractQueryAdapter $adapter
+    protected function applyWhere(
+        AbstractQueryAdapter $adapter,
+        ?string $whereStatement = null
     ): void
     {
         // Ignore if there is no where set
         if (empty($this->where)) {
+            // If a non-empty where statement is given, we inject it into the adapter anyway
+            if (! empty($whereStatement)) {
+                $adapter->finalizeConstraints(
+                    $this->applyWhereStatement(null, $adapter, $whereStatement)
+                );
+            }
+            
             return;
         }
         
@@ -260,7 +269,39 @@ trait QueryWhereApplierTrait
             $constraints = $adapter->makeOr($orConstraints);
         }
         
+        if ($whereStatement) {
+            $constraints = $this->applyWhereStatement($constraints, $adapter, $whereStatement);
+        }
+        
         // Finalize the query object
         $adapter->finalizeConstraints($constraints);
+    }
+    
+    /**
+     * Internal helper to prepare the constraints by appending the given where statement
+     *
+     * @param                                                                      $constraints
+     * @param   \LaborDigital\T3ba\Tool\Database\BetterQuery\AbstractQueryAdapter  $adapter
+     * @param   string                                                             $whereStatement
+     *
+     * @return mixed
+     */
+    protected function applyWhereStatement($constraints, AbstractQueryAdapter $adapter, string $whereStatement)
+    {
+        if ($constraints === null) {
+            return QueryHelper::stripLogicalOperatorPrefix($whereStatement);
+        }
+        
+        if (str_starts_with(strtolower($whereStatement), 'or ')) {
+            return $adapter->makeOr([
+                $constraints,
+                QueryHelper::stripLogicalOperatorPrefix($whereStatement),
+            ]);
+        }
+        
+        return $adapter->makeAnd([
+            $constraints,
+            QueryHelper::stripLogicalOperatorPrefix($whereStatement),
+        ]);
     }
 }

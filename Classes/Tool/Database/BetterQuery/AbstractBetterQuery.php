@@ -511,6 +511,7 @@ abstract class AbstractBetterQuery implements NoDiInterface
      * @param   string  $groupName
      *
      * @return $this
+     * @todo this should be converted into an immutable
      */
     public function removeWhereGroup(string $groupName): self
     {

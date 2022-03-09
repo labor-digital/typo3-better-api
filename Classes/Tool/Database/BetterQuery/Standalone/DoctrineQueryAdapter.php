@@ -57,6 +57,7 @@ class DoctrineQueryAdapter extends AbstractQueryAdapter
         
         // Reset query builder
         $queryBuilder->select('*');
+        // @todo this is crap -> there should be a way of either disabling this, or restoring it to the default
         $queryBuilder->getRestrictions()->removeAll();
     }
     
