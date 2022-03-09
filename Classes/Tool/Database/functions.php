@@ -23,7 +23,10 @@ use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAda
 use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3ba\Tool\Database\DatabaseException;
+use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Extbase\Object\Container\Container;
+use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
@@ -96,29 +99,35 @@ if (! function_exists('dbgQuery')) {
         }
         
         // Show general query information
-        echo '<h5>Query string</h5>';
         if (function_exists('dbg')) {
             dbg($queryString);
         } else {
-            DebuggerUtility::var_dump($queryString);
+            DebuggerUtility::var_dump($queryString, 'Query string');
         }
         
         try {
             if (php_sapi_name() !== 'cli') {
                 if (! empty($exception)) {
-                    echo '<h5>Db Errors</h5>';
-                    DebuggerUtility::var_dump($exception);
+                    DebuggerUtility::var_dump($exception, 'Db Errors');
                 }
-                echo '<h5>Query Object</h5>';
-                DebuggerUtility::var_dump($query);
+                try {
+                    $args = [true, false, [Container::class, Session::class, TypoContext::class], ['session', 'caServices']];
+                    ob_start();
+                    // Render as plaintext first -> if it fails we still have the styles available
+                    DebuggerUtility::var_dump($query, null, 8, true, ...$args);
+                    ob_end_clean();
+                    
+                    DebuggerUtility::var_dump($query, 'Query Object', 8, false, ...$args);
+                    
+                } catch (\Throwable $e) {
+                    echo '<em>Error while rendering the query: "' . $e->getMessage() . '"</em>';
+                }
+                
                 if (! empty($first)) {
-                    echo '<h5>First result item</h5>';
-                    DebuggerUtility::var_dump($first);
+                    DebuggerUtility::var_dump($first, 'First result item');
                 }
-                echo '<h5>Raw result</h5>';
-                DebuggerUtility::var_dump($result);
-                echo '<h5>Db Connection</h5>';
-                DebuggerUtility::var_dump($GLOBALS['TYPO3_DB']);
+                DebuggerUtility::var_dump($result, 'Raw result');
+                DebuggerUtility::var_dump($GLOBALS['TYPO3_DB'], 'Db Connection');
             }
         } catch (Exception $e) {
             echo '<h2>Db Error!</h2>';
