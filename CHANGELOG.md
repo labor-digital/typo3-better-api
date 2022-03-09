@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.34.3](https://github.com/labor-digital/typo3-better-api/compare/v10.34.2...v10.34.3) (2022-03-07)
+
+
+### Bug Fixes
+
+* **PidFacet:** use strict numeric merging for pid resolution ([2596b43](https://github.com/labor-digital/typo3-better-api/commit/2596b4308ee642c3c9d09f1cd304f5095de0fd10))
+
 ### [10.34.2](https://github.com/labor-digital/typo3-better-api/compare/v10.34.1...v10.34.2) (2022-03-07)
 
 
