@@ -29,6 +29,7 @@ use LaborDigital\T3ba\Tool\Simulation\SimulatedTypoScriptFrontendController;
 use LaborDigital\T3ba\Tool\Tsfe\TsfeService;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -181,15 +182,38 @@ class TsfeSimulationPass implements SimulatorPassInterface
         }
         
         $context = $this->getTypoContext();
-        $controller = $this->makeInstance(
-            SimulatedTypoScriptFrontendController::class, [
-                $context->getRootContext(),
-                $context->site()->getCurrent(),
-                $context->language()->getCurrentFrontendLanguage(),
-                $pageArguments,
-                $this->makeInstance(FrontendUserAuthentication::class),
-            ]
-        );
+        $simulateCliRequest = false;
+        
+        try {
+            // In the CLI there is no root request, so the instantiation of the TSFE fails.
+            // This hack creates a fallback to allow the script to run with the current site base url
+            if ($context->env()->isCli() && $context->request()->getRootRequest() === null) {
+                $simulateCliRequest = true;
+                $baseUrl = $context->site()->getCurrent()->getBase();
+                /** @noinspection HostnameSubstitutionInspection */
+                $_SERVER['HTTP_HOST'] = $baseUrl->getHost();
+                $_SERVER['REQUEST_URI'] = $baseUrl->getPath() . '?' . $baseUrl->getQuery();
+                GeneralUtility::flushInternalRuntimeCaches();
+            }
+            
+            $controller = $this->makeInstance(
+                SimulatedTypoScriptFrontendController::class, [
+                    $context->getRootContext(),
+                    $context->site()->getCurrent(),
+                    $context->language()->getCurrentFrontendLanguage(),
+                    $pageArguments,
+                    $this->makeInstance(FrontendUserAuthentication::class),
+                ]
+            );
+            
+        } finally {
+            if ($simulateCliRequest) {
+                $GLOBALS['TYPO3_REQUEST'] = null;
+                $GLOBALS['TYPO3_REQUEST_FALLBACK'] = null;
+            }
+        }
+        
+        
         $GLOBALS['TSFE'] = $controller;
         $controller->sys_page = $this->pageService->getPageRepository();
         $controller->rootLine = $this->pageService->getRootLine($pid);
