@@ -183,6 +183,7 @@ class StreamWriter extends AbstractWriter
         
         $this->createDir();
         $this->errorMessage = null;
+        // @todo does this work? I think customErrorHandler should be public...
         set_error_handler([$this, 'customErrorHandler']);
         $this->stream = fopen($this->stream, 'ab');
         restore_error_handler();
@@ -192,6 +193,8 @@ class StreamWriter extends AbstractWriter
             throw new UnexpectedValueException(
                 sprintf(
                     'The stream or file "%s" could not be opened in append mode: ' .
+                    // @todo $this->stream is never a string here...
+                    // store it in another value
                     $this->errorMessage, $this->stream));
         }
     }
