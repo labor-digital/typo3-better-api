@@ -1045,7 +1045,7 @@ class Link implements NoDiInterface
         // Resolve $pid. lookups in our args
         $pidFacet = $typoContext->pid();
         foreach ($this->args as $k => $v) {
-            if (! is_string($v) || ! $pidFacet->has($v)) {
+            if (empty($v) || ! is_string($v) || ! $pidFacet->has($v)) {
                 continue;
             }
             $this->args[$k] = $pidFacet->get($v);
