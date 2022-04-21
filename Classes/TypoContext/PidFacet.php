@@ -115,7 +115,13 @@ class PidFacet implements FacetInterface
      */
     public function has(string $key, ?string $siteIdentifier = null): bool
     {
-        return Arrays::hasPath($this->getResolvedPids($siteIdentifier), $this->stripPrefix($key));
+        try {
+            $this->get($key, -1, $siteIdentifier);
+            
+            return true;
+        } catch (InvalidPidException $e) {
+            return false;
+        }
     }
     
     /**
