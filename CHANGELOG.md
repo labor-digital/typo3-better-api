@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.35.1](https://github.com/labor-digital/typo3-better-api/compare/v10.35.0...v10.35.1) (2022-04-21)
+
+
+### Bug Fixes
+
+* **Link:** fix build issue in with empty arg ([87685ed](https://github.com/labor-digital/typo3-better-api/commit/87685edbbacde1422583022501b43cbc6330285f))
+* **Link:** fix LinkException message for missing args ([361f7ea](https://github.com/labor-digital/typo3-better-api/commit/361f7ea3da417630b36e8a068700ade6ad576773))
+* **PidFacet:** fix has() returning true on partial matches ([5e882d3](https://github.com/labor-digital/typo3-better-api/commit/5e882d38ab63d58edd28a59c23ca94394e4682ff))
+* **Simulation:** ensure TSFE gets booted correctly in cli ([dd4cc12](https://github.com/labor-digital/typo3-better-api/commit/dd4cc12d7b9eac3e1e87acd68240321778b71451))
+
 ## [10.35.0](https://github.com/labor-digital/typo3-better-api/compare/v10.34.3...v10.35.0) (2022-03-09)
 
 
