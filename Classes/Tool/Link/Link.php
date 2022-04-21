@@ -1066,7 +1066,7 @@ class Link implements NoDiInterface
         $missingArgs = array_diff_key(array_fill_keys($requiredArgs, true), $this->args);
         if (! empty($missingArgs)) {
             throw new LinkException('Could not build link, because it misses one or multiple arguments: '
-                                    . implode(', ', $missingArgs));
+                                    . implode(', ', array_keys($missingArgs)));
         }
         
         // While generating links for the frontend, T3 tends to taint the page renderer instance
