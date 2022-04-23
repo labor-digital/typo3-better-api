@@ -27,6 +27,9 @@ use Neunerlei\Arrays\Arrays;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 
+/**
+ * @deprecated this will be removed in v11, as it does not have the desired effect anymore
+ */
 class CacheHashCalculatorAdapter extends CacheHashCalculator implements NoDiInterface
 {
     /**

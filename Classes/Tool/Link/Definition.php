@@ -141,6 +141,7 @@ class Definition implements NoDiInterface
      * A list of arguments that should be ignored when the chash is generated for this link
      *
      * @var array
+     * @deprecated this will be removed in v11, as it does not have the desired effect anymore
      */
     protected $cHashExcludedArgs = [];
     
@@ -518,6 +519,7 @@ class Definition implements NoDiInterface
      * Returns the list of arguments that should be excluded from cHash generation when the url is being build
      *
      * @return array
+     * @deprecated this will be removed in v11, as it does not have the desired effect anymore
      */
     public function getCHashExcludedArgs(): array
     {
@@ -530,6 +532,7 @@ class Definition implements NoDiInterface
      * @param   array  $argsToExclude
      *
      * @return $this
+     * @deprecated this will be removed in v11, as it does not have the desired effect anymore
      */
     public function setCHashExcludedArgs(array $argsToExclude): self
     {

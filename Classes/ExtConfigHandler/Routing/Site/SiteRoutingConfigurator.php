@@ -301,6 +301,9 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
      *                              $germanValue, ...]] the script will automatically translate your value in the
      *                              languages you provided a specific value for. When the route is parsed TYPO3 will
      *                              re-map the translated value to the real value
+     *                              - urlEncodeArgs array: Basically a mapper for freetext fields that should
+     *                              be automatically url encoded/decoded by the router. An array where the values
+     *                              are the manes of the fields to be used as url encoded values. Those args are not considered staticly mappable
      *                              - raw array: Can be used to define additional, raw route enhancer configuration
      *                              options that will be merged with the generated options.
      *                              - rawOverride array: Similar to "raw" but will be merged into the

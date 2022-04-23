@@ -49,6 +49,7 @@ trait RouteEnhancerConfigTrait
         $config = $this->injectDbArgsConfig($config, $options);
         $config = $this->injectLocaleArgsConfig($config, $options);
         $config = $this->injectStaticArgsConfig($config, $options);
+        $config = $this->injectUrlEncodeArgsConfig($config, $options);
         
         if (! empty($options['pids'])) {
             $config['limitToPages'] = $this->context->resolvePids($options['pids']);
@@ -247,6 +248,31 @@ trait RouteEnhancerConfigTrait
                 'map' => $map,
                 'localeMap' => empty($localeMap) ? null : $localeMap,
             ];
+        }
+        
+        return $config;
+    }
+    
+    protected function injectUrlEncodeArgsConfig(array $config, array $options): array
+    {
+        if (empty($options['urlEncodeArgs'])) {
+            return $config;
+        }
+        
+        foreach ($options['urlEncodeArgs'] as $field) {
+            if (! is_string($field)) {
+                throw new ExtConfigException(
+                    'Invalid configuration for a urlEncodeArgs in the configuration of route: '
+                    . $options['routePath'] . '! An array of strings is expected!');
+            }
+            
+            $config['aspects'][$field] = [
+                'type' => 'T3BAUrlEncodeMapper',
+            ];
+            
+            if (($config['requirements'][$field] ?? null) === '[a-zA-Z0-9\-_.]*') {
+                $config['requirements'][$field] = '[\\w\\d\-_.%&+]*';
+            }
         }
         
         return $config;

@@ -93,6 +93,10 @@ trait RouteEnhancerSchemaTrait
                     'type' => 'array',
                     'default' => [],
                 ],
+                'urlEncodeArgs' => [
+                    'type' => 'array',
+                    'default' => [],
+                ],
             ],
             $override
         );
