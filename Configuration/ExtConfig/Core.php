@@ -43,6 +43,7 @@ use LaborDigital\T3ba\Tool\DataHook\FieldPacker\FlexFormFieldPacker;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldNode;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardNode;
 use LaborDigital\T3ba\Tool\Http\Routing\Aspect\StoragePidAwarePersistedAliasMapper;
+use LaborDigital\T3ba\Tool\Http\Routing\Aspect\UrlEncodeMapper;
 use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkBuilder;
 use LaborDigital\T3ba\Tool\Link\LinkBrowser\LinkHandler;
 use LaborDigital\T3ba\Tool\Tca\Preview\PreviewLinkHook;
@@ -187,10 +188,15 @@ class Core implements ConfigureRawSettingsInterface,
      */
     public static function configureRouting(RoutingConfigurator $configurator, ExtConfigContext $context): void
     {
-        $configurator->registerRouteAspectHandler(
-            'T3BAStoragePidAwarePersistedAliasMapper',
-            StoragePidAwarePersistedAliasMapper::class
-        );
+        $configurator
+            ->registerRouteAspectHandler(
+                'T3BAStoragePidAwarePersistedAliasMapper',
+                StoragePidAwarePersistedAliasMapper::class
+            )
+            ->registerRouteAspectHandler(
+                'T3BAUrlEncodeMapper',
+                UrlEncodeMapper::class
+            );
         
         $configurator
             ->registerMiddleware(TablePreviewResolverMiddleware::class, [
