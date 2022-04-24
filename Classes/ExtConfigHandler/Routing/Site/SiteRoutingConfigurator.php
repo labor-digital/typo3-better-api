@@ -301,9 +301,13 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
      *                              $germanValue, ...]] the script will automatically translate your value in the
      *                              languages you provided a specific value for. When the route is parsed TYPO3 will
      *                              re-map the translated value to the real value
-     *                              - urlEncodeArgs array: Basically a mapper for freetext fields that should
+     *                              - urlEncodeArgs array: Basically a mapper for freetext arguments that should
      *                              be automatically url encoded/decoded by the router. An array where the values
-     *                              are the manes of the fields to be used as url encoded values. Those args are not considered staticly mappable
+     *                              are the manes of the fields to be used as url encoded values.
+     *                              Those args are NOT considered statically mappable!
+     *                              - noCacheArgs array: A list of arguments that should NOT be considered when calculating
+     *                              hash values in the TYPO3 core. This affects both the cHash generation, and the "createHashBase()" method in the TSFE.
+     *                              If used on with the ExtBase enhancer, namespaces will be applied automatically.
      *                              - raw array: Can be used to define additional, raw route enhancer configuration
      *                              options that will be merged with the generated options.
      *                              - rawOverride array: Similar to "raw" but will be merged into the
@@ -420,8 +424,7 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
             ), $this->getExtBaseSchema()
         );
         
-        $controllerDefinition = NamingUtil::controllerAliasFromClass($options['controller'])
-                                . '::' . $options['action'];
+        $controllerDefinition = NamingUtil::controllerAliasFromClass($options['controller']) . '::' . $options['action'];
         
         $config = [
             'type' => 'Extbase',
@@ -446,6 +449,7 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
                     $options['defaults']['page'] = $options['defaults']['page'] ?? 0;
                     $options['requirements']['page'] = $options['requirements']['page'] ?? '\\d+';
                     
+                    // @todo this can be removed in v11, as widgets are no longer a thing there...
                     if ($route[1]['page'] === 'page') {
                         $route[1]['page'] = '@widget_0/currentPage';
                     }
@@ -478,6 +482,8 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
      */
     public function finish(ConfigState $state): void
     {
+        // @todo this should be routing.routeEnhancers
         $state->setAsJson('routeEnhancers', $this->routeEnhancers, true);
+        $state->set('routing.noCacheArgs', $this->noCacheArgs);
     }
 }

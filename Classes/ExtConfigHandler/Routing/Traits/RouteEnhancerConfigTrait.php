@@ -29,6 +29,8 @@ use Neunerlei\Arrays\Arrays;
 trait RouteEnhancerConfigTrait
 {
     
+    protected $noCacheArgs = [];
+    
     /**
      * Internal helper to merge the "raw" config, the $typeConfig and the "rawOverride" config
      * into a single array, while automatically applying some polyfills
@@ -65,11 +67,13 @@ trait RouteEnhancerConfigTrait
                 : $options['defaults'];
         }
         
-        return Arrays::merge(
+        $config = Arrays::merge(
             $config,
             $options['rawOverride'],
             'nn', 'r'
         );
+        
+        return $this->extractNoCacheArgs($config, $options);
     }
     
     /**
@@ -271,9 +275,57 @@ trait RouteEnhancerConfigTrait
             ];
             
             if (($config['requirements'][$field] ?? null) === '[a-zA-Z0-9\-_.]*') {
-                $config['requirements'][$field] = '[\\w\\d\-_.%&+]*';
+                $config['requirements'][$field] = '[^\\/]*';
             }
         }
+        
+        return $config;
+    }
+    
+    protected function extractNoCacheArgs(array $config, array $options): array
+    {
+        if (empty($options['noCacheArgs'])) {
+            return $config;
+        }
+        
+        $args = $options['noCacheArgs'];
+        $filteredArgs = [];
+        
+        if ($config['type'] === 'Extbase') {
+            $extensionName = $config['extension'] ?? '';
+            $pluginName = $config['plugin'] ?? '';
+            $extensionName = str_replace(' ', '', ucwords(str_replace('_', ' ', $extensionName)));
+            $pluginSignature = strtolower($extensionName . '_' . $pluginName);
+            $namespace = 'tx_' . $pluginSignature;
+            
+            foreach ($args as $arg) {
+                // @todo this can be removed in v11, as widgets are no longer a thing there...
+                if ($arg === 'page') {
+                    foreach ($config['routes'] as $route) {
+                        $_arg = $route['_arguments']['page'] ?? null;
+                        if (! is_string($_arg ?? null)
+                            || ! str_starts_with($_arg, '@')) {
+                            continue;
+                        }
+                        
+                        $filteredArgs[] = $namespace . '[' . str_replace('/', '][', $_arg) . ']';
+                    }
+                }
+                
+                // Ignore if the arg is already properly formatted
+                if (str_contains($arg, '[')) {
+                    // Except it starts with a bracket, in which case we prepend the namespace
+                    if (str_starts_with($arg, '[')) {
+                        $filteredArgs[] = $namespace . $arg;
+                    }
+                    continue;
+                }
+                
+                $filteredArgs[] = $namespace . '[' . $arg . ']';
+            }
+        }
+        
+        $this->noCacheArgs = array_unique(array_merge($this->noCacheArgs, array_values($filteredArgs)));
         
         return $config;
     }

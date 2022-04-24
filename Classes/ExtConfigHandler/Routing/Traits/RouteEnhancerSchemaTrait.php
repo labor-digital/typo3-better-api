@@ -97,6 +97,10 @@ trait RouteEnhancerSchemaTrait
                     'type' => 'array',
                     'default' => [],
                 ],
+                'noCacheArgs' => [
+                    'type' => 'array',
+                    'default' => [],
+                ],
             ],
             $override
         );

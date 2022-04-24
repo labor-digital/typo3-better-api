@@ -23,15 +23,21 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Routing;
 
 
+use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Event\Configuration\BackendRouteRegistrationEvent;
 use LaborDigital\T3ba\Event\Configuration\MiddlewareRegistrationEvent;
+use LaborDigital\T3ba\Event\Core\SiteActivatedEvent;
 use LaborDigital\T3ba\Event\Core\SiteConfigFilterEvent;
+use LaborDigital\T3ba\Event\Frontend\HashBaseArgFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractExtConfigApplier;
+use LaborDigital\T3ba\ExtConfigHandler\Routing\Site\Util\NoCacheArgsProvider;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\EventBus\Subscription\EventSubscriptionInterface;
 
 class Applier extends AbstractExtConfigApplier
 {
+    use ContainerAwareTrait;
+    
     /**
      * @inheritDoc
      */
@@ -40,6 +46,8 @@ class Applier extends AbstractExtConfigApplier
         $subscription->subscribe(MiddlewareRegistrationEvent::class, 'onMiddlewareRegistration');
         $subscription->subscribe(BackendRouteRegistrationEvent::class, 'onBeRouteRegistration');
         $subscription->subscribe(SiteConfigFilterEvent::class, 'onSiteConfigFilter');
+        $subscription->subscribe(SiteActivatedEvent::class, 'onSiteActivated');
+        $subscription->subscribe(HashBaseArgFilterEvent::class, 'onHashBaseFilter');
     }
     
     /**
@@ -111,4 +119,81 @@ class Applier extends AbstractExtConfigApplier
         $e->setConfig($config);
     }
     
+    /**
+     * Updates the cHash configuration for the registered no cache args when the site changes
+     *
+     * @return void
+     */
+    public function onSiteActivated(): void
+    {
+        $this->makeInstance(NoCacheArgsProvider::class)->updateCHashCalculator();
+    }
+    
+    /**
+     * Removes all registered no cache args from the hash base in the TSFE
+     *
+     * @param   \LaborDigital\T3ba\Event\Frontend\HashBaseArgFilterEvent  $event
+     *
+     * @return void
+     */
+    public function onHashBaseFilter(HashBaseArgFilterEvent $event): void
+    {
+        $noCacheArgs = $this->makeInstance(NoCacheArgsProvider::class)->getNoCacheArgs();
+        if (empty($noCacheArgs)) {
+            return;
+        }
+        
+        $hashArgs = $event->getArgs();
+        foreach ($noCacheArgs as $noCacheArg) {
+            $hashArgs['staticRouteArguments'] = $this->removeFromArgumentsArray(
+                $noCacheArg, $hashArgs['staticRouteArguments'] ?? []);
+            $hashArgs['dynamicArguments'] = $this->removeFromArgumentsArray(
+                $noCacheArg, $hashArgs['dynamicArguments'] ?? []);
+        }
+        
+        $event->setArgs($hashArgs);
+    }
+    
+    /**
+     * Internal helper to recursively remove a query argument from a list of existing arguments
+     *
+     * @param   string  $arg
+     * @param   array   $args
+     *
+     * @return array
+     */
+    protected function removeFromArgumentsArray(string $arg, array $args): array
+    {
+        if (empty($args)) {
+            return $args;
+        }
+        
+        parse_str($arg, $parsed);
+        
+        $walker = static function (array $list, array $removeList, \Closure $walker): ?array {
+            foreach ($list as $lk => $lv) {
+                if (! isset($removeList[$lk])) {
+                    continue;
+                }
+                
+                if (! is_array($removeList[$lk])) {
+                    unset($list[$lk]);
+                    continue;
+                }
+                
+                if (is_array($lv)) {
+                    $lv = $walker($lv, $removeList[$lk], $walker);
+                    if (! $lv) {
+                        unset($list[$lk]);
+                        continue;
+                    }
+                    $list[$lk] = $lv;
+                }
+            }
+            
+            return empty($list) ? null : $list;
+        };
+        
+        return $walker($args, $parsed, $walker);
+    }
 }
