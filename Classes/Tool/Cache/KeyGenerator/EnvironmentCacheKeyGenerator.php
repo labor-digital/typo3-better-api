@@ -82,6 +82,9 @@ class EnvironmentCacheKeyGenerator implements CacheKeyGeneratorInterface
     {
         $tsfe = $this->cs()->tsfe->getTsfe();
         
+        // @todo this should use the same logic as the TSFE
+        
+        /** @see \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::createHashBase() */
         return [
             'pageType' => $tsfe->type,
             'mountPoint' => $tsfe->MP,

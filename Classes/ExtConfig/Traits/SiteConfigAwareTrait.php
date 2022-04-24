@@ -69,6 +69,8 @@ trait SiteConfigAwareTrait
      */
     protected function getSiteIdentifier(): string
     {
+        // @todo we could make it so, that we listen on the SiteActivatedEvent
+        // if it turns out to be reliable in all cases
         return $this->context->site()->getCurrent()->getIdentifier();
     }
     
