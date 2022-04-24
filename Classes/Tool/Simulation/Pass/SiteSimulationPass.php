@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Simulation\Pass;
 
 
+use LaborDigital\T3ba\Event\Core\SiteActivatedEvent;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContextAwareTrait;
 
 class SiteSimulationPass implements SimulatorPassInterface
@@ -89,17 +90,21 @@ class SiteSimulationPass implements SimulatorPassInterface
      */
     public function setup(array $options, array &$storage): void
     {
+        $ctx = $this->getTypoContext();
+        $config = $ctx->config();
+        
         // Backup the current site
-        $storage['site'] = $this->getTypoContext()->config()->getRequestAttribute('site');
+        $storage['site'] = $config->getRequestAttribute('site');
         
         // Find the given site instance and inject it into the request
         if (isset($storage['pid'])) {
-            $site = $this->getTypoContext()->site()->getForPid($storage['pid']);
+            $site = $ctx->site()->getForPid($storage['pid']);
         } else {
-            $site = $this->getTypoContext()->site()->get($options['site']);
+            $site = $ctx->site()->get($options['site']);
         }
         
-        $this->getTypoContext()->config()->setRequestAttribute('site', $site);
+        $config->setRequestAttribute('site', $site);
+        $ctx->di()->cs()->eventBus->dispatch(new SiteActivatedEvent($site));
     }
     
     /**
@@ -107,7 +112,9 @@ class SiteSimulationPass implements SimulatorPassInterface
      */
     public function rollBack(array $storage): void
     {
-        $this->getTypoContext()->config()->setRequestAttribute('site', $storage['site']);
+        $ctx = $this->getTypoContext();
+        $ctx->config()->setRequestAttribute('site', $storage['site']);
+        $ctx->di()->cs()->eventBus->dispatch(new SiteActivatedEvent($storage['site']));
     }
     
 }

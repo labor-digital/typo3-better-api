@@ -22,10 +22,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Middleware;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\Core\SiteActivatedEvent;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 
 class RequestCollectorMiddleware implements MiddlewareInterface, NoDiInterface
 {
@@ -35,10 +38,12 @@ class RequestCollectorMiddleware implements MiddlewareInterface, NoDiInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Store fallback request
         $GLOBALS['TYPO3_REQUEST_FALLBACK'] = $request;
         
-        // Done
+        if ($request->getAttribute('site') instanceof SiteInterface) {
+            TypoEventBus::getInstance()->dispatch(new SiteActivatedEvent($request->getAttribute('site')));
+        }
+        
         return $handler->handle($request);
     }
 }
