@@ -28,7 +28,7 @@ use Neunerlei\Arrays\Arrays;
 use Neunerlei\Inflection\Inflector;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-class AbstractDataModel extends AbstractEntity
+class AbstractDataModel extends AbstractEntity implements \ArrayAccess
 {
     /**
      * The raw database array that was used to create this model
@@ -118,4 +118,38 @@ class AbstractDataModel extends AbstractEntity
     {
         return $this->__get($name) !== null;
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function offsetExists($offset)
+    {
+        return $this->__isset($offset);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function offsetSet($offset, $value)
+    {
+        throw new InvalidArgumentException('This model has only readable magic properties!');
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function offsetUnset($offset)
+    {
+        throw new InvalidArgumentException('This model has only readable magic properties!');
+    }
+    
+    
 }
