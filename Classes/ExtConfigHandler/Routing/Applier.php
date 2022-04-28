@@ -122,10 +122,16 @@ class Applier extends AbstractExtConfigApplier
     /**
      * Updates the cHash configuration for the registered no cache args when the site changes
      *
+     * @param   \LaborDigital\T3ba\Event\Core\SiteActivatedEvent  $e
+     *
      * @return void
      */
-    public function onSiteActivated(): void
+    public function onSiteActivated(SiteActivatedEvent $e): void
     {
+        if (! $e->getSite()) {
+            return;
+        }
+        
         $this->makeInstance(NoCacheArgsProvider::class)->updateCHashCalculator();
     }
     

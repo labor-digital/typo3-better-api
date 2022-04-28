@@ -27,6 +27,8 @@ use LaborDigital\T3ba\Tool\TypoContext\StaticTypoContextAwareTrait;
 use Neunerlei\Inflection\Inflector;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\Entity\NullSite;
 
 class T3baFunctionProvider implements ExpressionFunctionProviderInterface
 {
@@ -46,8 +48,12 @@ class T3baFunctionProvider implements ExpressionFunctionProviderInterface
     {
         return new ExpressionFunction('betterSite', static function () { },
             static function ($_, $valueKey = null, $siteIdentifier = null) {
-                $siteFacet = static::getTypoContext()->site();
-                $site = $siteIdentifier ? $siteFacet->get((string)$siteIdentifier) : $siteFacet->getCurrent();
+                try {
+                    $siteFacet = static::getTypoContext()->site();
+                    $site = $siteIdentifier ? $siteFacet->get((string)$siteIdentifier) : $siteFacet->getCurrent();
+                } catch (SiteNotFoundException $e) {
+                    $site = new NullSite();
+                }
                 $getter = Inflector::toGetter($valueKey ? (string)$valueKey : 'identifier');
                 
                 return $site->$getter();

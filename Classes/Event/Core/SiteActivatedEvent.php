@@ -33,19 +33,19 @@ class SiteActivatedEvent
     /**
      * @var \TYPO3\CMS\Core\Site\Entity\SiteInterface
      */
-    protected SiteInterface $site;
+    protected $site;
     
-    public function __construct(SiteInterface $site)
+    public function __construct(?SiteInterface $site)
     {
         $this->site = $site;
     }
     
     /**
-     * Returns the site that gets activated
+     * Returns the site that gets activated or null if it was restored to "LIMBO" by the simulator
      *
      * @return \TYPO3\CMS\Core\Site\Entity\SiteInterface
      */
-    public function getSite(): SiteInterface
+    public function getSite(): ?SiteInterface
     {
         return $this->site;
     }
