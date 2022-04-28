@@ -45,6 +45,13 @@ class AbstractDataModel extends AbstractEntity implements \ArrayAccess
     protected $__flex = [];
     
     /**
+     * This property helps to avoid that __isset is called recursively inside __get
+     *
+     * @var bool
+     */
+    protected $__recursiveLookup = false;
+    
+    /**
      * Returns the raw database array that was used to create this model
      *
      * @return array
@@ -96,6 +103,15 @@ class AbstractDataModel extends AbstractEntity implements \ArrayAccess
      */
     public function __get($name)
     {
+        $this->__recursiveLookup = true;
+        try {
+            if (isset($this->$name)) {
+                return $this->$name;
+            }
+        } finally {
+            $this->__recursiveLookup = false;
+        }
+        
         $raw = $this->getRaw();
         
         if (isset($raw[$name])) {
@@ -116,6 +132,10 @@ class AbstractDataModel extends AbstractEntity implements \ArrayAccess
      */
     public function __isset($name)
     {
+        if ($this->__recursiveLookup) {
+            return false;
+        }
+        
         return $this->__get($name) !== null;
     }
     
