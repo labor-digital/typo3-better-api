@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.36.0](https://github.com/labor-digital/typo3-better-api/compare/v10.35.1...v10.36.0) (2022-04-25)
+
+
+### Features
+
+* **Event:** add new HashBaseArgFilterEvent ([285b490](https://github.com/labor-digital/typo3-better-api/commit/285b490ea1f410096040f2c6dd247bbe8a33b264))
+* **Event:** add new SiteActivatedEvent ([8eb9b01](https://github.com/labor-digital/typo3-better-api/commit/8eb9b01045df723d2bf85e939452aa038ba1c393))
+* **Routing:** add noCacheArgs option to route configuration ([6f4d996](https://github.com/labor-digital/typo3-better-api/commit/6f4d996cddc2ce255976a494ad833b8168ca24f1))
+* **Routing:** introduce support for urlEncodeArgs in route enhancers ([f98b890](https://github.com/labor-digital/typo3-better-api/commit/f98b890937e1bb201aec6e50ef3201150087ca1b))
+
+
+### Bug Fixes
+
+* **Routing:** add missing T3BAUrlEncodeMapper as route mapper ([5df5e77](https://github.com/labor-digital/typo3-better-api/commit/5df5e77fceac5f012e459cc3cd6895a8b580787c))
+
 ### [10.35.1](https://github.com/labor-digital/typo3-better-api/compare/v10.35.0...v10.35.1) (2022-04-21)
 
 
