@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.36.1](https://github.com/labor-digital/typo3-better-api/compare/v10.36.0...v10.36.1) (2022-04-29)
+
+
+### Bug Fixes
+
+* **AbstractDataModel:** add ArrayAccess to data model to allow fluid to value lookup ([697c388](https://github.com/labor-digital/typo3-better-api/commit/697c38812eb54aa645dcf4376fcf982e07ad95a7))
+* **AbstractDataModel:** ensure real properties are still resolvable ([444486a](https://github.com/labor-digital/typo3-better-api/commit/444486a76c4102c19d5ed10a46edfb70a6f3e797))
+* **Site:** fix multiple issues when the site is currently not set ([8f5f3fd](https://github.com/labor-digital/typo3-better-api/commit/8f5f3fd7c3cdacfbfa37b1bacb12cc2c9c60c9cd))
+
 ## [10.36.0](https://github.com/labor-digital/typo3-better-api/compare/v10.35.1...v10.36.0) (2022-04-25)
 
 
