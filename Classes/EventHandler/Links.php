@@ -67,7 +67,7 @@ class Links implements LazyEventSubscriberInterface
         if ($linkSetOptions === null) {
             $linkSetOptions = false;
         } else {
-            $linkSetOptions = \GuzzleHttp\json_decode(substr($linkSetOptions, 10));
+            $linkSetOptions = \GuzzleHttp\json_decode(urldecode(substr($linkSetOptions, 10)));
         }
         
         // Filter out the link sets, either none (TRUE), all (FALSE) or just keep some (ARRAY)
@@ -82,7 +82,7 @@ class Links implements LazyEventSubscriberInterface
                         return false;
                     }
                     
-                    return is_array($linkSetOptions) && in_array($v, $linkSetOptions, true);
+                    return is_array($linkSetOptions) && in_array(substr($v, 8), $linkSetOptions, true);
                 }
                 
                 return true;
