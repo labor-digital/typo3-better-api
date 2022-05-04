@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.36.2](https://github.com/labor-digital/typo3-better-api/compare/v10.36.1...v10.36.2) (2022-05-04)
+
+
+### Bug Fixes
+
+* **LinkBrowserHandler:** ensure the page tree is limited to the storage pid as well ([3b1483a](https://github.com/labor-digital/typo3-better-api/commit/3b1483a7b0e4aa87fb0120478b53b90bb414c242))
+
 ### [10.36.1](https://github.com/labor-digital/typo3-better-api/compare/v10.36.0...v10.36.1) (2022-04-29)
 
 
