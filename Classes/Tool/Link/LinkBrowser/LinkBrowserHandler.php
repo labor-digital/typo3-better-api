@@ -39,6 +39,11 @@ class LinkBrowserHandler extends RecordLinkHandler
     {
         if (! empty($configuration['storagePid'])) {
             $configuration['storagePid'] = $this->getTypoContext()->pid()->get($configuration['storagePid']);
+            
+            // Only override the mount point if not specifically set via typoscript
+            if (empty($configuration['pageTreeMountPoints'])) {
+                $configuration['pageTreeMountPoints'] = $configuration['storagePid'];
+            }
         }
         
         parent::initialize($linkBrowser, $identifier, $configuration);
