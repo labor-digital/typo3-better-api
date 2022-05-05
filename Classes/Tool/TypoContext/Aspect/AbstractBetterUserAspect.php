@@ -111,6 +111,16 @@ abstract class AbstractBetterUserAspect extends UserAspect
     }
     
     /**
+     * Returns the name of the logged-in user or an empty string
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->getRootUserAspect()->get('username');
+    }
+    
+    /**
      * Returns the root aspect key
      *
      * @return string
