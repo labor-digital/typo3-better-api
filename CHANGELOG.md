@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.30.1](https://github.com/labor-digital/typo3-better-api/compare/v9.30.0...v9.30.1) (2022-05-05)
+
+
+### Bug Fixes
+
+* **TcaTable:** add editlock column in TCA defaults ([3fa7e01](https://github.com/labor-digital/typo3-better-api/commit/3fa7e011ceed6e49bab4202cd7d0a83d611827f4))
+
 ## [9.30.0](https://github.com/labor-digital/typo3-better-api/compare/v9.29.7...v9.30.0) (2021-07-15)
 
 
