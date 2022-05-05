@@ -152,6 +152,20 @@ class TcaTable extends AbstractTcaTable
                         ],
                     ],
                 ],
+                'editlock'         => [
+                    'exclude' => true,
+                    'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:editlock',
+                    'config'  => [
+                        'type'       => 'check',
+                        'renderType' => 'checkboxToggle',
+                        'items'      => [
+                            [
+                                0 => '',
+                                1 => '',
+                            ],
+                        ],
+                    ],
+                ],
                 'endtime'          => [
                     'exclude' => true,
                     'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
