@@ -34,12 +34,22 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class TypoEventBus extends EventBus implements SingletonInterface
 {
-    
+
     /**
      * @var EventBusInterface
      */
     protected static $eventBus;
-    
+
+    /**
+     * Returns true if an instance is available
+     *
+     * @return bool
+     */
+    public static function hasInstance(): bool
+    {
+        return isset(static::$eventBus);
+    }
+
     /**
      * Returns the event bus instance
      *
@@ -49,7 +59,7 @@ class TypoEventBus extends EventBus implements SingletonInterface
     {
         return static::$eventBus;
     }
-    
+
     /**
      * Internal helper to inject the event bus instance into the class
      *
