@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.36.3](https://github.com/labor-digital/typo3-better-api/compare/v10.36.2...v10.36.3) (2022-05-04)
+
+
+### Bug Fixes
+
+* **Links:** fix bug in handling allowed link sets ([8a30218](https://github.com/labor-digital/typo3-better-api/commit/8a3021864af073780e640e299fd4bb034e6f5a92))
+
 ### [10.36.2](https://github.com/labor-digital/typo3-better-api/compare/v10.36.1...v10.36.2) (2022-05-04)
 
 
