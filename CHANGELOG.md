@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.37.0](https://github.com/labor-digital/typo3-better-api/compare/v10.36.3...v10.37.0) (2022-05-06)
+
+
+### Features
+
+* **BetterUserAspect:** add getUsername() method ([af8d08c](https://github.com/labor-digital/typo3-better-api/commit/af8d08c7c5feae35db55a9fee173afbb6d682981))
+* **Util:** add hasInstance() method to SingletonInstanceTrait ([5a00e3b](https://github.com/labor-digital/typo3-better-api/commit/5a00e3b88d8b16735869e8c25977df9a470735a1))
+
+
+### Bug Fixes
+
+* **TableDefaults:** set tca configuration for "editlock" column ([1e0873f](https://github.com/labor-digital/typo3-better-api/commit/1e0873fe009e1b079224fc80ec153076d190403f))
+
 ### [10.36.3](https://github.com/labor-digital/typo3-better-api/compare/v10.36.2...v10.36.3) (2022-05-04)
 
 
