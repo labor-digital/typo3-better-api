@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.31.0](https://github.com/labor-digital/typo3-better-api/compare/v9.30.1...v9.31.0) (2022-05-06)
+
+
+### Features
+
+* **TypoEventBus:** add hasInstance() to check if singleton exists ([0c3201d](https://github.com/labor-digital/typo3-better-api/commit/0c3201d6e075166f2c60b1ad062c87ffd9f87bf2))
+
 ### [9.30.1](https://github.com/labor-digital/typo3-better-api/compare/v9.30.0...v9.30.1) (2022-05-05)
 
 
