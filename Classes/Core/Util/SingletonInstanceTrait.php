@@ -33,6 +33,17 @@ trait SingletonInstanceTrait
     protected static $instance;
     
     /**
+     * Returns true if the singleton instance for this class was set, false if not.
+     *
+     * @return bool
+     * @todo rename to hasSingleton() and deprecate it in v11
+     */
+    public static function hasInstance(): bool
+    {
+        return isset(static::$instance);
+    }
+    
+    /**
      * Returns the singleton instance for the class using this trait
      *
      * @return self
