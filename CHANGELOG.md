@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.32.0](https://github.com/labor-digital/typo3-better-api/compare/v9.31.0...v9.32.0) (2022-05-10)
+
+
+### Features
+
+* implement locking for cpu heavy tasks ([db74fce](https://github.com/labor-digital/typo3-better-api/commit/db74fce3df7a770b0a6133f585323d03d4272fbd))
+
+
+### Bug Fixes
+
+* **BetterApiInit:** don't render dbg be scripts for log functions ([70cd3c8](https://github.com/labor-digital/typo3-better-api/commit/70cd3c8c3d1c9404be2045d42929b2c422d136f7))
+
 ## [9.31.0](https://github.com/labor-digital/typo3-better-api/compare/v9.30.1...v9.31.0) (2022-05-06)
 
 
