@@ -48,8 +48,7 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     public function __construct()
     {
         $this->fs       = TempFs::makeInstance('DynamicTypoScript');
-        $memory         = $this->fs->hasFile('memory') ? $this->fs->getFileContent('memory') : [];
-        $this->contents = $memory;
+        $this->contents = $GLOBALS['TCA']['sys_template']['ctrl'][static::class] ?? [];
     }
 
     /**
@@ -59,7 +58,7 @@ class DynamicTypoScriptRegistry implements SingletonInterface
      */
     public function hasMemory(): bool
     {
-        return $this->fs->hasFile('memory');
+        return is_array($GLOBALS['TCA']['sys_template']['ctrl'][static::class] ?? null);
     }
 
     /**
@@ -107,9 +106,7 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     public function memorizeContent(string $key, string $content): self
     {
         $this->addContent($key, $content);
-        $memory       = $this->fs->hasFile('memory') ? $this->fs->getFileContent('memory') : [];
-        $memory[$key] = $content;
-        $this->fs->setFileContent('memory', $memory);
+        $GLOBALS['TCA']['sys_template']['ctrl'][static::class][$key] = $content;
 
         return $this;
     }

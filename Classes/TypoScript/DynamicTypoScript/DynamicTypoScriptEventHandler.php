@@ -54,17 +54,9 @@ class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
         $subscription->subscribe(FileImportFilterEvent::class, 'onTypoScriptFileImport');
     }
 
-    /**
-     * This is a major downside of the backport, because v10 handles a lot of inner logic differently
-     * and to other times in the TYPO3 lifecycle v9 sometimes forgets the memorized configuration state.
-     * This ugly hook detects those cases and flushes all TYPO3 caches to force the whole configuration
-     * to be re-written.
-     */
     public function onExtConfigLoaded(): void
     {
-        if (! $this->registry->hasMemory()) {
-            TypoContainer::getInstance()->get(CacheManager::class)->flushCaches();
-        }
+        // No longer required, only here for backward compatibility
     }
 
     /**
@@ -75,6 +67,11 @@ class DynamicTypoScriptEventHandler implements LazyEventSubscriberInterface
      */
     public function onTypoScriptFileImport(FileImportFilterEvent $event): void
     {
+        if (! $this->registry->hasMemory()) {
+            TypoContainer::getInstance()->get(CacheManager::class)->flushCaches();
+            throw new \RuntimeException('Dynamic-Typoscript failed to read from memory...');
+        }
+
         if (stripos($event->getFilename(), 'dynamic:') === 0) {
             $event->setFilename(
                 $this->registry->getFile(substr($event->getFilename(), 8))->getPathname()

@@ -23,11 +23,13 @@ use LaborDigital\Typo3BetterApi\BackendForms\TcaForms\TcaTable;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext;
 use LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigException;
 use LaborDigital\Typo3BetterApi\Frontend\TablePreview\PreviewLinkHook;
+use LaborDigital\Typo3BetterApi\Locking\LockerTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class TableConfigGenerator implements SingletonInterface
 {
     use ExtBasePersistenceMapperTrait;
+    use LockerTrait;
 
     /**
      * Holds the additional config data for all tables we generated the config for.
@@ -36,6 +38,13 @@ class TableConfigGenerator implements SingletonInterface
      * @var array
      */
     protected $additionalConfig = [];
+
+    protected $generatedSql;
+
+    public function __destruct()
+    {
+        $this->releaseAllLocks();
+    }
 
     /**
      * Generates the TCA list for the given stack of Table configuration classes
@@ -50,6 +59,23 @@ class TableConfigGenerator implements SingletonInterface
     {
         // Prepare the tca output
         $tcaList = [];
+
+        $cacheFileName = 'TableConfigCache-' . md5(serialize($stack) . '-' . ((int)$isOverride)) . '.txt';
+
+        $fs = $context->Fs;
+        if (! $fs->hasFile($cacheFileName)) {
+            $this->acquireLock($cacheFileName);
+            clearstatcache();
+        }
+
+        if ($fs->hasFile($cacheFileName)) {
+            $content                = $fs->getFileContent($cacheFileName);
+            $this->additionalConfig = $content['additionalConfig'];
+            $this->generatedSql     = $content['sql'];
+            $this->releaseLock($cacheFileName);
+
+            return $content['result'];
+        }
 
         // Run through the stack
         foreach ($stack as $tableName => $data) {
@@ -84,13 +110,24 @@ class TableConfigGenerator implements SingletonInterface
                 });
         }
 
+        clearstatcache();
+        if (! $fs->hasFile($cacheFileName)) {
+            $fs->setFileContent($cacheFileName, [
+                'additionalConfig' => $this->additionalConfig,
+                'sql'              => $context->SqlGenerator->getFullSql(),
+                'result'           => $tcaList,
+            ]);
+        }
+
+        $this->releaseLock();
+
         // Done
         return $tcaList;
     }
 
     /**
      * Should be called after both the default TCA and the TCA override stack ran.
-     * This will build the cachable table configuration object and return it.
+     * This will build the cacheable table configuration object and return it.
      *
      * @param   \LaborDigital\Typo3BetterApi\ExtConfig\ExtConfigContext  $context
      *
@@ -101,7 +138,7 @@ class TableConfigGenerator implements SingletonInterface
         $config = $context->getInstanceOf(TableConfig::class);
 
         // Build the sql string
-        $config->sql = $context->SqlGenerator->getFullSql();
+        $config->sql = $this->generatedSql ?? $context->SqlGenerator->getFullSql();
         $context->SqlGenerator->flush();
 
         // Build additional config
@@ -137,7 +174,7 @@ class TableConfigGenerator implements SingletonInterface
     protected function generatePreviewLinkTsConfig(string $tableName, array $configuration): string
     {
         $hiddenField = $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'] ?? 'hidden';
-        
+
         return '
         TCEMAIN.preview {
             ' . $tableName . ' {
