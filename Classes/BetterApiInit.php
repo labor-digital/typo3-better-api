@@ -414,10 +414,11 @@ class BetterApiInit
 
             // Register pre hook to fix broken typo3 iframe
             $recursion = false;
-            dbgConfig('postHooks', static function () use (&$recursion) {
-                if ($recursion) {
+            dbgConfig('postHooks', static function ($_, string $functionName) use (&$recursion) {
+                if ($recursion || in_array($functionName, ['logStream', 'logFile', 'logConsole'], true)) {
                     return;
                 }
+
                 $recursion = true;
                 try {
                     if ((defined('TYPO3_MODE') && TYPO3_MODE === 'BE') && PHP_SAPI !== 'cli') {
