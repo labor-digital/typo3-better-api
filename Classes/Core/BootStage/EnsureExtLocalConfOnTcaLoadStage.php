@@ -32,6 +32,15 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 class EnsureExtLocalConfOnTcaLoadStage implements BootStageInterface
 {
     /**
+     * Internal toggle to disable this stage temporarily in the Main loader.
+     * This flag may be removed without any notice
+     *
+     * @internal
+     * @var bool
+     */
+    public static $enabled = true;
+    
+    /**
      * True if the ext local conf files were loaded
      *
      * @var bool
@@ -45,7 +54,7 @@ class EnsureExtLocalConfOnTcaLoadStage implements BootStageInterface
     {
         // Load the ext config files when the TCA is loaded
         $eventBus->addListener(TcaWithoutOverridesLoadedEvent::class, function () {
-            if ($this->extLocalConfWasLoaded) {
+            if (! static::$enabled || $this->extLocalConfWasLoaded) {
                 return;
             }
             

@@ -23,13 +23,13 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfig\Loader;
 
 use Closure;
+use LaborDigital\T3ba\Core\BootStage\EnsureExtLocalConfOnTcaLoadStage;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
-use LaborDigital\T3ba\Event\Core\BasicBootDoneEvent;
+use LaborDigital\T3ba\Core\Locking\LockerTrait;
 use LaborDigital\T3ba\Event\ExtConfig\MainExtConfigGeneratedEvent;
 use LaborDigital\T3ba\Event\ExtConfig\SiteBasedExtConfigGeneratedEvent;
 use LaborDigital\T3ba\ExtConfig\Adapter\ConfigStateAdapter;
-use LaborDigital\T3ba\ExtConfig\Adapter\ExtensionManagementUtilityAdapter;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfig\ExtConfigService;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
@@ -48,15 +48,19 @@ use Neunerlei\Configuration\State\ConfigState;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class MainLoader implements LoggerAwareInterface, SingletonInterface
 {
     use TypoContextAwareTrait;
     use ContainerAwareTrait;
     use LoggerAwareTrait;
+    use LockerTrait;
     
     protected const STATE_CACHE_KEY = 't3ba.config.state';
     protected const STATE_CACHE_KEY_WITH_TCA_EXTENSION = 't3ba.config.state.tca';
@@ -84,6 +88,12 @@ class MainLoader implements LoggerAwareInterface, SingletonInterface
     {
         $this->extConfigService = $extConfigService;
         $this->eventBus = $eventBus;
+        $this->waitForLockLoops = 200;
+    }
+    
+    public function __destruct()
+    {
+        $this->releaseLock();
     }
     
     /**
@@ -94,64 +104,19 @@ class MainLoader implements LoggerAwareInterface, SingletonInterface
     {
         $state = $this->makeInstance(ConfigState::class);
         
-        $cache = $this->extConfigService->getFs()->getCache();
-        $hasStateCache = $cache->has(static::STATE_CACHE_KEY);
-        $hasStateCacheWithTcaExtension = $cache->has(static::STATE_CACHE_KEY_WITH_TCA_EXTENSION);
-        if ($hasStateCache && $hasStateCacheWithTcaExtension) {
-            // Load the cached state with TCA extensions and set it as state object
-            ConfigStateAdapter::resetState($state, $this->getStoredState());
+        if ($this->checkIfCachedStateIsAvailable()) {
+            $this->restoreStoredState($state);
         } else {
-            if ($hasStateCache && ! $hasStateCacheWithTcaExtension) {
-                // There is something out of sync here, this should theoretically never happen,
-                // however, to fix this, we will delete the TYPO3 TCA cache and force it to rebuild
-                $this->eventBus->addListener(BasicBootDoneEvent::class, function () {
-                    ExtensionManagementUtilityAdapter::clearBaseTcaCache();
-                });
+            $this->acquireLock();
+            
+            // Recheck if the cached state is available, after we waited for our lock
+            if ($this->checkIfCachedStateIsAvailable()) {
+                $this->restoreStoredState($state);
+            } else {
+                $this->generateStoredState($state);
             }
             
-            // @todo the loader generation should be extracted into a "LoaderFactory" class
-            $loader = $this->extConfigService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
-            
-            // As we do cache the state content externally, we don't need the loader to do that for us, too.
-            $loader->setCache(null);
-            
-            $loader->setEventDispatcher(
-                $this->makeEventDispatcherProxy(
-                    function (object $event) {
-                        if ($event instanceof BeforeStateCachingEvent) {
-                            $event->getState()->set(ExtConfigService::PERSISTABLE_STATE_PATH, $event->getCacheKey());
-                            
-                            $this->loadSiteBasedConfig($event->getState());
-                            
-                            $configContext = $event->getLoaderContext()->configContext;
-                            if ($configContext instanceof ExtConfigContext) {
-                                $this->eventBus->dispatch(
-                                    new MainExtConfigGeneratedEvent($configContext, $event->getState())
-                                );
-                            }
-                        }
-                    }
-                )
-            );
-            
-            // @todo this can be removed in v11, in order to set the EXT_CONFIG_V11_SITE_BASED_CONFIG
-            // at the first possible location, I need to inject the handler manually.
-            // This allows all other site-based handler to participate on the early access program,
-            // without additional configuration
-            $loader->registerHandler($this->makeInstance(Handler::class));
-            
-            $loader->setHandlerFinder(
-                $this->makeInstance(
-                    FilteredHandlerFinder:: class,
-                    [
-                        [StandAloneHandlerInterface::class],
-                        [],
-                    ]
-                )
-            );
-            
-            $loader->load(false, $state);
-            $this->storeState(static::STATE_CACHE_KEY, $state);
+            $isLocked = true;
         }
         
         // Ensure the config context is in sync with the global state
@@ -163,6 +128,13 @@ class MainLoader implements LoggerAwareInterface, SingletonInterface
         
         // Reset the log manager so our log configurations are applied correctly
         $this->getContainer()->get(LogManager::class)->reset();
+        
+        if (isset($isLocked)) {
+            // IF the script is running normally (not-yet-cached) we automatically load the TCA files here,
+            // in order to block the execution while the heavy TCA class lifting is being processed...
+            $this->loadBaseTcaIfPossible();
+            $this->releaseLock();
+        }
     }
     
     /**
@@ -269,6 +241,124 @@ class MainLoader implements LoggerAwareInterface, SingletonInterface
                 $this->eventBus->dispatch($event);
             }
         };
+    }
+    
+    /**
+     * Populates the provided config state object with the actual content
+     *
+     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     *
+     * @return void
+     */
+    protected function generateStoredState(ConfigState $state): void
+    {
+        // @todo the loader generation should be extracted into a "LoaderFactory" class
+        $loader = $this->extConfigService->makeLoader(ExtConfigService::MAIN_LOADER_KEY);
+        
+        // As we do cache the state content externally, we don't need the loader to do that for us, too.
+        $loader->setCache(null);
+        
+        $loader->setEventDispatcher(
+            $this->makeEventDispatcherProxy(
+                function (object $event) {
+                    if ($event instanceof BeforeStateCachingEvent) {
+                        $event->getState()->set(ExtConfigService::PERSISTABLE_STATE_PATH, $event->getCacheKey());
+                        
+                        $this->loadSiteBasedConfig($event->getState());
+                        
+                        $configContext = $event->getLoaderContext()->configContext;
+                        if ($configContext instanceof ExtConfigContext) {
+                            $this->eventBus->dispatch(
+                                new MainExtConfigGeneratedEvent($configContext, $event->getState())
+                            );
+                        }
+                    }
+                }
+            )
+        );
+        
+        // @todo this can be removed in v11, in order to set the EXT_CONFIG_V11_SITE_BASED_CONFIG
+        // at the first possible location, I need to inject the handler manually.
+        // This allows all other site-based handler to participate on the early access program,
+        // without additional configuration
+        $loader->registerHandler($this->makeInstance(Handler::class));
+        
+        $loader->setHandlerFinder(
+            $this->makeInstance(
+                FilteredHandlerFinder:: class,
+                [
+                    [StandAloneHandlerInterface::class],
+                    [],
+                ]
+            )
+        );
+        
+        $loader->load(false, $state);
+        $this->storeState(static::STATE_CACHE_KEY, $state);
+    }
+    
+    /**
+     * Checks if both the state and tca extension state caches exist
+     *
+     * @return bool
+     */
+    protected function checkIfCachedStateIsAvailable(): bool
+    {
+        $cache = $this->extConfigService->getFs()->getCache();
+        $hasStateCache = $cache->has(static::STATE_CACHE_KEY);
+        $hasStateCacheWithTcaExtension = $cache->has(static::STATE_CACHE_KEY_WITH_TCA_EXTENSION);
+        
+        return $hasStateCache && $hasStateCacheWithTcaExtension;
+    }
+    
+    /**
+     * Restores the global config state back to the object provided
+     *
+     * @param   \Neunerlei\Configuration\State\ConfigState  $state
+     *
+     * @return void
+     */
+    protected function restoreStoredState(ConfigState $state): void
+    {
+        ConfigStateAdapter::resetState($state, $this->getStoredState());
+    }
+    
+    /**
+     * Tries to (loaded from a cacheable "loadExtLocalconf" method, inside single (uncached) ext_localconf.php files)
+     * load the TCA a bit early. This allows us to keep our "lock" for the period of generating the TCA array alive.
+     * If we are not 100% sure to be called in the correct context this method does nothing.
+     *
+     * @return void
+     */
+    protected function loadBaseTcaIfPossible(): void
+    {
+        $inSingleExtLocalConf = false;
+        $inLoadExtLocalConf = false;
+        
+        /** @var FrontendInterface|null $cache */
+        $cache = null;
+        foreach (debug_backtrace() as $frame) {
+            if (str_ends_with($frame['file'], 'ext_localconf.php') && $frame['class'] === ExtensionManagementUtility::class) {
+                $inSingleExtLocalConf = true;
+                continue;
+            }
+            
+            if ($frame['function'] === 'loadExtLocalconf' && ! empty($frame['args'][0])) {
+                if (! isset($frame['args'][1]) || ! $frame['args'][1] instanceof FrontendInterface) {
+                    break;
+                }
+                $cache = $frame['args'][1];
+                $inLoadExtLocalConf = true;
+                break;
+            }
+        }
+        
+        if ($inSingleExtLocalConf && $inLoadExtLocalConf) {
+            EnsureExtLocalConfOnTcaLoadStage::$enabled = false;
+            Bootstrap::unsetReservedGlobalVariables();
+            ExtensionManagementUtility::loadBaseTca(true, $cache);
+            EnsureExtLocalConfOnTcaLoadStage::$enabled = true;
+        }
     }
     
     /**
