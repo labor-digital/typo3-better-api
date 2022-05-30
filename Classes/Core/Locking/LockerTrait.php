@@ -111,7 +111,7 @@ trait LockerTrait
     protected function acquireLock(?string $key = null): bool
     {
         $lock = $this->getLock($key);
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < $this->waitForLockLoops; $i++) {
             try {
                 $locked = $lock->acquire(LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE
                                          | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK);
