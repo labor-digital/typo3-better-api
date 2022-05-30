@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.38.0](https://github.com/labor-digital/typo3-better-api/compare/v10.37.0...v10.38.0) (2022-05-30)
+
+
+### Features
+
+* enable caching for non-runtime di loader ([0512537](https://github.com/labor-digital/typo3-better-api/commit/0512537f6770f0c982fe51f2712417a75631a2d7))
+* implement locking for ext config main loader ([f8eb7cc](https://github.com/labor-digital/typo3-better-api/commit/f8eb7cc67b45995e297061248553f0cbd524d120))
+* introduce "LockerTrait" to simplify usage of TYPO3 locking ([21bbf21](https://github.com/labor-digital/typo3-better-api/commit/21bbf21eb86a90b8d8e9c555d98a4713b1ab5a78))
+
+
+### Bug Fixes
+
+* **Locking:** actually consume the waitForLockLoops option ([6816614](https://github.com/labor-digital/typo3-better-api/commit/6816614f0e9084797a1c509a62ab75991189d9cc))
+
 ## [10.37.0](https://github.com/labor-digital/typo3-better-api/compare/v10.36.3...v10.37.0) (2022-05-06)
 
 
