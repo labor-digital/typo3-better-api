@@ -28,7 +28,6 @@ use LaborDigital\T3ba\Core\VarFs\Mount;
 use LaborDigital\T3ba\Core\VarFs\VarFs;
 use LaborDigital\T3ba\Event\ConfigLoaderFilterEvent;
 use LaborDigital\T3ba\ExtConfig\Loader\DiLoader;
-use LaborDigital\T3ba\ExtConfig\Loader\Factory\MainLoader\MergeOptionFinder\MergeOptionHandler;
 use LaborDigital\T3ba\ExtConfig\Loader\MainLoader;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\Configuration\Loader\Loader;
