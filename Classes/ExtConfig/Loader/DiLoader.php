@@ -79,10 +79,6 @@ class DiLoader
         
         $loader = $this->extConfigService->makeLoader($key);
         
-        if (! $runtime) {
-            $loader->setCache(null);
-        }
-        
         $loader->setHandlerFinder(
             $this->makeInstance(
                 FilteredHandlerFinder:: class,
