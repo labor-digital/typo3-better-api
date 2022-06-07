@@ -61,6 +61,7 @@ use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Extbase\Service\ImageService;
 
 class FalService implements SingletonInterface
@@ -126,7 +127,7 @@ class FalService implements SingletonInterface
     }
     
     /**
-     * Similar to getFile() as it finds a file object in the FAL. However this will
+     * Similar to getFile() as it finds a file object in the FAL. However, this will
      * solely search for file references and requires a numeric id for a reference to find in the database.
      *
      * @param   int  $uid  The uid of the reference in the sys_file_reference table
@@ -136,6 +137,26 @@ class FalService implements SingletonInterface
     public function getFileReference(int $uid): FileReference
     {
         return $this->getResourceFactory()->getFileReferenceObject($uid);
+    }
+    
+    /**
+     * Retrieves a File object representation and creates a dummy file reference object out of it
+     *
+     * @param   \TYPO3\CMS\Core\Resource\FileInterface  $file
+     *
+     * @return \TYPO3\CMS\Core\Resource\FileReference
+     */
+    public function makeFileReference(FileInterface $file): FileReference
+    {
+        return $this->getResourceFactory()->createFileReferenceObject(
+            [
+                'uid_local' => $file->getUid(),
+                'identifier' => $file->getIdentifier(),
+                'uid_foreign' => StringUtility::getUniqueId('NEW_'),
+                'uid' => StringUtility::getUniqueId('NEW_'),
+                'crop' => null,
+            ]
+        );
     }
     
     /**
