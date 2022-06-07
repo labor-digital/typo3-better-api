@@ -23,45 +23,12 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Tool\Fal;
 
 
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
-use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use LaborDigital\T3ba\Tool\Fal\Util\FalFileUrlUtil as FalFileUrlUtilRoot;
 
-class FalFileUrlUtil implements NoDiInterface
+/**
+ * @deprecated use LaborDigital\T3ba\Tool\Fal\Util\FalFileUrlUtil instead
+ */
+class FalFileUrlUtil extends FalFileUrlUtilRoot
 {
-    /**
-     * @var \LaborDigital\T3ba\Tool\TypoContext\TypoContext
-     */
-    protected static $context;
-    
-    /**
-     * Makes sure that the fal file url always has the host name prepended to it
-     *
-     * @param   string  $relativeUrl
-     *
-     * @return string
-     */
-    public static function makeAbsoluteUrl(string $relativeUrl): string
-    {
-        // Fallback if the relative url is already an absolute url
-        /** @noinspection BypassedUrlValidationInspection */
-        if (filter_var($relativeUrl, FILTER_VALIDATE_URL)) {
-            return $relativeUrl;
-        }
-        
-        return static::getHost() . '/' . ltrim($relativeUrl, '/');
-    }
-    
-    /**
-     * Returns the host of the current page
-     *
-     * @return string
-     */
-    protected static function getHost(): string
-    {
-        $context = static::$context ??
-                   static::$context = GeneralUtility::makeInstance(TypoContext::class);
-        
-        return $context->request()->getHost();
-    }
+
 }
