@@ -38,17 +38,15 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Fal;
 
-use InvalidArgumentException;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\FileInfo;
 use LaborDigital\T3ba\Tool\Fal\FileInfo\ProcessedFileAdapter;
 use LaborDigital\T3ba\Tool\Fal\Service\FileReferenceCreator;
-use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\Fal\Service\FileResolver;
+use LaborDigital\T3ba\Tool\Fal\Util\FalFilePathUtil;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Options\Options;
 use Neunerlei\PathUtil\Path;
-use RuntimeException;
-use Throwable;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\Area;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
@@ -77,7 +75,7 @@ class FalService implements SingletonInterface
      */
     public function getFileRepository(): FileRepository
     {
-        return $this->getService(FileRepository::class);
+        return $this->makeInstance(FileRepository::class);
     }
     
     /**
@@ -87,7 +85,7 @@ class FalService implements SingletonInterface
      */
     public function getResourceFactory(): ResourceFactory
     {
-        return $this->getService(ResourceFactory::class);
+        return $this->makeInstance(ResourceFactory::class);
     }
     
     /**
@@ -112,6 +110,7 @@ class FalService implements SingletonInterface
      *                                       - "23" (file UID)
      *                                       - "uploads/myfile.png" (backwards-compatibility, storage "0")
      *                                       - "file:23"
+     *                                       - "EXT:my_ext/path/to/my/file.jpg" (Absolute path on the file system)
      *
      * @param   string|null      $table      The table to use as reference
      * @param   string|null      $field      The field to use as reference
@@ -122,76 +121,8 @@ class FalService implements SingletonInterface
      */
     public function getFile($uid, ?string $table = null, ?string $field = null, bool $onlyFirst = true)
     {
-        // Check how we select
-        $useUidOnly = empty($table) || empty($field);
-        if ($useUidOnly && $uid === null) {
-            throw new InvalidArgumentException(
-                '$uid can"t be null if neither a $table nor a $field are defined'
-            );
-        }
-        
-        try {
-            if (is_int($uid)) {
-                $uid = (string)$uid;
-            }
-            
-            // Read the strange string identifiers
-            if (
-                (is_string($uid) && ! is_numeric($uid))
-                || (is_numeric($uid) && $useUidOnly)
-            ) {
-                // Prepare identifier
-                $identifier = $uid;
-                
-                // Check if we got a Pseudo Link|Label combination...
-                // Oh gosh typo3 is so weired...
-                if (strpos($identifier, '%') !== false && strpos($identifier, '|') !== false) {
-                    $identifier = explode('|', $identifier);
-                    $identifier = reset($identifier);
-                    // Crack strange multi-encodings
-                    for ($i = 0; $i < 25; $i++) {
-                        $identifier = rawurldecode($identifier);
-                        if (strpos($identifier, '%') === false) {
-                            break;
-                        }
-                    }
-                } // Read query like uid
-                elseif (strpos($identifier, '=') !== false) {
-                    $params = parse_url($uid);
-                    if (! isset($params['query'])) {
-                        throw new RuntimeException('');
-                    }
-                    parse_str($params['query'], $params);
-                    if (! isset($params['uid'])) {
-                        throw new RuntimeException('');
-                    }
-                    $identifier = $params['uid'];
-                } // Parse path
-                elseif (strpos($identifier, '/') !== false) {
-                    $path = $this->getFalPathArray($identifier);
-                    $identifier = $path['identifier'];
-                }
-                
-                // Check if we got a file
-                $file = $this->getResourceFactory()->retrieveFileOrFolderObject($identifier);
-                if ($file instanceof File) {
-                    return $file;
-                }
-                
-                return null;
-            }
-            
-            $table = NamingUtil::resolveTableName($table);
-            $file = $this->getFileRepository()->findByRelation($table, $field, $uid);
-            
-            if (! empty($file)) {
-                return $onlyFirst ? reset($file) : $file;
-            }
-            
-            return $onlyFirst ? null : [];
-        } catch (Throwable $e) {
-            return null;
-        }
+        return $this->makeInstance(FileResolver::class)
+                    ->resolve($uid, $table, $field, $onlyFirst);
     }
     
     /**
@@ -258,7 +189,7 @@ class FalService implements SingletonInterface
     {
         // Fetch the filename
         $falPath = trim(Path::unifySlashes($falPath, '/'));
-        if (substr($falPath, -1) === '/') {
+        if (str_ends_with($falPath, '/')) {
             // Got a folder name as fal path -> Use basename of system path as file name
             $filename = basename($fileSystemPath);
         } else {
@@ -347,7 +278,7 @@ class FalService implements SingletonInterface
         ]);
         
         // Check if fieldName contains namespace
-        if (strpos($uploadFieldName, '.') !== false) {
+        if (str_contains($uploadFieldName, '.')) {
             $uploadFieldNameList = GeneralUtility::trimExplode('.', $uploadFieldName);
             $namespace = array_shift($uploadFieldNameList);
             $uploadFieldName = implode('.', $uploadFieldNameList);
@@ -471,7 +402,7 @@ class FalService implements SingletonInterface
         }
         
         // Apply the processing
-        $processed = $this->getService(ImageService::class)->applyProcessingInstructions($file, $options);
+        $processed = $this->makeInstance(ImageService::class)->applyProcessingInstructions($file, $options);
         
         // Inject the file reference as property to use it in later processing steps
         if ($file instanceof FileReference) {
@@ -554,7 +485,7 @@ class FalService implements SingletonInterface
      */
     public function getFolder(string $falPath): Folder
     {
-        $path = $this->getFalPathArray($falPath);
+        $path = FalFilePathUtil::getFalPathArray($falPath);
         
         return $this->getResourceFactory()->getFolderObjectFromCombinedIdentifier($path['identifier']);
     }
@@ -569,7 +500,7 @@ class FalService implements SingletonInterface
      */
     public function mkFolder(string $falPath): Folder
     {
-        $path = $this->getFalPathArray($falPath);
+        $path = FalFilePathUtil::getFalPathArray($falPath);
         
         // Load the root folder
         $folder = $this->getResourceFactory()->getFolderObjectFromCombinedIdentifier($path['storage'] . ':/');
@@ -585,47 +516,5 @@ class FalService implements SingletonInterface
         
         // Done
         return $folder;
-    }
-    
-    /**
-     * Internal helper to receive a fal (currently only folder)path and parses it to avoid common errors.
-     * The resulting array has three keys, "storage" containing the storage id (1 if none was given), "path",
-     * the array of path elements given and "identifier" as the combined, prepared string to pass to the resource
-     * factory.
-     *
-     * The method will automatically strip superfluous "fileadmin" parts when the storage id is 1.
-     *
-     * @param   string  $falPath  Something like /myFolder/mySubFolder, 1:/myFolder, 2
-     *
-     * @return array
-     */
-    protected function getFalPathArray(string $falPath): array
-    {
-        $falPath = trim(trim($falPath, '\\/ '));
-        $falPath = Path::unifySlashes($falPath, '/');
-        $parts = explode(':', $falPath);
-        
-        if (count($parts) === 1 && is_numeric($parts[0])) {
-            $parts[] = '';
-        }
-        
-        $storageId = count($parts) > 1 && is_numeric($parts[0]) ? (int)array_shift($parts) : 1;
-        $remainingPathParts = array_values(array_filter(explode('/', implode(':', $parts))));
-        
-        if (empty($remainingPathParts)) {
-            $remainingPathParts[] = '';
-        }
-        
-        // Make sure to remove fileadmin from path when using the storage with id 1
-        if ($storageId === 1 && $remainingPathParts[0] === 'fileadmin') {
-            array_shift($remainingPathParts);
-        }
-        
-        // Done
-        return [
-            'storage' => $storageId,
-            'path' => $remainingPathParts,
-            'identifier' => $storageId . ':/' . implode('/', $remainingPathParts),
-        ];
     }
 }
