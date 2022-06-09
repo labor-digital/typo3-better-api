@@ -24,14 +24,14 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Frontend;
 
 
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3ba\ExtConfig\ExtConfigException;
+use LaborDigital\T3ba\ExtConfig\Interfaces\ExtendedSiteBasedHandlerInterface;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
 use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
 use LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\Configuration\State\ConfigState;
 
-class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
+class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface, ExtendedSiteBasedHandlerInterface
 {
     protected $configureMethod = 'configureFrontend';
     
@@ -44,6 +44,12 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
      * @var \LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer
      */
     protected $tsInterop;
+    
+    /**
+     * @var array
+     * @deprecated temporary, fallback implementation until v11
+     */
+    protected $legacyTs = [];
     
     public function __construct(TypoScriptConfigInteropLayer $tsInterop)
     {
@@ -88,25 +94,44 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
                   'page.shortcutIcon = ' . $this->configurator->getFavIcon() . PHP_EOL .
                   '[END]';
             
-            try {
+            // @todo this if can be removed in v11
+            if ($this->tsInterop->isLocked()) {
+                $this->legacyTs[] = $ts;
+                
+            } else {
                 $this->tsInterop->registerConfiguration(
                     function (TypoScriptConfigurator $configurator) use ($ts) {
                         $configurator->registerDynamicContent('generic.setup', $ts);
                     },
                     't3ba.' . $this->getStateNamespace()
                 );
-            } catch (ExtConfigException $e) {
-                // @todo this try/catch block can be removed in the v11 release as it is only a temporary
-                // workaround if the old site handling is used
-                $this->context->getState()
-                              ->useNamespace(
-                                  'typo.typoScript.dynamicTypoScript',
-                                  static function (ConfigState $state) use ($ts) {
-                                      $state->attachToString('generic\\.setup', $ts, true);
-                                  }
-                              );
             }
         }
+    }
+    
+    /**
+     * @inheritDoc
+     * @deprecated temporary implementation until v11
+     */
+    public function prepareSiteBasedConfig(ConfigState $state): void { }
+    
+    /**
+     * @inheritDoc
+     * @deprecated temporary implementation until v11
+     */
+    public function finishSiteBasedConfig(ConfigState $state): void
+    {
+        if (empty($this->legacyTs)) {
+            return;
+        }
+        
+        $state
+            ->useNamespace(
+                'typo.typoScript.dynamicTypoScript',
+                function (ConfigState $state) {
+                    $state->attachToString('generic\\.setup', implode(PHP_EOL, $this->legacyTs), true);
+                }
+            );
     }
     
     
