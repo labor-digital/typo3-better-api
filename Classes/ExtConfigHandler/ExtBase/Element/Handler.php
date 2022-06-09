@@ -35,6 +35,7 @@ use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\ConfigurePluginInterface;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Plugin\PluginConfigurator;
 use LaborDigital\T3ba\ExtConfigHandler\Table\ContentType\Loader;
 use LaborDigital\T3ba\ExtConfigHandler\Table\TcaTableHandler;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 use Neunerlei\PathUtil\Path;
 
@@ -110,7 +111,7 @@ class Handler extends AbstractGroupExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $configurator->registerLocation('Classes/Controller');
-        $configurator->executeThisHandlerAfter(\LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler::class);
+        $configurator->executeThisHandlerBefore(\LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler::class);
         $configurator->executeThisHandlerAfter(TcaTableHandler::class);
         $configurator->registerInterface(ConfigurePluginInterface::class);
         $configurator->registerInterface(ConfigureContentElementInterface::class);
@@ -127,7 +128,12 @@ class Handler extends AbstractGroupExtConfigHandler
     public function finishHandler(): void
     {
         $state = $this->context->getState();
-        $this->config->dump($state);
+        
+        $this->config->dump(
+            $state,
+            // @todo this should be done via constructor injection
+            $this->getInstance(TypoScriptConfigInteropLayer::class)
+        );
     }
     
     /**

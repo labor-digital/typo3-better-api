@@ -69,21 +69,6 @@ class Applier extends AbstractExtConfigApplier
         $this->applyAssetCollectorActions($siteIdentifier);
         $this->applyMetaTagActions($siteIdentifier);
         $this->applyHeaderAndFooterData($event, $siteIdentifier);
-        $this->applyFavIcon($event, $siteIdentifier);
-    }
-    
-    /**
-     * Applies the registered favicon to the page renderer
-     *
-     * @param   \LaborDigital\T3ba\Event\Frontend\FrontendAssetFilterEvent  $event
-     * @param   string                                                      $siteIdentifier
-     */
-    protected function applyFavIcon(FrontendAssetFilterEvent $event, string $siteIdentifier): void
-    {
-        $icon = $this->state->get('typo.site.' . $siteIdentifier . '.frontend.favicon');
-        if ($icon) {
-            $event->getPageRenderer()->setFavIcon($icon);
-        }
     }
     
     /**

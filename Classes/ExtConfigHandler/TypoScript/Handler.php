@@ -25,6 +25,7 @@ namespace LaborDigital\T3ba\ExtConfigHandler\TypoScript;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
@@ -59,5 +60,18 @@ class Handler extends AbstractSimpleExtConfigHandler implements NoDiInterface
     protected function getStateNamespace(): string
     {
         return 'typo.typoScript';
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function prepare(): void
+    {
+        parent::prepare();
+        
+        // Apply the interop layer
+        /** @var TypoScriptConfigInteropLayer $interop */
+        $interop = $this->getInstance(TypoScriptConfigInteropLayer::class);
+        $interop->apply($this->context, $this->configurator)->lock();
     }
 }

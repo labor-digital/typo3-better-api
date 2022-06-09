@@ -41,6 +41,8 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Module;
 
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\ConfigBuilder\FluidTemplateBuilder;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 use LaborDigital\T3ba\Tool\Translation\Translator;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\FileSystem\Fs;
@@ -56,13 +58,20 @@ class ConfigGenerator
     protected $translator;
     
     /**
+     * @var \LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer
+     */
+    protected $tsInterop;
+    
+    /**
      * ModuleConfigGenerator constructor.
      *
-     * @param   \LaborDigital\T3ba\Tool\Translation\Translator  $translator
+     * @param   \LaborDigital\T3ba\Tool\Translation\Translator                                       $translator
+     * @param   \LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer  $tsInterop
      */
-    public function __construct(Translator $translator)
+    public function __construct(Translator $translator, TypoScriptConfigInteropLayer $tsInterop)
     {
         $this->translator = $translator;
+        $this->tsInterop = $tsInterop;
     }
     
     /**
@@ -76,12 +85,11 @@ class ConfigGenerator
     public function generate(ModuleConfigurator $configurator, ExtConfigContext $context): array
     {
         $this->makeTranslationFileIfRequired($configurator, $context);
+        $ts = FluidTemplateBuilder::build('module', $configurator->getSignature(), $configurator);
         
-        $context->getState()->attachToString(
-            'typo.typoScript.dynamicTypoScript.extBase\.setup',
-            FluidTemplateBuilder::build('module', $configurator->getSignature(), $configurator),
-            true
-        );
+        $this->tsInterop->registerConfiguration(static function (TypoScriptConfigurator $configurator) use ($ts) {
+            $configurator->registerDynamicContent('extBase.setup', $ts);
+        }, 't3ba.module');
         
         return $this->makeRegisterModuleArgs($configurator, $context);
     }

@@ -23,13 +23,25 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Pid;
 
 
-use LaborDigital\T3ba\Core\Di\PublicServiceInterface;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 use Neunerlei\Arrays\Arrays;
 use Neunerlei\Configuration\State\ConfigState;
 use Neunerlei\Inflection\Inflector;
+use TYPO3\CMS\Core\SingletonInterface;
 
-class ConfigGenerator implements PublicServiceInterface
+class ConfigGenerator implements SingletonInterface
 {
+    /**
+     * @var \LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer
+     */
+    protected $tsInterop;
+    
+    public function __construct(TypoScriptConfigInteropLayer $tsInterop)
+    {
+        $this->tsInterop = $tsInterop;
+    }
+    
     /**
      * Processes the config state and merges both the site-based and global pids
      * into a unified structure, before dumping the required typoScript configuration
@@ -53,10 +65,19 @@ class ConfigGenerator implements PublicServiceInterface
         $state->set('t3ba.pids', $pidList);
         
         $ts = $this->dumpTypoScript($pidList, $sitePids);
-        $state->useNamespace('typo.typoScript.dynamicTypoScript', static function () use ($state, $ts) {
-            $state->set('pids\\.constants', $ts['constants']);
-            $state->set('pids\\.setup', $ts['setup']);
-        });
+        
+        // @todo this can be removed in v11
+        if ($this->tsInterop->isLocked()) {
+            $state->useNamespace('typo.typoScript.dynamicTypoScript', static function () use ($state, $ts) {
+                $state->set('pids\\.constants', $ts['constants']);
+                $state->set('pids\\.setup', $ts['setup']);
+            });
+        } else {
+            $this->tsInterop->registerConfiguration(static function (TypoScriptConfigurator $configurator) use ($ts) {
+                $configurator->registerDynamicContent('pids.constants', $ts['constants'])
+                             ->registerDynamicContent('pids.setup', $ts['setup']);
+            }, 't3ba.pids');
+        }
     }
     
     /**

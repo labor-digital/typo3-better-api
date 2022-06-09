@@ -31,11 +31,11 @@ class Handler extends AbstractExtConfigHandler
     /**
      * @var \LaborDigital\T3ba\ExtConfigHandler\Icon\ExtConfigIconRegistry
      */
-    protected $configurator;
+    protected $iconRegistry;
     
     public function __construct(ExtConfigIconRegistry $iconRegistry)
     {
-        $this->configurator = $iconRegistry;
+        $this->iconRegistry = $iconRegistry;
     }
     
     /**
@@ -58,7 +58,7 @@ class Handler extends AbstractExtConfigHandler
     public function handle(string $class): void
     {
         /** @var \LaborDigital\T3ba\ExtConfigHandler\Icon\ConfigureIconsInterface $class */
-        $class::configureIcons($this->configurator, $this->context);
+        $class::configureIcons($this->iconRegistry, $this->context);
     }
     
     /**

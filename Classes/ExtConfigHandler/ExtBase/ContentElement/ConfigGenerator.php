@@ -48,9 +48,10 @@ class ConfigGenerator extends AbstractConfigGenerator
         $isReplacement = $targetSignature !== $configurator->getSignature();
         
         $config = $this->config;
+        $tsConfig = $ts = [];
         
-        $config->typoScript[] = FluidTemplateBuilder::build('plugin', $targetSignature, $configurator);
-        $config->typoScript[] = TsBuilder::build($targetSignature, $configurator);
+        $config->typoScript[] = $ts[] = FluidTemplateBuilder::build('plugin', $targetSignature, $configurator);
+        $config->typoScript[] = $ts[] = TsBuilder::build($targetSignature, $configurator);
         $config->configureArgs[] = ConfigurePluginBuilder::build($configurator, $context, ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT);
         
         $this->handleBackendPreview($configurator, $targetSignature, $isReplacement);
@@ -59,16 +60,18 @@ class ConfigGenerator extends AbstractConfigGenerator
         if (! $isReplacement) {
             $config->iconArgs[] = IconBuilder::buildIconRegistrationArgs($configurator, $context);
             $config->registrationArgs['ce'][] = $this->buildRegistrationArgs($configurator, $context);
-            $config->tsConfig[] = TsConfigBuilder::buildNewCeWizardConfig($configurator, $context, $targetSignature, 'CType = ' . $targetSignature);
+            $config->tsConfig[] = $tsConfig[] = TsConfigBuilder::buildNewCeWizardConfig($configurator, $context, $targetSignature, 'CType = ' . $targetSignature);
             
         } else {
-            $config->typoScript[] = 'tt_content.' . $targetSignature . ' < tt_content.' . $configurator->getSignature() . PHP_EOL .
-                                    'tt_content.' . $configurator->getSignature() . ' >';
+            $config->typoScript[] = $ts[] = 'tt_content.' . $targetSignature . ' < tt_content.' . $configurator->getSignature() . PHP_EOL .
+                                            'tt_content.' . $configurator->getSignature() . ' >';
         }
         
         if ($configurator->getContentObject()) {
-            $config->typoScript[] = 'tt_content.' . $targetSignature . ' = ' . $configurator->getContentObject();
+            $config->typoScript[] = $ts[] = 'tt_content.' . $targetSignature . ' = ' . $configurator->getContentObject();
         }
+        
+        $this->registerTypoScript($ts, $tsConfig, $context->getNamespace());
         
         $config->variantMap[$targetSignature] = $variantName;
     }

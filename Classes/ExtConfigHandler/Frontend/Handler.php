@@ -23,14 +23,32 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\ExtConfigHandler\Frontend;
 
 
-use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
+use LaborDigital\T3ba\ExtConfig\ExtConfigException;
 use LaborDigital\T3ba\ExtConfig\Interfaces\SiteBasedHandlerInterface;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
+use Neunerlei\Configuration\State\ConfigState;
 
-class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface, NoDiInterface
+class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandlerInterface
 {
     protected $configureMethod = 'configureFrontend';
+    
+    /**
+     * @var \LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext
+     */
+    protected $context;
+    
+    /**
+     * @var \LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer
+     */
+    protected $tsInterop;
+    
+    public function __construct(TypoScriptConfigInteropLayer $tsInterop)
+    {
+        $this->tsInterop = $tsInterop;
+    }
     
     /**
      * @inheritDoc
@@ -55,5 +73,41 @@ class Handler extends AbstractSimpleExtConfigHandler implements SiteBasedHandler
     {
         $this->registerDefaultLocation($configurator);
         $configurator->registerInterface(ConfigureFrontendInterface::class);
+        $configurator->executeThisHandlerBefore(\LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler::class);
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function finish(): void
+    {
+        parent::finish();
+        
+        if ($this->configurator instanceof FrontendConfigurator && $this->configurator->getFavIcon()) {
+            $ts = '[betterSite("identifier") == "' . $this->context->getSiteIdentifier() . '"]' . PHP_EOL .
+                  'page.shortcutIcon = ' . $this->configurator->getFavIcon() . PHP_EOL .
+                  '[END]';
+            
+            try {
+                $this->tsInterop->registerConfiguration(
+                    function (TypoScriptConfigurator $configurator) use ($ts) {
+                        $configurator->registerDynamicContent('generic.setup', $ts);
+                    },
+                    't3ba.' . $this->getStateNamespace()
+                );
+            } catch (ExtConfigException $e) {
+                // @todo this try/catch block can be removed in the v11 release as it is only a temporary
+                // workaround if the old site handling is used
+                $this->context->getState()
+                              ->useNamespace(
+                                  'typo.typoScript.dynamicTypoScript',
+                                  static function (ConfigState $state) use ($ts) {
+                                      $state->attachToString('generic\\.setup', $ts, true);
+                                  }
+                              );
+            }
+        }
+    }
+    
+    
 }

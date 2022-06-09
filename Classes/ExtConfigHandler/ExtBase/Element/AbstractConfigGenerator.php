@@ -26,6 +26,8 @@ namespace LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element;
 use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\ExtConfig\ExtConfigContext;
 use LaborDigital\T3ba\ExtConfigHandler\ExtBase\Common\AbstractElementConfigurator;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer;
+use LaborDigital\T3ba\ExtConfigHandler\TypoScript\TypoScriptConfigurator;
 
 abstract class AbstractConfigGenerator
 {
@@ -35,6 +37,16 @@ abstract class AbstractConfigGenerator
      * @var \LaborDigital\T3ba\ExtConfigHandler\ExtBase\Element\SharedConfig
      */
     protected $config;
+    
+    /**
+     * @var \LaborDigital\T3ba\ExtConfigHandler\TypoScript\Interop\TypoScriptConfigInteropLayer
+     */
+    protected $tsInterop;
+    
+    public function injectTsInterop(TypoScriptConfigInteropLayer $tsInterop): void
+    {
+        $this->tsInterop = $tsInterop;
+    }
     
     /**
      * Injects the shared config object on which the data is stored
@@ -57,6 +69,32 @@ abstract class AbstractConfigGenerator
         foreach (array_merge([$configurator], $configurator->getVariants()) as $variantName => $variant) {
             $this->generateForVariant($variant, $context, $variantName === 0 ? null : $variantName);
         }
+    }
+    
+    /**
+     * Internal helper to register the typo script and ts config
+     *
+     * @param   array   $typoScript
+     * @param   array   $tsConfig
+     * @param   string  $namespace
+     *
+     * @return void
+     */
+    protected function registerTypoScript(array $typoScript, array $tsConfig, string $namespace): void
+    {
+        if (! $this->tsInterop) {
+            return;
+        }
+        
+        $this->tsInterop->registerConfiguration(function (TypoScriptConfigurator $configurator) use ($typoScript, $tsConfig) {
+            if (! empty($typoScript)) {
+                $configurator->registerDynamicContent('extBase.setup', implode(PHP_EOL, array_filter($typoScript)));
+            }
+            
+            if (! empty($tsConfig)) {
+                $configurator->registerPageTsConfig(implode(PHP_EOL, array_filter($tsConfig)));
+            }
+        }, $namespace);
     }
     
     /**

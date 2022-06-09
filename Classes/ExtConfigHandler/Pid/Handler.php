@@ -24,7 +24,6 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Pid;
 
 
 use LaborDigital\T3ba\ExtConfig\Abstracts\AbstractSimpleExtConfigHandler;
-use LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler as TsHandler;
 use Neunerlei\Configuration\Handler\HandlerConfigurator;
 
 class Handler extends AbstractSimpleExtConfigHandler
@@ -37,7 +36,7 @@ class Handler extends AbstractSimpleExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $this->registerDefaultLocation($configurator);
-        $configurator->executeThisHandlerAfter(TsHandler::class);
+        $configurator->executeThisHandlerBefore(\LaborDigital\T3ba\ExtConfigHandler\TypoScript\Handler::class);
         $configurator->registerInterface(ConfigurePidsInterface::class);
     }
     

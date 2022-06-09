@@ -47,9 +47,10 @@ class ConfigGenerator extends AbstractConfigGenerator
         $signature = $configurator->getSignature();
         
         $config = $this->config;
+        $tsConfig = $ts = [];
         
-        $config->typoScript[] = FluidTemplateBuilder::build('plugin', $signature, $configurator);
-        $config->typoScript[] = TsBuilder::build($signature, $configurator);
+        $config->typoScript[] = $ts[] = FluidTemplateBuilder::build('plugin', $signature, $configurator);
+        $config->typoScript[] = $ts[] = TsBuilder::build($signature, $configurator);
         $config->configureArgs[] = ConfigurePluginBuilder::build(
             $configurator, $context, ExtensionUtility::PLUGIN_TYPE_PLUGIN);
         
@@ -75,11 +76,12 @@ class ConfigGenerator extends AbstractConfigGenerator
         $config->iconArgs[] = IconBuilder::buildIconRegistrationArgs($configurator, $context);
         $config->flexFormArgs[] = $this->buildFlexFormArgs($configurator, $context);
         $config->registrationArgs['plugin'][] = $this->buildRegistrationArgs($configurator, $context);
-        $config->tsConfig[] = TsConfigBuilder::buildNewCeWizardConfig(
+        $config->tsConfig[] = $tsConfig[] = TsConfigBuilder::buildNewCeWizardConfig(
             $configurator, $context, $signature, 'CType = list' . PHP_EOL . 'list_type = ' . $signature);
         
-        $config->variantMap[$signature] = $variantName;
+        $this->registerTypoScript($ts, $tsConfig, $context->getNamespace());
         
+        $config->variantMap[$signature] = $variantName;
     }
     
     /**

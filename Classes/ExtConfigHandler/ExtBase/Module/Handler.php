@@ -73,7 +73,7 @@ class Handler extends AbstractGroupExtConfigHandler
     public function configure(HandlerConfigurator $configurator): void
     {
         $configurator->registerLocation('Classes/Controller');
-        $configurator->executeThisHandlerAfter(TsHandler::class);
+        $configurator->executeThisHandlerBefore(TsHandler::class);
         $configurator->registerInterface(ConfigureModuleInterface::class);
     }
     

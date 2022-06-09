@@ -46,6 +46,7 @@ class SharedConfig implements NoDiInterface
      * The list of generated typo script snippets
      *
      * @var array
+     * @deprecated will be removed in v11. Use the {@link TypoScriptConfigInteropLayer} instead
      */
     public $typoScript = [];
     
@@ -53,6 +54,7 @@ class SharedConfig implements NoDiInterface
      * The list of generated Ts Config settings for the plugin registration
      *
      * @var array
+     * @deprecated will be removed in v11. Use the {@link TypoScriptConfigInteropLayer} instead
      */
     public $tsConfig = [];
     
@@ -135,9 +137,5 @@ class SharedConfig implements NoDiInterface
             $state->mergeIntoArray('t3ba.backendPreview.listLabelRenderers', $this->backendPreviewRenderers['listLabel']);
         }
         
-        $state->attachToString('typo.typoScript.pageTsConfig',
-            implode(PHP_EOL, array_filter($this->tsConfig)), true);
-        $state->attachToString('typo.typoScript.dynamicTypoScript.extBase\.setup',
-            implode(PHP_EOL, array_filter($this->typoScript)), true);
     }
 }
