@@ -112,8 +112,10 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
         
         $state = $this->configContext->getState();
         $siteState = new ConfigState([]);
-        
-        $this->configContext->initialize($this->configContext->getLoaderContext(), $siteState);
+        $loaderContext = $this->configContext->getLoaderContext();
+        $loaderConfigContextBackup = $loaderContext->configContext;
+        $loaderContext->configContext = $this->configContext;
+        $this->configContext->initialize($loaderContext, $siteState);
         
         $siteKeys = array_keys($this->sites);
         $siteConfigClasses = array_filter($this->configClasses, function ($v) use ($identifier, $siteKeys) {
@@ -131,10 +133,12 @@ class ConfigDefinition extends DefaultConfigDefinition implements NoDiInterface
         $this->classNamespaceMap = $filter($this->classNamespaceMap);
         
         try {
+            $loaderContext->configContext = $this->configContext;
             $callback();
         } finally {
             // Revert the context back to the initial state
-            $this->configContext->initialize($this->configContext->getLoaderContext(), $state);
+            $loaderContext->configContext = $loaderConfigContextBackup;
+            $this->configContext->initialize($loaderContext, $state);
             $this->configClasses = $clone->configClasses;
             $this->overrideConfigClasses = $clone->overrideConfigClasses;
             $this->classNamespaceMap = $clone->classNamespaceMap;
