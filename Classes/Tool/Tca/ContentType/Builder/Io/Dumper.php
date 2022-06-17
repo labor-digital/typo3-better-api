@@ -74,7 +74,7 @@ class Dumper
      */
     public function registerType(ContentType $type): void
     {
-        $this->typesToDump[] = $type;
+        $this->typesToDump[spl_object_id($type)] = $type;
     }
     
     /**
