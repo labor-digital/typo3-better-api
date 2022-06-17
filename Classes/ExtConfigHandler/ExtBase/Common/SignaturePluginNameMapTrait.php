@@ -62,7 +62,9 @@ trait SignaturePluginNameMapTrait
             $signature = NamingUtil::pluginSignature($name, $this->context->getExtKey());
         }
         
-        $this->signaturePluginNameMap[$signature] = $name;
+        if (! isset($this->signaturePluginNameMap[$signature])) {
+            $this->signaturePluginNameMap[$signature] = $name;
+        }
         
         return $signature;
     }
