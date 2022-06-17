@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.39.0](https://github.com/labor-digital/typo3-better-api/compare/v10.38.0...v10.39.0) (2022-06-13)
+
+
+### Features
+
+* **ExtConfig:** introduce typo script config interop layer ([75a0928](https://github.com/labor-digital/typo3-better-api/commit/75a09288bae2c243641e13a8733413dfbefb4226))
+* **Fal:** add makeFileReference utility method to FalService ([c4316e5](https://github.com/labor-digital/typo3-better-api/commit/c4316e5e3abb5648c9ad984f3e66d351067c068c))
+
+
+### Bug Fixes
+
+* **ExtConfig:** distribute site based config context correctly ([049dead](https://github.com/labor-digital/typo3-better-api/commit/049dead469481a0746e2349ddb01e327e858bfbe))
+* **ExtConfig\Frontend:** reliably register favicon in legacy site based mode ([2ab144e](https://github.com/labor-digital/typo3-better-api/commit/2ab144ebae386428824ac28cd958c1580549819f))
+
 ## [10.38.0](https://github.com/labor-digital/typo3-better-api/compare/v10.37.0...v10.38.0) (2022-05-30)
 
 
