@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.40.1](https://github.com/labor-digital/typo3-better-api/compare/v10.40.0...v10.40.1) (2022-06-20)
+
+
+### Bug Fixes
+
+* **ExtConfig\Context:** apply pids relative to current site ([fa67735](https://github.com/labor-digital/typo3-better-api/commit/fa67735a6b73e8b8b46b0f4407899b898adc89c0))
+
 ## [10.40.0](https://github.com/labor-digital/typo3-better-api/compare/v10.39.1...v10.40.0) (2022-06-20)
 
 
