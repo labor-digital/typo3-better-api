@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.40.0](https://github.com/labor-digital/typo3-better-api/compare/v10.39.1...v10.40.0) (2022-06-20)
+
+
+### Features
+
+* implement automatic cache clearing ([f01861b](https://github.com/labor-digital/typo3-better-api/commit/f01861b0041a5af7e50db0bc6449a09b9e7d0fcb)), closes [#THABS22-43](https://github.com/labor-digital/typo3-better-api/issues/THABS22-43)
+
 ### [10.39.1](https://github.com/labor-digital/typo3-better-api/compare/v10.39.0...v10.39.1) (2022-06-17)
 
 
