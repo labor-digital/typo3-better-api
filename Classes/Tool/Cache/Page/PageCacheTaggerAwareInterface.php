@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2021 LABOR.digital
+ * Copyright 2022 LABOR.digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Last modified: 2021.06.27 at 16:27
+ * Last modified: 2022.06.20 at 15:16
  */
 
 declare(strict_types=1);
 
 
-namespace LaborDigital\T3ba\ExtBase\Controller;
+namespace LaborDigital\T3ba\Tool\Cache\Page;
 
 
-use LaborDigital\T3ba\Tool\Cache\Page\PageCacheTaggerAwareInterface;
-use LaborDigital\T3ba\Tool\Cache\Page\PageCacheTaggerAwareTrait;
-
-abstract class BetterContentActionController extends BetterActionController implements PageCacheTaggerAwareInterface
+interface PageCacheTaggerAwareInterface
 {
-    use ContentControllerDataTrait;
-    use ContentControllerBackendPreviewTrait;
-    use PageCacheTaggerAwareTrait;
+    public function injectPageCacheTagger(PageCacheTagger $tagger): void;
 }

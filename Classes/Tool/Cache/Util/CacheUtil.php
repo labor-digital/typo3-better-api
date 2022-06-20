@@ -25,13 +25,18 @@ namespace LaborDigital\T3ba\Tool\Cache\Util;
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Tool\Cache\CacheTagProviderInterface;
+use LaborDigital\T3ba\Tool\OddsAndEnds\LazyLoadingUtil;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\AbstractDataModel;
 use Neunerlei\PathUtil\Path;
 use Throwable;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 
 class CacheUtil implements NoDiInterface
 {
@@ -47,12 +52,17 @@ class CacheUtil implements NoDiInterface
      * - Object (fallback): try to serialize or json encode the value as an md5
      * - Fallback: If no string tag could be calculated NULL is returned
      *
-     * @param   string|int|CacheTagProviderInterface|AbstractEntity|object|null  $tag  The value to convert into a tag.
+     * @param   string|int|CacheTagProviderInterface|AbstractEntity|object|null  $tag       The value to convert into a tag.
+     * @param   int                                                              $maxDepth  The maximum depth of properties to traverse when generating the tags
      *
      * @return array
      */
-    public static function stringifyTag($tag): array
+    public static function stringifyTag($tag, int $maxDepth = 0): array
     {
+        if ($maxDepth < 0) {
+            return [];
+        }
+        
         if (empty($tag) && $tag !== 0) {
             return [];
         }
@@ -70,12 +80,42 @@ class CacheUtil implements NoDiInterface
                 }
             }
             
+            $tag = LazyLoadingUtil::getRealValue($tag);
+            
             if (method_exists($tag, 'getPid')) {
                 $tags[] = 'page_' . $tag->getPid();
             }
             
-            if ($tag instanceof AbstractEntity) {
-                $tags[] = NamingUtil::resolveTableName($tag) . '_' . $tag->getUid();
+            
+            if ($tag instanceof ObjectStorage) {
+                $_tags = [];
+                foreach ($tag as $_tag) {
+                    $_tags[] = static::stringifyTag($_tag, $maxDepth - 1);
+                }
+                $tags = array_merge($tags, ...$_tags);
+                unset($_tag, $_tags);
+            } elseif ($tag instanceof AbstractEntity) {
+                $tags[]
+                    = ($tag instanceof AbstractDataModel ? 'tt_content' : NamingUtil::resolveTableName($tag)) .
+                      '_' . $tag->getUid();
+                
+                if ($maxDepth > 0) {
+                    $_tags = [];
+                    $ref = GeneralUtility::makeInstance(ReflectionService::class)->getClassSchema($tag);
+                    foreach ($ref->getProperties() as $property) {
+                        if (str_starts_with($property->getName(), '_')) {
+                            continue;
+                        }
+                        
+                        $val = $tag->_getProperty($property->getName());
+                        if (is_object($val)) {
+                            $_tags[] = static::stringifyTag($val, $maxDepth - 1);
+                        }
+                    }
+                    
+                    $tags = array_merge($tags, ...$_tags);
+                    unset($val, $ref, $property, $_tags);
+                }
             } elseif ($tag instanceof FileReference || $tag instanceof \TYPO3\CMS\Extbase\Domain\Model\FileReference) {
                 $tags[] = 'sys_file_reference_' . $tag->getUid();
             } elseif ($tag instanceof File || $tag instanceof \TYPO3\CMS\Extbase\Domain\Model\File) {
@@ -93,9 +133,12 @@ class CacheUtil implements NoDiInterface
                 $tags[] = lcfirst(Path::classBasename(get_class($tag))) . '_' . $id;
             }
             
-            if (! empty($tags)) {
-                return array_map([static::class, 'ensureTagValidity'], $tags);
+            
+            if (empty($tags)) {
+                return [];
             }
+            
+            return array_map([static::class, 'ensureTagValidity'], $tags);
         }
         
         try {

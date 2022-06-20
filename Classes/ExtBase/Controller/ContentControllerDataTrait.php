@@ -50,14 +50,14 @@ trait ContentControllerDataTrait
         }
         
         ControllerUtil::requireActionController($this);
-    
+        
         $row = [];
         
         // Interop helper when used in combination with the ContentControllerBackendPreviewTrait
         if (isset($this->previewRendererContext)
             && $this->previewRendererContext instanceof BackendPreviewRendererContext) {
             $row = $this->previewRendererContext->getRow();
-        } elseif(isset($this->configurationManager)) {
+        } elseif (isset($this->configurationManager)) {
             $row = $this->configurationManager->getContentObject()->data;
         }
         
