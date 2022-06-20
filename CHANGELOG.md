@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.39.1](https://github.com/labor-digital/typo3-better-api/compare/v10.39.0...v10.39.1) (2022-06-17)
+
+
+### Bug Fixes
+
+* **ExtConfig\ContentType:** register content types only once in the dumper ([a354c91](https://github.com/labor-digital/typo3-better-api/commit/a354c91b71c2ad9dc793af8e17b450ddb1f342d2))
+* **ExtConfig\ExtBase:** don't override existing plugin signatures ([4ec6e90](https://github.com/labor-digital/typo3-better-api/commit/4ec6e90665cd956887c0304e7e5b98a7042d3f40))
+
 ## [10.39.0](https://github.com/labor-digital/typo3-better-api/compare/v10.38.0...v10.39.0) (2022-06-13)
 
 
