@@ -26,6 +26,7 @@ namespace LaborDigital\T3ba\ExtConfig;
 use LaborDigital\T3ba\Core\Di\DelegateContainer;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Core\Exception\T3baException;
+use LaborDigital\T3ba\ExtConfig\SiteBased\SiteConfigContext;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use LaborDigital\T3ba\TypoContext\EnvFacet;
@@ -179,14 +180,15 @@ class ExtConfigContext extends ConfigContext implements NoDiInterface
      * This helper allows you to resolve either a single pid entry or a list of multiple pids at once.
      * It will also take replaceMarkers into account before requesting the pids
      *
-     * @param   string|int|array  $keys      Either the single key or an array of keys to retrieve
-     * @param   int               $fallback  A fallback to use if the pid was not found.
-     *                                       If not given, the method will throw an exception on a missing pid
+     * @param   string|int|array  $keys            Either the single key or an array of keys to retrieve
+     * @param   int               $fallback        A fallback to use if the pid was not found.
+     *                                             If not given, the method will throw an exception on a missing pid
+     * @param   string|null       $siteIdentifier  An optional site identifier to resolve the pids with
      *
      * @return array|int
      * @see \LaborDigital\T3ba\TypoContext\PidFacet::get()
      */
-    public function resolvePids($keys, int $fallback = -1)
+    public function resolvePids($keys, int $fallback = -1, ?string $siteIdentifier = null)
     {
         if (empty($keys)) {
             return $keys;
@@ -194,11 +196,15 @@ class ExtConfigContext extends ConfigContext implements NoDiInterface
         
         $keys = $this->replaceMarkers($keys);
         
-        if (is_array($keys)) {
-            return $this->getTypoContext()->pid()->getMultiple($keys, $fallback);
+        if (! $siteIdentifier && $this instanceof SiteConfigContext) {
+            $siteIdentifier = $this->getSiteIdentifier();
         }
         
-        return $this->getTypoContext()->pid()->get($keys, $fallback);
+        if (is_array($keys)) {
+            return $this->getTypoContext()->pid()->getMultiple($keys, $fallback, $siteIdentifier);
+        }
+        
+        return $this->getTypoContext()->pid()->get($keys, $fallback, $siteIdentifier);
     }
     
     /**
