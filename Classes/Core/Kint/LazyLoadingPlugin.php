@@ -41,7 +41,7 @@ namespace LaborDigital\T3ba\Core\Kint;
 
 use Kint\Object\BasicObject;
 use Kint\Object\InstanceObject;
-use Kint\Parser\IteratorPlugin;
+use Kint\Object\Representation\Representation;
 use Kint\Parser\Parser;
 use Kint\Parser\Plugin;
 use LaborDigital\T3ba\Tool\OddsAndEnds\LazyLoadingUtil;
@@ -76,7 +76,7 @@ class LazyLoadingPlugin extends Plugin
             /** @var InstanceObject $object */
             $object = InstanceObject::blank($o->name);
             $object->transplant($o);
-            $object->classname = get_class($realVar);
+            $object->classname = $o->classname . ' - ' . get_class($realVar);
             $object->depth = $o->depth + 1;
             
             $object2 = InstanceObject::blank($o->name);
@@ -86,7 +86,16 @@ class LazyLoadingPlugin extends Plugin
             $o = $object;
             $o->type = 'object';
             $o->size = $realVar->count();
-            IteratorPlugin::$blacklist[] = $object->classname;
+            
+            $o->removeRepresentation('iterator');
+            $base_obj = new BasicObject();
+            $base_obj->depth = $o->depth;
+            
+            $r = new Representation('iterator');
+            $r->contents = $this->parser->parse($realVal, $base_obj);
+            $r->contents = $r->contents->value->contents;
+            $o->addRepresentation($r);
+            
         } elseif ($variable instanceof LazyLoadingProxy) {
             $realVar = LazyLoadingUtil::getRealValue($variable);
             $object = BasicObject::blank($o->name);

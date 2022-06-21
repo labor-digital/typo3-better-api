@@ -42,10 +42,7 @@ use Kint\Object\BasicObject;
 use Kint\Object\InstanceObject;
 use Kint\Parser\Parser;
 use Kint\Parser\Plugin;
-use LaborDigital\T3ba\Tool\OddsAndEnds\LazyLoadingUtil;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
@@ -68,30 +65,16 @@ class TypoInstanceTypePlugin extends Plugin
     /** @noinspection ReferencingObjectsInspection */
     public function parse(&$variable, BasicObject &$o, $trigger): void
     {
+        // Add the uid of entities to the output
+        if ($variable instanceof AbstractEntity && $o instanceof InstanceObject) {
+            $o->classname .= ' - UID: ' . $variable->getUid();
+        }
+        
         // Show the iterator first
         if (! empty($o->getRepresentation('iterator'))) {
             $r = $o->getRepresentation('iterator');
             $o->removeRepresentation('iterator');
             $o->addRepresentation($r, 0);
-        }
-        
-        // Add the uid of entities to the output
-        if ($variable instanceof AbstractEntity && $o instanceof InstanceObject) {
-            $o->classname = $o->classname .= ' - UID: ' . $variable->getUid();
-        }
-        
-        // Remove the iterator representation from lazy objects
-        if ($variable instanceof LazyObjectStorage || $variable instanceof LazyLoadingProxy) {
-            $o->removeRepresentation('iterator');
-        }
-        
-        // Add the real class name to lazy loading proxies
-        if ($variable instanceof LazyLoadingProxy) {
-            $realVal = LazyLoadingUtil::getRealValue($variable);
-            if ($realVal !== null) {
-                $o->classname .= ' - ' . get_class($realVal) .
-                                 ($realVal instanceof AbstractEntity ? ' - UID: ' . $realVal->getUid() : '');
-            }
         }
         
         // Update size for countable objects

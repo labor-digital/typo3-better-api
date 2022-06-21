@@ -39,7 +39,7 @@ class LazyLoadingUtil implements NoDiInterface
      *
      * @param   LazyObjectStorage|LazyLoadingProxy|mixed  $value  The object to convert to the real value
      *
-     * @return object|mixed|null The converted, real value of the given value
+     * @return mixed The converted, real value of the given value
      */
     public static function getRealValue($value)
     {
