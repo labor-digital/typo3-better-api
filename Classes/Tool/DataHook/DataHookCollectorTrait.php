@@ -50,15 +50,17 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      */
     public function registerSaveHook(
         string $handlerClass,
-        string $handlerMethodName = 'saveHook'
+        string $handlerMethodName = 'saveHook',
+        array $options = []
     )
     {
-        return $this->registerDataHook(DataHookTypes::TYPE_SAVE, $handlerClass, $handlerMethodName);
+        return $this->registerDataHook(DataHookTypes::TYPE_SAVE, $handlerClass, $handlerMethodName, $options);
     }
     
     /**
@@ -71,15 +73,17 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      */
     public function registerFormHook(
         string $handlerClass,
-        string $handlerMethodName = 'formHook'
+        string $handlerMethodName = 'formHook',
+        array $options = []
     )
     {
-        return $this->registerDataHook(DataHookTypes::TYPE_FORM, $handlerClass, $handlerMethodName);
+        return $this->registerDataHook(DataHookTypes::TYPE_FORM, $handlerClass, $handlerMethodName, $options);
     }
     
     /**
@@ -91,15 +95,17 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      */
     public function registerCopyHook(
         string $handlerClass,
-        string $handlerMethodName = 'copyHook'
+        string $handlerMethodName = 'copyHook',
+        array $options = []
     )
     {
-        return $this->registerDataHook(DataHookTypes::TYPE_COPY, $handlerClass, $handlerMethodName);
+        return $this->registerDataHook(DataHookTypes::TYPE_COPY, $handlerClass, $handlerMethodName, $options);
     }
     
     /**
@@ -111,15 +117,17 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      */
     public function registerMoveHook(
         string $handlerClass,
-        string $handlerMethodName = 'moveHook'
+        string $handlerMethodName = 'moveHook',
+        array $options = []
     )
     {
-        return $this->registerDataHook(DataHookTypes::TYPE_MOVE, $handlerClass, $handlerMethodName);
+        return $this->registerDataHook(DataHookTypes::TYPE_MOVE, $handlerClass, $handlerMethodName, $options);
     }
     
     /**
@@ -131,15 +139,17 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      */
     public function registerDeleteHook(
         string $handlerClass,
-        string $handlerMethodName = 'deleteHook'
+        string $handlerMethodName = 'deleteHook',
+        array $options = []
     )
     {
-        return $this->registerDataHook(DataHookTypes::TYPE_DELETE, $handlerClass, $handlerMethodName);
+        return $this->registerDataHook(DataHookTypes::TYPE_DELETE, $handlerClass, $handlerMethodName, $options);
     }
     
     /**
@@ -151,15 +161,17 @@ trait DataHookCollectorTrait
      * @param   string  $handlerMethodName  The name of the method to execute on our handler class.
      *                                      The method will receive the DataHookContext object for the registered
      *                                      constraints as parameter.
+     * @param   array   $options            Additional options for this data hook.
      *
      * @return $this
      */
     public function registerRestoreHook(
         string $handlerClass,
-        string $handlerMethodName = 'restoreHook'
+        string $handlerMethodName = 'restoreHook',
+        array $options = []
     )
     {
-        return $this->registerDataHook(DataHookTypes::TYPE_RESTORE, $handlerClass, $handlerMethodName);
+        return $this->registerDataHook(DataHookTypes::TYPE_RESTORE, $handlerClass, $handlerMethodName, $options);
     }
     
     /**
