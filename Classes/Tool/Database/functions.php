@@ -19,17 +19,25 @@
 
 declare(strict_types=1);
 
+use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\BetterQueryTypo3DbQueryParserAdapter;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\ExtBase\ExtBaseBetterQuery;
 use LaborDigital\T3ba\Tool\Database\BetterQuery\Standalone\StandaloneBetterQuery;
 use LaborDigital\T3ba\Tool\Database\DatabaseException;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
+use Neunerlei\EventBus\EventBus;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Object\Container\Container;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\CMS\Extbase\Persistence\Generic\Qom\QueryObjectModelFactory;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 if (! function_exists('dbgQuery')) {
     /**
@@ -83,7 +91,8 @@ if (! function_exists('dbgQuery')) {
             $in[] = ':' . $k;
             $out[] = '"' . addslashes((string)$v) . '"';
         }
-        $queryString = str_replace($in, $out, $queryString);
+        
+        $queryString = str_replace(array_reverse($in), array_reverse($out), $queryString);
         
         // Try to execute the message
         try {
@@ -105,19 +114,38 @@ if (! function_exists('dbgQuery')) {
             DebuggerUtility::var_dump($queryString, 'Query string');
         }
         
+        $dumpArgs = [
+            true,
+            false,
+            [
+                'PHPUnit_Framework_MockObject_InvocationMocker',
+                ReflectionService::class,
+                ObjectManager::class,
+                DataMapper::class,
+                PersistenceManager::class,
+                QueryObjectModelFactory::class,
+                ContentObjectRenderer::class,
+                Container::class,
+                Session::class,
+                TypoContext::class,
+                TypoEventBus::class,
+                EventBus::class,
+            ],
+            ['session', 'caServices'],
+        ];
+        
         try {
             if (php_sapi_name() !== 'cli') {
                 if (! empty($exception)) {
                     DebuggerUtility::var_dump($exception, 'Db Errors');
                 }
                 try {
-                    $args = [true, false, [Container::class, Session::class, TypoContext::class], ['session', 'caServices']];
                     ob_start();
                     // Render as plaintext first -> if it fails we still have the styles available
-                    DebuggerUtility::var_dump($query, null, 8, true, ...$args);
+                    DebuggerUtility::var_dump($query, null, 8, true, ...$dumpArgs);
                     ob_end_clean();
                     
-                    DebuggerUtility::var_dump($query, 'Query Object', 8, false, ...$args);
+                    DebuggerUtility::var_dump($query, 'Query Object', 8, false, ...$dumpArgs);
                     
                 } catch (\Throwable $e) {
                     echo '<em>Error while rendering the query: "' . $e->getMessage() . '"</em>';
@@ -127,11 +155,11 @@ if (! function_exists('dbgQuery')) {
                     DebuggerUtility::var_dump($first, 'First result item');
                 }
                 DebuggerUtility::var_dump($result, 'Raw result');
-                DebuggerUtility::var_dump($GLOBALS['TYPO3_DB'], 'Db Connection');
+                DebuggerUtility::var_dump($GLOBALS['TYPO3_DB'], 'Db Connection', 8, false, ...$dumpArgs);
             }
         } catch (Exception $e) {
             echo '<h2>Db Error!</h2>';
-            DebuggerUtility::var_dump($e);
+            DebuggerUtility::var_dump($e, 'Error', 8, false, ...$dumpArgs);
         }
         exit();
     }
