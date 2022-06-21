@@ -287,6 +287,8 @@ class SiteRoutingConfigurator extends AbstractExtConfigConfigurator implements N
      *                              the short table syntax also used in the table config option.
      *                              -- If the third parameter is either a PID, or a list of PIDs,
      *                              the used records are constrained to the storage PIDs given.
+     *                              -- If the forth parameter is an integer > 0, it is used to define
+     *                              the recursion level in which the pids of the third parameter should be searched.
      *                              - localeArgs array: A simplified configuration of the "LocaleModifier".
      *                              You can define segments and their language specific variants as an array
      *                              like key => [$defaultValue, "de_DE.*" => $germanValue, ...]. As you see,

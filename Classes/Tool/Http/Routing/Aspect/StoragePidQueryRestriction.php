@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\Tool\Http\Routing\Aspect;
 
+use LaborDigital\T3ba\Tool\Database\BetterQuery\Util\RecursivePidResolver;
 use TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression;
 use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\QueryRestrictionInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class StoragePidQueryRestriction implements QueryRestrictionInterface
 {
@@ -32,15 +34,18 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
      * @var array
      */
     protected $storagePids;
+    protected $recursion;
     
     /**
      * StoragePidQueryRestriction constructor.
      *
      * @param   array  $storagePids  The list of numeric pids to limit the query to
+     * @param   int    $recursion    Defines if, and how many nested pids should be used recursively
      */
-    public function __construct($storagePids = [])
+    public function __construct($storagePids = [], int $recursion = 0)
     {
         $this->storagePids = $storagePids;
+        $this->recursion = $recursion;
     }
     
     /**
@@ -53,9 +58,13 @@ class StoragePidQueryRestriction implements QueryRestrictionInterface
             return $expressionBuilder->andX();
         }
         
-        // Build constraint list
-        $constraints = [];
         $pids = array_map('intval', $this->storagePids);
+        
+        if ($this->recursion > 0) {
+            $pids = GeneralUtility::makeInstance(RecursivePidResolver::class)->resolve($pids, $this->recursion);
+        }
+        
+        $constraints = [];
         foreach ($queriedTables as $tableAlias => $tableName) {
             $constraints[] = $expressionBuilder->in($tableAlias . '.pid', $pids);
         }

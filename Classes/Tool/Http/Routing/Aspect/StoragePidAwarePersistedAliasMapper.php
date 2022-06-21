@@ -46,7 +46,8 @@ class StoragePidAwarePersistedAliasMapper extends PersistedAliasMapper
         $restrictions->add(
             GeneralUtility::makeInstance(
                 StoragePidQueryRestriction::class,
-                $this->settings['storagePids']
+                $this->settings['storagePids'],
+                $this->settings['storagePidsRecursion'] ?? 0
             )
         );
         

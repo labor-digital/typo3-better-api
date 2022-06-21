@@ -101,14 +101,19 @@ trait RouteEnhancerConfigTrait
             $baseError = 'Invalid configuration for the dbArgs "' . $field . '" in the configuration of route: '
                          . $options['routePath'] . '!';
             
-            if (! is_array($fieldConfig) || ! in_array(count($fieldConfig), [2, 3], true)) {
+            if (! is_array($fieldConfig) || ! in_array(count($fieldConfig), [2, 3, 4], true)) {
                 throw new ExtConfigException(
-                    $baseError . ' The field configuration has to be an array with two or three elements!');
+                    $baseError . ' The field configuration has to be an array with two, three or four elements!');
             }
             
             if (! is_string($fieldConfig[0]) || ! is_string($fieldConfig[1])) {
                 throw new ExtConfigException(
                     $baseError . ' Both elements have to be strings!');
+            }
+            
+            if (isset($fieldConfig[3]) && ! is_int($fieldConfig[3])) {
+                throw new ExtConfigException(
+                    $baseError . ' The forth element must be an integer if present!');
             }
             
             $tableName = $this->context->resolveTableName($fieldConfig[0]);
@@ -133,6 +138,7 @@ trait RouteEnhancerConfigTrait
                 'tableName' => $tableName,
                 'routeFieldName' => $tableField,
                 'storagePids' => $storagePids,
+                'storagePidsRecursion' => $fieldConfig[3] ?? 0,
             ];
         }
         
