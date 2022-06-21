@@ -121,7 +121,7 @@ class FieldRenderer implements PublicServiceInterface
         
         $fieldTca = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
         
-        if (empty($fieldTca) || (empty($row[$fieldName]) && $row[$fieldName] !== 0)) {
+        if (empty($fieldTca) || (empty($row[$fieldName]) && $row[$fieldName] !== 0 && $row[$fieldName] !== '0')) {
             return null;
         }
         

@@ -101,7 +101,7 @@ class FieldListRenderer implements PublicServiceInterface
     {
         $rows = [];
         foreach ($fields as $field) {
-            if (empty($row[$field]) && $row[$field] !== 0) {
+            if (empty($row[$field]) && $row[$field] !== 0 && $row[$field] !== '0') {
                 continue;
             }
             
