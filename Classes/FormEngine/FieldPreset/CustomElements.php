@@ -39,6 +39,7 @@ declare(strict_types=1);
 
 namespace LaborDigital\T3ba\FormEngine\FieldPreset;
 
+use LaborDigital\T3ba\FormEngine\Field\InformationField;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Field\CustomFieldPresetTrait;
 use LaborDigital\T3ba\Tool\FormEngine\Custom\Wizard\CustomWizardPresetTrait;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
@@ -47,6 +48,22 @@ class CustomElements extends AbstractFieldPreset
 {
     use CustomFieldPresetTrait;
     use CustomWizardPresetTrait;
+    
+    /**
+     * An information field can be used to provide additional information.
+     * It is treated as a "none" field and has no DB representation attached to it.
+     * Basically free-text to read for the editor in the backend.
+     *
+     * @param   string  $labelOrTemplate  Either a string, a translation label, Fluid-HTML code or the reference to a template file like EXT:ext_key...
+     *
+     * @return void
+     */
+    public function applyInformation(string $labelOrTemplate): void
+    {
+        $applyer = $this->field->applyPreset();
+        $applyer->none();
+        $applyer->customField(InformationField::class, ['lot' => $labelOrTemplate]);
+    }
     
     /**
      * Can be used to configure a generic, custom form element.
