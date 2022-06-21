@@ -32,14 +32,33 @@ use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\MinMaxLengthOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\SelectItemsOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldOption\UserFuncOption;
 use LaborDigital\T3ba\Tool\Tca\Builder\FieldPreset\AbstractFieldPreset;
+use LaborDigital\T3ba\Tool\Tca\Builder\Type\Table\TcaField;
 
 class Basics extends AbstractFieldPreset
 {
     /**
+     * Configures the field as a "none" type and removes the connected database column.
+     * The DataHandler discards values send for type none and never persists or updates them in the database.
+     * Type none is the only type that does not necessarily need a database field.
+     *
+     * @return void
+     */
+    public function applyNone(): void
+    {
+        $this->field->addConfig([
+            'type' => 'none',
+        ]);
+        
+        if ($this->field instanceof TcaField) {
+            $this->field->removeColumn();
+        }
+    }
+    
+    /**
      * Configures the field as a passThrough type. Its value, which is sent to the DataHandler is just kept,
      * as is and put into the database field. Default FormEngine however never sends values.
      *
-     * @see https://docs.typo3.org/m/typo3/reference-tca/master/en-us/ColumnsConfig/Type/Passthrough.html#type-passthrough
+     * @see https://docs.typo3.org/m/typo3/reference-tca/main/en-us/ColumnsConfig/Type/Passthrough/Index.html
      */
     public function applyPassThrough(): void
     {
