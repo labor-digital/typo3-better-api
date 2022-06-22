@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.41.0](https://github.com/labor-digital/typo3-better-api/compare/v10.40.1...v10.41.0) (2022-06-21)
+
+
+### Features
+
+* **FormEngine:** add "none" preset ([507b20e](https://github.com/labor-digital/typo3-better-api/commit/507b20e1aed750e1055285c91640a717b5f9f3ee))
+* **FormEngine:** add new "information" preset ([1c872e3](https://github.com/labor-digital/typo3-better-api/commit/1c872e379f389cf219d977afff64b412638e4b1b))
+* **Routing:** allow recursive lookups of storage pid aware dbArgs ([dfe545f](https://github.com/labor-digital/typo3-better-api/commit/dfe545f9ba80235d84c3f7ba6129d97f3e8aefde))
+
+
+### Bug Fixes
+
+* **Database:** fix dbgQuery output ([389b775](https://github.com/labor-digital/typo3-better-api/commit/389b77596870e4584d5c852b8f8c2243ce1b54ca))
+* **DataHook\Collector:** add $options parameter to all registration methods ([51eea48](https://github.com/labor-digital/typo3-better-api/commit/51eea4858b2de9c9a85932a8b5f272398413844e))
+* **dbg:** fix issues when debugging object storage instance ([0022e71](https://github.com/labor-digital/typo3-better-api/commit/0022e710ce307880c2ce24011e33b1d9f967b5a6))
+* **Rendering:** render fields with '0' as value ([8d642f1](https://github.com/labor-digital/typo3-better-api/commit/8d642f13d6821e9a16c467674e512813cd5ba94f))
+
 ### [10.40.1](https://github.com/labor-digital/typo3-better-api/compare/v10.40.0...v10.40.1) (2022-06-20)
 
 
