@@ -84,8 +84,8 @@ class CacheUtil implements NoDiInterface
             
             if (method_exists($tag, 'getPid')) {
                 $tags[] = 'page_' . $tag->getPid();
+                $tags[] = 'pageId_' . $tag->getPid();
             }
-            
             
             if ($tag instanceof ObjectStorage) {
                 $_tags = [];
