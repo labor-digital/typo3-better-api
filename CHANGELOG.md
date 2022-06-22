@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.41.2](https://github.com/labor-digital/typo3-better-api/compare/v10.41.1...v10.41.2) (2022-06-22)
+
+
+### Bug Fixes
+
+* **Cache:** generate pageId_ tag when a getPid method exists ([faf7eb0](https://github.com/labor-digital/typo3-better-api/commit/faf7eb0944310def2270dead86c37887e07921cc))
+
 ### [10.41.1](https://github.com/labor-digital/typo3-better-api/compare/v10.41.0...v10.41.1) (2022-06-22)
 
 
