@@ -269,6 +269,14 @@ trait AssetCollectorTrait
             ],
         ]);
         
+        // GeneralUtility::createVersionNumberedFilename is unreliable for the backend,
+        // therefore this fix was implemented to add a timestamp automatically.
+        [$path, $query] = explode('?', $source);
+        $path = $this->context->resolveFilename($path, false);
+        if (file_exists($path)) {
+            $source .= (empty($query) ? '?' : '&') . filemtime($path);
+        }
+        
         /** @var AbstractExtConfigConfigurator|AssetCollectorTrait $this */
         $this->assetActionList[] = [
             $function,
