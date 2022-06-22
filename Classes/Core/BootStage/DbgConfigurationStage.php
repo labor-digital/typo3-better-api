@@ -36,6 +36,7 @@ use Neunerlei\PathUtil\Path;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Throwable;
+use TYPO3\CMS\Extbase\Mvc\Web\Response;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -107,6 +108,8 @@ HTML;
             BlacklistPlugin::$shallow_blacklist[] = MysqliStatement::class;
             BlacklistPlugin::$shallow_blacklist[] = ContainerInterface::class;
             BlacklistPlugin::$shallow_blacklist[] = ListenerProviderInterface::class;
+            BlacklistPlugin::$shallow_blacklist[] = Response::class;
+            BlacklistPlugin::$shallow_blacklist[] = \TYPO3\CMS\Extbase\Mvc\Response::class;
         }
     }
     
