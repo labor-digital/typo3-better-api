@@ -251,25 +251,23 @@ class ExtConfigContext extends ConfigContext implements NoDiInterface
     {
         $filename = Path::normalize($this->replaceMarkers($filename));
         
-        if (! $asTypoPathIfPossible) {
-            return $filename;
-        }
-        
         if (str_starts_with($filename, './') || str_starts_with($filename, '.' . DIRECTORY_SEPARATOR)) {
             if ($this->getExtKey() === 'LIMBO') {
                 throw new ExtConfigException('Could not resolve relative filename: "' . $filename . '" because there is currently no active extension context');
             }
             
-            return 'EXT:' . $this->getExtKey() . substr($filename, 1);
+            $filename = 'EXT:' . $this->getExtKey() . substr($filename, 1);
+        }
+        
+        if (! $asTypoPathIfPossible) {
+            return $this->getTypoContext()->path()->typoPathToRealPath($filename);
         }
         
         if (! str_starts_with(strtolower($filename), 'ext:')) {
-            if (file_exists($filename)) {
-                try {
-                    return $this->getTypoContext()->path()->realPathToTypoExt($filename);
-                } catch (T3baException $e) {
-                    // If the resolution into an TYPO3 path fails, we simply return the absolute path
-                }
+            try {
+                return $this->getTypoContext()->path()->realPathToTypoExt($filename);
+            } catch (T3baException $e) {
+                // If the resolution into an TYPO3 path fails, we simply return the absolute path
             }
         }
         
