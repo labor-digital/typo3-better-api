@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.41.1](https://github.com/labor-digital/typo3-better-api/compare/v10.41.0...v10.41.1) (2022-06-22)
+
+
+### Bug Fixes
+
+* **Assets:** automatically add cache-buster to asset paths ([2f9d185](https://github.com/labor-digital/typo3-better-api/commit/2f9d185309856deb3e44d6e9819faf2c09838d7f))
+* **ContentType:** handle change detection for extension fields correctly ([70feeee](https://github.com/labor-digital/typo3-better-api/commit/70feeeeeef452dda5db619f5f82e49ebe0e54cde))
+* **dbg:** add mvc response to kint blacklist ([e45963d](https://github.com/labor-digital/typo3-better-api/commit/e45963d6f97a9c455be040a6edc517a5d587c985))
+* **ExtConfigContext:** resolve path more reliably ([fdd708b](https://github.com/labor-digital/typo3-better-api/commit/fdd708b9524b45aecd708231426fac8e548b509a))
+
 ## [10.41.0](https://github.com/labor-digital/typo3-better-api/compare/v10.40.1...v10.41.0) (2022-06-21)
 
 
