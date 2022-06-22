@@ -27,6 +27,7 @@ use LaborDigital\T3ba\Event\Backend\BackendUtilityRecordFilterEvent;
 use LaborDigital\T3ba\Event\Core\RefIndexRecordDataFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\ActionFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\ActionPostProcessorEvent;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerCompareFieldArrayFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoWithPermsFilterEvent;
@@ -67,6 +68,13 @@ class ContentTypeApplier extends AbstractExtConfigApplier
      */
     protected $delayedChildRelation;
     
+    /**
+     * The list of child row history entries that must be merged into their tt_content history
+     *
+     * @var array
+     */
+    protected $additionalHistoryRewrites = [];
+    
     public function __construct(ExtensionRowRepository $repository, DataHandlerService $dataHandlerService)
     {
         $this->repository = $repository;
@@ -89,6 +97,7 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         $subscription->subscribe(DataHandlerDbFieldsFilterEvent::class, 'onDbFieldFilter', $priorityOptions);
         $subscription->subscribe(RefIndexRecordDataFilterEvent::class, 'onRefIndexFilter', $priorityOptions);
         $subscription->subscribe(FormFilterEvent::class, 'onFormFilter', $priorityOptions);
+        $subscription->subscribe(DataHandlerCompareFieldArrayFilterEvent::class, 'onFieldArrayCompare', $priorityOptions);
     }
     
     /**
@@ -245,7 +254,8 @@ class ContentTypeApplier extends AbstractExtConfigApplier
             DataHandlerAdapter::rewriteHistory(
                 $event->getDataHandler(),
                 $parentId,
-                ContentTypeUtil::convertChildForParent($this->getChildRow($parentId), $cType)
+                ContentTypeUtil::convertChildForParent($this->getChildRow($parentId), $cType),
+                $this->additionalHistoryRewrites
             );
         }
     }
@@ -299,6 +309,34 @@ class ContentTypeApplier extends AbstractExtConfigApplier
         $data = $event->getData();
         $data['databaseRow'] = $this->mergeChildIntoParent($data['databaseRow']);
         $event->setData($data);
+    }
+    
+    public function onFieldArrayCompare(DataHandlerCompareFieldArrayFilterEvent $event): void
+    {
+        if ($event->getTableName() !== 'tt_content') {
+            return;
+        }
+        
+        $fieldArray = $event->getFieldArray();
+        $cType = $this->resolveColumnValue('CType', ['uid' => $event->getId()]);
+        $childFieldArray = ContentTypeUtil::extractChildFromParent($fieldArray, $cType);
+        
+        if (empty($childFieldArray)) {
+            return;
+        }
+        
+        $comp = $event->getConcreteComparator();
+        $event->setConcreteComparator(function ($table, $id) use ($comp, $fieldArray, $cType, $childFieldArray) {
+            $res = $comp($table, $id, $fieldArray);
+            $childTable = ContentTypeUtil::getTableMap()[$cType] ?? '';
+            $childUid = $this->getChildRow($id)['uid'] ?? 0;
+            $childRes = $comp($childTable, $childUid, $childFieldArray);
+            $childRes = ContentTypeUtil::remapColumns($childRes, $cType, true);
+            
+            $this->additionalHistoryRewrites['tt_content:' . $id] = [$childTable . ':' . $childUid => $cType];
+            
+            return array_merge($res, $childRes);
+        });
     }
     
     /**

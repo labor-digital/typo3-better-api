@@ -200,18 +200,24 @@ class ContentTypeUtil implements NoDiInterface
      * and remaps the existing extension fields from their namespaced name like ct_cType_... to the
      * name that was given in the form.
      *
-     * @param   array   $row    The row to resolve the the virtual columns on
-     * @param   string  $cType  The cType of content element to resolve the columns for
+     * @param   array   $row          The row to resolve the virtual columns on
+     * @param   string  $cType        The cType of content element to resolve the columns for
+     * @param   bool    $toNamespace  If set to true, non namespaced columns will be mapped as namespaced columns
      *
      * @return array
      */
-    public static function remapColumns(array $row, string $cType): array
+    public static function remapColumns(array $row, string $cType, bool $toNamespace = false): array
     {
         if (! static::hasExtensionTable($cType)) {
             return $row;
         }
         
-        foreach (static::getTypeColumnMap($cType) as $nsColumnName => $columnName) {
+        $map = static::getTypeColumnMap($cType);
+        if ($toNamespace) {
+            $map = array_flip($map);
+        }
+        
+        foreach ($map as $nsColumnName => $columnName) {
             if (array_key_exists($nsColumnName, $row)) {
                 $row[$columnName] = $row[$nsColumnName];
                 unset($row[$nsColumnName]);

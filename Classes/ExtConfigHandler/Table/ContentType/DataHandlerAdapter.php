@@ -24,6 +24,7 @@ namespace LaborDigital\T3ba\ExtConfigHandler\Table\ContentType;
 
 
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
+use LaborDigital\T3ba\Tool\Tca\ContentType\ContentTypeUtil;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 class DataHandlerAdapter extends DataHandler implements NoDiInterface
@@ -40,11 +41,35 @@ class DataHandlerAdapter extends DataHandler implements NoDiInterface
      * @param   \TYPO3\CMS\Core\DataHandling\DataHandler  $dataHandler
      * @param   int                                       $id
      * @param   array                                     $childFields
+     * @param   array|null                                $additionalRewrites
      */
-    public static function rewriteHistory(DataHandler $dataHandler, int $id, array $childFields): void
+    public static function rewriteHistory(DataHandler $dataHandler, int $id, array $childFields, ?array $additionalRewrites = null): void
     {
-        $record = &$dataHandler->historyRecords['tt_content:' . $id];
+        $key = 'tt_content:' . $id;
+        $record = &$dataHandler->historyRecords[$key];
         
+        // This construct is needed to rewrite the extension fields back into the tt_content table.
+        // Theoretically, with the new construct, the other code in this method
+        // should no longer be required.
+        if (is_array($additionalRewrites) && is_array($additionalRewrites[$key] ?? null)) {
+            foreach ($additionalRewrites[$key] as $childKey => $cType) {
+                if (isset($dataHandler->historyRecords[$childKey])) {
+                    if (! is_array($record)) {
+                        $record = [];
+                    }
+                    
+                    $childRecord = $dataHandler->historyRecords[$childKey];
+                    foreach (['oldRecord', 'newRecord'] as $recordType) {
+                        $remapped = ContentTypeUtil::remapColumns($childRecord[$recordType] ?? [], $cType, true);
+                        $record[$recordType] = array_merge($record[$recordType] ?? [], $remapped);
+                    }
+                    
+                    unset($dataHandler->historyRecords[$childKey]);
+                }
+            }
+        }
+        
+        // @todo in v11 evaluate if the following code can be removed
         if (! $record) {
             return;
         }

@@ -39,6 +39,7 @@ declare(strict_types=1);
 namespace LaborDigital\T3ba\Core\Override;
 
 use LaborDigital\T3ba\Core\EventBus\TypoEventBus;
+use LaborDigital\T3ba\Event\DataHandler\DataHandlerCompareFieldArrayFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\DataHandlerDbFieldsFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\DataHandlerDefaultFilterEvent;
 use LaborDigital\T3ba\Event\DataHandler\DataHandlerRecordInfoFilterEvent;
@@ -76,7 +77,6 @@ class ExtendedDataHandler extends T3BaCopyDataHandler
             $table, parent::newFieldArray($table), $this
         ))->getRow();
     }
-    
     
     /**
      * @inheritDoc
@@ -142,5 +142,19 @@ class ExtendedDataHandler extends T3BaCopyDataHandler
         return TypoEventBus::getInstance()->dispatch(new DataHandlerRecordInfoWithPermsFilterEvent(
             $table, $id, $fieldList, $this, $result, $perms
         ))->getResult();
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function compareFieldArrayWithCurrentAndUnset($table, $id, $fieldArray)
+    {
+        $e = TypoEventBus::getInstance()->dispatch(
+            new DataHandlerCompareFieldArrayFilterEvent($table, $id, $fieldArray, function ($t, $i, $f) {
+                return parent::compareFieldArrayWithCurrentAndUnset($t, $i, $f);
+            })
+        );
+        
+        return ($e->getConcreteComparator())($table, $id, $fieldArray);
     }
 }
