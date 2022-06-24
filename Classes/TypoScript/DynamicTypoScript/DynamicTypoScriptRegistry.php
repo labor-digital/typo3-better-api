@@ -122,6 +122,10 @@ class DynamicTypoScriptRegistry implements SingletonInterface
     public function getContents(string $key): string
     {
         if (! isset($this->contents[$key])) {
+            if (! empty($GLOBALS['TCA']['sys_template']['ctrl'][static::class][$key] ?? null)) {
+                return $this->contents[$key] = $GLOBALS['TCA']['sys_template']['ctrl'][static::class][$key];
+            }
+
             return '
 [GLOBAL]
 #############################################
