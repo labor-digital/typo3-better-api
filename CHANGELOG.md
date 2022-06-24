@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.32.1](https://github.com/labor-digital/typo3-better-api/compare/v9.32.0...v9.32.1) (2022-06-24)
+
+
+### Bug Fixes
+
+* **DynamicTypoScript:** load stored contents on runtime, if loaded to early ([a3c1669](https://github.com/labor-digital/typo3-better-api/commit/a3c16690e85e769a544b029fead09f10d43c3197))
+
 ## [9.32.0](https://github.com/labor-digital/typo3-better-api/compare/v9.31.0...v9.32.0) (2022-05-10)
 
 
