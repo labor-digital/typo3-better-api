@@ -549,7 +549,6 @@ class Relations extends AbstractFieldPreset
                     'type' => 'string',
                     'default' => '',
                 ],
-                new EvalOption(['required']),
             ],
             $allowsMultiSelect ? [
                 new WizardAllowEditOption(),
