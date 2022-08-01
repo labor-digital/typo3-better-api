@@ -69,7 +69,14 @@
 	},
 	"version": "10.41.2",
 	"config": {
-		"bin-dir": "bin"
+		"bin-dir": "bin",
+		"allow-plugins": {
+			"typo3/cms-composer-installers": true,
+			"typo3/class-alias-loader": true,
+			"0.0.0/composer-include-files": true,
+			"helhum/typo3-console-plugin": true,
+			"labor-digital/sentry-php": true
+		}
 	},
 	"extra": {
 		"t3ba": {
