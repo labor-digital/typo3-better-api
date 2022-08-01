@@ -75,7 +75,7 @@
 			"typo3/class-alias-loader": true,
 			"0.0.0/composer-include-files": true,
 			"helhum/typo3-console-plugin": true,
-			"labor-digital/sentry-php": true
+			"labor-digital/typo3-better-api-composer-plugin": true
 		}
 	},
 	"extra": {
