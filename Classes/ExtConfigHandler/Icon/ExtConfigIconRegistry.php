@@ -79,15 +79,15 @@ class ExtConfigIconRegistry implements PublicServiceInterface, SingletonInterfac
      */
     public function getIdentifierForFilename(string $filename): string
     {
+        // If the filename does not look like a filename we simply return it -> this is probably an identifier already
+        if (! str_contains($filename, '.') || ! str_contains($filename, '/')) {
+            return $filename;
+        }
+        
         $filename = $this->context->resolveFilename($filename);
         
         if (in_array($filename, $this->icons, true)) {
             return array_search($filename, $this->icons, true);
-        }
-        
-        // If the filename does not look like a filename we simply return it -> this is probably an identifier already
-        if (! str_contains($filename, '.') || ! str_contains($filename, '/')) {
-            return $filename;
         }
         
         $identifier = 't3ba-' . basename($filename, pathinfo($filename, PATHINFO_EXTENSION));
