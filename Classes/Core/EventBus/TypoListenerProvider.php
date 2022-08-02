@@ -62,6 +62,11 @@ class TypoListenerProvider extends ListenerProvider
         $this->concreteListenerProvider = new EventBusListenerProvider();
     }
     
+    public function __clone()
+    {
+        $this->concreteListenerProvider = clone $this->concreteListenerProvider;
+    }
+    
     /**
      * Used to inject the PSR service container after it was created
      *

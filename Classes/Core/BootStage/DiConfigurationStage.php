@@ -119,6 +119,14 @@ class DiConfigurationStage implements BootStageInterface
             return;
         }
         
+        // The install-tool extension has a functionality called the "LateBootService"
+        // which allows the di container to be recreated for some reason.
+        // If that is happening (like in upgrade wizards) some issues arose,
+        // like event listeners being re-registered multiple times.
+        // To prevent that issue, we check if the current stage is already instantiated
+        // and handle the creation differently if we re-instantiate an existing container.
+        $reinstantiate = $this->stage === static::STAGE_CONTAINER_INSTANTIATE;
+        
         $this->setStage(static::STAGE_CONTAINER_INSTANTIATE);
         
         $symfony = $event->getContainer();
@@ -127,17 +135,25 @@ class DiConfigurationStage implements BootStageInterface
         }
         
         $miniContainer = $this->delegate->getInternal();
-        $this->delegate->setContainer(DelegateContainer::TYPE_SYMFONY, $symfony);
-        
         $symfony->set(VarFs::class, $miniContainer->get(VarFs::class));
         
+        if (! $reinstantiate) {
+            $this->delegate->setContainer(DelegateContainer::TYPE_SYMFONY, $symfony);
+        }
+        
+        /** @var TypoEventBus $eventBus */
         $eventBus = $miniContainer->get(TypoEventBus::class);
         $symfony->set(EventBusInterface::class, $eventBus);
         $symfony->set(TypoEventBus::class, $eventBus);
         
-        /** @var TypoListenerProvider $listenerProvider */
-        $listenerProvider = clone $miniContainer->get('@listenerProviderBackup');
-        $eventBus->setConcreteListenerProvider($listenerProvider);
+        if ($reinstantiate) {
+            /** @var TypoListenerProvider $listenerProvider */
+            $listenerProvider = clone $miniContainer->get('@listenerProviderBackup');
+            $eventBus->setConcreteListenerProvider($listenerProvider);
+        } else {
+            $listenerProvider = $eventBus->getConcreteListenerProvider();
+        }
+        
         $symfony->set(ListenerProviderInterface::class, $listenerProvider);
         $symfony->set(TypoListenerProvider::class, $listenerProvider);
         
@@ -153,8 +169,10 @@ class DiConfigurationStage implements BootStageInterface
         
         // This is required to link the new event bus into the TYPO3 core and to load the registered event handlers
         // This MUST be executed after the typo context class is set up correctly
-        $symfony->get(ListenerProvider::class);
-        $symfony->get(EventSubscriberBridge::class);
+        if (! $reinstantiate) {
+            $symfony->get(ListenerProvider::class);
+            $symfony->get(EventSubscriberBridge::class);
+        }
         
         $symfony->set(ConfigState::class, $extConfigContext->getState());
         $extConfigContext->setTypoContext($context);
