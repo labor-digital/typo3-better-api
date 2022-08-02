@@ -567,7 +567,6 @@ class Relations extends AbstractFieldPreset
                 'foreign_table' => $foreignTable,
                 'foreign_table_where' => empty($options['where']) ? null : $options['where'],
                 'multiple' => false,
-                'enableMultiSelectFilterTextfield' => true,
                 'localizeReferencesAtParentLocalization' => true,
             ])
         );
