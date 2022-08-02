@@ -41,9 +41,17 @@ namespace LaborDigital\T3ba\Tool\BackendPreview;
 use LaborDigital\T3ba\Core\Di\NoDiInterface;
 use LaborDigital\T3ba\Event\BackendPreview\PreviewRenderingEvent;
 use LaborDigital\T3ba\Tool\BackendPreview\Hook\BackendPreviewUtils;
+use LaborDigital\T3ba\Tool\Tca\ContentType\Domain\ContentRepository;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class BackendPreviewRendererContext implements NoDiInterface
 {
+    /**
+     * The cached, extended row of data
+     *
+     * @var array|null
+     */
+    protected $extendedRow;
     
     /**
      * An additional header that will be placed above the rendered body
@@ -114,10 +122,22 @@ class BackendPreviewRendererContext implements NoDiInterface
     /**
      * Returns the row of data that was given to this element
      *
+     * @param   bool  $withExtension  By default, only the tt_content row will be returned,
+     *                                setting this to true, the row will be extended by the content type fields
+     *
      * @return array
+     * @todo in v11 $withExtension should be true by default
+     *       This means, that requiring methods must be adjusted, as well.
      */
-    public function getRow(): array
+    public function getRow(bool $withExtension = false): array
     {
+        if ($withExtension) {
+            return $this->extendedRow ??
+                   ($this->extendedRow
+                       = GeneralUtility::makeInstance(ContentRepository::class)
+                                       ->getExtendedRow($this->event->getRow()));
+        }
+        
         return $this->event->getRow();
     }
     
