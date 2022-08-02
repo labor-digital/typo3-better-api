@@ -43,6 +43,7 @@ use LaborDigital\T3ba\Core\Di\ContainerAwareTrait;
 use LaborDigital\T3ba\Core\Exception\T3baException;
 use LaborDigital\T3ba\Tool\Database\DbService;
 use LaborDigital\T3ba\Tool\OddsAndEnds\NamingUtil;
+use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use LaborDigital\T3ba\Tool\TypoContext\FacetInterface;
 use LaborDigital\T3ba\Tool\TypoContext\TypoContext;
 use Neunerlei\FileSystem\Fs;
@@ -324,9 +325,13 @@ class PathFacet implements FacetInterface
         }
         $p = PathUtility::stripPathSitePrefix($path);
         
+        if (! $p) {
+            $p = $path;
+        }
+        
         // Could we resolve the path inside of ext?
         if (stripos($p, 'typo3conf' . DIRECTORY_SEPARATOR . 'ext' . DIRECTORY_SEPARATOR) !== 0) {
-            // Try to find find a part inside the ext directory by looking for every chain member
+            // Try to find a part inside the ext directory by looking for every chain member
             $stripPath = [];
             foreach (explode(DIRECTORY_SEPARATOR, $path) as $extKey) {
                 $stripPath[] = $extKey;
@@ -348,7 +353,7 @@ class PathFacet implements FacetInterface
                 // Check if the path has a composer file we can use to find the ext key
                 $composerJsonPath = implode(DIRECTORY_SEPARATOR, $stripPath) . DIRECTORY_SEPARATOR . 'composer.json';
                 if (file_exists($composerJsonPath)) {
-                    $compJson = json_decode(Fs::readFile($composerJsonPath), true, 512, JSON_THROW_ON_ERROR);
+                    $compJson = SerializerUtil::unserializeJson(Fs::readFile($composerJsonPath));
                     if (! isset($compJson['name'])) {
                         continue;
                     }
@@ -364,7 +369,10 @@ class PathFacet implements FacetInterface
         }
         
         // Looking inside the ext directory
-        $path = substr($p, 14);
+        $p = substr($p, 14);
+        if ($p !== false) {
+            $path = $p;
+        }
         
         return 'EXT:' . $path;
     }
