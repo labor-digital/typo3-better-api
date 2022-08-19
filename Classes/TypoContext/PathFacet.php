@@ -323,10 +323,13 @@ class PathFacet implements FacetInterface
             return $path;
         }
         $p = PathUtility::stripPathSitePrefix($path);
+        if (! is_string($p)) {
+            $p = $path;
+        }
         
         // Could we resolve the path inside of ext?
         if (stripos($p, 'typo3conf' . DIRECTORY_SEPARATOR . 'ext' . DIRECTORY_SEPARATOR) !== 0) {
-            // Try to find find a part inside the ext directory by looking for every chain member
+            // Try to find a part inside the ext directory by looking for every chain member
             $stripPath = [];
             foreach (explode(DIRECTORY_SEPARATOR, $path) as $extKey) {
                 $stripPath[] = $extKey;
