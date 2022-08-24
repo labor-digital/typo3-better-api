@@ -30,6 +30,8 @@ use LaborDigital\T3ba\Tool\OddsAndEnds\SerializerUtil;
 use Neunerlei\FileSystem\Fs;
 use Neunerlei\PathUtil\Path;
 use SplFileInfo;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Throwable;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -152,7 +154,13 @@ class Mount
         
         // Write the file
         FilePermissionUtil::setFilePermissions($this->mountPath);
-        Fs::writeFile($filePathReal, $content);
+        try {
+            Fs::writeFile($filePathReal, $content);
+        } catch (IOException $e) {
+            if (!str_contains($e->getMessage(), 'File exists')) {
+                throw $e;
+            }
+        }
         FilePermissionUtil::setFilePermissions($filePathReal);
     }
     
@@ -251,7 +259,13 @@ class Mount
             }
             
             if (! is_writable($this->mountPath)) {
-                Fs::mkdir($this->mountPath);
+                try {
+                    Fs::mkdir($this->mountPath);
+                } catch (IOException $e) {
+                    if (!str_contains($e->getMessage(), 'File exists')) {
+                        throw $e;
+                    }
+                }
                 FilePermissionUtil::setFilePermissions($this->mountPath);
             }
         }
