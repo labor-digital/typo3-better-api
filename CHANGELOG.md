@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.41.4](https://github.com/labor-digital/typo3-better-api/compare/v10.41.3...v10.41.4) (2022-08-24)
+
+
+### Bug Fixes
+
+* **VarFs:** catch if file/folder already exist to avoid error ([fbb369c](https://github.com/labor-digital/typo3-better-api/commit/fbb369c7de06d1d80816c7b9bd0bdf0a365794b5))
+
 ### [10.41.3](https://github.com/labor-digital/typo3-better-api/compare/v10.41.2...v10.41.3) (2022-08-01)
 
 
