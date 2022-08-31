@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.41.5](https://github.com/labor-digital/typo3-better-api/compare/v10.41.4...v10.41.5) (2022-08-31)
+
+
+### Bug Fixes
+
+* **PathFacet:** fix a typing issue in realPathToTypoExt ([0b44d6e](https://github.com/labor-digital/typo3-better-api/commit/0b44d6e46de97b02ac93003362ce8779bf2abc3e))
+* **Rendering:** resolve hidden entities when rendering the table preview ([b85411f](https://github.com/labor-digital/typo3-better-api/commit/b85411fdae0074388ddf7ad64b5cf094705312a6))
+* **Tca:** ensure mm table when mmOpposite option is set ([8c4ab2a](https://github.com/labor-digital/typo3-better-api/commit/8c4ab2a18d86f8dc16eb3b660427bf5b2486c937))
+
 ### [10.41.4](https://github.com/labor-digital/typo3-better-api/compare/v10.41.3...v10.41.4) (2022-08-24)
 
 
