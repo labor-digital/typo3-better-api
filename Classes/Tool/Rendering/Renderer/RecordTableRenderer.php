@@ -75,7 +75,7 @@ class RecordTableRenderer implements PublicServiceInterface
             if (! is_array($row)) {
                 if ($row instanceof AbstractEntity) {
                     $row = TypoContext::getInstance()->di()->cs()->db
-                        ->getQuery($tableName)->withWhere(['uid' => $row->getUid()])->getFirst();
+                        ->getQuery($tableName)->withIncludeHidden()->withWhere(['uid' => $row->getUid()])->getFirst();
                     
                     if (! is_array($row)) {
                         throw new InvalidArgumentException(

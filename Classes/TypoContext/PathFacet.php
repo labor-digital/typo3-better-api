@@ -324,6 +324,9 @@ class PathFacet implements FacetInterface
             return $path;
         }
         $p = PathUtility::stripPathSitePrefix($path);
+        if (! is_string($p)) {
+            $p = $path;
+        }
         
         if (! $p) {
             $p = $path;

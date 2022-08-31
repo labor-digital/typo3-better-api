@@ -73,6 +73,12 @@ class MmTableOption extends AbstractOption
         $definition['mmTable'] = [
             'type' => 'bool',
             'default' => static function ($field, $given) {
+                // Interop with the "mmOpposite" field -> If we have an opposite value
+                // we need a mm table no matter what
+                if (! empty($given['mmOpposite'])) {
+                    return true;
+                }
+                
                 // Interop with the "maxItems" method -> If only a single item is allowed -> no MM table is required
                 if (! isset($given['maxItems'])) {
                     return true;
