@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.42.0](https://github.com/labor-digital/typo3-better-api/compare/v10.41.5...v10.42.0) (2022-08-31)
+
+
+### Features
+
+* **BackendPreview:** allow context to look up extended tt_content row ([cb0e9ee](https://github.com/labor-digital/typo3-better-api/commit/cb0e9ee88e429a4adf7fe7a852609ad1e40313c4))
+
+
+### Bug Fixes
+
+* **EventBus:** fix double registration of listeners in install tool ([d18ed23](https://github.com/labor-digital/typo3-better-api/commit/d18ed23d3914a21692cd13b7c0588c3194a7242e))
+* **FormEngine\Relations:** remove deprecated "enableMultiSelectFilterTextfield" option on select fields ([735e135](https://github.com/labor-digital/typo3-better-api/commit/735e1350d4661f95b47042e42201c94530c4e5d4))
+* **Icon:** harden icon identifier resolution in getIdentifierForFilename ([f66287a](https://github.com/labor-digital/typo3-better-api/commit/f66287a5afea3063ae70daf729b933f8970125ec))
+* **PathFacet:** fix type mismatch in realPathToTypoExt ([427ab14](https://github.com/labor-digital/typo3-better-api/commit/427ab14b9aaab961f114eba74c03e03dc454b99a))
+
 ### [10.41.5](https://github.com/labor-digital/typo3-better-api/compare/v10.41.4...v10.41.5) (2022-08-31)
 
 

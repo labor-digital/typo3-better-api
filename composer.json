@@ -67,7 +67,7 @@
 			"LaborDigital\\T3ba\\Tests\\": "Tests"
 		}
 	},
-	"version": "10.41.5",
+	"version": "10.42.0",
 	"config": {
 		"bin-dir": "bin",
 		"allow-plugins": {
